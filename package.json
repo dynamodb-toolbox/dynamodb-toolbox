@@ -1,6 +1,6 @@
 {
   "name": "dynamodb-toolbox",
-  "version": "-",
+  "version": "local",
   "description": "Lightweight and type-safe query builder for DynamoDB and TypeScript.",
   "homepage": "https://dynamodb-toolbox.com",
   "repository": {
@@ -67,13 +67,13 @@
     "prebuild": "rm -rf dist",
     "prepare": "npm run build",
     "prepublishOnly": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint",
-    "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint && test-exports",
+    "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint && npm run test-exports",
     "test-type": "tsc --noEmit",
     "test-format": "prettier --check 'src/**/*.(js|ts)'",
     "test-unit": "vitest run",
     "test-unit-watch": "vitest",
     "test-lint": "eslint .",
-    "test-exports": "attw --pack ."
+    "test-exports": "attw --pack . --ignore-rules no-resolution"
   },
   "files": [
     "dist"
