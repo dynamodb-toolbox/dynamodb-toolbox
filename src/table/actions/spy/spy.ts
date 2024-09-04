@@ -7,7 +7,7 @@ import { TableActionStub } from './actionStub.js'
 import { $mocks, $sentActions } from './constants.js'
 
 export class TableSpy<TABLE extends Table = Table> extends TableAction<TABLE> {
-  static actionName: 'spy';
+  static override actionName: 'spy';
 
   [$mocks]: Record<string, (...args: any[]) => any>;
   [$sentActions]: Record<string, any[]>

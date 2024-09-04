@@ -121,7 +121,8 @@ export function* schemaParser<
   const transformedValue = Object.fromEntries(
     Object.entries(parsers)
       .map(([attrName, attr]) => [
-        schema.attributes[attrName].savedAs ?? attrName,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        schema.attributes[attrName]!.savedAs ?? attrName,
         attr.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)

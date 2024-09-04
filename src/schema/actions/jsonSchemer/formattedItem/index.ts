@@ -1,1 +1,2 @@
-export { getFormattedItemJSONSchema, FormattedItemJSONSchema } from './schema.js'
+export { getFormattedItemJSONSchema } from './schema.js'
+export type { FormattedItemJSONSchema } from './schema.js'

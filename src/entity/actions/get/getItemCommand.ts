@@ -39,7 +39,7 @@ export class GetItemCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static actionName = 'get' as const;
+  static override actionName = 'get' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS

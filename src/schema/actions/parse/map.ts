@@ -129,7 +129,7 @@ export function* mapAttributeParser<
 
   const parsedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attrName, attr]) => [attrName, attr.next().value])
+      .map(([attrName, attrParser]) => [attrName, attrParser.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
   applyCustomValidation(attribute, parsedValue, options)
@@ -142,9 +142,10 @@ export function* mapAttributeParser<
 
   const transformedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attrName, attr]) => [
-        attribute.attributes[attrName].savedAs ?? attrName,
-        attr.next().value
+      .map(([attrName, attrParser]) => [
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        attribute.attributes[attrName]!.savedAs ?? attrName,
+        attrParser.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)
   )

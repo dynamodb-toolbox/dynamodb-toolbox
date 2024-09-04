@@ -22,7 +22,7 @@ export class PutTransaction<
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {
-  static actionName = 'transactPut' as const;
+  static override actionName = 'transactPut' as const;
 
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS

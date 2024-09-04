@@ -24,7 +24,7 @@ export class UpdateTransaction<
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {
-  static actionName = 'transactUpdate' as const;
+  static override actionName = 'transactUpdate' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS

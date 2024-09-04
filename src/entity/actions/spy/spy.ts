@@ -7,7 +7,7 @@ import { EntityActionStub } from './actionStub.js'
 import { $mocks, $sentActions } from './constants.js'
 
 export class EntitySpy<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName: 'spy';
+  static override actionName: 'spy';
 
   [$mocks]: Record<string, (...args: any[]) => any>;
   [$sentActions]: Record<string, any[]>

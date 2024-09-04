@@ -34,7 +34,7 @@ export class BatchWriteCommand<
   ENTITIES extends Entity[] = Entity[],
   REQUESTS extends BatchWriteRequestProps[] = BatchWriteRequestProps[]
 > extends TableAction<TABLE, ENTITIES> {
-  static actionName = 'batchWrite' as const;
+  static override actionName = 'batchWrite' as const;
 
   [$requests]?: REQUESTS
 

@@ -7,6 +7,7 @@ import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
+import type { Attribute } from '../types/attribute.js'
 import { MapAttribute } from './interface.js'
 import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
@@ -63,13 +64,9 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     never: new Set()
   }
 
-  const frozenAttributes: {
-    [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]>
-  } = {} as any
+  const frozenAttributes: Record<string, Attribute> = {}
 
-  for (const attributeName in attributes) {
-    const attribute = attributes[attributeName]
-
+  for (const [attributeName, attribute] of Object.entries(attributes)) {
     const {
       savedAs: attributeSavedAs = attributeName,
       key: attributeKey,
@@ -92,14 +89,14 @@ export const freezeMapAttribute: MapAttributeFreezer = <
 
     requiredAttributeNames[attributeRequired].add(attributeName)
 
-    frozenAttributes[attributeName] = attribute.freeze(
-      [path, attributeName].join('.')
-    ) as FreezeAttribute<$ATTRIBUTES[Extract<keyof $ATTRIBUTES, string>]>
+    frozenAttributes[attributeName] = attribute.freeze([path, attributeName].join('.'))
   }
 
   return new MapAttribute({
     path,
-    attributes: frozenAttributes,
+    attributes: frozenAttributes as {
+      [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]>
+    },
     ...state
   })
 }

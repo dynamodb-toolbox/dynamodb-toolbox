@@ -6,6 +6,12 @@ type InvalidReverseOptionErrorBlueprint = ErrorBlueprint<{
   payload: { reverse?: unknown }
 }>
 
+type InvalidIndexErrorBlueprint = ErrorBlueprint<{
+  code: 'queryCommand.invalidIndex'
+  hasPath: false
+  payload: { received: unknown; expected?: string[] }
+}>
+
 type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
   code: 'queryCommand.invalidPartition'
   hasPath: true
@@ -14,4 +20,5 @@ type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
 
 export type QueryCommandErrorBlueprints =
   | InvalidReverseOptionErrorBlueprint
+  | InvalidIndexErrorBlueprint
   | InvalidPartitionErrorBlueprint

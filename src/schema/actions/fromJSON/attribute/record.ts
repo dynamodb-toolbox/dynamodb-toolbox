@@ -1,6 +1,6 @@
 import type { $RecordAttribute } from '~/attributes/record/index.js'
 import { record } from '~/attributes/record/index.js'
-import type { $RecordAttributeElements, $RecordAttributeKeys } from '~/attributes/record/types'
+import type { $RecordAttributeElements, $RecordAttributeKeys } from '~/attributes/record/types.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
 
 import { fromJSONAttr } from './attribute.js'

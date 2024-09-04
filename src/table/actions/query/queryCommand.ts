@@ -66,7 +66,7 @@ export class QueryCommand<
   extends TableAction<TABLE, ENTITIES>
   implements TableSendableAction<TABLE>
 {
-  static actionName = 'query' as const;
+  static override actionName = 'query' as const;
 
   [$query]?: QUERY;
   [$options]: OPTIONS

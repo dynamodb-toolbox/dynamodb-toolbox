@@ -1,4 +1,4 @@
-import type { Update } from '~/types/update'
+import type { Update } from '~/types/update.js'
 
 type Updater = <OBJECT extends object, PROPERTY extends string, NEW_VALUE>(
   object: OBJECT,

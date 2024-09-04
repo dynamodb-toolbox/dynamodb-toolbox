@@ -215,7 +215,7 @@ export const execute: ExecuteBatchGet = async <
 
         // We know RequestItems & Keys exist
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const itemKey = initialRequestItems![tableName].Keys![index]
+        const itemKey = initialRequestItems![tableName]!.Keys![index]!
 
         const savedItem = tableResponses.find(tableResponse =>
           Object.entries(itemKey).every(([key, value]) => tableResponse[key] === value)

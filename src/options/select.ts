@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { isEmpty } from '~/utils/isEmpty.js'
 
 export type AllAttributesSelectOption = 'ALL_ATTRIBUTES'
 export type AllProjectedAttributesSelectOption = 'ALL_PROJECTED_ATTRIBUTES'
@@ -39,7 +38,7 @@ export const parseSelectOption = (
     })
   }
 
-  if (attributes !== undefined && !isEmpty(attributes) && select !== 'SPECIFIC_ATTRIBUTES') {
+  if (attributes !== undefined && select !== 'SPECIFIC_ATTRIBUTES') {
     throw new DynamoDBToolboxError('options.invalidSelectOption', {
       message: `Invalid select option: '${String(
         select

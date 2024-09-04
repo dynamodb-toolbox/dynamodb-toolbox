@@ -40,7 +40,7 @@ export class PutItemCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static actionName = 'put' as const;
+  static override actionName = 'put' as const;
 
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS

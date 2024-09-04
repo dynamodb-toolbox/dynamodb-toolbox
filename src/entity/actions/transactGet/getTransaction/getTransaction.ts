@@ -14,7 +14,7 @@ export class GetTransaction<
   ENTITY extends Entity = Entity,
   OPTIONS extends GetTransactionOptions<ENTITY> = GetTransactionOptions<ENTITY>
 > extends EntityAction<ENTITY> {
-  static actionName = 'transactGet' as const;
+  static override actionName = 'transactGet' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS

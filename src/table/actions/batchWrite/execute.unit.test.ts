@@ -164,7 +164,7 @@ describe('execute (batchWrite)', () => {
     await execute(...commands)
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0]?.args[0].input).toMatchObject({
       RequestItems: {
         'test-table-1': [
           { DeleteRequest: { Key: { pk: 'a', sk: 'a' } } },
@@ -186,7 +186,7 @@ describe('execute (batchWrite)', () => {
     )
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0]?.args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL',
       ReturnItemCollectionMetrics: 'SIZE'
     })
@@ -240,7 +240,7 @@ describe('execute (batchWrite)', () => {
     const { UnprocessedItems } = await execute({ maxAttempts: 3 }, command)
 
     expect(documentClientMock.commandCalls(_BatchWriteCommand)).toHaveLength(3)
-    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[0]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: [
           batchDeleteRequestA.params(),
@@ -250,7 +250,7 @@ describe('execute (batchWrite)', () => {
         ]
       }
     })
-    expect(documentClientMock.commandCalls(_BatchWriteCommand)[1].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[1]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: [
           batchPutRequestA.params(),
@@ -259,7 +259,7 @@ describe('execute (batchWrite)', () => {
         ]
       }
     })
-    expect(documentClientMock.commandCalls(_BatchWriteCommand)[2].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchWriteCommand)[2]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: [batchDeleteRequestB.params(), batchPutRequestB.params()]
       }

@@ -17,7 +17,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {
-  static actionName = 'conditionCheck' as const
+  static override actionName = 'conditionCheck' as const
 
   private [$key]?: KeyInput<ENTITY>
   private [$condition]?: Condition<ENTITY>

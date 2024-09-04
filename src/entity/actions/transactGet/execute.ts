@@ -85,7 +85,8 @@ export const formatResponses: TransactGetResponseFormatter = <
   ...transactions: TRANSACTIONS
 ) =>
   responses.map(({ Item: item }, index) => {
-    const transaction = transactions[index]
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const transaction = transactions[index]!
     const transactionEntity = transaction.entity
     const { attributes } = transaction[$options]
 

@@ -5,7 +5,7 @@ import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
-import type { Entity, EntitySendableAction } from '~/entity/entity'
+import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
@@ -59,7 +59,7 @@ export class UpdateItemCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static actionName = 'update' as const;
+  static override actionName = 'update' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
