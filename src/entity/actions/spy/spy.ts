@@ -23,14 +23,16 @@ export class EntitySpy<ENTITY extends Entity = Entity> extends EntityAction<ENTI
 
       const sentArgs = action[$sentArgs]()
 
-      if (this[$sentActions][actionName] !== undefined) {
-        this[$sentActions][actionName].push(sentArgs)
+      const actionSentArgs = this[$sentActions][actionName]
+      if (actionSentArgs !== undefined) {
+        actionSentArgs.push(sentArgs)
       } else {
         this[$sentActions][actionName] = [sentArgs]
       }
 
-      if (this[$mocks][actionName] !== undefined) {
-        return this[$mocks][actionName](...sentArgs)
+      const actionMock = this[$mocks][actionName]
+      if (actionMock !== undefined) {
+        return actionMock(...sentArgs)
       }
     }
   }

@@ -51,10 +51,12 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
 export const parseQuery: QueryParser = (table, query) => {
   const { index, partition, range } = query
 
-  let key: Index | Table
+  let primaryKeySchema: Index | Table
 
   if (index !== undefined) {
-    if (table.indexes[index] === undefined) {
+    const indexKeySchema = table.indexes[index]
+
+    if (indexKeySchema === undefined) {
       const indexes = Object.keys(table.indexes)
       const hasIndex = indexes.length > 0
 
@@ -64,12 +66,12 @@ export const parseQuery: QueryParser = (table, query) => {
       })
     }
 
-    key = table.indexes[index]
+    primaryKeySchema = indexKeySchema
   } else {
-    key = table
+    primaryKeySchema = table
   }
 
-  const { partitionKey = table.partitionKey, sortKey } = key
+  const { partitionKey = table.partitionKey, sortKey } = primaryKeySchema
 
   if (partition === undefined) {
     throw new DynamoDBToolboxError('queryCommand.invalidPartition', {

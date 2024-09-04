@@ -180,11 +180,12 @@ export const execute: ExecuteBatchGet = async <
         responses = {}
       }
 
-      for (const [tableName, tableResponses] of Object.entries(attemptResponses)) {
-        if (responses[tableName] === undefined) {
-          responses[tableName] = tableResponses
+      for (const [tableName, attemptTableResponses] of Object.entries(attemptResponses)) {
+        const tableResponses = responses[tableName]
+        if (tableResponses === undefined) {
+          responses[tableName] = attemptTableResponses
         } else {
-          responses[tableName].push(...tableResponses)
+          tableResponses.push(...attemptTableResponses)
         }
       }
     }
