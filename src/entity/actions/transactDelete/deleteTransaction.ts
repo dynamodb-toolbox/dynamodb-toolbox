@@ -20,7 +20,7 @@ export class DeleteTransaction<
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {
-  static actionName = 'transactDelete' as const;
+  static override actionName = 'transactDelete' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS

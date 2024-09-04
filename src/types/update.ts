@@ -1,4 +1,4 @@
-import type { ExtendsStr } from './extends'
+import type { ExtendsStr } from './extends.js'
 
 type Replace<PREV_VALUE, CONSTRAINT, NEXT_VALUE> = {
   true: NEXT_VALUE

@@ -9,7 +9,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $key } from './constants.js'
 
 export class BatchDeleteRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName = 'batchDelete' as const;
+  static override actionName = 'batchDelete' as const;
 
   [$key]?: KeyInput<ENTITY>
 

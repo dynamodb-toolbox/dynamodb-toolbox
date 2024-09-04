@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { Entity } from '~/entity/index.js'
-import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/index'
+import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/index.js'
 import { QueryCommand } from '~/table/actions/query/index.js'
 
 import type { AwsError, Error } from './actionStub.js'

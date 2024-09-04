@@ -81,8 +81,10 @@ export const parseRecordExtension = (
         const parsedValue = Object.fromEntries(
           parsers
             .map(([keyParser, elementParser]) => [
-              keyParser.next().value,
-              elementParser.next().value
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              keyParser!.next().value,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              elementParser!.next().value
             ])
             .filter(([, element]) => element !== undefined)
         )
@@ -95,8 +97,10 @@ export const parseRecordExtension = (
         const transformedValue = Object.fromEntries(
           parsers
             .map(([keyParser, elementParser]) => [
-              keyParser.next().value,
-              elementParser.next().value
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              keyParser!.next().value,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              elementParser!.next().value
             ])
             .filter(([, element]) => element !== undefined)
         )

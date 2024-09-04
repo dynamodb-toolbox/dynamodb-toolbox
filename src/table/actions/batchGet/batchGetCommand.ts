@@ -45,7 +45,7 @@ export class BatchGetCommand<
   REQUESTS extends BatchGetRequestProps[] = BatchGetRequestProps[],
   OPTIONS extends BatchGetCommandOptions<ENTITIES> = BatchGetCommandOptions<ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
-  static actionName = 'batchGet' as const;
+  static override actionName = 'batchGet' as const;
 
   [$requests]?: REQUESTS;
   [$options]: OPTIONS
@@ -104,11 +104,13 @@ export class BatchGetCommand<
         message: 'BatchGetCommand incomplete: No BatchGetRequest supplied'
       })
     }
-    const firstRequest = this[$requests][0]
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const firstRequest = this[$requests][0]!
     const firstRequestEntity = firstRequest.entity
 
     const { consistent, attributes: _attributes } = this[$options] ?? {}
-    const attributes = _attributes as string[] | undefined
+    const attributes = _attributes as [string, ...string[]] | undefined
     let projectionExpression: string | undefined = undefined
     const expressionAttributeNames: Record<string, string> = {}
 

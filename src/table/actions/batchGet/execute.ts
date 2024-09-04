@@ -180,11 +180,12 @@ export const execute: ExecuteBatchGet = async <
         responses = {}
       }
 
-      for (const [tableName, tableResponses] of Object.entries(attemptResponses)) {
-        if (responses[tableName] === undefined) {
-          responses[tableName] = tableResponses
+      for (const [tableName, attemptTableResponses] of Object.entries(attemptResponses)) {
+        const tableResponses = responses[tableName]
+        if (tableResponses === undefined) {
+          responses[tableName] = attemptTableResponses
         } else {
-          responses[tableName].push(...tableResponses)
+          tableResponses.push(...attemptTableResponses)
         }
       }
     }
@@ -215,7 +216,7 @@ export const execute: ExecuteBatchGet = async <
 
         // We know RequestItems & Keys exist
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const itemKey = initialRequestItems![tableName].Keys![index]
+        const itemKey = initialRequestItems![tableName]!.Keys![index]!
 
         const savedItem = tableResponses.find(tableResponse =>
           Object.entries(itemKey).every(([key, value]) => tableResponse[key] === value)

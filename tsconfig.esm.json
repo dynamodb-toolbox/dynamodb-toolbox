@@ -1,10 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "NodeNext",
     "outDir": "dist/esm",
-    "declaration": false
+    "declaration": true
   },
-  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "**/*.test.ts", "coverage"]
 }

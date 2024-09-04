@@ -311,7 +311,7 @@ describe('execute (batchGet)', () => {
     assertResponse
 
     expect(documentClientMock.calls()).toHaveLength(1)
-    expect(documentClientMock.commandCalls(_BatchGetCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[0]?.args[0].input).toMatchObject({
       ReturnConsumedCapacity: 'TOTAL'
     })
   })
@@ -352,7 +352,7 @@ describe('execute (batchGet)', () => {
     const { UnprocessedKeys } = await execute({ maxAttempts: 3 }, command)
 
     expect(documentClientMock.commandCalls(_BatchGetCommand)).toHaveLength(3)
-    expect(documentClientMock.commandCalls(_BatchGetCommand)[0].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[0]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: {
           Keys: [
@@ -365,7 +365,7 @@ describe('execute (batchGet)', () => {
         }
       }
     })
-    expect(documentClientMock.commandCalls(_BatchGetCommand)[1].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[1]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: {
           Keys: [batchGetRequestB.params(), batchGetRequestC.params(), batchGetRequestD.params()],
@@ -373,7 +373,7 @@ describe('execute (batchGet)', () => {
         }
       }
     })
-    expect(documentClientMock.commandCalls(_BatchGetCommand)[2].args[0].input).toMatchObject({
+    expect(documentClientMock.commandCalls(_BatchGetCommand)[2]?.args[0].input).toMatchObject({
       RequestItems: {
         [TestTable1.getName()]: {
           Keys: [batchGetRequestC.params(), batchGetRequestD.params()],

@@ -40,7 +40,7 @@ export class DeleteItemCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static actionName = 'delete' as const;
+  static override actionName = 'delete' as const;
 
   [$key]?: KeyInput<ENTITY>;
   [$options]: OPTIONS

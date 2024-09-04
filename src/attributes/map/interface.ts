@@ -562,10 +562,10 @@ export class MapAttribute<
       never: new Set()
     }
 
-    // TODO: Throw when duplicate attribute savedAs
-    for (const attributeName in attributes) {
-      const attribute = attributes[attributeName]
-
+    /**
+     * @debt bug "TODO: Throw when duplicate attribute savedAs"
+     */
+    for (const [attributeName, attribute] of Object.entries(attributes)) {
       if (attribute.key) {
         keyAttributeNames.add(attributeName)
       }

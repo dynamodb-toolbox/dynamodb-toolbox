@@ -92,7 +92,8 @@ export const appendAttributePath = (
 
   while (attributeMatches.length > 0) {
     const attributeMatch = attributeMatches.shift() as RegExpMatchArray
-    const childAttributeAccessor = attributeMatch[0]
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const childAttributeAccessor = attributeMatch[0]!
 
     switch (parentAttribute.type) {
       case 'any': {

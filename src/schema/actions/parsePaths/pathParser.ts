@@ -47,6 +47,11 @@ export class PathParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
 
   parse(attributes: string[]): this {
     const [firstAttribute, ...restAttributes] = attributes
+
+    if (firstAttribute === undefined) {
+      return this
+    }
+
     this.appendAttributePath(firstAttribute)
 
     for (const attribute of restAttributes) {

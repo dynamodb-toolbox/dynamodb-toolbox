@@ -3,7 +3,7 @@ import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'
 import type { Or } from '~/types/or.js'
-import type { SelectKeys } from '~/types/selectKeys'
+import type { SelectKeys } from '~/types/selectKeys.js'
 
 type NeedsKeyPartCompute<
   SCHEMA extends Schema,

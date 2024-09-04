@@ -9,7 +9,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $key } from './constants.js'
 
 export class BatchGetRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName = 'batchGet' as const;
+  static override actionName = 'batchGet' as const;
 
   [$key]?: KeyInput<ENTITY>
 

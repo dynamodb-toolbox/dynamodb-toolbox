@@ -31,7 +31,7 @@ export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
       : never
 
 export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<TABLE> {
-  static actionName = 'parsePrimaryKey' as const
+  static override actionName = 'parsePrimaryKey' as const
 
   constructor(table: TABLE) {
     super(table)

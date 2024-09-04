@@ -10,6 +10,7 @@ import type {
 } from '~/schema/actions/parseCondition/index.js'
 import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
+import type { Index } from '~/table/types/indexes.js'
 import { pick } from '~/utils/pick.js'
 
 import { queryOperatorSet } from '../types.js'
@@ -49,8 +50,28 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
 
 export const parseQuery: QueryParser = (table, query) => {
   const { index, partition, range } = query
-  const { partitionKey = table.partitionKey, sortKey } =
-    index !== undefined ? table.indexes[index] : table
+
+  let primaryKeySchema: Index | Table
+
+  if (index !== undefined) {
+    const indexKeySchema = table.indexes[index]
+
+    if (indexKeySchema === undefined) {
+      const indexes = Object.keys(table.indexes)
+      const hasIndex = indexes.length > 0
+
+      throw new DynamoDBToolboxError('queryCommand.invalidIndex', {
+        message: `Inknown index: ${index}. ${hasIndex ? ` Expected one of: ${indexes.join(', ')}.` : ''}`,
+        payload: { received: index, ...(hasIndex ? { expected: Object.keys(table.indexes) } : {}) }
+      })
+    }
+
+    primaryKeySchema = indexKeySchema
+  } else {
+    primaryKeySchema = table
+  }
+
+  const { partitionKey = table.partitionKey, sortKey } = primaryKeySchema
 
   if (partition === undefined) {
     throw new DynamoDBToolboxError('queryCommand.invalidPartition', {

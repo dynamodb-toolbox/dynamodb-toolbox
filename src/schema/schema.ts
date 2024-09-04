@@ -77,7 +77,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
 
     const nextAttributes = { ...this.attributes } as SchemaAttributes
 
-    for (const attributeName in additionalAttributes) {
+    for (const [attributeName, additionalAttribute] of Object.entries(additionalAttributes)) {
       if (attributeName in nextAttributes) {
         throw new DynamoDBToolboxError('schema.duplicateAttributeNames', {
           message: `Invalid schema: More than two attributes are named '${attributeName}'`,
@@ -85,7 +85,6 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
         })
       }
 
-      const additionalAttribute = additionalAttributes[attributeName]
       nextAttributes[attributeName] = additionalAttribute.freeze(attributeName)
     }
 

@@ -13,7 +13,8 @@ export const matchProjection = (
     const attributeMatch = attributePath.match(attributeNameRegex)
 
     if (attributeMatch !== null) {
-      const [firstMatch] = attributeMatch
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const firstMatch = attributeMatch[0]!
       childrenAttributes.push(attributePath.slice(firstMatch.length))
     }
   }

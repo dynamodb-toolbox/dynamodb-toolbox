@@ -9,7 +9,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { $item } from './constants.js'
 
 export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName = 'batchPut' as const;
+  static override actionName = 'batchPut' as const;
 
   [$item]?: EntityParserInput<ENTITY>
 

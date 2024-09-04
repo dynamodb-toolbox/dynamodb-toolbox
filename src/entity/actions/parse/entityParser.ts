@@ -36,7 +36,7 @@ export type EntityParserInput<
 export type KeyInput<ENTITY extends Entity> = EntityParserInput<ENTITY, { mode: 'key' }>
 
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName: 'parse';
+  static override actionName: 'parse';
   [$parser]: Parser<ENTITY['schema']>
 
   constructor(entity: ENTITY) {

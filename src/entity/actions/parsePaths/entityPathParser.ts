@@ -6,7 +6,7 @@ import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import { $pathParser } from './constants.js'
 
 export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static actionName: 'parsePaths';
+  static override actionName: 'parsePaths';
   [$pathParser]: PathParser<ENTITY['schema']>
 
   constructor(entity: ENTITY, id = '') {

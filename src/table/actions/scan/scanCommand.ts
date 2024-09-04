@@ -61,7 +61,7 @@ export class ScanCommand<
   extends TableAction<TABLE, ENTITIES>
   implements TableSendableAction<TABLE>
 {
-  static actionName = 'scan' as const;
+  static override actionName = 'scan' as const;
 
   [$options]: OPTIONS
 
