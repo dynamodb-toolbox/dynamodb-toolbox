@@ -6,6 +6,7 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
+import { parseTableNameOption } from '~/options/tableName.js'
 
 import { updateItemCommandReturnValuesOptionsSet } from '../options.js'
 import type { UpdateItemOptions } from '../options.js'
@@ -20,7 +21,8 @@ type UpdateItemOptionsParser = <ENTITY extends Entity>(
 export const parseUpdateItemOptions: UpdateItemOptionsParser = (entity, updateItemOptions) => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, condition, ...extraOptions } = updateItemOptions
+  const { capacity, metrics, returnValues, condition, tableName, ...extraOptions } =
+    updateItemOptions
   rejectExtraOptions(extraOptions)
 
   if (capacity !== undefined) {
@@ -47,6 +49,11 @@ export const parseUpdateItemOptions: UpdateItemOptionsParser = (entity, updateIt
     commandOptions.ExpressionAttributeNames = ExpressionAttributeNames
     commandOptions.ExpressionAttributeValues = ExpressionAttributeValues
     commandOptions.ConditionExpression = ConditionExpression
+  }
+
+  if (tableName !== undefined) {
+    // tableName is a meta-option, validated but not used here
+    parseTableNameOption(tableName)
   }
 
   return commandOptions

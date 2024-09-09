@@ -50,14 +50,15 @@ export class PutTransaction<
       })
     }
 
+    const options = this[$options]
     const { item } = this.entity.build(EntityParser).parse(this[$item])
-    const options = parseOptions(this.entity, this[$options])
+    const awsOptions = parseOptions(this.entity, options)
 
     return {
       Put: {
-        TableName: this.entity.table.getName(),
+        TableName: options?.tableName ?? this.entity.table.getName(),
         Item: item as Record<string, AttributeValue>,
-        ...options
+        ...awsOptions
       }
     }
   }

@@ -15,4 +15,5 @@ export interface DeleteItemOptions<ENTITY extends Entity = Entity> {
   metrics?: MetricsOption
   returnValues?: DeleteItemCommandReturnValuesOption
   condition?: Condition<ENTITY>
+  tableName?: string
 }

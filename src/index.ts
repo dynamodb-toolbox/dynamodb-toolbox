@@ -126,6 +126,7 @@ export type { UpdateTransactionOptions } from './entity/actions/transactUpdate/i
 export { DeleteTransaction } from './entity/actions/transactDelete/index.js'
 export type { DeleteTransactionOptions } from './entity/actions/transactDelete/index.js'
 export { ConditionCheck } from './entity/actions/transactCheck/index.js'
+export type { ConditionCheckOptions } from './entity/actions/transactCheck/index.js'
 export { EntityPathParser } from './entity/actions/parsePaths/index.js'
 export type { EntityPaths } from './entity/actions/parsePaths/index.js'
 export { EntityFormatter } from './entity/actions/format/index.js'

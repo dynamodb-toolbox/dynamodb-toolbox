@@ -19,14 +19,14 @@ export const deleteItemParams: DeleteItemParamsGetter = <
 >(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
-  deleteItemOptions: OPTIONS = {} as OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
-  const options = parseDeleteItemOptions(entity, deleteItemOptions)
+  const awsOptions = parseDeleteItemOptions(entity, options)
 
   return {
-    TableName: entity.table.getName(),
+    TableName: options.tableName ?? entity.table.getName(),
     Key: key,
-    ...options
+    ...awsOptions
   }
 }

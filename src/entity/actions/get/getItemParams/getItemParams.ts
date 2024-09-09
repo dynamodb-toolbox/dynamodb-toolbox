@@ -19,14 +19,14 @@ export const getItemParams: GetItemParamsGetter = <
 >(
   entity: ENTITY,
   input: KeyInput<ENTITY>,
-  getItemOptions = {} as OPTIONS
+  options = {} as OPTIONS
 ) => {
   const { key } = entity.build(EntityParser).parse(input, { mode: 'key' })
-  const options = parseGetItemOptions(entity, getItemOptions)
+  const awsOptions = parseGetItemOptions(entity, options)
 
   return {
-    TableName: entity.table.getName(),
+    TableName: options.tableName ?? entity.table.getName(),
     Key: key,
-    ...options
+    ...awsOptions
   }
 }

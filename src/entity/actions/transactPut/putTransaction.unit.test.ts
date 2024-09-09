@@ -110,9 +110,9 @@ const TestEntity5 = new Entity({
 
 describe('put transaction', () => {
   test('creates basic item', () => {
-    const { Item } = TestEntity.build(PutTransaction)
-      .item({ email: 'test-pk', sort: 'test-sk' })
-      .params().Put
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction).item({ email: 'test-pk', sort: 'test-sk' }).params()
 
     expect(Item).toMatchObject({
       _et: TestEntity.name,
@@ -126,13 +126,15 @@ describe('put transaction', () => {
   })
 
   test('creates item with aliases', () => {
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
         count: 0
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({ test_number: 0 })
   })
@@ -140,49 +142,57 @@ describe('put transaction', () => {
   test('creates item with overridden default override', () => {
     const overrideValue = 'different value'
 
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
         test_string: overrideValue
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({ test_string: overrideValue })
   })
 
   test('creates item with composite field', () => {
-    const { Item } = TestEntity2.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity2.build(PutTransaction)
       .item({
         email: 'test-pk',
         test_composite: 'test'
       })
-      .params().Put
+      .params()
 
     expect(Item).not.toHaveProperty('sort')
   })
 
   test('creates item with filled composite key', () => {
-    const { Item } = TestEntity2.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity2.build(PutTransaction)
       .item({
         email: 'test-pk',
         test_composite: 'test',
         test_composite2: 'test2'
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
   test('creates item with overriden composite key', () => {
-    const { Item } = TestEntity2.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity2.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'override',
         test_composite: 'test',
         test_composite2: 'test2'
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({ sk: 'override' })
   })
@@ -199,14 +209,16 @@ describe('put transaction', () => {
   })
 
   test('ignores additional attribute', () => {
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
         // @ts-expect-error
         unknown: '?'
       })
-      .params().Put
+      .params()
 
     expect(Item).not.toHaveProperty('unknown')
   })
@@ -251,13 +263,15 @@ describe('put transaction', () => {
   })
 
   test('with valid array', () => {
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
         test_list: ['a', 'b']
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({
       test_list: ['a', 'b']
@@ -278,7 +292,9 @@ describe('put transaction', () => {
   })
 
   test('with valid map', () => {
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -286,7 +302,7 @@ describe('put transaction', () => {
           str: 'x'
         }
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({
       test_map: { str: 'x' }
@@ -307,13 +323,15 @@ describe('put transaction', () => {
   })
 
   test('with valid set', () => {
-    const { Item } = TestEntity.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity.build(PutTransaction)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
         test_string_set: new Set(['a', 'b', 'c'])
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({
       test_string_set: new Set(['a', 'b', 'c'])
@@ -345,13 +363,15 @@ describe('put transaction', () => {
   })
 
   test('puts 0 and false to required fields', () => {
-    const { Item } = TestEntity5.build(PutTransaction)
+    const {
+      Put: { Item }
+    } = TestEntity5.build(PutTransaction)
       .item({
         pk: 'test-pk',
         test_required_boolean: false,
         test_required_number: 0
       })
-      .params().Put
+      .params()
 
     expect(Item).toMatchObject({
       test_required_boolean: false,
@@ -360,11 +380,38 @@ describe('put transaction', () => {
   })
 
   test('correctly aliases pks', () => {
-    const { Item } = TestEntity4.build(PutTransaction).item({ id: 3, xyz: '123' }).params().Put
+    const {
+      Put: { Item }
+    } = TestEntity4.build(PutTransaction).item({ id: 3, xyz: '123' }).params()
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
   // Options
+  test('overrides tableName', () => {
+    const {
+      Put: { TableName }
+    } = TestEntity.build(PutTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    const invalidCall = () =>
+      TestEntity.build(PutTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          tableName: 42
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
   test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(PutTransaction)
@@ -380,11 +427,12 @@ describe('put transaction', () => {
   })
 
   test('sets condition', () => {
-    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
-      TestEntity.build(PutTransaction)
-        .item({ email: 'x', sort: 'y' })
-        .options({ condition: { attr: 'email', gt: 'test' } })
-        .params().Put
+    const {
+      Put: { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression }
+    } = TestEntity.build(PutTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ condition: { attr: 'email', gt: 'test' } })
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })

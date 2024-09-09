@@ -10,8 +10,9 @@ import type {
   TransactWriteItem,
   WriteTransactionImplementation
 } from '../transactWrite/transaction.js'
-import { $condition, $key } from './constants.js'
+import { $condition, $key, $options } from './constants.js'
 import { parseOptions } from './options.js'
+import type { ConditionCheckOptions } from './options.js'
 
 export class ConditionCheck<ENTITY extends Entity = Entity>
   extends WriteTransaction<ENTITY>
@@ -21,19 +22,30 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
 
   private [$key]?: KeyInput<ENTITY>
   private [$condition]?: Condition<ENTITY>
+  private [$options]: ConditionCheckOptions
 
-  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, condition?: Condition<ENTITY>) {
+  constructor(
+    entity: ENTITY,
+    key?: KeyInput<ENTITY>,
+    condition?: Condition<ENTITY>,
+    options: ConditionCheckOptions = {}
+  ) {
     super(entity)
     this[$key] = key
     this[$condition] = condition
+    this[$options] = options
   }
 
   key(nextKey: KeyInput<ENTITY>): ConditionCheck<ENTITY> {
-    return new ConditionCheck(this.entity, nextKey, this[$condition])
+    return new ConditionCheck(this.entity, nextKey, this[$condition], this[$options])
   }
 
   condition(nextCondition: Condition<ENTITY>): ConditionCheck<ENTITY> {
-    return new ConditionCheck(this.entity, this[$key], nextCondition)
+    return new ConditionCheck(this.entity, this[$key], nextCondition, this[$options])
+  }
+
+  options(nextOptions: ConditionCheckOptions): ConditionCheck<ENTITY> {
+    return new ConditionCheck(this.entity, this[$key], this[$condition], nextOptions)
   }
 
   params(): Require<TransactWriteItem, 'ConditionCheck'> {
@@ -49,14 +61,15 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
       })
     }
 
+    const options = this[$options]
     const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
-    const options = parseOptions(this.entity, this[$condition])
+    const awsOptions = parseOptions(this.entity, this[$condition], options)
 
     return {
       ConditionCheck: {
-        TableName: this.entity.table.getName(),
+        TableName: options.tableName ?? this.entity.table.getName(),
         Key: key,
-        ...options
+        ...awsOptions
       }
     }
   }

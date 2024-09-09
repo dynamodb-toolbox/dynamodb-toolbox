@@ -12,12 +12,6 @@ type InvalidActionErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
-type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
-  code: 'actions.missingDocumentClient'
-  hasPath: false
-  payload: undefined
-}>
-
 type InvalidCapacityOptionErrorBlueprint = ErrorBlueprint<{
   code: 'options.invalidCapacityOption'
   hasPath: false
@@ -72,10 +66,22 @@ type InvalidSelectOptionErrorBlueprint = ErrorBlueprint<{
   payload: { select: unknown }
 }>
 
+type InvalidTableNameOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidTableNameOption'
+  hasPath: false
+  payload: { tableName: unknown }
+}>
+
 type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   code: 'options.unknownOption'
   hasPath: false
   payload: { option: unknown }
+}>
+
+type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
+  code: 'actions.missingDocumentClient'
+  hasPath: false
+  payload: undefined
 }>
 
 export type OptionsErrorBlueprints =
@@ -90,5 +96,6 @@ export type OptionsErrorBlueprints =
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
+  | InvalidTableNameOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | MissingDocumentClientErrorBlueprint

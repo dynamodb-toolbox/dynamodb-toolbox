@@ -15,4 +15,5 @@ export interface UpdateItemOptions<ENTITY extends Entity = Entity> {
   metrics?: MetricsOption
   returnValues?: UpdateItemCommandReturnValuesOption
   condition?: Condition<ENTITY>
+  tableName?: string
 }

@@ -63,11 +63,12 @@ export class UpdateTransaction<
       UpdateExpression
     } = parseUpdate(this.entity, omit(item, ...Object.keys(key)))
 
+    const options = this[$options]
     const {
       ExpressionAttributeNames: optionsExpressionAttributeNames,
       ExpressionAttributeValues: optionsExpressionAttributeValues,
-      ...options
-    } = parseOptions(this.entity, this[$options])
+      ...awsOptions
+    } = parseOptions(this.entity, options)
 
     const ExpressionAttributeNames = {
       ...optionsExpressionAttributeNames,
@@ -81,10 +82,10 @@ export class UpdateTransaction<
 
     return {
       Update: {
-        TableName: this.entity.table.getName(),
+        TableName: options.tableName ?? this.entity.table.getName(),
         Key: key,
         UpdateExpression,
-        ...options,
+        ...awsOptions,
         ...(!isEmpty(ExpressionAttributeNames) ? { ExpressionAttributeNames } : {}),
         ...(!isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {})
       }

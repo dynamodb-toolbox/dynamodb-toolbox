@@ -6,6 +6,7 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
+import { parseTableNameOption } from '~/options/tableName.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { putItemCommandReturnValuesOptionsSet } from '../options.js'
@@ -21,7 +22,7 @@ type PutItemOptionsParser = <ENTITY extends Entity>(
 export const parsePutItemOptions: PutItemOptionsParser = (entity, putItemOptions) => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, condition, ...extraOptions } = putItemOptions
+  const { capacity, metrics, returnValues, condition, tableName, ...extraOptions } = putItemOptions
   rejectExtraOptions(extraOptions)
 
   if (capacity !== undefined) {
@@ -54,6 +55,11 @@ export const parsePutItemOptions: PutItemOptionsParser = (entity, putItemOptions
     }
 
     commandOptions.ConditionExpression = ConditionExpression
+  }
+
+  if (tableName !== undefined) {
+    // tableName is a meta-option, validated but not used here
+    parseTableNameOption(tableName)
   }
 
   return commandOptions

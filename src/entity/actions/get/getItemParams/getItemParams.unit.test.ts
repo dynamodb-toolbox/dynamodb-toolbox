@@ -165,6 +165,29 @@ describe('get', () => {
     )
   })
 
+  test('overrides tableName', () => {
+    const { TableName } = TestEntity.build(GetItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    const invalidCall = () =>
+      TestEntity.build(GetItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          tableName: 42
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
   test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(GetItemCommand)
