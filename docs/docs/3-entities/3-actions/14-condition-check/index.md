@@ -68,9 +68,48 @@ The condition to check against:
 ```ts
 const transaction = PokemonEntity.build(ConditionCheck)
   .key(...)
-  .options({
-    condition: { attr: 'level', gte: 50 }
-  })
+  .condition({ attr: 'level', gte: 50 })
 ```
 
 See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions.
+
+### `.options(...)`
+
+Provides additional options:
+
+```ts
+const transaction = PokemonEntity.build(ConditionCheck)
+  .options({ ... })
+```
+
+You can use the `ConditionCheckOptions` type to explicitly type an object as a `ConditionCheck` options object:
+
+```ts
+import type { ConditionCheckOptions } from 'dynamodb-toolbox/entity/actions/transactCheck'
+
+const options: ConditionCheckOptions<
+  typeof PokemonEntity
+> = { ... }
+
+const transaction = PokemonEntity.build(ConditionCheck)
+  .options(options)
+```
+
+Available options:
+
+| Option      |   Type   | Default | Description                                                                                               |
+| ----------- | :------: | :-----: | --------------------------------------------------------------------------------------------------------- |
+| `tableName` | `string` |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy). |
+
+:::noteExamples
+
+```ts
+const transaction = PokemonEntity.build(ConditionCheck)
+  .key(...)
+  .condition(...)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+:::

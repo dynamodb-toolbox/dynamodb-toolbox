@@ -5,6 +5,7 @@ type InvalidElementsErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: undefined
 }>
+
 type MissingElementsErrorBlueprint = ErrorBlueprint<{
   code: 'schema.anyOfAttribute.missingElements'
   hasPath: true

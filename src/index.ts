@@ -58,7 +58,10 @@ export {
   BatchWriteCommand,
   execute as executeBatchWrite
 } from './table/actions/batchWrite/index.js'
-export type { ExecuteBatchWriteOptions } from './table/actions/batchWrite/index.js'
+export type {
+  BatchWriteCommandOptions,
+  ExecuteBatchWriteOptions
+} from './table/actions/batchWrite/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
@@ -126,6 +129,7 @@ export type { UpdateTransactionOptions } from './entity/actions/transactUpdate/i
 export { DeleteTransaction } from './entity/actions/transactDelete/index.js'
 export type { DeleteTransactionOptions } from './entity/actions/transactDelete/index.js'
 export { ConditionCheck } from './entity/actions/transactCheck/index.js'
+export type { ConditionCheckOptions } from './entity/actions/transactCheck/index.js'
 export { EntityPathParser } from './entity/actions/parsePaths/index.js'
 export type { EntityPaths } from './entity/actions/parsePaths/index.js'
 export { EntityFormatter } from './entity/actions/format/index.js'

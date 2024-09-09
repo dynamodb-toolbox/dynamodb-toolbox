@@ -16,7 +16,7 @@ export class Table<
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient?: DynamoDBDocumentClient
-  public name: string | (() => string)
+  public name?: string | (() => string)
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
   public indexes: INDEXES
@@ -33,7 +33,7 @@ export class Table<
     entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
   }: {
     documentClient?: DynamoDBDocumentClient
-    name: string | (() => string)
+    name?: string | (() => string)
     partitionKey: NarrowObject<PARTITION_KEY>
     sortKey?: NarrowObject<SORT_KEY>
     indexes?: NarrowObjectRec<INDEXES>
@@ -50,6 +50,12 @@ export class Table<
   }
 
   getName(): string {
+    if (this.name === undefined) {
+      throw new DynamoDBToolboxError('table.missingTableName', {
+        message: 'Please specify a table name in your Table constructor or in your command options.'
+      })
+    }
+
     if (isString(this.name)) {
       return this.name
     } else {

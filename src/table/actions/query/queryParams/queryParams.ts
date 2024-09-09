@@ -13,6 +13,7 @@ import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
+import { parseTableNameOption } from '~/options/tableName.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
@@ -30,7 +31,7 @@ type QueryParamsGetter = <
   table: TABLE,
   entities: ENTITIES,
   query: QUERY,
-  scanOptions?: OPTIONS
+  options?: OPTIONS
 ) => QueryCommandInput
 
 export const queryParams: QueryParamsGetter = <
@@ -42,7 +43,7 @@ export const queryParams: QueryParamsGetter = <
   table: TABLE,
   entities = [] as unknown as ENTITIES,
   query: QUERY,
-  scanOptions: OPTIONS = {} as OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ) => {
   const { index } = query
   const {
@@ -55,14 +56,20 @@ export const queryParams: QueryParamsGetter = <
     select,
     filters: _filters,
     attributes: _attributes,
+    tableName,
     ...extraOptions
-  } = scanOptions
+  } = options
+  rejectExtraOptions(extraOptions)
 
   const filters = (_filters ?? {}) as Record<string, Condition>
   const attributes = _attributes as EntityPaths[] | undefined
 
+  if (tableName !== undefined) {
+    parseTableNameOption(tableName)
+  }
+
   const commandOptions: QueryCommandInput = {
-    TableName: table.getName()
+    TableName: tableName ?? table.getName()
   }
 
   if (capacity !== undefined) {
@@ -186,8 +193,6 @@ export const queryParams: QueryParamsGetter = <
   if (!isEmpty(expressionAttributeValues)) {
     commandOptions.ExpressionAttributeValues = expressionAttributeValues
   }
-
-  rejectExtraOptions(extraOptions)
 
   return commandOptions
 }

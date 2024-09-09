@@ -87,6 +87,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `consistent` |    `boolean`     | `false`  | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.                                             |
 | `attributes` | `Path<Entity>[]` |    -     | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `capacity`   | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                  |
+| `tableName`  |     `string`     |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                 |
 
 :::noteExamples
 
@@ -96,17 +97,33 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
-  .options({ consistent: true })
+  .options({
+    consistent: true
+  })
   .send()
 ```
 
 </TabItem>
-<TabItem value="filtered" label="Filtered">
+<TabItem value="attributes" label="Attributes">
 
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
-  .options({ attributes: ['type', 'level'] })
+  .options({
+    attributes: ['type', 'level']
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key({ pokemonId: 'pikachu1' })
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
   .send()
 ```
 

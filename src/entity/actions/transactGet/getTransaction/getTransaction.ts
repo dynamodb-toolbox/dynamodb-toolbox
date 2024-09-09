@@ -42,14 +42,15 @@ export class GetTransaction<
       })
     }
 
+    const options = this[$options]
     const { key } = this.entity.build(EntityParser).parse(this[$key], { mode: 'key' })
-    const options = parseOptions(this.entity, this[$options])
+    const awsOptions = parseOptions(this.entity, options)
 
     return {
       Get: {
-        TableName: this.entity.table.getName(),
+        TableName: options.tableName ?? this.entity.table.getName(),
         Key: key,
-        ...options
+        ...awsOptions
       }
     }
   }

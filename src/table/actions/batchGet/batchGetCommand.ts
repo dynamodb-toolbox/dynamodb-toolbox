@@ -6,6 +6,8 @@ import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
+import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { parseTableNameOption } from '~/options/tableName.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import type { ListOf } from '~/types/listOf.js'
@@ -17,6 +19,7 @@ export type BatchGetRequestProps = Pick<BatchGetRequest, 'entity' | 'params'>
 
 export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   consistent?: boolean
+  tableName?: string
   // For some reason, this union is required to keep the strict type of `options.attributes`
   // when building a `BatchGetCommand` directly inside `execute`:
   // => execute(TestTable1.build(BatchGetCommand).requests(...).options({ attributes: ['attr'] }))
@@ -98,7 +101,7 @@ export class BatchGetCommand<
     return new BatchGetCommand(this.table, this[$entities], this[$requests], nextOptions)
   }
 
-  params(): NonNullable<BatchGetCommandInput['RequestItems']>[string] {
+  params(): NonNullable<BatchGetCommandInput['RequestItems']> {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchGetCommand incomplete: No BatchGetRequest supplied'
@@ -109,7 +112,13 @@ export class BatchGetCommand<
     const firstRequest = this[$requests][0]!
     const firstRequestEntity = firstRequest.entity
 
-    const { consistent, attributes: _attributes } = this[$options] ?? {}
+    const { consistent, attributes: _attributes, tableName, ...extraOptions } = this[$options] ?? {}
+    rejectExtraOptions(extraOptions)
+
+    if (tableName) {
+      parseTableNameOption(tableName)
+    }
+
     const attributes = _attributes as [string, ...string[]] | undefined
     let projectionExpression: string | undefined = undefined
     const expressionAttributeNames: Record<string, string> = {}
@@ -134,7 +143,7 @@ export class BatchGetCommand<
       Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
       projectionExpression = ProjectionExpression
 
-      //  table partitionKey and sortKey are required at all times for response re-ordering
+      // table partitionKey and sortKey are required at all times for response re-ordering
       const { partitionKey, sortKey } = this.table
 
       const filteredAttributes = new Set<string>(Object.values(expressionAttributeNames))
@@ -157,12 +166,16 @@ export class BatchGetCommand<
     }
 
     return {
-      Keys: keys,
-      ...(consistent !== undefined ? { ConsistentRead: parseConsistentOption(consistent) } : {}),
-      ...(projectionExpression !== undefined ? { ProjectionExpression: projectionExpression } : {}),
-      ...(!isEmpty(expressionAttributeNames)
-        ? { ExpressionAttributeNames: expressionAttributeNames }
-        : {})
+      [tableName ?? this.table.getName()]: {
+        Keys: keys,
+        ...(consistent !== undefined ? { ConsistentRead: parseConsistentOption(consistent) } : {}),
+        ...(projectionExpression !== undefined
+          ? { ProjectionExpression: projectionExpression }
+          : {}),
+        ...(!isEmpty(expressionAttributeNames)
+          ? { ExpressionAttributeNames: expressionAttributeNames }
+          : {})
+      }
     }
   }
 }

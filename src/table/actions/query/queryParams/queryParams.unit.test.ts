@@ -701,6 +701,28 @@ describe('query', () => {
     )
   })
 
+  test('overrides tableName', () => {
+    const { TableName } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ tableName: 'tableName' })
+      .params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    // segment without totalSegment option
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        // @ts-expect-error
+        .options({ tableName: 42 })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
   test('applies entity _et filter', () => {
     const command = TestTable.build(QueryCommand).query({ partition: 'foo' }).entities(Entity1)
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =

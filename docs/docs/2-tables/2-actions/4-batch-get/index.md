@@ -91,7 +91,7 @@ Provides additional **table-level** options:
 
 ```ts
 const command = PokeTable.build(BatchGetCommand).options({
-  consistent: true
+  consistent: true,
   ...
 })
 ```
@@ -126,6 +126,47 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | ------------ | :--------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `consistent` | `boolean`  | `false` | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.                                                                                                                                                               |
 | `attributes` | `string[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>Requires [requests](#requests). Paths must be common to all requested entities.<br/><br/>See the [PathParser](../../../3-entities/3-actions/18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
+| `tableName`  |  `string`  |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                                                                                                                                   |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="consistent" label="Strongly consistent">
+
+```ts
+const command = PokeTable.build(BatchGetCommand)
+  .requests(...)
+  .options({
+    consistent: true
+  })
+```
+
+</TabItem>
+<TabItem value="attributes" label="Attributes">
+
+```ts
+const command = PokeTable.build(BatchGetCommand)
+  .requests(...)
+  .options({
+    attributes: ['name', 'type']
+  })
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const command = PokeTable.build(BatchGetCommand)
+  .requests(...)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+</TabItem>
+</Tabs>
+
+:::
 
 ## Execution
 

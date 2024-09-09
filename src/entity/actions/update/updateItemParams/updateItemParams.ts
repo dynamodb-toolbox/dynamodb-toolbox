@@ -23,7 +23,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
 >(
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
-  updateItemOptions: OPTIONS = {} as OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ) => {
   const { item, key } = entity.build(EntityParser).parse(input, {
     mode: 'update',
@@ -39,8 +39,8 @@ export const updateItemParams: UpdateItemParamsGetter = <
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,
     ExpressionAttributeValues: optionsExpressionAttributeValues,
-    ...options
-  } = parseUpdateItemOptions(entity, updateItemOptions)
+    ...awsOptions
+  } = parseUpdateItemOptions(entity, options)
 
   const ExpressionAttributeNames = {
     ...optionsExpressionAttributeNames,
@@ -53,10 +53,10 @@ export const updateItemParams: UpdateItemParamsGetter = <
   }
 
   return {
-    TableName: entity.table.getName(),
+    TableName: options.tableName ?? entity.table.getName(),
     Key: key,
     ...update,
-    ...options,
+    ...awsOptions,
     ...(!isEmpty(ExpressionAttributeNames) ? { ExpressionAttributeNames } : {}),
     ...(!isEmpty(ExpressionAttributeValues) ? { ExpressionAttributeValues } : {})
   }

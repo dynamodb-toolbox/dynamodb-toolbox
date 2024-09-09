@@ -93,20 +93,22 @@ describe('BatchGetCommand', () => {
       .params()
 
     expect(input).toStrictEqual({
-      Keys: [
-        { pk: 'a', sk: 'a' },
-        { pk: 'b', sk: 'b' }
-      ]
+      [TestTable.getName()]: {
+        Keys: [
+          { pk: 'a', sk: 'a' },
+          { pk: 'b', sk: 'b' }
+        ]
+      }
     })
   })
 
   test('parses consistent options', () => {
-    const initialCommand = TestTable.build(BatchGetCommand).requests(
+    const command = TestTable.build(BatchGetCommand).requests(
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' })
     )
 
     const invalidCall = () =>
-      initialCommand
+      command
         // @ts-expect-error
         .options({ consistent: 'true' })
         .params()
@@ -116,8 +118,8 @@ describe('BatchGetCommand', () => {
       expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
 
-    const input = initialCommand.options({ consistent: true }).params()
-    expect(input).toMatchObject({ ConsistentRead: true })
+    const input = command.options({ consistent: true }).params()
+    expect(input).toMatchObject({ [TestTable.getName()]: { ConsistentRead: true } })
   })
 
   test('parses attributes options', () => {
@@ -144,12 +146,14 @@ describe('BatchGetCommand', () => {
       .params()
 
     expect(completeInput).toMatchObject({
-      ProjectionExpression: '#p_1, #p_2, #p_3, #p_4',
-      ExpressionAttributeNames: {
-        '#p_1': '_et',
-        '#p_2': 'pk',
-        '#p_3': 'sk',
-        '#p_4': 'commonAttribute'
+      [TestTable.getName()]: {
+        ProjectionExpression: '#p_1, #p_2, #p_3, #p_4',
+        ExpressionAttributeNames: {
+          '#p_1': '_et',
+          '#p_2': 'pk',
+          '#p_3': 'sk',
+          '#p_4': 'commonAttribute'
+        }
       }
     })
   })
@@ -161,13 +165,33 @@ describe('BatchGetCommand', () => {
       .params()
 
     expect(completeInput).toMatchObject({
-      ProjectionExpression: '#p_1, #p_2, #_pk, #_sk',
-      ExpressionAttributeNames: {
-        '#p_1': '_et',
-        '#p_2': 'commonAttribute',
-        '#_pk': TestTable.partitionKey.name,
-        '#_sk': TestTable.sortKey?.name
+      [TestTable.getName()]: {
+        ProjectionExpression: '#p_1, #p_2, #_pk, #_sk',
+        ExpressionAttributeNames: {
+          '#p_1': '_et',
+          '#p_2': 'commonAttribute',
+          '#_pk': TestTable.partitionKey.name,
+          '#_sk': TestTable.sortKey?.name
+        }
       }
     })
+  })
+
+  test('parses tableName options', () => {
+    const command = TestTable.build(BatchGetCommand).requests(
+      EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' })
+    )
+
+    const invalidCall = () =>
+      command
+        // @ts-expect-error
+        .options({ tableName: 42 })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+
+    const input = command.options({ tableName: 'tableName' }).params()
+    expect(input).toMatchObject({ tableName: { Keys: [{ pk: 'a', sk: 'a' }] } })
   })
 })

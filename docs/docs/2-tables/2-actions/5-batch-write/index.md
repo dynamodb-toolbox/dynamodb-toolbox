@@ -49,6 +49,48 @@ Note that batch operations are more efficient than running their equivalent comm
 
 The [`BatchPutRequests`](../../../3-entities/3-actions/7-batch-put/index.md) and [`BatchDeleteRequests`](../../../3-entities/3-actions/8-batch-delete/index.md) to execute.
 
+### `.options(...)`
+
+Provides additional **table-level** options:
+
+```ts
+const command = PokeTable.build(BatchWriteCommand).options({
+  ...
+})
+```
+
+You can use the `BatchWriteCommandOptions` type to explicitly type an object as a `BatchWriteCommand` options object:
+
+```ts
+import type { BatchWriteCommandOptions } from 'dynamodb-toolbox/table/actions/batchWrite'
+
+const batchWriteOptions: BatchWriteCommandOptions= {
+  ...
+}
+
+const command = PokeTable.build(BatchWriteCommand)
+  .requests(...)
+  .options(batchWriteOptions)
+```
+
+Available options:
+
+| Option      |   Type   | Default | Description                                                                                               |
+| ----------- | :------: | :-----: | --------------------------------------------------------------------------------------------------------- |
+| `tableName` | `string` |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy). |
+
+:::noteExamples
+
+```ts
+const command = PokeTable.build(BatchWriteCommand)
+  .requests(...)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+:::
+
 ## Execution
 
 ```ts

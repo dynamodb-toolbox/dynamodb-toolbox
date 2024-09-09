@@ -329,7 +329,8 @@ describe('execute (batchGet)', () => {
       batchGetRequestD
     )
 
-    const { Keys: keys = [], ...restCommand } = command.params()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const { Keys: keys = [], ...restCommand } = command.params()[TestTable1.getName()]!
 
     documentClientMock
       .on(_BatchGetCommand)

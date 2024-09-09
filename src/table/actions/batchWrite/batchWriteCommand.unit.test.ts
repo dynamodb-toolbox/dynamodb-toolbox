@@ -104,21 +104,41 @@ describe('BatchWriteCommand', () => {
       )
       .params()
 
-    expect(input).toStrictEqual([
-      {
-        PutRequest: {
-          Item: {
-            _et: 'EntityA',
-            _ct: expect.any(String),
-            _md: expect.any(String),
-            commonAttribute: 'bar',
-            name: 'foo',
-            pk: 'a',
-            sk: 'a'
+    expect(input).toStrictEqual({
+      [TestTable.getName()]: [
+        {
+          PutRequest: {
+            Item: {
+              _et: 'EntityA',
+              _ct: expect.any(String),
+              _md: expect.any(String),
+              commonAttribute: 'bar',
+              name: 'foo',
+              pk: 'a',
+              sk: 'a'
+            }
           }
-        }
-      },
-      { DeleteRequest: { Key: { pk: 'b', sk: 'b' } } }
-    ])
+        },
+        { DeleteRequest: { Key: { pk: 'b', sk: 'b' } } }
+      ]
+    })
+  })
+
+  test('parses tableName options', () => {
+    const command = TestTable.build(BatchWriteCommand).requests(
+      EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' })
+    )
+
+    const invalidCall = () =>
+      command
+        // @ts-expect-error
+        .options({ tableName: 42 })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+
+    const input = command.options({ tableName: 'tableName' }).params()
+    expect(input).toMatchObject({ tableName: [{ DeleteRequest: { Key: { pk: 'b', sk: 'b' } } }] })
   })
 })

@@ -4,6 +4,9 @@ sidebar_custom_props:
   sidebarActionType: write
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # UpdateTransaction
 
 Builds a transaction to update an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
@@ -99,6 +102,12 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | Option      |               Type                | Default | Description                                                                                                                                                                                                                      |
 | ----------- | :-------------------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `UpdateTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `tableName` |             `string`              |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="condition" label="Conditional write">
 
 ```ts
 PokemonEntity.build(UpdateTransaction)
@@ -107,6 +116,22 @@ PokemonEntity.build(UpdateTransaction)
     condition: { attr: 'level', lt: 99 }
   })
 ```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+PokemonEntity.build(UpdateTransaction)
+  .item(...)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+</TabItem>
+</Tabs>
+
+:::
 
 :::info
 

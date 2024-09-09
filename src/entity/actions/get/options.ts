@@ -6,4 +6,5 @@ export interface GetItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   consistent?: boolean
   attributes?: EntityPaths<ENTITY>[]
+  tableName?: string
 }

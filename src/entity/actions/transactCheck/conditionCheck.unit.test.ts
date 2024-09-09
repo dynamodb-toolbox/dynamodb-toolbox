@@ -52,11 +52,12 @@ const TestEntity = new Entity({
 
 describe('condition check transaction', () => {
   test('sets condition', () => {
-    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
-      TestEntity.build(ConditionCheck)
-        .key({ email: 'x', sort: 'y' })
-        .condition({ attr: 'email', gt: 'test' })
-        .params().ConditionCheck
+    const {
+      ConditionCheck: { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression }
+    } = TestEntity.build(ConditionCheck)
+      .key({ email: 'x', sort: 'y' })
+      .condition({ attr: 'email', gt: 'test' })
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#c_1': 'pk' })
     expect(ExpressionAttributeValues).toEqual({ ':c_1': 'test' })
@@ -90,5 +91,47 @@ describe('condition check transaction', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
+  })
+
+  test('overrides tableName', () => {
+    const {
+      ConditionCheck: { TableName }
+    } = TestEntity.build(ConditionCheck)
+      .key({ email: 'x', sort: 'y' })
+      .condition({ attr: 'email', gt: 'test' })
+      .options({ tableName: 'tableName' })
+      .params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    const invalidCall = () =>
+      TestEntity.build(ConditionCheck)
+        .key({ email: 'x', sort: 'y' })
+        .condition({ attr: 'email', gt: 'test' })
+        .options({
+          // @ts-expect-error
+          tableName: 42
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
+  test('fails on extra options', () => {
+    const invalidCall = () =>
+      TestEntity.build(ConditionCheck)
+        .key({ email: 'x', sort: 'y' })
+        .condition({ attr: 'email', gt: 'test' })
+        .options({
+          // @ts-expect-error
+          extra: true
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 })

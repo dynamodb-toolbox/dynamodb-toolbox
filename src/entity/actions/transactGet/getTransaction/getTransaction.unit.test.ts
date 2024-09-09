@@ -36,23 +36,25 @@ const TestEntity2 = new Entity({
 
 describe('Get transaction', () => {
   test('Gets the key from inputs', async () => {
-    const { TableName, Key } = TestEntity.build(GetTransaction)
-      .key({ email: 'test-pk', sort: 'test-sk' })
-      .params().Get
+    const {
+      Get: { TableName, Key }
+    } = TestEntity.build(GetTransaction).key({ email: 'test-pk', sort: 'test-sk' }).params()
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
   })
 
   test('filters out extra data', async () => {
-    const { Key } = TestEntity.build(GetTransaction)
+    const {
+      Get: { Key }
+    } = TestEntity.build(GetTransaction)
       .key({
         email: 'test-pk',
         sort: 'test-sk',
         // @ts-expect-error
         test: 'test'
       })
-      .params().Get
+      .params()
 
     expect(Key).not.toHaveProperty('test')
   })
@@ -110,6 +112,31 @@ describe('Get transaction', () => {
   })
 
   // Options
+  test('overrides tableName', () => {
+    const {
+      Get: { TableName }
+    } = TestEntity.build(GetTransaction)
+      .key({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    const invalidCall = () =>
+      TestEntity.build(GetTransaction)
+        .key({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          tableName: 42
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
   test('fails on extra options', () => {
     const invalidCall = () =>
       TestEntity.build(GetTransaction)
@@ -125,10 +152,12 @@ describe('Get transaction', () => {
   })
 
   test('sets projection', () => {
-    const { ExpressionAttributeNames, ProjectionExpression } = TestEntity.build(GetTransaction)
+    const {
+      Get: { ExpressionAttributeNames, ProjectionExpression }
+    } = TestEntity.build(GetTransaction)
       .key({ email: 'x', sort: 'y' })
       .options({ attributes: ['test', 'sort'] })
-      .params().Get
+      .params()
 
     expect(ExpressionAttributeNames).toEqual({ '#p_1': 'test', '#p_2': 'sk' })
     expect(ProjectionExpression).toBe('#p_1, #p_2')

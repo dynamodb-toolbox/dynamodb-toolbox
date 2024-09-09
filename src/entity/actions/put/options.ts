@@ -16,4 +16,5 @@ export interface PutItemOptions<ENTITY extends Entity = Entity> {
   metrics?: MetricsOption
   returnValues?: PutItemCommandReturnValuesOption
   condition?: Condition<ENTITY>
+  tableName?: string
 }

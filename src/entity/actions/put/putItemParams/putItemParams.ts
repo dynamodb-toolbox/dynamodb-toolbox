@@ -19,14 +19,14 @@ export const putItemParams: PutItemParamsGetter = <
 >(
   entity: ENTITY,
   input: PutItemInput<ENTITY>,
-  putItemOptions: OPTIONS = {} as OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ) => {
   const { item } = entity.build(EntityParser).parse(input)
-  const options = parsePutItemOptions(entity, putItemOptions)
+  const awsOptions = parsePutItemOptions(entity, options)
 
   return {
-    TableName: entity.table.getName(),
+    TableName: options.tableName ?? entity.table.getName(),
     Item: item,
-    ...options
+    ...awsOptions
   }
 }
