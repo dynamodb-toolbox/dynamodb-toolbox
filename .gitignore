@@ -13,3 +13,6 @@ dist
 
 # dev env settings
 .vscode
+
+# for test-exports script
+dynamodb-toolbox-*.tgz
