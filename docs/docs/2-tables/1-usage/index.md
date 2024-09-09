@@ -72,8 +72,6 @@ PokeTable.documentClient = documentClient
 
 ### `name`
 
-<p style={{ marginTop: '-15px' }}><i>(required)</i></p>
-
 A `string` (or function returning a `string`) that matches the [name](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.Basics.html#WorkingWithTables.Basics.CreateTable) of your DynamoDB table:
 
 :::noteExamples
@@ -113,6 +111,21 @@ const PokeTable = new Table({
 </Tabs>
 
 :::
+
+You can also provide it through **command options** – which is useful for [multitenant apps](https://en.wikipedia.org/wiki/Multitenancy) – but beware that commands fail if no table name has been provided:
+
+```ts
+const PokeTable = new Table({
+  // Omit `name` property
+  documentClient,
+  ...
+})
+
+// Scan tenant table
+const { Items } = await PokeTable.build(ScanCommand)
+  .options({ tableName: tenantTableName })
+  .send()
+```
 
 ### `partitionKey`
 

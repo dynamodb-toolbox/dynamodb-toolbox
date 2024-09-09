@@ -127,7 +127,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
+            <td rowSpan="5" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -161,6 +161,14 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td>
               Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.
               <br/><br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
+            </td>
+        </tr>
+            <tr>
+            <td><code>tableName</code></td>
+            <td align="center"><code>string</code></td>
+            <td align="center">-</td>
+            <td>
+              Overrides the <code>Table</code> name. Mostly useful for <a href="https://en.wikipedia.org/wiki/Multitenancy">multitenancy</a>.
             </td>
         </tr>
         <tr>
@@ -231,7 +239,9 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({ consistent: true })
+  .options({
+    consistent: true
+  })
   .send()
 ```
 
@@ -256,7 +266,22 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({ reverse: true })
+  .options({
+    reverse: true
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .entities(PokemonEntity)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
   .send()
 ```
 
@@ -294,7 +319,9 @@ do {
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   // Retrieve all items from the partition (beware of RAM issues!)
-  .options({ maxPages: Infinity })
+  .options({
+    maxPages: Infinity
+  })
   .send()
 ```
 
@@ -329,7 +356,9 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({ attributes: ['name', 'type'] })
+  .options({
+    attributes: ['name', 'type']
+  })
   .send()
 ```
 
@@ -339,7 +368,9 @@ const { Items } = await PokeTable.build(QueryCommand)
 ```ts
 const { Count } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
-  .options({ select: 'COUNT' })
+  .options({
+    select: 'COUNT'
+  })
   .send()
 ```
 

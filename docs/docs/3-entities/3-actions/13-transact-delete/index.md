@@ -4,6 +4,9 @@ sidebar_custom_props:
   sidebarActionType: delete
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # DeleteTransaction
 
 Builds a transaction to delete an entity item, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
@@ -91,6 +94,12 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | Option      |               Type                | Default | Description                                                                                                                                                                                                                      |
 | ----------- | :-------------------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `tableName` |             `string`              |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="condition" label="Conditional write">
 
 ```ts
 const transaction = PokemonEntity.build(DeleteTransaction)
@@ -99,6 +108,22 @@ const transaction = PokemonEntity.build(DeleteTransaction)
     condition: { attr: 'archived', eq: true }
   })
 ```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const transaction = PokemonEntity.build(DeleteTransaction)
+  .key({ pokemonId: 'pikachu1' })
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+</TabItem>
+</Tabs>
+
+:::
 
 :::info
 

@@ -100,6 +100,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `returnValues` |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                 |
 | `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                  |
 | `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                      |
+| `tableName`    |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                     |
 
 :::noteExamples
 
@@ -133,8 +134,27 @@ const { Attributes: prevPikachu } =
       pokeType: 'electric',
       level: 50
     })
-    .options({ returnValues: 'ALL_OLD' })
+    .options({
+      returnValues: 'ALL_OLD'
+    })
     .send()
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+await PokemonEntity.build(PutItemCommand)
+  .item({
+    pokemonId: 'pikachu1',
+    name: 'Pikachu',
+    pokeType: 'electric',
+    level: 50
+  })
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+  .send()
 ```
 
 </TabItem>

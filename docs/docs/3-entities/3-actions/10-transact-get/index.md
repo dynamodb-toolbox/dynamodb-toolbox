@@ -84,7 +84,7 @@ import type { GetTransactionOptions } from 'dynamodb-toolbox/entity/actions/tran
 const options: GetTransactionOptions<typeof PokemonEntity> =
   { attributes: ['name', 'level'] }
 
-const transaction = PokemonEntity.build(PutTransaction)
+const transaction = PokemonEntity.build(GetTransaction)
   .key(...)
   .options(options)
 ```
@@ -94,6 +94,36 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | Option       |       Type       | Default | Description                                                                                                                                                                                                               |
 | ------------ | :--------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
+| `tableName`  |     `string`     |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                 |
+
+:::noteExamples
+
+<Tabs>
+<TabItem value="attributes" label="Attributes">
+
+```ts
+const transaction = PokemonEntity.build(GetTransaction)
+  .key({ pokemonId: 'pikachu1' })
+  .options({
+    attributes: ['type', 'level']
+  })
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const transaction = PokemonEntity.build(GetTransaction)
+  .key({ pokemonId: 'pikachu1' })
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
+```
+
+</TabItem>
+</Tabs>
+
+:::
 
 ## Execution
 

@@ -87,7 +87,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowspan="3" align="center" class="vertical"><b>General</b></td>
+            <td rowspan="4" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -112,6 +112,14 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td>
               Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.
               <br/><br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>tableName</code></td>
+            <td align="center"><code>string</code></td>
+            <td align="center">-</td>
+            <td>
+              Overrides the <code>Table</code> name. Mostly useful for <a href="https://en.wikipedia.org/wiki/Multitenancy">multitenancy</a>.
             </td>
         </tr>
         <tr>
@@ -199,7 +207,9 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({ consistent: true })
+  .options({
+    consistent: true
+  })
   .send()
 ```
 
@@ -208,7 +218,20 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({ index: 'my-index' })
+  .options({
+    index: 'my-index'
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
+
+```ts
+const { Items } = await PokeTable.build(ScanCommand)
+  .options({
+    tableName: `tenant-${tenantId}-pokemons`
+  })
   .send()
 ```
 
@@ -243,7 +266,9 @@ do {
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
   // Retrieve all items from the table (beware of RAM issues!)
-  .options({ maxPages: Infinity })
+  .options({
+    maxPages: Infinity
+  })
   .send()
 ```
 
@@ -255,7 +280,9 @@ const { Items } = await PokeTable.build(ScanCommand)
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
   // Retrieve all pokemons from the table (beware of RAM issues!)
-  .options({ maxPages: Infinity })
+  .options({
+    maxPages: Infinity
+  })
   .send()
 ```
 
@@ -287,7 +314,9 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
-  .options({ attributes: ['name', 'type'] })
+  .options({
+    attributes: ['name', 'type']
+  })
   .send()
 ```
 
@@ -296,7 +325,9 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Count } = await PokeTable.build(ScanCommand)
-  .options({ select: 'COUNT' })
+  .options({
+    select: 'COUNT'
+  })
   .send()
 ```
 
@@ -312,7 +343,10 @@ const { Count } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({ segment: 1, totalSegment: 3 })
+  .options({
+    segment: 1,
+    totalSegment: 3
+  })
   .send()
 ```
 
