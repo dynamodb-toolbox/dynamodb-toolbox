@@ -103,15 +103,17 @@ export const getCommandInput = (
   }
 
   for (const command of commands) {
-    const tableName = command.table.getName()
+    const commandParams = command.params()
 
-    if (tableName in requestItems) {
-      throw new DynamoDBToolboxError('actions.invalidAction', {
-        message: `Two BatchWriteCommands detected for table: ${tableName}. Please provide only one BatchWriteCommand per table`
-      })
+    for (const tableName of Object.keys(commandParams)) {
+      if (tableName in requestItems) {
+        throw new DynamoDBToolboxError('actions.invalidAction', {
+          message: `Two BatchWriteCommands detected for table: ${tableName}. Please provide only one BatchWriteCommand per table`
+        })
+      }
     }
 
-    requestItems[tableName] = command.params()
+    Object.assign(requestItems, commandParams)
   }
 
   const { capacity, metrics } = options

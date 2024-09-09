@@ -386,6 +386,26 @@ describe('scan', () => {
     )
   })
 
+  test('overrides tableName', () => {
+    const { TableName } = TestTable.build(ScanCommand).options({ tableName: 'tableName' }).params()
+
+    expect(TableName).toBe('tableName')
+  })
+
+  test('fails on invalid tableName option', () => {
+    // segment without totalSegment option
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        .options({
+          // @ts-expect-error
+          tableName: 42
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
   test('fails on extra options', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)

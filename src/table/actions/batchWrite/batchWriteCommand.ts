@@ -4,13 +4,19 @@ import type { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import type { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { TableAction } from '~/table/index.js'
+import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import { parseTableNameOption } from '~/options/tableName.js'
+import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import type { ListOf } from '~/types/listOf.js'
 
-import { $requests } from './constants.js'
+import { $options, $requests } from './constants.js'
 
 export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
+
+export type BatchWriteCommandOptions = {
+  tableName?: string
+}
 
 type RequestEntities<
   REQUESTS extends BatchWriteRequestProps[],
@@ -36,11 +42,18 @@ export class BatchWriteCommand<
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'batchWrite' as const;
 
-  [$requests]?: REQUESTS
+  [$requests]?: REQUESTS;
+  [$options]: BatchWriteCommandOptions
 
-  constructor(table: TABLE, entities = [] as unknown as ENTITIES, requests?: REQUESTS) {
+  constructor(
+    table: TABLE,
+    entities = [] as unknown as ENTITIES,
+    requests?: REQUESTS,
+    options: BatchWriteCommandOptions = {}
+  ) {
     super(table, entities)
     this[$requests] = requests
+    this[$options] = options
   }
 
   requests<NEXT_REQUESTS extends BatchWriteRequestProps[]>(
@@ -60,13 +73,26 @@ export class BatchWriteCommand<
     return new BatchWriteCommand(this.table, entities as RequestEntities<NEXT_REQUESTS>, requests)
   }
 
-  params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']>[string] {
+  options(nextOptions: BatchWriteCommandOptions): BatchWriteCommand<TABLE, ENTITIES, REQUESTS> {
+    return new BatchWriteCommand(this.table, this[$entities], this[$requests], nextOptions)
+  }
+
+  params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']> {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchWriteCommand incomplete: No BatchWriteRequest supplied'
       })
     }
 
-    return this[$requests].map(request => request.params())
+    const { tableName, ...extraOptions } = this[$options] ?? {}
+    rejectExtraOptions(extraOptions)
+
+    if (tableName) {
+      parseTableNameOption(tableName)
+    }
+
+    return {
+      [tableName ?? this.table.getName()]: this[$requests].map(request => request.params())
+    }
   }
 }

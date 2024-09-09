@@ -13,6 +13,7 @@ import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
+import { parseTableNameOption } from '~/options/tableName.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
@@ -26,7 +27,7 @@ type ScanParamsGetter = <
 >(
   table: TABLE,
   entities?: ENTITIES,
-  scanOptions?: OPTIONS
+  options?: OPTIONS
 ) => ScanCommandInput
 
 export const scanParams: ScanParamsGetter = <
@@ -36,7 +37,7 @@ export const scanParams: ScanParamsGetter = <
 >(
   table: TABLE,
   entities = [] as unknown as ENTITIES,
-  scanOptions: OPTIONS = {} as OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ) => {
   const {
     capacity,
@@ -50,14 +51,19 @@ export const scanParams: ScanParamsGetter = <
     segment,
     filters: _filters,
     attributes: _attributes,
+    tableName,
     ...extraOptions
-  } = scanOptions
+  } = options
 
   const filters = (_filters ?? {}) as Record<string, Condition>
   const attributes = _attributes as EntityPaths[] | undefined
 
+  if (tableName !== undefined) {
+    parseTableNameOption(tableName)
+  }
+
   const commandOptions: ScanCommandInput = {
-    TableName: table.getName()
+    TableName: tableName ?? table.getName()
   }
 
   if (capacity !== undefined) {

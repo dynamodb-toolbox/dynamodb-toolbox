@@ -24,6 +24,7 @@ export type QueryOptions<
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+  tableName?: string
 } & (QUERY['index'] extends string
   ? {
       // consistent must be false if a secondary index is queried

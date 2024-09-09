@@ -18,6 +18,7 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+  tableName?: string
 } & (
   | { segment?: never; totalSegments?: never }
   // Either both segment & totalSegments are set, either none
