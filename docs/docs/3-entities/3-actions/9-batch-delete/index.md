@@ -30,7 +30,7 @@ const request = PokemonEntity.build(BatchDeleteRequest).key(
 )
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `BatchDeleteRequest` key object:
+You can use the `KeyInput` type from the [`EntityParser`](../17-parse/index.md) action to explicitly type an object as a `BatchDeleteRequest` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -46,6 +46,6 @@ const request = PokemonEntity.build(BatchDeleteRequest).key(
 
 :::info
 
-Contrary to [`DeleteItemCommands`](../4-delete-item/index.md), batch deletes cannot be [conditioned](../17-parse-condition/index.md), nor return the values of the deleted items.
+Contrary to [`DeleteItemCommands`](../5-delete-item/index.md), batch deletes cannot be [conditioned](../18-parse-condition/index.md), nor return the values of the deleted items.
 
 :::

@@ -49,7 +49,7 @@ const TestEntity = new Entity({
     test_boolean: boolean().optional(),
     test_nullable_boolean: anyOf(boolean(), nul()).optional(),
     test_list: list(string()).optional(),
-    test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
+    test_list_deep: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
     contents: map({ test: string() }).savedAs('_c'),
@@ -894,14 +894,14 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           test_list: { 2: 'Test2' },
-          test_list_nested: { 1: { value: 'foo' } }
+          test_list_deep: { 1: { value: 'foo' } }
         })
         .params()
 
     expect(UpdateExpression).toContain('SET #s_1[2] = :s_1, #s_2[1].#s_3 = :s_2')
     expect(ExpressionAttributeNames).toMatchObject({
       '#s_1': 'test_list',
-      '#s_2': 'test_list_nested',
+      '#s_2': 'test_list_deep',
       '#s_3': 'value'
     })
     expect(ExpressionAttributeValues).toMatchObject({
@@ -1131,7 +1131,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $append([{ value: 'foo' }, { value: 'baz' }])
+          test_list_deep: $append([{ value: 'foo' }, { value: 'baz' }])
         })
         .params()
 
@@ -1144,7 +1144,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $append($get('invalid_ref'))
+          test_list_deep: $append($get('invalid_ref'))
         })
         .params()
 
@@ -1213,7 +1213,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $prepend([{ value: 'foo' }, { value: 'baz' }])
+          test_list_deep: $prepend([{ value: 'foo' }, { value: 'baz' }])
         })
         .params()
 
@@ -1226,7 +1226,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $prepend($get('invalid_ref'))
+          test_list_deep: $prepend($get('invalid_ref'))
         })
         .params()
 
@@ -1236,7 +1236,7 @@ describe('update', () => {
     )
   })
 
-  test('updates nested data in a map', () => {
+  test('updates deep data in a map', () => {
     const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.build(UpdateItemCommand)
         .item({
@@ -1254,7 +1254,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 1 })
   })
 
-  test('removes nested data in a map', () => {
+  test('removes deep data in a map', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1429,7 +1429,7 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('updates nested data in a record', () => {
+  test('updates deep data in a record', () => {
     const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.build(UpdateItemCommand)
         .item({
@@ -1447,7 +1447,7 @@ describe('update', () => {
     expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 1 })
   })
 
-  test('removes nested data in a record', () => {
+  test('removes deep data in a record', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',

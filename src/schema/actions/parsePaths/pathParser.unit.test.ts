@@ -11,7 +11,7 @@ describe('parseProjection', () => {
   describe('savedAs attrs', () => {
     const schemaWithSavedAs = schema({
       savedAs: string().savedAs('_s'),
-      nested: map({
+      deep: map({
         savedAs: string().savedAs('_s')
       }).savedAs('_n'),
       listed: list(
@@ -30,9 +30,9 @@ describe('parseProjection', () => {
       })
     })
 
-    test('correctly parses projection (nested)', () => {
+    test('correctly parses projection (deep)', () => {
       expect(
-        schemaWithSavedAs.build(PathParser).parse(['savedAs', 'nested.savedAs']).toCommandOptions()
+        schemaWithSavedAs.build(PathParser).parse(['savedAs', 'deep.savedAs']).toCommandOptions()
       ).toStrictEqual({
         ProjectionExpression: '#p_1, #p_2.#p_3',
         ExpressionAttributeNames: { '#p_1': '_s', '#p_2': '_n', '#p_3': '_s' }
@@ -73,7 +73,7 @@ describe('parseProjection', () => {
       })
     })
 
-    test('correctly parses projection (nested str)', () => {
+    test('correctly parses projection (deep str)', () => {
       expect(
         schemaWithAnyOf.build(PathParser).parse(['anyOf.str']).toCommandOptions()
       ).toStrictEqual({
@@ -82,7 +82,7 @@ describe('parseProjection', () => {
       })
     })
 
-    test('correctly parses projection (nested num)', () => {
+    test('correctly parses projection (deep num)', () => {
       expect(
         schemaWithAnyOf.build(PathParser).parse(['anyOf.num']).toCommandOptions()
       ).toStrictEqual({

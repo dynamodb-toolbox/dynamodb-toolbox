@@ -52,20 +52,20 @@ describe('schema', () => {
   test('maps', () => {
     const str = string()
     const flatMap = map({ str })
-    const nestedMap = map({
-      nested: map({ str })
+    const deepMap = map({
+      deep: map({ str })
     })
     const reqMap = map({ str })
     const hiddenMap = map({ str }).hidden()
 
-    const sch = schema({ flatMap, nestedMap, reqMap, hiddenMap })
+    const sch = schema({ flatMap, deepMap, reqMap, hiddenMap })
 
     const assertSch: A.Contains<
       typeof sch,
       {
         attributes: {
           flatMap: FreezeAttribute<typeof flatMap>
-          nestedMap: FreezeAttribute<typeof nestedMap>
+          deepMap: FreezeAttribute<typeof deepMap>
           reqMap: FreezeAttribute<typeof reqMap>
           hiddenMap: FreezeAttribute<typeof hiddenMap>
         }
@@ -76,7 +76,7 @@ describe('schema', () => {
     expect(sch).toMatchObject({
       attributes: {
         flatMap: flatMap.freeze('flatMap'),
-        nestedMap: nestedMap.freeze('nestedMap'),
+        deepMap: deepMap.freeze('deepMap'),
         reqMap: reqMap.freeze('reqMap'),
         hiddenMap: hiddenMap.freeze('hiddenMap')
       }
@@ -86,13 +86,13 @@ describe('schema', () => {
   test('list', () => {
     const str = string()
     const optList = list(str).optional()
-    const nestedList = list(list(str))
+    const deepList = list(list(str))
     const reqList = list(str)
     const hiddenList = list(str).optional().hidden()
 
     const sch = schema({
       optList,
-      nestedList,
+      deepList,
       reqList,
       hiddenList
     })
@@ -102,7 +102,7 @@ describe('schema', () => {
       {
         attributes: {
           optList: FreezeAttribute<typeof optList>
-          nestedList: FreezeAttribute<typeof nestedList>
+          deepList: FreezeAttribute<typeof deepList>
           reqList: FreezeAttribute<typeof reqList>
           hiddenList: FreezeAttribute<typeof hiddenList>
         }
@@ -113,7 +113,7 @@ describe('schema', () => {
     expect(sch).toMatchObject({
       attributes: {
         optList: optList.freeze('optList'),
-        nestedList: nestedList.freeze('nestedList'),
+        deepList: deepList.freeze('deepList'),
         reqList: reqList.freeze('reqList'),
         hiddenList: hiddenList.freeze('hiddenList')
       }

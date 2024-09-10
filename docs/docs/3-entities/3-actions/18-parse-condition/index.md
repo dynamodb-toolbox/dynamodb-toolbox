@@ -111,7 +111,7 @@ You can only specify one operator per condition. To combine multiple conditions,
 
 ### Paths
 
-`attr` contains the path of the attribute value to check (potentially nested). You can also specify `size` instead of `attr` if you want to check the **size** of an attribute (in which case the attribute type becomes `number`):
+`attr` contains the path of the attribute value to check (potentially deep). You can also specify `size` instead of `attr` if you want to check the **size** of an attribute (in which case the attribute type becomes `number`):
 
 :::noteExamples
 
@@ -126,7 +126,7 @@ const nameCheck: Condition<typeof PokemonEntity> = {
 ```
 
 </TabItem>
-<TabItem value="nested-map" label="Nested (Map)">
+<TabItem value="deep-map" label="Deep (Map)">
 
 ```ts
 const nameCheck: Condition<typeof PokemonEntity> = {
@@ -136,7 +136,7 @@ const nameCheck: Condition<typeof PokemonEntity> = {
 ```
 
 </TabItem>
-<TabItem value="nested-list" label="Nested (List)">
+<TabItem value="deep-list" label="Deep (List)">
 
 ```ts
 const nameCheck: Condition<typeof PokemonEntity> = {
@@ -404,10 +404,10 @@ const notElectric: Condition<typeof PokemonEntity> = {
 ```
 
 </TabItem>
-<TabItem value="nested" label="Nested">
+<TabItem value="deep" label="Deep">
 
 ```ts
-const nestedCondition: Condition<typeof PokemonEntity> = {
+const deepCondition: Condition<typeof PokemonEntity> = {
   and: [
     {
       // Level ≥ 50 or ≤ 20...

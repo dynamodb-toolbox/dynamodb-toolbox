@@ -639,14 +639,14 @@ const v1Condition = {
 
 ## Projection Expressions
 
-Projections expressions can now be nested:
+Projections expressions can now be deep:
 
 ```ts
 const projection = {
   attributes: [
     'pokemonId',
     'level',
-    'some.nested.map.value',
+    'some.deep.map.value',
     'some.array[0].element'
   ]
 }

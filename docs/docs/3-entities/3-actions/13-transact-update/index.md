@@ -21,11 +21,11 @@ const params = transaction.params()
 await execute(transaction, ...otherTransactions)
 ```
 
-`UpdateTransactions` can be executed in conjunction with [`PutTransactions`](../11-transact-put/index.md), [`DeleteTransactions`](../13-transact-delete/index.md) and [`ConditionChecks`](../14-condition-check/index.md).
+`UpdateTransactions` can be executed in conjunction with [`PutTransactions`](../12-transact-put/index.md), [`DeleteTransactions`](../14-transact-delete/index.md) and [`ConditionChecks`](../15-condition-check/index.md).
 
 :::info
 
-Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more about the `execute` function.
+Check the [Transaction Documentation](../10-transactions/index.md#transactwrite) to learn more about the `execute` function.
 
 :::
 
@@ -101,7 +101,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 | Option      |               Type                | Default | Description                                                                                                                                                                                                                      |
 | ----------- | :-------------------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `UpdateTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `UpdateTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 | `tableName` |             `string`              |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
 
 :::noteExamples

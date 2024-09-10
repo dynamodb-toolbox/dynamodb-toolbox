@@ -43,7 +43,7 @@ const TestEntity = new Entity({
     test_boolean: boolean().optional(),
     test_nullable_boolean: anyOf(boolean(), nul()).optional(),
     test_list: list(string()).optional(),
-    test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
+    test_list_deep: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
     contents: map({ test: string(), optional: string().optional() }).savedAs('_c'),
@@ -908,7 +908,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: { 1: { value: 'foo' } }
+          test_list_deep: { 1: { value: 'foo' } }
         })
         .params()
 
@@ -975,7 +975,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $append([{ value: 'foo' }, { value: 'baz' }])
+          test_list_deep: $append([{ value: 'foo' }, { value: 'baz' }])
         })
         .params()
 
@@ -988,7 +988,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $append($get('invalid_ref'))
+          test_list_deep: $append($get('invalid_ref'))
         })
         .params()
 
@@ -1057,7 +1057,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $prepend([{ value: 'foo' }, { value: 'baz' }])
+          test_list_deep: $prepend([{ value: 'foo' }, { value: 'baz' }])
         })
         .params()
 
@@ -1070,7 +1070,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list_nested: $prepend($get('invalid_ref'))
+          test_list_deep: $prepend($get('invalid_ref'))
         })
         .params()
 

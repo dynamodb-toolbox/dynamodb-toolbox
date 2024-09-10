@@ -11,16 +11,16 @@ import TabItem from '@theme/TabItem';
 
 ## TransactGet
 
-DynamoDB-Toolbox exposes the [`GetTransaction`](../10-transact-get/index.md) actions to perform [TransactGetItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html).
+DynamoDB-Toolbox exposes the [`GetTransaction`](../11-transact-get/index.md) actions to perform [TransactGetItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html).
 
 ## TransactWrite
 
 DynamoDB-Toolbox exposes the following actions to perform [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
 
-- [`PutTransaction`](../11-transact-put/index.md): Builds a transaction to put an entity item
-- [`UpdateTransaction`](../7-batch-put/index.md): Builds a transaction to update an entity item
-- [`DeleteTransaction`](../8-batch-delete/index.md): Builds a transaction to delete an entity item
-- [`ConditionCheck`](../8-batch-delete/index.md): Builds a condition to check against an entity item for the transaction to succeed
+- [`PutTransaction`](../12-transact-put/index.md): Builds a transaction to put an entity item
+- [`UpdateTransaction`](../8-batch-put/index.md): Builds a transaction to update an entity item
+- [`DeleteTransaction`](../9-batch-delete/index.md): Builds a transaction to delete an entity item
+- [`ConditionCheck`](../9-batch-delete/index.md): Builds a condition to check against an entity item for the transaction to succeed
 
 TransactWriteItems operations can affect **multiple items**, so transactions do not have a `.send(...)` method. Instead, they should be performed via the dedicated `execute` function:
 

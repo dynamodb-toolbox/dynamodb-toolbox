@@ -36,7 +36,7 @@ await PokemonEntity.build(DeleteItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `DeleteItemCommand` key object:
+You can use the `KeyInput` type from the [`EntityParser`](../17-parse/index.md) action to explicitly type an object as a `DeleteItemCommand` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -84,7 +84,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 | Option         |               Type                | Default  | Description                                                                                                                                                                                                                      |
 | -------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `DeleteItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `DeleteItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 | `returnValues` |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were deleted with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                    |
 | `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                     |
 | `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                         |

@@ -431,10 +431,10 @@ describe('map', () => {
     })
   })
 
-  test('nested map', () => {
+  test('deep map', () => {
     const mapped = map({
-      nested: map({
-        nestedAgain: map({
+      deep: map({
+        deepAgain: map({
           str
         }).hidden()
       })
@@ -445,10 +445,10 @@ describe('map', () => {
       {
         [$type]: 'map'
         [$attributes]: {
-          nested: {
+          deep: {
             [$type]: 'map'
             [$attributes]: {
-              nestedAgain: {
+              deepAgain: {
                 [$type]: 'map'
                 [$attributes]: {
                   str: typeof str

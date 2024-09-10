@@ -1,56 +1,18 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
+import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
-import type { FormattedItem } from '~/entity/actions/format/index.js'
+import type { UpdateItemResponse } from '~/entity/actions/update/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type {
-  AllNewReturnValuesOption,
-  AllOldReturnValuesOption,
-  NoneReturnValuesOption,
-  UpdatedNewReturnValuesOption,
-  UpdatedOldReturnValuesOption
-} from '~/options/returnValues.js'
-import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
 import type { UpdateAttributesOptions } from './options.js'
 import type { UpdateAttributesInput } from './types.js'
 import { updateAttributesParams } from './updateAttributesParams/index.js'
-
-type ReturnedAttributes<
-  ENTITY extends Entity,
-  OPTIONS extends UpdateAttributesOptions<ENTITY>
-> = OPTIONS['returnValues'] extends NoneReturnValuesOption
-  ? undefined
-  : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-    ?
-        | FormattedItem<
-            ENTITY,
-            {
-              partial: OPTIONS['returnValues'] extends
-                | UpdatedOldReturnValuesOption
-                | UpdatedNewReturnValuesOption
-                ? true
-                : false
-            }
-          >
-        | undefined
-    : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
-      ? FormattedItem<ENTITY> | undefined
-      : never
-
-export type UpdateAttributesResponse<
-  ENTITY extends Entity,
-  OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
-> = Merge<
-  Omit<UpdateCommandOutput, 'Attributes'>,
-  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
->
 
 export class UpdateAttributesCommand<
     ENTITY extends Entity = Entity,
@@ -101,7 +63,7 @@ export class UpdateAttributesCommand<
   }
 
   @sender()
-  async send(): Promise<UpdateAttributesResponse<ENTITY, OPTIONS>> {
+  async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
     const commandOutput = await this.entity.table
@@ -118,7 +80,7 @@ export class UpdateAttributesCommand<
 
     const formattedItem = new EntityFormatter(this.entity).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
-    }) as unknown as ReturnedAttributes<ENTITY, OPTIONS>
+    }) as unknown as UpdateItemResponse<ENTITY, OPTIONS>['Attributes']
 
     return {
       Attributes: formattedItem,

@@ -67,7 +67,7 @@ DynamoDB-Toolbox attribute types closely mirror the capabilities of DynamoDB. Se
 
 :::
 
-Note that some attribute types can be **nested**, i.e. defined with other attributes. For instance, here's a list of string:
+Note that some attribute types can be defined with other attributes. For instance, here's a list of string:
 
 ```ts
 const nameAttr = string()

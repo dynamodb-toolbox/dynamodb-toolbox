@@ -11,7 +11,7 @@ describe('parseCondition', () => {
   describe('savedAs attrs', () => {
     const schemaWithSavedAs = schema({
       savedAs: string().savedAs('_s'),
-      nested: map({
+      deep: map({
         savedAs: string().savedAs('_s')
       }).savedAs('_n'),
       listed: list(
@@ -34,11 +34,11 @@ describe('parseCondition', () => {
       })
     })
 
-    test('correctly parses condition (nested)', () => {
+    test('correctly parses condition (deep)', () => {
       expect(
         schemaWithSavedAs
           .build(ConditionParser)
-          .parse({ attr: 'nested.savedAs', beginsWith: 'foo' })
+          .parse({ attr: 'deep.savedAs', beginsWith: 'foo' })
           .toCommandOptions()
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
@@ -98,7 +98,7 @@ describe('parseCondition', () => {
       })
     })
 
-    test('correctly parses condition (nested num)', () => {
+    test('correctly parses condition (deep num)', () => {
       expect(
         schemaWithAnyOf
           .build(ConditionParser)
@@ -111,7 +111,7 @@ describe('parseCondition', () => {
       })
     })
 
-    test('correctly parses condition (nested str)', () => {
+    test('correctly parses condition (deep str)', () => {
       expect(
         schemaWithAnyOf
           .build(ConditionParser)

@@ -51,6 +51,6 @@ const request =
 
 :::info
 
-Contrary to [`PutItemCommands`](../2-put-item/index.md), batch writes cannot be [conditioned](../17-parse-condition/index.md), nor return the previous values of the written items.
+Contrary to [`PutItemCommands`](../2-put-item/index.md), batch writes cannot be [conditioned](../18-parse-condition/index.md), nor return the previous values of the written items.
 
 :::

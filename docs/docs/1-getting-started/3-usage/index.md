@@ -103,7 +103,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-DynamoDB operations like the [GetItemCommand](../../3-entities/3-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/3-actions/16-parse/index.md), [formatting](../../3-entities/3-actions/19-format/index.md) or [spying](../../3-entities/3-actions/20-spy/index.md).
+DynamoDB operations like the [GetItemCommand](../../3-entities/3-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/3-actions/17-parse/index.md), [formatting](../../3-entities/3-actions/20-format/index.md) or [spying](../../3-entities/3-actions/21-spy/index.md).
 
 The syntax is a bit more verbose than a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
 

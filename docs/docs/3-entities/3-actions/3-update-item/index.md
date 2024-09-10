@@ -56,7 +56,7 @@ const item: UpdateItemInput<typeof PokemonEntity> = {
 await PokemonEntity.build(UpdateItemCommand).item(item).send()
 ```
 
-`UpdateItemInput` differ from [`PutItemInput`](../2-put-item/index.md#item) as it is **partial by default**, except for `always` required attributes without defaults or links.
+`UpdateItemInput` differs from [`PutItemInput`](../2-put-item/index.md#item) as it is **partial by default**, except for `always` required attributes without defaults or links.
 
 It also benefits from an **extended syntax** that reflects the [capabilities of DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html):
 
@@ -122,9 +122,9 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-### Non-nested attributes
+### Flat attributes
 
-In the case of non-nested attributes (primitives and `sets`), updates completely override their current values:
+In the case of flat attributes (primitives and `sets`), updates completely override their current values:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -172,16 +172,16 @@ import {
 
 await PokemonEntity.build(UpdateItemCommand)
   .item({
-    ...
+    ...,
     skills: $add(new Set(['thunder', 'dragon-tail'])),
     types: $delete(new Set(['flight']))
   })
   .send()
 ```
 
-### Nested attributes
+### Deep attributes
 
-In the case of nested attributes, e.g. `lists`, `maps` and `records`, updates are **partial by default**:
+In the case of deep attributes (e.g. `lists`, `maps` and `records`), updates are **partial by default**:
 
 ```ts
 // 👇 Partial overrides
@@ -197,7 +197,7 @@ await PokemonEntity.build(UpdateItemCommand)
     },
     // 👇 Map
     some: {
-      nested: {
+      deep: {
         field: 'foo'
       }
     },
@@ -222,7 +222,7 @@ await PokemonEntity.build(UpdateItemCommand).item({
  skills: $set(['thunder']),
  // Removes all other map attributes
  some: $set({
-   nested: {
+   deep: {
      field: 'foo',
      otherField: 42
    }
@@ -237,6 +237,11 @@ await PokemonEntity.build(UpdateItemCommand).item({
 Lists benefit from additional `$append` and `$prepend` extensions, which can use references:
 
 ```ts
+import {
+  $append,
+  $prepend
+} from 'dynamodb-toolbox/entity/actions/update'
+
 PokemonEntity.build(UpdateItemCommand).item({
   ...
   skills: $append(['thunder', 'dragon-tail']),
@@ -287,7 +292,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 | Option         |               Type                | Default  | Description                                                                                                                                                                                                                      |
 | -------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `UpdateItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `UpdateItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 | `returnValues` |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"`, `"UPDATED_NEW"`, `"ALL_NEW"`, `"UPDATED_OLD"` and `"ALL_OLD"`.                                     |
 | `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                     |
 | `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                         |
@@ -618,7 +623,7 @@ import {
 } from 'dynamodb-toolbox/entity/actions/update/symbols'
 
 const setting = $set({
-  nested: {
+  deep: {
     field: 'foo',
     otherField: 42
   }
@@ -627,7 +632,7 @@ const setting = $set({
 // 👇 Equivalent to
 const setting = {
   [$SET]: {
-    nested: {
+    deep: {
       field: 'foo',
       otherField: 42
     }
@@ -638,7 +643,7 @@ const setting = {
 const link = (input: UpdateItemInput) => {
   if (isSetting(input)) {
     input[$SET] // => {
-    //   nested: {
+    //   deep: {
     //     field: 'foo',
     //     otherField: 42
     //   }

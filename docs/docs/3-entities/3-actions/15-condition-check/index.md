@@ -18,11 +18,11 @@ const params = transaction.params()
 await execute(transaction, ...otherTransactions)
 ```
 
-`ConditionCheck` can be executed in conjunction with [`PutTransactions`](../11-transact-put/index.md), [`UpdateTransactions`](../12-transact-update/index.md) and [`DeleteTransactions`](../13-transact-delete/index.md).
+`ConditionCheck` can be executed in conjunction with [`PutTransactions`](../12-transact-put/index.md), [`UpdateTransactions`](../13-transact-update/index.md) and [`DeleteTransactions`](../14-transact-delete/index.md).
 
 :::info
 
-Check the [Transaction Documentation](../9-transactions/index.md#transactwrite) to learn more about the `execute` function.
+Check the [Transaction Documentation](../10-transactions/index.md#transactwrite) to learn more about the `execute` function.
 
 :::
 
@@ -46,7 +46,7 @@ const transaction = PokemonEntity.build(ConditionCheck).key(
 )
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../16-parse/index.md) action to explicitly type an object as a `ConditionCheck` key object:
+You can use the `KeyInput` type from the [`EntityParser`](../17-parse/index.md) action to explicitly type an object as a `ConditionCheck` key object:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
@@ -71,7 +71,7 @@ const transaction = PokemonEntity.build(ConditionCheck)
   .condition({ attr: 'level', gte: 50 })
 ```
 
-See the [`ConditionParser`](../17-parse-condition/index.md#building-conditions) action for more details on how to write conditions.
+See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions.
 
 ### `.options(...)`
 
