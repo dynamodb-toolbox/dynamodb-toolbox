@@ -74,7 +74,7 @@ export const formatListAttrRawValue: ListAttrRawValueFormatter = <
   // We don't need isProjected:
   // - Either whole list is projected and we already know => projectedAttributes undefined
   // - Either some elements are projected => childrenAttributes undefined
-  // - Either projection is nested => childrenAttributes defined
+  // - Either projection is deep => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
   const formattedValues: unknown[] = []

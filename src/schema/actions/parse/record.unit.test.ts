@@ -54,6 +54,17 @@ describe('recordAttributeParser', () => {
     expect(transformedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
   })
 
+  test('ignores undefined values', () => {
+    const recordA = record(string(), string()).freeze('root')
+
+    const { value: parsed } = recordAttributeParser(
+      recordA,
+      { foo: 'bar', baz: undefined },
+      { fill: false }
+    ).next()
+    expect(parsed).toStrictEqual({ foo: 'bar' })
+  })
+
   test('applies validation if any', () => {
     const recordA = record(string(), string())
       .validate(input => 'foo' in input)

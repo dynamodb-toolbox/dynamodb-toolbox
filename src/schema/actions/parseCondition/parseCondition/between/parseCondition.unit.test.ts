@@ -58,8 +58,8 @@ describe('parseCondition - between', () => {
   test('deep maps (values)', () => {
     const sch = schema({
       map: map({
-        nestedA: map({
-          nestedB: number()
+        deepA: map({
+          deepB: number()
         })
       })
     })
@@ -68,7 +68,7 @@ describe('parseCondition - between', () => {
       sch
         .build(ConditionParser)
         .parse({
-          attr: 'map.nestedA.nestedB',
+          attr: 'map.deepA.deepB',
           between: [42, 43]
         })
         .toCommandOptions()
@@ -76,8 +76,8 @@ describe('parseCondition - between', () => {
       ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN :c_1 AND :c_2',
       ExpressionAttributeNames: {
         '#c_1': 'map',
-        '#c_2': 'nestedA',
-        '#c_3': 'nestedB'
+        '#c_2': 'deepA',
+        '#c_3': 'deepB'
       },
       ExpressionAttributeValues: { ':c_1': 42, ':c_2': 43 }
     })
@@ -85,14 +85,14 @@ describe('parseCondition - between', () => {
 
   const deepMapsSchema = schema({
     map: map({
-      nestedA: map({
-        nestedB: number()
+      deepA: map({
+        deepB: number()
       })
     }),
-    nestedC: map({
+    deepC: map({
       otherNum: number()
     }),
-    nestedD: map({
+    deepD: map({
       yetAnotherNum: number()
     })
   })
@@ -102,17 +102,17 @@ describe('parseCondition - between', () => {
       deepMapsSchema
         .build(ConditionParser)
         .parse({
-          attr: 'map.nestedA.nestedB',
-          between: [{ attr: 'nestedC.otherNum' }, 43]
+          attr: 'map.deepA.deepB',
+          between: [{ attr: 'deepC.otherNum' }, 43]
         })
         .toCommandOptions()
     ).toStrictEqual({
       ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN #c_4.#c_5 AND :c_1',
       ExpressionAttributeNames: {
         '#c_1': 'map',
-        '#c_2': 'nestedA',
-        '#c_3': 'nestedB',
-        '#c_4': 'nestedC',
+        '#c_2': 'deepA',
+        '#c_3': 'deepB',
+        '#c_4': 'deepC',
         '#c_5': 'otherNum'
       },
       ExpressionAttributeValues: { ':c_1': 43 }
@@ -124,19 +124,19 @@ describe('parseCondition - between', () => {
       deepMapsSchema
         .build(ConditionParser)
         .parse({
-          attr: 'map.nestedA.nestedB',
-          between: [{ attr: 'nestedC.otherNum' }, { attr: 'nestedD.yetAnotherNum' }]
+          attr: 'map.deepA.deepB',
+          between: [{ attr: 'deepC.otherNum' }, { attr: 'deepD.yetAnotherNum' }]
         })
         .toCommandOptions()
     ).toStrictEqual({
       ConditionExpression: '#c_1.#c_2.#c_3 BETWEEN #c_4.#c_5 AND #c_6.#c_7',
       ExpressionAttributeNames: {
         '#c_1': 'map',
-        '#c_2': 'nestedA',
-        '#c_3': 'nestedB',
-        '#c_4': 'nestedC',
+        '#c_2': 'deepA',
+        '#c_3': 'deepB',
+        '#c_4': 'deepC',
         '#c_5': 'otherNum',
-        '#c_6': 'nestedD',
+        '#c_6': 'deepD',
         '#c_7': 'yetAnotherNum'
       },
       ExpressionAttributeValues: {}
@@ -146,21 +146,21 @@ describe('parseCondition - between', () => {
   const deepMapsAndListsSchema = schema({
     listA: list(
       map({
-        nested: map({
+        deep: map({
           listB: list(map({ value: number() }))
         })
       })
     ),
     listC: list(
       map({
-        nested: map({
+        deep: map({
           listD: list(map({ value: number() }))
         })
       })
     ),
     listE: list(
       map({
-        nested: map({
+        deep: map({
           listF: list(map({ value: number() }))
         })
       })
@@ -172,7 +172,7 @@ describe('parseCondition - between', () => {
       deepMapsAndListsSchema
         .build(ConditionParser)
         .parse({
-          attr: 'listA[1].nested.listB[2].value',
+          attr: 'listA[1].deep.listB[2].value',
           between: [42, 43]
         })
         .toCommandOptions()
@@ -180,7 +180,7 @@ describe('parseCondition - between', () => {
       ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN :c_1 AND :c_2',
       ExpressionAttributeNames: {
         '#c_1': 'listA',
-        '#c_2': 'nested',
+        '#c_2': 'deep',
         '#c_3': 'listB',
         '#c_4': 'value'
       },
@@ -193,19 +193,19 @@ describe('parseCondition - between', () => {
       deepMapsAndListsSchema
         .build(ConditionParser)
         .parse({
-          attr: 'listA[1].nested.listB[2].value',
-          between: [42, { attr: 'listC[3].nested.listD[4].value' }]
+          attr: 'listA[1].deep.listB[2].value',
+          between: [42, { attr: 'listC[3].deep.listD[4].value' }]
         })
         .toCommandOptions()
     ).toStrictEqual({
       ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN :c_1 AND #c_5[3].#c_6.#c_7[4].#c_8',
       ExpressionAttributeNames: {
         '#c_1': 'listA',
-        '#c_2': 'nested',
+        '#c_2': 'deep',
         '#c_3': 'listB',
         '#c_4': 'value',
         '#c_5': 'listC',
-        '#c_6': 'nested',
+        '#c_6': 'deep',
         '#c_7': 'listD',
         '#c_8': 'value'
       },
@@ -218,10 +218,10 @@ describe('parseCondition - between', () => {
       deepMapsAndListsSchema
         .build(ConditionParser)
         .parse({
-          attr: 'listA[1].nested.listB[2].value',
+          attr: 'listA[1].deep.listB[2].value',
           between: [
-            { attr: 'listC[3].nested.listD[4].value' },
-            { attr: 'listE[3].nested.listF[4].value' }
+            { attr: 'listC[3].deep.listD[4].value' },
+            { attr: 'listE[3].deep.listF[4].value' }
           ]
         })
         .toCommandOptions()
@@ -230,15 +230,15 @@ describe('parseCondition - between', () => {
         '#c_1[1].#c_2.#c_3[2].#c_4 BETWEEN #c_5[3].#c_6.#c_7[4].#c_8 AND #c_9[3].#c_10.#c_11[4].#c_12',
       ExpressionAttributeNames: {
         '#c_1': 'listA',
-        '#c_2': 'nested',
+        '#c_2': 'deep',
         '#c_3': 'listB',
         '#c_4': 'value',
         '#c_5': 'listC',
-        '#c_6': 'nested',
+        '#c_6': 'deep',
         '#c_7': 'listD',
         '#c_8': 'value',
         '#c_9': 'listE',
-        '#c_10': 'nested',
+        '#c_10': 'deep',
         '#c_11': 'listF',
         '#c_12': 'value'
       },

@@ -383,10 +383,10 @@ describe('anyOf', () => {
   })
 
   test('anyOf of anyOfs', () => {
-    const nestedAnyOff = anyOf(str)
-    const anyOfAttr = anyOf(nestedAnyOff)
+    const deepAnyOff = anyOf(str)
+    const anyOfAttr = anyOf(deepAnyOff)
 
-    const assertAnyOf: A.Equals<(typeof anyOfAttr)[$elements], [typeof nestedAnyOff]> = 1
+    const assertAnyOf: A.Equals<(typeof anyOfAttr)[$elements], [typeof deepAnyOff]> = 1
     assertAnyOf
   })
 })

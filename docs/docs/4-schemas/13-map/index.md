@@ -33,7 +33,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 
 const pokemonSchema = schema({
   ...
-  nestedMagic: map({
+  deepMagic: map({
     does: map({
       work: string().const('!'),
     }),
@@ -43,7 +43,7 @@ const pokemonSchema = schema({
 type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 // => {
 //   ...
-//   nestedMagic: {
+//   deepMagic: {
 //     does: {
 //       work: "!"
 //     }

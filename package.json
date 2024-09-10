@@ -400,6 +400,16 @@
         "default": "./dist/cjs/entity/actions/update/symbols/index.js"
       }
     },
+    "./entity/actions/updateAttributes": {
+      "import": {
+        "types": "./dist/esm/entity/actions/updateAttributes/index.d.ts",
+        "default": "./dist/esm/entity/actions/updateAttributes/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/updateAttributes/index.d.ts",
+        "default": "./dist/cjs/entity/actions/updateAttributes/index.js"
+      }
+    },
     "./entity/actions/delete": {
       "import": {
         "types": "./dist/esm/entity/actions/delete/index.d.ts",

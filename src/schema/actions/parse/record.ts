@@ -63,10 +63,16 @@ export function* recordAttributeParser<
       ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
     >
   ][] = []
+  const undefinedEntries: [string, undefined][] = []
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
     for (const [key, element] of Object.entries(inputValue)) {
+      if (element === undefined) {
+        undefinedEntries.push([key, undefined])
+        continue
+      }
+
       parsers.push([
         attrParser(attribute.keys, key, options),
         attrParser(attribute.elements, element, options)
@@ -76,21 +82,23 @@ export function* recordAttributeParser<
 
   if (fill) {
     if (isInputValueObject) {
-      const defaultedValue = Object.fromEntries(
-        parsers
+      const defaultedValue = Object.fromEntries([
+        ...parsers
           .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
-          .filter(([, element]) => element !== undefined)
-      )
+          .filter(([, element]) => element !== undefined),
+        ...undefinedEntries
+      ])
       const itemInput = yield defaultedValue as Parsed
 
-      const linkedValue = Object.fromEntries(
-        parsers
+      const linkedValue = Object.fromEntries([
+        ...parsers
           .map(([keyParser, elementParser]) => [
             keyParser.next().value,
             elementParser.next(itemInput).value
           ])
-          .filter(([, element]) => element !== undefined)
-      )
+          .filter(([, element]) => element !== undefined),
+        ...undefinedEntries
+      ])
       yield linkedValue as Parsed
     } else {
       const defaultedValue = cloneDeep(inputValue)

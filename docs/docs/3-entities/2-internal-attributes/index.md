@@ -16,7 +16,7 @@ If the schema contains a conflicting attribute, the constructor throws a `reserv
 
 :::tip
 
-You can get familiar with the internal attributes by using the `FormattedItem` and `SavedItem` types, respectively from the [`Formatter`](../3-actions/19-format/index.md) and [`Parser`](../3-actions/16-parse/index.md) actions.
+You can get familiar with the internal attributes by using the `FormattedItem` and `SavedItem` types, respectively from the [`Formatter`](../3-actions/20-format/index.md) and [`Parser`](../3-actions/17-parse/index.md) actions.
 
 <details className="details-in-admonition">
 <summary>🔎 <b>Show code</b></summary>

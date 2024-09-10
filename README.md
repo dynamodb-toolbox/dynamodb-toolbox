@@ -87,7 +87,7 @@ await documentClient.send(
 
 It's a very simple example (updating two fields of a `Music` item), yet already complex 😰
 
-**Things only get messier as your data grows in complexity**: What if your items have many attributes, some nested or optional? What if you need to index an item based on its value or handle different types of items? What about polymorphism?
+**Things only get messier as your data grows in complexity**: What if your items have many attributes, with some of them deep or optional? What if you need to index an item based on its value or handle different types of items? What about polymorphism?
 
 In those cases, which are fairly common, **the required code to generate those requests gets very hard to maintain**. That's when DynamoDB-Toolbox comes to the rescue 💪
 

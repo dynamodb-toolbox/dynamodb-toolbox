@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # BatchGetCommand
 
-Groups one or several [`BatchGetRequest`](../../../3-entities/3-actions/6-batch-get/index.md) from the `Table` entities to execute a [BatchGetItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html) operation.
+Groups one or several [`BatchGetRequest`](../../../3-entities/3-actions/7-batch-get/index.md) from the `Table` entities to execute a [BatchGetItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html) operation.
 
 BatchGetItem operations can affect **multiple tables**, so `BatchGetCommands` do not have a `.send(...)` method. Instead, they should be performed via the dedicated `execute` function:
 
@@ -49,7 +49,7 @@ Note that batch operations are more efficient than running their equivalent comm
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-The [`BatchGetRequests`](../../../3-entities/3-actions/6-batch-get/index.md) to execute.
+The [`BatchGetRequests`](../../../3-entities/3-actions/7-batch-get/index.md) to execute.
 
 Note that the requests can be provided as **tuples** or **arrays** (the output is typed accordingly):
 
@@ -125,7 +125,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | Option       |    Type    | Default | Description                                                                                                                                                                                                                                                                                                                                 |
 | ------------ | :--------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `consistent` | `boolean`  | `false` | By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).<br/><br/>Set to `true` to use <b>strongly</b> consistent reads.                                                                                                                                                               |
-| `attributes` | `string[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>Requires [requests](#requests). Paths must be common to all requested entities.<br/><br/>See the [PathParser](../../../3-entities/3-actions/18-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
+| `attributes` | `string[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>Requires [requests](#requests). Paths must be common to all requested entities.<br/><br/>See the [PathParser](../../../3-entities/3-actions/19-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `tableName`  |  `string`  |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                                                                                                                                   |
 
 :::noteExamples

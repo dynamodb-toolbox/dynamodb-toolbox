@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 Entities represent a **category of items** in your `Table`.
 
-An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../3-actions/5-batching/index.md) or [transactions](../3-actions/9-transactions/index.md)):
+An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../3-actions/6-batching/index.md) or [transactions](../3-actions/10-transactions/index.md)):
 
 ```ts
 import { Entity } from 'dynamodb-toolbox/entity';

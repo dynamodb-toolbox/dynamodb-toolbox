@@ -94,7 +94,7 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
-  test('combines nested combinations', () => {
+  test('combines logical combinations', () => {
     expect(
       mySchema
         .build(ConditionParser)

@@ -30,8 +30,8 @@ describe('parseCondition - singleArgFn', () => {
 
   const mapSchema = schema({
     map: map({
-      nestedA: map({
-        nestedB: number()
+      deepA: map({
+        deepB: number()
       })
     })
   })
@@ -40,14 +40,14 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       mapSchema
         .build(ConditionParser)
-        .parse({ attr: 'map.nestedA.nestedB', exists: true })
+        .parse({ attr: 'map.deepA.deepB', exists: true })
         .toCommandOptions()
     ).toStrictEqual({
       ConditionExpression: 'attribute_exists(#c_1.#c_2.#c_3)',
       ExpressionAttributeNames: {
         '#c_1': 'map',
-        '#c_2': 'nestedA',
-        '#c_3': 'nestedB'
+        '#c_2': 'deepA',
+        '#c_3': 'deepB'
       },
       ExpressionAttributeValues: {}
     })
@@ -56,7 +56,7 @@ describe('parseCondition - singleArgFn', () => {
   const listSchema = schema({
     listA: list(
       map({
-        nested: map({
+        deep: map({
           listB: list(map({ value: number() }))
         })
       })
@@ -68,13 +68,13 @@ describe('parseCondition - singleArgFn', () => {
     expect(
       listSchema
         .build(ConditionParser)
-        .parse({ attr: 'listA[1].nested.listB[2].value', exists: true })
+        .parse({ attr: 'listA[1].deep.listB[2].value', exists: true })
         .toCommandOptions()
     ).toStrictEqual({
       ConditionExpression: 'attribute_exists(#c_1[1].#c_2.#c_3[2].#c_4)',
       ExpressionAttributeNames: {
         '#c_1': 'listA',
-        '#c_2': 'nested',
+        '#c_2': 'deep',
         '#c_3': 'listB',
         '#c_4': 'value'
       },
