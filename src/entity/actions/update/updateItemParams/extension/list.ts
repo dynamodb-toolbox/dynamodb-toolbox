@@ -100,7 +100,7 @@ export const parseListExtension = (
           isExtension: true,
           *extensionParser() {
             const parsers = appendedValue.map(element =>
-              // Should a simple list of valid elements (not extended)
+              // Should be a simple list of valid elements (not extended)
               new Parser(attribute.elements).start(element, { fill: false, transform })
             )
 

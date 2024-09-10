@@ -114,6 +114,15 @@ export type {
   UpdateItemOptions,
   UpdateItemResponse
 } from './entity/actions/update/index.js'
+export {
+  UpdateAttributesCommand,
+  parseUpdateAttributesExtension
+} from './entity/actions/updateAttributes/index.js'
+export type {
+  UpdateAttributesInput,
+  UpdateAttributesOptions,
+  UpdateAttributesResponse
+} from './entity/actions/updateAttributes/index.js'
 export { BatchGetRequest } from './entity/actions/batchGet/index.js'
 export { BatchDeleteRequest } from './entity/actions/batchDelete/index.js'
 export { BatchPutRequest } from './entity/actions/batchPut/index.js'

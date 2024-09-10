@@ -11,12 +11,14 @@ import {
   DynamoDBToolboxError,
   Entity,
   Table,
-  UpdateTransaction,
+  UpdateAttributesCommand,
   any,
+  anyOf,
   binary,
   boolean,
   list,
   map,
+  nul,
   number,
   prefix,
   record,
@@ -27,14 +29,8 @@ import {
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  }
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' }
 })
 
 const TestEntity = new Entity({
@@ -45,12 +41,12 @@ const TestEntity = new Entity({
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
     test_boolean: boolean().optional(),
-    test_boolean_coerce: boolean().optional(),
+    test_nullable_boolean: anyOf(boolean(), nul()).optional(),
     test_list: list(string()).optional(),
     test_list_nested: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
-    contents: map({ test: string() }).savedAs('_c'),
+    contents: map({ test: string(), optional: string().optional() }).savedAs('_c'),
     test_map: map({ optional: number().enum(1, 2).optional() }),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
@@ -160,17 +156,17 @@ const TestEntity5 = new Entity({
   table: TestTable
 })
 
-describe('update transaction', () => {
+describe('update', () => {
   test('creates default update', () => {
     const {
-      Update: {
-        TableName,
-        Key,
-        UpdateExpression,
-        ExpressionAttributeNames,
-        ExpressionAttributeValues
-      }
-    } = TestEntity.build(UpdateTransaction).item({ email: 'test-pk', sort: 'test-sk' }).params()
+      TableName,
+      Key,
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
+    } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'test-pk', sort: 'test-sk' })
+      .params()
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
@@ -205,15 +201,14 @@ describe('update transaction', () => {
   })
 
   test('allows overriding default field values', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string: 'test string'
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string: 'test string'
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_string' })
@@ -221,9 +216,9 @@ describe('update transaction', () => {
   })
 
   test('overrides default field values that use mapping', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity4.build(UpdateTransaction)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity4.build(
+      UpdateAttributesCommand
+    )
       .item({
         email: 'test-pk',
         test_number_default_with_map: 111
@@ -235,9 +230,9 @@ describe('update transaction', () => {
   })
 
   test('removes fields', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity2.build(UpdateTransaction)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity2.build(
+      UpdateAttributesCommand
+    )
       .item({
         email: 'test-pk',
         test: $remove(),
@@ -253,9 +248,7 @@ describe('update transaction', () => {
   })
 
   test('ignores removing an invalid attribute', () => {
-    const {
-      Update: { ExpressionAttributeNames = {} }
-    } = TestEntity.build(UpdateTransaction)
+    const { ExpressionAttributeNames = {} } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'x',
         sort: 'y',
@@ -269,7 +262,7 @@ describe('update transaction', () => {
 
   test('fails when trying to remove the partitionKey', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           // @ts-expect-error
           email: $remove(),
@@ -283,7 +276,7 @@ describe('update transaction', () => {
 
   test('fails when trying to remove the sortKey', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test',
           // @ts-expect-error
@@ -296,9 +289,7 @@ describe('update transaction', () => {
   })
 
   test('ignores fields with no value', () => {
-    const {
-      Update: { ExpressionAttributeValues = {} }
-    } = TestEntity.build(UpdateTransaction)
+    const { ExpressionAttributeValues = {} } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -311,13 +302,29 @@ describe('update transaction', () => {
     expect(attributeValues).not.toContain('test_string')
   })
 
+  test('accepts null on nullable fields', () => {
+    const {
+      UpdateExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues = {}
+    } = TestEntity.build(UpdateAttributesCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-pk',
+        test_nullable_boolean: null
+      })
+      .params()
+
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_nullable_boolean' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': null })
+  })
+
   test('accepts references', () => {
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionA,
-        ExpressionAttributeNames: ExpressionAttributeNamesA
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -332,12 +339,10 @@ describe('update transaction', () => {
     })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionB,
-        ExpressionAttributeNames: ExpressionAttributeNamesB,
-        ExpressionAttributeValues: ExpressionAttributeValuesB
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -353,11 +358,9 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': 'foo' })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionC,
-        ExpressionAttributeNames: ExpressionAttributeNamesC
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -373,12 +376,10 @@ describe('update transaction', () => {
     })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionD,
-        ExpressionAttributeNames: ExpressionAttributeNamesD,
-        ExpressionAttributeValues: ExpressionAttributeValuesD
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionD,
+      ExpressionAttributeNames: ExpressionAttributeNamesD,
+      ExpressionAttributeValues: ExpressionAttributeValuesD
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-pk',
@@ -397,7 +398,7 @@ describe('update transaction', () => {
 
   test('rejects invalid references', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
@@ -412,7 +413,7 @@ describe('update transaction', () => {
     )
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
@@ -425,7 +426,7 @@ describe('update transaction', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
@@ -438,7 +439,7 @@ describe('update transaction', () => {
     expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
@@ -453,7 +454,7 @@ describe('update transaction', () => {
     )
 
     const invalidCallE = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-pk',
@@ -468,12 +469,10 @@ describe('update transaction', () => {
 
   test('performs sum update', () => {
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionA,
-        ExpressionAttributeNames: ExpressionAttributeNamesA,
-        ExpressionAttributeValues: ExpressionAttributeValuesA
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -489,12 +488,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesA).toMatchObject({ ':s_2': 10, ':s_3': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionB,
-        ExpressionAttributeNames: ExpressionAttributeNamesB,
-        ExpressionAttributeValues: ExpressionAttributeValuesB
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -511,12 +508,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesB).toMatchObject({ ':s_2': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionC,
-        ExpressionAttributeNames: ExpressionAttributeNamesC,
-        ExpressionAttributeValues: ExpressionAttributeValuesC
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -533,12 +528,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesC).toMatchObject({ ':s_2': 10, ':s_3': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionD,
-        ExpressionAttributeNames: ExpressionAttributeNamesD,
-        ExpressionAttributeValues: ExpressionAttributeValuesD
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionD,
+      ExpressionAttributeNames: ExpressionAttributeNamesD,
+      ExpressionAttributeValues: ExpressionAttributeValuesD
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -559,7 +552,7 @@ describe('update transaction', () => {
 
   test('rejects invalid sum update', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -572,7 +565,7 @@ describe('update transaction', () => {
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -585,7 +578,7 @@ describe('update transaction', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -600,7 +593,7 @@ describe('update transaction', () => {
     )
 
     const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -615,12 +608,10 @@ describe('update transaction', () => {
 
   test('performs subtract update', () => {
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionA,
-        ExpressionAttributeNames: ExpressionAttributeNamesA,
-        ExpressionAttributeValues: ExpressionAttributeValuesA
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -636,12 +627,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesA).toMatchObject({ ':s_2': 10, ':s_3': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionB,
-        ExpressionAttributeNames: ExpressionAttributeNamesB,
-        ExpressionAttributeValues: ExpressionAttributeValuesB
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -658,12 +647,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesB).toMatchObject({ ':s_2': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionC,
-        ExpressionAttributeNames: ExpressionAttributeNamesC,
-        ExpressionAttributeValues: ExpressionAttributeValuesC
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -680,12 +667,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesC).toMatchObject({ ':s_3': 10 })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionD,
-        ExpressionAttributeNames: ExpressionAttributeNamesD,
-        ExpressionAttributeValues: ExpressionAttributeValuesD
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionD,
+      ExpressionAttributeNames: ExpressionAttributeNamesD,
+      ExpressionAttributeValues: ExpressionAttributeValuesD
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -706,7 +691,7 @@ describe('update transaction', () => {
 
   test('rejects invalid subtract update', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -719,7 +704,7 @@ describe('update transaction', () => {
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -732,7 +717,7 @@ describe('update transaction', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -747,7 +732,7 @@ describe('update transaction', () => {
     )
 
     const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -761,16 +746,15 @@ describe('update transaction', () => {
   })
 
   test('performs number and set add updates', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_number_default: $add(10),
-        test_number_set: $add(new Set([1, 2, 3]))
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_number_default: $add(10),
+          test_number_set: $add(new Set([1, 2, 3]))
+        })
+        .params()
 
     expect(UpdateExpression).toContain('ADD #a_1 :a_1, #a_2 :a_2')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -785,7 +769,7 @@ describe('update transaction', () => {
 
   test('rejects an invalid number add update', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -798,7 +782,7 @@ describe('update transaction', () => {
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -812,17 +796,16 @@ describe('update transaction', () => {
   })
 
   test('creates sets', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string_set: new Set(['1', '2', '3']),
-        test_number_set: new Set([1, 2, 3]),
-        test_binary_set: new Set([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])])
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string_set: new Set(['1', '2', '3']),
+          test_number_set: new Set([1, 2, 3]),
+          test_binary_set: new Set([new Uint8Array([1]), new Uint8Array([2]), new Uint8Array([3])])
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -838,16 +821,15 @@ describe('update transaction', () => {
   })
 
   test('performs a delete update on set', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_string_set: $delete(new Set(['1', '2', '3'])),
-        test_number_set: $delete(new Set([1, 2, 3]))
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_string_set: $delete(new Set(['1', '2', '3'])),
+          test_number_set: $delete(new Set([1, 2, 3]))
+        })
+        .params()
 
     expect(UpdateExpression).toContain('DELETE #d_1 :d_1, #d_2 :d_2')
     expect(ExpressionAttributeNames).toMatchObject({
@@ -862,7 +844,7 @@ describe('update transaction', () => {
 
   test('rejects an invalid delete update', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -876,29 +858,26 @@ describe('update transaction', () => {
   })
 
   test('overrides existing list', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: $set(['test1', 'test2'])
-      })
-      .params()
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_list: ['test1', 'test2']
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_list' })
     expect(ExpressionAttributeValues).toMatchObject({ ':s_1': ['test1', 'test2'] })
-  })
 
-  test('rejects references when setting whole list', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_list: $set([$get('test_string'), 'test2'])
+          test_list: $set(['test1', 'test2'])
         })
         .params()
 
@@ -906,205 +885,43 @@ describe('update transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('updates specific items in a list', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: { 2: 'Test2' },
-        test_list_nested: { 1: { value: 'foo' } }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1[2] = :s_1, #s_2[1].#s_3 = :s_2')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_list',
-      '#s_2': 'test_list_nested',
-      '#s_3': 'value'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':s_1': 'Test2',
-      ':s_2': 'foo'
-    })
-  })
-
-  test('accepts references when updating list element', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: { 2: $get('test_string') }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1[2] = #s_2')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_list',
-      '#s_2': 'test_string'
-    })
-  })
-
-  test('rejects invalid reference when updating list element', () => {
+  test('rejects updating specific items in a list', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_list: {
-            // @ts-expect-error invalid_ref is not a valid attribute
-            2: $get('invalid_ref')
-          }
-        })
-        .params()
-
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_list: {
-            // @ts-expect-error 42 is not assignable to string
-            2: $get('test_string', 42)
-          }
-        })
-        .params()
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_list: {
-            // @ts-expect-error fallback must be basic value or reference
-            2: $get('test_string', $add(42))
-          }
-        })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_list: {
-            // @ts-expect-error invalid_attribute_name is not an existing attribute name
-            2: $get('test_string', $get('invalid_attribute_name'))
-          }
-        })
-        .params()
-
-    expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallE = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_list: {
-            // @ts-expect-error 42 is not assignable to string
-            2: $get('test_string', $get('simple_string', 42))
-          }
-        })
-        .params()
-
-    expect(invalidCallE).toThrow(DynamoDBToolboxError)
-    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  test('rejects invalid key while updating list element', () => {
-    const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-sk',
-          test_list: {
+          test_list: [
             // @ts-expect-error
-            foo: 'Test2'
-          }
+            undefined,
+            'Test2'
+          ]
         })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_list: {
-            // TS unable to detect integers
-            1.5: 'Test2'
-          }
+          // @ts-expect-error
+          test_list_nested: { 1: { value: 'foo' } }
         })
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  test('removes items from a list', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: {
-          2: $remove()
-        }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('REMOVE #r_1[2]')
-    expect(ExpressionAttributeNames).toMatchObject({ '#r_1': 'test_list' })
-  })
-
-  test('updates elements within a list', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_list: [undefined, $remove(), 'test']
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1[2] = :s_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_list' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 'test' })
-
-    expect(UpdateExpression).toContain('REMOVE #r_1[1]')
-    expect(ExpressionAttributeNames).toMatchObject({ '#r_1': 'test_list' })
   })
 
   test('appends data to a list', () => {
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionA,
-        ExpressionAttributeNames: ExpressionAttributeNamesA,
-        ExpressionAttributeValues: ExpressionAttributeValuesA
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1117,12 +934,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': [], ':s_2': ['1', '2', '3'] })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionB,
-        ExpressionAttributeNames: ExpressionAttributeNamesB,
-        ExpressionAttributeValues: ExpressionAttributeValuesB
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1135,12 +950,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': [] })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionC,
-        ExpressionAttributeNames: ExpressionAttributeNamesC,
-        ExpressionAttributeValues: ExpressionAttributeValuesC
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1157,7 +970,7 @@ describe('update transaction', () => {
 
   test('rejects invalid appended values', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -1170,7 +983,7 @@ describe('update transaction', () => {
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -1187,12 +1000,10 @@ describe('update transaction', () => {
 
   test('prepends data to a list', () => {
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionA,
-        ExpressionAttributeNames: ExpressionAttributeNamesA,
-        ExpressionAttributeValues: ExpressionAttributeValuesA
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1205,12 +1016,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': ['a', 'b', 'c'], ':s_2': [] })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionB,
-        ExpressionAttributeNames: ExpressionAttributeNamesB,
-        ExpressionAttributeValues: ExpressionAttributeValuesB
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1223,12 +1032,10 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': [] })
 
     const {
-      Update: {
-        UpdateExpression: UpdateExpressionC,
-        ExpressionAttributeNames: ExpressionAttributeNamesC,
-        ExpressionAttributeValues: ExpressionAttributeValuesC
-      }
-    } = TestEntity.build(UpdateTransaction)
+      UpdateExpression: UpdateExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1245,7 +1052,7 @@ describe('update transaction', () => {
 
   test('rejects invalid prepended values', () => {
     const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -1258,7 +1065,7 @@ describe('update transaction', () => {
     expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
 
     const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
@@ -1273,401 +1080,110 @@ describe('update transaction', () => {
     )
   })
 
-  test('updates nested data in a map', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: { optional: 1 }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_map',
-      '#s_2': 'optional'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 1 })
-  })
-
-  test('removes nested data in a map', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: { optional: $remove() }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('REMOVE #r_1.#r_2')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#r_1': 'test_map',
-      '#r_2': 'optional'
-    })
-  })
-
-  test('ignores undefined values', () => {
-    const {
-      Update: { ExpressionAttributeNames = {} }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: { optional: undefined }
-      })
-      .params()
-
-    expect(Object.values(ExpressionAttributeNames)).not.toContain('test_map')
-  })
-
-  test('accepts references', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: { optional: $get('test_number_default') }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = #s_3')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_map',
-      '#s_2': 'optional',
-      '#s_3': 'test_number_default'
-    })
-  })
-
-  test('rejects invalid reference', () => {
-    const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+  test('overrides whole map', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_map: {
-            // @ts-expect-error invalid_attribute_name is not an existing attribute name
-            optional: $get('invalid_attribute_name')
-          }
+          test_map: { optional: 1 }
         })
         .params()
-
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_map: {
-            // @ts-expect-error 42 is not assignable to 1 | 2
-            optional: $get('test_number_default', 42)
-          }
-        })
-        .params()
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_map: {
-            // @ts-expect-error fallback must be basic value or reference
-            optional: $get('test_number_default', $add(42))
-          }
-        })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_map: {
-            // @ts-expect-error invalid_attribute_name is not an existing attribute name
-            optional: $get('test_number_default', $get('invalid_attribute_name'))
-          }
-        })
-        .params()
-
-    expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallE = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_map: {
-            // @ts-expect-error 42 is not assignable to 1 | 2
-            optional: $get('test_number_default', $get('test_number_default', 42))
-          }
-        })
-        .params()
-
-    expect(invalidCallE).toThrow(DynamoDBToolboxError)
-    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  test('override whole map if set is used', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_map: $set({ optional: 1 })
-      })
-      .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_map' })
     expect(ExpressionAttributeValues).toMatchObject({ ':s_1': { optional: 1 } })
   })
 
-  test('rejects references when setting whole map', () => {
+  test('rejects partial updates of maps', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_map: $set({
-            optional: $get('test_string')
-          })
+          contents: {
+            optional: 'opt'
+          }
         })
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  test('rejects invalid set map', () => {
-    const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_map: $set({
-            optional: $add(1)
-          })
-        })
-        .params()
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  test('updates nested data in a record', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: { foo: 1 }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_record',
-      '#s_2': 'foo'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 1 })
-  })
-
-  test('removes nested data in a record', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: { foo: $remove() }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('REMOVE #r_1.#r_2')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#r_1': 'test_record',
-      '#r_2': 'foo'
-    })
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
   })
 
   test('ignores undefined values', () => {
-    const {
-      Update: { ExpressionAttributeNames = {} }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: { foo: undefined }
-      })
-      .params()
-
-    expect(Object.values(ExpressionAttributeNames)).not.toContain('test_record')
-  })
-
-  test('accepts references', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: { foo: $get('test_number_default') }
-      })
-      .params()
-
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = #s_3')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'test_record',
-      '#s_2': 'foo',
-      '#s_3': 'test_number_default'
-    })
-  })
-
-  test('rejects invalid reference', () => {
-    const invalidCallA = () =>
-      TestEntity.build(UpdateTransaction)
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_record: {
-            // @ts-expect-error invalid_attribute_name is not an existing attribute name
-            foo: $get('invalid_attribute_name')
-          }
+          test_map: { optional: undefined }
         })
         .params()
 
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallB = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_record: {
-            // @ts-expect-error 'foo' is not assignable to number
-            foo: $get('test_number_default', 'foo')
-          }
-        })
-        .params()
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallC = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_record: {
-            // @ts-expect-error fallback must be basic value or reference
-            foo: $get('test_number_default', $add(42))
-          }
-        })
-        .params()
-
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-
-    const invalidCallD = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_record: {
-            // @ts-expect-error invalid_attribute_name is not an existing attribute name
-            foo: $get('test_number_default', $get('invalid_attribute_name'))
-          }
-        })
-        .params()
-
-    expect(invalidCallD).toThrow(DynamoDBToolboxError)
-    expect(invalidCallD).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
-    )
-
-    const invalidCallE = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-pk',
-          test_record: {
-            // @ts-expect-error 'foo" is not assignable to number
-            foo: $get('test_number_default', $get('test_number_default', 'foo'))
-          }
-        })
-        .params()
-
-    expect(invalidCallE).toThrow(DynamoDBToolboxError)
-    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_map' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': {} })
   })
 
-  test('override whole record if set is used', () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity.build(UpdateTransaction)
-      .item({
-        email: 'test-pk',
-        sort: 'test-sk',
-        test_record: $set({ foo: 1 })
-      })
-      .params()
+  test('rejects invalid map', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_map: {
+            // @ts-expect-error
+            optional: $add(1)
+          }
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('override whole record', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_record: { foo: 1 }
+        })
+        .params()
 
     expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_record' })
     expect(ExpressionAttributeValues).toMatchObject({ ':s_1': { foo: 1 } })
   })
 
-  test('rejects references when setting whole record', () => {
-    const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+  test('ignores undefined values', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          // @ts-expect-error
-          test_record: $set({
-            foo: $get('test_string')
-          })
+          test_record: { foo: undefined }
         })
         .params()
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_record' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': {} })
   })
 
   test('rejects invalid set record', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          // @ts-expect-error
-          test_record: $set({
+          test_record: {
+            // @ts-expect-error
             foo: $add(1)
-          })
+          }
         })
         .params()
 
@@ -1675,29 +1191,12 @@ describe('update transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('rejects set on non-map or non-record attributes', () => {
-    const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
-        .item({
-          email: 'test-pk',
-          sort: 'test-sk',
-          // @ts-expect-error
-          test_string: $set('test')
-        })
-        .params()
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
-  })
-
-  /**
-   * @debt TODO "Test anyOf attribute"
-   */
+  // /**
+  //  * @debt test "Test anyOf attribute"
+  //  */
 
   test('uses an alias', async () => {
-    const {
-      Update: { UpdateExpression, ExpressionAttributeNames }
-    } = TestEntity.build(UpdateTransaction)
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test@test.com',
         sort: 'test-sk',
@@ -1706,7 +1205,7 @@ describe('update transaction', () => {
       })
       .params()
 
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#s_1': '_c' })
 
     expect(UpdateExpression).toContain('ADD #a_1 :a_1')
@@ -1714,9 +1213,7 @@ describe('update transaction', () => {
   })
 
   test('ignores additional attribute', () => {
-    const {
-      Update: { ExpressionAttributeNames = {} }
-    } = TestEntity.build(UpdateTransaction)
+    const { ExpressionAttributeNames = {} } = TestEntity.build(UpdateAttributesCommand)
       .item({
         email: 'test-pk',
         sort: 'test-sk',
@@ -1730,7 +1227,7 @@ describe('update transaction', () => {
 
   test('fails when missing an "always" required field', () => {
     const invalidCall = () =>
-      TestEntity3.build(UpdateTransaction)
+      TestEntity3.build(UpdateAttributesCommand)
         .item(
           // @ts-expect-error
           { email: 'test-pk' }
@@ -1741,10 +1238,79 @@ describe('update transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
   })
 
+  test('sets capacity options', () => {
+    const { ReturnConsumedCapacity } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+  })
+
+  test('sets metrics options', () => {
+    const { ReturnItemCollectionMetrics } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ metrics: 'SIZE' })
+      .params()
+
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  test('sets returnValues options', () => {
+    const { ReturnValues } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValues: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValues).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid capacity option', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          capacity: 'test'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
+  })
+
+  test('fails on invalid metrics option', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          metrics: 'test'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
+  })
+
+  test('fails on invalid returnValues option', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValues: 'test'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOption' })
+    )
+  })
+
   test('overrides tableName', () => {
-    const {
-      Update: { TableName }
-    } = TestEntity.build(UpdateTransaction)
+    const { TableName } = TestEntity.build(UpdateAttributesCommand)
       .item({ email: 'x', sort: 'y' })
       .options({ tableName: 'tableName' })
       .params()
@@ -1754,7 +1320,7 @@ describe('update transaction', () => {
 
   test('fails on invalid tableName option', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({ email: 'x', sort: 'y' })
         .options({
           // @ts-expect-error
@@ -1768,7 +1334,7 @@ describe('update transaction', () => {
 
   test('fails on extra options', () => {
     const invalidCall = () =>
-      TestEntity.build(UpdateTransaction)
+      TestEntity.build(UpdateAttributesCommand)
         .item({ email: 'x', sort: 'y' })
         .options({
           // @ts-expect-error
@@ -1781,12 +1347,11 @@ describe('update transaction', () => {
   })
 
   test('sets conditions', () => {
-    const {
-      Update: { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression }
-    } = TestEntity.build(UpdateTransaction)
-      .item({ email: 'x', sort: 'y' })
-      .options({ condition: { attr: 'email', gt: 'test' } })
-      .params()
+    const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({ condition: { attr: 'email', gt: 'test' } })
+        .params()
 
     expect(ConditionExpression).toBe('#c_1 > :c_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'pk' })
@@ -1794,95 +1359,22 @@ describe('update transaction', () => {
   })
 
   test('missing item', () => {
-    const invalidCall = () => TestEntity.build(UpdateTransaction).params()
+    const invalidCall = () => TestEntity.build(UpdateAttributesCommand).params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  test('transformed key/attribute (partial - 1)', () => {
-    const {
-      Update: {
-        Key,
-        UpdateExpression,
-        ConditionExpression,
-        ExpressionAttributeNames,
-        ExpressionAttributeValues
-      }
-    } = TestEntity5.build(UpdateTransaction)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedSet: $add(new Set(['set'])),
-        transformedList: ['list'],
-        transformedMap: { str: 'map' },
-        transformedRecord: { recordKey: 'recordValue' }
-      })
-      .options({
-        condition: {
-          and: [
-            { attr: 'email', eq: 'test' },
-            { attr: 'transformedStr', eq: 'str' },
-            /**
-             * @debt feature "Can you apply Contains clauses to Set attributes?"
-             */
-            // { attr: 'transformedSet', contains: 'SET' }
-            { attr: 'transformedMap.str', eq: 'map' },
-            { attr: 'transformedRecord.key', eq: 'value' }
-          ]
-        }
-      })
-      .params()
-
-    expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
-    expect(UpdateExpression).toContain('SET #s_1[0] = :s_1, #s_2.#s_3 = :s_2, #s_4.#s_5 = :s_3')
-    expect(UpdateExpression).toContain('ADD #a_1 :a_1')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#s_1': 'transformedList',
-      '#s_2': 'transformedMap',
-      '#s_3': 'str',
-      '#s_4': 'transformedRecord',
-      '#s_5': 'RECORD_KEY#recordKey',
-      '#a_1': 'transformedSet'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':s_1': 'LIST#list',
-      ':s_2': 'MAP#map',
-      ':s_3': 'RECORD_VALUE#recordValue',
-      ':a_1': new Set(['SET#set'])
-    })
-
-    expect(ConditionExpression).toBe(
-      '(#c_1 = :c_1) AND (#c_2 = :c_2) AND (#c_3.#c_4 = :c_3) AND (#c_5.#c_6 = :c_4)'
-    )
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#c_1': 'pk',
-      '#c_2': 'transformedStr',
-      '#c_3': 'transformedMap',
-      '#c_4': 'str',
-      '#c_5': 'transformedRecord',
-      '#c_6': 'RECORD_KEY#key'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':a_1': new Set(['SET#set']),
-      ':c_1': 'EMAIL#test',
-      ':c_2': 'STR#str',
-      ':c_3': 'MAP#map',
-      ':c_4': 'RECORD_VALUE#value'
-    })
-  })
-
-  test('transformed key/attribute (partial - 2)', () => {
-    const {
-      Update: { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity5.build(UpdateTransaction)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedSet: $delete(new Set(['set'])),
-        transformedList: $append(['list'])
-      })
-      .params()
+  test('transformed key/attribute (partial)', () => {
+    const { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity5.build(UpdateAttributesCommand)
+        .item({
+          email: 'foo@bar.mail',
+          sort: 'y',
+          transformedSet: $delete(new Set(['set'])),
+          transformedList: $append(['list'])
+        })
+        .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
     expect(UpdateExpression).toContain('SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2)')
@@ -1898,19 +1390,18 @@ describe('update transaction', () => {
     })
   })
 
-  test('transformed key/attribute (complete)', () => {
-    const {
-      Update: { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues }
-    } = TestEntity5.build(UpdateTransaction)
-      .item({
-        email: 'foo@bar.mail',
-        sort: 'y',
-        transformedSet: new Set(['set']),
-        transformedList: $set(['list']),
-        transformedMap: $set({ str: 'map' }),
-        transformedRecord: $set({ recordKey: 'recordValue' })
-      })
-      .params()
+  test('transformed key/attribute', () => {
+    const { Key, UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity5.build(UpdateAttributesCommand)
+        .item({
+          email: 'foo@bar.mail',
+          sort: 'y',
+          transformedSet: new Set(['set']),
+          transformedList: ['list'],
+          transformedMap: { str: 'map' },
+          transformedRecord: { recordKey: 'recordValue' }
+        })
+        .params()
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
     expect(UpdateExpression).toContain('SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4')
@@ -1923,12 +1414,29 @@ describe('update transaction', () => {
     expect(ExpressionAttributeValues).toMatchObject({
       ':s_1': new Set(['SET#set']),
       ':s_2': ['LIST#list'],
-      ':s_3': {
-        str: 'MAP#map'
-      },
-      ':s_4': {
-        'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue'
-      }
+      ':s_3': { str: 'MAP#map' },
+      ':s_4': { 'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue' }
     })
+  })
+
+  test('any attribute', () => {
+    const TestEntity6 = new Entity({
+      name: 'TestEntity',
+      schema: schema({
+        pk: string().key(),
+        sk: string().key(),
+        any: any().optional()
+      }),
+      table: TestTable
+    })
+
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity6.build(UpdateAttributesCommand)
+        .item({ pk: 'pk', sk: 'sk', any: { key: $set({ foo: 'bar' }) } })
+        .params()
+
+    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'any', '#s_2': 'key' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': { foo: 'bar' } })
   })
 })

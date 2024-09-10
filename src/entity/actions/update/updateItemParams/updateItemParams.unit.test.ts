@@ -302,7 +302,7 @@ describe('update', () => {
     expect(attributeValues).not.toContain('test_string')
   })
 
-  test('accets null on nullable fields', () => {
+  test('accepts null on nullable fields', () => {
     const {
       UpdateExpression,
       ExpressionAttributeNames,
@@ -430,7 +430,7 @@ describe('update', () => {
         .item({
           email: 'test-pk',
           sort: 'test-pk',
-          // @ts-expect-error $get is only available in SET updates
+          // @ts-expect-error fallback must be basic value or reference
           test_number_default: $get('test_string', $add(42))
         })
         .params()
@@ -965,7 +965,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_list: {
-            // @ts-expect-error $get is only available in SET updates
+            // @ts-expect-error fallback must be basic value or reference
             2: $get('test_string', $add(42))
           }
         })
@@ -1338,7 +1338,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_map: {
-            // @ts-expect-error $get is only available in SET updates
+            // @ts-expect-error fallback must be basic value or reference
             optional: $get('test_number_default', $add(42))
           }
         })
@@ -1531,7 +1531,7 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-pk',
           test_record: {
-            // @ts-expect-error $get is only available in SET updates
+            // @ts-expect-error fallback must be basic value or reference
             foo: $get('test_number_default', $add(42))
           }
         })
