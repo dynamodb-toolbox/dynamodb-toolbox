@@ -67,14 +67,11 @@ const defaultNumberAttribute = new PrimitiveAttribute({
   }
 })
 
-class InvalidExpressionAttributePathError extends DynamoDBToolboxError<'actions.invalidExpressionAttributePath'> {
-  constructor(attributePath: string) {
-    super('actions.invalidExpressionAttributePath', {
-      message: `Unable to match expression attribute path with schema: ${attributePath}`,
-      payload: { attributePath }
-    })
-  }
-}
+const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
+  new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
+    message: `Unable to match expression attribute path with schema: ${attributePath}`,
+    payload: { attributePath }
+  })
 
 const isListAccessor = (accessor: string): accessor is `[${number}]` => /\[\d+\]/g.test(accessor)
 
@@ -88,7 +85,7 @@ export const appendAttributePath = (
   const expressionAttributePrefix = parser.expressionAttributePrefix
   let parentAttribute: Schema | Attribute = parser.schema
   let expressionPath = ''
-  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|[\w-]+(?=(\.|$|\[))/g)]
+  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|[\w#-]+(?=(\.|$|\[))/g)]
 
   while (attributeMatches.length > 0) {
     const attributeMatch = attributeMatches.shift() as RegExpMatchArray
@@ -120,7 +117,7 @@ export const appendAttributePath = (
       case 'number':
       case 'string':
       case 'set':
-        throw new InvalidExpressionAttributePathError(attributePath)
+        throw getInvalidExpressionAttributePathError(attributePath)
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
@@ -141,7 +138,7 @@ export const appendAttributePath = (
       case 'map': {
         const childAttribute = parentAttribute.attributes[childAttributeAccessor]
         if (!childAttribute) {
-          throw new InvalidExpressionAttributePathError(attributePath)
+          throw getInvalidExpressionAttributePathError(attributePath)
         }
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
@@ -157,7 +154,7 @@ export const appendAttributePath = (
       }
       case 'list': {
         if (!isListAccessor(childAttributeAccessor)) {
-          throw new InvalidExpressionAttributePathError(attributePath)
+          throw getInvalidExpressionAttributePathError(attributePath)
         }
 
         expressionPath += childAttributeAccessor
@@ -181,7 +178,7 @@ export const appendAttributePath = (
         }
 
         if (validElementExpressionParser === undefined) {
-          throw new InvalidExpressionAttributePathError(attributePath)
+          throw getInvalidExpressionAttributePathError(attributePath)
         }
 
         parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
@@ -195,7 +192,7 @@ export const appendAttributePath = (
   }
 
   if (parentAttribute.type === 'schema') {
-    throw new InvalidExpressionAttributePathError(attributePath)
+    throw getInvalidExpressionAttributePathError(attributePath)
   }
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
