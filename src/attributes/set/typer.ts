@@ -19,7 +19,7 @@ type SetAttributeTyper = <
 
 /**
  * Define a new set attribute
- * Not that set elements have constraints. They must be:
+ * Note that set elements have constraints. They must be:
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not renamed (savedAs: undefined)

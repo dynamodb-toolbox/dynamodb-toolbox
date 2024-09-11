@@ -22,7 +22,7 @@ type RecordAttributeTyper = <
 
 /**
  * Define a new record attribute
- * Not that record keys and elements have constraints. They must be:
+ * Note that record keys and elements have constraints. They must be:
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not key (key: false)
