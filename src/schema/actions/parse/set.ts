@@ -2,6 +2,7 @@ import type { ExtendedValue, SetAttribute, SetAttributeElements } from '~/attrib
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
@@ -53,7 +54,7 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     for (const element of inputValue.values()) {
-      parsers.push(attrParser(attribute.elements, element, options))
+      parsers.push(attrParser(attribute.elements, element, { ...options, defined: false }))
     }
   }
 
@@ -87,7 +88,9 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   }
 
   const parsedValue = new Set(parsers.map(parser => parser.next().value))
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue as Parsed
@@ -103,8 +106,11 @@ export type SetAttrParserInput<
   ATTRIBUTE extends SetAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = SetAttribute extends ATTRIBUTE
-  ? Set<AttrParserInput<SetAttribute['elements']>>
+  ?
+      | undefined
+      | Set<AttrParserInput<SetAttribute['elements']>>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | Set<AttrParserInput<ATTRIBUTE['elements'], OPTIONS>>
+      | Set<AttrParserInput<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>>
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>

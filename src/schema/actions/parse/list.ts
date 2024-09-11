@@ -2,6 +2,7 @@ import type { Attribute, ExtendedValue, ListAttribute } from '~/attributes/index
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
@@ -56,7 +57,7 @@ export function* listAttrParser<
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
     for (const element of inputValue) {
-      parsers.push(attrParser(attribute.elements, element, options))
+      parsers.push(attrParser(attribute.elements, element, { ...options, defined: false }))
     }
   }
 
@@ -90,7 +91,9 @@ export function* listAttrParser<
   }
 
   const parsedValue = parsers.map(parser => parser.next().value)
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue as Parsed
@@ -106,8 +109,8 @@ export type ListAttrParserInput<
   ATTRIBUTE extends ListAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ListAttribute extends ATTRIBUTE
-  ? unknown[]
+  ? undefined | unknown[] | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrParserInput<ATTRIBUTE['elements'], OPTIONS>[]
+      | AttrParserInput<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>

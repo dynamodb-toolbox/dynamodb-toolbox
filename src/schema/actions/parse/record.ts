@@ -8,6 +8,7 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -34,11 +35,8 @@ export type RecordAttrParsedValue<
 > = RecordAttribute extends ATTRIBUTE
   ? { [KEY: string]: unknown }
   : // We cannot use Record type as it messes up map resolution down the line
-
     | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | {
-          [KEY in KEYS]?: AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>
-        }
+      | { [KEY in KEYS]?: AttrParsedValue<ATTRIBUTE['elements'], OPTIONS> }
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
 
 export function* recordAttributeParser<
@@ -81,7 +79,7 @@ export function* recordAttributeParser<
 
       parsers.push([
         attrParser(attribute.keys, key, options),
-        attrParser(attribute.elements, element, options)
+        attrParser(attribute.elements, element, { ...options, defined: false })
       ])
     }
   }
@@ -133,7 +131,9 @@ export function* recordAttributeParser<
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue as Parsed
@@ -153,13 +153,16 @@ export type RecordAttrParserInput<
   ATTRIBUTE extends RecordAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = RecordAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
+  ?
+      | undefined
+      | { [KEY: string]: unknown }
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | {
           [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
             ATTRIBUTE['elements'],
-            OPTIONS
+            Overwrite<OPTIONS, { defined: false }>
           >
         }
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>

@@ -440,7 +440,7 @@ export class $ListAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
     >
@@ -476,7 +476,10 @@ export class $ListAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>, { fill: false }>,
+      ParserInput<
+        FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
+        { fill: false; defined: true }
+      >,
       FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
     >
   ): $ListAttribute<
@@ -550,9 +553,12 @@ export class $ListAttribute<
         STATE['key'],
         ParserInput<
           FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
-        ParserInput<FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>, { fill: false }>
+        ParserInput<
+          FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>,
+          { fill: false; defined: true }
+        >
       >,
       FreezeListAttribute<$ListAttribute<STATE, $ELEMENTS>>
     >

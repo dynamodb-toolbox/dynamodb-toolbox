@@ -560,7 +560,7 @@ describe('set', () => {
     prevOptSet.validate((...args) => {
       const assertArgs: A.Equals<
         typeof args,
-        [Set<string> | undefined, FreezeSetAttribute<typeof prevOptSet>]
+        [Set<string>, FreezeSetAttribute<typeof prevOptSet>]
       > = 1
       assertArgs
 

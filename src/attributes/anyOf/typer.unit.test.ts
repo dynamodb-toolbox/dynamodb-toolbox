@@ -371,7 +371,7 @@ describe('anyOf', () => {
     prevOptAnyOf.validate((...args) => {
       const assertArgs: A.Equals<
         typeof args,
-        [string | number | undefined, FreezeAnyOfAttribute<typeof prevOptAnyOf>]
+        [string | number, FreezeAnyOfAttribute<typeof prevOptAnyOf>]
       > = 1
       assertArgs
 

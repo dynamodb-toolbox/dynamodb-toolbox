@@ -2,6 +2,7 @@ import type { AnyAttribute, Attribute, Never } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -60,7 +61,7 @@ export function* schemaParser<
     Object.entries(schema.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], options)
+        parsers[attrName] = attrParser(attr, inputValue[attrName], { ...options, defined: false })
 
         additionalAttributeNames.delete(attrName)
       })
@@ -135,14 +136,14 @@ export type SchemaParserInput<
   SCHEMA extends Schema,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = Schema extends SCHEMA
-  ? { [KEY: string]: AttrParserInput<Attribute, OPTIONS> }
+  ? { [KEY: string]: AttrParserInput<Attribute, Overwrite<OPTIONS, { defined: false }>> }
   : OptionalizeUndefinableProperties<
       {
         [KEY in OPTIONS extends { mode: 'key' }
           ? SelectKeys<SCHEMA['attributes'], { key: true }>
           : keyof SCHEMA['attributes'] & string]: AttrParserInput<
           SCHEMA['attributes'][KEY],
-          OPTIONS
+          Overwrite<OPTIONS, { defined: false }>
         >
       },
       // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)

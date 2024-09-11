@@ -497,7 +497,7 @@ export class $RecordAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
@@ -537,7 +537,7 @@ export class $RecordAttribute<
     nextPutValidator: Validator<
       ParserInput<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-        { fill: false }
+        { fill: false; defined: true }
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
@@ -619,11 +619,11 @@ export class $RecordAttribute<
         STATE['key'],
         ParserInput<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
         ParserInput<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-          { fill: false }
+          { fill: false; defined: true }
         >
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>

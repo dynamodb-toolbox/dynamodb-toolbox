@@ -419,7 +419,7 @@ describe('map', () => {
     prevOptMap.validate((...args) => {
       const assertArgs: A.Equals<
         typeof args,
-        [{ str: string; num: number } | undefined, FreezeMapAttribute<typeof prevOptMap>]
+        [{ str: string; num: number }, FreezeMapAttribute<typeof prevOptMap>]
       > = 1
       assertArgs
 

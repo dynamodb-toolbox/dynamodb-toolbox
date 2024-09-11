@@ -443,7 +443,7 @@ export class $AnyOfAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
@@ -479,7 +479,10 @@ export class $AnyOfAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { fill: false }>,
+      ParserInput<
+        FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
+        { fill: false; defined: true }
+      >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
   ): $AnyOfAttribute<
@@ -553,9 +556,12 @@ export class $AnyOfAttribute<
         STATE['key'],
         ParserInput<
           FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
-        ParserInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { fill: false }>
+        ParserInput<
+          FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
+          { fill: false; defined: true }
+        >
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >

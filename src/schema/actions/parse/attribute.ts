@@ -84,6 +84,7 @@ export function* attrParser<
     mode = 'put',
     fill = true,
     transform = true,
+    defined = false,
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
@@ -135,7 +136,7 @@ export function* attrParser<
     const { path } = attribute
 
     // We don't need to fill
-    if (isRequired(attribute, mode)) {
+    if (isRequired(attribute, mode) || defined) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute ${path !== undefined ? `'${path}' ` : ''}is required.`,
         path
@@ -179,25 +180,27 @@ export function* attrParser<
 export type MustBeProvided<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = OPTIONS extends { mode: 'update' | 'key' }
-  ? OPTIONS extends { fill: false }
-    ? Extends<ATTRIBUTE, { required: Always }>
-    : Extends<
-        ATTRIBUTE,
-        { required: Always } & (
-          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-          | { key: false; defaults: { update: undefined }; links: { update: undefined } }
-        )
-      >
-  : OPTIONS extends { fill: false }
-    ? Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
-    : Extends<
-        ATTRIBUTE,
-        { required: AtLeastOnce | Always } & (
-          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-          | { key: false; defaults: { put: undefined }; links: { put: undefined } }
-        )
-      >
+> = OPTIONS extends { defined: true }
+  ? true
+  : OPTIONS extends { mode: 'update' | 'key' }
+    ? OPTIONS extends { fill: false }
+      ? Extends<ATTRIBUTE, { required: Always }>
+      : Extends<
+          ATTRIBUTE,
+          { required: Always } & (
+            | { key: true; defaults: { key: undefined }; links: { key: undefined } }
+            | { key: false; defaults: { update: undefined }; links: { update: undefined } }
+          )
+        >
+    : OPTIONS extends { fill: false }
+      ? Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
+      : Extends<
+          ATTRIBUTE,
+          { required: AtLeastOnce | Always } & (
+            | { key: true; defaults: { key: undefined }; links: { key: undefined } }
+            | { key: false; defaults: { put: undefined }; links: { put: undefined } }
+          )
+        >
 
 export type AttrParserInput<
   ATTRIBUTE extends Attribute,

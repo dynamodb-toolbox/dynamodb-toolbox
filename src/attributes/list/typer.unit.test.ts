@@ -536,10 +536,8 @@ describe('list', () => {
 
     const prevOptList = list(string()).optional()
     prevOptList.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [string[] | undefined, FreezeListAttribute<typeof prevOptList>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [string[], FreezeListAttribute<typeof prevOptList>]> =
+        1
       assertArgs
 
       return true

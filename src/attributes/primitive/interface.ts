@@ -553,7 +553,7 @@ export class $PrimitiveAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
@@ -589,7 +589,10 @@ export class $PrimitiveAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>,
+      ParserInput<
+        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        { fill: false; defined: true }
+      >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
   ): $PrimitiveAttribute<
@@ -666,11 +669,11 @@ export class $PrimitiveAttribute<
         STATE['key'],
         ParserInput<
           FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
         ParserInput<
           FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { fill: false }
+          { fill: false; defined: true }
         >
       >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>

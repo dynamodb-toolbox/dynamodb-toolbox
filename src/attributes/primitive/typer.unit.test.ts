@@ -611,7 +611,7 @@ describe('primitiveAttribute', () => {
       prevOptString.validate((...args) => {
         const assertArgs: A.Equals<
           typeof args,
-          [string | undefined, FreezePrimitiveAttribute<typeof prevOptString>]
+          [string, FreezePrimitiveAttribute<typeof prevOptString>]
         > = 1
         assertArgs
 

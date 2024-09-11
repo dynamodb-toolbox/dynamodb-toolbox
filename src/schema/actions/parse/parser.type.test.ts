@@ -116,3 +116,9 @@ const optionalStr = string().optional().freeze()
 
 const assertOptionalStr: A.Equals<ParserInput<typeof optionalStr>, string | undefined> = 1
 assertOptionalStr
+
+const assertOptionalStrDefined: A.Equals<
+  ParserInput<typeof optionalStr, { defined: true }>,
+  string
+> = 1
+assertOptionalStrDefined

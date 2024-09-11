@@ -116,7 +116,9 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
       }
     })
   }
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue
@@ -132,7 +134,7 @@ export type AnyOfAttrParserInput<
   ATTRIBUTE extends AnyOfAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = AnyOfAttribute extends ATTRIBUTE
-  ? unknown
+  ? undefined | unknown | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrParserInput<ATTRIBUTE['elements'][number], OPTIONS>

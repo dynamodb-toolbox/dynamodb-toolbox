@@ -439,7 +439,7 @@ export class $MapAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
     >
@@ -475,7 +475,10 @@ export class $MapAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { fill: false }>,
+      ParserInput<
+        FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
+        { fill: false; defined: true }
+      >,
       FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
     >
   ): $MapAttribute<
@@ -549,9 +552,12 @@ export class $MapAttribute<
         STATE['key'],
         ParserInput<
           FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
-        ParserInput<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { fill: false }>
+        ParserInput<
+          FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
+          { fill: false; defined: true }
+        >
       >,
       FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
     >

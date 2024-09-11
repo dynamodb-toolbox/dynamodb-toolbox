@@ -124,7 +124,10 @@ export type PrimitiveAttrParserInput<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = PrimitiveAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute
+  ?
+      | undefined
+      | ResolvedPrimitiveAttribute
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | ResolvePrimitiveAttribute<ATTRIBUTE>

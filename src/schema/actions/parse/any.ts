@@ -47,7 +47,9 @@ export function* anyAttrParser<
   }
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue
@@ -63,7 +65,7 @@ export type AnyAttrParserInput<
   ATTRIBUTE extends AnyAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = AnyAttribute extends ATTRIBUTE
-  ? unknown
+  ? undefined | unknown | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | ATTRIBUTE['castAs']
