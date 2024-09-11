@@ -13,7 +13,12 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -151,3 +156,24 @@ export function* mapAttributeParser<
   )
   return transformedValue
 }
+
+export type MapAttrParserInput<
+  ATTRIBUTE extends MapAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = MapAttribute extends ATTRIBUTE
+  ? { [KEY: string]: unknown }
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | OptionalizeUndefinableProperties<
+          {
+            [KEY in OPTIONS extends { mode: 'key' }
+              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+              : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
+              ATTRIBUTE['attributes'][KEY],
+              OPTIONS
+            >
+          },
+          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+        >
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>

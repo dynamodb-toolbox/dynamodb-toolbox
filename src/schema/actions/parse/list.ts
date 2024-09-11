@@ -6,7 +6,12 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -20,7 +25,7 @@ export type ListAttrParsedValue<
   ATTRIBUTE extends ListAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ListAttribute extends ATTRIBUTE
-  ? unknown
+  ? unknown[]
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrParsedValue<ATTRIBUTE['elements']>[]
@@ -96,3 +101,13 @@ export function* listAttrParser<
   const transformedValue = parsers.map(parser => parser.next().value)
   return transformedValue as Parsed
 }
+
+export type ListAttrParserInput<
+  ATTRIBUTE extends ListAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = ListAttribute extends ATTRIBUTE
+  ? unknown[]
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrParserInput<ATTRIBUTE['elements'], OPTIONS>[]
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>

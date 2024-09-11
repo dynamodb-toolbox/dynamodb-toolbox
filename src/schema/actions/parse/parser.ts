@@ -5,9 +5,9 @@ import type { Schema } from '~/schema/index.js'
 import type { Merge } from '~/types/merge.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue } from './attribute.js'
+import type { AttrParsedValue, AttrParserInput } from './attribute.js'
 import { schemaParser } from './schema.js'
-import type { SchemaParsedValue } from './schema.js'
+import type { SchemaParsedValue, SchemaParserInput } from './schema.js'
 import type {
   FromParsingOptions,
   ParsedValueDefaultOptions,
@@ -15,7 +15,6 @@ import type {
   ParsingDefaultOptions,
   ParsingOptions
 } from './types/options.js'
-import type { ParserInput } from './types/parserInput.js'
 
 export type ParsedValue<
   SCHEMA extends Schema | Attribute,
@@ -24,6 +23,15 @@ export type ParsedValue<
   ? SchemaParsedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
     ? AttrParsedValue<SCHEMA, OPTIONS>
+    : never
+
+export type ParserInput<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = SCHEMA extends Schema
+  ? SchemaParserInput<SCHEMA, OPTIONS>
+  : SCHEMA extends Attribute
+    ? AttrParserInput<SCHEMA, OPTIONS>
     : never
 
 export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHEMA> {

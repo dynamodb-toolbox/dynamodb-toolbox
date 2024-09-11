@@ -222,7 +222,7 @@ export class $PrimitiveAttribute<
       this[$type],
       overwrite(this[$state], {
         defaults: {
-          key: nextKeyDefault,
+          key: nextKeyDefault as unknown,
           put: this[$state].defaults.put,
           update: this[$state].defaults.update
         }
@@ -257,7 +257,7 @@ export class $PrimitiveAttribute<
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
-          put: nextPutDefault,
+          put: nextPutDefault as unknown,
           update: this[$state].defaults.update
         }
       })
@@ -295,7 +295,7 @@ export class $PrimitiveAttribute<
         defaults: {
           key: this[$state].defaults.key,
           put: this[$state].defaults.put,
-          update: nextUpdateDefault
+          update: nextUpdateDefault as unknown
         }
       })
     )
@@ -373,7 +373,7 @@ export class $PrimitiveAttribute<
       this[$type],
       overwrite(this[$state], {
         links: {
-          key: nextKeyLink,
+          key: nextKeyLink as unknown,
           put: this[$state].links.put,
           update: this[$state].links.update
         }
@@ -411,7 +411,7 @@ export class $PrimitiveAttribute<
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
-          put: nextPutLink,
+          put: nextPutLink as unknown,
           update: this[$state].links.update
         }
       })
@@ -449,7 +449,7 @@ export class $PrimitiveAttribute<
         links: {
           key: this[$state].links.key,
           put: this[$state].links.put,
-          update: nextUpdateLink
+          update: nextUpdateLink as unknown
         }
       })
     )
@@ -501,8 +501,16 @@ export class $PrimitiveAttribute<
       overwrite(this[$state], {
         links: ifThenElse(
           this[$state].key,
-          { key: nextLink, put: this[$state].links.put, update: this[$state].links.update },
-          { key: this[$state].links.key, put: nextLink, update: this[$state].links.update }
+          {
+            key: nextLink as unknown,
+            put: this[$state].links.put,
+            update: this[$state].links.update
+          },
+          {
+            key: this[$state].links.key as unknown,
+            put: nextLink,
+            update: this[$state].links.update
+          }
         )
       })
     )
@@ -521,14 +529,29 @@ export class $PrimitiveAttribute<
       >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
-  ): $PrimitiveAttribute<TYPE, STATE> {
-    return new $PrimitiveAttribute(this[$type], {
-      ...this[$state],
-      validators: {
-        ...this[$state].validators,
-        key: nextKeyValidator
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
       }
-    })
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      })
+    )
   }
 
   /**
@@ -541,14 +564,29 @@ export class $PrimitiveAttribute<
       ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
-  ): $PrimitiveAttribute<TYPE, STATE> {
-    return new $PrimitiveAttribute(this[$type], {
-      ...this[$state],
-      validators: {
-        ...this[$state].validators,
-        put: nextPutValidator
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
       }
-    })
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      })
+    )
   }
 
   /**
@@ -564,14 +602,29 @@ export class $PrimitiveAttribute<
       >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
-  ): $PrimitiveAttribute<TYPE, STATE> {
-    return new $PrimitiveAttribute(this[$type], {
-      ...this[$state],
-      validators: {
-        ...this[$state].validators,
-        update: nextUpdateValidator
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
       }
-    })
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      })
+    )
   }
 
   /**
@@ -594,8 +647,48 @@ export class $PrimitiveAttribute<
       >,
       FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
     >
-  ): $PrimitiveAttribute<TYPE, STATE> {
-    return this[$state].key ? this.keyValidate(nextValidator) : this.putValidate(nextValidator)
+  ): $PrimitiveAttribute<
+    TYPE,
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >
+  > {
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          /**
+           * @debt type "remove this cast"
+           */
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      })
+    )
   }
 
   freeze(path?: string): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> {

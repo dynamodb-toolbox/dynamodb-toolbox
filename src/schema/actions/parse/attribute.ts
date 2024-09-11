@@ -12,24 +12,25 @@ import type {
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
+import type { Extends } from '~/types/extends.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
 import { anyAttrParser } from './any.js'
-import type { AnyAttrParsedValue } from './any.js'
+import type { AnyAttrParsedValue, AnyAttrParserInput } from './any.js'
 import { anyOfAttributeParser } from './anyOf.js'
-import type { AnyOfAttrParsedValue } from './anyOf.js'
+import type { AnyOfAttrParsedValue, AnyOfAttrParserInput } from './anyOf.js'
 import { listAttrParser } from './list.js'
-import type { ListAttrParsedValue } from './list.js'
+import type { ListAttrParsedValue, ListAttrParserInput } from './list.js'
 import { mapAttributeParser } from './map.js'
-import type { MapAttrParsedValue } from './map.js'
+import type { MapAttrParsedValue, MapAttrParserInput } from './map.js'
 import type { ParsedValue } from './parser.js'
 import { primitiveAttrParser } from './primitive.js'
-import type { PrimitiveAttrParsedValue } from './primitive.js'
+import type { PrimitiveAttrParsedValue, PrimitiveAttrParserInput } from './primitive.js'
 import { recordAttributeParser } from './record.js'
-import type { RecordAttrParsedValue } from './record.js'
+import type { RecordAttrParsedValue, RecordAttrParserInput } from './record.js'
 import { setAttrParser } from './set.js'
-import type { SetAttrParsedValue } from './set.js'
+import type { SetAttrParsedValue, SetAttrParserInput } from './set.js'
 import type {
   FromParsingOptions,
   ParsedValueDefaultOptions,
@@ -43,12 +44,8 @@ export type MustBeDefined<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions
 > = OPTIONS extends { mode: 'update' | 'key' }
-  ? ATTRIBUTE extends { required: Always }
-    ? true
-    : false
-  : ATTRIBUTE extends { required: AtLeastOnce | Always }
-    ? true
-    : false
+  ? Extends<ATTRIBUTE, { required: Always }>
+  : Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
 
 export type AttrParsedValue<
   ATTRIBUTE extends Attribute,
@@ -178,3 +175,45 @@ export function* attrParser<
       return yield* anyOfAttributeParser(attribute, basicInput, nextOpts) as any
   }
 }
+
+export type MustBeProvided<
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = OPTIONS extends { mode: 'update' | 'key' }
+  ? OPTIONS extends { fill: false }
+    ? Extends<ATTRIBUTE, { required: Always }>
+    : Extends<
+        ATTRIBUTE,
+        { required: Always } & (
+          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
+          | { key: false; defaults: { update: undefined }; links: { update: undefined } }
+        )
+      >
+  : OPTIONS extends { fill: false }
+    ? Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
+    : Extends<
+        ATTRIBUTE,
+        { required: AtLeastOnce | Always } & (
+          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
+          | { key: false; defaults: { put: undefined }; links: { put: undefined } }
+        )
+      >
+
+export type AttrParserInput<
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = ATTRIBUTE extends AnyAttribute
+  ? AnyAttrParserInput<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends PrimitiveAttribute
+    ? PrimitiveAttrParserInput<ATTRIBUTE, OPTIONS>
+    : ATTRIBUTE extends SetAttribute
+      ? SetAttrParserInput<ATTRIBUTE, OPTIONS>
+      : ATTRIBUTE extends ListAttribute
+        ? ListAttrParserInput<ATTRIBUTE, OPTIONS>
+        : ATTRIBUTE extends MapAttribute
+          ? MapAttrParserInput<ATTRIBUTE, OPTIONS>
+          : ATTRIBUTE extends RecordAttribute
+            ? RecordAttrParserInput<ATTRIBUTE, OPTIONS>
+            : ATTRIBUTE extends AnyOfAttribute
+              ? AnyOfAttrParserInput<ATTRIBUTE, OPTIONS>
+              : never

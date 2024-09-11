@@ -1,4 +1,4 @@
-import type { $SetAttribute } from '~/attributes/set/index.js'
+import type { $SetAttributeNestedState } from '~/attributes/set/index.js'
 import { set } from '~/attributes/set/index.js'
 import type { $SetAttributeElements } from '~/attributes/set/types.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
@@ -15,7 +15,7 @@ export const fromJSONSetAttr = ({
   links,
   elements,
   ...props
-}: JSONizedSetAttr): $SetAttribute => {
+}: JSONizedSetAttr): $SetAttributeNestedState => {
   defaults
   links
 

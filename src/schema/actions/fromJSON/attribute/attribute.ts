@@ -1,4 +1,4 @@
-import type { $Attribute } from '~/attributes/index.js'
+import type { $AttributeNestedState } from '~/attributes/index.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
 
 import { fromJSONAnyAttr } from './any.js'
@@ -9,7 +9,7 @@ import { fromJSONPrimitiveAttr } from './primitive.js'
 import { fromJSONRecordAttr } from './record.js'
 import { fromJSONSetAttr } from './set.js'
 
-export const fromJSONAttr = (jsonizedAttr: JSONizedAttr): $Attribute => {
+export const fromJSONAttr = (jsonizedAttr: JSONizedAttr): $AttributeNestedState => {
   switch (jsonizedAttr.type) {
     case 'any':
       return fromJSONAnyAttr(jsonizedAttr)

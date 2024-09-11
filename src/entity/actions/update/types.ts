@@ -167,6 +167,9 @@ export type Reference<
   ]
 >
 
+/**
+ * @debt refactor "use AttrParserInput instead"
+ */
 type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :

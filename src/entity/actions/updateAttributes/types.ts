@@ -133,6 +133,9 @@ export type UpdateAttributesInput<
         ? UpdateAttributesInput<SCHEMA['schema'], REQUIRE_DEFAULTS>
         : never
 
+/**
+ * @debt refactor "use AttrParserInput instead"
+ */
 type UpdateAttributeCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
   ? AttributeValue | undefined
   :

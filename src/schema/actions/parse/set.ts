@@ -6,7 +6,12 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -93,3 +98,13 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   const transformedValue = new Set(parsers.map(parser => parser.next().value))
   return transformedValue as Parsed
 }
+
+export type SetAttrParserInput<
+  ATTRIBUTE extends SetAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = SetAttribute extends ATTRIBUTE
+  ? Set<AttrParserInput<SetAttribute['elements']>>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | Set<AttrParserInput<ATTRIBUTE['elements'], OPTIONS>>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>

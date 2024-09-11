@@ -490,17 +490,35 @@ describe('list', () => {
     const listB = list(string()).putValidate(pass)
     const listC = list(string()).updateValidate(pass)
 
+    const assertListA: A.Contains<
+      (typeof listA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertListA
+
     expect(listA[$state].validators).toStrictEqual({
       key: pass,
       put: undefined,
       update: undefined
     })
 
+    const assertListB: A.Contains<
+      (typeof listB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertListB
+
     expect(listB[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
       update: undefined
     })
+
+    const assertListC: A.Contains<
+      (typeof listC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertListC
 
     expect(listC[$state].validators).toStrictEqual({
       key: undefined,
@@ -532,6 +550,12 @@ describe('list', () => {
     const pass = () => true
     const _list = list(string()).validate(pass)
 
+    const assertList: A.Contains<
+      (typeof _list)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertList
+
     expect(_list[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
@@ -539,9 +563,15 @@ describe('list', () => {
     })
   })
 
-  test('returns list with KEY validator if it is key (link shorthand)', () => {
+  test('returns list with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _list = list(string()).key().validate(pass)
+
+    const assertList: A.Contains<
+      (typeof _list)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertList
 
     expect(_list[$state].validators).toStrictEqual({
       key: pass,

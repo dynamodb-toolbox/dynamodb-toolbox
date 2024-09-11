@@ -401,17 +401,35 @@ describe('anyAttribute', () => {
     const anyB = any().putValidate(pass)
     const anyC = any().updateValidate(pass)
 
+    const assertAnyA: A.Contains<
+      (typeof anyA)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertAnyA
+
     expect(anyA[$state].validators).toStrictEqual({
       key: pass,
       put: undefined,
       update: undefined
     })
 
+    const assertAnyB: A.Contains<
+      (typeof anyB)[$state],
+      { validators: { key: undefined; put: Validator; update: undefined } }
+    > = 1
+    assertAnyB
+
     expect(anyB[$state].validators).toStrictEqual({
       key: undefined,
       put: pass,
       update: undefined
     })
+
+    const assertAnyC: A.Contains<
+      (typeof anyC)[$state],
+      { validators: { key: undefined; put: undefined; update: Validator } }
+    > = 1
+    assertAnyC
 
     expect(anyC[$state].validators).toStrictEqual({
       key: undefined,
@@ -439,9 +457,15 @@ describe('anyAttribute', () => {
     })
   })
 
-  test('returns any with KEY validator if it is key (link shorthand)', () => {
+  test('returns any with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _any = any().key().validate(pass)
+
+    const assertAny: A.Contains<
+      (typeof _any)[$state],
+      { validators: { key: Validator; put: undefined; update: undefined } }
+    > = 1
+    assertAny
 
     expect(_any[$state].validators).toStrictEqual({
       key: pass,

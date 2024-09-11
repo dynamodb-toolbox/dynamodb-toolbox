@@ -1,5 +1,5 @@
 export { Parser } from './parser.js'
-export type { ParsedValue } from './parser.js'
+export type { ParsedValue, ParserInput } from './parser.js'
 export type { ExtensionParserOptions, ExtensionParser } from './types/extensionParser.js'
 export type {
   FromParsingOptions,
@@ -9,4 +9,5 @@ export type {
   ParsingOptions,
   ParsingDefaultOptions
 } from './types/options.js'
-export type { ParserInput } from './types/parserInput.js'
+export type { SchemaParserInput, SchemaParsedValue } from './schema.js'
+export type { AttrParsedValue, AttrParserInput } from './attribute.js'

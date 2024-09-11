@@ -7,10 +7,11 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue } from './attribute.js'
+import type { AttrParsedValue, AttrParserInput } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
+  ParsedValueDefaultOptions,
   ParsedValueOptions,
   ParsingDefaultOptions,
   ParsingOptions
@@ -18,7 +19,7 @@ import type {
 
 export type SchemaParsedValue<
   SCHEMA extends Schema,
-  OPTIONS extends ParsedValueOptions = ParsedValueOptions
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = Schema extends SCHEMA
   ? { [KEY: string]: AttrParsedValue<Attribute, OPTIONS> }
   : OptionalizeUndefinableProperties<
@@ -129,3 +130,21 @@ export function* schemaParser<
   )
   return transformedValue
 }
+
+export type SchemaParserInput<
+  SCHEMA extends Schema,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = Schema extends SCHEMA
+  ? { [KEY: string]: AttrParserInput<Attribute, OPTIONS> }
+  : OptionalizeUndefinableProperties<
+      {
+        [KEY in OPTIONS extends { mode: 'key' }
+          ? SelectKeys<SCHEMA['attributes'], { key: true }>
+          : keyof SCHEMA['attributes'] & string]: AttrParserInput<
+          SCHEMA['attributes'][KEY],
+          OPTIONS
+        >
+      },
+      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+      SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+    >

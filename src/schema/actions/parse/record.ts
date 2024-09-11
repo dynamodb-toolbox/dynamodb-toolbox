@@ -2,7 +2,8 @@ import type {
   Attribute,
   ExtendedValue,
   RecordAttribute,
-  RecordAttributeKeys
+  RecordAttributeKeys,
+  ResolvePrimitiveAttribute
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -11,7 +12,12 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -142,3 +148,18 @@ export function* recordAttributeParser<
   )
   return transformedValue as Parsed
 }
+
+export type RecordAttrParserInput<
+  ATTRIBUTE extends RecordAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = RecordAttribute extends ATTRIBUTE
+  ? { [KEY: string]: unknown }
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | {
+          [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
+            ATTRIBUTE['elements'],
+            OPTIONS
+          >
+        }
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
