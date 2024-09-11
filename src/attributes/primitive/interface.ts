@@ -159,8 +159,16 @@ export class $PrimitiveAttribute<
         enum: [constant],
         defaults: ifThenElse(
           this[$state].key,
-          { key: constant, put: this[$state].defaults.put, update: this[$state].defaults.update },
-          { key: this[$state].defaults.key, put: constant, update: this[$state].defaults.update }
+          {
+            key: constant as unknown,
+            put: this[$state].defaults.put,
+            update: this[$state].defaults.update
+          },
+          {
+            key: this[$state].defaults.key,
+            put: constant as unknown,
+            update: this[$state].defaults.update
+          }
         )
       })
     )
@@ -190,7 +198,10 @@ export class $PrimitiveAttribute<
       ResolvePrimitiveAttributeType<TYPE>
     >
   ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { transform: transformer }))
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], { transform: transformer as unknown })
+    )
   }
 
   /**
@@ -341,7 +352,24 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
+    return new $PrimitiveAttribute(
+      this[$type],
+      overwrite(this[$state], {
+        defaults: ifThenElse(
+          this[$state].key,
+          {
+            key: nextDefault as unknown,
+            put: this[$state].defaults.put,
+            update: this[$state].defaults.update
+          },
+          {
+            key: this[$state].defaults.key as unknown,
+            put: nextDefault,
+            update: this[$state].defaults.update
+          }
+        )
+      })
+    )
   }
 
   /**

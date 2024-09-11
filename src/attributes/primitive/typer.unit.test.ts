@@ -12,7 +12,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezePrimitiveAttribute } from './freeze.js'
-import type { $PrimitiveAttribute, PrimitiveAttribute } from './interface.js'
+import type { $PrimitiveAttributeState, PrimitiveAttribute } from './interface.js'
 
 describe('primitiveAttribute', () => {
   const path = 'some.path'
@@ -64,7 +64,7 @@ describe('primitiveAttribute', () => {
         validators: { key: undefined, put: undefined, update: undefined }
       })
 
-      const assertExtends: A.Extends<typeof str, $PrimitiveAttribute> = 1
+      const assertExtends: A.Extends<typeof str, $PrimitiveAttributeState> = 1
       assertExtends
 
       const frozenStr = str.freeze(path)

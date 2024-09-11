@@ -1,5 +1,5 @@
 import { $state } from '~/attributes/constants/attributeOptions.js'
-import type { $Attribute } from '~/attributes/index.js'
+import type { $AttributeNestedState } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -38,7 +38,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
-  const internalAttributes: Record<string, $Attribute> = {}
+  const internalAttributes: Record<string, $AttributeNestedState> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     required: 'atLeastOnce',
@@ -123,7 +123,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
     const { savedAs: attributeSavedAs } = attribute[$state]
     if (attributeSavedAs !== undefined && schema.savedAttributeNames.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
-        message: `'${attribute.savedAs}' is a reserved attribute alias (savedAs).`,
+        message: `'${attributeSavedAs}' is a reserved attribute alias (savedAs).`,
         path: attributeName
       })
     }
