@@ -19,7 +19,7 @@ type ListAttributeTyper = <
 
 /**
  * Define a new list attribute
- * Not that list elements have constraints. They must be:
+ * Note that list elements have constraints. They must be:
  * - Required (required: AtLeastOnce)
  * - Displayed (hidden: false)
  * - Not renamed (savedAs: undefined)
