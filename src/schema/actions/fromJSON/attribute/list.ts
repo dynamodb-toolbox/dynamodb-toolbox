@@ -1,4 +1,4 @@
-import type { $ListAttribute } from '~/attributes/list/index.js'
+import type { $ListAttributeNestedState } from '~/attributes/list/index.js'
 import { list } from '~/attributes/list/index.js'
 import type { $ListAttributeElements } from '~/attributes/list/types.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
@@ -15,7 +15,7 @@ export const fromJSONListAttr = ({
   links,
   elements,
   ...props
-}: JSONizedListAttr): $ListAttribute => {
+}: JSONizedListAttr): $ListAttributeNestedState => {
   defaults
   links
 

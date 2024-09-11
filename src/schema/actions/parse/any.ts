@@ -1,7 +1,9 @@
 import type { AnyAttribute, ExtendedValue } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
+import type { If } from '~/types/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
+import type { MustBeDefined, MustBeProvided } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -16,7 +18,10 @@ export type AnyAttrParsedValue<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = AnyAttribute extends ATTRIBUTE
   ? unknown
-  : ATTRIBUTE['castAs'] | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
+  :
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ATTRIBUTE['castAs']
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
 
 export function* anyAttrParser<
   ATTRIBUTE extends AnyAttribute,
@@ -42,7 +47,9 @@ export function* anyAttrParser<
   }
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue
@@ -53,3 +60,13 @@ export function* anyAttrParser<
   const transformedValue = parsedValue
   return transformedValue
 }
+
+export type AnyAttrParserInput<
+  ATTRIBUTE extends AnyAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = AnyAttribute extends ATTRIBUTE
+  ? undefined | unknown | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ATTRIBUTE['castAs']
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'any'>

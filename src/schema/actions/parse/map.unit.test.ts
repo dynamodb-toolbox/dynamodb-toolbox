@@ -35,8 +35,14 @@ describe('mapAttributeParser', () => {
     expect(defaultedState.value).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
+      ...options,
+      defined: false
+    })
+    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', {
+      ...options,
+      defined: false
+    })
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

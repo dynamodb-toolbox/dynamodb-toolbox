@@ -10,7 +10,12 @@ import type { If } from '~/types/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -32,7 +37,7 @@ export type AnyOfAttrParsedValue<
 
 type ValidAnyOfAttrValueRec<
   ELEMENTS extends Attribute[],
-  OPTIONS extends ParsedValueOptions = ParsedValueOptions,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions,
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Attribute
@@ -111,7 +116,9 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
       }
     })
   }
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue
@@ -122,3 +129,13 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
   const transformedValue = parser.next().value
   return transformedValue
 }
+
+export type AnyOfAttrParserInput<
+  ATTRIBUTE extends AnyOfAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = AnyOfAttribute extends ATTRIBUTE
+  ? undefined | unknown | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrParserInput<ATTRIBUTE['elements'][number], OPTIONS>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>

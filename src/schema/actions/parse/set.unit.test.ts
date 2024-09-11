@@ -35,8 +35,8 @@ describe('setAttrParser', () => {
     expect(defaultedState.value).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
+    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', { ...options, defined: false })
+    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', { ...options, defined: false })
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

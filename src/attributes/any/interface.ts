@@ -389,14 +389,33 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
+      ParserInput<
+        FreezeAnyAttribute<$AnyAttributeState<STATE>>,
+        { mode: 'key'; fill: false; defined: true }
+      >,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<STATE> {
-    return new $AnyAttribute({
-      ...this[$state],
-      validators: { ...this[$state].validators, key: nextKeyValidator }
-    })
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      })
+    )
   }
 
   /**
@@ -406,14 +425,30 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>,
+      ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false; defined: true }>,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<STATE> {
-    return new $AnyAttribute({
-      ...this[$state],
-      validators: { ...this[$state].validators, put: nextPutValidator }
-    })
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      })
+    )
   }
 
   /**
@@ -426,11 +461,27 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<STATE> {
-    return new $AnyAttribute({
-      ...this[$state],
-      validators: { ...this[$state].validators, update: nextUpdateValidator }
-    })
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      })
+    )
   }
 
   /**
@@ -442,13 +493,54 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; fill: false }>,
-        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false }>
+        ParserInput<
+          FreezeAnyAttribute<$AnyAttributeState<STATE>>,
+          { mode: 'key'; fill: false; defined: true }
+        >,
+        ParserInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { fill: false; defined: true }>
       >,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<STATE> {
-    return this[$state].key ? this.keyValidate(nextValidator) : this.putValidate(nextValidator)
+  ): $AnyAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >
+  > {
+    return new $AnyAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          /**
+           * @debt type "remove this cast"
+           */
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      })
+    )
   }
 
   freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>> {

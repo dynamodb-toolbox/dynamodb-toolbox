@@ -1,6 +1,7 @@
 import type {
   ExtendedValue,
   PrimitiveAttribute,
+  ResolvePrimitiveAttribute,
   ResolvePrimitiveAttributeType,
   ResolvedPrimitiveAttribute,
   Transformer
@@ -11,7 +12,7 @@ import type { If } from '~/types/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
 
-import type { MustBeDefined } from './attribute.js'
+import type { MustBeDefined, MustBeProvided } from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -118,3 +119,16 @@ export function* primitiveAttrParser<
       : parsedValue
   return transformedValue as Parsed
 }
+
+export type PrimitiveAttrParserInput<
+  ATTRIBUTE extends PrimitiveAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = PrimitiveAttribute extends ATTRIBUTE
+  ?
+      | undefined
+      | ResolvedPrimitiveAttribute
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

@@ -38,8 +38,14 @@ describe('recordAttributeParser', () => {
     expect(attrParser).toHaveBeenCalledTimes(4)
     expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
     expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'bar', options)
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'foo1', options)
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'bar1', options)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'foo1', {
+      ...options,
+      defined: false
+    })
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'bar1', {
+      ...options,
+      defined: false
+    })
 
     const linkedState = parser.next()
     expect(linkedState.done).toBe(false)

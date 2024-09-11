@@ -1,5 +1,9 @@
 import type { FreezeAttribute } from '~/attributes/freeze.js'
-import type { $Attribute, $PrimitiveAttribute, AtLeastOnce } from '~/attributes/index.js'
+import type {
+  $AttributeNestedState,
+  $PrimitiveAttributeNestedState,
+  AtLeastOnce
+} from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'
@@ -10,7 +14,7 @@ import type { IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 export type WithInternalAttribute<
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
-  $ATTRIBUTE extends $Attribute
+  $ATTRIBUTE extends $AttributeNestedState
 > = Schema<{
   [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
     ? FreezeAttribute<$ATTRIBUTE>
@@ -23,7 +27,7 @@ export type $EntityAttribute<
   TABLE extends Table,
   ENTITY_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean
-> = $PrimitiveAttribute<
+> = $PrimitiveAttributeNestedState<
   'string',
   {
     required: AtLeastOnce
@@ -67,7 +71,7 @@ export type WithEntityAttribute<
 export type $TimestampAttribute<
   SAVED_AS extends string,
   HIDDEN extends boolean
-> = $PrimitiveAttribute<
+> = $PrimitiveAttributeNestedState<
   'string',
   {
     required: AtLeastOnce

@@ -1,4 +1,4 @@
-import type { $RecordAttribute } from '~/attributes/record/index.js'
+import type { $RecordAttributeNestedState } from '~/attributes/record/index.js'
 import { record } from '~/attributes/record/index.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from '~/attributes/record/types.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
@@ -16,7 +16,7 @@ export const fromJSONRecordAttr = ({
   keys,
   elements,
   ...props
-}: JSONizedRecordAttr): $RecordAttribute => {
+}: JSONizedRecordAttr): $RecordAttributeNestedState => {
   defaults
   links
 

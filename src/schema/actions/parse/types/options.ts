@@ -10,6 +10,7 @@ export type ParsingOptions = {
   transform?: boolean
   mode?: ParsingMode
   parseExtension?: ExtensionParser
+  defined?: boolean
 }
 
 export type ParsingDefaultOptions = {
@@ -17,6 +18,7 @@ export type ParsingDefaultOptions = {
   transform: true
   mode: 'put'
   parseExtension: undefined
+  defined: false
 }
 
 export type ParsedValueOptions = {
@@ -24,6 +26,7 @@ export type ParsedValueOptions = {
   transform?: boolean
   mode?: ParsingMode
   extension?: Extension
+  defined?: boolean
 }
 
 export type ParsedValueDefaultOptions = {
@@ -31,6 +34,7 @@ export type ParsedValueDefaultOptions = {
   transform: true
   mode: 'put'
   extension: undefined
+  defined: false
 }
 
 export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends boolean = false> = {

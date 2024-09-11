@@ -245,7 +245,24 @@ export class $AnyOfAttribute<
     >,
     $ELEMENTS
   > {
-    return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
+    return new $AnyOfAttribute(
+      overwrite(this[$state], {
+        defaults: ifThenElse(
+          this[$state].key,
+          {
+            key: nextDefault as unknown,
+            put: this[$state].defaults.put,
+            update: this[$state].defaults.update
+          },
+          {
+            key: this[$state].defaults.key,
+            put: nextDefault as unknown,
+            update: this[$state].defaults.update
+          }
+        )
+      }),
+      this[$elements]
+    )
   }
 
   /**
@@ -426,16 +443,31 @@ export class $AnyOfAttribute<
     nextKeyValidator: Validator<
       ParserInput<
         FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key'; fill: false; defined: true }
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<STATE, $ELEMENTS> {
-    return new $AnyOfAttribute(
+  ): $AnyOfAttribute<
+    Overwrite<
+      STATE,
       {
-        ...this[$state],
-        validators: { ...this[$state].validators, key: nextKeyValidator }
-      },
+        validators: {
+          key: Validator
+          put: STATE['validators']['put']
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $AnyOfAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: nextKeyValidator as Validator,
+          put: this[$state].validators.put,
+          update: this[$state].validators.update
+        }
+      }),
       this[$elements]
     )
   }
@@ -447,15 +479,33 @@ export class $AnyOfAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { fill: false }>,
+      ParserInput<
+        FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
+        { fill: false; defined: true }
+      >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<STATE, $ELEMENTS> {
-    return new $AnyOfAttribute(
+  ): $AnyOfAttribute<
+    Overwrite<
+      STATE,
       {
-        ...this[$state],
-        validators: { ...this[$state].validators, put: nextPutValidator }
-      },
+        validators: {
+          key: STATE['validators']['key']
+          put: Validator
+          update: STATE['validators']['update']
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $AnyOfAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: nextPutValidator as Validator,
+          update: this[$state].validators.update
+        }
+      }),
       this[$elements]
     )
   }
@@ -470,12 +520,27 @@ export class $AnyOfAttribute<
       AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, true>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<STATE, $ELEMENTS> {
-    return new $AnyOfAttribute(
+  ): $AnyOfAttribute<
+    Overwrite<
+      STATE,
       {
-        ...this[$state],
-        validators: { ...this[$state].validators, update: nextUpdateValidator }
-      },
+        validators: {
+          key: STATE['validators']['key']
+          put: STATE['validators']['put']
+          update: Validator
+        }
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $AnyOfAttribute(
+      overwrite(this[$state], {
+        validators: {
+          key: this[$state].validators.key,
+          put: this[$state].validators.put,
+          update: nextUpdateValidator as Validator
+        }
+      }),
       this[$elements]
     )
   }
@@ -491,14 +556,57 @@ export class $AnyOfAttribute<
         STATE['key'],
         ParserInput<
           FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key'; fill: false; defined: true }
         >,
-        ParserInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { fill: false }>
+        ParserInput<
+          FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
+          { fill: false; defined: true }
+        >
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<STATE, $ELEMENTS> {
-    return this[$state].key ? this.keyValidate(nextValidator) : this.putValidate(nextValidator)
+  ): $AnyOfAttribute<
+    Overwrite<
+      STATE,
+      {
+        validators: If<
+          STATE['key'],
+          {
+            key: Validator
+            put: STATE['validators']['put']
+            update: STATE['validators']['update']
+          },
+          {
+            key: STATE['validators']['key']
+            put: Validator
+            update: STATE['validators']['update']
+          }
+        >
+      }
+    >,
+    $ELEMENTS
+  > {
+    return new $AnyOfAttribute(
+      overwrite(this[$state], {
+        validators: ifThenElse(
+          /**
+           * @debt type "remove this cast"
+           */
+          this[$state].key as STATE['key'],
+          {
+            key: nextValidator as Validator,
+            put: this[$state].validators.put,
+            update: this[$state].validators.update
+          },
+          {
+            key: this[$state].validators.key,
+            put: nextValidator as Validator,
+            update: this[$state].validators.update
+          }
+        )
+      }),
+      this[$elements]
+    )
   }
 
   freeze(path?: string): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>> {

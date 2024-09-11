@@ -24,7 +24,11 @@ export type {
   ParsingOptions,
   ParsedValueOptions,
   FromParsingOptions,
-  ParserInput
+  ParserInput,
+  SchemaParserInput,
+  SchemaParsedValue,
+  AttrParserInput,
+  AttrParsedValue
 } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
 export type {

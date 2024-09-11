@@ -8,12 +8,18 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
+import type { Overwrite } from '~/types/overwrite.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, MustBeDefined } from './attribute.js'
+import type {
+  AttrParsedValue,
+  AttrParserInput,
+  MustBeDefined,
+  MustBeProvided
+} from './attribute.js'
 import type { ParsedValue } from './parser.js'
 import type {
   FromParsingOptions,
@@ -77,7 +83,7 @@ export function* mapAttributeParser<
     Object.entries(attribute.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], options)
+        parsers[attrName] = attrParser(attr, inputValue[attrName], { ...options, defined: false })
 
         additionalAttributeNames.delete(attrName)
       })
@@ -132,7 +138,9 @@ export function* mapAttributeParser<
       .map(([attrName, attrParser]) => [attrName, attrParser.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
-  applyCustomValidation(attribute, parsedValue, options)
+  if (parsedValue !== undefined) {
+    applyCustomValidation(attribute, parsedValue, options)
+  }
 
   if (transform) {
     yield parsedValue
@@ -151,3 +159,24 @@ export function* mapAttributeParser<
   )
   return transformedValue
 }
+
+export type MapAttrParserInput<
+  ATTRIBUTE extends MapAttribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = MapAttribute extends ATTRIBUTE
+  ? undefined | { [KEY: string]: unknown } | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | OptionalizeUndefinableProperties<
+          {
+            [KEY in OPTIONS extends { mode: 'key' }
+              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+              : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
+              ATTRIBUTE['attributes'][KEY],
+              Overwrite<OPTIONS, { defined: false }>
+            >
+          },
+          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
+          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+        >
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>

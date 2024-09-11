@@ -1,4 +1,4 @@
-import type { $MapAttribute } from '~/attributes/map/index.js'
+import type { $MapAttributeNestedState } from '~/attributes/map/index.js'
 import { map } from '~/attributes/map/index.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
 
@@ -14,7 +14,7 @@ export const fromJSONMapAttr = ({
   links,
   attributes,
   ...props
-}: JSONizedMapAttr): $MapAttribute => {
+}: JSONizedMapAttr): $MapAttributeNestedState => {
   defaults
   links
 
