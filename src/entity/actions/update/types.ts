@@ -21,6 +21,7 @@ import type {
   SetAttributeValue
 } from '~/attributes/index.js'
 import type { Entity } from '~/entity/index.js'
+import type { AttrParserInput } from '~/schema/actions/parse/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
@@ -162,45 +163,10 @@ export type Reference<
   [
     ref: SCHEMA_ATTRIBUTE_PATHS,
     fallback?:
-      | AttributeUpdateItemCompleteInput<ATTRIBUTE>
+      | AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>
       | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
   ]
 >
-
-/**
- * @debt refactor "use AttrParserInput instead"
- */
-type AttributeUpdateItemCompleteInput<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
-  ? AttributeValue | undefined
-  :
-      | (ATTRIBUTE extends { required: Never } ? undefined : never)
-      | (ATTRIBUTE extends AnyAttribute
-          ? ResolveAnyAttribute<ATTRIBUTE> | unknown
-          : ATTRIBUTE extends PrimitiveAttribute
-            ? ResolvePrimitiveAttribute<ATTRIBUTE>
-            : ATTRIBUTE extends SetAttribute
-              ? Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
-              : ATTRIBUTE extends ListAttribute
-                ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
-                : ATTRIBUTE extends MapAttribute
-                  ? OptionalizeUndefinableProperties<
-                      {
-                        [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemCompleteInput<
-                          ATTRIBUTE['attributes'][KEY]
-                        >
-                      },
-                      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                      SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-                    >
-                  : ATTRIBUTE extends RecordAttribute
-                    ? {
-                        [KEY in ResolvePrimitiveAttribute<
-                          ATTRIBUTE['keys']
-                        >]?: AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>
-                      }
-                    : ATTRIBUTE extends AnyOfAttribute
-                      ? AttributeUpdateItemCompleteInput<ATTRIBUTE['elements'][number]>
-                      : never)
 
 /**
  * User input of an UPDATE command for a given Attribute
@@ -223,7 +189,7 @@ export type AttributeUpdateItemInput<
           [
             ref: SCHEMA_ATTRIBUTE_PATHS,
             fallback?:
-              | AttributeUpdateItemCompleteInput<ATTRIBUTE>
+              | AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>
               | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
           ]
         >
@@ -274,9 +240,9 @@ export type AttributeUpdateItemInput<
                     : never)
             : ATTRIBUTE extends SetAttribute
               ?
-                  | Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>
-                  | ADD<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
-                  | DELETE<Set<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>>>
+                  | Set<AttrParserInput<ATTRIBUTE['elements']>>
+                  | ADD<Set<AttrParserInput<ATTRIBUTE['elements']>>>
+                  | DELETE<Set<AttrParserInput<ATTRIBUTE['elements']>>>
               : ATTRIBUTE extends ListAttribute
                 ?
                     | Basic<{
@@ -288,29 +254,29 @@ export type AttributeUpdateItemInput<
                             >
                           | REMOVE
                       }>
-                    | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]>
+                    | SET<AttrParserInput<ATTRIBUTE['elements']>[]>
                     | APPEND<
                         // Not using Reference<...> for improved type display
                         | GET<
                             [
                               ref: SCHEMA_ATTRIBUTE_PATHS,
                               fallback?:
-                                | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                                | AttrParserInput<ATTRIBUTE['elements']>[]
                                 | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                             ]
                           >
-                        | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                        | AttrParserInput<ATTRIBUTE['elements']>[]
                       >
                     | PREPEND<
                         | GET<
                             [
                               ref: SCHEMA_ATTRIBUTE_PATHS,
                               fallback?:
-                                | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                                | AttrParserInput<ATTRIBUTE['elements']>[]
                                 | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                             ]
                           >
-                        | AttributeUpdateItemCompleteInput<ATTRIBUTE['elements']>[]
+                        | AttrParserInput<ATTRIBUTE['elements']>[]
                       >
                 : ATTRIBUTE extends MapAttribute
                   ?
@@ -330,7 +296,7 @@ export type AttributeUpdateItemInput<
                             >
                           >
                         >
-                      | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
+                      | SET<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
                   : ATTRIBUTE extends RecordAttribute
                     ?
                         | Basic<{
@@ -342,7 +308,7 @@ export type AttributeUpdateItemInput<
                                 >
                               | REMOVE
                           }>
-                        | SET<AttributeUpdateItemCompleteInput<ATTRIBUTE>>
+                        | SET<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
                     : ATTRIBUTE extends AnyOfAttribute
                       ? AttributeUpdateItemInput<
                           ATTRIBUTE['elements'][number],
