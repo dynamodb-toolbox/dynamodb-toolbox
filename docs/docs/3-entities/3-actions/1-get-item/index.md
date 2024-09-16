@@ -134,7 +134,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 ## Response
 
-The data is returned with the same response syntax as from the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements). If present, the returned item is formatted by the Entity.
+The data is returned using the same response syntax as the [DynamoDB GetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#API_GetItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
 You can use the `GetItemResponse` type to explicitly type an object as a `GetItemCommand` response object:
 
@@ -145,6 +145,6 @@ const getItemResponse: GetItemResponse<
   typeof PokemonEntity,
   // 👇 Optional options
   { attributes: ['type', 'level'] }
-  // 👇 Typed as Pokemon | undefined
+  // 👇 Typed as Pick<Pokemon, 'type' | 'level'> | undefined
 > = { Item: ... }
 ```

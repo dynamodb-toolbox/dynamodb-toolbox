@@ -381,9 +381,9 @@ const { Count } = await PokeTable.build(QueryCommand)
 
 ## Response
 
-The data is returned with the same response syntax as from the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
+The data is returned using the same response syntax as the [DynamoDB Query API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html#API_Query_ResponseElements).
 
-If a [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
+If [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
 
 You can use the `QueryResponse` type to explicitly type an object as a `QueryCommand` response object:
 

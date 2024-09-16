@@ -276,7 +276,7 @@ const { Response } = await execute(
 
 ### Response
 
-The data is returned with the same response syntax as from the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_ResponseSyntax), except for the `Responses` property.
+The data is returned using the same response syntax as the [DynamoDB BatchGetItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html#API_BatchGetItem_ResponseSyntax), except for the `Responses` property.
 
 Instead of a map of arrays indexed by table name, DynamoDB-Toolbox returns an **array of arrays**, where each sub-array contains the items of a `BatchGetCommand`. Both commands and items are returned in the **same order they were provided**, and items are formatted by their respective entities.
 
