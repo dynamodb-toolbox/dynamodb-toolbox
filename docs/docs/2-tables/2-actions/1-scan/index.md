@@ -382,7 +382,7 @@ const allItems = [...segment1, ...segment2, ...segment3]
 
 ## Response
 
-The data is returned with the same response syntax as from the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_ResponseElements).
+The data is returned using the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_ResponseElements).
 
 If [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
 

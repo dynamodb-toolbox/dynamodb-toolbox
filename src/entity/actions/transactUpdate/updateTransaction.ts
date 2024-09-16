@@ -45,14 +45,14 @@ export class UpdateTransaction<
     return new UpdateTransaction(this.entity, this[$item], nextOptions)
   }
 
-  params(): Require<TransactWriteItem, 'Update'> {
+  params(): Require<TransactWriteItem, 'Update'> & { ToolboxItem: UpdateItemInput<ENTITY, true> } {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateTransaction incomplete: Missing "item" property'
       })
     }
 
-    const { item, key } = this.entity.build(EntityParser).parse(this[$item], {
+    const { parsedItem, item, key } = this.entity.build(EntityParser).parse(this[$item], {
       mode: 'update',
       parseExtension: parseUpdateExtension
     })
@@ -81,6 +81,10 @@ export class UpdateTransaction<
     }
 
     return {
+      /**
+       * @debt type "TODO: Remove this cast?"
+       */
+      ToolboxItem: parsedItem as UpdateItemInput<ENTITY, true>,
       Update: {
         TableName: options.tableName ?? this.entity.table.getName(),
         Key: key,

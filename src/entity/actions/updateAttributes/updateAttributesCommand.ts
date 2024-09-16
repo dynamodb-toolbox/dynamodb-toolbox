@@ -1,18 +1,30 @@
 import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
-import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
+import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
-import type { UpdateItemResponse } from '~/entity/actions/update/index.js'
+import type { ReturnedAttributes } from '~/entity/actions/update/updateItemCommand.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
 import type { UpdateAttributesOptions } from './options.js'
 import type { UpdateAttributesInput } from './types.js'
 import { updateAttributesParams } from './updateAttributesParams/index.js'
+
+export type UpdateAttributesResponse<
+  ENTITY extends Entity,
+  OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
+> = Merge<
+  Omit<UpdateCommandOutput, 'Attributes'>,
+  {
+    Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
+    ToolboxItem: UpdateAttributesInput<ENTITY, true>
+  }
+>
 
 export class UpdateAttributesCommand<
     ENTITY extends Entity = Entity,
@@ -56,15 +68,15 @@ export class UpdateAttributesCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): UpdateCommandInput {
+  params(): UpdateCommandInput & { ToolboxItem: UpdateAttributesInput<ENTITY, true> } {
     const [item, options] = this[$sentArgs]()
 
     return updateAttributesParams(this.entity, item, options)
   }
 
   @sender()
-  async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
-    const getItemParams = this.params()
+  async send(): Promise<UpdateAttributesResponse<ENTITY, OPTIONS>> {
+    const { ToolboxItem, ...getItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
@@ -73,16 +85,17 @@ export class UpdateAttributesCommand<
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
     if (attributes === undefined) {
-      return restCommandOutput
+      return { ToolboxItem, ...restCommandOutput }
     }
 
     const { returnValues } = this[$options]
 
     const formattedItem = new EntityFormatter(this.entity).format(attributes, {
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
-    }) as unknown as UpdateItemResponse<ENTITY, OPTIONS>['Attributes']
+    }) as unknown as UpdateAttributesResponse<ENTITY, OPTIONS>['Attributes']
 
     return {
+      ToolboxItem,
       Attributes: formattedItem,
       ...restCommandOutput
     }

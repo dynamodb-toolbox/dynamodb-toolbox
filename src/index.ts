@@ -124,7 +124,8 @@ export {
 } from './entity/actions/updateAttributes/index.js'
 export type {
   UpdateAttributesInput,
-  UpdateAttributesOptions
+  UpdateAttributesOptions,
+  UpdateAttributesResponse
 } from './entity/actions/updateAttributes/index.js'
 export { BatchGetRequest } from './entity/actions/batchGet/index.js'
 export { BatchDeleteRequest } from './entity/actions/batchDelete/index.js'

@@ -15,7 +15,7 @@ type UpdateItemParamsGetter = <ENTITY extends Entity, OPTIONS extends UpdateItem
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
   updateItemOptions?: OPTIONS
-) => UpdateCommandInput
+) => UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, true> }
 
 export const updateItemParams: UpdateItemParamsGetter = <
   ENTITY extends Entity,
@@ -25,7 +25,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
   input: UpdateItemInput<ENTITY>,
   options: OPTIONS = {} as OPTIONS
 ) => {
-  const { item, key } = entity.build(EntityParser).parse(input, {
+  const { parsedItem, item, key } = entity.build(EntityParser).parse(input, {
     mode: 'update',
     parseExtension: parseUpdateExtension
   })
@@ -54,6 +54,10 @@ export const updateItemParams: UpdateItemParamsGetter = <
 
   return {
     TableName: options.tableName ?? entity.table.getName(),
+    /**
+     * @debt type "TODO: Remove this cast?"
+     */
+    ToolboxItem: parsedItem as UpdateItemInput<ENTITY, true>,
     Key: key,
     ...update,
     ...awsOptions,

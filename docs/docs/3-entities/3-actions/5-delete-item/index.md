@@ -136,7 +136,7 @@ await PokemonEntity.build(DeleteItemCommand)
 
 ## Response
 
-The data is returned with the same response syntax as from the [DynamoDB DeleteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#API_DeleteItem_ResponseElements). If present, the returned item is formatted by the Entity.
+The data is returned using the same response syntax as the [DynamoDB DeleteItem API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html#API_DeleteItem_ResponseElements). If present, the returned item is formatted by the Entity.
 
 You can use the `DeleteItemResponse` type to explicitly type an object as a `DeleteItemCommand` response object:
 

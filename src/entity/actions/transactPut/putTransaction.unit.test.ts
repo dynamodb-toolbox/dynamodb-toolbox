@@ -111,15 +111,26 @@ const TestEntity5 = new Entity({
 describe('put transaction', () => {
   test('creates basic item', () => {
     const {
+      ToolboxItem,
       Put: { Item }
     } = TestEntity.build(PutTransaction).item({ email: 'test-pk', sort: 'test-sk' }).params()
 
-    expect(Item).toMatchObject({
+    expect(Item).toStrictEqual({
       _et: TestEntity.name,
       _ct: expect.any(String),
       _md: expect.any(String),
       pk: 'test-pk',
       sk: 'test-sk',
+      test_string: 'test string',
+      test_number_defaulted: 0
+    })
+
+    expect(ToolboxItem).toMatchObject({
+      entity: TestEntity.name,
+      created: expect.any(String),
+      modified: expect.any(String),
+      email: 'test-pk',
+      sort: 'test-sk',
       test_string: 'test string',
       test_number_defaulted: 0
     })

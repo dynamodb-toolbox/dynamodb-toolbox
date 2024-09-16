@@ -115,11 +115,11 @@ const TestEntity5 = new Entity({
 
 describe('put', () => {
   test('creates basic item', () => {
-    const { Item } = TestEntity.build(PutItemCommand)
+    const { Item, ToolboxItem } = TestEntity.build(PutItemCommand)
       .item({ email: 'test-pk', sort: 'test-sk' })
       .params()
 
-    expect(Item).toMatchObject({
+    expect(Item).toStrictEqual({
       _et: TestEntity.name,
       _ct: expect.any(String),
       _md: expect.any(String),
@@ -127,6 +127,17 @@ describe('put', () => {
       sk: 'test-sk',
       test_string: 'test string',
       // Defaults are filled before links
+      test_string_2: 'test string',
+      test_number_defaulted: 0
+    })
+
+    expect(ToolboxItem).toStrictEqual({
+      entity: TestEntity.name,
+      created: expect.any(String),
+      modified: expect.any(String),
+      email: 'test-pk',
+      sort: 'test-sk',
+      test_string: 'test string',
       test_string_2: 'test string',
       test_number_defaulted: 0
     })

@@ -1,4 +1,6 @@
 import {
+  $ADD,
+  $GET,
   $add,
   $append,
   $delete,
@@ -27,14 +29,8 @@ import {
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  }
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' }
 })
 
 const TestEntity = new Entity({
@@ -107,10 +103,7 @@ const TestEntity2 = new Entity({
 
 const TestTable3 = new Table({
   name: 'test-table3',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  }
+  partitionKey: { type: 'string', name: 'pk' }
 })
 
 const TestEntity3 = new Entity({
@@ -127,10 +120,7 @@ const TestEntity3 = new Entity({
 
 const TestTable4 = new Table({
   name: 'test-table4',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  }
+  partitionKey: { type: 'string', name: 'pk' }
 })
 
 const TestEntity4 = new Entity({
@@ -163,6 +153,7 @@ const TestEntity5 = new Entity({
 describe('update transaction', () => {
   test('creates default update', () => {
     const {
+      ToolboxItem,
       Update: {
         TableName,
         Key,
@@ -201,6 +192,19 @@ describe('update transaction', () => {
       ':s_6': expect.any(String),
       ':s_7': expect.any(String),
       ':a_1': 1
+    })
+
+    expect(ToolboxItem).toStrictEqual({
+      created: { [$GET]: ['created', expect.any(String)] },
+      modified: expect.any(String),
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      email: 'test-pk',
+      sort: 'test-sk',
+      simple_string_copy: 'NOTHING_TO_COPY',
+      test_boolean_default: false,
+      test_number_default: 0,
+      test_string: 'default string',
+      touchCount: { [$ADD]: 1 }
     })
   })
 

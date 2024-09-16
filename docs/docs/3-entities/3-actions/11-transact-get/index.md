@@ -217,4 +217,4 @@ const { Response } = await execute(
 
 ### Response
 
-The data is returned with the same response syntax as from the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_ResponseSyntax). Items are formatted by their respective entities.
+The data is returned using the same response syntax as the [DynamoDB TransactGetItems API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html#API_TransactGetItems_ResponseSyntax). If present, the returned items are formatted by their respective entities.

@@ -22,7 +22,7 @@ import type { UpdateItemOptions } from './options.js'
 import type { UpdateItemInput } from './types.js'
 import { updateItemParams } from './updateItemParams/index.js'
 
-type ReturnedAttributes<
+export type ReturnedAttributes<
   ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY>
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
@@ -49,7 +49,10 @@ export type UpdateItemResponse<
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
 > = Merge<
   Omit<UpdateCommandOutput, 'Attributes'>,
-  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
+  {
+    Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
+    ToolboxItem: UpdateItemInput<ENTITY, true>
+  }
 >
 
 export class UpdateItemCommand<
@@ -90,7 +93,7 @@ export class UpdateItemCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): UpdateCommandInput {
+  params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, true> } {
     const [item, options] = this[$sentArgs]()
 
     return updateItemParams(this.entity, item, options)
@@ -98,7 +101,7 @@ export class UpdateItemCommand<
 
   @sender()
   async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
-    const getItemParams = this.params()
+    const { ToolboxItem, ...getItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
@@ -107,7 +110,7 @@ export class UpdateItemCommand<
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
     if (attributes === undefined) {
-      return restCommandOutput
+      return { ToolboxItem, ...restCommandOutput }
     }
 
     const { returnValues } = this[$options]
@@ -116,9 +119,6 @@ export class UpdateItemCommand<
       partial: returnValues === 'UPDATED_NEW' || returnValues === 'UPDATED_OLD'
     }) as unknown as ReturnedAttributes<ENTITY, OPTIONS>
 
-    return {
-      Attributes: formattedItem,
-      ...restCommandOutput
-    }
+    return { ToolboxItem, Attributes: formattedItem, ...restCommandOutput }
   }
 }

@@ -1,7 +1,13 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { A } from 'ts-toolbelt'
+import type { MockInstance } from 'vitest'
 
 import {
+  $ADD,
+  $APPEND,
+  $GET,
+  $SET,
   $add,
   $append,
   $set,
@@ -22,24 +28,18 @@ import {
   set,
   string
 } from '~/index.js'
+import type { PutItemInput, UpdateItemInput } from '~/index.js'
 
 import { getCommandInput } from './execute.js'
 import { execute } from './index.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
-
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  },
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' },
   documentClient
 })
 
@@ -89,13 +89,23 @@ const TestEntity2 = new Entity({
   table: TestTable2
 })
 
+const mockDate = '2023-12-15T16:22:49.834Z'
+
 describe('execute', () => {
+  let documentClientSpy: MockInstance
+
   beforeAll(() => {
-    vi.spyOn(documentClient, 'send').mockImplementation(vi.fn())
+    vi.useFakeTimers().setSystemTime(new Date(mockDate))
+    documentClientSpy = vi.spyOn(documentClient, 'send').mockImplementation(vi.fn())
   })
 
   afterAll(() => {
-    vi.restoreAllMocks()
+    vi.useRealTimers()
+    documentClientSpy.mockRestore()
+  })
+
+  afterEach(() => {
+    documentClientSpy.mockReset()
   })
 
   test('should throw an error if dynamoDBDocumentClient is not found', async () => {
@@ -105,25 +115,118 @@ describe('execute', () => {
     )
   })
 
-  test('should send a transaction with the correct parameters', async () => {
-    const transactions = [
-      TestEntity.build(PutTransaction).item({
-        email: 'titi@example.com',
-        sort: 'titi'
-      }),
-      TestEntity2.build(PutTransaction).item({
-        email: 'toto@example.com'
-      })
-    ]
-    const options = { documentClient }
+  test('should send a transaction from a tuple of WriteTransaction', async () => {
+    const { ToolboxItems: toolboxItems } = await execute(
+      { documentClient },
+      TestEntity.build(PutTransaction).item({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity.build(DeleteTransaction).key({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity2.build(PutTransaction).item({ email: 'toto@example.com' }),
+      TestEntity2.build(ConditionCheck)
+        .key({ email: 'titi@example.com' })
+        .condition({ attr: 'email', exists: true }),
+      TestEntity.build(UpdateTransaction).item({ email: 'tutu@example.com', sort: 'titi' })
+    )
 
-    await execute(options, ...transactions)
+    expect(toolboxItems).toHaveLength(5)
+
+    const assertToolboxItems: A.Equals<
+      typeof toolboxItems,
+      [
+        PutItemInput<typeof TestEntity, true>,
+        undefined,
+        PutItemInput<typeof TestEntity2, true>,
+        undefined,
+        UpdateItemInput<typeof TestEntity, true>
+      ]
+    > = 1
+    assertToolboxItems
+
+    const [toolboxItem1, toolboxItem2, toolboxItem3, toolboxItem4, toolboxItem5] = toolboxItems
+
+    expect(toolboxItem1).toStrictEqual({
+      entity: TestEntity.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'titi@example.com',
+      sort: 'titi',
+      test_number_defaulted: 0,
+      test_string: 'test string'
+    })
+    expect(toolboxItem2).toBeUndefined()
+    expect(toolboxItem3).toStrictEqual({
+      entity: TestEntity2.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'toto@example.com'
+    })
+    expect(toolboxItem4).toBeUndefined()
+    expect(toolboxItem5).toStrictEqual({
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      created: { [$GET]: ['created', mockDate] },
+      modified: mockDate,
+      email: 'tutu@example.com',
+      sort: 'titi'
+    })
+
+    expect(documentClient.send).toHaveBeenCalledTimes(1)
+  })
+
+  test('should send a transaction from an array of WriteTransaction', async () => {
+    const transactions = [
+      TestEntity.build(PutTransaction).item({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity.build(DeleteTransaction).key({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity2.build(PutTransaction).item({ email: 'toto@example.com' }),
+      TestEntity2.build(ConditionCheck)
+        .key({ email: 'titi@example.com' })
+        .condition({ attr: 'email', exists: true }),
+      TestEntity.build(UpdateTransaction).item({ email: 'tutu@example.com', sort: 'titi' })
+    ]
+
+    const { ToolboxItems: toolboxItems } = await execute({ documentClient }, ...transactions)
+
+    expect(toolboxItems).toHaveLength(5)
+
+    const assertToolboxItems: A.Equals<
+      typeof toolboxItems,
+      (
+        | undefined
+        | PutItemInput<typeof TestEntity, true>
+        | PutItemInput<typeof TestEntity2, true>
+        | UpdateItemInput<typeof TestEntity, true>
+      )[]
+    > = 1
+    assertToolboxItems
+
+    const [toolboxItem1, toolboxItem2, toolboxItem3, toolboxItem4, toolboxItem5] = toolboxItems
+
+    expect(toolboxItem1).toStrictEqual({
+      entity: TestEntity.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'titi@example.com',
+      sort: 'titi',
+      test_number_defaulted: 0,
+      test_string: 'test string'
+    })
+    expect(toolboxItem2).toBeUndefined()
+    expect(toolboxItem3).toStrictEqual({
+      entity: TestEntity2.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'toto@example.com'
+    })
+    expect(toolboxItem4).toBeUndefined()
+    expect(toolboxItem5).toStrictEqual({
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      created: { [$GET]: ['created', mockDate] },
+      modified: mockDate,
+      email: 'tutu@example.com',
+      sort: 'titi'
+    })
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
 })
-
-const mockDate = '2023-12-15T16:22:49.834Z'
 
 describe('generateTransactWriteCommandInput', () => {
   beforeAll(() => {
@@ -136,10 +239,7 @@ describe('generateTransactWriteCommandInput', () => {
 
   test('should throw an error if an invalid option is set', async () => {
     const transactions = [
-      TestEntity.build(PutTransaction).item({
-        email: 'titi@example.com',
-        sort: 'titi'
-      })
+      TestEntity.build(PutTransaction).item({ email: 'titi@example.com', sort: 'titi' })
     ]
 
     const invalidTransactWriteCommandInputGeneration = () =>
@@ -157,11 +257,9 @@ describe('generateTransactWriteCommandInput', () => {
   test('should generate a transaction with the correct parameters', async () => {
     const transactions = [
       TestEntity.build(ConditionCheck)
-        .key({
-          email: 'tata@example.com',
-          sort: 'tata'
-        })
+        .key({ email: 'tata@example.com', sort: 'tata' })
         .condition({ attr: 'count', gt: 4 }),
+
       TestEntity.build(PutTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
@@ -176,10 +274,9 @@ describe('generateTransactWriteCommandInput', () => {
         test_number_set: new Set([1, 2, 3]),
         test_binary_set: new Set([new Uint8Array([2]), new Uint8Array([3])])
       }),
-      TestEntity.build(DeleteTransaction).key({
-        email: 'tata@example.com',
-        sort: 'tata'
-      }),
+
+      TestEntity.build(DeleteTransaction).key({ email: 'tata@example.com', sort: 'tata' }),
+
       TestEntity.build(UpdateTransaction).item({
         email: 'titi@example.com',
         sort: 'titi',
@@ -187,6 +284,7 @@ describe('generateTransactWriteCommandInput', () => {
         test_map: $set({ str: 'B' }),
         test_list: $append(['toutou'])
       }),
+
       TestEntity2.build(PutTransaction).item({
         email: 'toto@example.com',
         test_composite: 'hey',
@@ -210,18 +308,33 @@ describe('generateTransactWriteCommandInput', () => {
             ConditionExpression: '#c_1 > :c_1',
             ExpressionAttributeNames: { '#c_1': 'test_number' },
             ExpressionAttributeValues: { ':c_1': 4 },
-            Key: {
-              pk: 'tata@example.com',
-              sk: 'tata'
-            },
+            Key: { pk: 'tata@example.com', sk: 'tata' },
             TableName: 'test-table'
           }
         },
         {
+          ToolboxItem: {
+            entity: TestEntity.name,
+            created: mockDate,
+            modified: mockDate,
+            email: 'titi@example.com',
+            sort: 'titi',
+            test_any: 'any',
+            test_binary: new Uint8Array([1]),
+            test_binary_set: new Set([new Uint8Array([2]), new Uint8Array([3])]),
+            test_boolean: true,
+            test_list: ['titi', 'tata'],
+            test_map: { str: 'A' },
+            count: 5,
+            test_number_defaulted: 0,
+            test_number_set: new Set([1, 2, 3]),
+            test_string: 'test string',
+            test_string_set: new Set(['titi', 'tata'])
+          },
           Put: {
             Item: {
+              _et: TestEntity.name,
               _ct: mockDate,
-              _et: 'TestEntity',
               _md: mockDate,
               pk: 'titi@example.com',
               sk: 'titi',
@@ -242,19 +355,23 @@ describe('generateTransactWriteCommandInput', () => {
         },
         {
           Delete: {
-            Key: {
-              pk: 'tata@example.com',
-              sk: 'tata'
-            },
+            Key: { pk: 'tata@example.com', sk: 'tata' },
             TableName: 'test-table'
           }
         },
         {
+          ToolboxItem: {
+            entity: { [$GET]: ['entity', TestEntity.name] },
+            created: { [$GET]: ['created', mockDate] },
+            modified: mockDate,
+            email: 'titi@example.com',
+            sort: 'titi',
+            test_list: { [$APPEND]: ['toutou'] },
+            test_map: { [$SET]: { str: 'B' } },
+            count: { [$ADD]: 3 }
+          },
           Update: {
-            Key: {
-              pk: 'titi@example.com',
-              sk: 'titi'
-            },
+            Key: { pk: 'titi@example.com', sk: 'titi' },
             UpdateExpression:
               'SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2), #s_2 = :s_3, #s_3 = if_not_exists(#s_4, :s_4), #s_5 = if_not_exists(#s_6, :s_5), #s_7 = :s_6 ADD #a_1 :a_1',
             ExpressionAttributeNames: {
@@ -272,7 +389,7 @@ describe('generateTransactWriteCommandInput', () => {
               ':s_1': [],
               ':s_2': ['toutou'],
               ':s_3': { str: 'B' },
-              ':s_4': 'TestEntity',
+              ':s_4': TestEntity.name,
               ':s_5': mockDate,
               ':s_6': mockDate
             },
@@ -280,6 +397,15 @@ describe('generateTransactWriteCommandInput', () => {
           }
         },
         {
+          ToolboxItem: {
+            entity: 'TestEntity2',
+            created: mockDate,
+            modified: mockDate,
+            email: 'toto@example.com',
+            test_composite: 'hey',
+            test_composite2: 'ho',
+            sort: 'hey#ho'
+          },
           Put: {
             Item: {
               _ct: mockDate,
