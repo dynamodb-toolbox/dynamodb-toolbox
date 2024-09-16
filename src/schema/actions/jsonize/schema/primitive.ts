@@ -2,7 +2,7 @@ import { anyOf } from '~/attributes/anyOf/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
 import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
-import { nul } from '~/attributes/nul/index.js'
+import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
 import { string } from '~/attributes/string/index.js'
 

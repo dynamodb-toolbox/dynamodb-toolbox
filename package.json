@@ -112,12 +112,12 @@
     },
     "./attributes/nul": {
       "import": {
-        "types": "./dist/esm/attributes/nul/index.d.ts",
-        "default": "./dist/esm/attributes/nul/index.js"
+        "types": "./dist/esm/attributes/null/index.d.ts",
+        "default": "./dist/esm/attributes/null/index.js"
       },
       "require": {
-        "types": "./dist/cjs/attributes/nul/index.d.ts",
-        "default": "./dist/cjs/attributes/nul/index.js"
+        "types": "./dist/cjs/attributes/null/index.d.ts",
+        "default": "./dist/cjs/attributes/null/index.js"
       }
     },
     "./attributes/boolean": {
