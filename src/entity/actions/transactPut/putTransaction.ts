@@ -43,7 +43,7 @@ export class PutTransaction<
     return new PutTransaction(this.entity, this[$item], nextOptions)
   }
 
-  params(): Require<TransactWriteItem, 'Put'> {
+  params(): Require<TransactWriteItem, 'Put'> & { ToolboxItem: PutItemInput<ENTITY, true> } {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'PutTransaction incomplete: Missing "item" property'
@@ -51,10 +51,14 @@ export class PutTransaction<
     }
 
     const options = this[$options]
-    const { item } = this.entity.build(EntityParser).parse(this[$item])
+    const { parsedItem, item } = this.entity.build(EntityParser).parse(this[$item])
     const awsOptions = parseOptions(this.entity, options)
 
     return {
+      /**
+       * @debt type "TODO: Remove this cast?"
+       */
+      ToolboxItem: parsedItem as PutItemInput<ENTITY, true>,
       Put: {
         TableName: options?.tableName ?? this.entity.table.getName(),
         Item: item as Record<string, AttributeValue>,

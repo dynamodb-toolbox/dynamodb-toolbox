@@ -102,23 +102,23 @@ export type UpdateItemInputExtension =
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRE_DEFAULTS extends boolean = false
-> = REQUIRE_DEFAULTS extends false
-  ? ATTRIBUTE extends { required: Always } & (
-      | {
-          key: true
-          defaults: { key: undefined }
-          links: { key: undefined }
-        }
-      | {
-          key: false
-          defaults: { update: undefined }
-          links: { update: undefined }
-        }
-    )
+  FILLED extends boolean = false
+> = FILLED extends true
+  ? ATTRIBUTE extends { required: Always }
     ? true
     : false
-  : ATTRIBUTE extends { required: Always }
+  : ATTRIBUTE extends { required: Always } & (
+        | {
+            key: true
+            defaults: { key: undefined }
+            links: { key: undefined }
+          }
+        | {
+            key: false
+            defaults: { update: undefined }
+            links: { update: undefined }
+          }
+      )
     ? true
     : false
 
@@ -135,7 +135,7 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
  */
 export type UpdateItemInput<
   SCHEMA extends Entity | Schema = Entity,
-  REQUIRE_DEFAULTS extends boolean = false
+  FILLED extends boolean = false
 > = Entity extends SCHEMA
   ? Item<UpdateItemInputExtension>
   : Schema extends SCHEMA
@@ -145,7 +145,7 @@ export type UpdateItemInput<
           {
             [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
               SCHEMA['attributes'][KEY],
-              REQUIRE_DEFAULTS,
+              FILLED,
               Paths<SCHEMA>
             >
           },
@@ -153,7 +153,7 @@ export type UpdateItemInput<
           SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
       : SCHEMA extends Entity
-        ? UpdateItemInput<SCHEMA['schema'], REQUIRE_DEFAULTS>
+        ? UpdateItemInput<SCHEMA['schema'], FILLED>
         : never
 
 export type Reference<
@@ -177,12 +177,12 @@ export type Reference<
  */
 export type AttributeUpdateItemInput<
   ATTRIBUTE extends Attribute = Attribute,
-  REQUIRE_DEFAULTS extends boolean = false,
+  FILLED extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateItemInputExtension> | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRE_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, FILLED>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
@@ -249,7 +249,7 @@ export type AttributeUpdateItemInput<
                         [INDEX in number]?:
                           | AttributeUpdateItemInput<
                               ATTRIBUTE['elements'],
-                              REQUIRE_DEFAULTS,
+                              FILLED,
                               SCHEMA_ATTRIBUTE_PATHS
                             >
                           | REMOVE
@@ -285,7 +285,7 @@ export type AttributeUpdateItemInput<
                             {
                               [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                                 ATTRIBUTE['attributes'][KEY],
-                                REQUIRE_DEFAULTS,
+                                FILLED,
                                 SCHEMA_ATTRIBUTE_PATHS
                               >
                             },
@@ -303,7 +303,7 @@ export type AttributeUpdateItemInput<
                             [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?:
                               | AttributeUpdateItemInput<
                                   ATTRIBUTE['elements'],
-                                  REQUIRE_DEFAULTS,
+                                  FILLED,
                                   SCHEMA_ATTRIBUTE_PATHS
                                 >
                               | REMOVE
@@ -312,7 +312,7 @@ export type AttributeUpdateItemInput<
                     : ATTRIBUTE extends AnyOfAttribute
                       ? AttributeUpdateItemInput<
                           ATTRIBUTE['elements'][number],
-                          REQUIRE_DEFAULTS,
+                          FILLED,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
                       : never)

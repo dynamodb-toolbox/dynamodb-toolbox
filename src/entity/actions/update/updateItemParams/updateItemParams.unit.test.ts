@@ -1,4 +1,6 @@
 import {
+  $ADD,
+  $GET,
   $add,
   $append,
   $delete,
@@ -166,6 +168,7 @@ describe('update', () => {
   test('creates default update', () => {
     const {
       TableName,
+      ToolboxItem,
       Key,
       UpdateExpression,
       ExpressionAttributeNames,
@@ -201,6 +204,19 @@ describe('update', () => {
       ':s_6': expect.any(String),
       ':s_7': expect.any(String),
       ':a_1': 1
+    })
+
+    expect(ToolboxItem).toStrictEqual({
+      created: { [$GET]: ['created', expect.any(String)] },
+      modified: expect.any(String),
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      email: 'test-pk',
+      sort: 'test-sk',
+      simple_string_copy: 'NOTHING_TO_COPY',
+      test_boolean_default: false,
+      test_number_default: 0,
+      test_string: 'default string',
+      touchCount: { [$ADD]: 1 }
     })
   })
 

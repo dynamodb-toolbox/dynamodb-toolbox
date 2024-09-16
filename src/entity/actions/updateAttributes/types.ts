@@ -80,23 +80,23 @@ export type UpdateAttributesInputExtension =
 
 type MustBeDefined<
   ATTRIBUTE extends Attribute,
-  REQUIRE_DEFAULTS extends boolean = false
-> = REQUIRE_DEFAULTS extends false
-  ? ATTRIBUTE extends { required: Always } & (
-      | {
-          key: true
-          defaults: { key: undefined }
-          links: { key: undefined }
-        }
-      | {
-          key: false
-          defaults: { update: undefined }
-          links: { update: undefined }
-        }
-    )
+  FILLED extends boolean = false
+> = FILLED extends true
+  ? ATTRIBUTE extends { required: Always }
     ? true
     : false
-  : ATTRIBUTE extends { required: Always }
+  : ATTRIBUTE extends { required: Always } & (
+        | {
+            key: true
+            defaults: { key: undefined }
+            links: { key: undefined }
+          }
+        | {
+            key: false
+            defaults: { update: undefined }
+            links: { update: undefined }
+          }
+      )
     ? true
     : false
 
@@ -113,7 +113,7 @@ type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: N
  */
 export type UpdateAttributesInput<
   SCHEMA extends Entity | Schema = Entity,
-  REQUIRE_DEFAULTS extends boolean = false
+  FILLED extends boolean = false
 > = Entity extends SCHEMA
   ? Item<UpdateAttributesInputExtension>
   : Schema extends SCHEMA
@@ -123,7 +123,7 @@ export type UpdateAttributesInput<
           {
             [KEY in keyof SCHEMA['attributes']]: UpdateAttributeInput<
               SCHEMA['attributes'][KEY],
-              REQUIRE_DEFAULTS,
+              FILLED,
               Paths<SCHEMA>
             >
           },
@@ -131,7 +131,7 @@ export type UpdateAttributesInput<
           SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
         >
       : SCHEMA extends Entity
-        ? UpdateAttributesInput<SCHEMA['schema'], REQUIRE_DEFAULTS>
+        ? UpdateAttributesInput<SCHEMA['schema'], FILLED>
         : never
 
 /**
@@ -143,12 +143,12 @@ export type UpdateAttributesInput<
  */
 export type UpdateAttributeInput<
   ATTRIBUTE extends Attribute = Attribute,
-  REQUIRE_DEFAULTS extends boolean = false,
+  FILLED extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
 > = Attribute extends ATTRIBUTE
   ? AttributeValue<UpdateAttributesInputExtension> | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, REQUIRE_DEFAULTS>, never, undefined>
+      | If<MustBeDefined<ATTRIBUTE, FILLED>, never, undefined>
       | If<CanBeRemoved<ATTRIBUTE>, REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
@@ -242,7 +242,7 @@ export type UpdateAttributeInput<
                     : ATTRIBUTE extends AnyOfAttribute
                       ? UpdateAttributeInput<
                           ATTRIBUTE['elements'][number],
-                          REQUIRE_DEFAULTS,
+                          FILLED,
                           SCHEMA_ATTRIBUTE_PATHS
                         >
                       : never)

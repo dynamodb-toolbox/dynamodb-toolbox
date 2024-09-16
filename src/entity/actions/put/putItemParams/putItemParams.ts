@@ -11,7 +11,7 @@ type PutItemParamsGetter = <ENTITY extends Entity, OPTIONS extends PutItemOption
   entity: ENTITY,
   input: PutItemInput<ENTITY>,
   putItemOptions?: OPTIONS
-) => PutCommandInput
+) => PutCommandInput & { ToolboxItem: PutItemInput<ENTITY, true> }
 
 export const putItemParams: PutItemParamsGetter = <
   ENTITY extends Entity,
@@ -21,12 +21,16 @@ export const putItemParams: PutItemParamsGetter = <
   input: PutItemInput<ENTITY>,
   options: OPTIONS = {} as OPTIONS
 ) => {
-  const { item } = entity.build(EntityParser).parse(input)
+  const { parsedItem, item } = entity.build(EntityParser).parse(input)
   const awsOptions = parsePutItemOptions(entity, options)
 
   return {
     TableName: options.tableName ?? entity.table.getName(),
     Item: item,
+    /**
+     * @debt type "TODO: Remove this cast?"
+     */
+    ToolboxItem: parsedItem as PutItemInput<ENTITY, true>,
     ...awsOptions
   }
 }

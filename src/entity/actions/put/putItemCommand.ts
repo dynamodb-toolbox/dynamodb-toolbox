@@ -30,7 +30,10 @@ export type PutItemResponse<
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
 > = Merge<
   Omit<PutCommandOutput, 'Attributes'>,
-  { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> }
+  {
+    Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
+    ToolboxItem: PutItemInput<ENTITY, true>
+  }
 >
 
 export class PutItemCommand<
@@ -71,7 +74,7 @@ export class PutItemCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): PutCommandInput {
+  params(): PutCommandInput & { ToolboxItem: PutItemInput<ENTITY, true> } {
     const [item, options] = this[$sentArgs]()
 
     return putItemParams(this.entity, item, options)
@@ -79,7 +82,7 @@ export class PutItemCommand<
 
   @sender()
   async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
-    const putItemParams = this.params()
+    const { ToolboxItem, ...putItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
@@ -88,14 +91,11 @@ export class PutItemCommand<
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
     if (attributes === undefined) {
-      return restCommandOutput
+      return { ToolboxItem, ...restCommandOutput }
     }
 
     const formattedItem = new EntityFormatter(this.entity).format(attributes)
 
-    return {
-      Attributes: formattedItem as any,
-      ...restCommandOutput
-    }
+    return { ToolboxItem, Attributes: formattedItem as any, ...restCommandOutput }
   }
 }

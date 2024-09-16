@@ -46,4 +46,7 @@ export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends b
   extension: OPTIONS extends { parseExtension: ExtensionParser }
     ? NonNullable<OPTIONS['parseExtension'][CONTEXT extends true ? $contextExtension : $extension]>
     : ParsedValueDefaultOptions['extension']
+  defined: OPTIONS extends { defined: boolean }
+    ? OPTIONS['defined']
+    : ParsedValueDefaultOptions['defined']
 }

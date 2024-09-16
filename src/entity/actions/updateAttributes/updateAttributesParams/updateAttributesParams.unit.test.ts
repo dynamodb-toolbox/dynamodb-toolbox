@@ -1,4 +1,6 @@
 import {
+  $ADD,
+  $GET,
   $add,
   $append,
   $delete,
@@ -163,7 +165,8 @@ describe('update', () => {
       Key,
       UpdateExpression,
       ExpressionAttributeNames,
-      ExpressionAttributeValues
+      ExpressionAttributeValues,
+      ToolboxItem
     } = TestEntity.build(UpdateAttributesCommand)
       .item({ email: 'test-pk', sort: 'test-sk' })
       .params()
@@ -174,6 +177,7 @@ describe('update', () => {
     expect(UpdateExpression).toStrictEqual(
       'SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4, #s_5 = if_not_exists(#s_6, :s_5), #s_7 = if_not_exists(#s_8, :s_6), #s_9 = :s_7 ADD #a_1 :a_1'
     )
+
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s_1': 'test_string',
       '#s_2': 'test_number_default',
@@ -188,6 +192,7 @@ describe('update', () => {
       '#s_9': '_md',
       '#a_1': 'touchCount'
     })
+
     expect(ExpressionAttributeValues).toStrictEqual({
       ':s_1': 'default string',
       ':s_2': 0,
@@ -197,6 +202,19 @@ describe('update', () => {
       ':s_6': expect.any(String),
       ':s_7': expect.any(String),
       ':a_1': 1
+    })
+
+    expect(ToolboxItem).toStrictEqual({
+      created: { [$GET]: ['created', expect.any(String)] },
+      modified: expect.any(String),
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      email: 'test-pk',
+      sort: 'test-sk',
+      simple_string_copy: 'NOTHING_TO_COPY',
+      test_boolean_default: false,
+      test_number_default: 0,
+      test_string: 'default string',
+      touchCount: { [$ADD]: 1 }
     })
   })
 
