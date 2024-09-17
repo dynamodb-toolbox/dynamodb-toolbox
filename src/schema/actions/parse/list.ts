@@ -29,7 +29,7 @@ export type ListAttrParsedValue<
   ? unknown[]
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrParsedValue<ATTRIBUTE['elements']>[]
+      | AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>[]
       | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
 
 export function* listAttrParser<
