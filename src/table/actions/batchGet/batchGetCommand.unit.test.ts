@@ -54,7 +54,7 @@ describe('BatchGetCommand', () => {
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'actions.incompleteAction' }))
   })
 
-  test('infers correct type', () => {
+  test('infers correct type when receiving a tuple of requests', () => {
     const command = TestTable.build(BatchGetCommand).requests(
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
@@ -67,8 +67,8 @@ describe('BatchGetCommand', () => {
     expect(command[$entities]).toStrictEqual([EntityA, EntityB])
   })
 
-  test('infers correct type even when receiving an array of requests', () => {
-    const requests = [
+  test('infers correct type when receiving an array of requests', () => {
+    const requests: [BatchGetRequest<typeof EntityA>, ...BatchGetRequest<typeof EntityB>[]] = [
       EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
       EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
     ]

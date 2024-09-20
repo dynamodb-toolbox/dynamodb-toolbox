@@ -45,76 +45,82 @@ type ExecuteBatchGetResponse<COMMAND extends BatchGetCommand[]> = Omit<
 type BatchGetResponses<
   COMMANDS extends BatchGetCommand[],
   RESPONSES extends unknown[] = []
-> = number extends COMMANDS['length']
-  ? (COMMANDS[number] extends infer TABLE_COMMAND
-      ? TABLE_COMMAND extends BatchGetCommand
-        ? BatchGetRequestResponses<NonNullable<TABLE_COMMAND[$requests]>, TABLE_COMMAND[$options]>
-        : never
-      : never)[]
-  : COMMANDS extends [infer COMMANDS_HEAD, ...infer COMMANDS_TAILS]
-    ? COMMANDS_HEAD extends BatchGetCommand
-      ? COMMANDS_TAILS extends BatchGetCommand[]
-        ? BatchGetResponses<
-            COMMANDS_TAILS,
-            [
-              ...RESPONSES,
-              BatchGetRequestResponses<
-                NonNullable<COMMANDS_HEAD[$requests]>,
-                COMMANDS_HEAD[$options]
-              >
-            ]
-          >
-        : never
+> = COMMANDS extends [infer COMMANDS_HEAD, ...infer COMMANDS_TAILS]
+  ? COMMANDS_HEAD extends BatchGetCommand
+    ? COMMANDS_TAILS extends BatchGetCommand[]
+      ? BatchGetResponses<
+          COMMANDS_TAILS,
+          [
+            ...RESPONSES,
+            BatchGetRequestResponses<NonNullable<COMMANDS_HEAD[$requests]>, COMMANDS_HEAD[$options]>
+          ]
+        >
       : never
+    : never
+  : number extends COMMANDS['length']
+    ? [
+        ...RESPONSES,
+        ...(COMMANDS[number] extends infer TABLE_COMMAND
+          ? TABLE_COMMAND extends BatchGetCommand
+            ? BatchGetRequestResponses<
+                NonNullable<TABLE_COMMAND[$requests]>,
+                TABLE_COMMAND[$options]
+              >
+            : never
+          : never)[]
+      ]
     : RESPONSES
 
 type BatchGetRequestResponses<
   REQUESTS extends BatchGetRequestProps[],
   OPTIONS extends BatchGetCommandOptions,
   ITEMS extends unknown[] = []
-> = number extends REQUESTS['length']
-  ? (
-      | (REQUESTS[number] extends infer ENTITY_REQUEST
-          ? ENTITY_REQUEST extends BatchGetRequestProps
-            ? FormattedItem<
-                ENTITY_REQUEST['entity'],
-                {
-                  attributes: OPTIONS extends {
-                    attributes: Paths<ENTITY_REQUEST['entity']['schema']>[]
+> = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
+  ? REQUESTS_HEAD extends BatchGetRequestProps
+    ? REQUESTS_TAIL extends BatchGetRequestProps[]
+      ? BatchGetRequestResponses<
+          REQUESTS_TAIL,
+          OPTIONS,
+          [
+            ...ITEMS,
+            (
+              | FormattedItem<
+                  REQUESTS_HEAD['entity'],
+                  {
+                    attributes: OPTIONS extends {
+                      attributes: Paths<REQUESTS_HEAD['entity']['schema']>[]
+                    }
+                      ? OPTIONS['attributes'][number]
+                      : undefined
                   }
-                    ? OPTIONS['attributes'][number]
-                    : undefined
-                }
-              >
-            : never
-          : never)
-      | undefined
-    )[]
-  : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-    ? REQUESTS_HEAD extends BatchGetRequestProps
-      ? REQUESTS_TAIL extends BatchGetRequestProps[]
-        ? BatchGetRequestResponses<
-            REQUESTS_TAIL,
-            OPTIONS,
-            [
-              ...ITEMS,
-              (
-                | FormattedItem<
-                    REQUESTS_HEAD['entity'],
+                >
+              | undefined
+            )
+          ]
+        >
+      : never
+    : never
+  : number extends REQUESTS['length']
+    ? [
+        ...ITEMS,
+        ...(
+          | (REQUESTS[number] extends infer ENTITY_REQUEST
+              ? ENTITY_REQUEST extends BatchGetRequestProps
+                ? FormattedItem<
+                    ENTITY_REQUEST['entity'],
                     {
                       attributes: OPTIONS extends {
-                        attributes: Paths<REQUESTS_HEAD['entity']['schema']>[]
+                        attributes: Paths<ENTITY_REQUEST['entity']['schema']>[]
                       }
                         ? OPTIONS['attributes'][number]
                         : undefined
                     }
                   >
-                | undefined
-              )
-            ]
-          >
-        : never
-      : never
+                : never
+              : never)
+          | undefined
+        )[]
+      ]
     : ITEMS
 
 export const execute: ExecuteBatchGet = async <

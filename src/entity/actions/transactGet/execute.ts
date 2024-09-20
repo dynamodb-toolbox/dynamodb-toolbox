@@ -45,21 +45,24 @@ type ExecuteTransactGetResponse<TRANSACTIONS extends GetTransactionProps[]> = Om
 type TransactGetResponses<
   TRANSACTIONS extends GetTransactionProps[],
   RESPONSES extends unknown[] = []
-> = number extends TRANSACTIONS['length']
-  ? (TRANSACTIONS[number] extends infer TRANSACTION
-      ? TRANSACTION extends GetTransactionProps
-        ? TransactGetResponse<TRANSACTION>
-        : never
-      : never)[]
-  : TRANSACTIONS extends [infer TRANSACTIONS_HEAD, ...infer TRANSACTIONS_TAIL]
-    ? TRANSACTIONS_HEAD extends GetTransactionProps
-      ? TRANSACTIONS_TAIL extends GetTransactionProps[]
-        ? TransactGetResponses<
-            TRANSACTIONS_TAIL,
-            [...RESPONSES, TransactGetResponse<TRANSACTIONS_HEAD>]
-          >
-        : never
+> = TRANSACTIONS extends [infer TRANSACTIONS_HEAD, ...infer TRANSACTIONS_TAIL]
+  ? TRANSACTIONS_HEAD extends GetTransactionProps
+    ? TRANSACTIONS_TAIL extends GetTransactionProps[]
+      ? TransactGetResponses<
+          TRANSACTIONS_TAIL,
+          [...RESPONSES, TransactGetResponse<TRANSACTIONS_HEAD>]
+        >
       : never
+    : never
+  : number extends TRANSACTIONS['length']
+    ? [
+        ...RESPONSES,
+        ...(TRANSACTIONS[number] extends infer TRANSACTION
+          ? TRANSACTION extends GetTransactionProps
+            ? TransactGetResponse<TRANSACTION>
+            : never
+          : never)[]
+      ]
     : RESPONSES extends []
       ? (FormattedItem | undefined)[]
       : RESPONSES

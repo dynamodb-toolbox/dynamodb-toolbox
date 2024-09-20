@@ -201,6 +201,52 @@ describe('execute', () => {
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
+
+  test('should send a transaction from a mix of tuple and array of GetTransaction', async () => {
+    const transactions: [
+      GetTransaction<typeof TestEntity, { attributes: ['test_string'] }>,
+      ...GetTransaction<typeof TestEntity2>[]
+    ] = [
+      TestEntity.build(GetTransaction)
+        .key({ email: 'toto@example.com', sort: 'toto' })
+        .options({ attributes: ['test_string'] }),
+      TestEntity2.build(GetTransaction).key({ email: 'titi@example.com' }),
+      TestEntity2.build(GetTransaction).key({ email: 'tutu@example.com' }).options({})
+    ]
+
+    const { Responses: responses } = await execute({ documentClient }, ...transactions)
+
+    expect(responses).toHaveLength(3)
+
+    const assertResponse: A.Equals<
+      typeof responses,
+      | [
+          { Item?: FormattedItem<typeof TestEntity, { attributes: 'test_string' }> },
+          ...{ Item?: FormattedItem<typeof TestEntity2> }[]
+        ]
+      | undefined
+    > = 1
+    assertResponse
+
+    const [response1, response2, response3] = responses ?? []
+    expect(response1).toStrictEqual({ Item: { test_string: 'test_string' } })
+    expect(response2).toStrictEqual({
+      Item: {
+        created: '2023-12-15T16:22:49.834Z',
+        modified: '2023-12-15T16:22:49.834Z',
+        email: 'tata@example.com'
+      }
+    })
+    expect(response3).toStrictEqual({
+      Item: {
+        created: '2023-12-15T16:22:49.834Z',
+        modified: '2023-12-15T16:22:49.834Z',
+        email: 'titi@example.com'
+      }
+    })
+
+    expect(documentClient.send).toHaveBeenCalledTimes(1)
+  })
 })
 
 const mockDate = '2023-12-15T16:22:49.834Z'
