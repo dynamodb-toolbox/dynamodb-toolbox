@@ -1,13 +1,11 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
+import type { Never } from '~/attributes/constants/requiredOptions.js'
+import { NumberAttribute } from '~/attributes/number/index.js'
 import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
-import type { ResolvedPrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
-import type {
-  PrimitiveAttributeCondition,
-  SchemaCondition
-} from '~/schema/actions/parseCondition/index.js'
+import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
 import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Index } from '~/table/types/indexes.js'
@@ -16,28 +14,16 @@ import { pick } from '~/utils/pick.js'
 import { queryOperatorSet } from '../types.js'
 import type { Query } from '../types.js'
 
-const defaultAttribute: Omit<ConstructorParameters<typeof PrimitiveAttribute>[0], 'type'> = {
-  required: 'never',
+const defaultAttribute = {
+  required: 'never' as Never,
   key: false,
   hidden: false,
   savedAs: undefined,
   enum: undefined,
   transform: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  validators: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  }
+  defaults: { key: undefined, put: undefined, update: undefined },
+  links: { key: undefined, put: undefined, update: undefined },
+  validators: { key: undefined, put: undefined, update: undefined }
 }
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
@@ -82,44 +68,32 @@ export const parseQuery: QueryParser = (table, query) => {
   }
 
   const indexSchema: Schema = new Schema<{}>({})
-  indexSchema.attributes[partitionKey.name] = new PrimitiveAttribute({
-    ...defaultAttribute,
-    path: partitionKey.name,
-    type: partitionKey.type,
-    enum: undefined,
-    transform: undefined
-  })
+  indexSchema.attributes[partitionKey.name] =
+    partitionKey.type === 'number'
+      ? new NumberAttribute({ ...defaultAttribute, path: partitionKey.name })
+      : new PrimitiveAttribute({
+          ...defaultAttribute,
+          path: partitionKey.name,
+          type: partitionKey.type
+        })
 
-  let condition: SchemaCondition = {
+  let condition = {
     attr: partitionKey.name,
     eq: partition
-  }
+  } as SchemaCondition
 
   if (sortKey !== undefined && range !== undefined) {
-    indexSchema.attributes[sortKey.name] = new PrimitiveAttribute({
-      ...defaultAttribute,
-      path: sortKey.name,
-      type: sortKey.type,
-      enum: undefined,
-      transform: undefined
-    })
+    indexSchema.attributes[sortKey.name] =
+      sortKey.type === 'number'
+        ? new NumberAttribute({ ...defaultAttribute, path: partitionKey.name })
+        : new PrimitiveAttribute({ ...defaultAttribute, path: sortKey.name, type: sortKey.type })
 
     const sortKeyCondition = {
       attr: sortKey.name,
       ...pick(range, ...queryOperatorSet)
-      /**
-       * @debt type "Remove this cast"
-       */
-    } as unknown as PrimitiveAttributeCondition<
-      string,
-      PrimitiveAttribute,
-      never,
-      ResolvedPrimitiveAttribute
-    >
+    } as SchemaCondition
 
-    condition = {
-      and: [condition, sortKeyCondition]
-    }
+    condition = { and: [condition, sortKeyCondition] }
   }
 
   const conditionParser = new ConditionParser(indexSchema, '0')

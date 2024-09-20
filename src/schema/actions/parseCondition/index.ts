@@ -7,4 +7,4 @@ export type {
 } from './parseCondition/comparison/types.js'
 export type { LogicalCombinationOperator } from './parseCondition/logicalCombination/types.js'
 export type { BeginsWithOperator, TwoArgsFnOperator } from './parseCondition/twoArgsFn/types.js'
-export type { SchemaCondition, PrimitiveAttributeCondition } from './condition.js'
+export type { SchemaCondition, PrimitiveOrNumberAttributeCondition } from './condition.js'

@@ -6,6 +6,7 @@ import type {
   Attribute,
   ListAttribute,
   MapAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
   SetAttribute
@@ -25,8 +26,11 @@ import type { ListAttrParsedValue, ListAttrParserInput } from './list.js'
 import { mapAttributeParser } from './map.js'
 import type { MapAttrParsedValue, MapAttrParserInput } from './map.js'
 import type { ParsedValue } from './parser.js'
-import { primitiveAttrParser } from './primitive.js'
-import type { PrimitiveAttrParsedValue, PrimitiveAttrParserInput } from './primitive.js'
+import { primitiveOrNumberAttrParser } from './primitiveOrNumber.js'
+import type {
+  PrimitiveOrNumberAttrParsedValue,
+  PrimitiveOrNumberAttrParserInput
+} from './primitiveOrNumber.js'
 import { recordAttributeParser } from './record.js'
 import type { RecordAttrParsedValue, RecordAttrParserInput } from './record.js'
 import { setAttrParser } from './set.js'
@@ -52,8 +56,8 @@ export type AttrParsedValue<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
+    ? PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, OPTIONS>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrParsedValue<ATTRIBUTE, OPTIONS>
       : ATTRIBUTE extends ListAttribute
@@ -163,7 +167,7 @@ export function* attrParser<
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveAttrParser(attribute, basicInput, nextOpts) as any
+      return yield* primitiveOrNumberAttrParser(attribute, basicInput, nextOpts) as any
     case 'set':
       return yield* setAttrParser(attribute, basicInput, nextOpts) as any
     case 'list':
@@ -207,8 +211,8 @@ export type AttrParserInput<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParserInput<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrParserInput<ATTRIBUTE, OPTIONS>
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
+    ? PrimitiveOrNumberAttrParserInput<ATTRIBUTE, OPTIONS>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrParserInput<ATTRIBUTE, OPTIONS>
       : ATTRIBUTE extends ListAttribute

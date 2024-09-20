@@ -1,8 +1,11 @@
 import type {
   ExtendedValue,
+  NumberAttribute,
   PrimitiveAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolvePrimitiveAttributeType,
+  ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   Transformer
 } from '~/attributes/index.js'
@@ -22,40 +25,48 @@ import type {
 } from './types/options.js'
 import { applyCustomValidation } from './utils.js'
 
-export type PrimitiveAttrParsedValue<
-  ATTRIBUTE extends PrimitiveAttribute,
+export type PrimitiveOrNumberAttrParsedValue<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = PrimitiveAttribute extends ATTRIBUTE
   ? ResolvedPrimitiveAttribute
   : ATTRIBUTE extends { transform: undefined }
     ?
         | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-        | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
-            ? ATTRIBUTE['enum'][number]
-            : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+        | (ATTRIBUTE extends PrimitiveAttribute
+            ? ResolvePrimitiveAttribute<ATTRIBUTE>
+            : ATTRIBUTE extends NumberAttribute
+              ? ResolveNumberAttribute<ATTRIBUTE>
+              : never)
         | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
     : OPTIONS extends { transform: false }
       ?
           | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-          | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
-              ? ATTRIBUTE['enum'][number]
-              : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+          | (ATTRIBUTE extends PrimitiveAttribute
+              ? ResolvePrimitiveAttribute<ATTRIBUTE>
+              : ATTRIBUTE extends NumberAttribute
+                ? ResolveNumberAttribute<ATTRIBUTE>
+                : never)
           | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-      : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
+      : ATTRIBUTE extends PrimitiveAttribute
+        ? ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
+        : ATTRIBUTE extends NumberAttribute
+          ? ResolveNumberAttribute<ATTRIBUTE>
+          : never
 
-export function* primitiveAttrParser<
-  ATTRIBUTE extends PrimitiveAttribute,
+export function* primitiveOrNumberAttrParser<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(
   attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
   ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
-  type Parsed = PrimitiveAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
+  type Parsed = PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
 
   const { fill = true, transform = true } = options
 
@@ -83,10 +94,7 @@ export function* primitiveAttrParser<
     })
   }
 
-  if (
-    attribute.enum !== undefined &&
-    !attribute.enum.includes(linkedValue as ResolvedPrimitiveAttribute)
-  ) {
+  if (attribute.enum !== undefined && !attribute.enum.includes(linkedValue as any)) {
     const { path } = attribute
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -101,10 +109,7 @@ export function* primitiveAttrParser<
     })
   }
 
-  /**
-   * @debt type "validator should act as type guard"
-   */
-  const parsedValue = linkedValue as ResolvedPrimitiveAttribute
+  const parsedValue = linkedValue
   applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
@@ -120,15 +125,20 @@ export function* primitiveAttrParser<
   return transformedValue as Parsed
 }
 
-export type PrimitiveAttrParserInput<
-  ATTRIBUTE extends PrimitiveAttribute,
+export type PrimitiveOrNumberAttrParserInput<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute extends ATTRIBUTE
+> = PrimitiveAttribute | NumberAttribute extends ATTRIBUTE
   ?
       | undefined
       | ResolvedPrimitiveAttribute
+      | ResolvedNumberAttribute
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends PrimitiveAttribute
+          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends NumberAttribute
+            ? ResolveNumberAttribute<ATTRIBUTE>
+            : never)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

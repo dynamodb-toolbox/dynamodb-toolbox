@@ -6,3 +6,5 @@ export type ResolveNumberAttribute<ATTRIBUTE extends NumberAttribute> = ATTRIBUT
   ? ATTRIBUTE['enum'][number]
   : // TODO: support bigInts if big: true
     number
+
+export type ResolvedNumberAttribute = ResolveNumberAttribute<NumberAttribute>

@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, PrimitiveAttribute } from '~/attributes/index.js'
+import type { AttributeBasicValue, NumberAttribute } from '~/attributes/index.js'
 import { number } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
@@ -10,7 +10,7 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
-  attribute: PrimitiveAttribute<'number'>,
+  attribute: NumberAttribute,
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -28,9 +28,7 @@ export const parseNumberExtension = (
               path !== undefined ? `'${path}' ` : ''
             }should be a tuple of length 2`,
             path,
-            payload: {
-              received: inputValue[$SUM]
-            }
+            payload: { received: inputValue[$SUM] }
           })
         }
 

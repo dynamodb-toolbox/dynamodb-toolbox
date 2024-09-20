@@ -9,10 +9,12 @@ import type {
   ListAttribute,
   MapAttribute,
   Never,
+  NumberAttribute,
   PrimitiveAttribute,
   PrimitiveAttributeValue,
   RecordAttribute,
   ResolveAnyAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   SetAttribute,
   SetAttributeValue
@@ -162,87 +164,86 @@ export type UpdateAttributeInput<
       | (ATTRIBUTE extends AnyAttribute
           ? ResolveAnyAttribute<ATTRIBUTE> | unknown
           : ATTRIBUTE extends PrimitiveAttribute
-            ?
-                | ResolvePrimitiveAttribute<ATTRIBUTE>
-                | (ATTRIBUTE extends PrimitiveAttribute<'number'>
-                    ?
-                        | ADD<number>
-                        | SUM<
-                            // Not using Reference<...> for improved type display
-                            | number
-                            | GET<
-                                [
-                                  ref: SCHEMA_ATTRIBUTE_PATHS,
-                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                                ]
-                              >,
-                            // Not using Reference<...> for improved type display
-                            | number
-                            | GET<
-                                [
-                                  ref: SCHEMA_ATTRIBUTE_PATHS,
-                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                                ]
-                              >
-                          >
-                        | SUBTRACT<
-                            // Not using Reference<...> for improved type display
-                            | number
-                            | GET<
-                                [
-                                  ref: SCHEMA_ATTRIBUTE_PATHS,
-                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                                ]
-                              >,
-                            // Not using Reference<...> for improved type display
-                            | number
-                            | GET<
-                                [
-                                  ref: SCHEMA_ATTRIBUTE_PATHS,
-                                  fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                                ]
-                              >
-                          >
-                    : never)
-            : ATTRIBUTE extends SetAttribute
+            ? ResolvePrimitiveAttribute<ATTRIBUTE>
+            : ATTRIBUTE extends NumberAttribute
               ?
-                  | Set<AttrParserInput<ATTRIBUTE['elements']>>
-                  | ADD<Set<AttrParserInput<ATTRIBUTE['elements']>>>
-                  | DELETE<Set<AttrParserInput<ATTRIBUTE['elements']>>>
-              : ATTRIBUTE extends ListAttribute
-                ?
-                    | Basic<AttrParserInput<ATTRIBUTE['elements']>[]>
-                    | APPEND<
-                        // Not using Reference<...> for improved type display
-                        | GET<
-                            [
-                              ref: SCHEMA_ATTRIBUTE_PATHS,
-                              fallback?:
-                                | AttrParserInput<ATTRIBUTE['elements']>[]
-                                | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                            ]
-                          >
-                        | AttrParserInput<ATTRIBUTE['elements']>[]
-                      >
-                    | PREPEND<
-                        | GET<
-                            [
-                              ref: SCHEMA_ATTRIBUTE_PATHS,
-                              fallback?:
-                                | AttrParserInput<ATTRIBUTE['elements']>[]
-                                | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
-                            ]
-                          >
-                        | AttrParserInput<ATTRIBUTE['elements']>[]
-                      >
-                : ATTRIBUTE extends MapAttribute
-                  ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
-                  : ATTRIBUTE extends RecordAttribute
-                    ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
-                    : ATTRIBUTE extends AnyOfAttribute
-                      ? UpdateAttributeInput<
-                          ATTRIBUTE['elements'][number],
-                          FILLED,
-                          SCHEMA_ATTRIBUTE_PATHS
+                  | ResolveNumberAttribute<ATTRIBUTE>
+                  | ADD<number>
+                  | SUM<
+                      // Not using Reference<...> for improved type display
+                      | number
+                      | GET<
+                          [
+                            ref: SCHEMA_ATTRIBUTE_PATHS,
+                            fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          ]
+                        >,
+                      // Not using Reference<...> for improved type display
+                      | number
+                      | GET<
+                          [
+                            ref: SCHEMA_ATTRIBUTE_PATHS,
+                            fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          ]
                         >
-                      : never)
+                    >
+                  | SUBTRACT<
+                      // Not using Reference<...> for improved type display
+                      | number
+                      | GET<
+                          [
+                            ref: SCHEMA_ATTRIBUTE_PATHS,
+                            fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          ]
+                        >,
+                      // Not using Reference<...> for improved type display
+                      | number
+                      | GET<
+                          [
+                            ref: SCHEMA_ATTRIBUTE_PATHS,
+                            fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          ]
+                        >
+                    >
+              : ATTRIBUTE extends SetAttribute
+                ?
+                    | Set<AttrParserInput<ATTRIBUTE['elements']>>
+                    | ADD<Set<AttrParserInput<ATTRIBUTE['elements']>>>
+                    | DELETE<Set<AttrParserInput<ATTRIBUTE['elements']>>>
+                : ATTRIBUTE extends ListAttribute
+                  ?
+                      | Basic<AttrParserInput<ATTRIBUTE['elements']>[]>
+                      | APPEND<
+                          // Not using Reference<...> for improved type display
+                          | GET<
+                              [
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?:
+                                  | AttrParserInput<ATTRIBUTE['elements']>[]
+                                  | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                              ]
+                            >
+                          | AttrParserInput<ATTRIBUTE['elements']>[]
+                        >
+                      | PREPEND<
+                          | GET<
+                              [
+                                ref: SCHEMA_ATTRIBUTE_PATHS,
+                                fallback?:
+                                  | AttrParserInput<ATTRIBUTE['elements']>[]
+                                  | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                              ]
+                            >
+                          | AttrParserInput<ATTRIBUTE['elements']>[]
+                        >
+                  : ATTRIBUTE extends MapAttribute
+                    ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
+                    : ATTRIBUTE extends RecordAttribute
+                      ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
+                      : ATTRIBUTE extends AnyOfAttribute
+                        ? UpdateAttributeInput<
+                            ATTRIBUTE['elements'][number],
+                            FILLED,
+                            SCHEMA_ATTRIBUTE_PATHS
+                          >
+                        : never)

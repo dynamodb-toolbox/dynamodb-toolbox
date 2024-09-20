@@ -1,8 +1,8 @@
 import type { Attribute, PrimitiveAttribute, PrimitiveAttributeType } from '~/attributes/index.js'
 
 const primitiveAttributeTypeSet = new Set<PrimitiveAttributeType>([
+  'null',
   'boolean',
-  'number',
   'string',
   'binary'
 ])

@@ -4,9 +4,12 @@ import type {
   Attribute,
   ListAttribute,
   MapAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
+  ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   SetAttribute
 } from '~/attributes/index.js'
@@ -18,7 +21,12 @@ export type AnyAttributeCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = AttributeCondition<
   ATTRIBUTE_PATH,
-  PrimitiveAttribute | SetAttribute | ListAttribute | MapAttribute | RecordAttribute,
+  | NumberAttribute
+  | PrimitiveAttribute
+  | SetAttribute
+  | ListAttribute
+  | MapAttribute
+  | RecordAttribute,
   COMPARED_ATTRIBUTE_PATH
 >
 
@@ -40,8 +48,8 @@ export type AttributeCondition<
   | (ATTRIBUTE extends AnyAttribute
       ? AnyAttributeCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends PrimitiveAttribute
-      ? PrimitiveAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends NumberAttribute | PrimitiveAttribute
+      ? PrimitiveOrNumberAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends SetAttribute
       ? SetAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
@@ -61,13 +69,19 @@ export type AttributeCondition<
 
 type SortableAttribute =
   | PrimitiveAttribute<'string'>
-  | PrimitiveAttribute<'number'>
+  | NumberAttribute
   | PrimitiveAttribute<'binary'>
 
 type RangeCondition<
   ATTRIBUTE extends SortableAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
-  ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
+  ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute = ATTRIBUTE extends
+    | PrimitiveAttribute<'string'>
+    | PrimitiveAttribute<'binary'>
+    ? ResolvePrimitiveAttribute<ATTRIBUTE>
+    : ATTRIBUTE extends NumberAttribute
+      ? ResolveNumberAttribute<ATTRIBUTE>
+      : never
 > =
   | { lt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
   | { lte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
@@ -84,11 +98,17 @@ type StringAttributeCondition<COMPARED_ATTRIBUTE_PATH extends string> =
   | { contains: string | { attr: COMPARED_ATTRIBUTE_PATH } }
   | { beginsWith: string | { attr: COMPARED_ATTRIBUTE_PATH } }
 
-export type PrimitiveAttributeCondition<
+export type PrimitiveOrNumberAttributeCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends PrimitiveAttribute,
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
-  ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
+  ATTRIBUTE_VALUE extends
+    | ResolvedPrimitiveAttribute
+    | ResolvedNumberAttribute = ATTRIBUTE extends PrimitiveAttribute
+    ? ResolvePrimitiveAttribute<ATTRIBUTE>
+    : ATTRIBUTE extends NumberAttribute
+      ? ResolveNumberAttribute<ATTRIBUTE>
+      : never
 > = AttrOrSize<ATTRIBUTE_PATH> & { transform?: boolean } & (
     | { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
@@ -103,8 +123,11 @@ export type PrimitiveAttributeCondition<
      * @debt type "Annoying: PrimitiveAttribute is not the union of primitive Attributes (BooleanAttribute, StringAttribute etc...). So we have to do this for general case."
      */
     | (PrimitiveAttribute extends ATTRIBUTE
-        ? RangeCondition<SortableAttribute, string> | StringAttributeCondition<string>
+        ?
+            | RangeCondition<PrimitiveAttribute<'string'> | PrimitiveAttribute<'binary'>, string>
+            | StringAttributeCondition<string>
         : never)
+    | (NumberAttribute extends ATTRIBUTE ? RangeCondition<NumberAttribute, string> : never)
   )
 
 export type SetAttributeCondition<
@@ -112,7 +135,13 @@ export type SetAttributeCondition<
   ATTRIBUTE extends SetAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
 > = AttrOrSize<ATTRIBUTE_PATH> & {
-  contains: ResolvePrimitiveAttribute<ATTRIBUTE['elements']> | { attr: COMPARED_ATTRIBUTE_PATH }
+  contains:
+    | (ATTRIBUTE['elements'] extends PrimitiveAttribute
+        ? ResolvePrimitiveAttribute<ATTRIBUTE['elements']>
+        : ATTRIBUTE['elements'] extends NumberAttribute
+          ? ResolveNumberAttribute<ATTRIBUTE['elements']>
+          : never)
+    | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type ListAttributeCondition<
@@ -125,7 +154,11 @@ export type ListAttributeCondition<
         ? AttrOrSize<ATTRIBUTE_PATH> & {
             contains: ResolvePrimitiveAttribute<ELEMENTS> | { attr: COMPARED_ATTRIBUTE_PATH }
           }
-        : never
+        : ELEMENTS extends NumberAttribute
+          ? AttrOrSize<ATTRIBUTE_PATH> & {
+              contains: ResolveNumberAttribute<ELEMENTS> | { attr: COMPARED_ATTRIBUTE_PATH }
+            }
+          : never
       : never)
   // Stops recursion on general case
   | (ListAttribute extends ATTRIBUTE

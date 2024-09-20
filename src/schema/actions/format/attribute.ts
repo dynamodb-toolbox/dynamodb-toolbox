@@ -6,6 +6,7 @@ import type {
   Attribute,
   ListAttribute,
   MapAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
   RequiredOption,
@@ -23,7 +24,7 @@ import type { ListAttrFormattedValue } from './list.js'
 import { formatMapAttrRawValue } from './map.js'
 import type { MapAttrFormattedValue } from './map.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import type { PrimitiveAttrFormattedValue } from './primitive.js'
+import type { PrimitiveOrNumberAttrFormattedValue } from './primitive.js'
 import { formatRecordAttrRawValue } from './record.js'
 import type { RecordAttrFormattedValue } from './record.js'
 import { formatSavedSetAttribute } from './set.js'
@@ -46,8 +47,8 @@ export type AttrFormattedValue<
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrFormattedValue<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
+    ? PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
       : ATTRIBUTE extends ListAttribute

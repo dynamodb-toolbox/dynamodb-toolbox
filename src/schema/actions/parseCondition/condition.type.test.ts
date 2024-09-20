@@ -3,6 +3,7 @@ import type { A } from 'ts-toolbelt'
 import type {
   Attribute,
   ListAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   SetAttribute
 } from '~/attributes/index.js'
@@ -16,7 +17,7 @@ import type {
   ConditionType,
   ListAttributeCondition,
   NonLogicalCondition,
-  PrimitiveAttributeCondition,
+  PrimitiveOrNumberAttributeCondition,
   SchemaCondition,
   SetAttributeCondition
 } from './condition.js'
@@ -54,7 +55,8 @@ const anyCondition: A.Equals<
   ANY_CONDITION,
   | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
   | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
-  | PrimitiveAttributeCondition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveOrNumberAttributeCondition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveOrNumberAttributeCondition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
   | SetAttributeCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
   | ListAttributeCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
 > = 1

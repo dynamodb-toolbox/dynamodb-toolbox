@@ -8,9 +8,6 @@ assertResolveNull
 const assertResolveString: A.Equals<ResolvePrimitiveAttributeType<'string'>, string> = 1
 assertResolveString
 
-const assertResolveNumber: A.Equals<ResolvePrimitiveAttributeType<'number'>, number> = 1
-assertResolveNumber
-
 const assertResolveBoolean: A.Equals<ResolvePrimitiveAttributeType<'boolean'>, boolean> = 1
 assertResolveBoolean
 

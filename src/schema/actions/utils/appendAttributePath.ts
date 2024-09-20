@@ -1,6 +1,6 @@
 import { AnyAttribute } from '~/attributes/any/index.js'
 import type { Attribute } from '~/attributes/index.js'
-import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
+import { NumberAttribute } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -24,47 +24,22 @@ const defaultAnyAttribute = new AnyAttribute({
   hidden: false,
   key: false,
   savedAs: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  validators: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
+  defaults: { key: undefined, put: undefined, update: undefined },
+  links: { key: undefined, put: undefined, update: undefined },
+  validators: { key: undefined, put: undefined, update: undefined },
   castAs: undefined
 })
 
-const defaultNumberAttribute = new PrimitiveAttribute({
-  type: 'number',
+const defaultNumberAttribute = new NumberAttribute({
   required: 'never',
   hidden: false,
   key: false,
   savedAs: undefined,
   enum: undefined,
   transform: undefined,
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  links: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  },
-  validators: {
-    key: undefined,
-    put: undefined,
-    update: undefined
-  }
+  defaults: { key: undefined, put: undefined, update: undefined },
+  links: { key: undefined, put: undefined, update: undefined },
+  validators: { key: undefined, put: undefined, update: undefined }
 })
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
@@ -198,9 +173,6 @@ export const appendAttributePath = (
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
   return size
-    ? new PrimitiveAttribute({
-        ...defaultNumberAttribute,
-        path: parentAttribute.path
-      })
+    ? new NumberAttribute({ ...defaultNumberAttribute, path: parentAttribute.path })
     : parentAttribute
 }

@@ -1,6 +1,9 @@
 import type {
+  NumberAttribute,
   PrimitiveAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
+  ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   Transformer
 } from '~/attributes/index.js'
@@ -10,23 +13,30 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 
 import type { MustBeDefined } from './attribute.js'
 
-export type PrimitiveAttrFormattedValue<ATTRIBUTE extends PrimitiveAttribute> =
-  PrimitiveAttribute extends ATTRIBUTE
-    ? ResolvedPrimitiveAttribute
-    : If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvePrimitiveAttribute<ATTRIBUTE>
+export type PrimitiveOrNumberAttrFormattedValue<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
+> = PrimitiveAttribute | NumberAttribute extends ATTRIBUTE
+  ? ResolvedPrimitiveAttribute | ResolvedNumberAttribute
+  :
+      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+      | (ATTRIBUTE extends PrimitiveAttribute
+          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends NumberAttribute
+            ? ResolveNumberAttribute<ATTRIBUTE>
+            : never)
 
-type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute>(
+type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute | NumberAttribute>(
   attribute: ATTRIBUTE,
   rawValue: unknown
-) => PrimitiveAttrFormattedValue<ATTRIBUTE>
+) => PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => {
-  type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
+  type Formatted = PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
 
   const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(rawValue)) {
@@ -44,14 +54,11 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
     })
   }
 
-  /**
-   * @debt type "validator should act as type guard"
-   */
-  const rawPrimitive = rawValue as ResolvedPrimitiveAttribute
+  const rawPrimitive = rawValue
   const transformer = attribute.transform as Transformer
   const formattedValue = transformer !== undefined ? transformer.format(rawPrimitive) : rawPrimitive
 
-  if (attribute.enum !== undefined && !attribute.enum.includes(formattedValue)) {
+  if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(formattedValue)) {
     const { path } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -59,10 +66,7 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
       path,
-      payload: {
-        received: formattedValue,
-        expected: attribute.enum
-      }
+      payload: { received: formattedValue, expected: attribute.enum }
     })
   }
 

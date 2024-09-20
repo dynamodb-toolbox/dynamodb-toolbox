@@ -8,7 +8,6 @@ import { boolean } from '../boolean/index.js'
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { nul } from '../null/typer.js'
-import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezePrimitiveAttribute } from './freeze.js'
@@ -662,17 +661,6 @@ describe('primitiveAttribute', () => {
       assertNu
 
       expect(nu[$type]).toBe('null')
-    })
-  })
-
-  describe('number', () => {
-    test('returns default number', () => {
-      const num = number()
-
-      const assertNum: A.Contains<typeof num, { [$type]: 'number' }> = 1
-      assertNum
-
-      expect(num[$type]).toBe('number')
     })
   })
 

@@ -1,4 +1,9 @@
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
+import type {
+  PrimitiveAttributeType,
+  ResolvePrimitiveAttributeType,
+  ResolvedNumberAttribute,
+  ResolvedPrimitiveAttribute
+} from '~/attributes/index.js'
 import type {
   BeginsWithOperator,
   BetweenOperator,
@@ -26,9 +31,13 @@ export const queryOperatorSet = new Set<QueryOperator>([
  */
 type QueryRange<
   KEY_TYPE extends IndexableKeyType,
-  ATTRIBUTE_VALUE extends ResolvePrimitiveAttribute<
-    PrimitiveAttribute<KEY_TYPE>
-  > = ResolvePrimitiveAttribute<PrimitiveAttribute<KEY_TYPE>>
+  ATTRIBUTE_VALUE extends
+    | ResolvedPrimitiveAttribute
+    | ResolvedNumberAttribute = KEY_TYPE extends PrimitiveAttributeType
+    ? ResolvePrimitiveAttributeType<KEY_TYPE>
+    : KEY_TYPE extends 'number'
+      ? number
+      : never
 > =
   | (RangeOperator extends infer COMPARISON_OPERATOR
       ? COMPARISON_OPERATOR extends RangeOperator
@@ -46,16 +55,22 @@ type SecondaryIndexQuery<
 > = ComputeDeep<
   { index: INDEX_NAME } & (INDEX_SCHEMA extends GlobalIndex
     ? {
-        partition: ResolvePrimitiveAttribute<
-          PrimitiveAttribute<INDEX_SCHEMA['partitionKey']['type']>
-        >
+        partition: INDEX_SCHEMA['partitionKey']['type'] extends PrimitiveAttributeType
+          ? ResolvePrimitiveAttributeType<INDEX_SCHEMA['partitionKey']['type']>
+          : INDEX_SCHEMA['partitionKey']['type'] extends 'number'
+            ? ResolvedNumberAttribute
+            : never
         range?: INDEX_SCHEMA['sortKey'] extends Key
           ? QueryRange<INDEX_SCHEMA['sortKey']['type']>
           : undefined
       }
     : INDEX_SCHEMA extends LocalIndex
       ? {
-          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          partition: TABLE['partitionKey']['type'] extends PrimitiveAttributeType
+            ? ResolvePrimitiveAttributeType<TABLE['partitionKey']['type']>
+            : TABLE['partitionKey']['type'] extends 'number'
+              ? ResolvedNumberAttribute
+              : never
           range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
         }
       : never)
@@ -73,12 +88,20 @@ type PrimaryIndexQuery<TABLE extends Table> = ComputeDeep<
     index?: never
   } & (Key extends TABLE['sortKey']
     ? {
-        partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+        partition: TABLE['partitionKey']['type'] extends PrimitiveAttributeType
+          ? ResolvePrimitiveAttributeType<TABLE['partitionKey']['type']>
+          : TABLE['partitionKey']['type'] extends 'number'
+            ? ResolvedNumberAttribute
+            : never
         range?: never
       }
     : NonNullable<TABLE['sortKey']> extends Key
       ? {
-          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          partition: TABLE['partitionKey']['type'] extends PrimitiveAttributeType
+            ? ResolvePrimitiveAttributeType<TABLE['partitionKey']['type']>
+            : TABLE['partitionKey']['type'] extends 'number'
+              ? ResolvedNumberAttribute
+              : never
           range?: QueryRange<NonNullable<TABLE['sortKey']>['type']>
         }
       : never)

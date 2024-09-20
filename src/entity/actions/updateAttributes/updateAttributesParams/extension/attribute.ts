@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue, PrimitiveAttribute } from '~/attributes/index.js'
+import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
 import { isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
@@ -52,10 +52,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
 
   switch (attribute.type) {
     case 'number':
-      /**
-       * @debt type "fix this cast"
-       */
-      return parseNumberExtension(attribute as PrimitiveAttribute<'number'>, input, options)
+      return parseNumberExtension(attribute, input, options)
     case 'set':
       return parseSetExtension(attribute, input, options)
     case 'list':
