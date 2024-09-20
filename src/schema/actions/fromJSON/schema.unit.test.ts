@@ -1,6 +1,7 @@
 import { AnyOfAttribute } from '~/attributes/anyOf/index.js'
 import { ListAttribute } from '~/attributes/list/index.js'
 import { MapAttribute } from '~/attributes/map/index.js'
+import { NumberAttribute } from '~/attributes/number/index.js'
 import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { RecordAttribute } from '~/attributes/record/index.js'
 import { SetAttribute } from '~/attributes/set/index.js'
@@ -49,9 +50,9 @@ describe('fromJSON - schema', () => {
     expect(attributes.boolean?.type).toBe('boolean')
     expect(attributes.boolean?.key).toBe(true)
 
-    expect(attributes.number).toBeInstanceOf(PrimitiveAttribute)
+    expect(attributes.number).toBeInstanceOf(NumberAttribute)
     expect(attributes.number?.type).toBe('number')
-    expect((attributes.number as PrimitiveAttribute).enum).toStrictEqual([0, 1, 2])
+    expect((attributes.number as NumberAttribute).enum).toStrictEqual([0, 1, 2])
 
     expect(attributes.str).toBeInstanceOf(PrimitiveAttribute)
     expect(attributes.str?.type).toBe('string')

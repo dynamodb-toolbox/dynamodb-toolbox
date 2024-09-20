@@ -1,12 +1,12 @@
-import type { AtLeastOnce, RequiredOption } from '../constants/index.js'
+import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 
-// Note: May look like a duplicate of RecordAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of NumberAttributeState but actually adds JSDocs
 
 /**
- * Input options of Record Attribute
+ * Input options of Number Attribute
  */
-export interface RecordAttributeOptions {
+export type NumberAttributeOptions = {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -26,6 +26,7 @@ export interface RecordAttributeOptions {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
+  transform: undefined | unknown
   /**
    * Provide default values for attribute
    */
@@ -52,11 +53,12 @@ export interface RecordAttributeOptions {
   }
 }
 
-export type RecordAttributeDefaultOptions = {
+export type NumberAttributeDefaultOptions = {
   required: AtLeastOnce
   hidden: false
   key: false
   savedAs: undefined
+  transform: undefined
   defaults: {
     key: undefined
     put: undefined
@@ -74,11 +76,12 @@ export type RecordAttributeDefaultOptions = {
   }
 }
 
-export const RECORD_DEFAULT_OPTIONS: RecordAttributeDefaultOptions = {
+export const NUMBER_DEFAULT_OPTIONS: NumberAttributeDefaultOptions = {
   required: 'atLeastOnce',
   hidden: false,
   key: false,
   savedAs: undefined,
+  transform: undefined,
   defaults: {
     key: undefined,
     put: undefined,

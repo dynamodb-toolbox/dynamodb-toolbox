@@ -2,6 +2,7 @@ import type { AnyAttribute } from '../any/index.js'
 import type { AnyOfAttribute } from '../anyOf/index.js'
 import type { ListAttribute } from '../list/index.js'
 import type { MapAttribute } from '../map/index.js'
+import type { NumberAttribute } from '../number/index.js'
 import type {
   PrimitiveAttribute,
   PrimitiveAttributeType,
@@ -15,6 +16,7 @@ import type { SetAttribute } from '../set/index.js'
  */
 export type Attribute =
   | AnyAttribute
+  | NumberAttribute
   | PrimitiveAttribute
   | SetAttribute
   | ListAttribute
