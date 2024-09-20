@@ -2,7 +2,7 @@
   "name": "dynamodb-toolbox",
   "version": "local",
   "description": "Lightweight and type-safe query builder for DynamoDB and TypeScript.",
-  "homepage": "https://dynamodb-toolbox.com",
+  "homepage": "https://www.dynamodbtoolbox.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dynamodb-toolbox/dynamodb-toolbox.git"

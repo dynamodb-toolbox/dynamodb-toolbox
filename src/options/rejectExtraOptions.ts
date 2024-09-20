@@ -5,7 +5,7 @@ export const rejectExtraOptions = (extraOptions: {}): void => {
 
   if (extraOption !== undefined) {
     throw new DynamoDBToolboxError('options.unknownOption', {
-      message: `Unkown option: ${extraOption}.`,
+      message: `Unknown option: ${extraOption}.`,
       payload: { option: extraOption }
     })
   }

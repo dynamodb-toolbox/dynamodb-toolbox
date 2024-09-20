@@ -193,7 +193,7 @@ describe('put transaction', () => {
     expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
-  test('creates item with overriden composite key', () => {
+  test('creates item with overridden composite key', () => {
     const {
       Put: { Item }
     } = TestEntity2.build(PutTransaction)

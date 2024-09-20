@@ -61,7 +61,7 @@ export const parseQuery: QueryParser = (table, query) => {
       const hasIndex = indexes.length > 0
 
       throw new DynamoDBToolboxError('queryCommand.invalidIndex', {
-        message: `Inknown index: ${index}. ${hasIndex ? ` Expected one of: ${indexes.join(', ')}.` : ''}`,
+        message: `Unknown index: ${index}. ${hasIndex ? ` Expected one of: ${indexes.join(', ')}.` : ''}`,
         payload: { received: index, ...(hasIndex ? { expected: Object.keys(table.indexes) } : {}) }
       })
     }

@@ -181,7 +181,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ sk: 'test#test2' })
   })
 
-  test('creates item with overriden composite key', () => {
+  test('creates item with overridden composite key', () => {
     const { Item } = TestEntity2.build(PutItemCommand)
       .item({
         email: 'test-pk',
@@ -270,7 +270,7 @@ describe('put', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  test('acceps null provided to nullable attribute', () => {
+  test('accepts null provided to nullable attribute', () => {
     const { Item } = TestEntity.build(PutItemCommand)
       .item({
         email: 'test-pk',
