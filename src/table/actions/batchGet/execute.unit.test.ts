@@ -174,7 +174,7 @@ describe('execute (batchGet)', () => {
     })
   })
 
-  test('returns correct response', async () => {
+  test('returns correct response when receiving a tuple of requests', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
@@ -190,20 +190,19 @@ describe('execute (batchGet)', () => {
       TestTable2.build(BatchGetCommand).requests(EntityC.build(BatchGetRequest).key(keyC))
     )
 
-    type AssertResponse = A.Equals<
+    const assertResponse: A.Equals<
       typeof Responses,
       [
         [FormattedItem<typeof EntityA> | undefined, FormattedItem<typeof EntityB> | undefined],
         [FormattedItem<typeof EntityC> | undefined]
       ]
-    >
-    const assertResponse: AssertResponse = 1
+    > = 1
     assertResponse
 
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
   })
 
-  test('infers correct type even with arrays of request', async () => {
+  test('returns correct type even receiving an array of request', async () => {
     documentClientMock.on(_BatchGetCommand).resolves({
       Responses: {
         'test-table-1': [savedItemA, savedItemB],
@@ -225,17 +224,45 @@ describe('execute (batchGet)', () => {
 
     const { Responses } = await execute(...commands)
 
-    type AssertResponse = A.Equals<
+    const assertResponse: A.Equals<
       typeof Responses,
       (
         | (FormattedItem<typeof EntityA> | FormattedItem<typeof EntityB> | undefined)[]
         | (FormattedItem<typeof EntityC> | undefined)[]
       )[]
-    >
-    const assertResponse: AssertResponse = 1
+    > = 1
     assertResponse
 
     expect(Responses).toStrictEqual([[formattedItemA, formattedItemB], [formattedItemC]])
+  })
+
+  test('returns correct type even receiving a mix of tuple & array of requests', async () => {
+    documentClientMock.on(_BatchGetCommand).resolves({
+      Responses: {
+        'test-table-1': [savedItemA, savedItemB],
+        'test-table-2': [savedItemC]
+      }
+    })
+
+    const requests1: [BatchGetRequest<typeof EntityA>, ...BatchGetRequest<typeof EntityB>[]] = [
+      EntityA.build(BatchGetRequest).key(keyA),
+      EntityB.build(BatchGetRequest).key(keyB)
+    ]
+
+    const { Responses } = await execute(TestTable1.build(BatchGetCommand).requests(...requests1))
+
+    const assertResponse: A.Equals<
+      typeof Responses,
+      [
+        [
+          FormattedItem<typeof EntityA> | undefined,
+          ...(FormattedItem<typeof EntityB> | undefined)[]
+        ]
+      ]
+    > = 1
+    assertResponse
+
+    expect(Responses).toStrictEqual([[formattedItemA, formattedItemB]])
   })
 
   test('formats response', async () => {
@@ -258,7 +285,7 @@ describe('execute (batchGet)', () => {
         .options({ attributes: ['pkC'] })
     )
 
-    type AssertResponse = A.Equals<
+    const assertResponse: A.Equals<
       typeof Responses,
       [
         [
@@ -267,8 +294,7 @@ describe('execute (batchGet)', () => {
         ],
         [FormattedItem<typeof EntityC, { attributes: 'pkC' }> | undefined]
       ]
-    >
-    const assertResponse: AssertResponse = 1
+    > = 1
     assertResponse
 
     expect(Responses).toStrictEqual([
@@ -306,8 +332,10 @@ describe('execute (batchGet)', () => {
       TestTable1.build(BatchGetCommand).requests(EntityA.build(BatchGetRequest).key(keyA))
     )
 
-    type AssertResponse = A.Equals<typeof Responses, [[FormattedItem<typeof EntityA> | undefined]]>
-    const assertResponse: AssertResponse = 1
+    const assertResponse: A.Equals<
+      typeof Responses,
+      [[FormattedItem<typeof EntityA> | undefined]]
+    > = 1
     assertResponse
 
     expect(documentClientMock.calls()).toHaveLength(1)

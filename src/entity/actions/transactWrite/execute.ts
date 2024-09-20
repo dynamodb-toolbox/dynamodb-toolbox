@@ -5,7 +5,6 @@ import type {
   TransactWriteCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
@@ -47,20 +46,23 @@ type ExecuteTransactWriteResponse<TRANSACTIONS extends WriteTransactionImplement
 type ToolboxItems<
   TRANSACTIONS extends WriteTransactionImplementation[],
   TOOLBOX_ITEMS extends unknown[] = []
-> = number extends TRANSACTIONS['length']
-  ? (TRANSACTIONS[number] extends infer TRANSACTION
-      ? TRANSACTION extends WriteTransactionImplementation
-        ? ToolboxItem<TRANSACTION>
-        : never
-      : never)[]
-  : TRANSACTIONS extends [infer TRANSACTIONS_HEAD, ...infer TRANSACTIONS_TAIL]
-    ? TRANSACTIONS_HEAD extends WriteTransactionImplementation
-      ? TRANSACTIONS_TAIL extends WriteTransactionImplementation[]
-        ? ToolboxItems<TRANSACTIONS_TAIL, [...TOOLBOX_ITEMS, ToolboxItem<TRANSACTIONS_HEAD>]>
-        : never
+> = TRANSACTIONS extends [infer TRANSACTIONS_HEAD, ...infer TRANSACTIONS_TAIL]
+  ? TRANSACTIONS_HEAD extends WriteTransactionImplementation
+    ? TRANSACTIONS_TAIL extends WriteTransactionImplementation[]
+      ? ToolboxItems<TRANSACTIONS_TAIL, [...TOOLBOX_ITEMS, ToolboxItem<TRANSACTIONS_HEAD>]>
       : never
+    : never
+  : number extends TRANSACTIONS['length']
+    ? [
+        ...TOOLBOX_ITEMS,
+        ...(TRANSACTIONS[number] extends infer TRANSACTION
+          ? TRANSACTION extends WriteTransactionImplementation
+            ? ToolboxItem<TRANSACTION>
+            : never
+          : never)[]
+      ]
     : TOOLBOX_ITEMS extends []
-      ? (FormattedItem | undefined)[]
+      ? unknown[]
       : TOOLBOX_ITEMS
 
 type ToolboxItem<

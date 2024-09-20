@@ -226,6 +226,59 @@ describe('execute', () => {
 
     expect(documentClient.send).toHaveBeenCalledTimes(1)
   })
+
+  test('should send a transaction from a mix of tuple & array of WriteTransactions', async () => {
+    const transactions: [
+      PutTransaction<typeof TestEntity>,
+      UpdateTransaction<typeof TestEntity>,
+      ...PutTransaction<typeof TestEntity2>[]
+    ] = [
+      TestEntity.build(PutTransaction).item({ email: 'titi@example.com', sort: 'titi' }),
+      TestEntity.build(UpdateTransaction).item({ email: 'tutu@example.com', sort: 'titi' }),
+      TestEntity2.build(PutTransaction).item({ email: 'toto@example.com' })
+    ]
+
+    const { ToolboxItems: toolboxItems } = await execute({ documentClient }, ...transactions)
+
+    expect(toolboxItems).toHaveLength(3)
+
+    const assertToolboxItems: A.Equals<
+      typeof toolboxItems,
+      [
+        PutItemInput<typeof TestEntity, true>,
+        UpdateItemInput<typeof TestEntity, true>,
+        ...PutItemInput<typeof TestEntity2, true>[]
+      ]
+    > = 1
+    assertToolboxItems
+
+    const [toolboxItem1, toolboxItem2, toolboxItem3] = toolboxItems
+
+    expect(toolboxItem1).toStrictEqual({
+      entity: TestEntity.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'titi@example.com',
+      sort: 'titi',
+      test_number_defaulted: 0,
+      test_string: 'test string'
+    })
+    expect(toolboxItem2).toStrictEqual({
+      entity: { [$GET]: ['entity', TestEntity.name] },
+      created: { [$GET]: ['created', mockDate] },
+      modified: mockDate,
+      email: 'tutu@example.com',
+      sort: 'titi'
+    })
+    expect(toolboxItem3).toStrictEqual({
+      entity: TestEntity2.name,
+      created: mockDate,
+      modified: mockDate,
+      email: 'toto@example.com'
+    })
+
+    expect(documentClient.send).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('generateTransactWriteCommandInput', () => {
