@@ -2,15 +2,11 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
   ListAttribute,
   MapAttribute,
-  NullAttribute,
-  NumberAttribute,
+  PrimitiveAttribute,
   RecordAttribute,
-  SetAttribute,
-  StringAttribute
+  SetAttribute
 } from '~/attributes/index.js'
 
 import type { FormattedAnyOfAttrJSONSchema } from './anyOf.js'
@@ -19,33 +15,23 @@ import type { FormattedListAttrJSONSchema } from './list.js'
 import { getFormattedListAttrJSONSchema } from './list.js'
 import type { FormattedMapAttrJSONSchema } from './map.js'
 import { getFormattedMapAttrJSONSchema } from './map.js'
-import type { FormattedPrimitiveAttrV2JSONSchema } from './primitive.js'
-import { getFormattedPrimitiveAttrV2JSONSchema } from './primitive.js'
+import type { FormattedPrimitiveAttrJSONSchema } from './primitive.js'
+import { getFormattedPrimitiveAttrJSONSchema } from './primitive.js'
 import type { FormattedRecordAttrJSONSchema } from './record.js'
 import { getFormattedRecordAttrJSONSchema } from './record.js'
 import type { FormattedSetAttrJSONSchema } from './set.js'
 import { getFormattedSetAttrJSONSchema } from './set.js'
 
-export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = ATTRIBUTE extends AnyAttribute
-  ? {}
-  : ATTRIBUTE extends
-        | NullAttribute
-        | BooleanAttribute
-        | NumberAttribute
-        | StringAttribute
-        | BinaryAttribute
-    ? FormattedPrimitiveAttrV2JSONSchema<ATTRIBUTE>
-    : ATTRIBUTE extends SetAttribute
-      ? FormattedSetAttrJSONSchema<ATTRIBUTE>
-      : ATTRIBUTE extends ListAttribute
-        ? FormattedListAttrJSONSchema<ATTRIBUTE>
-        : ATTRIBUTE extends MapAttribute
-          ? FormattedMapAttrJSONSchema<ATTRIBUTE>
-          : ATTRIBUTE extends RecordAttribute
-            ? FormattedRecordAttrJSONSchema<ATTRIBUTE>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? FormattedAnyOfAttrJSONSchema<ATTRIBUTE>
-              : never
+export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
+  ? Record<string, unknown>
+  :
+      | (ATTRIBUTE extends AnyAttribute ? {} : never)
+      | (ATTRIBUTE extends PrimitiveAttribute ? FormattedPrimitiveAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends SetAttribute ? FormattedSetAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends ListAttribute ? FormattedListAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends MapAttribute ? FormattedMapAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends RecordAttribute ? FormattedRecordAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? FormattedAnyOfAttrJSONSchema<ATTRIBUTE> : never)
 
 export const getFormattedAttrJSONSchema = <ATTRIBUTE extends Attribute>(
   attr: ATTRIBUTE
@@ -60,7 +46,7 @@ export const getFormattedAttrJSONSchema = <ATTRIBUTE extends Attribute>(
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveAttrV2JSONSchema(attr) as Response
+      return getFormattedPrimitiveAttrJSONSchema(attr) as Response
     case 'set':
       return getFormattedSetAttrJSONSchema(attr) as Response
     case 'list':

@@ -1,8 +1,4 @@
-import type {
-  AnyAttributeCondition,
-  NonLogicalCondition,
-  SchemaCondition
-} from '../../condition.js'
+import type { AnyAttrCondition, NonLogicalCondition, SchemaCondition } from '../../condition.js'
 
 export type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
 export type EqualityOperator = 'eq'
@@ -19,7 +15,7 @@ export const isComparisonOperator: IsComparisonOperatorAsserter = (
 export type ComparisonCondition = NonLogicalCondition &
   (ComparisonOperator extends infer OPERATOR
     ? OPERATOR extends string
-      ? Extract<AnyAttributeCondition<string, string>, { [KEY in OPERATOR]: unknown }>
+      ? Extract<AnyAttrCondition<string, string>, { [KEY in OPERATOR]: unknown }>
       : never
     : never)
 

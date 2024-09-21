@@ -1,19 +1,6 @@
 import type {
-  BinaryAttribute,
-  BooleanAttribute,
-  NullAttribute,
-  NumberAttribute,
-  ResolveBinaryAttribute,
-  ResolveBooleanAttribute,
-  ResolveNullAttribute,
-  ResolveNumberAttribute,
-  ResolveStringAttribute,
-  ResolvedBinaryAttribute,
-  ResolvedBooleanAttribute,
-  ResolvedNullAttribute,
-  ResolvedNumberAttribute,
-  ResolvedStringAttribute,
-  StringAttribute,
+  PrimitiveAttribute,
+  ResolvePrimitiveAttribute,
   Transformer
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -22,63 +9,22 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 
 import type { MustBeDefined } from './attribute.js'
 
-export type PrimitiveAttrV2FormattedValue<
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
-> =
-  | NullAttribute
-  | BooleanAttribute
-  | NumberAttribute
-  | StringAttribute
-  | BinaryAttribute extends ATTRIBUTE
-  ?
-      | ResolvedNullAttribute
-      | ResolvedBooleanAttribute
-      | ResolvedNumberAttribute
-      | ResolvedStringAttribute
-      | ResolvedBinaryAttribute
-  :
-      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | (ATTRIBUTE extends NullAttribute
-          ? ResolveNullAttribute<ATTRIBUTE>
-          : ATTRIBUTE extends BooleanAttribute
-            ? ResolveBooleanAttribute<ATTRIBUTE>
-            : ATTRIBUTE extends NumberAttribute
-              ? ResolveNumberAttribute<ATTRIBUTE>
-              : ATTRIBUTE extends StringAttribute
-                ? ResolveStringAttribute<ATTRIBUTE>
-                : ATTRIBUTE extends BinaryAttribute
-                  ? ResolveBinaryAttribute<ATTRIBUTE>
-                  : never)
+export type PrimitiveAttrFormattedValue<ATTRIBUTE extends PrimitiveAttribute> =
+  | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+  | ResolvePrimitiveAttribute<ATTRIBUTE>
 
-type PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
->(
+type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute>(
   attribute: ATTRIBUTE,
   rawValue: unknown
-) => PrimitiveAttrV2FormattedValue<ATTRIBUTE>
+) => PrimitiveAttrFormattedValue<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
+  ATTRIBUTE extends PrimitiveAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => {
-  type Formatted = PrimitiveAttrV2FormattedValue<ATTRIBUTE>
+  type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
 
   const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(rawValue)) {
@@ -89,10 +35,7 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be a ${type}.`,
       path,
-      payload: {
-        received: rawValue,
-        expected: type
-      }
+      payload: { received: rawValue, expected: type }
     })
   }
 

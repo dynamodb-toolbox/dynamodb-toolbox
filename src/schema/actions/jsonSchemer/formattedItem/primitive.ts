@@ -1,31 +1,12 @@
-import type {
-  BinaryAttribute,
-  BooleanAttribute,
-  NullAttribute,
-  NumberAttribute,
-  StringAttribute
-} from '~/attributes/index.js'
+import type { BinaryAttribute, PrimitiveAttribute } from '~/attributes/index.js'
 
-export type FormattedPrimitiveAttrV2JSONSchema<
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
-> = ATTRIBUTE extends BinaryAttribute ? { type: 'string' } : { type: ATTRIBUTE['type'] }
+export type FormattedPrimitiveAttrJSONSchema<ATTRIBUTE extends PrimitiveAttribute> =
+  ATTRIBUTE extends BinaryAttribute ? { type: 'string' } : { type: ATTRIBUTE['type'] }
 
-export const getFormattedPrimitiveAttrV2JSONSchema = <
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
->(
+export const getFormattedPrimitiveAttrJSONSchema = <ATTRIBUTE extends PrimitiveAttribute>(
   attr: ATTRIBUTE
-): FormattedPrimitiveAttrV2JSONSchema<ATTRIBUTE> => {
-  type Response = FormattedPrimitiveAttrV2JSONSchema<ATTRIBUTE>
+): FormattedPrimitiveAttrJSONSchema<ATTRIBUTE> => {
+  type Response = FormattedPrimitiveAttrJSONSchema<ATTRIBUTE>
 
   if (attr.type === 'binary') {
     return { type: 'string' } as Response

@@ -4,16 +4,12 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
   ListAttribute,
   MapAttribute,
-  NullAttribute,
-  NumberAttribute,
+  PrimitiveAttribute,
   RecordAttribute,
   RequiredOption,
-  SetAttribute,
-  StringAttribute
+  SetAttribute
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -27,7 +23,7 @@ import type { ListAttrFormattedValue } from './list.js'
 import { formatMapAttrRawValue } from './map.js'
 import type { MapAttrFormattedValue } from './map.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import type { PrimitiveAttrV2FormattedValue } from './primitive.js'
+import type { PrimitiveAttrFormattedValue } from './primitive.js'
 import { formatRecordAttrRawValue } from './record.js'
 import type { RecordAttrFormattedValue } from './record.js'
 import { formatSavedSetAttribute } from './set.js'
@@ -48,26 +44,18 @@ export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
 export type AttrFormattedValue<
   ATTRIBUTE extends Attribute,
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
-> = ATTRIBUTE extends AnyAttribute
-  ? AnyAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends
-        | NullAttribute
-        | BooleanAttribute
-        | NumberAttribute
-        | StringAttribute
-        | BinaryAttribute
-    ? PrimitiveAttrV2FormattedValue<ATTRIBUTE>
-    : ATTRIBUTE extends SetAttribute
-      ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
-      : ATTRIBUTE extends ListAttribute
-        ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS>
-        : ATTRIBUTE extends Schema | MapAttribute
+> = Attribute extends ATTRIBUTE
+  ? unknown
+  :
+      | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrFormattedValue<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends Schema | MapAttribute
           ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
-          : ATTRIBUTE extends RecordAttribute
-            ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS>
-              : never
+          : never)
+      | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 

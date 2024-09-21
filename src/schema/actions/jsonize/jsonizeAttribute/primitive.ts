@@ -1,10 +1,4 @@
-import type {
-  BinaryAttribute,
-  BooleanAttribute,
-  NullAttribute,
-  NumberAttribute,
-  StringAttribute
-} from '~/attributes/index.js'
+import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { $transformerId } from '~/attributes/primitive/constants.js'
 import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
@@ -19,9 +13,7 @@ const isJSONizableTransformer = (transformer: unknown): transformer is JSONizabl
 /**
  * @debt feature "handle JSONizable defaults, links & validators"
  */
-export const jsonizePrimitiveAttribute = (
-  attr: NullAttribute | BooleanAttribute | NumberAttribute | StringAttribute | BinaryAttribute
-): JSONizedAttr => {
+export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAttr => {
   const jsonizedDefaults = jsonizeDefaults(attr)
 
   const jsonizedAttr = {

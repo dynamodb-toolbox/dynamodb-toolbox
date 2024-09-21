@@ -2,16 +2,11 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
   ListAttribute,
   MapAttribute,
-  NullAttribute,
-  NumberAttribute,
   RecordAttribute,
   ResolveStringAttribute,
-  SetAttribute,
-  StringAttribute
+  SetAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
@@ -19,23 +14,6 @@ type AnyAttrPaths<
   ATTRIBUTE extends AnyAttribute,
   ATTRIBUTE_PATH extends string = ''
 > = AnyAttribute extends ATTRIBUTE ? string : `${ATTRIBUTE_PATH}${string}`
-
-// Really needed ?
-type PrimitiveAttrV2Paths<
-  ATTRIBUTE extends
-    | NullAttribute
-    | BooleanAttribute
-    | NumberAttribute
-    | StringAttribute
-    | BinaryAttribute
-> =
-  | NullAttribute
-  | BooleanAttribute
-  | NumberAttribute
-  | StringAttribute
-  | BinaryAttribute extends ATTRIBUTE
-  ? string
-  : never
 
 type SetAttrPaths<ATTRIBUTE extends SetAttribute> = SetAttribute extends ATTRIBUTE ? string : never
 
@@ -94,29 +72,13 @@ type AnyOfAttrPathsRec<
     : never
   : RESULTS
 
-export type AttrPaths<
-  ATTRIBUTE extends Attribute,
-  ATTRIBUTE_PATH extends string = ''
-> = ATTRIBUTE extends AnyAttribute
-  ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends
-        | NullAttribute
-        | BooleanAttribute
-        | NumberAttribute
-        | StringAttribute
-        | BinaryAttribute
-    ? PrimitiveAttrV2Paths<ATTRIBUTE>
-    : ATTRIBUTE extends SetAttribute
-      ? SetAttrPaths<ATTRIBUTE>
-      : ATTRIBUTE extends ListAttribute
-        ? ListAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-        : ATTRIBUTE extends MapAttribute
-          ? MapAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-          : ATTRIBUTE extends RecordAttribute
-            ? RecordAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? AnyOfAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-              : never
+export type AttrPaths<ATTRIBUTE extends Attribute, ATTRIBUTE_PATH extends string = ''> =
+  | (ATTRIBUTE extends AnyAttribute ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
+  | (ATTRIBUTE extends SetAttribute ? SetAttrPaths<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends ListAttribute ? ListAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
+  | (ATTRIBUTE extends MapAttribute ? MapAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
+  | (ATTRIBUTE extends RecordAttribute ? RecordAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
+  | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
 
 export type SchemaPaths<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? string

@@ -1,1 +1,10 @@
-export type { Transformer } from './types.js'
+export type {
+  $PrimitiveAttributeNestedState,
+  $PrimitiveAttribute,
+  $PrimitiveAttributeState,
+  PrimitiveAttribute,
+  FreezePrimitiveAttribute,
+  ResolvePrimitiveAttribute,
+  ResolvedPrimitiveAttribute,
+  Transformer
+} from './types.js'
