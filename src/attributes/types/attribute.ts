@@ -4,12 +4,8 @@ import type { BinaryAttribute, ResolvedBinaryAttribute } from '../binary/index.j
 import type { BooleanAttribute, ResolvedBooleanAttribute } from '../boolean/index.js'
 import type { ListAttribute } from '../list/index.js'
 import type { MapAttribute } from '../map/index.js'
+import type { NullAttribute, ResolvedNullAttribute } from '../null/index.js'
 import type { NumberAttribute, ResolvedNumberAttribute } from '../number/index.js'
-import type {
-  PrimitiveAttribute,
-  PrimitiveAttributeType,
-  ResolvedPrimitiveAttribute
-} from '../primitive/index.js'
 import type { RecordAttribute } from '../record/index.js'
 import type { SetAttribute } from '../set/index.js'
 import type { ResolvedStringAttribute, StringAttribute } from '../string/index.js'
@@ -19,7 +15,7 @@ import type { ResolvedStringAttribute, StringAttribute } from '../string/index.j
  */
 export type Attribute =
   | AnyAttribute
-  | PrimitiveAttribute
+  | NullAttribute
   | BooleanAttribute
   | NumberAttribute
   | StringAttribute
@@ -57,6 +53,11 @@ export type ExtendedValue<
       : never
     : never
 
+export type NullAttributeBasicValue = ResolvedNullAttribute
+export type NullAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'null'>
+  | NullAttributeBasicValue
+
 export type BooleanAttributeBasicValue = ResolvedBooleanAttribute
 export type BooleanAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'boolean'>
@@ -76,11 +77,6 @@ export type BinaryAttributeBasicValue = ResolvedBinaryAttribute
 export type BinaryAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'binary'>
   | BinaryAttributeBasicValue
-
-export type PrimitiveAttributeBasicValue = ResolvedPrimitiveAttribute
-export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, PrimitiveAttributeType>
-  | PrimitiveAttributeBasicValue
 
 export type SetAttributeBasicValue<EXTENSION extends Extension = never> = Set<
   AttributeValue<EXTENSION>
@@ -113,7 +109,7 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
  * Any possible resolved attribute type
  */
 export type AttributeValue<EXTENSION extends Extension = never> =
-  | PrimitiveAttributeValue<EXTENSION>
+  | NullAttributeValue<EXTENSION>
   | BooleanAttributeValue<EXTENSION>
   | NumberAttributeValue<EXTENSION>
   | StringAttributeValue<EXTENSION>
@@ -128,11 +124,11 @@ export type Item<EXTENSION extends Extension = never> = {
 }
 
 export type AttributeBasicValue<EXTENSION extends Extension = never> =
+  | NullAttributeBasicValue
   | BooleanAttributeBasicValue
   | NumberAttributeBasicValue
   | StringAttributeBasicValue
   | BinaryAttributeBasicValue
-  | PrimitiveAttributeBasicValue
   | SetAttributeBasicValue<EXTENSION>
   | ListAttributeBasicValue<EXTENSION>
   | MapAttributeBasicValue<EXTENSION>

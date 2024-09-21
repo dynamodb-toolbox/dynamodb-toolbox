@@ -1,4 +1,8 @@
-import type { ResolvedPrimitiveAttribute } from '../primitive/index.js'
+import type { ResolvedBinaryAttribute } from '../binary/index.js'
+import type { ResolvedBooleanAttribute } from '../boolean/index.js'
+import type { ResolvedNullAttribute } from '../null/index.js'
+import type { ResolvedNumberAttribute } from '../number/index.js'
+import type { ResolvedStringAttribute } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { RequiredOption } from './requiredOptions.js'
 
@@ -37,7 +41,16 @@ export type AttributeOptions = {
     put: undefined | Validator
     update: undefined | Validator
   }
-  enum: ResolvedPrimitiveAttribute[] | undefined
+  // TODO: Really needed?
+  enum:
+    | (
+        | ResolvedNullAttribute
+        | ResolvedBooleanAttribute
+        | ResolvedNumberAttribute
+        | ResolvedStringAttribute
+        | ResolvedBinaryAttribute
+      )[]
+    | undefined
   castAs: unknown
   transform: unknown
 }

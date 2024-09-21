@@ -8,8 +8,8 @@ import type {
   BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   RecordAttribute,
   RequiredOption,
   SetAttribute,
@@ -51,7 +51,7 @@ export type AttrFormattedValue<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
   : ATTRIBUTE extends
-        | PrimitiveAttribute
+        | NullAttribute
         | BooleanAttribute
         | NumberAttribute
         | StringAttribute

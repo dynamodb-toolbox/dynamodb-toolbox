@@ -1,14 +1,14 @@
 import type {
   BinaryAttribute,
   BooleanAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   StringAttribute
 } from '~/attributes/index.js'
 
 export type FormattedPrimitiveAttrV2JSONSchema<
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
@@ -17,7 +17,7 @@ export type FormattedPrimitiveAttrV2JSONSchema<
 
 export const getFormattedPrimitiveAttrV2JSONSchema = <
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute

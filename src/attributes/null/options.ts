@@ -1,12 +1,12 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 
-// Note: May look like a duplicate of PrimitiveAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of NullAttributeState but actually adds JSDocs
 
 /**
- * Input options of Primitive Attribute
+ * Input options of Null Attribute
  */
-export type PrimitiveAttributeOptions = {
+export type NullAttributeOptions = {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -53,7 +53,7 @@ export type PrimitiveAttributeOptions = {
   }
 }
 
-export type PrimitiveAttributeDefaultOptions = {
+export type NullAttributeDefaultOptions = {
   required: AtLeastOnce
   hidden: false
   key: false
@@ -76,7 +76,7 @@ export type PrimitiveAttributeDefaultOptions = {
   }
 }
 
-export const PRIMITIVE_DEFAULT_OPTIONS: PrimitiveAttributeDefaultOptions = {
+export const NULL_DEFAULT_OPTIONS: NullAttributeDefaultOptions = {
   required: 'atLeastOnce',
   hidden: false,
   key: false,

@@ -1,9 +1,17 @@
 import type { A } from 'ts-toolbelt'
 
 import type {
-  PrimitiveAttribute,
-  ResolvedPrimitiveAttribute
-} from '~/attributes/primitive/index.js'
+  BinaryAttribute,
+  BooleanAttribute,
+  NullAttribute,
+  NumberAttribute,
+  ResolvedBinaryAttribute,
+  ResolvedBooleanAttribute,
+  ResolvedNullAttribute,
+  ResolvedNumberAttribute,
+  ResolvedStringAttribute,
+  StringAttribute
+} from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
@@ -11,8 +19,14 @@ import type { PrimitiveAttrV2ParsedValue } from './primitiveV2.js'
 
 // Constraint
 const assertConstraint: A.Equals<
-  PrimitiveAttrV2ParsedValue<PrimitiveAttribute>,
-  ResolvedPrimitiveAttribute | null
+  PrimitiveAttrV2ParsedValue<
+    NullAttribute | BooleanAttribute | NumberAttribute | StringAttribute | BinaryAttribute
+  >,
+  | ResolvedBinaryAttribute
+  | ResolvedBooleanAttribute
+  | ResolvedNullAttribute
+  | ResolvedNumberAttribute
+  | ResolvedStringAttribute
 > = 1
 assertConstraint
 

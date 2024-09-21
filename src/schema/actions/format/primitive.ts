@@ -1,17 +1,17 @@
 import type {
   BinaryAttribute,
   BooleanAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   ResolveBinaryAttribute,
   ResolveBooleanAttribute,
+  ResolveNullAttribute,
   ResolveNumberAttribute,
-  ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   ResolvedBinaryAttribute,
   ResolvedBooleanAttribute,
+  ResolvedNullAttribute,
   ResolvedNumberAttribute,
-  ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
   StringAttribute,
   Transformer
@@ -24,27 +24,27 @@ import type { MustBeDefined } from './attribute.js'
 
 export type PrimitiveAttrV2FormattedValue<
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
     | BinaryAttribute
 > =
-  | PrimitiveAttribute
+  | NullAttribute
   | BooleanAttribute
   | NumberAttribute
   | StringAttribute
   | BinaryAttribute extends ATTRIBUTE
   ?
-      | ResolvedPrimitiveAttribute
+      | ResolvedNullAttribute
       | ResolvedBooleanAttribute
       | ResolvedNumberAttribute
       | ResolvedStringAttribute
       | ResolvedBinaryAttribute
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | (ATTRIBUTE extends PrimitiveAttribute
-          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends NullAttribute
+          ? ResolveNullAttribute<ATTRIBUTE>
           : ATTRIBUTE extends BooleanAttribute
             ? ResolveBooleanAttribute<ATTRIBUTE>
             : ATTRIBUTE extends NumberAttribute
@@ -57,7 +57,7 @@ export type PrimitiveAttrV2FormattedValue<
 
 type PrimitiveAttrRawValueFormatter = <
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
@@ -69,7 +69,7 @@ type PrimitiveAttrRawValueFormatter = <
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute

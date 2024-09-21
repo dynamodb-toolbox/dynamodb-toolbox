@@ -6,8 +6,8 @@ import type {
   BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   RecordAttribute,
   SetAttribute,
   StringAttribute
@@ -29,7 +29,7 @@ import { getFormattedSetAttrJSONSchema } from './set.js'
 export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = ATTRIBUTE extends AnyAttribute
   ? {}
   : ATTRIBUTE extends
-        | PrimitiveAttribute
+        | NullAttribute
         | BooleanAttribute
         | NumberAttribute
         | StringAttribute

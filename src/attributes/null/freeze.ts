@@ -1,74 +1,59 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import type { Update } from '~/types/update.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
+import { isNull } from '~/utils/validation/isNull.js'
 
-import type { $state, $type } from '../constants/attributeOptions.js'
+import type { $state } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { PrimitiveAttribute } from './interface.js'
-import type { $PrimitiveAttributeState } from './interface.js'
-import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
+import type { $NullAttributeState } from './interface.js'
+import { NullAttribute } from './interface.js'
+import type { NullAttributeState } from './types.js'
 
-export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
+export type FreezeNullAttribute<$NULL_ATTRIBUTE extends $NullAttributeState> =
   // Applying void Update improves type display
-  Update<
-    PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]>,
-    never,
-    never
-  >
+  Update<NullAttribute<$NULL_ATTRIBUTE[$state]>, never, never>
 
-type PrimitiveAttributeFreezer = <
-  TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE>
->(
-  type: TYPE,
-  primitiveAttribute: STATE,
+type NullAttributeFreezer = <STATE extends NullAttributeState>(
+  state: STATE,
   path?: string
-) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+) => FreezeNullAttribute<$NullAttributeState<STATE>>
 
 /**
- * Freezes a warm `boolean`, `number`,  `string` or `binary` attribute
+ * Freezes a warm `null` attribute
  *
- * @param type Attribute type
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE>
->(
-  type: TYPE,
+export const freezeNullAttribute: NullAttributeFreezer = <STATE extends NullAttributeState>(
   state: STATE,
   path?: string
-): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> => {
+): FreezeNullAttribute<$NullAttributeState<STATE>> => {
   validateAttributeProperties(state, path)
-
-  const typeValidator = validatorsByPrimitiveType[type]
 
   const { enum: enumValues } = state
   enumValues?.forEach(enumValue => {
-    const isEnumValueValid = typeValidator(enumValue)
+    const isEnumValueValid = isNull(enumValue)
     if (!isEnumValueValid) {
       throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
         message: `Invalid enum value type${
           path !== undefined ? ` at path '${path}'` : ''
-        }. Expected: ${type}. Received: ${String(enumValue)}.`,
+        }. Expected: null. Received: ${String(enumValue)}.`,
         path,
-        payload: { expectedType: type, enumValue }
+        payload: { expectedType: 'null', enumValue }
       })
     }
   })
 
   for (const defaultValue of Object.values(state.defaults)) {
     if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
-      if (!typeValidator(defaultValue)) {
+      if (!isNull(defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
           message: `Invalid default value type${
             path !== undefined ? ` at path '${path}'` : ''
-          }: Expected: ${type}. Received: ${String(defaultValue)}.`,
+          }: Expected: null. Received: ${String(defaultValue)}.`,
           path,
-          payload: { expectedType: type, defaultValue }
+          payload: { expectedType: 'null', defaultValue }
         })
       }
 
@@ -84,5 +69,5 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   }
 
-  return new PrimitiveAttribute({ path, type, ...state })
+  return new NullAttribute({ path, ...state })
 }

@@ -13,16 +13,16 @@ import type {
   MapAttribute,
   MapAttributeValue,
   Never,
+  NullAttribute,
   NumberAttribute,
   NumberAttributeValue,
-  PrimitiveAttribute,
   RecordAttribute,
   RecordAttributeValue,
   ResolveAnyAttribute,
   ResolveBinaryAttribute,
   ResolveBooleanAttribute,
+  ResolveNullAttribute,
   ResolveNumberAttribute,
-  ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   SetAttribute,
   SetAttributeValue,
@@ -203,8 +203,8 @@ export type AttributeUpdateItemInput<
         >
       | (ATTRIBUTE extends AnyAttribute
           ? ResolveAnyAttribute<ATTRIBUTE> | unknown
-          : ATTRIBUTE extends PrimitiveAttribute
-            ? ResolvePrimitiveAttribute<ATTRIBUTE>
+          : ATTRIBUTE extends NullAttribute
+            ? ResolveNullAttribute<ATTRIBUTE>
             : ATTRIBUTE extends BooleanAttribute
               ? ResolveBooleanAttribute<ATTRIBUTE>
               : ATTRIBUTE extends StringAttribute

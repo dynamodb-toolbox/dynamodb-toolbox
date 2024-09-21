@@ -5,8 +5,8 @@ import type {
   BinaryAttribute,
   BooleanAttribute,
   ListAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
@@ -58,7 +58,7 @@ const anyCondition: A.Equals<
   ANY_CONDITION,
   | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
   | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
-  | PrimitiveAttributeV2Condition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, NullAttribute, ATTRIBUTE_PATHS>
   | PrimitiveAttributeV2Condition<`any${string}`, BooleanAttribute, ATTRIBUTE_PATHS>
   | PrimitiveAttributeV2Condition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
   | PrimitiveAttributeV2Condition<`any${string}`, StringAttribute, ATTRIBUTE_PATHS>

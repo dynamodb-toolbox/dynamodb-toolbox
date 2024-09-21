@@ -2,17 +2,17 @@ import type {
   BinaryAttribute,
   BooleanAttribute,
   ExtendedValue,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   ResolveBinaryAttribute,
   ResolveBooleanAttribute,
+  ResolveNullAttribute,
   ResolveNumberAttribute,
-  ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   ResolvedBinaryAttribute,
   ResolvedBooleanAttribute,
+  ResolvedNullAttribute,
   ResolvedNumberAttribute,
-  ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
   StringAttribute,
   Transformer
@@ -35,18 +35,28 @@ import { applyCustomValidation } from './utils.js'
 
 export type PrimitiveAttrV2ParsedValue<
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
     | BinaryAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute
+> =
+  | NullAttribute
+  | BooleanAttribute
+  | NumberAttribute
+  | StringAttribute
+  | BinaryAttribute extends ATTRIBUTE
+  ?
+      | ResolvedNullAttribute
+      | ResolvedBooleanAttribute
+      | ResolvedNumberAttribute
+      | ResolvedStringAttribute
+      | ResolvedBinaryAttribute
   : ATTRIBUTE extends { transform: undefined }
     ?
         | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-        | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends NullAttribute ? ResolveNullAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
@@ -55,14 +65,14 @@ export type PrimitiveAttrV2ParsedValue<
     : OPTIONS extends { transform: false }
       ?
           | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-          | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
+          | (ATTRIBUTE extends NullAttribute ? ResolveNullAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
           | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
       :
-          | (ATTRIBUTE extends PrimitiveAttribute ? ResolvedPrimitiveAttribute : never)
+          | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
           | (ATTRIBUTE extends BooleanAttribute ? ResolvedBooleanAttribute : never)
           | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
           | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
@@ -70,7 +80,7 @@ export type PrimitiveAttrV2ParsedValue<
 
 export function* primitiveAttrV2Parser<
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
@@ -140,21 +150,21 @@ export function* primitiveAttrV2Parser<
 
 export type PrimitiveAttrV2ParserInput<
   ATTRIBUTE extends
-    | PrimitiveAttribute
+    | NullAttribute
     | BooleanAttribute
     | NumberAttribute
     | StringAttribute
     | BinaryAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > =
-  | PrimitiveAttribute
+  | NullAttribute
   | BooleanAttribute
   | NumberAttribute
   | StringAttribute
   | BinaryAttribute extends ATTRIBUTE
   ?
       | undefined
-      | ResolvedPrimitiveAttribute
+      | ResolvedNullAttribute
       | ResolvedBooleanAttribute
       | ResolvedNumberAttribute
       | ResolvedStringAttribute
@@ -162,8 +172,8 @@ export type PrimitiveAttrV2ParserInput<
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | (ATTRIBUTE extends PrimitiveAttribute
-          ? ResolvePrimitiveAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends NullAttribute
+          ? ResolveNullAttribute<ATTRIBUTE>
           : ATTRIBUTE extends BooleanAttribute
             ? ResolveBooleanAttribute<ATTRIBUTE>
             : ATTRIBUTE extends NumberAttribute

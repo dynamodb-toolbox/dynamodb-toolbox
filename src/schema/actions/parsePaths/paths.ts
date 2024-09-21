@@ -2,10 +2,12 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
+  BinaryAttribute,
+  BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   RecordAttribute,
   ResolveStringAttribute,
   SetAttribute,
@@ -18,9 +20,22 @@ type AnyAttrPaths<
   ATTRIBUTE_PATH extends string = ''
 > = AnyAttribute extends ATTRIBUTE ? string : `${ATTRIBUTE_PATH}${string}`
 
+// Really needed ?
 type PrimitiveAttrV2Paths<
-  ATTRIBUTE extends PrimitiveAttribute | StringAttribute | NumberAttribute
-> = PrimitiveAttribute extends ATTRIBUTE ? string : never
+  ATTRIBUTE extends
+    | NullAttribute
+    | BooleanAttribute
+    | NumberAttribute
+    | StringAttribute
+    | BinaryAttribute
+> =
+  | NullAttribute
+  | BooleanAttribute
+  | NumberAttribute
+  | StringAttribute
+  | BinaryAttribute extends ATTRIBUTE
+  ? string
+  : never
 
 type SetAttrPaths<ATTRIBUTE extends SetAttribute> = SetAttribute extends ATTRIBUTE ? string : never
 
@@ -84,7 +99,12 @@ export type AttrPaths<
   ATTRIBUTE_PATH extends string = ''
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends PrimitiveAttribute | StringAttribute | NumberAttribute
+  : ATTRIBUTE extends
+        | NullAttribute
+        | BooleanAttribute
+        | NumberAttribute
+        | StringAttribute
+        | BinaryAttribute
     ? PrimitiveAttrV2Paths<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrPaths<ATTRIBUTE>

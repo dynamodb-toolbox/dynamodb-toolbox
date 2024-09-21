@@ -8,8 +8,8 @@ import type {
   BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  NullAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   RecordAttribute,
   SetAttribute,
   StringAttribute
@@ -57,7 +57,7 @@ export type AttrParsedValue<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS>
   : ATTRIBUTE extends
-        | PrimitiveAttribute
+        | NullAttribute
         | BooleanAttribute
         | NumberAttribute
         | StringAttribute
@@ -217,7 +217,7 @@ export type AttrParserInput<
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParserInput<ATTRIBUTE, OPTIONS>
   : ATTRIBUTE extends
-        | PrimitiveAttribute
+        | NullAttribute
         | BooleanAttribute
         | NumberAttribute
         | StringAttribute

@@ -1,1 +1,5 @@
 export { nul } from './typer.js'
+export type { $NullAttributeState, $NullAttributeNestedState } from './interface.js'
+export { $NullAttribute, NullAttribute } from './interface.js'
+export type { FreezeNullAttribute } from './freeze.js'
+export type { ResolveNullAttribute, ResolvedNullAttribute } from './resolve.js'
