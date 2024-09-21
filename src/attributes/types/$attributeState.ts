@@ -1,5 +1,6 @@
 import type { $AnyAttributeState } from '../any/index.js'
 import type { $AnyOfAttributeState } from '../anyOf/index.js'
+import type { $BinaryAttributeState } from '../binary/index.js'
 import type { $ListAttributeState } from '../list/index.js'
 import type { $MapAttributeState } from '../map/index.js'
 import type { $NumberAttributeState } from '../number/index.js'
@@ -15,6 +16,7 @@ export type $AttributeState =
   | $AnyAttributeState
   | $NumberAttributeState
   | $StringAttributeState
+  | $BinaryAttributeState
   | $PrimitiveAttributeState
   | $SetAttributeState
   | $ListAttributeState

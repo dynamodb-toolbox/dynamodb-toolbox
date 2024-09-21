@@ -1,10 +1,10 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
+import { BinaryAttribute } from '~/attributes/binary/index.js'
 import type { Never } from '~/attributes/constants/requiredOptions.js'
 import type { Attribute } from '~/attributes/index.js'
 import { StringAttribute } from '~/attributes/index.js'
 import { NumberAttribute } from '~/attributes/number/index.js'
-import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
@@ -43,7 +43,7 @@ const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute => {
     case 'string':
       return new StringAttribute({ ...defaultAttribute, path: key.name })
     case 'binary':
-      return new PrimitiveAttribute({ ...defaultAttribute, path: key.name, type: 'binary' })
+      return new BinaryAttribute({ ...defaultAttribute, path: key.name })
   }
 }
 

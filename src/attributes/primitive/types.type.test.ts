@@ -7,6 +7,3 @@ assertResolveNull
 
 const assertResolveBoolean: A.Equals<ResolvePrimitiveAttributeType<'boolean'>, boolean> = 1
 assertResolveBoolean
-
-const assertResolveBinary: A.Equals<ResolvePrimitiveAttributeType<'binary'>, Uint8Array> = 1
-assertResolveBinary

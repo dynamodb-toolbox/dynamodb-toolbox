@@ -1,4 +1,5 @@
 import type {
+  BinaryAttribute,
   NumberAttribute,
   PrimitiveAttribute,
   PrimitiveAttributeType,
@@ -20,7 +21,7 @@ const isJSONizableTransformer = (transformer: unknown): transformer is JSONizabl
  * @debt feature "handle JSONizable defaults, links & validators"
  */
 export const jsonizePrimitiveAttribute = (
-  attr: PrimitiveAttribute | NumberAttribute | StringAttribute
+  attr: PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
 ): JSONizedAttr => {
   const jsonizedDefaults = jsonizeDefaults(attr)
 

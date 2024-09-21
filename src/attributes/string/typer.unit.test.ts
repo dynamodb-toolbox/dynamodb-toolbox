@@ -5,10 +5,10 @@ import { prefix } from '~/transformers/prefix.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
 import type { $StringAttributeState, StringAttribute } from './interface.js'
+import { string } from './typer.js'
 
 const path = 'some.path'
 

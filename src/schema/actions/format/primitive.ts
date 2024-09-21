@@ -1,9 +1,12 @@
 import type {
+  BinaryAttribute,
   NumberAttribute,
   PrimitiveAttribute,
+  ResolveBinaryAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
+  ResolvedBinaryAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
@@ -17,9 +20,13 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 import type { MustBeDefined } from './attribute.js'
 
 export type PrimitiveAttrV2FormattedValue<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
-> = PrimitiveAttribute | NumberAttribute | StringAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute | ResolvedNumberAttribute | ResolvedStringAttribute
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
+> = PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute extends ATTRIBUTE
+  ?
+      | ResolvedPrimitiveAttribute
+      | ResolvedNumberAttribute
+      | ResolvedStringAttribute
+      | ResolvedBinaryAttribute
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | (ATTRIBUTE extends PrimitiveAttribute
@@ -28,17 +35,19 @@ export type PrimitiveAttrV2FormattedValue<
             ? ResolveNumberAttribute<ATTRIBUTE>
             : ATTRIBUTE extends StringAttribute
               ? ResolveStringAttribute<ATTRIBUTE>
-              : never)
+              : ATTRIBUTE extends BinaryAttribute
+                ? ResolveBinaryAttribute<ATTRIBUTE>
+                : never)
 
 type PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => PrimitiveAttrV2FormattedValue<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown

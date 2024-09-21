@@ -1,5 +1,6 @@
 import type { AnyAttribute } from '../any/index.js'
 import type { AnyOfAttribute } from '../anyOf/index.js'
+import type { BinaryAttribute, ResolvedBinaryAttribute } from '../binary/index.js'
 import type { ListAttribute } from '../list/index.js'
 import type { MapAttribute } from '../map/index.js'
 import type { NumberAttribute, ResolvedNumberAttribute } from '../number/index.js'
@@ -19,6 +20,7 @@ export type Attribute =
   | AnyAttribute
   | NumberAttribute
   | StringAttribute
+  | BinaryAttribute
   | PrimitiveAttribute
   | SetAttribute
   | ListAttribute
@@ -63,6 +65,11 @@ export type StringAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'string'>
   | StringAttributeBasicValue
 
+export type BinaryAttributeBasicValue = ResolvedBinaryAttribute
+export type BinaryAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'binary'>
+  | BinaryAttributeBasicValue
+
 export type PrimitiveAttributeBasicValue = ResolvedPrimitiveAttribute
 export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, PrimitiveAttributeType>
@@ -101,6 +108,7 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
 export type AttributeValue<EXTENSION extends Extension = never> =
   | NumberAttributeValue<EXTENSION>
   | StringAttributeValue<EXTENSION>
+  | BinaryAttributeValue<EXTENSION>
   | PrimitiveAttributeValue<EXTENSION>
   | SetAttributeValue<EXTENSION>
   | ListAttributeValue<EXTENSION>
@@ -114,6 +122,7 @@ export type Item<EXTENSION extends Extension = never> = {
 export type AttributeBasicValue<EXTENSION extends Extension = never> =
   | NumberAttributeBasicValue
   | StringAttributeBasicValue
+  | BinaryAttributeBasicValue
   | PrimitiveAttributeBasicValue
   | SetAttributeBasicValue<EXTENSION>
   | ListAttributeBasicValue<EXTENSION>

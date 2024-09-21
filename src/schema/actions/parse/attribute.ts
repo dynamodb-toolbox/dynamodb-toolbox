@@ -4,6 +4,7 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Attribute,
+  BinaryAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
@@ -54,7 +55,7 @@ export type AttrParsedValue<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
     ? PrimitiveAttrV2ParsedValue<ATTRIBUTE, OPTIONS>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrParsedValue<ATTRIBUTE, OPTIONS>
@@ -209,7 +210,7 @@ export type AttrParserInput<
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrParserInput<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
     ? PrimitiveAttrV2ParserInput<ATTRIBUTE, OPTIONS>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrParserInput<ATTRIBUTE, OPTIONS>

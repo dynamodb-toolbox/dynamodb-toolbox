@@ -2,6 +2,7 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
+  BinaryAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
@@ -26,7 +27,7 @@ import { getFormattedSetAttrJSONSchema } from './set.js'
 
 export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = ATTRIBUTE extends AnyAttribute
   ? {}
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
     ? FormattedPrimitiveAttrV2JSONSchema<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? FormattedSetAttrJSONSchema<ATTRIBUTE>

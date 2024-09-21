@@ -19,7 +19,7 @@ type StringAttributeTyper = <
 >
 
 /**
- * Define a new attribute of any type
+ * Define a new attribute of string type
  *
  * @param options _(optional)_ Attribute Options
  */

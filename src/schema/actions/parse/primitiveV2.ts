@@ -1,10 +1,13 @@
 import type {
+  BinaryAttribute,
   ExtendedValue,
   NumberAttribute,
   PrimitiveAttribute,
+  ResolveBinaryAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
+  ResolvedBinaryAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
@@ -28,7 +31,7 @@ import type {
 import { applyCustomValidation } from './utils.js'
 
 export type PrimitiveAttrV2ParsedValue<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = PrimitiveAttribute extends ATTRIBUTE
   ? ResolvedPrimitiveAttribute
@@ -38,6 +41,7 @@ export type PrimitiveAttrV2ParsedValue<
         | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
         | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
     : OPTIONS extends { transform: false }
       ?
@@ -45,14 +49,16 @@ export type PrimitiveAttrV2ParsedValue<
           | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
           | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+          | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
           | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
       :
           | (ATTRIBUTE extends PrimitiveAttribute ? ResolvedPrimitiveAttribute : never)
           | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
           | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
+          | (ATTRIBUTE extends BinaryAttribute ? ResolvedBinaryAttribute : never)
 
 export function* primitiveAttrV2Parser<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(
   attribute: ATTRIBUTE,
@@ -117,14 +123,15 @@ export function* primitiveAttrV2Parser<
 }
 
 export type PrimitiveAttrV2ParserInput<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute | NumberAttribute | StringAttribute extends ATTRIBUTE
+> = PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute extends ATTRIBUTE
   ?
       | undefined
       | ResolvedPrimitiveAttribute
       | ResolvedNumberAttribute
       | ResolvedStringAttribute
+      | ResolvedBinaryAttribute
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
@@ -134,5 +141,7 @@ export type PrimitiveAttrV2ParserInput<
             ? ResolveNumberAttribute<ATTRIBUTE>
             : ATTRIBUTE extends StringAttribute
               ? ResolveStringAttribute<ATTRIBUTE>
-              : never)
+              : ATTRIBUTE extends BinaryAttribute
+                ? ResolveBinaryAttribute<ATTRIBUTE>
+                : never)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

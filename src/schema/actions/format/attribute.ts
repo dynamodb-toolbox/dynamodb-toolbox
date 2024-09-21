@@ -4,6 +4,7 @@ import type {
   AnyOfAttribute,
   AtLeastOnce,
   Attribute,
+  BinaryAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
@@ -48,7 +49,7 @@ export type AttrFormattedValue<
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
     ? PrimitiveAttrV2FormattedValue<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>

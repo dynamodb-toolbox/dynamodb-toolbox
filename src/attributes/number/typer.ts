@@ -19,7 +19,7 @@ type NumberAttributeTyper = <
 >
 
 /**
- * Define a new attribute of any type
+ * Define a new attribute of number type
  *
  * @param options _(optional)_ Attribute Options
  */

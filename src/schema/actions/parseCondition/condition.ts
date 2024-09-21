@@ -2,14 +2,17 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
+  BinaryAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveBinaryAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
+  ResolvedBinaryAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
@@ -52,7 +55,7 @@ export type AttributeCondition<
   | (ATTRIBUTE extends AnyAttribute
       ? AnyAttributeCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends NumberAttribute | PrimitiveAttribute | StringAttribute
+  | (ATTRIBUTE extends NumberAttribute | PrimitiveAttribute | StringAttribute | BinaryAttribute
       ? PrimitiveAttributeV2Condition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends SetAttribute
@@ -71,20 +74,18 @@ export type AttributeCondition<
       ? AnyOfAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
 
-type SortableAttribute = StringAttribute | NumberAttribute | PrimitiveAttribute<'binary'>
+type SortableAttribute = StringAttribute | NumberAttribute | BinaryAttribute
 
 type RangeCondition<
   ATTRIBUTE extends SortableAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends
-    | ResolvedPrimitiveAttribute
     | ResolvedNumberAttribute
-    | ResolvedStringAttribute =
-    | (ATTRIBUTE extends PrimitiveAttribute<'binary'>
-        ? ResolvePrimitiveAttribute<ATTRIBUTE>
-        : never)
+    | ResolvedStringAttribute
+    | ResolvedBinaryAttribute =
     | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+    | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 > =
   | { lt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
   | { lte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
@@ -103,15 +104,17 @@ type StringAttributeCondition<COMPARED_ATTRIBUTE_PATH extends string> =
 
 export type PrimitiveAttributeV2Condition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends
     | ResolvedPrimitiveAttribute
     | ResolvedNumberAttribute
-    | ResolvedStringAttribute =
+    | ResolvedStringAttribute
+    | ResolvedBinaryAttribute =
     | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+    | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 > = AttrOrSize<ATTRIBUTE_PATH> & { transform?: boolean } & (
     | { eq: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
     | { ne: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
@@ -122,16 +125,11 @@ export type PrimitiveAttributeV2Condition<
     | (ATTRIBUTE extends StringAttribute
         ? StringAttributeCondition<COMPARED_ATTRIBUTE_PATH>
         : never)
-    /**
-     * @debt type "Annoying: PrimitiveAttribute is not the union of primitive Attributes (BooleanAttribute, StringAttribute etc...). So we have to do this for general case."
-     */
-    | (PrimitiveAttribute<'binary'> extends ATTRIBUTE
-        ? RangeCondition<PrimitiveAttribute<'binary'>, string>
-        : never)
     | (StringAttribute extends ATTRIBUTE
         ? RangeCondition<StringAttribute, string> | StringAttributeCondition<string>
         : never)
     | (NumberAttribute extends ATTRIBUTE ? RangeCondition<NumberAttribute, string> : never)
+    | (BinaryAttribute extends ATTRIBUTE ? RangeCondition<BinaryAttribute, string> : never)
   )
 
 export type SetAttributeCondition<

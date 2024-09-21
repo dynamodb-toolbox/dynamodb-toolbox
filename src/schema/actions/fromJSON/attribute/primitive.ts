@@ -1,4 +1,5 @@
 import { binary } from '~/attributes/binary/index.js'
+import type { $BinaryAttributeNestedState } from '~/attributes/binary/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
 import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
@@ -20,7 +21,11 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
  */
 export const fromJSONPrimitiveAttr = (
   attr: JSONizedPrimitiveAttr
-): $PrimitiveAttributeNestedState | $NumberAttributeNestedState | $StringAttributeNestedState => {
+):
+  | $PrimitiveAttributeNestedState
+  | $NumberAttributeNestedState
+  | $StringAttributeNestedState
+  | $BinaryAttributeNestedState => {
   switch (attr.type) {
     case 'null': {
       const { links, defaults, enum: _enum, ...props } = attr

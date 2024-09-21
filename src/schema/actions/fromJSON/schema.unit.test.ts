@@ -1,11 +1,14 @@
-import { AnyOfAttribute } from '~/attributes/anyOf/index.js'
-import { ListAttribute } from '~/attributes/list/index.js'
-import { MapAttribute } from '~/attributes/map/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
-import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
-import { RecordAttribute } from '~/attributes/record/index.js'
-import { SetAttribute } from '~/attributes/set/index.js'
-import { StringAttribute } from '~/attributes/string/index.js'
+import {
+  AnyOfAttribute,
+  BinaryAttribute,
+  ListAttribute,
+  MapAttribute,
+  NumberAttribute,
+  PrimitiveAttribute,
+  RecordAttribute,
+  SetAttribute,
+  StringAttribute
+} from '~/attributes/index.js'
 import type { JSONizedSchema } from '~/schema/actions/jsonize/index.js'
 import { Schema } from '~/schema/index.js'
 
@@ -59,7 +62,7 @@ describe('fromJSON - schema', () => {
     expect(attributes.str?.type).toBe('string')
     expect(attributes.str?.required).toBe('always')
 
-    expect(attributes.binary).toBeInstanceOf(PrimitiveAttribute)
+    expect(attributes.binary).toBeInstanceOf(BinaryAttribute)
     expect(attributes.binary?.type).toBe('binary')
     expect(attributes.binary?.savedAs).toBe('_b')
     expect((attributes.binary as PrimitiveAttribute).enum).toStrictEqual([
