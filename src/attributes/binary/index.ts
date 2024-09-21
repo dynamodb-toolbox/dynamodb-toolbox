@@ -1,1 +1,5 @@
 export { binary } from './typer.js'
+export type { $BinaryAttributeState, $BinaryAttributeNestedState } from './interface.js'
+export { $BinaryAttribute, BinaryAttribute } from './interface.js'
+export type { FreezeBinaryAttribute } from './freeze.js'
+export type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'

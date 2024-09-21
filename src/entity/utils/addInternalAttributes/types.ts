@@ -1,7 +1,7 @@
 import type { FreezeAttribute } from '~/attributes/freeze.js'
 import type {
   $AttributeNestedState,
-  $PrimitiveAttributeNestedState,
+  $StringAttributeNestedState,
   AtLeastOnce
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -27,32 +27,17 @@ export type $EntityAttribute<
   TABLE extends Table,
   ENTITY_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean
-> = $PrimitiveAttributeNestedState<
-  'string',
-  {
-    required: AtLeastOnce
-    hidden: ENTITY_ATTRIBUTE_HIDDEN
-    key: false
-    savedAs: TABLE['entityAttributeSavedAs']
-    enum: [ENTITY_NAME]
-    transform: undefined
-    defaults: {
-      key: undefined
-      put: unknown
-      update: unknown
-    }
-    links: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    validators: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-  }
->
+> = $StringAttributeNestedState<{
+  required: AtLeastOnce
+  hidden: ENTITY_ATTRIBUTE_HIDDEN
+  key: false
+  savedAs: TABLE['entityAttributeSavedAs']
+  enum: [ENTITY_NAME]
+  transform: undefined
+  defaults: { key: undefined; put: unknown; update: unknown }
+  links: { key: undefined; put: undefined; update: undefined }
+  validators: { key: undefined; put: undefined; update: undefined }
+}>
 
 export type WithEntityAttribute<
   SCHEMA extends Schema,
@@ -71,32 +56,17 @@ export type WithEntityAttribute<
 export type $TimestampAttribute<
   SAVED_AS extends string,
   HIDDEN extends boolean
-> = $PrimitiveAttributeNestedState<
-  'string',
-  {
-    required: AtLeastOnce
-    key: false
-    hidden: HIDDEN
-    savedAs: SAVED_AS
-    enum: undefined
-    transform: undefined
-    defaults: {
-      key: undefined
-      put: unknown
-      update: unknown
-    }
-    links: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    validators: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-  }
->
+> = $StringAttributeNestedState<{
+  required: AtLeastOnce
+  key: false
+  hidden: HIDDEN
+  savedAs: SAVED_AS
+  enum: undefined
+  transform: undefined
+  defaults: { key: undefined; put: unknown; update: unknown }
+  links: { key: undefined; put: undefined; update: undefined }
+  validators: { key: undefined; put: undefined; update: undefined }
+}>
 
 export type WithTimestampAttributes<
   SCHEMA extends Schema,

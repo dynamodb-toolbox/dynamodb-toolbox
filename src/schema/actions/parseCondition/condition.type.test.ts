@@ -2,33 +2,37 @@ import type { A } from 'ts-toolbelt'
 
 import type {
   Attribute,
+  BinaryAttribute,
+  BooleanAttribute,
   ListAttribute,
-  PrimitiveAttribute,
-  SetAttribute
+  NullAttribute,
+  NumberAttribute,
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {
+  AttrCondition,
   AttrOrSize,
-  AttributeCondition,
-  BaseAttributeCondition,
+  BaseAttrCondition,
   ConditionType,
-  ListAttributeCondition,
+  ListAttrCondition,
   NonLogicalCondition,
-  PrimitiveAttributeCondition,
+  PrimitiveAttrCondition,
   SchemaCondition,
-  SetAttributeCondition
+  SetAttrCondition
 } from './condition.js'
 
 type ATTRIBUTES = (typeof mySchema)['attributes']
 type ATTRIBUTE_PATHS = Paths<typeof mySchema>
 
-type PARENT_ID_CONDITION = AttributeCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
+type PARENT_ID_CONDITION = AttrCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
 const assertParentIdCondition: A.Equals<
   AttrOrSize<'parentId'> &
     (
-      | BaseAttributeCondition<'parentId'>
+      | BaseAttrCondition<'parentId'>
       | ({ transform?: boolean } & (
           | { eq: string | { attr: ATTRIBUTE_PATHS } }
           | { ne: string | { attr: ATTRIBUTE_PATHS } }
@@ -46,25 +50,29 @@ const assertParentIdCondition: A.Equals<
 > = 1
 assertParentIdCondition
 
-type CHILD_ID_CONDITION = AttributeCondition<'childId', ATTRIBUTES['childId'], ATTRIBUTE_PATHS>
+type CHILD_ID_CONDITION = AttrCondition<'childId', ATTRIBUTES['childId'], ATTRIBUTE_PATHS>
 
-type ANY_CONDITION = AttributeCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
+type ANY_CONDITION = AttrCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
 
 const anyCondition: A.Equals<
   ANY_CONDITION,
   | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
   | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
-  | PrimitiveAttributeCondition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
-  | SetAttributeCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
-  | ListAttributeCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttrCondition<`any${string}`, NullAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttrCondition<`any${string}`, BooleanAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttrCondition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttrCondition<`any${string}`, StringAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttrCondition<`any${string}`, BinaryAttribute, ATTRIBUTE_PATHS>
+  | SetAttrCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
+  | ListAttrCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
 > = 1
 anyCondition
 
-type NUM_CONDITION = AttributeCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
+type NUM_CONDITION = AttrCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
 const assertNumCondition: A.Equals<
   AttrOrSize<'num'> &
     (
-      | BaseAttributeCondition<'num'>
+      | BaseAttrCondition<'num'>
       | ({ transform?: boolean } & (
           | { eq: number | { attr: ATTRIBUTE_PATHS } }
           | { ne: number | { attr: ATTRIBUTE_PATHS } }
@@ -80,11 +88,11 @@ const assertNumCondition: A.Equals<
 > = 1
 assertNumCondition
 
-type BOOL_CONDITION = AttributeCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
+type BOOL_CONDITION = AttrCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
 const assertBoolCondition: A.Equals<
   AttrOrSize<'bool'> &
     (
-      | BaseAttributeCondition<'bool'>
+      | BaseAttrCondition<'bool'>
       | ({ transform?: boolean } & (
           | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
           | { ne: boolean | { attr: ATTRIBUTE_PATHS } }
@@ -95,12 +103,12 @@ const assertBoolCondition: A.Equals<
 > = 1
 assertBoolCondition
 
-type BIN_CONDITION = AttributeCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
+type BIN_CONDITION = AttrCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
 const assertBinCondition: A.Equals<
   BIN_CONDITION,
   AttrOrSize<'bin'> &
     (
-      | BaseAttributeCondition<'bin'>
+      | BaseAttrCondition<'bin'>
       | ({ transform?: boolean } & (
           | { eq: Uint8Array | { attr: ATTRIBUTE_PATHS } }
           | { ne: Uint8Array | { attr: ATTRIBUTE_PATHS } }
@@ -120,76 +128,56 @@ const assertBinCondition: A.Equals<
 > = 1
 assertBinCondition
 
-type STRING_SET_CONDITION = AttributeCondition<
-  'stringSet',
-  ATTRIBUTES['stringSet'],
-  ATTRIBUTE_PATHS
->
+type STRING_SET_CONDITION = AttrCondition<'stringSet', ATTRIBUTES['stringSet'], ATTRIBUTE_PATHS>
 const assertStringSetCondition: A.Equals<
   STRING_SET_CONDITION,
   AttrOrSize<'stringSet'> &
-    (BaseAttributeCondition<'stringSet'> | { contains: string | { attr: ATTRIBUTE_PATHS } })
+    (BaseAttrCondition<'stringSet'> | { contains: string | { attr: ATTRIBUTE_PATHS } })
 > = 1
 assertStringSetCondition
 
-type STRING_LIST_CONDITION = AttributeCondition<
-  'stringList',
-  ATTRIBUTES['stringList'],
-  ATTRIBUTE_PATHS
->
+type STRING_LIST_CONDITION = AttrCondition<'stringList', ATTRIBUTES['stringList'], ATTRIBUTE_PATHS>
 const assertStringListCondition: A.Equals<
   STRING_LIST_CONDITION,
-  | BaseAttributeCondition<'stringList'>
+  | BaseAttrCondition<'stringList'>
   | (AttrOrSize<'stringList'> & { contains: string | { attr: ATTRIBUTE_PATHS } })
-  | AttributeCondition<
-      `stringList[${number}]`,
-      ATTRIBUTES['stringList']['elements'],
-      ATTRIBUTE_PATHS
-    >
+  | AttrCondition<`stringList[${number}]`, ATTRIBUTES['stringList']['elements'], ATTRIBUTE_PATHS>
 > = 1
 assertStringListCondition
 
-type MAP_LIST_CONDITION = AttributeCondition<'mapList', ATTRIBUTES['mapList'], ATTRIBUTE_PATHS>
+type MAP_LIST_CONDITION = AttrCondition<'mapList', ATTRIBUTES['mapList'], ATTRIBUTE_PATHS>
 const assertMapListCondition: A.Equals<
-  | BaseAttributeCondition<'mapList'>
-  | AttributeCondition<`mapList[${number}]`, ATTRIBUTES['mapList']['elements'], ATTRIBUTE_PATHS>,
+  | BaseAttrCondition<'mapList'>
+  | AttrCondition<`mapList[${number}]`, ATTRIBUTES['mapList']['elements'], ATTRIBUTE_PATHS>,
   MAP_LIST_CONDITION
 > = 1
 assertMapListCondition
 
-type MAP_CONDITION = AttributeCondition<'map', ATTRIBUTES['map'], ATTRIBUTE_PATHS>
+type MAP_CONDITION = AttrCondition<'map', ATTRIBUTES['map'], ATTRIBUTE_PATHS>
 const assertMapCondition: A.Equals<
   MAP_CONDITION,
-  | BaseAttributeCondition<'map'>
-  | AttributeCondition<`map.num`, ATTRIBUTES['map']['attributes']['num'], ATTRIBUTE_PATHS>
-  | AttributeCondition<
-      `map.stringList`,
-      ATTRIBUTES['map']['attributes']['stringList'],
-      ATTRIBUTE_PATHS
-    >
-  | AttributeCondition<`map.map`, ATTRIBUTES['map']['attributes']['map'], ATTRIBUTE_PATHS>
+  | BaseAttrCondition<'map'>
+  | AttrCondition<`map.num`, ATTRIBUTES['map']['attributes']['num'], ATTRIBUTE_PATHS>
+  | AttrCondition<`map.stringList`, ATTRIBUTES['map']['attributes']['stringList'], ATTRIBUTE_PATHS>
+  | AttrCondition<`map.map`, ATTRIBUTES['map']['attributes']['map'], ATTRIBUTE_PATHS>
 > = 1
 assertMapCondition
 
-type RECORD_CONDITION = AttributeCondition<'record', ATTRIBUTES['record'], ATTRIBUTE_PATHS>
+type RECORD_CONDITION = AttrCondition<'record', ATTRIBUTES['record'], ATTRIBUTE_PATHS>
 const assertRecordCondition: A.Equals<
   RECORD_CONDITION,
-  | BaseAttributeCondition<'record'>
-  | AttributeCondition<
-      'record.foo' | 'record.bar',
-      ATTRIBUTES['record']['elements'],
-      ATTRIBUTE_PATHS
-    >
+  | BaseAttrCondition<'record'>
+  | AttrCondition<'record.foo' | 'record.bar', ATTRIBUTES['record']['elements'], ATTRIBUTE_PATHS>
 > = 1
 assertRecordCondition
 
-type UNION_CONDITION = AttributeCondition<'union', ATTRIBUTES['union'], ATTRIBUTE_PATHS>
+type UNION_CONDITION = AttrCondition<'union', ATTRIBUTES['union'], ATTRIBUTE_PATHS>
 const assertUnionCondition: A.Equals<
   UNION_CONDITION,
-  | BaseAttributeCondition<'union'>
+  | BaseAttrCondition<'union'>
   | (ATTRIBUTES['union']['elements'][number] extends infer ELEMENT
       ? ELEMENT extends Attribute
-        ? AttributeCondition<'union', ELEMENT, ATTRIBUTE_PATHS>
+        ? AttrCondition<'union', ELEMENT, ATTRIBUTE_PATHS>
         : never
       : never)
 > = 1

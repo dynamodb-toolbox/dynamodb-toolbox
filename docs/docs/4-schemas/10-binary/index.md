@@ -116,7 +116,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
 
 ```ts
-var PREFIX = new Uint8Array([1, 2, 3])
+const PREFIX = new Uint8Array([1, 2, 3])
 
 const prefix = {
   parse: (input: Uint8Array) => {

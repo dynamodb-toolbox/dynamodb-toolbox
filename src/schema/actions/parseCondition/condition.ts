@@ -2,25 +2,30 @@ import type {
   AnyAttribute,
   AnyOfAttribute,
   Attribute,
+  BinaryAttribute,
   ListAttribute,
   MapAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveBinaryAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
+  ResolveStringAttribute,
+  ResolvedBinaryAttribute,
+  ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
-  SetAttribute
+  ResolvedStringAttribute,
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 
-export type AnyAttributeCondition<
+export type AnyAttrCondition<
   ATTRIBUTE_PATH extends string,
   COMPARED_ATTRIBUTE_PATH extends string
-> = AttributeCondition<
-  ATTRIBUTE_PATH,
-  PrimitiveAttribute | SetAttribute | ListAttribute | MapAttribute | RecordAttribute,
-  COMPARED_ATTRIBUTE_PATH
->
+> = AttrCondition<ATTRIBUTE_PATH, Exclude<Attribute, AnyAttribute>, COMPARED_ATTRIBUTE_PATH>
 
 export type ConditionType = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
 
@@ -28,46 +33,49 @@ export type AttrOrSize<ATTRIBUTE_PATH extends string> =
   | { attr: ATTRIBUTE_PATH; size?: undefined }
   | { attr?: undefined; size: ATTRIBUTE_PATH }
 
-export type BaseAttributeCondition<ATTRIBUTE_PATH extends string> = AttrOrSize<ATTRIBUTE_PATH> &
+export type BaseAttrCondition<ATTRIBUTE_PATH extends string> = AttrOrSize<ATTRIBUTE_PATH> &
   ({ exists: boolean } | { type: ConditionType })
 
-export type AttributeCondition<
+export type AttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends Attribute,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
-  | BaseAttributeCondition<ATTRIBUTE_PATH>
+  | BaseAttrCondition<ATTRIBUTE_PATH>
   | (ATTRIBUTE extends AnyAttribute
-      ? AnyAttributeCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
+      ? AnyAttrCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends PrimitiveAttribute
-      ? PrimitiveAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? PrimitiveAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends SetAttribute
-      ? SetAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? SetAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends ListAttribute
-      ? ListAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? ListAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends MapAttribute
-      ? MapAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? MapAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends RecordAttribute
-      ? RecordAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? RecordAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends AnyOfAttribute
-      ? AnyOfAttributeCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      ? AnyOfAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
 
-type SortableAttribute =
-  | PrimitiveAttribute<'string'>
-  | PrimitiveAttribute<'number'>
-  | PrimitiveAttribute<'binary'>
+type SortableAttribute = StringAttribute | NumberAttribute | BinaryAttribute
 
 type RangeCondition<
   ATTRIBUTE extends SortableAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
-  ATTRIBUTE_VALUE extends ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<ATTRIBUTE>
+  ATTRIBUTE_VALUE extends
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute
+    | ResolvedBinaryAttribute =
+    | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
+    | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+    | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 > =
   | { lt: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
   | { lte: ATTRIBUTE_VALUE | { attr: COMPARED_ATTRIBUTE_PATH } }
@@ -80,11 +88,11 @@ type RangeCondition<
       ]
     }
 
-type StringAttributeCondition<COMPARED_ATTRIBUTE_PATH extends string> =
+type StringAttrCondition<COMPARED_ATTRIBUTE_PATH extends string> =
   | { contains: string | { attr: COMPARED_ATTRIBUTE_PATH } }
   | { beginsWith: string | { attr: COMPARED_ATTRIBUTE_PATH } }
 
-export type PrimitiveAttributeCondition<
+export type PrimitiveAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends PrimitiveAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
@@ -96,18 +104,15 @@ export type PrimitiveAttributeCondition<
     | (ATTRIBUTE extends SortableAttribute
         ? RangeCondition<ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
         : never)
-    | (ATTRIBUTE extends PrimitiveAttribute<'string'>
-        ? StringAttributeCondition<COMPARED_ATTRIBUTE_PATH>
+    | (ATTRIBUTE extends StringAttribute ? StringAttrCondition<COMPARED_ATTRIBUTE_PATH> : never)
+    | (StringAttribute extends ATTRIBUTE
+        ? RangeCondition<StringAttribute, string> | StringAttrCondition<string>
         : never)
-    /**
-     * @debt type "Annoying: PrimitiveAttribute is not the union of primitive Attributes (BooleanAttribute, StringAttribute etc...). So we have to do this for general case."
-     */
-    | (PrimitiveAttribute extends ATTRIBUTE
-        ? RangeCondition<SortableAttribute, string> | StringAttributeCondition<string>
-        : never)
+    | (NumberAttribute extends ATTRIBUTE ? RangeCondition<NumberAttribute, string> : never)
+    | (BinaryAttribute extends ATTRIBUTE ? RangeCondition<BinaryAttribute, string> : never)
   )
 
-export type SetAttributeCondition<
+export type SetAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends SetAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
@@ -115,7 +120,7 @@ export type SetAttributeCondition<
   contains: ResolvePrimitiveAttribute<ATTRIBUTE['elements']> | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
-export type ListAttributeCondition<
+export type ListAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends ListAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
@@ -130,13 +135,13 @@ export type ListAttributeCondition<
   // Stops recursion on general case
   | (ListAttribute extends ATTRIBUTE
       ? never
-      : AttributeCondition<
+      : AttrCondition<
           `${ATTRIBUTE_PATH}[${number}]`,
           ATTRIBUTE['elements'],
           COMPARED_ATTRIBUTE_PATH
         >)
 
-type MapAttributeCondition<
+type MapAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends MapAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
@@ -145,14 +150,14 @@ type MapAttributeCondition<
   MapAttribute extends ATTRIBUTE
     ? never
     : {
-        [KEY in keyof ATTRIBUTE['attributes']]: AttributeCondition<
+        [KEY in keyof ATTRIBUTE['attributes']]: AttrCondition<
           `${ATTRIBUTE_PATH}.${Extract<KEY, string>}`,
           ATTRIBUTE['attributes'][KEY],
           COMPARED_ATTRIBUTE_PATH
         >
       }[keyof ATTRIBUTE['attributes']]
 
-type RecordAttributeCondition<
+type RecordAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends RecordAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
@@ -160,13 +165,13 @@ type RecordAttributeCondition<
   // Stops recursion on general case
   RecordAttribute extends ATTRIBUTE
     ? never
-    : AttributeCondition<
-        `${ATTRIBUTE_PATH}.${ResolvePrimitiveAttribute<ATTRIBUTE['keys']>}`,
+    : AttrCondition<
+        `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`,
         ATTRIBUTE['elements'],
         COMPARED_ATTRIBUTE_PATH
       >
 
-type AnyOfAttributeCondition<
+type AnyOfAttrCondition<
   ATTRIBUTE_PATH extends string,
   ATTRIBUTE extends AnyOfAttribute,
   COMPARED_ATTRIBUTE_PATH extends string
@@ -176,15 +181,15 @@ type AnyOfAttributeCondition<
     ? never
     : ATTRIBUTE['elements'][number] extends infer ELEMENT
       ? ELEMENT extends Attribute
-        ? AttributeCondition<ATTRIBUTE_PATH, ELEMENT, COMPARED_ATTRIBUTE_PATH>
+        ? AttrCondition<ATTRIBUTE_PATH, ELEMENT, COMPARED_ATTRIBUTE_PATH>
         : never
       : never
 
 export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
-  ? AnyAttributeCondition<string, string>
+  ? AnyAttrCondition<string, string>
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
     ? ATTRIBUTE_PATH extends string
-      ? AttributeCondition<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH], Paths<SCHEMA>>
+      ? AttrCondition<ATTRIBUTE_PATH, SCHEMA['attributes'][ATTRIBUTE_PATH], Paths<SCHEMA>>
       : never
     : never
 

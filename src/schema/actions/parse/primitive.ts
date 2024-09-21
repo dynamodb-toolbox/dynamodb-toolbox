@@ -1,9 +1,17 @@
 import type {
+  BinaryAttribute,
+  BooleanAttribute,
   ExtendedValue,
+  NullAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   ResolvePrimitiveAttribute,
-  ResolvePrimitiveAttributeType,
-  ResolvedPrimitiveAttribute,
+  ResolvedBinaryAttribute,
+  ResolvedBooleanAttribute,
+  ResolvedNullAttribute,
+  ResolvedNumberAttribute,
+  ResolvedStringAttribute,
+  StringAttribute,
   Transformer
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -25,23 +33,22 @@ import { applyCustomValidation } from './utils.js'
 export type PrimitiveAttrParsedValue<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute
-  : ATTRIBUTE extends { transform: undefined }
+> = ATTRIBUTE extends { transform: undefined }
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+  : OPTIONS extends { transform: false }
     ?
         | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-        | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
-            ? ATTRIBUTE['enum'][number]
-            : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
+        | ResolvePrimitiveAttribute<ATTRIBUTE>
         | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-    : OPTIONS extends { transform: false }
-      ?
-          | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-          | (ATTRIBUTE['enum'] extends ResolvePrimitiveAttributeType<ATTRIBUTE['type']>[]
-              ? ATTRIBUTE['enum'][number]
-              : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>)
-          | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-      : ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
+    :
+        | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
+        | (ATTRIBUTE extends BooleanAttribute ? ResolvedBooleanAttribute : never)
+        | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
+        | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
+        | (ATTRIBUTE extends BinaryAttribute ? ResolvedBinaryAttribute : never)
 
 export function* primitiveAttrParser<
   ATTRIBUTE extends PrimitiveAttribute,
@@ -76,17 +83,11 @@ export function* primitiveAttrParser<
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
       path,
-      payload: {
-        received: linkedValue,
-        expected: type
-      }
+      payload: { received: linkedValue, expected: type }
     })
   }
 
-  if (
-    attribute.enum !== undefined &&
-    !attribute.enum.includes(linkedValue as ResolvedPrimitiveAttribute)
-  ) {
+  if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(linkedValue)) {
     const { path } = attribute
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -94,17 +95,11 @@ export function* primitiveAttrParser<
         path !== undefined ? `'${path}' ` : ''
       }should be one of: ${attribute.enum.map(String).join(', ')}.`,
       path,
-      payload: {
-        received: linkedValue,
-        expected: attribute.enum
-      }
+      payload: { received: linkedValue, expected: attribute.enum }
     })
   }
 
-  /**
-   * @debt type "validator should act as type guard"
-   */
-  const parsedValue = linkedValue as ResolvedPrimitiveAttribute
+  const parsedValue = linkedValue
   applyCustomValidation(attribute, parsedValue, options)
 
   if (transform) {
@@ -123,12 +118,7 @@ export function* primitiveAttrParser<
 export type PrimitiveAttrParserInput<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute extends ATTRIBUTE
-  ?
-      | undefined
-      | ResolvedPrimitiveAttribute
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | ResolvePrimitiveAttribute<ATTRIBUTE>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+> =
+  | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+  | ResolvePrimitiveAttribute<ATTRIBUTE>
+  | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

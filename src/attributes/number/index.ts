@@ -1,1 +1,5 @@
 export { number } from './typer.js'
+export type { $NumberAttributeState, $NumberAttributeNestedState } from './interface.js'
+export { $NumberAttribute, NumberAttribute } from './interface.js'
+export type { FreezeNumberAttribute } from './freeze.js'
+export type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'

@@ -13,45 +13,35 @@ import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import type { Transformer } from '../primitive/types.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezePrimitiveAttribute } from './freeze.js'
-import type { FreezePrimitiveAttribute } from './freeze.js'
-import type {
-  PrimitiveAttributeState,
-  PrimitiveAttributeType,
-  ResolvePrimitiveAttributeType,
-  Transformer
-} from './types.js'
+import { freezeNullAttribute } from './freeze.js'
+import type { FreezeNullAttribute } from './freeze.js'
+import type { ResolveNullAttribute, ResolvedNullAttribute } from './resolve.js'
+import type { NullAttributeState } from './types.js'
 
-export interface $PrimitiveAttributeState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> {
-  [$type]: TYPE
+export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
+  [$type]: 'null'
   [$state]: STATE
 }
 
-export interface $PrimitiveAttributeNestedState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> extends $PrimitiveAttributeState<TYPE, STATE> {
-  freeze: (path?: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
+  extends $NullAttributeState<STATE> {
+  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>>
 }
 
 /**
- * Primitive attribute interface
+ * Null attribute (warm)
  */
-export class $PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements $PrimitiveAttributeNestedState<TYPE, STATE>
+export class $NullAttribute<STATE extends NullAttributeState = NullAttributeState>
+  implements $NullAttributeNestedState<STATE>
 {
-  [$type]: TYPE;
+  [$type]: 'null';
   [$state]: STATE
 
-  constructor(type: TYPE, state: STATE) {
-    this[$type] = type
+  constructor(state: STATE) {
+    this[$type] = 'null'
     this[$state] = state
   }
 
@@ -65,14 +55,14 @@ export class $PrimitiveAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { required: nextRequired }))
+  ): $NullAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+    return new $NullAttribute(overwrite(this[$state], { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: Never }>> {
+  optional(): $NullAttribute<Overwrite<STATE, { required: Never }>> {
     return this.required('never')
   }
 
@@ -81,8 +71,8 @@ export class $PrimitiveAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { hidden: nextHidden }))
+  ): $NullAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+    return new $NullAttribute(overwrite(this[$state], { hidden: nextHidden }))
   }
 
   /**
@@ -90,11 +80,8 @@ export class $PrimitiveAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], { key: nextKey, required: 'always' })
-    )
+  ): $NullAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+    return new $NullAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -102,8 +89,8 @@ export class $PrimitiveAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { savedAs: nextSavedAs }))
+  ): $NullAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+    return new $NullAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
   }
 
   /**
@@ -114,12 +101,12 @@ export class $PrimitiveAttribute<
    * @example
    * string().enum('foo', 'bar')
    */
-  enum<NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
+  enum<NEXT_ENUM extends ResolveNullAttribute<FreezeNullAttribute<$NullAttributeState<STATE>>>[]>(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $PrimitiveAttribute<TYPE, Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $PrimitiveAttribute(this[$type], update(this[$state], 'enum', nextEnum))
+   */ $NullAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
+    return new $NullAttribute(update(this[$state], 'enum', nextEnum))
   }
 
   /**
@@ -129,10 +116,9 @@ export class $PrimitiveAttribute<
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolvePrimitiveAttributeType<TYPE>>(
+  const<CONSTANT extends ResolveNullAttribute<FreezeNullAttribute<$NullAttributeState<STATE>>>>(
     constant: CONSTANT
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -153,8 +139,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         enum: [constant],
         defaults: ifThenElse(
@@ -185,23 +170,17 @@ export class $PrimitiveAttribute<
         If<
           STATE['key'],
           ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+            FreezeNullAttribute<$NullAttributeState<STATE>>,
             { mode: 'key'; fill: false }
           >,
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { fill: false }
-          >
+          ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
         >,
-        ResolvePrimitiveAttributeType<TYPE>
+        ResolvedNullAttribute
       >,
-      ResolvePrimitiveAttributeType<TYPE>
+      ResolvedNullAttribute
     >
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], { transform: transformer as unknown })
-    )
+  ): $NullAttribute<Overwrite<STATE, { transform: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { transform: transformer as unknown }))
   }
 
   /**
@@ -211,13 +190,9 @@ export class $PrimitiveAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { mode: 'key'; fill: false }
-      >
+      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -229,8 +204,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         defaults: {
           key: nextKeyDefault as unknown,
@@ -248,10 +222,9 @@ export class $PrimitiveAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -263,8 +236,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -282,13 +254,9 @@ export class $PrimitiveAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        true
-      >
+      AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -300,8 +268,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -321,18 +288,11 @@ export class $PrimitiveAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { mode: 'key'; fill: false }
-        >,
-        ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { fill: false }
-        >
+        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>,
+        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
       >
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -352,8 +312,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         defaults: ifThenElse(
           this[$state].key,
@@ -380,12 +339,8 @@ export class $PrimitiveAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      { mode: 'key'; fill: false }
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -397,8 +352,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         links: {
           key: nextKeyLink as unknown,
@@ -417,12 +371,8 @@ export class $PrimitiveAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      { fill: false }
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -434,8 +384,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -454,12 +403,8 @@ export class $PrimitiveAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      true
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -471,8 +416,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -497,14 +441,10 @@ export class $PrimitiveAttribute<
       >
     ) => If<
       STATE['key'],
-      ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { mode: 'key'; fill: false }
-      >,
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>,
+      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -524,8 +464,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         links: ifThenElse(
           this[$state].key,
@@ -547,18 +486,17 @@ export class $PrimitiveAttribute<
   /**
    * Provide a custom validator for attribute in Primary Key computing
    *
-   * @param nextKeyValidator `(keyAttributeInput) => boolean | string`
+   * @param nextKeyValidator `(keyAttributeInput) => null | string`
    */
   keyValidate(
     nextKeyValidator: Validator<
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeNullAttribute<$NullAttributeState<STATE>>,
         { mode: 'key'; fill: false; defined: true }
       >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -570,8 +508,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         validators: {
           key: nextKeyValidator as Validator,
@@ -585,18 +522,14 @@ export class $PrimitiveAttribute<
   /**
    * Provide a custom validator for attribute in PUT commands
    *
-   * @param nextPutValidator `(putAttributeInput) => boolean | string`
+   * @param nextPutValidator `(putAttributeInput) => null | string`
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { fill: false; defined: true }
-      >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false; defined: true }>,
+      FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -608,8 +541,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -623,18 +555,14 @@ export class $PrimitiveAttribute<
   /**
    * Provide a custom validator for attribute in UPDATE commands
    *
-   * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
+   * @param nextUpdateValidator `(updateAttributeInput) => null | string`
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        true
-      >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>,
+      FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -646,8 +574,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -661,25 +588,21 @@ export class $PrimitiveAttribute<
   /**
    * Provide a custom validator for attribute in PUT commands OR Primary Key computing if attribute is tagged as key
    *
-   * @param nextValidator `(key/putAttributeInput) => boolean | string`
+   * @param nextValidator `(key/putAttributeInput) => null | string`
    */
   validate(
     nextValidator: Validator<
       If<
         STATE['key'],
         ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          FreezeNullAttribute<$NullAttributeState<STATE>>,
           { mode: 'key'; fill: false; defined: true }
         >,
-        ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { fill: false; defined: true }
-        >
+        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false; defined: true }>
       >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $NullAttribute<
     Overwrite<
       STATE,
       {
@@ -699,8 +622,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $NullAttribute(
       overwrite(this[$state], {
         validators: ifThenElse(
           /**
@@ -722,17 +644,15 @@ export class $PrimitiveAttribute<
     )
   }
 
-  freeze(path?: string): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> {
-    return freezePrimitiveAttribute(this[$type], this[$state], path)
+  freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>> {
+    return freezeNullAttribute(this[$state], path)
   }
 }
 
-export class PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements SharedAttributeState<STATE>
+export class NullAttribute<STATE extends NullAttributeState = NullAttributeState>
+  implements SharedAttributeState<STATE>
 {
-  type: TYPE
+  type: 'null'
   path?: string
   required: STATE['required']
   hidden: STATE['hidden']
@@ -744,15 +664,8 @@ export class PrimitiveAttribute<
   links: STATE['links']
   validators: STATE['validators']
 
-  constructor({
-    type,
-    path,
-    ...state
-  }: STATE & {
-    path?: string
-    type: TYPE
-  }) {
-    this.type = type
+  constructor({ path, ...state }: STATE & { path?: string }) {
+    this.type = 'null'
     this.path = path
     this.required = state.required
     this.hidden = state.hidden

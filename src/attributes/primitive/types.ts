@@ -1,46 +1,88 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type {
+  $BinaryAttribute,
+  $BinaryAttributeNestedState,
+  $BinaryAttributeState,
+  BinaryAttribute,
+  FreezeBinaryAttribute,
+  ResolveBinaryAttribute
+} from '../binary/index.js'
+import type {
+  $BooleanAttribute,
+  $BooleanAttributeNestedState,
+  $BooleanAttributeState,
+  BooleanAttribute,
+  FreezeBooleanAttribute,
+  ResolveBooleanAttribute
+} from '../boolean/index.js'
+import type {
+  $NullAttribute,
+  $NullAttributeNestedState,
+  $NullAttributeState,
+  FreezeNullAttribute,
+  NullAttribute,
+  ResolveNullAttribute
+} from '../null/index.js'
+import type {
+  $NumberAttribute,
+  $NumberAttributeNestedState,
+  $NumberAttributeState,
+  FreezeNumberAttribute,
+  NumberAttribute,
+  ResolveNumberAttribute
+} from '../number/index.js'
+import type {
+  $StringAttribute,
+  $StringAttributeNestedState,
+  $StringAttributeState,
+  FreezeStringAttribute,
+  ResolveStringAttribute,
+  StringAttribute
+} from '../string/index.js'
 import type { $transformerId } from './constants.js'
 
-export interface PrimitiveAttributeState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType
-> extends SharedAttributeState {
-  enum: PrimitiveAttributeEnumValues<TYPE>
-  transform: undefined | unknown
-}
+export type $PrimitiveAttributeNestedState =
+  | $NullAttributeNestedState
+  | $BooleanAttributeNestedState
+  | $NumberAttributeNestedState
+  | $StringAttributeNestedState
+  | $BinaryAttributeNestedState
 
-/**
- * Possible Primitive Attribute type
- */
-export type PrimitiveAttributeType = 'null' | 'string' | 'boolean' | 'number' | 'binary'
+export type $PrimitiveAttributeState =
+  | $NullAttributeState
+  | $BooleanAttributeState
+  | $NumberAttributeState
+  | $StringAttributeState
+  | $BinaryAttributeState
 
-/**
- * Returns the corresponding TS type of a Primitive Attribute type
- *
- * @param TYPE Primitive Type
- */
-export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> = TYPE extends 'null'
-  ? null
-  : TYPE extends 'string'
-    ? string
-    : TYPE extends 'number'
-      ? number
-      : TYPE extends 'boolean'
-        ? boolean
-        : TYPE extends 'binary'
-          ? Uint8Array
-          : never
+export type $PrimitiveAttribute =
+  | $NullAttribute
+  | $BooleanAttribute
+  | $NumberAttribute
+  | $StringAttribute
+  | $BinaryAttribute
 
-/**
- * TS type of any Primitive Attribute
- */
-export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttributeType<PrimitiveAttributeType>
+export type PrimitiveAttribute =
+  | NullAttribute
+  | BooleanAttribute
+  | NumberAttribute
+  | StringAttribute
+  | BinaryAttribute
 
-/**
- * Primitive Enum values constraint
- */
-export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
-  | ResolvePrimitiveAttributeType<TYPE>[]
-  | undefined
+export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
+  | (ATTRIBUTE extends NullAttribute ? ResolveNullAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
+
+export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<PrimitiveAttribute>
+
+export type FreezePrimitiveAttribute<ATTRIBUTE extends $PrimitiveAttributeState> =
+  | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends $BooleanAttributeState ? FreezeBooleanAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE> : never)
 
 export interface Transformer<
   INPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,

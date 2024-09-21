@@ -44,21 +44,18 @@ export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
 export type AttrFormattedValue<
   ATTRIBUTE extends Attribute,
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
-> = ATTRIBUTE extends AnyAttribute
-  ? AnyAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrFormattedValue<ATTRIBUTE>
-    : ATTRIBUTE extends SetAttribute
-      ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
-      : ATTRIBUTE extends ListAttribute
-        ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS>
-        : ATTRIBUTE extends Schema | MapAttribute
+> = Attribute extends ATTRIBUTE
+  ? unknown
+  :
+      | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrFormattedValue<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends Schema | MapAttribute
           ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
-          : ATTRIBUTE extends RecordAttribute
-            ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS>
-              : never
+          : never)
+      | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 

@@ -1,1 +1,5 @@
 export { string } from './typer.js'
+export type { $StringAttributeState, $StringAttributeNestedState } from './interface.js'
+export { $StringAttribute, StringAttribute } from './interface.js'
+export type { FreezeStringAttribute } from './freeze.js'
+export type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'

@@ -50,21 +50,18 @@ export type MustBeDefined<
 export type AttrParsedValue<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = ATTRIBUTE extends AnyAttribute
-  ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
-    : ATTRIBUTE extends SetAttribute
-      ? SetAttrParsedValue<ATTRIBUTE, OPTIONS>
-      : ATTRIBUTE extends ListAttribute
-        ? ListAttrParsedValue<ATTRIBUTE, OPTIONS>
-        : ATTRIBUTE extends MapAttribute
-          ? MapAttrParsedValue<ATTRIBUTE, OPTIONS>
-          : ATTRIBUTE extends RecordAttribute
-            ? RecordAttrParsedValue<ATTRIBUTE, OPTIONS>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS>
-              : never
+> = Attribute extends ATTRIBUTE
+  ? unknown
+  :
+      | (ATTRIBUTE extends AnyAttribute ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends PrimitiveAttribute
+          ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
+          : never)
+      | (ATTRIBUTE extends SetAttribute ? SetAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListAttribute ? ListAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends MapAttribute ? MapAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends RecordAttribute ? RecordAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
 
 export function* attrParser<
   ATTRIBUTE extends Attribute,
@@ -205,18 +202,15 @@ export type MustBeProvided<
 export type AttrParserInput<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = ATTRIBUTE extends AnyAttribute
-  ? AnyAttrParserInput<ATTRIBUTE, OPTIONS>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrParserInput<ATTRIBUTE, OPTIONS>
-    : ATTRIBUTE extends SetAttribute
-      ? SetAttrParserInput<ATTRIBUTE, OPTIONS>
-      : ATTRIBUTE extends ListAttribute
-        ? ListAttrParserInput<ATTRIBUTE, OPTIONS>
-        : ATTRIBUTE extends MapAttribute
-          ? MapAttrParserInput<ATTRIBUTE, OPTIONS>
-          : ATTRIBUTE extends RecordAttribute
-            ? RecordAttrParserInput<ATTRIBUTE, OPTIONS>
-            : ATTRIBUTE extends AnyOfAttribute
-              ? AnyOfAttrParserInput<ATTRIBUTE, OPTIONS>
-              : never
+> = Attribute extends ATTRIBUTE
+  ? unknown
+  :
+      | (ATTRIBUTE extends AnyAttribute ? AnyAttrParserInput<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends PrimitiveAttribute
+          ? PrimitiveAttrParserInput<ATTRIBUTE, OPTIONS>
+          : never)
+      | (ATTRIBUTE extends SetAttribute ? SetAttrParserInput<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListAttribute ? ListAttrParserInput<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends MapAttribute ? MapAttrParserInput<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends RecordAttribute ? RecordAttrParserInput<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrParserInput<ATTRIBUTE, OPTIONS> : never)

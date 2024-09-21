@@ -1,7 +1,7 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 
-// Note: May look like a duplicate of AnyAttributeState but actually adds JSDocs
+// Note: May look like a duplicate of RecordAttributeState but actually adds JSDocs
 
 /**
  * Input options of Record Attribute

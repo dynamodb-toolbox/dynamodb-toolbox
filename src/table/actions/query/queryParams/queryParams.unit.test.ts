@@ -134,9 +134,7 @@ describe('query', () => {
         // @ts-expect-error
         .query({
           partition: 'foo',
-          range: {
-            gt: 42
-          }
+          range: { gt: 42 }
         })
         .params()
 

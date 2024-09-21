@@ -12,17 +12,17 @@ Once **frozen**, validation is applied and building methods are stripped:
 
 ```ts
 const $nameSchema = string()
-// => $PrimitiveAttribute<"string">
+// => $StringAttribute
 
 const nameSchema = $nameSchema.freeze()
-// => PrimitiveAttribute<"string">
+// => StringAttribute
 
 // 👇 `schema` uses `.freeze()` under the hood
 const pokemonSchema = schema({
   name: $nameSchema
 })
 // => Schema<{
-//   name: PrimitiveAttribute<"string">
+//   name: StringAttribute
 // }>
 ```
 

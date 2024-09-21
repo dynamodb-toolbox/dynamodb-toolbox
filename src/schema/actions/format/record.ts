@@ -1,4 +1,4 @@
-import type { RecordAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
+import type { RecordAttribute, ResolveStringAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 import type { If } from '~/types/index.js'
@@ -20,7 +20,7 @@ export type RecordAttrFormattedValue<
   ATTRIBUTE extends RecordAttribute,
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions,
   MATCHING_KEYS extends string = MatchKeys<
-    ResolvePrimitiveAttribute<ATTRIBUTE['keys']>,
+    ResolveStringAttribute<ATTRIBUTE['keys']>,
     '.',
     OPTIONS['attributes']
   >

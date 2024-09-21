@@ -1,38 +1,26 @@
+import type { $BinaryAttributeNestedState, BinaryAttribute } from '../binary/index.js'
+import type { BinaryAttributeState } from '../binary/types.js'
 import type { AtLeastOnce } from '../constants/index.js'
-import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/interface.js'
-import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
-import type { Validator } from '../types/validator.js'
+import type { $NumberAttributeNestedState, NumberAttribute } from '../number/index.js'
+import type { NumberAttributeState } from '../number/types.js'
+import type { $StringAttributeNestedState, StringAttribute } from '../string/index.js'
+import type { StringAttributeState } from '../string/types.js'
 
 interface SetAttributeElementState {
   required: AtLeastOnce
   hidden: false
   key: boolean
   savedAs: undefined
-  enum: PrimitiveAttributeEnumValues<'string' | 'number' | 'binary'>
-  defaults: {
-    key: undefined
-    put: undefined
-    update: undefined
-  }
-  links: {
-    key: undefined
-    put: undefined
-    update: undefined
-  }
-  validators: {
-    key: undefined | Validator
-    put: undefined | Validator
-    update: undefined | Validator
-  }
-  transform: undefined | unknown
+  defaults: { key: undefined; put: undefined; update: undefined }
+  links: { key: undefined; put: undefined; update: undefined }
 }
 
-export type $SetAttributeElements = $PrimitiveAttributeNestedState<
-  'string' | 'number' | 'binary',
-  SetAttributeElementState
->
+export type $SetAttributeElements =
+  | $NumberAttributeNestedState<NumberAttributeState & SetAttributeElementState>
+  | $StringAttributeNestedState<StringAttributeState & SetAttributeElementState>
+  | $BinaryAttributeNestedState<BinaryAttributeState & SetAttributeElementState>
 
-export type SetAttributeElements = PrimitiveAttribute<
-  'string' | 'number' | 'binary',
-  SetAttributeElementState
->
+export type SetAttributeElements =
+  | NumberAttribute<NumberAttributeState & SetAttributeElementState>
+  | StringAttribute<StringAttributeState & SetAttributeElementState>
+  | BinaryAttribute<BinaryAttributeState & SetAttributeElementState>

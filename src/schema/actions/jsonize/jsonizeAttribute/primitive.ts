@@ -1,7 +1,5 @@
-import type { PrimitiveAttributeType } from '~/attributes/index.js'
+import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { $transformerId } from '~/attributes/primitive/constants.js'
-import type { PrimitiveAttribute } from '~/attributes/primitive/index.js'
-import { PRIMITIVE_DEFAULT_OPTIONS } from '~/attributes/primitive/options.js'
 import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -20,9 +18,9 @@ export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAtt
 
   const jsonizedAttr = {
     type: attr.type,
-    ...(attr.required !== PRIMITIVE_DEFAULT_OPTIONS.required ? { required: attr.required } : {}),
-    ...(attr.hidden !== PRIMITIVE_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
-    ...(attr.key !== PRIMITIVE_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
+    ...(attr.required !== 'atLeastOnce' ? { required: attr.required } : {}),
+    ...(attr.hidden !== false ? { hidden: attr.hidden } : {}),
+    ...(attr.key !== false ? { key: attr.key } : {}),
     ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
     ...(attr.transform !== undefined
       ? {
@@ -33,14 +31,14 @@ export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAtt
       : {}),
     ...(!isEmpty(jsonizedDefaults) ? { defaults: jsonizedDefaults } : {})
     // We need to cast as `.enum` is not coupled to `.type`
-  } as Extract<JSONizedAttr, { type: PrimitiveAttributeType }>
+  } as Extract<JSONizedAttr, { type: 'null' | 'boolean' | 'number' | 'string' | 'binary' }>
 
   if (attr.enum) {
     if (attr.type === 'binary') {
       const textDecoder = new TextDecoder('utf8')
       jsonizedAttr.enum = (attr.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
     } else {
-      jsonizedAttr.enum = attr.enum as string[] | number[] | boolean[] | null[]
+      jsonizedAttr.enum = attr.enum
     }
   }
 

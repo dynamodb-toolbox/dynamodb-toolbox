@@ -3,7 +3,7 @@ import type {
   ExtendedValue,
   RecordAttribute,
   RecordAttributeKeys,
-  ResolvePrimitiveAttribute
+  ResolveStringAttribute
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -160,7 +160,7 @@ export type RecordAttrParserInput<
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | {
-          [KEY in ResolvePrimitiveAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
+          [KEY in ResolveStringAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
             ATTRIBUTE['elements'],
             Overwrite<OPTIONS, { defined: false }>
           >

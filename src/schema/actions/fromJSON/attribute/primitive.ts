@@ -1,8 +1,8 @@
 import { binary } from '~/attributes/binary/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
+import type { $PrimitiveAttributeNestedState } from '~/attributes/index.js'
 import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
-import type { $PrimitiveAttributeNestedState } from '~/attributes/primitive/index.js'
 import { string } from '~/attributes/string/index.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
 

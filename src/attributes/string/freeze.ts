@@ -1,74 +1,59 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import type { Update } from '~/types/update.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
+import { isString } from '~/utils/validation/isString.js'
 
-import type { $state, $type } from '../constants/attributeOptions.js'
+import type { $state } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { PrimitiveAttribute } from './interface.js'
-import type { $PrimitiveAttributeState } from './interface.js'
-import type { PrimitiveAttributeState, PrimitiveAttributeType } from './types.js'
+import type { $StringAttributeState } from './interface.js'
+import { StringAttribute } from './interface.js'
+import type { StringAttributeState } from './types.js'
 
-export type FreezePrimitiveAttribute<$PRIMITIVE_ATTRIBUTE extends $PrimitiveAttributeState> =
+export type FreezeStringAttribute<$STRING_ATTRIBUTE extends $StringAttributeState> =
   // Applying void Update improves type display
-  Update<
-    PrimitiveAttribute<$PRIMITIVE_ATTRIBUTE[$type], $PRIMITIVE_ATTRIBUTE[$state]>,
-    never,
-    never
-  >
+  Update<StringAttribute<$STRING_ATTRIBUTE[$state]>, never, never>
 
-type PrimitiveAttributeFreezer = <
-  TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE>
->(
-  type: TYPE,
-  primitiveAttribute: STATE,
+type StringAttributeFreezer = <STATE extends StringAttributeState>(
+  state: STATE,
   path?: string
-) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+) => FreezeStringAttribute<$StringAttributeState<STATE>>
 
 /**
- * Freezes a warm `boolean`, `number`,  `string` or `binary` attribute
+ * Freezes a warm `string` attribute
  *
- * @param type Attribute type
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
-  TYPE extends PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE>
->(
-  type: TYPE,
+export const freezeStringAttribute: StringAttributeFreezer = <STATE extends StringAttributeState>(
   state: STATE,
   path?: string
-): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> => {
+): FreezeStringAttribute<$StringAttributeState<STATE>> => {
   validateAttributeProperties(state, path)
-
-  const typeValidator = validatorsByPrimitiveType[type]
 
   const { enum: enumValues } = state
   enumValues?.forEach(enumValue => {
-    const isEnumValueValid = typeValidator(enumValue)
+    const isEnumValueValid = isString(enumValue)
     if (!isEnumValueValid) {
       throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
         message: `Invalid enum value type${
           path !== undefined ? ` at path '${path}'` : ''
-        }. Expected: ${type}. Received: ${String(enumValue)}.`,
+        }. Expected: string. Received: ${String(enumValue)}.`,
         path,
-        payload: { expectedType: type, enumValue }
+        payload: { expectedType: 'string', enumValue }
       })
     }
   })
 
   for (const defaultValue of Object.values(state.defaults)) {
     if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
-      if (!typeValidator(defaultValue)) {
+      if (!isString(defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
           message: `Invalid default value type${
             path !== undefined ? ` at path '${path}'` : ''
-          }: Expected: ${type}. Received: ${String(defaultValue)}.`,
+          }: Expected: string. Received: ${String(defaultValue)}.`,
           path,
-          payload: { expectedType: type, defaultValue }
+          payload: { expectedType: 'string', defaultValue }
         })
       }
 
@@ -84,5 +69,5 @@ export const freezePrimitiveAttribute: PrimitiveAttributeFreezer = <
     }
   }
 
-  return new PrimitiveAttribute({ path, type, ...state })
+  return new StringAttribute({ path, ...state })
 }

@@ -1,4 +1,8 @@
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
+import type {
+  ResolvedBinaryAttribute,
+  ResolvedNumberAttribute,
+  ResolvedStringAttribute
+} from '~/attributes/index.js'
 import type {
   BeginsWithOperator,
   BetweenOperator,
@@ -21,14 +25,23 @@ export const queryOperatorSet = new Set<QueryOperator>([
   'beginsWith'
 ])
 
+type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'number'
+  ? ResolvedNumberAttribute
+  : KEY_TYPE extends 'string'
+    ? ResolvedStringAttribute
+    : KEY_TYPE extends 'binary'
+      ? ResolvedBinaryAttribute
+      : never
+
 /**
  * @debt refactor "Factorize with Condition types"
  */
 type QueryRange<
   KEY_TYPE extends IndexableKeyType,
-  ATTRIBUTE_VALUE extends ResolvePrimitiveAttribute<
-    PrimitiveAttribute<KEY_TYPE>
-  > = ResolvePrimitiveAttribute<PrimitiveAttribute<KEY_TYPE>>
+  ATTRIBUTE_VALUE extends
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute
+    | ResolvedBinaryAttribute = ResolveKeyType<KEY_TYPE>
 > =
   | (RangeOperator extends infer COMPARISON_OPERATOR
       ? COMPARISON_OPERATOR extends RangeOperator
@@ -46,16 +59,14 @@ type SecondaryIndexQuery<
 > = ComputeDeep<
   { index: INDEX_NAME } & (INDEX_SCHEMA extends GlobalIndex
     ? {
-        partition: ResolvePrimitiveAttribute<
-          PrimitiveAttribute<INDEX_SCHEMA['partitionKey']['type']>
-        >
+        partition: ResolveKeyType<INDEX_SCHEMA['partitionKey']['type']>
         range?: INDEX_SCHEMA['sortKey'] extends Key
           ? QueryRange<INDEX_SCHEMA['sortKey']['type']>
           : undefined
       }
     : INDEX_SCHEMA extends LocalIndex
       ? {
-          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          partition: ResolveKeyType<TABLE['partitionKey']['type']>
           range?: QueryRange<INDEX_SCHEMA['sortKey']['type']>
         }
       : never)
@@ -73,12 +84,12 @@ type PrimaryIndexQuery<TABLE extends Table> = ComputeDeep<
     index?: never
   } & (Key extends TABLE['sortKey']
     ? {
-        partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+        partition: ResolveKeyType<TABLE['partitionKey']['type']>
         range?: never
       }
     : NonNullable<TABLE['sortKey']> extends Key
       ? {
-          partition: ResolvePrimitiveAttribute<PrimitiveAttribute<TABLE['partitionKey']['type']>>
+          partition: ResolveKeyType<TABLE['partitionKey']['type']>
           range?: QueryRange<NonNullable<TABLE['sortKey']>['type']>
         }
       : never)
