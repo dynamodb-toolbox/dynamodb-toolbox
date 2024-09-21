@@ -209,6 +209,7 @@ export const execute: ExecuteBatchGet = async <
       const tableName = command.table.getName()
       const requests = command[$requests]
       const { attributes } = (command as BatchGetCommand)[$options]
+      const { preProcess } = command.table
 
       return requests?.map((request, index) => {
         const entity = request.entity
@@ -224,12 +225,16 @@ export const execute: ExecuteBatchGet = async <
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const itemKey = initialRequestItems![tableName]!.Keys![index]!
 
-        const savedItem = tableResponses.find(tableResponse =>
+        let savedItem = tableResponses.find(tableResponse =>
           Object.entries(itemKey).every(([key, value]) => tableResponse[key] === value)
         )
 
         if (savedItem === undefined) {
           return undefined
+        }
+
+        if (preProcess) {
+          savedItem = preProcess(savedItem)
         }
 
         return entity.build(EntityFormatter).format(savedItem, { attributes })

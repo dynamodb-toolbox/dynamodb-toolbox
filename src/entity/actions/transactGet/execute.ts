@@ -92,11 +92,18 @@ export const formatResponses: TransactGetResponseFormatter = <
     const transaction = transactions[index]!
     const transactionEntity = transaction.entity
     const { attributes } = transaction[$options]
+    const { preProcess } = transactionEntity.table
+
+    if (item === undefined) {
+      return { Item: item }
+    }
+
+    if (preProcess) {
+      item = preProcess(item)
+    }
 
     return {
-      Item: item
-        ? new EntityFormatter(transactionEntity).format(item, attributes ? { attributes } : {})
-        : undefined
+      Item: new EntityFormatter(transactionEntity).format(item, attributes ? { attributes } : {})
     }
   }) as TransactGetResponses<TRANSACTIONS>
 

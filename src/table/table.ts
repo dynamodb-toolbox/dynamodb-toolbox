@@ -20,7 +20,8 @@ export class Table<
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
   public indexes: INDEXES
-  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS;
+  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS
+  public preProcess?: (item: Record<string, any>) => Record<string, any>;
 
   [$interceptor]?: (action: TableSendableAction) => any
 
@@ -30,7 +31,8 @@ export class Table<
     partitionKey,
     sortKey,
     indexes = {} as INDEXES,
-    entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
+    entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS,
+    preProcess
   }: {
     documentClient?: DynamoDBDocumentClient
     name?: string | (() => string)
@@ -38,6 +40,7 @@ export class Table<
     sortKey?: NarrowObject<SORT_KEY>
     indexes?: NarrowObjectRec<INDEXES>
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
+    preProcess?: (item: Record<string, any>) => Record<string, any>
   }) {
     this.documentClient = documentClient
     this.name = name
@@ -47,6 +50,7 @@ export class Table<
     }
     this.indexes = indexes as INDEXES
     this.entityAttributeSavedAs = entityAttributeSavedAs
+    this.preProcess = preProcess
   }
 
   getName(): string {

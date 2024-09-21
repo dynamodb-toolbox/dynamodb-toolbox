@@ -123,6 +123,7 @@ export class ScanCommand<
 
     // NOTE: maxPages has been validated by this.params()
     const { attributes, maxPages = 1 } = this[$options]
+    const { preProcess } = this.table
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -142,7 +143,11 @@ export class ScanCommand<
         $metadata: pageMetadata
       } = await this.table.getDocumentClient().send(new _ScanCommand(pageScanParams))
 
-      for (const item of items) {
+      for (let item of items) {
+        if (preProcess) {
+          item = preProcess(item)
+        }
+
         const itemEntityName = item[this.table.entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {

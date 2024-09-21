@@ -82,10 +82,17 @@ export class GetItemCommand<
       .getDocumentClient()
       .send(new GetCommand(getItemParams))
 
-    const { Item: item, ...restCommandOutput } = commandOutput
+    // TODO: investigate false positive
+    // eslint-disable-next-line prefer-const
+    let { Item: item, ...restCommandOutput } = commandOutput
 
     if (item === undefined) {
       return restCommandOutput
+    }
+
+    const { preProcess } = this.entity.table
+    if (preProcess) {
+      item = preProcess(item)
     }
 
     const { attributes } = this[$options]
