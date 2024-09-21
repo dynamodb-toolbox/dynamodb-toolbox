@@ -1,12 +1,15 @@
 import type {
   BinaryAttribute,
+  BooleanAttribute,
   NumberAttribute,
   PrimitiveAttribute,
   ResolveBinaryAttribute,
+  ResolveBooleanAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   ResolvedBinaryAttribute,
+  ResolvedBooleanAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
@@ -20,10 +23,21 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 import type { MustBeDefined } from './attribute.js'
 
 export type PrimitiveAttrV2FormattedValue<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
-> = PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute extends ATTRIBUTE
+  ATTRIBUTE extends
+    | PrimitiveAttribute
+    | BooleanAttribute
+    | NumberAttribute
+    | StringAttribute
+    | BinaryAttribute
+> =
+  | PrimitiveAttribute
+  | BooleanAttribute
+  | NumberAttribute
+  | StringAttribute
+  | BinaryAttribute extends ATTRIBUTE
   ?
       | ResolvedPrimitiveAttribute
+      | ResolvedBooleanAttribute
       | ResolvedNumberAttribute
       | ResolvedStringAttribute
       | ResolvedBinaryAttribute
@@ -31,23 +45,35 @@ export type PrimitiveAttrV2FormattedValue<
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | (ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
-          : ATTRIBUTE extends NumberAttribute
-            ? ResolveNumberAttribute<ATTRIBUTE>
-            : ATTRIBUTE extends StringAttribute
-              ? ResolveStringAttribute<ATTRIBUTE>
-              : ATTRIBUTE extends BinaryAttribute
-                ? ResolveBinaryAttribute<ATTRIBUTE>
-                : never)
+          : ATTRIBUTE extends BooleanAttribute
+            ? ResolveBooleanAttribute<ATTRIBUTE>
+            : ATTRIBUTE extends NumberAttribute
+              ? ResolveNumberAttribute<ATTRIBUTE>
+              : ATTRIBUTE extends StringAttribute
+                ? ResolveStringAttribute<ATTRIBUTE>
+                : ATTRIBUTE extends BinaryAttribute
+                  ? ResolveBinaryAttribute<ATTRIBUTE>
+                  : never)
 
 type PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
+  ATTRIBUTE extends
+    | PrimitiveAttribute
+    | BooleanAttribute
+    | NumberAttribute
+    | StringAttribute
+    | BinaryAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => PrimitiveAttrV2FormattedValue<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
+  ATTRIBUTE extends
+    | PrimitiveAttribute
+    | BooleanAttribute
+    | NumberAttribute
+    | StringAttribute
+    | BinaryAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown

@@ -2,6 +2,8 @@ import type { A } from 'ts-toolbelt'
 
 import type {
   Attribute,
+  BinaryAttribute,
+  BooleanAttribute,
   ListAttribute,
   NumberAttribute,
   PrimitiveAttribute,
@@ -57,8 +59,10 @@ const anyCondition: A.Equals<
   | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
   | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
   | PrimitiveAttributeV2Condition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, BooleanAttribute, ATTRIBUTE_PATHS>
   | PrimitiveAttributeV2Condition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
   | PrimitiveAttributeV2Condition<`any${string}`, StringAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, BinaryAttribute, ATTRIBUTE_PATHS>
   | SetAttributeCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
   | ListAttributeCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
 > = 1

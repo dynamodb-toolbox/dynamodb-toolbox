@@ -3,16 +3,19 @@ import type {
   AnyOfAttribute,
   Attribute,
   BinaryAttribute,
+  BooleanAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
   ResolveBinaryAttribute,
+  ResolveBooleanAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   ResolvedBinaryAttribute,
+  ResolvedBooleanAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
@@ -27,9 +30,11 @@ export type AnyAttributeCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = AttributeCondition<
   ATTRIBUTE_PATH,
+  | PrimitiveAttribute
+  | BooleanAttribute
   | NumberAttribute
   | StringAttribute
-  | PrimitiveAttribute
+  | BinaryAttribute
   | SetAttribute
   | ListAttribute
   | MapAttribute
@@ -55,7 +60,12 @@ export type AttributeCondition<
   | (ATTRIBUTE extends AnyAttribute
       ? AnyAttributeCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends NumberAttribute | PrimitiveAttribute | StringAttribute | BinaryAttribute
+  | (ATTRIBUTE extends
+      | PrimitiveAttribute
+      | BooleanAttribute
+      | NumberAttribute
+      | StringAttribute
+      | BinaryAttribute
       ? PrimitiveAttributeV2Condition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   | (ATTRIBUTE extends SetAttribute
@@ -104,14 +114,21 @@ type StringAttributeCondition<COMPARED_ATTRIBUTE_PATH extends string> =
 
 export type PrimitiveAttributeV2Condition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute,
+  ATTRIBUTE extends
+    | PrimitiveAttribute
+    | BooleanAttribute
+    | NumberAttribute
+    | StringAttribute
+    | BinaryAttribute,
   COMPARED_ATTRIBUTE_PATH extends string,
   ATTRIBUTE_VALUE extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute =
     | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
+    | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
     | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)

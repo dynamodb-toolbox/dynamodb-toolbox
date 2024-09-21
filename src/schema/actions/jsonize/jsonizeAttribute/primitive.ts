@@ -1,5 +1,6 @@
 import type {
   BinaryAttribute,
+  BooleanAttribute,
   NumberAttribute,
   PrimitiveAttribute,
   PrimitiveAttributeType,
@@ -21,7 +22,7 @@ const isJSONizableTransformer = (transformer: unknown): transformer is JSONizabl
  * @debt feature "handle JSONizable defaults, links & validators"
  */
 export const jsonizePrimitiveAttribute = (
-  attr: PrimitiveAttribute | NumberAttribute | StringAttribute | BinaryAttribute
+  attr: PrimitiveAttribute | BooleanAttribute | NumberAttribute | StringAttribute | BinaryAttribute
 ): JSONizedAttr => {
   const jsonizedDefaults = jsonizeDefaults(attr)
 
@@ -40,7 +41,10 @@ export const jsonizePrimitiveAttribute = (
       : {}),
     ...(!isEmpty(jsonizedDefaults) ? { defaults: jsonizedDefaults } : {})
     // We need to cast as `.enum` is not coupled to `.type`
-  } as Extract<JSONizedAttr, { type: PrimitiveAttributeType | 'number' | 'string' }>
+  } as Extract<
+    JSONizedAttr,
+    { type: PrimitiveAttributeType | 'boolean' | 'number' | 'string' | 'binary' }
+  >
 
   if (attr.enum) {
     if (attr.type === 'binary') {

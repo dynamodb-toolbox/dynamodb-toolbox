@@ -1,7 +1,8 @@
 import type { NumberAttribute } from './interface.js'
+import type { NumberAttributeState } from './types.js'
 
 export type ResolveNumberAttribute<ATTRIBUTE extends NumberAttribute> = ATTRIBUTE extends {
-  enum: number[]
+  enum: NonNullable<NumberAttributeState['enum']>
 }
   ? ATTRIBUTE['enum'][number]
   : // TODO: support bigInts if big: true

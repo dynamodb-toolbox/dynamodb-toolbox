@@ -1,14 +1,15 @@
 import {
   AnyOfAttribute,
   BinaryAttribute,
+  BooleanAttribute,
   ListAttribute,
   MapAttribute,
   NumberAttribute,
-  PrimitiveAttribute,
   RecordAttribute,
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
+import type { PrimitiveAttribute } from '~/attributes/index.js'
 import type { JSONizedSchema } from '~/schema/actions/jsonize/index.js'
 import { Schema } from '~/schema/index.js'
 
@@ -50,7 +51,7 @@ describe('fromJSON - schema', () => {
 
     const { attributes } = importedSchema
 
-    expect(attributes.boolean).toBeInstanceOf(PrimitiveAttribute)
+    expect(attributes.boolean).toBeInstanceOf(BooleanAttribute)
     expect(attributes.boolean?.type).toBe('boolean')
     expect(attributes.boolean?.key).toBe(true)
 

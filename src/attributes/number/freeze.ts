@@ -21,7 +21,6 @@ type NumberAttributeFreezer = <STATE extends NumberAttributeState>(
 /**
  * Freezes a warm `number` attribute
  *
- * @param type Attribute type
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void

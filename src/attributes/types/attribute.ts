@@ -1,6 +1,7 @@
 import type { AnyAttribute } from '../any/index.js'
 import type { AnyOfAttribute } from '../anyOf/index.js'
 import type { BinaryAttribute, ResolvedBinaryAttribute } from '../binary/index.js'
+import type { BooleanAttribute, ResolvedBooleanAttribute } from '../boolean/index.js'
 import type { ListAttribute } from '../list/index.js'
 import type { MapAttribute } from '../map/index.js'
 import type { NumberAttribute, ResolvedNumberAttribute } from '../number/index.js'
@@ -18,10 +19,11 @@ import type { ResolvedStringAttribute, StringAttribute } from '../string/index.j
  */
 export type Attribute =
   | AnyAttribute
+  | PrimitiveAttribute
+  | BooleanAttribute
   | NumberAttribute
   | StringAttribute
   | BinaryAttribute
-  | PrimitiveAttribute
   | SetAttribute
   | ListAttribute
   | MapAttribute
@@ -54,6 +56,11 @@ export type ExtendedValue<
         : never
       : never
     : never
+
+export type BooleanAttributeBasicValue = ResolvedBooleanAttribute
+export type BooleanAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'boolean'>
+  | BooleanAttributeBasicValue
 
 export type NumberAttributeBasicValue = ResolvedNumberAttribute
 export type NumberAttributeValue<EXTENSION extends Extension = never> =
@@ -106,10 +113,11 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
  * Any possible resolved attribute type
  */
 export type AttributeValue<EXTENSION extends Extension = never> =
+  | PrimitiveAttributeValue<EXTENSION>
+  | BooleanAttributeValue<EXTENSION>
   | NumberAttributeValue<EXTENSION>
   | StringAttributeValue<EXTENSION>
   | BinaryAttributeValue<EXTENSION>
-  | PrimitiveAttributeValue<EXTENSION>
   | SetAttributeValue<EXTENSION>
   | ListAttributeValue<EXTENSION>
   | MapAttributeValue<EXTENSION>
@@ -120,6 +128,7 @@ export type Item<EXTENSION extends Extension = never> = {
 }
 
 export type AttributeBasicValue<EXTENSION extends Extension = never> =
+  | BooleanAttributeBasicValue
   | NumberAttributeBasicValue
   | StringAttributeBasicValue
   | BinaryAttributeBasicValue

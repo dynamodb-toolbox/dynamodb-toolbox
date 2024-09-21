@@ -624,22 +624,20 @@ describe('binary', () => {
       update: pass
     })
 
-    const prevString = binary()
-    prevString.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [Uint8Array, FreezeBinaryAttribute<typeof prevString>]
-      > = 1
+    const prevBin = binary()
+    prevBin.validate((...args) => {
+      const assertArgs: A.Equals<typeof args, [Uint8Array, FreezeBinaryAttribute<typeof prevBin>]> =
+        1
       assertArgs
 
       return true
     })
 
-    const prevOptString = binary().optional()
-    prevOptString.validate((...args) => {
+    const prevOptBin = binary().optional()
+    prevOptBin.validate((...args) => {
       const assertArgs: A.Equals<
         typeof args,
-        [Uint8Array, FreezeBinaryAttribute<typeof prevOptString>]
+        [Uint8Array, FreezeBinaryAttribute<typeof prevOptBin>]
       > = 1
       assertArgs
 

@@ -1,4 +1,5 @@
 import type { ResolvedBinaryAttribute } from '../binary/index.js'
+import type { ResolvedBooleanAttribute } from '../boolean/index.js'
 import type { ResolvedNumberAttribute } from '../number/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { ResolvedStringAttribute } from '../string/index.js'
@@ -14,7 +15,7 @@ export interface PrimitiveAttributeState<
 /**
  * Possible Primitive Attribute type
  */
-export type PrimitiveAttributeType = 'null' | 'boolean'
+export type PrimitiveAttributeType = 'null'
 
 /**
  * Returns the corresponding TS type of a Primitive Attribute type
@@ -23,9 +24,7 @@ export type PrimitiveAttributeType = 'null' | 'boolean'
  */
 export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> = TYPE extends 'null'
   ? null
-  : TYPE extends 'boolean'
-    ? boolean
-    : never
+  : never
 
 /**
  * TS type of any Primitive Attribute
@@ -42,24 +41,29 @@ export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
 export interface Transformer<
   INPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute =
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute,
   OUTPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute =
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute,
   PARSED_OUTPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute = OUTPUT
@@ -72,24 +76,29 @@ export interface JSONizableTransformer<
   JSONIZED extends { transformerId: string } & object = { transformerId: string } & object,
   INPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedStringAttribute
     | ResolvedNumberAttribute
     | ResolvedBinaryAttribute =
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute,
   OUTPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute =
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute,
   PARSED_OUTPUT extends
     | ResolvedPrimitiveAttribute
+    | ResolvedBooleanAttribute
     | ResolvedNumberAttribute
     | ResolvedStringAttribute
     | ResolvedBinaryAttribute = OUTPUT

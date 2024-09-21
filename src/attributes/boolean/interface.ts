@@ -16,33 +16,35 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/re
 import type { Transformer } from '../primitive/types.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeStringAttribute } from './freeze.js'
-import type { FreezeStringAttribute } from './freeze.js'
-import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
-import type { StringAttributeState } from './types.js'
+import { freezeBooleanAttribute } from './freeze.js'
+import type { FreezeBooleanAttribute } from './freeze.js'
+import type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
+import type { BooleanAttributeState } from './types.js'
 
-export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
-  [$type]: 'string'
+export interface $BooleanAttributeState<
+  STATE extends BooleanAttributeState = BooleanAttributeState
+> {
+  [$type]: 'boolean'
   [$state]: STATE
 }
 
-export interface $StringAttributeNestedState<
-  STATE extends StringAttributeState = StringAttributeState
-> extends $StringAttributeState<STATE> {
-  freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>>
+export interface $BooleanAttributeNestedState<
+  STATE extends BooleanAttributeState = BooleanAttributeState
+> extends $BooleanAttributeState<STATE> {
+  freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
 }
 
 /**
- * String attribute (warm)
+ * Boolean attribute (warm)
  */
-export class $StringAttribute<STATE extends StringAttributeState = StringAttributeState>
-  implements $StringAttributeNestedState<STATE>
+export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
+  implements $BooleanAttributeNestedState<STATE>
 {
-  [$type]: 'string';
+  [$type]: 'boolean';
   [$state]: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'string'
+    this[$type] = 'boolean'
     this[$state] = state
   }
 
@@ -56,14 +58,14 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $StringAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $StringAttribute(overwrite(this[$state], { required: nextRequired }))
+  ): $BooleanAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $StringAttribute<Overwrite<STATE, { required: Never }>> {
+  optional(): $BooleanAttribute<Overwrite<STATE, { required: Never }>> {
     return this.required('never')
   }
 
@@ -72,8 +74,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $StringAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $StringAttribute(overwrite(this[$state], { hidden: nextHidden }))
+  ): $BooleanAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { hidden: nextHidden }))
   }
 
   /**
@@ -81,8 +83,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $StringAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $StringAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
+  ): $BooleanAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -90,8 +92,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $StringAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $StringAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
+  ): $BooleanAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
   }
 
   /**
@@ -103,13 +105,15 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    NEXT_ENUM extends ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>[]
+    NEXT_ENUM extends ResolveBooleanAttribute<
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+    >[]
   >(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $StringAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $StringAttribute(update(this[$state], 'enum', nextEnum))
+   */ $BooleanAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
+    return new $BooleanAttribute(update(this[$state], 'enum', nextEnum))
   }
 
   /**
@@ -120,10 +124,10 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * string().const('foo')
    */
   const<
-    CONSTANT extends ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
+    CONSTANT extends ResolveBooleanAttribute<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
   >(
     constant: CONSTANT
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -144,7 +148,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         enum: [constant],
         defaults: ifThenElse(
@@ -175,17 +179,17 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
         If<
           STATE['key'],
           ParserInput<
-            FreezeStringAttribute<$StringAttributeState<STATE>>,
+            FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
             { mode: 'key'; fill: false }
           >,
-          ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
+          ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
         >,
-        ResolvedStringAttribute
+        ResolvedBooleanAttribute
       >,
-      ResolvedStringAttribute
+      ResolvedBooleanAttribute
     >
-  ): $StringAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { transform: transformer as unknown }))
+  ): $BooleanAttribute<Overwrite<STATE, { transform: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { transform: transformer as unknown }))
   }
 
   /**
@@ -195,9 +199,12 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key'; fill: false }>
+      ParserInput<
+        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
+        { mode: 'key'; fill: false }
+      >
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -209,7 +216,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         defaults: {
           key: nextKeyDefault as unknown,
@@ -227,9 +234,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
+      ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -241,7 +248,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -259,9 +266,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -273,7 +280,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -294,13 +301,13 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       If<
         STATE['key'],
         ParserInput<
-          FreezeStringAttribute<$StringAttributeState<STATE>>,
+          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
+        ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
       >
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -320,7 +327,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         defaults: ifThenElse(
           this[$state].key,
@@ -348,10 +355,10 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezeStringAttribute<$StringAttributeState<STATE>>,
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
       { mode: 'key'; fill: false }
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -363,7 +370,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         links: {
           key: nextKeyLink as unknown,
@@ -382,8 +389,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
-  ): $StringAttribute<
+    ) => ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -395,7 +402,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -414,8 +421,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
-  ): $StringAttribute<
+    ) => AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -427,7 +434,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -453,12 +460,12 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezeStringAttribute<$StringAttributeState<STATE>>,
+        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
+      ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -478,7 +485,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         links: ifThenElse(
           this[$state].key,
@@ -505,12 +512,12 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   keyValidate(
     nextKeyValidator: Validator<
       ParserInput<
-        FreezeStringAttribute<$StringAttributeState<STATE>>,
+        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
         { mode: 'key'; fill: false; defined: true }
       >,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -522,7 +529,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         validators: {
           key: nextKeyValidator as Validator,
@@ -541,12 +548,12 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   putValidate(
     nextPutValidator: Validator<
       ParserInput<
-        FreezeStringAttribute<$StringAttributeState<STATE>>,
+        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
         { fill: false; defined: true }
       >,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -558,7 +565,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -576,10 +583,10 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>,
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -591,7 +598,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -612,17 +619,17 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       If<
         STATE['key'],
         ParserInput<
-          FreezeStringAttribute<$StringAttributeState<STATE>>,
+          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
           { mode: 'key'; fill: false; defined: true }
         >,
         ParserInput<
-          FreezeStringAttribute<$StringAttributeState<STATE>>,
+          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
           { fill: false; defined: true }
         >
       >,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $StringAttribute<
+  ): $BooleanAttribute<
     Overwrite<
       STATE,
       {
@@ -642,7 +649,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       }
     >
   > {
-    return new $StringAttribute(
+    return new $BooleanAttribute(
       overwrite(this[$state], {
         validators: ifThenElse(
           /**
@@ -664,15 +671,15 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     )
   }
 
-  freeze(path?: string): FreezeStringAttribute<$StringAttributeState<STATE>> {
-    return freezeStringAttribute(this[$state], path)
+  freeze(path?: string): FreezeBooleanAttribute<$BooleanAttributeState<STATE>> {
+    return freezeBooleanAttribute(this[$state], path)
   }
 }
 
-export class StringAttribute<STATE extends StringAttributeState = StringAttributeState>
+export class BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
   implements SharedAttributeState<STATE>
 {
-  type: 'string'
+  type: 'boolean'
   path?: string
   required: STATE['required']
   hidden: STATE['hidden']
@@ -685,7 +692,7 @@ export class StringAttribute<STATE extends StringAttributeState = StringAttribut
   validators: STATE['validators']
 
   constructor({ path, ...state }: STATE & { path?: string }) {
-    this.type = 'string'
+    this.type = 'boolean'
     this.path = path
     this.required = state.required
     this.hidden = state.hidden

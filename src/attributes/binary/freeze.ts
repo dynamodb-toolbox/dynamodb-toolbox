@@ -9,9 +9,9 @@ import type { $BinaryAttributeState } from './interface.js'
 import { BinaryAttribute } from './interface.js'
 import type { BinaryAttributeState } from './types.js'
 
-export type FreezeBinaryAttribute<$STRING_ATTRIBUTE extends $BinaryAttributeState> =
+export type FreezeBinaryAttribute<$BINARY_ATTRIBUTE extends $BinaryAttributeState> =
   // Applying void Update improves type display
-  Update<BinaryAttribute<$STRING_ATTRIBUTE[$state]>, never, never>
+  Update<BinaryAttribute<$BINARY_ATTRIBUTE[$state]>, never, never>
 
 type BinaryAttributeFreezer = <STATE extends BinaryAttributeState>(
   state: STATE,
@@ -21,7 +21,6 @@ type BinaryAttributeFreezer = <STATE extends BinaryAttributeState>(
 /**
  * Freezes a warm `number` attribute
  *
- * @param type Attribute type
  * @param state Attribute options
  * @param path Path of the instance in the related schema (string)
  * @return void
