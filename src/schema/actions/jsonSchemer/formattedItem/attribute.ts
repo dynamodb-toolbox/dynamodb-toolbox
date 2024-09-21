@@ -7,7 +7,8 @@ import type {
   NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
-  SetAttribute
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 
 import type { FormattedAnyOfAttrJSONSchema } from './anyOf.js'
@@ -16,8 +17,8 @@ import type { FormattedListAttrJSONSchema } from './list.js'
 import { getFormattedListAttrJSONSchema } from './list.js'
 import type { FormattedMapAttrJSONSchema } from './map.js'
 import { getFormattedMapAttrJSONSchema } from './map.js'
-import type { FormattedPrimitiveOrNumberAttrJSONSchema } from './primitive.js'
-import { getFormattedPrimitiveOrNumberAttrJSONSchema } from './primitive.js'
+import type { FormattedPrimitiveAttrV2JSONSchema } from './primitive.js'
+import { getFormattedPrimitiveAttrV2JSONSchema } from './primitive.js'
 import type { FormattedRecordAttrJSONSchema } from './record.js'
 import { getFormattedRecordAttrJSONSchema } from './record.js'
 import type { FormattedSetAttrJSONSchema } from './set.js'
@@ -25,8 +26,8 @@ import { getFormattedSetAttrJSONSchema } from './set.js'
 
 export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = ATTRIBUTE extends AnyAttribute
   ? {}
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
-    ? FormattedPrimitiveOrNumberAttrJSONSchema<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+    ? FormattedPrimitiveAttrV2JSONSchema<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? FormattedSetAttrJSONSchema<ATTRIBUTE>
       : ATTRIBUTE extends ListAttribute
@@ -52,7 +53,7 @@ export const getFormattedAttrJSONSchema = <ATTRIBUTE extends Attribute>(
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveOrNumberAttrJSONSchema(attr) as Response
+      return getFormattedPrimitiveAttrV2JSONSchema(attr) as Response
     case 'set':
       return getFormattedSetAttrJSONSchema(attr) as Response
     case 'list':

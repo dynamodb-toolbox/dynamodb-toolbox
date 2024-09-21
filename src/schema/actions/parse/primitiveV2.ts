@@ -4,9 +4,11 @@ import type {
   PrimitiveAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
-  ResolvePrimitiveAttributeType,
+  ResolveStringAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
+  ResolvedStringAttribute,
+  StringAttribute,
   Transformer
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -25,48 +27,43 @@ import type {
 } from './types/options.js'
 import { applyCustomValidation } from './utils.js'
 
-export type PrimitiveOrNumberAttrParsedValue<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
+export type PrimitiveAttrV2ParsedValue<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = PrimitiveAttribute extends ATTRIBUTE
   ? ResolvedPrimitiveAttribute
   : ATTRIBUTE extends { transform: undefined }
     ?
         | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-        | (ATTRIBUTE extends PrimitiveAttribute
-            ? ResolvePrimitiveAttribute<ATTRIBUTE>
-            : ATTRIBUTE extends NumberAttribute
-              ? ResolveNumberAttribute<ATTRIBUTE>
-              : never)
+        | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
         | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
     : OPTIONS extends { transform: false }
       ?
           | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-          | (ATTRIBUTE extends PrimitiveAttribute
-              ? ResolvePrimitiveAttribute<ATTRIBUTE>
-              : ATTRIBUTE extends NumberAttribute
-                ? ResolveNumberAttribute<ATTRIBUTE>
-                : never)
+          | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
+          | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
+          | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
           | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-      : ATTRIBUTE extends PrimitiveAttribute
-        ? ResolvePrimitiveAttributeType<ATTRIBUTE['type']>
-        : ATTRIBUTE extends NumberAttribute
-          ? ResolveNumberAttribute<ATTRIBUTE>
-          : never
+      :
+          | (ATTRIBUTE extends PrimitiveAttribute ? ResolvedPrimitiveAttribute : never)
+          | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
+          | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
 
-export function* primitiveOrNumberAttrParser<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
+export function* primitiveAttrV2Parser<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
   OPTIONS extends ParsingOptions = ParsingOptions
 >(
   attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  PrimitiveAttrV2ParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
+  PrimitiveAttrV2ParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
   ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
 > {
-  type Parsed = PrimitiveOrNumberAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
+  type Parsed = PrimitiveAttrV2ParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
 
   const { fill = true, transform = true } = options
 
@@ -87,14 +84,11 @@ export function* primitiveOrNumberAttrParser<
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
       path,
-      payload: {
-        received: linkedValue,
-        expected: type
-      }
+      payload: { received: linkedValue, expected: type }
     })
   }
 
-  if (attribute.enum !== undefined && !attribute.enum.includes(linkedValue as any)) {
+  if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(linkedValue)) {
     const { path } = attribute
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -102,10 +96,7 @@ export function* primitiveOrNumberAttrParser<
         path !== undefined ? `'${path}' ` : ''
       }should be one of: ${attribute.enum.map(String).join(', ')}.`,
       path,
-      payload: {
-        received: linkedValue,
-        expected: attribute.enum
-      }
+      payload: { received: linkedValue, expected: attribute.enum }
     })
   }
 
@@ -125,14 +116,15 @@ export function* primitiveOrNumberAttrParser<
   return transformedValue as Parsed
 }
 
-export type PrimitiveOrNumberAttrParserInput<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute,
+export type PrimitiveAttrV2ParserInput<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = PrimitiveAttribute | NumberAttribute extends ATTRIBUTE
+> = PrimitiveAttribute | NumberAttribute | StringAttribute extends ATTRIBUTE
   ?
       | undefined
       | ResolvedPrimitiveAttribute
       | ResolvedNumberAttribute
+      | ResolvedStringAttribute
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
@@ -140,5 +132,7 @@ export type PrimitiveOrNumberAttrParserInput<
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends NumberAttribute
             ? ResolveNumberAttribute<ATTRIBUTE>
-            : never)
+            : ATTRIBUTE extends StringAttribute
+              ? ResolveStringAttribute<ATTRIBUTE>
+              : never)
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

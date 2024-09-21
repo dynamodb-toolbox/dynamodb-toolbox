@@ -4,10 +4,12 @@ import type {
   Attribute,
   ListAttribute,
   MapAttribute,
+  NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
-  ResolvePrimitiveAttribute,
-  SetAttribute
+  ResolveStringAttribute,
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
@@ -16,9 +18,9 @@ type AnyAttrPaths<
   ATTRIBUTE_PATH extends string = ''
 > = AnyAttribute extends ATTRIBUTE ? string : `${ATTRIBUTE_PATH}${string}`
 
-type PrimitiveAttrPaths<ATTRIBUTE extends PrimitiveAttribute> = PrimitiveAttribute extends ATTRIBUTE
-  ? string
-  : never
+type PrimitiveAttrV2Paths<
+  ATTRIBUTE extends PrimitiveAttribute | StringAttribute | NumberAttribute
+> = PrimitiveAttribute extends ATTRIBUTE ? string : never
 
 type SetAttrPaths<ATTRIBUTE extends SetAttribute> = SetAttribute extends ATTRIBUTE ? string : never
 
@@ -48,10 +50,10 @@ type RecordAttrPaths<
 > = RecordAttribute extends ATTRIBUTE
   ? string
   :
-      | `${ATTRIBUTE_PATH}.${ResolvePrimitiveAttribute<ATTRIBUTE['keys']>}`
+      | `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`
       | AttrPaths<
           ATTRIBUTE['elements'],
-          `${ATTRIBUTE_PATH}.${ResolvePrimitiveAttribute<ATTRIBUTE['keys']>}`
+          `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`
         >
 
 type AnyOfAttrPaths<
@@ -82,8 +84,8 @@ export type AttrPaths<
   ATTRIBUTE_PATH extends string = ''
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH>
-  : ATTRIBUTE extends PrimitiveAttribute
-    ? PrimitiveAttrPaths<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute | StringAttribute | NumberAttribute
+    ? PrimitiveAttrV2Paths<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrPaths<ATTRIBUTE>
       : ATTRIBUTE extends ListAttribute

@@ -1,5 +1,5 @@
 import type { Attribute } from '~/attributes/index.js'
-import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
+import { StringAttribute } from '~/attributes/string/index.js'
 import { string } from '~/attributes/string/index.js'
 
 import type { ConditionParser } from '../../conditionParser.js'
@@ -44,7 +44,7 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   let targetAttribute: Attribute
   switch (comparisonOperator) {
     case 'type':
-      targetAttribute = new PrimitiveAttribute({ ...typeAttribute, path: attributePath })
+      targetAttribute = new StringAttribute({ ...typeAttribute, path: attributePath })
       break
     case 'contains':
       switch (attribute.type) {
@@ -54,7 +54,7 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
           break
         case 'string':
           // We accept any string in case of contains
-          targetAttribute = new PrimitiveAttribute({ ...stringAttribute, path: attributePath })
+          targetAttribute = new StringAttribute({ ...stringAttribute, path: attributePath })
           break
         default:
           targetAttribute = attribute

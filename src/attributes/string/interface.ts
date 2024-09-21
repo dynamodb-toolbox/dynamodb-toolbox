@@ -13,45 +13,36 @@ import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import type { Transformer } from '../primitive/types.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezePrimitiveAttribute } from './freeze.js'
-import type { FreezePrimitiveAttribute } from './freeze.js'
-import type {
-  PrimitiveAttributeState,
-  PrimitiveAttributeType,
-  ResolvePrimitiveAttributeType,
-  Transformer
-} from './types.js'
+import { freezeNumberAttribute } from './freeze.js'
+import type { FreezeStringAttribute } from './freeze.js'
+import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
+import type { StringAttributeState } from './types.js'
 
-export interface $PrimitiveAttributeState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> {
-  [$type]: TYPE
+export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
+  [$type]: 'string'
   [$state]: STATE
 }
 
-export interface $PrimitiveAttributeNestedState<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> extends $PrimitiveAttributeState<TYPE, STATE> {
-  freeze: (path?: string) => FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+export interface $StringAttributeNestedState<
+  STATE extends StringAttributeState = StringAttributeState
+> extends $StringAttributeState<STATE> {
+  freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>>
 }
 
 /**
- * Primitive attribute interface
+ * Number attribute (warm)
  */
-export class $PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements $PrimitiveAttributeNestedState<TYPE, STATE>
+export class $StringAttribute<STATE extends StringAttributeState = StringAttributeState>
+  implements $StringAttributeNestedState<STATE>
 {
-  [$type]: TYPE;
+  [$type]: 'string';
   [$state]: STATE
 
-  constructor(type: TYPE, state: STATE) {
-    this[$type] = type
+  constructor(state: STATE) {
+    this[$type] = 'string'
     this[$state] = state
   }
 
@@ -65,14 +56,14 @@ export class $PrimitiveAttribute<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { required: nextRequired }))
+  ): $StringAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
+    return new $StringAttribute(overwrite(this[$state], { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): $PrimitiveAttribute<TYPE, Overwrite<STATE, { required: Never }>> {
+  optional(): $StringAttribute<Overwrite<STATE, { required: Never }>> {
     return this.required('never')
   }
 
@@ -81,8 +72,8 @@ export class $PrimitiveAttribute<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { hidden: nextHidden }))
+  ): $StringAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
+    return new $StringAttribute(overwrite(this[$state], { hidden: nextHidden }))
   }
 
   /**
@@ -90,11 +81,8 @@ export class $PrimitiveAttribute<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], { key: nextKey, required: 'always' })
-    )
+  ): $StringAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
+    return new $StringAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -102,8 +90,8 @@ export class $PrimitiveAttribute<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $PrimitiveAttribute(this[$type], overwrite(this[$state], { savedAs: nextSavedAs }))
+  ): $StringAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
+    return new $StringAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
   }
 
   /**
@@ -114,12 +102,14 @@ export class $PrimitiveAttribute<
    * @example
    * string().enum('foo', 'bar')
    */
-  enum<NEXT_ENUM extends ResolvePrimitiveAttributeType<TYPE>[]>(
+  enum<
+    NEXT_ENUM extends ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>[]
+  >(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $PrimitiveAttribute<TYPE, Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $PrimitiveAttribute(this[$type], update(this[$state], 'enum', nextEnum))
+   */ $StringAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
+    return new $StringAttribute(update(this[$state], 'enum', nextEnum))
   }
 
   /**
@@ -129,10 +119,11 @@ export class $PrimitiveAttribute<
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolvePrimitiveAttributeType<TYPE>>(
+  const<
+    CONSTANT extends ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
+  >(
     constant: CONSTANT
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -153,8 +144,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         enum: [constant],
         defaults: ifThenElse(
@@ -185,23 +175,17 @@ export class $PrimitiveAttribute<
         If<
           STATE['key'],
           ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+            FreezeStringAttribute<$StringAttributeState<STATE>>,
             { mode: 'key'; fill: false }
           >,
-          ParserInput<
-            FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-            { fill: false }
-          >
+          ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
         >,
-        ResolvePrimitiveAttributeType<TYPE>
+        ResolvedStringAttribute
       >,
-      ResolvePrimitiveAttributeType<TYPE>
+      ResolvedStringAttribute
     >
-  ): $PrimitiveAttribute<TYPE, Overwrite<STATE, { transform: unknown }>> {
-    return new $PrimitiveAttribute(
-      this[$type],
-      overwrite(this[$state], { transform: transformer as unknown })
-    )
+  ): $StringAttribute<Overwrite<STATE, { transform: unknown }>> {
+    return new $StringAttribute(overwrite(this[$state], { transform: transformer as unknown }))
   }
 
   /**
@@ -211,13 +195,9 @@ export class $PrimitiveAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        { mode: 'key'; fill: false }
-      >
+      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key'; fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -229,8 +209,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         defaults: {
           key: nextKeyDefault as unknown,
@@ -248,10 +227,9 @@ export class $PrimitiveAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -263,8 +241,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -282,13 +259,9 @@ export class $PrimitiveAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        true
-      >
+      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -300,8 +273,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         defaults: {
           key: this[$state].defaults.key,
@@ -322,17 +294,13 @@ export class $PrimitiveAttribute<
       If<
         STATE['key'],
         ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          FreezeStringAttribute<$StringAttributeState<STATE>>,
           { mode: 'key'; fill: false }
         >,
-        ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-          { fill: false }
-        >
+        ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
       >
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -352,8 +320,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         defaults: ifThenElse(
           this[$state].key,
@@ -381,11 +348,10 @@ export class $PrimitiveAttribute<
     nextKeyLink: (
       keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
     ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+      FreezeStringAttribute<$StringAttributeState<STATE>>,
       { mode: 'key'; fill: false }
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -397,8 +363,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         links: {
           key: nextKeyLink as unknown,
@@ -417,12 +382,8 @@ export class $PrimitiveAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      { fill: false }
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -434,8 +395,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -454,12 +414,8 @@ export class $PrimitiveAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-      true
-    >
-  ): $PrimitiveAttribute<
-    TYPE,
+    ) => AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -471,8 +427,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         links: {
           key: this[$state].links.key,
@@ -498,13 +453,12 @@ export class $PrimitiveAttribute<
     ) => If<
       STATE['key'],
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeStringAttribute<$StringAttributeState<STATE>>,
         { mode: 'key'; fill: false }
       >,
-      ParserInput<FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>, { fill: false }>
+      ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -524,8 +478,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         links: ifThenElse(
           this[$state].key,
@@ -552,13 +505,12 @@ export class $PrimitiveAttribute<
   keyValidate(
     nextKeyValidator: Validator<
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeStringAttribute<$StringAttributeState<STATE>>,
         { mode: 'key'; fill: false; defined: true }
       >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      FreezeStringAttribute<$StringAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -570,8 +522,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         validators: {
           key: nextKeyValidator as Validator,
@@ -590,13 +541,12 @@ export class $PrimitiveAttribute<
   putValidate(
     nextPutValidator: Validator<
       ParserInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+        FreezeStringAttribute<$StringAttributeState<STATE>>,
         { fill: false; defined: true }
       >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      FreezeStringAttribute<$StringAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -608,8 +558,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -627,14 +576,10 @@ export class $PrimitiveAttribute<
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<
-        FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
-        true
-      >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>,
+      FreezeStringAttribute<$StringAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -646,8 +591,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         validators: {
           key: this[$state].validators.key,
@@ -668,18 +612,17 @@ export class $PrimitiveAttribute<
       If<
         STATE['key'],
         ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          FreezeStringAttribute<$StringAttributeState<STATE>>,
           { mode: 'key'; fill: false; defined: true }
         >,
         ParserInput<
-          FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>,
+          FreezeStringAttribute<$StringAttributeState<STATE>>,
           { fill: false; defined: true }
         >
       >,
-      FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>>
+      FreezeStringAttribute<$StringAttributeState<STATE>>
     >
-  ): $PrimitiveAttribute<
-    TYPE,
+  ): $StringAttribute<
     Overwrite<
       STATE,
       {
@@ -699,8 +642,7 @@ export class $PrimitiveAttribute<
       }
     >
   > {
-    return new $PrimitiveAttribute(
-      this[$type],
+    return new $StringAttribute(
       overwrite(this[$state], {
         validators: ifThenElse(
           /**
@@ -722,17 +664,15 @@ export class $PrimitiveAttribute<
     )
   }
 
-  freeze(path?: string): FreezePrimitiveAttribute<$PrimitiveAttributeState<TYPE, STATE>> {
-    return freezePrimitiveAttribute(this[$type], this[$state], path)
+  freeze(path?: string): FreezeStringAttribute<$StringAttributeState<STATE>> {
+    return freezeNumberAttribute(this[$state], path)
   }
 }
 
-export class PrimitiveAttribute<
-  TYPE extends PrimitiveAttributeType = PrimitiveAttributeType,
-  STATE extends PrimitiveAttributeState<TYPE> = PrimitiveAttributeState<TYPE>
-> implements SharedAttributeState<STATE>
+export class StringAttribute<STATE extends StringAttributeState = StringAttributeState>
+  implements SharedAttributeState<STATE>
 {
-  type: TYPE
+  type: 'string'
   path?: string
   required: STATE['required']
   hidden: STATE['hidden']
@@ -744,8 +684,8 @@ export class PrimitiveAttribute<
   links: STATE['links']
   validators: STATE['validators']
 
-  constructor({ type, path, ...state }: STATE & { path?: string; type: TYPE }) {
-    this.type = type
+  constructor({ path, ...state }: STATE & { path?: string }) {
+    this.type = 'string'
     this.path = path
     this.required = state.required
     this.hidden = state.hidden

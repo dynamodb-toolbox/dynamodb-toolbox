@@ -10,6 +10,7 @@ import type {
 } from '../primitive/index.js'
 import type { RecordAttribute } from '../record/index.js'
 import type { SetAttribute } from '../set/index.js'
+import type { ResolvedStringAttribute, StringAttribute } from '../string/index.js'
 
 /**
  * Any attribute
@@ -17,6 +18,7 @@ import type { SetAttribute } from '../set/index.js'
 export type Attribute =
   | AnyAttribute
   | NumberAttribute
+  | StringAttribute
   | PrimitiveAttribute
   | SetAttribute
   | ListAttribute
@@ -56,6 +58,11 @@ export type NumberAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'number'>
   | NumberAttributeBasicValue
 
+export type StringAttributeBasicValue = ResolvedStringAttribute
+export type StringAttributeValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'string'>
+  | StringAttributeBasicValue
+
 export type PrimitiveAttributeBasicValue = ResolvedPrimitiveAttribute
 export type PrimitiveAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, PrimitiveAttributeType>
@@ -93,6 +100,7 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
  */
 export type AttributeValue<EXTENSION extends Extension = never> =
   | NumberAttributeValue<EXTENSION>
+  | StringAttributeValue<EXTENSION>
   | PrimitiveAttributeValue<EXTENSION>
   | SetAttributeValue<EXTENSION>
   | ListAttributeValue<EXTENSION>
@@ -105,6 +113,7 @@ export type Item<EXTENSION extends Extension = never> = {
 
 export type AttributeBasicValue<EXTENSION extends Extension = never> =
   | NumberAttributeBasicValue
+  | StringAttributeBasicValue
   | PrimitiveAttributeBasicValue
   | SetAttributeBasicValue<EXTENSION>
   | ListAttributeBasicValue<EXTENSION>

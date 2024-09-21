@@ -6,6 +6,7 @@ import type { $NumberAttributeNestedState } from '../number/index.js'
 import type { $PrimitiveAttributeNestedState } from '../primitive/index.js'
 import type { $RecordAttributeNestedState } from '../record/index.js'
 import type { $SetAttributeNestedState } from '../set/index.js'
+import type { $StringAttributeNestedState } from '../string/index.js'
 
 /**
  * Any warm attribute nested state (i.e. with `freeze` method)
@@ -13,6 +14,7 @@ import type { $SetAttributeNestedState } from '../set/index.js'
 export type $AttributeNestedState =
   | $AnyAttributeNestedState
   | $NumberAttributeNestedState
+  | $StringAttributeNestedState
   | $PrimitiveAttributeNestedState
   | $SetAttributeNestedState
   | $ListAttributeNestedState

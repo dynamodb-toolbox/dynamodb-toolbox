@@ -5,7 +5,8 @@ import type {
   ListAttribute,
   NumberAttribute,
   PrimitiveAttribute,
-  SetAttribute
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 import type { Paths } from '~/schema/actions/parsePaths/index.js'
 
@@ -17,7 +18,7 @@ import type {
   ConditionType,
   ListAttributeCondition,
   NonLogicalCondition,
-  PrimitiveOrNumberAttributeCondition,
+  PrimitiveAttributeV2Condition,
   SchemaCondition,
   SetAttributeCondition
 } from './condition.js'
@@ -55,8 +56,9 @@ const anyCondition: A.Equals<
   ANY_CONDITION,
   | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
   | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
-  | PrimitiveOrNumberAttributeCondition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
-  | PrimitiveOrNumberAttributeCondition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, PrimitiveAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
+  | PrimitiveAttributeV2Condition<`any${string}`, StringAttribute, ATTRIBUTE_PATHS>
   | SetAttributeCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
   | ListAttributeCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
 > = 1

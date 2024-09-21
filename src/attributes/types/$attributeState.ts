@@ -6,6 +6,7 @@ import type { $NumberAttributeState } from '../number/index.js'
 import type { $PrimitiveAttributeState } from '../primitive/index.js'
 import type { $RecordAttributeState } from '../record/index.js'
 import type { $SetAttributeState } from '../set/index.js'
+import type { $StringAttributeState } from '../string/index.js'
 
 /**
  * Any warm attribute state
@@ -13,6 +14,7 @@ import type { $SetAttributeState } from '../set/index.js'
 export type $AttributeState =
   | $AnyAttributeState
   | $NumberAttributeState
+  | $StringAttributeState
   | $PrimitiveAttributeState
   | $SetAttributeState
   | $ListAttributeState

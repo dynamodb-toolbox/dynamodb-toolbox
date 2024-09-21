@@ -1,11 +1,6 @@
 import type { Attribute, PrimitiveAttribute, PrimitiveAttributeType } from '~/attributes/index.js'
 
-const primitiveAttributeTypeSet = new Set<PrimitiveAttributeType>([
-  'null',
-  'boolean',
-  'string',
-  'binary'
-])
+const primitiveAttributeTypeSet = new Set<PrimitiveAttributeType>(['null', 'boolean', 'binary'])
 
 type IsPrimitiveAttributeAsserter = (attribute: Attribute) => attribute is PrimitiveAttribute
 

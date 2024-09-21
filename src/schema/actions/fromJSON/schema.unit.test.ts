@@ -5,6 +5,7 @@ import { NumberAttribute } from '~/attributes/number/index.js'
 import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { RecordAttribute } from '~/attributes/record/index.js'
 import { SetAttribute } from '~/attributes/set/index.js'
+import { StringAttribute } from '~/attributes/string/index.js'
 import type { JSONizedSchema } from '~/schema/actions/jsonize/index.js'
 import { Schema } from '~/schema/index.js'
 
@@ -54,7 +55,7 @@ describe('fromJSON - schema', () => {
     expect(attributes.number?.type).toBe('number')
     expect((attributes.number as NumberAttribute).enum).toStrictEqual([0, 1, 2])
 
-    expect(attributes.str).toBeInstanceOf(PrimitiveAttribute)
+    expect(attributes.str).toBeInstanceOf(StringAttribute)
     expect(attributes.str?.type).toBe('string')
     expect(attributes.str?.required).toBe('always')
 

@@ -5,6 +5,7 @@ import { number } from '~/attributes/number/index.js'
 import type { $NumberAttributeNestedState } from '~/attributes/number/index.js'
 import type { $PrimitiveAttributeNestedState } from '~/attributes/primitive/index.js'
 import { string } from '~/attributes/string/index.js'
+import type { $StringAttributeNestedState } from '~/attributes/string/index.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
 
 type JSONizedPrimitiveAttr = Extract<
@@ -19,7 +20,7 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
  */
 export const fromJSONPrimitiveAttr = (
   attr: JSONizedPrimitiveAttr
-): $PrimitiveAttributeNestedState | $NumberAttributeNestedState => {
+): $PrimitiveAttributeNestedState | $NumberAttributeNestedState | $StringAttributeNestedState => {
   switch (attr.type) {
     case 'null': {
       const { links, defaults, enum: _enum, ...props } = attr

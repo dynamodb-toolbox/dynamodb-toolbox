@@ -10,7 +10,8 @@ import type {
   PrimitiveAttribute,
   RecordAttribute,
   RequiredOption,
-  SetAttribute
+  SetAttribute,
+  StringAttribute
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -24,7 +25,7 @@ import type { ListAttrFormattedValue } from './list.js'
 import { formatMapAttrRawValue } from './map.js'
 import type { MapAttrFormattedValue } from './map.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import type { PrimitiveOrNumberAttrFormattedValue } from './primitive.js'
+import type { PrimitiveAttrV2FormattedValue } from './primitive.js'
 import { formatRecordAttrRawValue } from './record.js'
 import type { RecordAttrFormattedValue } from './record.js'
 import { formatSavedSetAttribute } from './set.js'
@@ -47,8 +48,8 @@ export type AttrFormattedValue<
   OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
 > = ATTRIBUTE extends AnyAttribute
   ? AnyAttrFormattedValue<ATTRIBUTE>
-  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
-    ? PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
+  : ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+    ? PrimitiveAttrV2FormattedValue<ATTRIBUTE>
     : ATTRIBUTE extends SetAttribute
       ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS>
       : ATTRIBUTE extends ListAttribute

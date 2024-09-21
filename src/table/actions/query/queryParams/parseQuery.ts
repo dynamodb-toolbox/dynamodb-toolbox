@@ -1,6 +1,8 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { Never } from '~/attributes/constants/requiredOptions.js'
+import type { Attribute } from '~/attributes/index.js'
+import { StringAttribute } from '~/attributes/index.js'
 import { NumberAttribute } from '~/attributes/number/index.js'
 import { PrimitiveAttribute } from '~/attributes/primitive/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -8,7 +10,7 @@ import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
 import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
-import type { Index } from '~/table/types/indexes.js'
+import type { Index, IndexableKeyType, Key } from '~/table/types/index.js'
 import { pick } from '~/utils/pick.js'
 
 import { queryOperatorSet } from '../types.js'
@@ -33,6 +35,17 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   QueryCommandInput,
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
+
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute => {
+  switch (key.type) {
+    case 'number':
+      return new NumberAttribute({ ...defaultAttribute, path: key.name })
+    case 'string':
+      return new StringAttribute({ ...defaultAttribute, path: key.name })
+    case 'binary':
+      return new PrimitiveAttribute({ ...defaultAttribute, path: key.name, type: 'binary' })
+  }
+}
 
 export const parseQuery: QueryParser = (table, query) => {
   const { index, partition, range } = query
@@ -68,25 +81,12 @@ export const parseQuery: QueryParser = (table, query) => {
   }
 
   const indexSchema: Schema = new Schema<{}>({})
-  indexSchema.attributes[partitionKey.name] =
-    partitionKey.type === 'number'
-      ? new NumberAttribute({ ...defaultAttribute, path: partitionKey.name })
-      : new PrimitiveAttribute({
-          ...defaultAttribute,
-          path: partitionKey.name,
-          type: partitionKey.type
-        })
+  indexSchema.attributes[partitionKey.name] = getIndexKeySchema(partitionKey)
 
-  let condition = {
-    attr: partitionKey.name,
-    eq: partition
-  } as SchemaCondition
+  let condition = { attr: partitionKey.name, eq: partition } as SchemaCondition
 
   if (sortKey !== undefined && range !== undefined) {
-    indexSchema.attributes[sortKey.name] =
-      sortKey.type === 'number'
-        ? new NumberAttribute({ ...defaultAttribute, path: partitionKey.name })
-        : new PrimitiveAttribute({ ...defaultAttribute, path: sortKey.name, type: sortKey.type })
+    indexSchema.attributes[sortKey.name] = getIndexKeySchema(sortKey)
 
     const sortKeyCondition = {
       attr: sortKey.name,

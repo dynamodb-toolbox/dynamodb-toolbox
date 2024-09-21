@@ -1,7 +1,8 @@
 import type {
   NumberAttribute,
   PrimitiveAttribute,
-  PrimitiveAttributeType
+  PrimitiveAttributeType,
+  StringAttribute
 } from '~/attributes/index.js'
 import { $transformerId } from '~/attributes/primitive/constants.js'
 import { PRIMITIVE_DEFAULT_OPTIONS } from '~/attributes/primitive/options.js'
@@ -19,7 +20,7 @@ const isJSONizableTransformer = (transformer: unknown): transformer is JSONizabl
  * @debt feature "handle JSONizable defaults, links & validators"
  */
 export const jsonizePrimitiveAttribute = (
-  attr: PrimitiveAttribute | NumberAttribute
+  attr: PrimitiveAttribute | NumberAttribute | StringAttribute
 ): JSONizedAttr => {
   const jsonizedDefaults = jsonizeDefaults(attr)
 
@@ -38,7 +39,7 @@ export const jsonizePrimitiveAttribute = (
       : {}),
     ...(!isEmpty(jsonizedDefaults) ? { defaults: jsonizedDefaults } : {})
     // We need to cast as `.enum` is not coupled to `.type`
-  } as Extract<JSONizedAttr, { type: PrimitiveAttributeType | 'number' }>
+  } as Extract<JSONizedAttr, { type: PrimitiveAttributeType | 'number' | 'string' }>
 
   if (attr.enum) {
     if (attr.type === 'binary') {

@@ -3,6 +3,8 @@ import type { $NumberAttributeNestedState, NumberAttribute } from '../number/ind
 import type { NumberAttributeState } from '../number/types.js'
 import type { $PrimitiveAttributeNestedState, PrimitiveAttribute } from '../primitive/interface.js'
 import type { PrimitiveAttributeEnumValues } from '../primitive/types.js'
+import type { $StringAttributeNestedState, StringAttribute } from '../string/index.js'
+import type { StringAttributeState } from '../string/types.js'
 import type { Validator } from '../types/validator.js'
 
 /**
@@ -13,7 +15,7 @@ interface SetAttributeElementState {
   hidden: false
   key: boolean
   savedAs: undefined
-  enum: PrimitiveAttributeEnumValues<'string' | 'binary'>
+  enum: PrimitiveAttributeEnumValues<'binary'>
   defaults: {
     key: undefined
     put: undefined
@@ -42,9 +44,11 @@ interface SetAttributeElementStateV2 {
 }
 
 export type $SetAttributeElements =
-  | $PrimitiveAttributeNestedState<'string' | 'binary', SetAttributeElementState>
+  | $PrimitiveAttributeNestedState<'binary', SetAttributeElementState>
   | $NumberAttributeNestedState<NumberAttributeState & SetAttributeElementStateV2>
+  | $StringAttributeNestedState<StringAttributeState & SetAttributeElementStateV2>
 
 export type SetAttributeElements =
-  | PrimitiveAttribute<'string' | 'binary', SetAttributeElementState>
+  | PrimitiveAttribute<'binary', SetAttributeElementState>
   | NumberAttribute<NumberAttributeState & SetAttributeElementStateV2>
+  | StringAttribute<StringAttributeState & SetAttributeElementStateV2>

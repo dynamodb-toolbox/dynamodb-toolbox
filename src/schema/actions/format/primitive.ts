@@ -3,8 +3,11 @@ import type {
   PrimitiveAttribute,
   ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
+  ResolveStringAttribute,
   ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
+  ResolvedStringAttribute,
+  StringAttribute,
   Transformer
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -13,30 +16,34 @@ import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimit
 
 import type { MustBeDefined } from './attribute.js'
 
-export type PrimitiveOrNumberAttrFormattedValue<
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
-> = PrimitiveAttribute | NumberAttribute extends ATTRIBUTE
-  ? ResolvedPrimitiveAttribute | ResolvedNumberAttribute
+export type PrimitiveAttrV2FormattedValue<
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+> = PrimitiveAttribute | NumberAttribute | StringAttribute extends ATTRIBUTE
+  ? ResolvedPrimitiveAttribute | ResolvedNumberAttribute | ResolvedStringAttribute
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | (ATTRIBUTE extends PrimitiveAttribute
           ? ResolvePrimitiveAttribute<ATTRIBUTE>
           : ATTRIBUTE extends NumberAttribute
             ? ResolveNumberAttribute<ATTRIBUTE>
-            : never)
+            : ATTRIBUTE extends StringAttribute
+              ? ResolveStringAttribute<ATTRIBUTE>
+              : never)
 
-type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute | NumberAttribute>(
+type PrimitiveAttrRawValueFormatter = <
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
+>(
   attribute: ATTRIBUTE,
   rawValue: unknown
-) => PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
+) => PrimitiveAttrV2FormattedValue<ATTRIBUTE>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
-  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute
+  ATTRIBUTE extends PrimitiveAttribute | NumberAttribute | StringAttribute
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => {
-  type Formatted = PrimitiveOrNumberAttrFormattedValue<ATTRIBUTE>
+  type Formatted = PrimitiveAttrV2FormattedValue<ATTRIBUTE>
 
   const validator = validatorsByPrimitiveType[attribute.type]
   if (!validator(rawValue)) {

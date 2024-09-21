@@ -5,9 +5,6 @@ import type { ResolvePrimitiveAttributeType } from './types.js'
 const assertResolveNull: A.Equals<ResolvePrimitiveAttributeType<'null'>, null> = 1
 assertResolveNull
 
-const assertResolveString: A.Equals<ResolvePrimitiveAttributeType<'string'>, string> = 1
-assertResolveString
-
 const assertResolveBoolean: A.Equals<ResolvePrimitiveAttributeType<'boolean'>, boolean> = 1
 assertResolveBoolean
 

@@ -1,5 +1,6 @@
 import type { ResolvedNumberAttribute } from '../number/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import type { ResolvedStringAttribute } from '../string/index.js'
 import type { $transformerId } from './constants.js'
 
 export interface PrimitiveAttributeState<
@@ -12,7 +13,7 @@ export interface PrimitiveAttributeState<
 /**
  * Possible Primitive Attribute type
  */
-export type PrimitiveAttributeType = 'null' | 'string' | 'boolean' | 'binary'
+export type PrimitiveAttributeType = 'null' | 'boolean' | 'binary'
 
 /**
  * Returns the corresponding TS type of a Primitive Attribute type
@@ -21,13 +22,11 @@ export type PrimitiveAttributeType = 'null' | 'string' | 'boolean' | 'binary'
  */
 export type ResolvePrimitiveAttributeType<TYPE extends PrimitiveAttributeType> = TYPE extends 'null'
   ? null
-  : TYPE extends 'string'
-    ? string
-    : TYPE extends 'boolean'
-      ? boolean
-      : TYPE extends 'binary'
-        ? Uint8Array
-        : never
+  : TYPE extends 'boolean'
+    ? boolean
+    : TYPE extends 'binary'
+      ? Uint8Array
+      : never
 
 /**
  * TS type of any Primitive Attribute
@@ -42,13 +41,18 @@ export type PrimitiveAttributeEnumValues<TYPE extends PrimitiveAttributeType> =
   | undefined
 
 export interface Transformer<
-  INPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute =
+  INPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute | ResolvedStringAttribute =
     | ResolvedPrimitiveAttribute
-    | ResolvedNumberAttribute,
-  OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute =
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute,
+  OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute | ResolvedStringAttribute =
     | ResolvedPrimitiveAttribute
-    | ResolvedNumberAttribute,
-  PARSED_OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute = OUTPUT
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute,
+  PARSED_OUTPUT extends
+    | ResolvedPrimitiveAttribute
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute = OUTPUT
 > {
   parse: (inputValue: INPUT) => OUTPUT
   format: (savedValue: OUTPUT) => PARSED_OUTPUT
@@ -56,13 +60,18 @@ export interface Transformer<
 
 export interface JSONizableTransformer<
   JSONIZED extends { transformerId: string } & object = { transformerId: string } & object,
-  INPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute =
+  INPUT extends ResolvedPrimitiveAttribute | ResolvedStringAttribute | ResolvedNumberAttribute =
     | ResolvedPrimitiveAttribute
-    | ResolvedNumberAttribute,
-  OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute =
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute,
+  OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute | ResolvedStringAttribute =
     | ResolvedPrimitiveAttribute
-    | ResolvedNumberAttribute,
-  PARSED_OUTPUT extends ResolvedPrimitiveAttribute | ResolvedNumberAttribute = OUTPUT
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute,
+  PARSED_OUTPUT extends
+    | ResolvedPrimitiveAttribute
+    | ResolvedNumberAttribute
+    | ResolvedStringAttribute = OUTPUT
 > extends Transformer<INPUT, OUTPUT, PARSED_OUTPUT> {
   [$transformerId]: JSONIZED['transformerId']
   parse: (inputValue: INPUT) => OUTPUT

@@ -6,6 +6,7 @@ import type { $NumberAttributeState, FreezeNumberAttribute } from './number/inde
 import type { $PrimitiveAttributeState, FreezePrimitiveAttribute } from './primitive/index.js'
 import type { $RecordAttributeState, FreezeRecordAttribute } from './record/index.js'
 import type { $SetAttributeState, FreezeSetAttribute } from './set/index.js'
+import type { $StringAttributeState, FreezeStringAttribute } from './string/index.js'
 import type { $AttributeState } from './types/index.js'
 
 export type FreezeAttribute<$ATTRIBUTE extends $AttributeState> =
@@ -13,16 +14,18 @@ export type FreezeAttribute<$ATTRIBUTE extends $AttributeState> =
     ? FreezeAnyAttribute<$ATTRIBUTE>
     : $ATTRIBUTE extends $NumberAttributeState
       ? FreezeNumberAttribute<$ATTRIBUTE>
-      : $ATTRIBUTE extends $PrimitiveAttributeState
-        ? FreezePrimitiveAttribute<$ATTRIBUTE>
-        : $ATTRIBUTE extends $SetAttributeState
-          ? FreezeSetAttribute<$ATTRIBUTE>
-          : $ATTRIBUTE extends $ListAttributeState
-            ? FreezeListAttribute<$ATTRIBUTE>
-            : $ATTRIBUTE extends $MapAttributeState
-              ? FreezeMapAttribute<$ATTRIBUTE>
-              : $ATTRIBUTE extends $RecordAttributeState
-                ? FreezeRecordAttribute<$ATTRIBUTE>
-                : $ATTRIBUTE extends $AnyOfAttributeState
-                  ? FreezeAnyOfAttribute<$ATTRIBUTE>
-                  : never
+      : $ATTRIBUTE extends $StringAttributeState
+        ? FreezeStringAttribute<$ATTRIBUTE>
+        : $ATTRIBUTE extends $PrimitiveAttributeState
+          ? FreezePrimitiveAttribute<$ATTRIBUTE>
+          : $ATTRIBUTE extends $SetAttributeState
+            ? FreezeSetAttribute<$ATTRIBUTE>
+            : $ATTRIBUTE extends $ListAttributeState
+              ? FreezeListAttribute<$ATTRIBUTE>
+              : $ATTRIBUTE extends $MapAttributeState
+                ? FreezeMapAttribute<$ATTRIBUTE>
+                : $ATTRIBUTE extends $RecordAttributeState
+                  ? FreezeRecordAttribute<$ATTRIBUTE>
+                  : $ATTRIBUTE extends $AnyOfAttributeState
+                    ? FreezeAnyOfAttribute<$ATTRIBUTE>
+                    : never

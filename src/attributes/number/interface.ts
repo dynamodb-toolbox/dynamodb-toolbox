@@ -18,7 +18,7 @@ import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import { freezeNumberAttribute } from './freeze.js'
 import type { FreezeNumberAttribute } from './freeze.js'
-import type { ResolveNumberAttribute } from './resolve.js'
+import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
 import type { NumberAttributeState } from './types.js'
 
 export interface $NumberAttributeState<STATE extends NumberAttributeState = NumberAttributeState> {
@@ -180,9 +180,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
           >,
           ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
         >,
-        ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+        ResolvedNumberAttribute
       >,
-      ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+      ResolvedNumberAttribute
     >
   ): $NumberAttribute<Overwrite<STATE, { transform: unknown }>> {
     return new $NumberAttribute(overwrite(this[$state], { transform: transformer as unknown }))
@@ -684,12 +684,7 @@ export class NumberAttribute<STATE extends NumberAttributeState = NumberAttribut
   links: STATE['links']
   validators: STATE['validators']
 
-  constructor({
-    path,
-    ...state
-  }: STATE & {
-    path?: string
-  }) {
+  constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'number'
     this.path = path
     this.required = state.required
