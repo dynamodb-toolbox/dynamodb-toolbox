@@ -23,7 +23,7 @@ const enumSchema = string().enum('foo', 'bar').freeze()
 const assertEnum: A.Equals<PrimitiveAttrParsedValue<typeof enumSchema>, 'foo' | 'bar'> = 1
 assertEnum
 
-// Tranformed
+// Transformed
 const transformedSchema = string().enum('foo', 'bar').transform(prefix('foo')).freeze()
 const assertTransformed: A.Equals<PrimitiveAttrParsedValue<typeof transformedSchema>, string> = 1
 assertTransformed
