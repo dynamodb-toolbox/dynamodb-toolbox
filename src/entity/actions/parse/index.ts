@@ -7,5 +7,6 @@ export type {
   KeyInput,
   ParsedItem,
   ParsedItemOptions,
+  ParsedItemDefaultOptions,
   SavedItem
 } from './entityParser.js'

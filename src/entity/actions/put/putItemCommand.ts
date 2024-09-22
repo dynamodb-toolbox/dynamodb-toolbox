@@ -3,6 +3,7 @@ import type { PutCommandInput, PutCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
+import type { ParsedItem, ParsedItemDefaultOptions } from '~/entity/actions/parse/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
@@ -10,6 +11,7 @@ import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { Merge } from '~/types/merge.js'
+import type { Overwrite } from '~/types/overwrite.js'
 
 import { $item, $options } from './constants.js'
 import type { PutItemOptions } from './options.js'
@@ -32,7 +34,7 @@ export type PutItemResponse<
   Omit<PutCommandOutput, 'Attributes'>,
   {
     Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
-    ToolboxItem: PutItemInput<ENTITY, true>
+    ToolboxItem: ParsedItem<ENTITY, Overwrite<ParsedItemDefaultOptions, { transform: false }>>
   }
 >
 
@@ -74,7 +76,9 @@ export class PutItemCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): PutCommandInput & { ToolboxItem: PutItemInput<ENTITY, true> } {
+  params(): PutCommandInput & {
+    ToolboxItem: ParsedItem<ENTITY, Overwrite<ParsedItemDefaultOptions, { transform: false }>>
+  } {
     const [item, options] = this[$sentArgs]()
 
     return putItemParams(this.entity, item, options)
