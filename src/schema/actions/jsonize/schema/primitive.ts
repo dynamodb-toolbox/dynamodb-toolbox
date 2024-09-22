@@ -23,7 +23,8 @@ export const jsonizedBooleanAttrSchema = map({
 export const jsonizedNumberAttrSchema = map({
   type: string().const('number'),
   ...jsonizedAttrOptionSchemas,
-  enum: list(number()).optional()
+  big: boolean().optional(),
+  enum: list(anyOf(number(), string())).optional()
 })
 
 const strTransformersSchema = anyOf(

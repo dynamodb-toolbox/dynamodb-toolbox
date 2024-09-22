@@ -5,7 +5,6 @@ export type ResolveNumberAttribute<ATTRIBUTE extends NumberAttribute> = ATTRIBUT
   enum: NonNullable<NumberAttributeState['enum']>
 }
   ? ATTRIBUTE['enum'][number]
-  : // TODO: support bigInts if big: true
-    number
+  : number | (true extends ATTRIBUTE['big'] ? bigint : never)
 
 export type ResolvedNumberAttribute = ResolveNumberAttribute<NumberAttribute>

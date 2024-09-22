@@ -26,7 +26,7 @@ export type NullAttributeOptions = {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
-  transform: undefined | unknown
+  transform: undefined
   /**
    * Provide default values for attribute
    */

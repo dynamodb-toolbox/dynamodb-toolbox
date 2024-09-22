@@ -166,28 +166,6 @@ describe('null', () => {
     expect(nil[$state].savedAs).toBe('foo')
   })
 
-  test('returns null with enum values (method)', () => {
-    const invalidNull = nul().enum(
-      // @ts-expect-error
-      'foo',
-      null
-    )
-
-    const invalidCall = () => invalidNull.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
-    const nil = nul().enum(null)
-
-    const assertNull: A.Contains<(typeof nil)[$state], { enum: [null] }> = 1
-    assertNull
-
-    expect(nil[$state].enum).toStrictEqual([null])
-  })
-
   test('returns defaulted null (option)', () => {
     const invalidNull = nul({
       // TOIMPROVE: add type constraints here
@@ -250,34 +228,6 @@ describe('null', () => {
       put: undefined,
       update: returnNull
     })
-  })
-
-  test('returns transformed null (option)', () => {
-    const keep = {
-      parse: (input: null) => input,
-      format: (saved: null) => saved
-    }
-
-    const nil = nul({ transform: keep })
-
-    const assertNull: A.Contains<(typeof nil)[$state], { transform: unknown }> = 1
-    assertNull
-
-    expect(nil[$state].transform).toBe(keep)
-  })
-
-  test('returns transformed null (method)', () => {
-    const keep = {
-      parse: (input: null) => input,
-      format: (saved: null) => saved
-    }
-
-    const nil = nul().transform(keep)
-
-    const assertNull: A.Contains<(typeof nil)[$state], { transform: unknown }> = 1
-    assertNull
-
-    expect(nil[$state].transform).toBe(keep)
   })
 
   test('returns defaulted null (method)', () => {
@@ -364,50 +314,6 @@ describe('null', () => {
     assertNull
 
     expect(nil[$state].defaults).toStrictEqual({
-      key: null,
-      put: undefined,
-      update: undefined
-    })
-  })
-
-  test('returns null with constant value (method)', () => {
-    const invalidNull = nul().const(
-      // @ts-expect-error
-      'foo'
-    )
-
-    const invalidCall = () => invalidNull.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
-    const nonKeyNum = nul().const(null)
-
-    const assertNonKeyNum: A.Contains<
-      (typeof nonKeyNum)[$state],
-      { enum: [null]; defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
-    assertNonKeyNum
-
-    expect(nonKeyNum[$state].enum).toStrictEqual([null])
-    expect(nonKeyNum[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: null,
-      update: undefined
-    })
-
-    const keyNum = nul().key().const(null)
-
-    const assertKeyNum: A.Contains<
-      (typeof keyNum)[$state],
-      { enum: [null]; defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
-    assertKeyNum
-
-    expect(keyNum[$state].enum).toStrictEqual([null])
-    expect(keyNum[$state].defaults).toStrictEqual({
       key: null,
       put: undefined,
       update: undefined

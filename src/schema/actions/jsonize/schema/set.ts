@@ -19,7 +19,8 @@ export const jsonizedSetAttrSchema = map({
       required: string().optional().const('atLeastOnce'),
       hidden: boolean().optional().const(false),
       key: boolean().optional().const(false),
-      enum: list(number()).optional()
+      enum: list(anyOf(number(), string())).optional(),
+      big: boolean().optional()
     }),
     map({
       type: string().const('string'),

@@ -23,6 +23,7 @@ const defaultAttribute = {
   savedAs: undefined,
   enum: undefined,
   transform: undefined,
+  big: false,
   defaults: { key: undefined, put: undefined, update: undefined },
   links: { key: undefined, put: undefined, update: undefined },
   validators: { key: undefined, put: undefined, update: undefined }

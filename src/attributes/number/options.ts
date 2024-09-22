@@ -26,6 +26,10 @@ export type NumberAttributeOptions = {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
+  /**
+   * Allow BigInts
+   */
+  big: boolean
   transform: undefined | unknown
   /**
    * Provide default values for attribute
@@ -58,6 +62,7 @@ export type NumberAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
+  big: false
   transform: undefined
   defaults: {
     key: undefined
@@ -82,6 +87,7 @@ export const NUMBER_DEFAULT_OPTIONS: NumberAttributeDefaultOptions = {
   key: false,
   savedAs: undefined,
   transform: undefined,
+  big: false,
   defaults: {
     key: undefined,
     put: undefined,

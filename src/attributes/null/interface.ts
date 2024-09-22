@@ -6,19 +6,15 @@ import type { ParserInput } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
-import type { Update } from '~/types/update.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { Transformer } from '../primitive/types.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import { freezeNullAttribute } from './freeze.js'
 import type { FreezeNullAttribute } from './freeze.js'
-import type { ResolveNullAttribute, ResolvedNullAttribute } from './resolve.js'
 import type { NullAttributeState } from './types.js'
 
 export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
@@ -91,96 +87,6 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextSavedAs: NEXT_SAVED_AS
   ): $NullAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
     return new $NullAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
-  }
-
-  /**
-   * Provide a finite list of possible values for attribute
-   * (For typing reasons, enums are only available as attribute methods, not as input options)
-   *
-   * @param enum Possible values
-   * @example
-   * string().enum('foo', 'bar')
-   */
-  enum<NEXT_ENUM extends ResolveNullAttribute<FreezeNullAttribute<$NullAttributeState<STATE>>>[]>(
-    ...nextEnum: NEXT_ENUM
-  ): /**
-   * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $NullAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $NullAttribute(update(this[$state], 'enum', nextEnum))
-  }
-
-  /**
-   * Shorthand for `enum(constantValue).default(constantValue)`
-   *
-   * @param constantValue Constant value
-   * @example
-   * string().const('foo')
-   */
-  const<CONSTANT extends ResolveNullAttribute<FreezeNullAttribute<$NullAttributeState<STATE>>>>(
-    constant: CONSTANT
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        enum: [CONSTANT]
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        enum: [constant],
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: constant as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: constant as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      })
-    )
-  }
-
-  /**
-   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
-   *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
-   */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezeNullAttribute<$NullAttributeState<STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
-        >,
-        ResolvedNullAttribute
-      >,
-      ResolvedNullAttribute
-    >
-  ): $NullAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { transform: transformer as unknown }))
   }
 
   /**
@@ -658,8 +564,8 @@ export class NullAttribute<STATE extends NullAttributeState = NullAttributeState
   hidden: STATE['hidden']
   key: STATE['key']
   savedAs: STATE['savedAs']
-  enum: STATE['enum']
-  transform: STATE['transform']
+  enum: undefined
+  transform: undefined
   defaults: STATE['defaults']
   links: STATE['links']
   validators: STATE['validators']
@@ -671,8 +577,8 @@ export class NullAttribute<STATE extends NullAttributeState = NullAttributeState
     this.hidden = state.hidden
     this.key = state.key
     this.savedAs = state.savedAs
-    this.enum = state.enum
-    this.transform = state.transform
+    this.enum = undefined
+    this.transform = undefined
     this.defaults = state.defaults
     this.links = state.links
     this.validators = state.validators
