@@ -1,5 +1,6 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
+export type { Validator } from './attributes/index.js'
 export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
 export { nul, NullAttribute, $NullAttribute } from './attributes/null/index.js'
 export { boolean, BooleanAttribute, $BooleanAttribute } from './attributes/boolean/index.js'

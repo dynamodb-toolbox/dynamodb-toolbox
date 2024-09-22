@@ -10,6 +10,8 @@ import { record } from './record/index.js'
 import { set } from './set/index.js'
 import { string } from './string/index.js'
 
+export type { Validator } from './types/index.js'
+
 export * from './any/index.js'
 export * from './primitive/index.js'
 export * from './null/index.js'
