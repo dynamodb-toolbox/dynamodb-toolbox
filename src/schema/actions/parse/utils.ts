@@ -27,7 +27,7 @@ export const applyCustomValidation = (
 ): void => {
   const { mode = 'put' } = options
 
-  const customValidator = attribute.validators[mode]
+  const customValidator = attribute.validators[attribute.key ? 'key' : mode]
   if (customValidator !== undefined) {
     const validationResult = customValidator(inputValue, attribute)
 
