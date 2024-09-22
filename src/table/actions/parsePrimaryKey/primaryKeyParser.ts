@@ -2,7 +2,7 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
+import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 /**
  * Returns the TS type of a Table Primary Key
@@ -43,10 +43,9 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
 
     const primaryKey: { [KEY: string]: unknown } = {}
 
-    const partitionKeyValidator = validatorsByPrimitiveType[partitionKey.type]
     const partitionKeyValue = keyInput[partitionKey.name]
 
-    if (!partitionKeyValidator(partitionKeyValue)) {
+    if (!isValidPrimitive({ ...partitionKey, big: true }, partitionKeyValue)) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid partition key: ${partitionKey.name}`,
         path: partitionKey.name,
@@ -64,10 +63,8 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
       return primaryKey as PrimaryKey<TABLE>
     }
 
-    const sortKeyValidator = validatorsByPrimitiveType[sortKey.type]
     const sortKeyValue = keyInput[sortKey.name]
-
-    if (!sortKeyValidator(sortKeyValue)) {
+    if (!isValidPrimitive({ ...sortKey, big: true }, sortKeyValue)) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,
         path: sortKey.name,

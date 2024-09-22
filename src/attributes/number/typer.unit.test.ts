@@ -28,6 +28,7 @@ describe('number', () => {
         savedAs: undefined
         enum: undefined
         transform: undefined
+        big: false
         defaults: {
           key: undefined
           put: undefined
@@ -53,6 +54,7 @@ describe('number', () => {
       savedAs: undefined,
       enum: undefined,
       transform: undefined,
+      big: false,
       defaults: { key: undefined, put: undefined, update: undefined },
       links: { key: undefined, put: undefined, update: undefined },
       validators: { key: undefined, put: undefined, update: undefined }
@@ -167,16 +169,29 @@ describe('number', () => {
   })
 
   test('returns number with enum values (method)', () => {
-    const invalidNum = number().enum(
+    const invalidNumA = number().enum(
       // @ts-expect-error
       'foo',
       42
     )
 
-    const invalidCall = () => invalidNum.freeze(path)
+    const invalidCallA = () => invalidNumA.freeze(path)
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
+    )
+
+    const invalidNumB = number().enum(
+      // @ts-expect-error
+      BigInt('100000000'),
+      42
+    )
+
+    const invalidCallB = () => invalidNumB.freeze(path)
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
@@ -269,7 +284,7 @@ describe('number', () => {
   test('returns transformed number (method)', () => {
     const transformer = {
       parse: (input: number): number => input + 1,
-      format: (raw: number): number => raw - 1
+      format: (raw: number | bigint): number => (typeof raw === 'number' ? raw - 1 : 0)
     }
 
     const num = number().transform(transformer)
@@ -280,15 +295,48 @@ describe('number', () => {
     expect(num[$state].transform).toBe(transformer)
   })
 
+  test('returns big number (option)', () => {
+    const num = number({ big: true })
+
+    const assertNum: A.Contains<(typeof num)[$state], { big: true }> = 1
+    assertNum
+
+    expect(num[$state].big).toBe(true)
+  })
+
+  test('returns big number (method)', () => {
+    const num = number().big()
+
+    const assertNum: A.Contains<(typeof num)[$state], { big: true }> = 1
+    assertNum
+
+    expect(num[$state].big).toBe(true)
+  })
+
   test('returns defaulted number (method)', () => {
-    const invalidNum = number()
+    const invalidNumA = number()
       // @ts-expect-error
       .putDefault('foo')
 
-    const invalidCall = () => invalidNum.freeze(path)
+    const invalidCallA = () => invalidNumA.freeze(path)
 
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
+    number()
+      // @ts-expect-error Unable to throw here (it would require executing the fn)
+      .updateDefault(() => 'foo')
+
+    const invalidNumB = number()
+      // @ts-expect-error
+      .putDefault(BigInt('1000000'))
+
+    const invalidCallB = () => invalidNumB.freeze(path)
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
     )
 
@@ -335,6 +383,20 @@ describe('number', () => {
       key: undefined,
       put: undefined,
       update: returnNumber
+    })
+
+    const numBig = number().big().default(BigInt('10000000'))
+
+    const assertNumBig: A.Contains<
+      (typeof numBig)[$state],
+      { defaults: { key: undefined; put: unknown; update: undefined } }
+    > = 1
+    assertNumBig
+
+    expect(numBig[$state].defaults).toStrictEqual({
+      key: undefined,
+      put: BigInt('10000000'),
+      update: undefined
     })
   })
 

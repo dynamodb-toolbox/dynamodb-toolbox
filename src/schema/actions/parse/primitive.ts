@@ -10,6 +10,7 @@ import type {
   ResolvedBooleanAttribute,
   ResolvedNullAttribute,
   ResolvedNumberAttribute,
+  ResolvedPrimitiveAttribute,
   ResolvedStringAttribute,
   StringAttribute,
   Transformer
@@ -18,7 +19,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { If } from '~/types/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
+import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 import type { MustBeDefined, MustBeProvided } from './attribute.js'
 import type { ParsedValue } from './parser.js'
@@ -33,22 +34,27 @@ import { applyCustomValidation } from './utils.js'
 export type PrimitiveAttrParsedValue<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = ATTRIBUTE extends { transform: undefined }
+> = PrimitiveAttribute extends ATTRIBUTE
   ?
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | undefined
+      | ResolvedPrimitiveAttribute
       | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-  : OPTIONS extends { transform: false }
+  : ATTRIBUTE extends { transform: undefined }
     ?
         | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
         | ResolvePrimitiveAttribute<ATTRIBUTE>
         | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
-    :
-        | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
-        | (ATTRIBUTE extends BooleanAttribute ? ResolvedBooleanAttribute : never)
-        | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
-        | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
-        | (ATTRIBUTE extends BinaryAttribute ? ResolvedBinaryAttribute : never)
+    : OPTIONS extends { transform: false }
+      ?
+          | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+          | ResolvePrimitiveAttribute<ATTRIBUTE>
+          | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+      :
+          | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
+          | (ATTRIBUTE extends BooleanAttribute ? ResolvedBooleanAttribute : never)
+          | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
+          | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
+          | (ATTRIBUTE extends BinaryAttribute ? ResolvedBinaryAttribute : never)
 
 export function* primitiveAttrParser<
   ATTRIBUTE extends PrimitiveAttribute,
@@ -76,8 +82,7 @@ export function* primitiveAttrParser<
     yield linkedValue as Parsed
   }
 
-  const validator = validatorsByPrimitiveType[attribute.type]
-  if (!validator(linkedValue)) {
+  if (!isValidPrimitive(attribute, linkedValue)) {
     const { path, type } = attribute
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -118,7 +123,12 @@ export function* primitiveAttrParser<
 export type PrimitiveAttrParserInput<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> =
-  | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-  | ResolvePrimitiveAttribute<ATTRIBUTE>
-  | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+> = PrimitiveAttribute extends ATTRIBUTE
+  ?
+      | undefined
+      | ResolvedPrimitiveAttribute
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
+  :
+      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
+      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>

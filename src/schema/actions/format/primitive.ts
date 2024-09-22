@@ -5,7 +5,7 @@ import type {
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { If } from '~/types/index.js'
-import { validatorsByPrimitiveType } from '~/utils/validation/validatorsByPrimitiveType.js'
+import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 import type { MustBeDefined } from './attribute.js'
 
@@ -26,8 +26,7 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
 ) => {
   type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
 
-  const validator = validatorsByPrimitiveType[attribute.type]
-  if (!validator(rawValue)) {
+  if (!isValidPrimitive(attribute, rawValue)) {
     const { path, type } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {

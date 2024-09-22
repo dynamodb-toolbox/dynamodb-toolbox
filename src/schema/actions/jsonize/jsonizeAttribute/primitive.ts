@@ -2,6 +2,7 @@ import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { $transformerId } from '~/attributes/primitive/constants.js'
 import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
 import { isEmpty } from '~/utils/isEmpty.js'
+import { isBigInt } from '~/utils/validation/isBigInt.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import type { JSONizedAttr } from '../schema/index.js'
@@ -34,11 +35,20 @@ export const jsonizePrimitiveAttribute = (attr: PrimitiveAttribute): JSONizedAtt
   } as Extract<JSONizedAttr, { type: 'null' | 'boolean' | 'number' | 'string' | 'binary' }>
 
   if (attr.enum) {
-    if (attr.type === 'binary') {
-      const textDecoder = new TextDecoder('utf8')
-      jsonizedAttr.enum = (attr.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
-    } else {
-      jsonizedAttr.enum = attr.enum
+    switch (attr.type) {
+      case 'binary': {
+        const textDecoder = new TextDecoder('utf8')
+        jsonizedAttr.enum = (attr.enum as Uint8Array[]).map(value =>
+          btoa(textDecoder.decode(value))
+        )
+        break
+      }
+      case 'number': {
+        jsonizedAttr.enum = attr.enum.map(value => (isBigInt(value) ? value.toString() : value))
+        break
+      }
+      default:
+        jsonizedAttr.enum = attr.enum
     }
   }
 

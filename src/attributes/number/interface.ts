@@ -189,6 +189,15 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   }
 
   /**
+   * Allow BigInts
+   */
+  big<NEXT_BIG extends boolean = true>(
+    nextBig: NEXT_BIG = true as NEXT_BIG
+  ): $NumberAttribute<Overwrite<STATE, { big: NEXT_BIG }>> {
+    return new $NumberAttribute(overwrite(this[$state], { big: nextBig }))
+  }
+
+  /**
    * Provide a default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
@@ -680,6 +689,7 @@ export class NumberAttribute<STATE extends NumberAttributeState = NumberAttribut
   savedAs: STATE['savedAs']
   enum: STATE['enum']
   transform: STATE['transform']
+  big: STATE['big']
   defaults: STATE['defaults']
   links: STATE['links']
   validators: STATE['validators']
@@ -693,6 +703,7 @@ export class NumberAttribute<STATE extends NumberAttributeState = NumberAttribut
     this.savedAs = state.savedAs
     this.enum = state.enum
     this.transform = state.transform
+    this.big = state.big
     this.defaults = state.defaults
     this.links = state.links
     this.validators = state.validators

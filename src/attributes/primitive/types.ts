@@ -4,7 +4,8 @@ import type {
   $BinaryAttributeState,
   BinaryAttribute,
   FreezeBinaryAttribute,
-  ResolveBinaryAttribute
+  ResolveBinaryAttribute,
+  ResolvedBinaryAttribute
 } from '../binary/index.js'
 import type {
   $BooleanAttribute,
@@ -12,7 +13,8 @@ import type {
   $BooleanAttributeState,
   BooleanAttribute,
   FreezeBooleanAttribute,
-  ResolveBooleanAttribute
+  ResolveBooleanAttribute,
+  ResolvedBooleanAttribute
 } from '../boolean/index.js'
 import type {
   $NullAttribute,
@@ -28,7 +30,8 @@ import type {
   $NumberAttributeState,
   FreezeNumberAttribute,
   NumberAttribute,
-  ResolveNumberAttribute
+  ResolveNumberAttribute,
+  ResolvedNumberAttribute
 } from '../number/index.js'
 import type {
   $StringAttribute,
@@ -36,6 +39,7 @@ import type {
   $StringAttributeState,
   FreezeStringAttribute,
   ResolveStringAttribute,
+  ResolvedStringAttribute,
   StringAttribute
 } from '../string/index.js'
 import type { $transformerId } from './constants.js'
@@ -68,14 +72,22 @@ export type PrimitiveAttribute =
   | StringAttribute
   | BinaryAttribute
 
-export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
-  | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
-  | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
+export type ResolvedPrimitiveAttribute =
+  | ResolvedNullAttribute
+  | ResolvedBooleanAttribute
+  | ResolvedNumberAttribute
+  | ResolvedStringAttribute
+  | ResolvedBinaryAttribute
 
-export type ResolvedPrimitiveAttribute = ResolvePrimitiveAttribute<PrimitiveAttribute>
+export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
+  PrimitiveAttribute extends ATTRIBUTE
+    ? ResolvedPrimitiveAttribute
+    :
+        | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
+        | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 
 export type FreezePrimitiveAttribute<ATTRIBUTE extends $PrimitiveAttributeState> =
   | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE> : never)

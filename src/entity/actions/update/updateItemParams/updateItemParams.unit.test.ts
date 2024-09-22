@@ -49,6 +49,7 @@ const TestEntity = new Entity({
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
     test_boolean: boolean().optional(),
+    test_big_number: number().big().optional(),
     test_nullable_boolean: anyOf(boolean(), nul()).optional(),
     test_list: list(string()).optional(),
     test_list_deep: list(map({ value: string().enum('foo', 'bar') })).optional(),
@@ -173,36 +174,40 @@ describe('update', () => {
       UpdateExpression,
       ExpressionAttributeNames,
       ExpressionAttributeValues
-    } = TestEntity.build(UpdateItemCommand).item({ email: 'test-pk', sort: 'test-sk' }).params()
+    } = TestEntity.build(UpdateItemCommand)
+      .item({ email: 'test-pk', sort: 'test-sk', test_big_number: BigInt('10000000') })
+      .params()
 
     expect(TableName).toBe('test-table')
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(UpdateExpression).toStrictEqual(
-      'SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4, #s_5 = if_not_exists(#s_6, :s_5), #s_7 = if_not_exists(#s_8, :s_6), #s_9 = :s_7 ADD #a_1 :a_1'
+      'SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4, #s_5 = :s_5, #s_6 = if_not_exists(#s_7, :s_6), #s_8 = if_not_exists(#s_9, :s_7), #s_10 = :s_8 ADD #a_1 :a_1'
     )
     expect(ExpressionAttributeNames).toStrictEqual({
-      '#s_1': 'test_string',
-      '#s_2': 'test_number_default',
-      '#s_3': 'test_boolean_default',
-      '#s_4': 'simple_string_copy',
+      '#s_1': 'test_big_number',
+      '#s_2': 'test_string',
+      '#s_3': 'test_number_default',
+      '#s_4': 'test_boolean_default',
+      '#s_5': 'simple_string_copy',
       // TODO: Re-use s5
-      '#s_5': '_et',
       '#s_6': '_et',
+      '#s_7': '_et',
       // TODO: Re-use s7
-      '#s_7': '_ct',
       '#s_8': '_ct',
-      '#s_9': '_md',
+      '#s_9': '_ct',
+      '#s_10': '_md',
       '#a_1': 'touchCount'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
-      ':s_1': 'default string',
-      ':s_2': 0,
-      ':s_3': false,
-      ':s_4': 'NOTHING_TO_COPY',
-      ':s_5': TestEntity.name,
-      ':s_6': expect.any(String),
+      ':s_1': BigInt('10000000'),
+      ':s_2': 'default string',
+      ':s_3': 0,
+      ':s_4': false,
+      ':s_5': 'NOTHING_TO_COPY',
+      ':s_6': TestEntity.name,
       ':s_7': expect.any(String),
+      ':s_8': expect.any(String),
       ':a_1': 1
     })
 
@@ -212,6 +217,7 @@ describe('update', () => {
       entity: { [$GET]: ['entity', TestEntity.name] },
       email: 'test-pk',
       sort: 'test-sk',
+      test_big_number: BigInt('10000000'),
       simple_string_copy: 'NOTHING_TO_COPY',
       test_boolean_default: false,
       test_number_default: 0,

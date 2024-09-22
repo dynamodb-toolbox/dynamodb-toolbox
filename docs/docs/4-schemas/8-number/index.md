@@ -125,6 +125,23 @@ const levelSchema = number({ transform: addOne })
 
 DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
 
+### `.big()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Allows `BigInt` values:
+
+```ts
+const levelSchema = number().big()
+const levelSchema = number({ big: true })
+
+type FormattedPokemon = FormattedItem<typeof PokemonEntity>
+// => {
+//   ...
+//   level: number | bigint
+// }
+```
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;number&gt;</code></i></p>

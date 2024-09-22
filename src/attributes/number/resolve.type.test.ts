@@ -15,4 +15,6 @@ const constNumber = number().const(1).freeze()
 const assertResolveConst: A.Equals<ResolveNumberAttribute<typeof constNumber>, 1> = 1
 assertResolveConst
 
-// TODO: BigInt
+const bigNumber = number().big().freeze()
+const assertResolveBig: A.Equals<ResolveNumberAttribute<typeof bigNumber>, number | bigint> = 1
+assertResolveBig

@@ -38,6 +38,7 @@ const TestEntity = new Entity({
     test_any: any().optional(),
     test_boolean: boolean().optional(),
     test_number_defaulted: number().putDefault(0),
+    test_big_number: number().big().optional(),
     test_string: string().putDefault('test string'),
     test_binary: binary().optional(),
     count: number().optional().savedAs('test_number'),
@@ -116,7 +117,11 @@ const TestEntity5 = new Entity({
 describe('put', () => {
   test('creates basic item', () => {
     const { Item, ToolboxItem } = TestEntity.build(PutItemCommand)
-      .item({ email: 'test-pk', sort: 'test-sk' })
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_big_number: BigInt('100000000')
+      })
       .params()
 
     expect(Item).toStrictEqual({
@@ -128,7 +133,8 @@ describe('put', () => {
       test_string: 'test string',
       // Defaults are filled before links
       test_string_2: 'test string',
-      test_number_defaulted: 0
+      test_number_defaulted: 0,
+      test_big_number: BigInt('100000000')
     })
 
     expect(ToolboxItem).toStrictEqual({
@@ -139,7 +145,8 @@ describe('put', () => {
       sort: 'test-sk',
       test_string: 'test string',
       test_string_2: 'test string',
-      test_number_defaulted: 0
+      test_number_defaulted: 0,
+      test_big_number: BigInt('100000000')
     })
   })
 

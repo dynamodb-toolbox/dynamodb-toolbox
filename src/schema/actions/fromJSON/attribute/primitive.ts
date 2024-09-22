@@ -1,10 +1,12 @@
 import { binary } from '~/attributes/binary/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
-import type { $PrimitiveAttributeNestedState } from '~/attributes/index.js'
+import type { $NumberAttribute, $PrimitiveAttributeNestedState } from '~/attributes/index.js'
 import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
+import type { NumberAttributeState } from '~/attributes/number/types.js'
 import { string } from '~/attributes/string/index.js'
 import type { JSONizedAttr } from '~/schema/actions/jsonize/index.js'
+import { isString } from '~/utils/validation/isString.js'
 
 type JSONizedPrimitiveAttr = Extract<
   JSONizedAttr,
@@ -40,9 +42,11 @@ export const fromJSONPrimitiveAttr = (
       const { links, defaults, enum: _enum, ...props } = attr
       links
       defaults
-      const $attr = number(props)
+      const $attr = number(props) as $NumberAttribute<NumberAttributeState>
 
-      return _enum ? $attr.enum(..._enum) : $attr
+      return _enum
+        ? $attr.enum(..._enum.map(value => (isString(value) ? BigInt(value) : value)))
+        : $attr
     }
     case 'string': {
       const { links, defaults, enum: _enum, ...props } = attr

@@ -17,7 +17,7 @@ describe('jsonize - set schema', () => {
       elements: {
         type: 'string',
         // @ts-expect-error
-        enum: ['foo', 'bar', 42]
+        enum: [false, 42]
       }
     }
 
