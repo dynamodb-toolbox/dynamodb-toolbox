@@ -20,7 +20,7 @@ import type {
   $NullAttributeState,
   FreezeNullAttribute,
   NullAttribute,
-  ResolveNullAttribute
+  ResolvedNullAttribute
 } from '../null/index.js'
 import type {
   $NumberAttribute,
@@ -69,7 +69,7 @@ export type PrimitiveAttribute =
   | BinaryAttribute
 
 export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
-  | (ATTRIBUTE extends NullAttribute ? ResolveNullAttribute<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
   | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
   | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
   | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)

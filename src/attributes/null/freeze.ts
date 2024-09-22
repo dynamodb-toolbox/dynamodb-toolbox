@@ -31,20 +31,6 @@ export const freezeNullAttribute: NullAttributeFreezer = <STATE extends NullAttr
 ): FreezeNullAttribute<$NullAttributeState<STATE>> => {
   validateAttributeProperties(state, path)
 
-  const { enum: enumValues } = state
-  enumValues?.forEach(enumValue => {
-    const isEnumValueValid = isNull(enumValue)
-    if (!isEnumValueValid) {
-      throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
-        message: `Invalid enum value type${
-          path !== undefined ? ` at path '${path}'` : ''
-        }. Expected: null. Received: ${String(enumValue)}.`,
-        path,
-        payload: { expectedType: 'null', enumValue }
-      })
-    }
-  })
-
   for (const defaultValue of Object.values(state.defaults)) {
     if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
       if (!isNull(defaultValue)) {
@@ -54,16 +40,6 @@ export const freezeNullAttribute: NullAttributeFreezer = <STATE extends NullAttr
           }: Expected: null. Received: ${String(defaultValue)}.`,
           path,
           payload: { expectedType: 'null', defaultValue }
-        })
-      }
-
-      if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
-        throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueRange', {
-          message: `Invalid default value${
-            path !== undefined ? ` at path '${path}'` : ''
-          }: Expected one of: ${enumValues.join(', ')}. Received: ${String(defaultValue)}.`,
-          path,
-          payload: { enumValues, defaultValue }
         })
       }
     }

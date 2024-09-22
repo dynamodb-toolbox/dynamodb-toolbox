@@ -9,7 +9,7 @@ import type { PrimitiveAttrParsedValue } from './primitive.js'
 // Constraint
 const assertConstraint: A.Equals<
   PrimitiveAttrParsedValue<PrimitiveAttribute>,
-  ResolvedPrimitiveAttribute
+  ResolvedPrimitiveAttribute | undefined
 > = 1
 assertConstraint
 

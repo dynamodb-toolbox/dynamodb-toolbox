@@ -101,43 +101,6 @@ const nullishSchema = nul().savedAs('_n')
 const nullishSchema = nul({ savedAs: '_n' })
 ```
 
-### `.enum(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>null[]</code></i></p>
-
-Provides a finite range of possible values:
-
-```ts
-const nullishSchema = nul().enum(null)
-
-// 👇 Equivalent to `.enum(null).default(null)`
-const nullishSchema = nul().const(null)
-```
-
-:::info
-
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
-
-:::
-
-:::note
-
-Although they are not very useful, `nul` is a primitive, and as such inherits from the `.enum` and `.const` options.
-
-:::
-
-### `.transform(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;null&gt;</code></i></p>
-
-Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md).
-
-:::note
-
-Although it is not very useful, `nul` is a primitive, and as such inherits from the `.transform` option.
-
-:::
-
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;null&gt;</code></i></p>
@@ -203,12 +166,6 @@ const isUpdatedSchema = nul({
 
 :::
 
-:::note
-
-Although they are not very useful, `nul` is a primitive, and as such inherits from the `.default` options.
-
-:::
-
 ### `.link<Schema>(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, null&gt;</code></i></p>
@@ -228,20 +185,8 @@ const pokemonSchema = schema({
 }))
 ```
 
-:::note
-
-Although they are not very useful, `nul` is a primitive, and as such inherits from the `.link` options.
-
-:::
-
 ### `.validate(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;null&gt;</code></i></p>
 
 Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details.
-
-:::note
-
-Although they are not very useful, `nul` is a primitive, and as such inherits from the `.validate` options.
-
-:::

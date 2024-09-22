@@ -21,12 +21,12 @@ export const fromJSONPrimitiveAttr = (
 ): $PrimitiveAttributeNestedState => {
   switch (attr.type) {
     case 'null': {
-      const { links, defaults, enum: _enum, ...props } = attr
+      const { links, defaults, ...props } = attr
       links
       defaults
       const $attr = nul(props)
 
-      return _enum ? $attr.enum(..._enum) : $attr
+      return $attr
     }
     case 'boolean': {
       const { links, defaults, enum: _enum, ...props } = attr
