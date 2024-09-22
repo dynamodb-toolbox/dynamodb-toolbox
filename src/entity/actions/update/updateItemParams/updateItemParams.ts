@@ -55,7 +55,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
   return {
     TableName: options.tableName ?? entity.table.getName(),
     /**
-     * @debt type "TODO: Remove this cast?"
+     * @debt type "TODO: Rework extensions & not cast here (use `ParsedItem<ENTITY, { extension: UpdateItemExtension }>`)"
      */
     ToolboxItem: parsedItem as UpdateItemInput<ENTITY, true>,
     Key: key,

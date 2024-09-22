@@ -28,7 +28,7 @@ import {
   set,
   string
 } from '~/index.js'
-import type { PutItemInput, UpdateItemInput } from '~/index.js'
+import type { ParsedItem, UpdateItemInput } from '~/index.js'
 
 import { getCommandInput } from './execute.js'
 import { execute } from './index.js'
@@ -132,9 +132,9 @@ describe('execute', () => {
     const assertToolboxItems: A.Equals<
       typeof toolboxItems,
       [
-        PutItemInput<typeof TestEntity, true>,
+        ParsedItem<typeof TestEntity, { transform: false }>,
         undefined,
-        PutItemInput<typeof TestEntity2, true>,
+        ParsedItem<typeof TestEntity2, { transform: false }>,
         undefined,
         UpdateItemInput<typeof TestEntity, true>
       ]
@@ -190,8 +190,8 @@ describe('execute', () => {
       typeof toolboxItems,
       (
         | undefined
-        | PutItemInput<typeof TestEntity, true>
-        | PutItemInput<typeof TestEntity2, true>
+        | ParsedItem<typeof TestEntity, { transform: false }>
+        | ParsedItem<typeof TestEntity2, { transform: false }>
         | UpdateItemInput<typeof TestEntity, true>
       )[]
     > = 1
@@ -245,9 +245,9 @@ describe('execute', () => {
     const assertToolboxItems: A.Equals<
       typeof toolboxItems,
       [
-        PutItemInput<typeof TestEntity, true>,
+        ParsedItem<typeof TestEntity, { transform: false }>,
         UpdateItemInput<typeof TestEntity, true>,
-        ...PutItemInput<typeof TestEntity2, true>[]
+        ...ParsedItem<typeof TestEntity2, { transform: false }>[]
       ]
     > = 1
     assertToolboxItems

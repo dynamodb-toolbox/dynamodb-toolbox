@@ -158,6 +158,7 @@ export type {
   KeyInput,
   ParsedItem,
   ParsedItemOptions,
+  ParsedItemDefaultOptions,
   SavedItem
 } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
