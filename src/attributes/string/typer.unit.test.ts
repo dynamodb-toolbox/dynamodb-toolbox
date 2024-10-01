@@ -258,7 +258,7 @@ describe('string', () => {
     const transformer = prefix('test')
     const str = string({ transform: transformer })
 
-    const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)[$state], { transform: typeof transformer }> = 1
     assertStr
 
     expect(str[$state].transform).toBe(transformer)
@@ -268,7 +268,7 @@ describe('string', () => {
     const transformer = prefix('test')
     const str = string().transform(transformer)
 
-    const assertStr: A.Contains<(typeof str)[$state], { transform: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)[$state], { transform: typeof transformer }> = 1
     assertStr
 
     expect(str[$state].transform).toBe(transformer)

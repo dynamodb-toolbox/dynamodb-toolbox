@@ -49,9 +49,10 @@ export const fromJSONPrimitiveAttr = (
         : $attr
     }
     case 'string': {
-      const { links, defaults, enum: _enum, ...props } = attr
+      const { links, defaults, enum: _enum, transform, ...props } = attr
       links
       defaults
+      transform
       const $attr = string(props)
 
       return _enum ? $attr.enum(..._enum) : $attr

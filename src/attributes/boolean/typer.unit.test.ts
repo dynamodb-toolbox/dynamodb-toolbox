@@ -260,7 +260,7 @@ describe('boolean', () => {
 
     const bool = boolean({ transform: negate })
 
-    const assertBool: A.Contains<(typeof bool)[$state], { transform: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { transform: typeof negate }> = 1
     assertBool
 
     expect(bool[$state].transform).toBe(negate)
@@ -274,7 +274,7 @@ describe('boolean', () => {
 
     const bool = boolean().transform(negate)
 
-    const assertBool: A.Contains<(typeof bool)[$state], { transform: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { transform: typeof negate }> = 1
     assertBool
 
     expect(bool[$state].transform).toBe(negate)

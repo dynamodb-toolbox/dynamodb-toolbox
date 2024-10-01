@@ -269,7 +269,7 @@ describe('number', () => {
 
   test('returns transformed number (option)', () => {
     const transformer = {
-      parse: (input: number): number => input + 1,
+      parse: (input: number | bigint): number => (typeof input === 'number' ? input + 1 : 0),
       format: (raw: number): number => raw - 1
     }
 
@@ -289,7 +289,7 @@ describe('number', () => {
 
     const num = number().transform(transformer)
 
-    const assertNum: A.Contains<(typeof num)[$state], { transform: unknown }> = 1
+    const assertNum: A.Contains<(typeof num)[$state], { transform: typeof transformer }> = 1
     assertNum
 
     expect(num[$state].transform).toBe(transformer)

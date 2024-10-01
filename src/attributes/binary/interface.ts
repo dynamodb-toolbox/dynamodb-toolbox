@@ -169,23 +169,13 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezeBinaryAttribute<$BinaryAttributeState<STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { fill: false }>
-        >,
-        ResolvedBinaryAttribute
-      >,
-      ResolvedBinaryAttribute
+  transform<
+    TRANSFORMER extends Transformer<
+      ResolvedBinaryAttribute,
+      ResolveBinaryAttribute<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
     >
-  ): $BinaryAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $BinaryAttribute(overwrite(this[$state], { transform: transformer as unknown }))
+  >(transform: TRANSFORMER): $BinaryAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { transform }))
   }
 
   /**

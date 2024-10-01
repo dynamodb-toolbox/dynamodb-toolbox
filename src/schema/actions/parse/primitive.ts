@@ -1,3 +1,5 @@
+import type { Call } from 'hotscript'
+
 import type {
   BinaryAttribute,
   BooleanAttribute,
@@ -5,15 +7,16 @@ import type {
   NullAttribute,
   NumberAttribute,
   PrimitiveAttribute,
+  ResolveBinaryAttribute,
+  ResolveBooleanAttribute,
+  ResolveNumberAttribute,
   ResolvePrimitiveAttribute,
-  ResolvedBinaryAttribute,
-  ResolvedBooleanAttribute,
+  ResolveStringAttribute,
   ResolvedNullAttribute,
-  ResolvedNumberAttribute,
   ResolvedPrimitiveAttribute,
-  ResolvedStringAttribute,
   StringAttribute,
-  Transformer
+  Transformer,
+  TypeModifier
 } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -51,10 +54,26 @@ export type PrimitiveAttrParsedValue<
           | ExtendedValue<NonNullable<OPTIONS['extension']>, ATTRIBUTE['type']>
       :
           | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
-          | (ATTRIBUTE extends BooleanAttribute ? ResolvedBooleanAttribute : never)
-          | (ATTRIBUTE extends NumberAttribute ? ResolvedNumberAttribute : never)
-          | (ATTRIBUTE extends StringAttribute ? ResolvedStringAttribute : never)
-          | (ATTRIBUTE extends BinaryAttribute ? ResolvedBinaryAttribute : never)
+          | (ATTRIBUTE extends NumberAttribute
+              ? ATTRIBUTE extends { transform: Transformer }
+                ? Call<TypeModifier<ATTRIBUTE['transform']>, ResolveNumberAttribute<ATTRIBUTE>>
+                : ResolveNumberAttribute<ATTRIBUTE>
+              : never)
+          | (ATTRIBUTE extends BooleanAttribute
+              ? ATTRIBUTE extends { transform: Transformer }
+                ? Call<TypeModifier<ATTRIBUTE['transform']>, ResolveBooleanAttribute<ATTRIBUTE>>
+                : ResolveBooleanAttribute<ATTRIBUTE>
+              : never)
+          | (ATTRIBUTE extends StringAttribute
+              ? ATTRIBUTE extends { transform: Transformer }
+                ? Call<TypeModifier<ATTRIBUTE['transform']>, ResolveStringAttribute<ATTRIBUTE>>
+                : ResolveStringAttribute<ATTRIBUTE>
+              : never)
+          | (ATTRIBUTE extends BinaryAttribute
+              ? ATTRIBUTE extends { transform: Transformer }
+                ? Call<TypeModifier<ATTRIBUTE['transform']>, ResolveBinaryAttribute<ATTRIBUTE>>
+                : ResolveBinaryAttribute<ATTRIBUTE>
+              : never)
 
 export function* primitiveAttrParser<
   ATTRIBUTE extends PrimitiveAttribute,

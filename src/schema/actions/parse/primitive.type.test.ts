@@ -23,7 +23,39 @@ const enumSchema = string().enum('foo', 'bar').freeze()
 const assertEnum: A.Equals<PrimitiveAttrParsedValue<typeof enumSchema>, 'foo' | 'bar'> = 1
 assertEnum
 
-// Transformed
-const transformedSchema = string().enum('foo', 'bar').transform(prefix('foo')).freeze()
-const assertTransformed: A.Equals<PrimitiveAttrParsedValue<typeof transformedSchema>, string> = 1
-assertTransformed
+// Transformed (custom)
+const transformedSchemaCustom = string()
+  .enum('foo', 'bar')
+  .transform({
+    parse: formatted => {
+      const assertFormatted: A.Equals<typeof formatted, 'foo' | 'bar'> = 1
+      assertFormatted
+
+      return `PREFIX#${formatted}`
+    },
+    format: (transformed: string) => {
+      const assertTransformed: A.Equals<typeof transformed, string> = 1
+      assertTransformed
+
+      return transformed.slice(7)
+    }
+  })
+  .freeze()
+
+const assertTransformedCustom: A.Equals<
+  PrimitiveAttrParsedValue<typeof transformedSchemaCustom>,
+  string
+> = 1
+assertTransformedCustom
+
+// Transformed (lib)
+const transformedSchemaLib = string()
+  .enum('foo', 'bar')
+  .transform(prefix('PREFIX', { delimiter: '.' }))
+  .freeze()
+
+const assertTransformedLib: A.Equals<
+  PrimitiveAttrParsedValue<typeof transformedSchemaLib>,
+  'PREFIX.foo' | 'PREFIX.bar'
+> = 1
+assertTransformedLib

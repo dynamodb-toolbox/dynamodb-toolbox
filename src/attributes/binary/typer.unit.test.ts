@@ -272,7 +272,7 @@ describe('binary', () => {
 
     const bin = binary({ transform: prefix })
 
-    const assertBin: A.Contains<(typeof bin)[$state], { transform: unknown }> = 1
+    const assertBin: A.Contains<(typeof bin)[$state], { transform: typeof prefix }> = 1
     assertBin
 
     expect(bin[$state].transform).toBe(prefix)
@@ -294,7 +294,7 @@ describe('binary', () => {
 
     const bin = binary().transform(prefix)
 
-    const assertBin: A.Contains<(typeof bin)[$state], { transform: unknown }> = 1
+    const assertBin: A.Contains<(typeof bin)[$state], { transform: typeof prefix }> = 1
     assertBin
 
     expect(bin[$state].transform).toBe(prefix)

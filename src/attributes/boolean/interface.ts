@@ -173,23 +173,13 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
-        >,
-        ResolvedBooleanAttribute
-      >,
-      ResolvedBooleanAttribute
+  transform<
+    TRANSFORMER extends Transformer<
+      ResolvedBooleanAttribute,
+      ResolveBooleanAttribute<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
     >
-  ): $BooleanAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $BooleanAttribute(overwrite(this[$state], { transform: transformer as unknown }))
+  >(transform: TRANSFORMER): $BooleanAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { transform }))
   }
 
   /**

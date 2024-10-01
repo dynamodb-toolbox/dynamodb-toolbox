@@ -1,3 +1,5 @@
+import type { Constant, Fn, Identity } from 'hotscript'
+
 import type {
   $BinaryAttribute,
   $BinaryAttributeNestedState,
@@ -42,7 +44,7 @@ import type {
   ResolvedStringAttribute,
   StringAttribute
 } from '../string/index.js'
-import type { $transformerId } from './constants.js'
+import type { $transformerId, $typeModifier } from './constants.js'
 
 export type $PrimitiveAttributeNestedState =
   | $NullAttributeNestedState
@@ -97,22 +99,34 @@ export type FreezePrimitiveAttribute<ATTRIBUTE extends $PrimitiveAttributeState>
   | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE> : never)
 
 export interface Transformer<
-  INPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
-  OUTPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
-  PARSED_OUTPUT extends ResolvedPrimitiveAttribute = OUTPUT
+  FORMATTED_CONSTRAINT = any,
+  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
+  TRANSFORMED = any
 > {
-  parse: (inputValue: INPUT) => OUTPUT
-  format: (savedValue: OUTPUT) => PARSED_OUTPUT
+  parse: (formatted: FORMATTED) => TRANSFORMED
+  format: (transformed: TRANSFORMED) => FORMATTED_CONSTRAINT
 }
 
+export interface TypedTransformer<
+  FORMATTED_CONSTRAINT = any,
+  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
+  TRANSFORMED = any,
+  TYPE_MODIFIER extends Fn = Identity
+> extends Transformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED> {
+  [$typeModifier]: TYPE_MODIFIER
+}
+
+export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends TypedTransformer
+  ? TRANSFORMER[$typeModifier]
+  : Constant<ReturnType<TRANSFORMER['parse']>>
+
 export interface JSONizableTransformer<
-  JSONIZED extends { transformerId: string } & object = { transformerId: string } & object,
-  INPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
-  OUTPUT extends ResolvedPrimitiveAttribute = ResolvedPrimitiveAttribute,
-  PARSED_OUTPUT extends ResolvedPrimitiveAttribute = OUTPUT
-> extends Transformer<INPUT, OUTPUT, PARSED_OUTPUT> {
+  FORMATTED_CONSTRAINT = any,
+  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
+  TRANSFORMED = any,
+  TYPE_MODIFIER extends Fn = Fn,
+  JSONIZED extends { transformerId: string } & object = { transformerId: string } & object
+> extends TypedTransformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED, TYPE_MODIFIER> {
   [$transformerId]: JSONIZED['transformerId']
-  parse: (inputValue: INPUT) => OUTPUT
-  format: (savedValue: OUTPUT) => PARSED_OUTPUT
   jsonize: () => JSONIZED
 }

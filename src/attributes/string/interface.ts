@@ -169,23 +169,13 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezeStringAttribute<$StringAttributeState<STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<FreezeStringAttribute<$StringAttributeState<STATE>>, { fill: false }>
-        >,
-        ResolvedStringAttribute
-      >,
-      ResolvedStringAttribute
+  transform<
+    TRANSFORMER extends Transformer<
+      ResolvedStringAttribute,
+      ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
     >
-  ): $StringAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { transform: transformer as unknown }))
+  >(transform: TRANSFORMER): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $StringAttribute(overwrite(this[$state], { transform }))
   }
 
   /**
