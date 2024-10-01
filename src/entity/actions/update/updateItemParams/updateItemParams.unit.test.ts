@@ -1854,10 +1854,7 @@ describe('update', () => {
           and: [
             { attr: 'email', eq: 'test' },
             { attr: 'transformedStr', eq: 'str' },
-            /**
-             * @debt feature "Can you apply Contains clauses to Set attributes?"
-             */
-            // { attr: 'transformedSet', contains: 'SET' }
+            { attr: 'transformedSet', contains: 'contained' },
             { attr: 'transformedMap.str', eq: 'map' },
             { attr: 'transformedRecord.key', eq: 'value' }
           ]
@@ -1884,22 +1881,24 @@ describe('update', () => {
     })
 
     expect(ConditionExpression).toBe(
-      '(#c_1 = :c_1) AND (#c_2 = :c_2) AND (#c_3.#c_4 = :c_3) AND (#c_5.#c_6 = :c_4)'
+      '(#c_1 = :c_1) AND (#c_2 = :c_2) AND (contains(#c_3, :c_3)) AND (#c_4.#c_5 = :c_4) AND (#c_6.#c_7 = :c_5)'
     )
     expect(ExpressionAttributeNames).toMatchObject({
       '#c_1': 'pk',
       '#c_2': 'transformedStr',
-      '#c_3': 'transformedMap',
-      '#c_4': 'str',
-      '#c_5': 'transformedRecord',
-      '#c_6': 'RECORD_KEY#key'
+      '#c_3': 'transformedSet',
+      '#c_4': 'transformedMap',
+      '#c_5': 'str',
+      '#c_6': 'transformedRecord',
+      '#c_7': 'RECORD_KEY#key'
     })
     expect(ExpressionAttributeValues).toMatchObject({
       ':a_1': new Set(['SET#set']),
       ':c_1': 'EMAIL#test',
       ':c_2': 'STR#str',
-      ':c_3': 'MAP#map',
-      ':c_4': 'RECORD_VALUE#value'
+      ':c_3': 'SET#contained',
+      ':c_4': 'MAP#map',
+      ':c_5': 'RECORD_VALUE#value'
     })
   })
 

@@ -1,4 +1,5 @@
-import { anyOf, list, map, number, string } from '~/attributes/index.js'
+import { anyOf, list, map, number, record, string } from '~/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { schema } from '~/schema/index.js'
 
 import { ConditionParser } from '../conditionParser.js'
@@ -120,6 +121,79 @@ describe('parseCondition', () => {
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
         ExpressionAttributeNames: { '#c_1': 'anyOf', '#c_2': 'strOrNum' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+    })
+  })
+
+  describe('special chars', () => {
+    const schemaWithSpecChars = schema({
+      record: record(string(), string()),
+      map: map({ '[': string(), ']': string(), '.': string() })
+    })
+
+    test('fails when not escaping special chars', () => {
+      const invalidCallA = () =>
+        schemaWithSpecChars.build(ConditionParser).parse({ attr: 'record.[', beginsWith: 'foo' })
+
+      expect(invalidCallA).toThrow(DynamoDBToolboxError)
+      expect(invalidCallA).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+
+      const invalidCallB = () =>
+        schemaWithSpecChars.build(ConditionParser).parse({ attr: 'map.[', beginsWith: 'foo' })
+
+      expect(invalidCallB).toThrow(DynamoDBToolboxError)
+      expect(invalidCallB).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+    })
+
+    test('correctly parses condition with escaped keys (record)', () => {
+      expect(
+        schemaWithSpecChars
+          .build(ConditionParser)
+          .parse({ attr: `record['[']`, beginsWith: 'foo' })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'record', '#c_2': '[' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+    })
+
+    test('correctly parses condition with escaped keys (map)', () => {
+      expect(
+        schemaWithSpecChars
+          .build(ConditionParser)
+          .parse({ attr: `map['[']`, beginsWith: 'foo' })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'map', '#c_2': '[' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+
+      expect(
+        schemaWithSpecChars
+          .build(ConditionParser)
+          .parse({ attr: `map[']']`, beginsWith: 'foo' })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'map', '#c_2': ']' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+
+      expect(
+        schemaWithSpecChars
+          .build(ConditionParser)
+          .parse({ attr: `map['.']`, beginsWith: 'foo' })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'map', '#c_2': '.' },
         ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })

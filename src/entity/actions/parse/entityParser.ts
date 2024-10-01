@@ -57,7 +57,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
   ): {
     parsedItem: ParsedItem<
       ENTITY,
-      // TODO: Just use {} as default options
+      // TODO: Just use `{}` as default options
       Overwrite<FromEntityParsingOptions<OPTIONS>, { transform: false }>
     >
     item: ParsedItem<ENTITY, FromEntityParsingOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>

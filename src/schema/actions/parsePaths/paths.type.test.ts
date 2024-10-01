@@ -30,15 +30,15 @@ export const mySchema = schema({
   map: map({
     num: number(),
     stringList: list(string()),
-    map: map({
-      num: number()
-    })
+    map: map({ num: number() })
   }),
   record: record(string().enum('foo', 'bar'), map({ num: number() })),
+  dict: record(string(), string()),
   union: anyOf(map({ str: string() }), map({ num: number() }))
 })
 
 export type ATTRIBUTE_PATHS = Paths<typeof mySchema>
+
 const assertAttributePaths: A.Equals<
   | 'parentId'
   | 'childId'
@@ -53,19 +53,17 @@ const assertAttributePaths: A.Equals<
   | `stringList[${number}]`
   | 'mapList'
   | `mapList[${number}]`
-  | `mapList[${number}].num`
+  | `mapList[${number}]${'.num' | `['num']`}`
   | 'map'
-  | `map.num`
-  | `map.stringList`
-  | `map.stringList[${number}]`
-  | `map.map`
-  | `map.map.num`
+  | `map${'.num' | `['num']`}`
+  | `map${'.stringList' | `['stringList']`}${'' | `[${number}]`}`
+  | `map${'.map' | `['map']`}${'' | '.num' | `['num']`}`
   | 'record'
-  | `record.${'foo' | 'bar'}`
-  | `record.${'foo' | 'bar'}.num`
+  | `record${'.foo' | '.bar' | `['foo']` | `['bar']`}${'' | '.num' | `['num']`}`
+  | 'dict'
+  | `dict${`.${string}` | `['${string}']`}`
   | 'union'
-  | 'union.str'
-  | 'union.num',
+  | `union${'.str' | `['str']` | '.num' | `['num']`}`,
   ATTRIBUTE_PATHS
 > = 1
 assertAttributePaths

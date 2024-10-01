@@ -4,6 +4,7 @@ import { NumberAttribute } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
+import { combineRegExp } from '~/utils/combineRegExp.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
@@ -49,7 +50,12 @@ const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDB
     payload: { attributePath }
   })
 
-const isListAccessor = (accessor: string): accessor is `[${number}]` => /\[\d+\]/g.test(accessor)
+const listIndexRegex = /\[(\d+)\]/g
+const escapedStrRegex = /\['(.+)'\]/g
+const regularStrRegex = /[\w#-]+(?=(\.|\[|$))/g
+const pathRegex = combineRegExp(listIndexRegex, escapedStrRegex, regularStrRegex)
+
+type MatchType = 'regularStr' | 'escapedStr' | 'listIndex'
 
 export const appendAttributePath = (
   parser: ExpressionParser,
@@ -61,30 +67,42 @@ export const appendAttributePath = (
   const expressionAttributePrefix = parser.expressionAttributePrefix
   let parentAttribute: Schema | Attribute = parser.schema
   let expressionPath = ''
-  let attributeMatches = [...attributePath.matchAll(/\[(\d+)\]|[\w#-]+(?=(\.|$|\[))/g)]
+  let attributeMatches = [...attributePath.matchAll(pathRegex)]
+  let attributePathTail: string | undefined
 
   while (attributeMatches.length > 0) {
     const attributeMatch = attributeMatches.shift() as RegExpMatchArray
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const childAttributeAccessor = attributeMatch[0]!
+
+    // NOTE: Order of those matches follows those of combined regExps above
+    const [match, listIndexMatch, escapedStrMatch, tail] = attributeMatch
+    attributePathTail = tail
+
+    const matchedKey: string = escapedStrMatch ?? listIndexMatch ?? match
+    const matchType: MatchType =
+      escapedStrMatch !== undefined
+        ? 'escapedStr'
+        : listIndexMatch !== undefined
+          ? 'listIndex'
+          : 'regularStr'
 
     switch (parentAttribute.type) {
       case 'any': {
-        const isChildAttributeInList = isListAccessor(childAttributeAccessor)
-
-        if (isChildAttributeInList) {
-          expressionPath += childAttributeAccessor
-        } else {
-          const expressionAttributeNameIndex =
-            parser.expressionAttributeNames.push(childAttributeAccessor)
-          expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+        switch (matchType) {
+          case 'listIndex': {
+            expressionPath += `[${matchedKey}]`
+            break
+          }
+          default: {
+            const expressionAttributeNameIndex = parser.expressionAttributeNames.push(matchedKey)
+            expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+          }
         }
 
         parentAttribute = new AnyAttribute({
           ...defaultAnyAttribute,
-          path: [parentAttribute.path, childAttributeAccessor]
+          path: [parentAttribute.path, match]
             .filter(Boolean)
-            .join(isChildAttributeInList ? '' : '.')
+            .join(matchType === 'regularStr' ? '.' : '')
         })
         break
       }
@@ -97,14 +115,9 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttribute.keys
-        const keyParser = new Parser(keyAttribute).start(childAttributeAccessor, {
-          fill: false,
-          transform: true
-        })
-        keyParser.next() // parsed
-        const transformedKey = keyParser.next().value as string
+        const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false })
 
-        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(transformedKey)
+        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
         expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
 
         parentAttribute = parentAttribute.elements
@@ -112,29 +125,28 @@ export const appendAttributePath = (
       }
       case 'schema':
       case 'map': {
-        const childAttribute = parentAttribute.attributes[childAttributeAccessor]
+        const childAttribute = parentAttribute.attributes[matchedKey]
         if (!childAttribute) {
           throw getInvalidExpressionAttributePathError(attributePath)
         }
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          childAttribute.savedAs ?? childAttributeAccessor
+          childAttribute.savedAs ?? matchedKey
         )
+
         expressionPath +=
           parentAttribute.type === 'schema'
             ? `#${expressionAttributePrefix}${expressionAttributeNameIndex}`
             : `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
-
         parentAttribute = childAttribute
         break
       }
       case 'list': {
-        if (!isListAccessor(childAttributeAccessor)) {
+        if (matchType !== 'listIndex') {
           throw getInvalidExpressionAttributePathError(attributePath)
         }
 
-        expressionPath += childAttributeAccessor
-
+        expressionPath += match
         parentAttribute = parentAttribute.elements
         break
       }
@@ -149,6 +161,7 @@ export const appendAttributePath = (
             elementExpressionParser.resetExpression()
             parentAttribute = elementExpressionParser.appendAttributePath(subPath, options)
             validElementExpressionParser = elementExpressionParser
+            break
             /* eslint-disable no-empty */
           } catch {}
         }
@@ -167,7 +180,10 @@ export const appendAttributePath = (
     }
   }
 
-  if (parentAttribute.type === 'schema') {
+  if (
+    parentAttribute.type === 'schema' ||
+    (attributePathTail !== undefined && attributePathTail.length > 0)
+  ) {
     throw getInvalidExpressionAttributePathError(attributePath)
   }
 

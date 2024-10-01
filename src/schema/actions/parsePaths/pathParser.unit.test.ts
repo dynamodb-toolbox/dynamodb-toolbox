@@ -1,4 +1,5 @@
-import { anyOf, list, map, number, string } from '~/attributes/index.js'
+import { anyOf, list, map, number, record, string } from '~/attributes/index.js'
+import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { schema } from '~/schema/index.js'
 
 import { PathParser } from './pathParser.js'
@@ -88,6 +89,67 @@ describe('parseProjection', () => {
       ).toStrictEqual({
         ProjectionExpression: '#p_1.#p_2',
         ExpressionAttributeNames: { '#p_1': 'anyOf', '#p_2': '_n' }
+      })
+    })
+  })
+
+  describe('special char keys', () => {
+    const schemaWithRec = schema({
+      record: record(string(), string()),
+      map: map({
+        '[': string(),
+        ']': string(),
+        '.': string()
+      })
+    })
+
+    test('rejects unescaped chars', () => {
+      const invalidCall = () =>
+        schemaWithRec.build(PathParser).parse(['record.[.]']).toCommandOptions()
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+    })
+
+    test('correctly parses escaped record keys', () => {
+      expect(
+        schemaWithRec.build(PathParser).parse(["record['[']"]).toCommandOptions()
+      ).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'record', '#p_2': '[' }
+      })
+
+      expect(
+        schemaWithRec.build(PathParser).parse(["record[']']"]).toCommandOptions()
+      ).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'record', '#p_2': ']' }
+      })
+
+      expect(
+        schemaWithRec.build(PathParser).parse(["record['.']"]).toCommandOptions()
+      ).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'record', '#p_2': '.' }
+      })
+    })
+
+    test('correctly parses escaped map keys', () => {
+      expect(schemaWithRec.build(PathParser).parse(["map['[']"]).toCommandOptions()).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'map', '#p_2': '[' }
+      })
+
+      expect(schemaWithRec.build(PathParser).parse(["map[']']"]).toCommandOptions()).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'map', '#p_2': ']' }
+      })
+
+      expect(schemaWithRec.build(PathParser).parse(["map['.']"]).toCommandOptions()).toStrictEqual({
+        ProjectionExpression: '#p_1.#p_2',
+        ExpressionAttributeNames: { '#p_1': 'map', '#p_2': '.' }
       })
     })
   })

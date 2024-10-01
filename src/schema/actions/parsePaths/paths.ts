@@ -9,6 +9,15 @@ import type {
   SetAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
+import type { Extends } from '~/types/extends.js'
+import type { If } from '~/types/if.js'
+
+type CharsToEscape = '[' | ']' | '.'
+type StringToEscape = `${string}${CharsToEscape}${string}`
+
+export type AppendKey<PATH extends string, KEY extends string> =
+  | `${PATH}['${KEY}']`
+  | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
 
 type AnyAttrPaths<
   ATTRIBUTE extends AnyAttribute,
@@ -33,21 +42,19 @@ type MapAttrPaths<
   ? string
   : {
       [KEY in keyof ATTRIBUTE['attributes'] & string]:
-        | `${ATTRIBUTE_PATH}.${KEY}`
-        | AttrPaths<ATTRIBUTE['attributes'][KEY], `${ATTRIBUTE_PATH}.${KEY}`>
+        | AppendKey<ATTRIBUTE_PATH, KEY>
+        | AttrPaths<ATTRIBUTE['attributes'][KEY], AppendKey<ATTRIBUTE_PATH, KEY>>
     }[keyof ATTRIBUTE['attributes'] & string]
 
 type RecordAttrPaths<
   ATTRIBUTE extends RecordAttribute,
-  ATTRIBUTE_PATH extends string = ''
+  ATTRIBUTE_PATH extends string = '',
+  RESOLVED_KEYS extends string = ResolveStringAttribute<ATTRIBUTE['keys']>
 > = RecordAttribute extends ATTRIBUTE
   ? string
   :
-      | `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`
-      | AttrPaths<
-          ATTRIBUTE['elements'],
-          `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`
-        >
+      | AppendKey<ATTRIBUTE_PATH, RESOLVED_KEYS>
+      | AttrPaths<ATTRIBUTE['elements'], AppendKey<ATTRIBUTE_PATH, RESOLVED_KEYS>>
 
 type AnyOfAttrPaths<
   ATTRIBUTE extends AnyOfAttribute,
