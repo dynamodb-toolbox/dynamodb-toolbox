@@ -570,5 +570,8 @@
         "default": "./dist/cjs/errors/index.js"
       }
     }
+  },
+  "dependencies": {
+    "hotscript": "^1.0.13"
   }
 }

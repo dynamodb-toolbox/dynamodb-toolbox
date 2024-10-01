@@ -1,4 +1,5 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
+import type { Transformer } from '../primitive/types.js'
 import type { Validator } from '../types/validator.js'
 
 // Note: May look like a duplicate of NumberAttributeState but actually adds JSDocs
@@ -30,7 +31,7 @@ export type NumberAttributeOptions = {
    * Allow BigInts
    */
   big: boolean
-  transform: undefined | unknown
+  transform: undefined | Transformer<number | bigint>
   /**
    * Provide default values for attribute
    */

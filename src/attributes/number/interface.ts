@@ -169,23 +169,13 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    *
    * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  transform(
-    transformer: Transformer<
-      Extract<
-        If<
-          STATE['key'],
-          ParserInput<
-            FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-            { mode: 'key'; fill: false }
-          >,
-          ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
-        >,
-        ResolvedNumberAttribute
-      >,
-      ResolvedNumberAttribute
+  transform<
+    TRANSFORMER extends Transformer<
+      ResolvedNumberAttribute,
+      ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
     >
-  ): $NumberAttribute<Overwrite<STATE, { transform: unknown }>> {
-    return new $NumberAttribute(overwrite(this[$state], { transform: transformer as unknown }))
+  >(transform: TRANSFORMER): $NumberAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $NumberAttribute(overwrite(this[$state], { transform }))
   }
 
   /**

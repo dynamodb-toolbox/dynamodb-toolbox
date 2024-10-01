@@ -1,32 +1,42 @@
-import { $transformerId } from '~/attributes/primitive/constants.js'
+import type { Strings } from 'hotscript'
+
+import { $transformerId, $typeModifier } from '~/attributes/primitive/constants.js'
 import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
 
-class Prefixer
+interface PrefixerOptions<DELIMITER extends string> {
+  delimiter?: DELIMITER
+}
+
+class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   implements
     JSONizableTransformer<
-      { transformerId: 'prefix'; prefix: string; delimiter: string },
       string,
-      string
+      string,
+      string,
+      Strings.Prepend<`${PREFIX}${DELIMITER}`>,
+      { transformerId: 'prefix'; prefix: PREFIX; delimiter: DELIMITER }
     >
 {
+  // @ts-expect-error
+  [$typeModifier]: Strings.Prepend<`${PREFIX}${DELIMITER}`>;
   [$transformerId]: 'prefix'
-  prefix: string
-  delimiter: string
+  prefix: PREFIX
+  delimiter: DELIMITER
 
-  constructor(prefix: string, { delimiter = '#' }: { delimiter?: string } = {}) {
+  constructor(prefix: PREFIX, { delimiter = '#' as DELIMITER }: PrefixerOptions<DELIMITER> = {}) {
     this[$transformerId] = 'prefix'
     this.prefix = prefix
     this.delimiter = delimiter
   }
 
-  parse(inputValue: string): string {
-    return [this.prefix, inputValue].join(this.delimiter)
+  parse(formatted: string): string {
+    return [this.prefix, formatted].join(this.delimiter)
   }
 
-  format(savedValue: string): string {
-    return savedValue.startsWith([this.prefix, ''].join(this.delimiter))
-      ? savedValue.slice(this.prefix.length + this.delimiter.length)
-      : savedValue
+  format(transformed: string): string {
+    return transformed.startsWith([this.prefix, ''].join(this.delimiter))
+      ? transformed.slice(this.prefix.length + this.delimiter.length)
+      : transformed
   }
 
   jsonize() {
@@ -38,4 +48,7 @@ class Prefixer
   }
 }
 
-export const prefix = (...args: ConstructorParameters<typeof Prefixer>) => new Prefixer(...args)
+export const prefix = <PREFIX extends string, DELIMITER extends string = '#'>(
+  prefix: PREFIX,
+  { delimiter = '#' as DELIMITER }: PrefixerOptions<DELIMITER> = {}
+) => new Prefixer<PREFIX, DELIMITER>(prefix, { delimiter })

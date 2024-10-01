@@ -1,4 +1,5 @@
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
+import type { Transformer } from '../primitive/types.js'
 import type { Validator } from '../types/validator.js'
 
 // Note: May look like a duplicate of BooleanAttributeState but actually adds JSDocs
@@ -26,7 +27,7 @@ export type BooleanAttributeOptions = {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
-  transform: undefined | unknown
+  transform: undefined | Transformer<boolean>
   /**
    * Provide default values for attribute
    */
