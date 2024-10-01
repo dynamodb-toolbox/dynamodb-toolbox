@@ -19,7 +19,7 @@ import type {
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { AppendKey, Paths } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 
 export type AnyAttrCondition<
@@ -150,12 +150,12 @@ type MapAttrCondition<
   MapAttribute extends ATTRIBUTE
     ? never
     : {
-        [KEY in keyof ATTRIBUTE['attributes']]: AttrCondition<
-          `${ATTRIBUTE_PATH}.${Extract<KEY, string>}`,
+        [KEY in keyof ATTRIBUTE['attributes'] & string]: AttrCondition<
+          AppendKey<ATTRIBUTE_PATH, KEY>,
           ATTRIBUTE['attributes'][KEY],
           COMPARED_ATTRIBUTE_PATH
         >
-      }[keyof ATTRIBUTE['attributes']]
+      }[keyof ATTRIBUTE['attributes'] & string]
 
 type RecordAttrCondition<
   ATTRIBUTE_PATH extends string,
@@ -166,7 +166,7 @@ type RecordAttrCondition<
   RecordAttribute extends ATTRIBUTE
     ? never
     : AttrCondition<
-        `${ATTRIBUTE_PATH}.${ResolveStringAttribute<ATTRIBUTE['keys']>}`,
+        AppendKey<ATTRIBUTE_PATH, ResolveStringAttribute<ATTRIBUTE['keys']>>,
         ATTRIBUTE['elements'],
         COMPARED_ATTRIBUTE_PATH
       >

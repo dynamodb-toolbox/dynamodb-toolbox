@@ -87,9 +87,17 @@ import type {
 } from 'dynamodb-toolbox/entity/actions/parsePaths'
 
 type PokemonPath = Path<typeof PokemonEntity>
+
 const namePath: PokemonPath = 'name'
-const mapChildPath: PokemonPath = 'weaknesses.fire'
-const listElementPath: PokemonPath = 'pokeTypes[0]'
+
+const deepListPath: PokemonPath = 'pokeTypes[0]'
+
+const deepMapOrRecordPath: PokemonPath = 'weaknesses.fire'
+// 👇 Similar to
+const deepMapOrRecordPath: PokemonPath = `weaknesses['fire']`
+
+// 👇 Use this syntax to escape special chars (e.g. in `records`)
+const deepRecordPath: PokemonPath = `meta['any[char]-you.want!']`
 
 // Path common to both entities
 type PokemonAndTrainerPath = PathIntersection<

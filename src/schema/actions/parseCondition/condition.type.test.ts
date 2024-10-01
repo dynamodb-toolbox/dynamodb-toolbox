@@ -157,9 +157,21 @@ type MAP_CONDITION = AttrCondition<'map', ATTRIBUTES['map'], ATTRIBUTE_PATHS>
 const assertMapCondition: A.Equals<
   MAP_CONDITION,
   | BaseAttrCondition<'map'>
-  | AttrCondition<`map.num`, ATTRIBUTES['map']['attributes']['num'], ATTRIBUTE_PATHS>
-  | AttrCondition<`map.stringList`, ATTRIBUTES['map']['attributes']['stringList'], ATTRIBUTE_PATHS>
-  | AttrCondition<`map.map`, ATTRIBUTES['map']['attributes']['map'], ATTRIBUTE_PATHS>
+  | AttrCondition<
+      `map${'.num' | `['num']`}`,
+      ATTRIBUTES['map']['attributes']['num'],
+      ATTRIBUTE_PATHS
+    >
+  | AttrCondition<
+      `map${'.stringList' | `['stringList']`}`,
+      ATTRIBUTES['map']['attributes']['stringList'],
+      ATTRIBUTE_PATHS
+    >
+  | AttrCondition<
+      `map${'.map' | `['map']`}`,
+      ATTRIBUTES['map']['attributes']['map'],
+      ATTRIBUTE_PATHS
+    >
 > = 1
 assertMapCondition
 
@@ -167,9 +179,25 @@ type RECORD_CONDITION = AttrCondition<'record', ATTRIBUTES['record'], ATTRIBUTE_
 const assertRecordCondition: A.Equals<
   RECORD_CONDITION,
   | BaseAttrCondition<'record'>
-  | AttrCondition<'record.foo' | 'record.bar', ATTRIBUTES['record']['elements'], ATTRIBUTE_PATHS>
+  | AttrCondition<
+      `record${'.foo' | `['foo']` | '.bar' | `['bar']`}`,
+      ATTRIBUTES['record']['elements'],
+      ATTRIBUTE_PATHS
+    >
 > = 1
 assertRecordCondition
+
+type DICT_CONDITION = AttrCondition<'dict', ATTRIBUTES['dict'], ATTRIBUTE_PATHS>
+const assertDictCondition: A.Equals<
+  DICT_CONDITION,
+  | BaseAttrCondition<'dict'>
+  | AttrCondition<
+      `dict${`.${string}` | `['${string}']`}`,
+      ATTRIBUTES['dict']['elements'],
+      ATTRIBUTE_PATHS
+    >
+> = 1
+assertDictCondition
 
 type UNION_CONDITION = AttrCondition<'union', ATTRIBUTES['union'], ATTRIBUTE_PATHS>
 const assertUnionCondition: A.Equals<
