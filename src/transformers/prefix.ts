@@ -6,7 +6,7 @@ interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
 }
 
-class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
+export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   implements
     JSONizableTransformer<
       string,
@@ -47,7 +47,12 @@ class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   }
 }
 
-export const prefix = <PREFIX extends string, DELIMITER extends string = '#'>(
+type Prefix = <PREFIX extends string, DELIMITER extends string = '#'>(
+  prefix: PREFIX,
+  options?: PrefixerOptions<DELIMITER>
+) => Prefixer<PREFIX, DELIMITER>
+
+export const prefix: Prefix = <PREFIX extends string, DELIMITER extends string = '#'>(
   prefix: PREFIX,
   { delimiter = '#' as DELIMITER }: PrefixerOptions<DELIMITER> = {}
 ) => new Prefixer<PREFIX, DELIMITER>(prefix, { delimiter })
