@@ -7,7 +7,7 @@ title: Usage
 Transformers allow modifying a primitive attribute value during the [transformation step](../16-actions/1-parse.md):
 
 ```ts
-import type { Transformer } from 'dynamodb-toolbox/transformers'
+import type { Transformer } from 'dynamodb-toolbox/transformers/prefix'
 
 const PREFIX = 'POKEMON#'
 

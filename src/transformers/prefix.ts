@@ -1,7 +1,6 @@
 import type { Strings } from 'hotscript'
 
-import { $transformerId, $typeModifier } from '~/attributes/primitive/constants.js'
-import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
+import type { JSONizableTransformer } from './transformer.js'
 
 interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
@@ -18,13 +17,13 @@ class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
     >
 {
   // @ts-expect-error
-  [$typeModifier]: Strings.Prepend<`${PREFIX}${DELIMITER}`>;
-  [$transformerId]: 'prefix'
+  _typeModifier: Strings.Prepend<`${PREFIX}${DELIMITER}`>
+  transformerId: 'prefix'
   prefix: PREFIX
   delimiter: DELIMITER
 
   constructor(prefix: PREFIX, { delimiter = '#' as DELIMITER }: PrefixerOptions<DELIMITER> = {}) {
-    this[$transformerId] = 'prefix'
+    this.transformerId = 'prefix'
     this.prefix = prefix
     this.delimiter = delimiter
   }
@@ -41,7 +40,7 @@ class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
 
   jsonize() {
     return {
-      transformerId: this[$transformerId],
+      transformerId: this.transformerId,
       prefix: this.prefix,
       delimiter: this.delimiter
     }

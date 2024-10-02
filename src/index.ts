@@ -169,4 +169,10 @@ export { EntitySpy } from './entity/actions/spy/index.js'
 export { DynamoDBToolboxError } from './errors/index.js'
 
 // transformers
+export type {
+  Transformer,
+  TypedTransformer,
+  JSONizableTransformer,
+  TypeModifier
+} from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'
