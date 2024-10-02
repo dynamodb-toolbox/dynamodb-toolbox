@@ -1,3 +1,6 @@
+export const sanitize = (str: string): string =>
+  str.replace(/\\/g, '\\\\').replace(/[-[\]/{}()*+?.^$|]/g, '\\$&')
+
 export const matchProjection = (
   attributeNameRegex: RegExp,
   projectedAttributes?: string[]

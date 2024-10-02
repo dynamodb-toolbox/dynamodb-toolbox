@@ -49,10 +49,7 @@ export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be a ${type}.`,
       path: path,
-      payload: {
-        received: rawValue,
-        expected: type
-      }
+      payload: { received: rawValue, expected: type }
     })
   }
 

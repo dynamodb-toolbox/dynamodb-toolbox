@@ -41,29 +41,32 @@ export type ATTRIBUTE_PATHS = Paths<typeof mySchema>
 
 const assertAttributePaths: A.Equals<
   | 'parentId'
+  | `['parentId']`
   | 'childId'
-  | 'any'
-  | `any${string}`
+  | `['childId']`
+  | `${'any' | `['any']`}${string}`
   | 'const'
+  | `['const']`
   | 'num'
+  | `['num']`
   | 'bool'
+  | `['bool']`
   | 'bin'
+  | `['bin']`
   | 'stringSet'
-  | 'stringList'
-  | `stringList[${number}]`
+  | `['stringSet']`
+  | `${'stringList' | `['stringList']`}${'' | `[${number}]`}`
   | 'mapList'
-  | `mapList[${number}]`
-  | `mapList[${number}]${'.num' | `['num']`}`
-  | 'map'
-  | `map${'.num' | `['num']`}`
-  | `map${'.stringList' | `['stringList']`}${'' | `[${number}]`}`
-  | `map${'.map' | `['map']`}${'' | '.num' | `['num']`}`
+  | `['mapList']`
+  | `${'mapList' | `['mapList']`}[${number}]${'' | '.num' | `['num']`}`
+  | `${'map' | `['map']`}${'' | '.num' | `['num']`}`
+  | `${'map' | `['map']`}${'.stringList' | `['stringList']`}${'' | `[${number}]`}`
+  | `${'map' | `['map']`}${'.map' | `['map']`}${'' | '.num' | `['num']`}`
   | 'record'
-  | `record${'.foo' | '.bar' | `['foo']` | `['bar']`}${'' | '.num' | `['num']`}`
-  | 'dict'
-  | `dict${`.${string}` | `['${string}']`}`
-  | 'union'
-  | `union${'.str' | `['str']` | '.num' | `['num']`}`,
+  | `['record']`
+  | `${'record' | `['record']`}${'.foo' | '.bar' | `['foo']` | `['bar']`}${'' | '.num' | `['num']`}`
+  | `${'dict' | `['dict']`}${'' | `.${string}` | `['${string}']`}`
+  | `${'union' | `['union']`}${'' | '.str' | `['str']` | '.num' | `['num']`}`,
   ATTRIBUTE_PATHS
 > = 1
 assertAttributePaths

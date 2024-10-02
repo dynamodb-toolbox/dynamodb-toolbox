@@ -14,6 +14,7 @@ import type {
   FromFormatOptions,
   MatchKeys
 } from './types.js'
+import { sanitize } from './utils.js'
 import { matchProjection } from './utils.js'
 
 export type RecordAttrFormattedValue<
@@ -78,10 +79,7 @@ export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be a ${type}.`,
       path,
-      payload: {
-        received: rawValue,
-        expected: type
-      }
+      payload: { received: rawValue, expected: type }
     })
   }
 
@@ -90,8 +88,12 @@ export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
   Object.entries(rawValue).forEach(([key, element]) => {
     const parsedKey = formatPrimitiveAttrRawValue(attribute.keys, key) as string
 
+    const sanitizedKey = sanitize(parsedKey)
     // We don't need isProjected: We used the saved value key so we know it is
-    const { childrenAttributes } = matchProjection(new RegExp('^\\.' + parsedKey), attributes)
+    const { childrenAttributes } = matchProjection(
+      new RegExp(`^\\.${sanitizedKey}|^\\['${sanitizedKey}']`),
+      attributes
+    )
 
     const formattedAttribute = formatAttrRawValue(attribute.elements, element, {
       attributes: childrenAttributes,

@@ -15,7 +15,7 @@ import type {
   FromFormatOptions,
   MatchKeys
 } from './types.js'
-import { matchProjection } from './utils.js'
+import { matchProjection, sanitize } from './utils.js'
 
 export type SchemaFormattedValue<
   SCHEMA extends Schema,
@@ -95,10 +95,7 @@ export const formatSchemaRawValue: SchemaRawValueFormatter = <
   if (!isObject(rawValue)) {
     throw new DynamoDBToolboxError('formatter.invalidItem', {
       message: 'Invalid item detected while formatting. Should be an object.',
-      payload: {
-        received: rawValue,
-        expected: 'Object'
-      }
+      payload: { received: rawValue, expected: 'Object' }
     })
   }
 
@@ -109,8 +106,9 @@ export const formatSchemaRawValue: SchemaRawValueFormatter = <
       return
     }
 
+    const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
-      new RegExp('^' + attributeName),
+      new RegExp(`^${sanitizedAttributeName}|^\\['${sanitizedAttributeName}']`),
       attributes
     )
 

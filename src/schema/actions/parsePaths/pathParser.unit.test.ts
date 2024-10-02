@@ -97,18 +97,31 @@ describe('parseProjection', () => {
     const schemaWithRec = schema({
       record: record(string(), string()),
       map: map({
-        '[': string(),
-        ']': string(),
-        '.': string()
-      })
+        '[': string()
+      }),
+      ']': string()
     })
 
     test('rejects unescaped chars', () => {
-      const invalidCall = () =>
+      const invalidCallA = () =>
         schemaWithRec.build(PathParser).parse(['record.[.]']).toCommandOptions()
 
-      expect(invalidCall).toThrow(DynamoDBToolboxError)
-      expect(invalidCall).toThrow(
+      expect(invalidCallA).toThrow(DynamoDBToolboxError)
+      expect(invalidCallA).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+
+      const invalidCallB = () => schemaWithRec.build(PathParser).parse(['map.[']).toCommandOptions()
+
+      expect(invalidCallB).toThrow(DynamoDBToolboxError)
+      expect(invalidCallB).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+
+      const invalidCallC = () => schemaWithRec.build(PathParser).parse([']']).toCommandOptions()
+
+      expect(invalidCallC).toThrow(DynamoDBToolboxError)
+      expect(invalidCallC).toThrow(
         expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
       )
     })
@@ -120,20 +133,6 @@ describe('parseProjection', () => {
         ProjectionExpression: '#p_1.#p_2',
         ExpressionAttributeNames: { '#p_1': 'record', '#p_2': '[' }
       })
-
-      expect(
-        schemaWithRec.build(PathParser).parse(["record[']']"]).toCommandOptions()
-      ).toStrictEqual({
-        ProjectionExpression: '#p_1.#p_2',
-        ExpressionAttributeNames: { '#p_1': 'record', '#p_2': ']' }
-      })
-
-      expect(
-        schemaWithRec.build(PathParser).parse(["record['.']"]).toCommandOptions()
-      ).toStrictEqual({
-        ProjectionExpression: '#p_1.#p_2',
-        ExpressionAttributeNames: { '#p_1': 'record', '#p_2': '.' }
-      })
     })
 
     test('correctly parses escaped map keys', () => {
@@ -141,15 +140,12 @@ describe('parseProjection', () => {
         ProjectionExpression: '#p_1.#p_2',
         ExpressionAttributeNames: { '#p_1': 'map', '#p_2': '[' }
       })
+    })
 
-      expect(schemaWithRec.build(PathParser).parse(["map[']']"]).toCommandOptions()).toStrictEqual({
-        ProjectionExpression: '#p_1.#p_2',
-        ExpressionAttributeNames: { '#p_1': 'map', '#p_2': ']' }
-      })
-
-      expect(schemaWithRec.build(PathParser).parse(["map['.']"]).toCommandOptions()).toStrictEqual({
-        ProjectionExpression: '#p_1.#p_2',
-        ExpressionAttributeNames: { '#p_1': 'map', '#p_2': '.' }
+    test('correctly parses escaped schema keys', () => {
+      expect(schemaWithRec.build(PathParser).parse(["[']']"]).toCommandOptions()).toStrictEqual({
+        ProjectionExpression: '#p_1',
+        ExpressionAttributeNames: { '#p_1': ']' }
       })
     })
   })

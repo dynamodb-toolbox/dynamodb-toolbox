@@ -64,10 +64,7 @@ export const formatListAttrRawValue: ListAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be a ${type}.`,
       path,
-      payload: {
-        received: rawValue,
-        expected: type
-      }
+      payload: { received: rawValue, expected: type }
     })
   }
 

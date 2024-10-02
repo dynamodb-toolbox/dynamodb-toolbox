@@ -36,7 +36,7 @@ export type MatchKeys<
 > = FILTERED_ATTRIBUTES extends string
   ? KEYS extends infer KEY
     ? KEY extends string
-      ? FILTERED_ATTRIBUTES extends `${KEY_PREFIX}${KEY}${string}`
+      ? FILTERED_ATTRIBUTES extends `['${KEY}']${string}` | `${KEY_PREFIX}${KEY}${string}`
         ? KEY
         : never
       : never

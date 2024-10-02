@@ -91,7 +91,14 @@ export type SchemaPaths<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
     ? ATTRIBUTE_PATH extends string
-      ? ATTRIBUTE_PATH | AttrPaths<SCHEMA['attributes'][ATTRIBUTE_PATH], ATTRIBUTE_PATH>
+      ?
+          | `['${ATTRIBUTE_PATH}']`
+          | If<Extends<ATTRIBUTE_PATH, StringToEscape>, never, ATTRIBUTE_PATH>
+          | AttrPaths<
+              SCHEMA['attributes'][ATTRIBUTE_PATH],
+              | `['${ATTRIBUTE_PATH}']`
+              | If<Extends<ATTRIBUTE_PATH, StringToEscape>, never, ATTRIBUTE_PATH>
+            >
       : never
     : never
 

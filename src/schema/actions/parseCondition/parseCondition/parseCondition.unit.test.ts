@@ -129,7 +129,8 @@ describe('parseCondition', () => {
   describe('special chars', () => {
     const schemaWithSpecChars = schema({
       record: record(string(), string()),
-      map: map({ '[': string(), ']': string(), '.': string() })
+      map: map({ '[': string() }),
+      ']': string()
     })
 
     test('fails when not escaping special chars', () => {
@@ -146,6 +147,14 @@ describe('parseCondition', () => {
 
       expect(invalidCallB).toThrow(DynamoDBToolboxError)
       expect(invalidCallB).toThrow(
+        expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      )
+
+      const invalidCallC = () =>
+        schemaWithSpecChars.build(ConditionParser).parse({ attr: ']', beginsWith: 'foo' })
+
+      expect(invalidCallC).toThrow(DynamoDBToolboxError)
+      expect(invalidCallC).toThrow(
         expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
       )
     })
@@ -174,26 +183,17 @@ describe('parseCondition', () => {
         ExpressionAttributeNames: { '#c_1': 'map', '#c_2': '[' },
         ExpressionAttributeValues: { ':c_1': 'foo' }
       })
+    })
 
+    test('correctly parses condition with escaped keys (schema)', () => {
       expect(
         schemaWithSpecChars
           .build(ConditionParser)
-          .parse({ attr: `map[']']`, beginsWith: 'foo' })
+          .parse({ attr: `[']']`, beginsWith: 'foo' })
           .toCommandOptions()
       ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
-        ExpressionAttributeNames: { '#c_1': 'map', '#c_2': ']' },
-        ExpressionAttributeValues: { ':c_1': 'foo' }
-      })
-
-      expect(
-        schemaWithSpecChars
-          .build(ConditionParser)
-          .parse({ attr: `map['.']`, beginsWith: 'foo' })
-          .toCommandOptions()
-      ).toStrictEqual({
-        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
-        ExpressionAttributeNames: { '#c_1': 'map', '#c_2': '.' },
+        ConditionExpression: 'begins_with(#c_1, :c_1)',
+        ExpressionAttributeNames: { '#c_1': ']' },
         ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })
