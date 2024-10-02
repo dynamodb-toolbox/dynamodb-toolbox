@@ -14,7 +14,7 @@ import type {
   FromFormatOptions,
   MatchKeys
 } from './types.js'
-import { matchProjection } from './utils.js'
+import { matchProjection, sanitize } from './utils.js'
 
 export type MapAttrFormattedValue<
   ATTRIBUTE extends MapAttribute,
@@ -110,10 +110,7 @@ export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }. Should be a ${type}.`,
       path,
-      payload: {
-        received: rawValue,
-        expected: type
-      }
+      payload: { received: rawValue, expected: type }
     })
   }
 
@@ -124,8 +121,9 @@ export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
       return
     }
 
+    const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
-      new RegExp('^\\.' + attributeName),
+      new RegExp(`^\\.${sanitizedAttributeName}|^\\['${sanitizedAttributeName}']`),
       attributes
     )
 

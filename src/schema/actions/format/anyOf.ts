@@ -86,9 +86,7 @@ export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
         path !== undefined ? `: '${path}'` : ''
       }.`,
       path,
-      payload: {
-        received: rawValue
-      }
+      payload: { received: rawValue }
     })
   }
 
