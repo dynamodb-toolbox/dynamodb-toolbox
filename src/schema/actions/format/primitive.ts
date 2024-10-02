@@ -1,9 +1,6 @@
-import type {
-  PrimitiveAttribute,
-  ResolvePrimitiveAttribute,
-  Transformer
-} from '~/attributes/index.js'
+import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Transformer } from '~/transformers/index.js'
 import type { If } from '~/types/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 

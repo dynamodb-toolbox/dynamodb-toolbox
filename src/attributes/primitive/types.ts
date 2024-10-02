@@ -1,5 +1,3 @@
-import type { Constant, Fn, Identity } from 'hotscript'
-
 import type {
   $BinaryAttribute,
   $BinaryAttributeNestedState,
@@ -44,7 +42,6 @@ import type {
   ResolvedStringAttribute,
   StringAttribute
 } from '../string/index.js'
-import type { $transformerId, $typeModifier } from './constants.js'
 
 export type $PrimitiveAttributeNestedState =
   | $NullAttributeNestedState
@@ -97,36 +94,3 @@ export type FreezePrimitiveAttribute<ATTRIBUTE extends $PrimitiveAttributeState>
   | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE> : never)
   | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE> : never)
   | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE> : never)
-
-export interface Transformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any
-> {
-  parse: (formatted: FORMATTED) => TRANSFORMED
-  format: (transformed: TRANSFORMED) => FORMATTED_CONSTRAINT
-}
-
-export interface TypedTransformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any,
-  TYPE_MODIFIER extends Fn = Identity
-> extends Transformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED> {
-  [$typeModifier]: TYPE_MODIFIER
-}
-
-export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends TypedTransformer
-  ? TRANSFORMER[$typeModifier]
-  : Constant<ReturnType<TRANSFORMER['parse']>>
-
-export interface JSONizableTransformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any,
-  TYPE_MODIFIER extends Fn = Fn,
-  JSONIZED extends { transformerId: string } & object = { transformerId: string } & object
-> extends TypedTransformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED, TYPE_MODIFIER> {
-  [$transformerId]: JSONIZED['transformerId']
-  jsonize: () => JSONIZED
-}

@@ -1,5 +1,6 @@
+import type { Transformer } from '~/transformers/index.js'
+
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
-import type { Transformer } from '../primitive/types.js'
 import type { Validator } from '../types/validator.js'
 
 // Note: May look like a duplicate of BinaryAttributeState but actually adds JSDocs

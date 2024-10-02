@@ -5,7 +5,5 @@ export type {
   PrimitiveAttribute,
   FreezePrimitiveAttribute,
   ResolvePrimitiveAttribute,
-  ResolvedPrimitiveAttribute,
-  Transformer,
-  TypeModifier
+  ResolvedPrimitiveAttribute
 } from './types.js'

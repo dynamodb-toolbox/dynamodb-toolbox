@@ -1,6 +1,5 @@
 import type { PrimitiveAttribute } from '~/attributes/index.js'
-import { $transformerId } from '~/attributes/primitive/constants.js'
-import type { JSONizableTransformer } from '~/attributes/primitive/types.js'
+import type { JSONizableTransformer } from '~/transformers/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -9,7 +8,7 @@ import type { JSONizedAttr } from '../schema/index.js'
 import { jsonizeDefaults } from './utils.js'
 
 const isJSONizableTransformer = (transformer: unknown): transformer is JSONizableTransformer =>
-  isObject(transformer) && $transformerId in transformer && 'jsonize' in transformer
+  isObject(transformer) && 'transformerId' in transformer && 'jsonize' in transformer
 
 /**
  * @debt feature "handle JSONizable defaults, links & validators"

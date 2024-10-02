@@ -210,6 +210,16 @@
         "default": "./dist/cjs/attributes/anyOf/index.js"
       }
     },
+    "./transformers": {
+      "import": {
+        "types": "./dist/esm/transformers/index.d.ts",
+        "default": "./dist/esm/transformers/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/index.d.ts",
+        "default": "./dist/cjs/transformers/index.js"
+      }
+    },
     "./transformers/prefix": {
       "import": {
         "types": "./dist/esm/transformers/prefix.d.ts",
