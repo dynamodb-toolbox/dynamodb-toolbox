@@ -35,7 +35,7 @@ const mySchema = schema({
 })
 
 // ❌ Raises a `parsing.customValidationFailed` error
-mySchema.build(Parser).parse('foo')
+mySchema.build(Parser).parse({ name: 'foo' })
 ```
 
 In case of invalid value, you can **return a `string`** to provide more context through the error message:
@@ -47,7 +47,7 @@ const mySchema = schema({
   )
 })
 
-mySchema.build(Parser).parse('foo')
+mySchema.build(Parser).parse({ name: 'foo' })
 // => ❌ Custom validation for attribute 'name' failed with message: Provide a longer name.
 ```
 
