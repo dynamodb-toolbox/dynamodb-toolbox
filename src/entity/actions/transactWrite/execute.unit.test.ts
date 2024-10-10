@@ -28,7 +28,7 @@ import {
   set,
   string
 } from '~/index.js'
-import type { ParsedItem, UpdateItemInput } from '~/index.js'
+import type { FullItem, UpdateItemInput } from '~/index.js'
 
 import { getCommandInput } from './execute.js'
 import { execute } from './index.js'
@@ -132,9 +132,9 @@ describe('execute', () => {
     const assertToolboxItems: A.Equals<
       typeof toolboxItems,
       [
-        ParsedItem<typeof TestEntity, { transform: false }>,
+        FullItem<typeof TestEntity>,
         undefined,
-        ParsedItem<typeof TestEntity2, { transform: false }>,
+        FullItem<typeof TestEntity2>,
         undefined,
         UpdateItemInput<typeof TestEntity, true>
       ]
@@ -190,8 +190,8 @@ describe('execute', () => {
       typeof toolboxItems,
       (
         | undefined
-        | ParsedItem<typeof TestEntity, { transform: false }>
-        | ParsedItem<typeof TestEntity2, { transform: false }>
+        | FullItem<typeof TestEntity>
+        | FullItem<typeof TestEntity2>
         | UpdateItemInput<typeof TestEntity, true>
       )[]
     > = 1
@@ -245,9 +245,9 @@ describe('execute', () => {
     const assertToolboxItems: A.Equals<
       typeof toolboxItems,
       [
-        ParsedItem<typeof TestEntity, { transform: false }>,
+        FullItem<typeof TestEntity>,
         UpdateItemInput<typeof TestEntity, true>,
-        ...ParsedItem<typeof TestEntity2, { transform: false }>[]
+        ...FullItem<typeof TestEntity2>[]
       ]
     > = 1
     assertToolboxItems

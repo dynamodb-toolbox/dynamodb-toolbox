@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { FullValue, Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -110,10 +109,7 @@ export class $AnyOfAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
-        FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
-      >
+      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -147,7 +143,7 @@ export class $AnyOfAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -217,11 +213,8 @@ export class $AnyOfAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
-        >,
-        ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+        FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
       >
     >
   ): $AnyOfAttribute<
@@ -272,11 +265,8 @@ export class $AnyOfAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
-      { mode: 'key'; fill: false }
-    >
+      keyInput: FullValue<SCHEMA, { mode: 'key' }>
+    ) => FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $AnyOfAttribute<
     Overwrite<
       STATE,
@@ -309,8 +299,8 @@ export class $AnyOfAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      putItemInput: FullValue<SCHEMA>
+    ) => FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
   ): $AnyOfAttribute<
     Overwrite<
       STATE,
@@ -380,18 +370,11 @@ export class $AnyOfAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<
-        FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
-      >,
-      ParserInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -441,9 +424,9 @@ export class $AnyOfAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
+      FullValue<
         FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false; defined: true }
+        { mode: 'key'; defined: true }
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
@@ -479,10 +462,7 @@ export class $AnyOfAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
-        FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-        { fill: false; defined: true }
-      >,
+      FullValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
   ): $AnyOfAttribute<
@@ -554,14 +534,11 @@ export class $AnyOfAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
+        FullValue<
           FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false; defined: true }
+          { mode: 'key'; defined: true }
         >,
-        ParserInput<
-          FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-          { fill: false; defined: true }
-        >
+        FullValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >

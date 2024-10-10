@@ -1,57 +1,25 @@
-import type { AnyAttribute, Attribute, Never } from '~/attributes/index.js'
+import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { OptionalizeUndefinableProperties } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, AttrParserInput } from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingDefaultOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 
-export type SchemaParsedValue<
-  SCHEMA extends Schema,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = Schema extends SCHEMA
-  ? { [KEY: string]: AttrParsedValue<Attribute, OPTIONS> }
-  : OptionalizeUndefinableProperties<
-      {
-        [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { key: true }>
-          : keyof SCHEMA['attributes'] & string as OPTIONS extends { transform: false }
-          ? KEY
-          : SCHEMA['attributes'][KEY] extends { savedAs: string }
-            ? SCHEMA['attributes'][KEY]['savedAs']
-            : KEY]: AttrParsedValue<SCHEMA['attributes'][KEY], OPTIONS>
-      },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
-    >
-
-export function* schemaParser<
-  SCHEMA extends Schema,
-  OPTIONS extends ParsingOptions = ParsingDefaultOptions
->(
+export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParsingOptions = {}>(
   schema: SCHEMA,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
-  ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
-> {
+): Generator<ParserYield<Schema, OPTIONS>, ParserReturn<Schema, OPTIONS>> {
   const { mode = 'put', fill = true, transform = true } = options
 
-  const parsers: Record<string, Generator<ParsedValue<Attribute, FromParsingOptions<OPTIONS>>>> = {}
-  let restEntries: [string, ParsedValue<Attribute, FromParsingOptions<OPTIONS>>][] = []
+  const parsers: Record<
+    string,
+    Generator<ParserYield<Attribute, OPTIONS>, ParserReturn<Attribute, OPTIONS>>
+  > = {}
+  let restEntries: [string, unknown][] = []
 
   const isInputValueObject = isObject(inputValue)
 
@@ -91,10 +59,10 @@ export function* schemaParser<
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as any
+      yield defaultedValue as ParserYield<Schema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as any
+      yield linkedValue as ParserYield<Schema, OPTIONS>
     }
   }
 
@@ -131,21 +99,3 @@ export function* schemaParser<
   )
   return transformedValue
 }
-
-export type SchemaParserInput<
-  SCHEMA extends Schema,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = Schema extends SCHEMA
-  ? { [KEY: string]: AttrParserInput<Attribute, Overwrite<OPTIONS, { defined: false }>> }
-  : OptionalizeUndefinableProperties<
-      {
-        [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { key: true }>
-          : keyof SCHEMA['attributes'] & string]: AttrParserInput<
-          SCHEMA['attributes'][KEY],
-          Overwrite<OPTIONS, { defined: false }>
-        >
-      },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
-    >

@@ -1,55 +1,21 @@
-import type { ExtendedValue, SetAttribute, SetAttributeElements } from '~/attributes/index.js'
+import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { If } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
 import { attrParser } from './attribute.js'
-import type {
-  AttrParsedValue,
-  AttrParserInput,
-  MustBeDefined,
-  MustBeProvided
-} from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export type SetAttrParsedValue<
-  ATTRIBUTE extends SetAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = SetAttribute extends ATTRIBUTE
-  ? Set<AttrParsedValue<SetAttribute['elements']>>
-  :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | Set<AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>
-
-export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends ParsingOptions>(
-  attribute: ATTRIBUTE,
+export function* setAttrParser<OPTIONS extends ParsingOptions = {}>(
+  attribute: SetAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  SetAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  SetAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-> {
-  type Parsed = SetAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
-
+): Generator<ParserYield<SetAttribute, OPTIONS>, ParserReturn<SetAttribute, OPTIONS>> {
   const { fill = true, transform = true } = options
 
-  const parsers: Generator<
-    ParsedValue<SetAttributeElements, FromParsingOptions<OPTIONS>>,
-    ParsedValue<SetAttributeElements, FromParsingOptions<OPTIONS>>,
-    ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-  >[] = []
+  const parsers: Generator<any, any>[] = []
 
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
@@ -61,16 +27,16 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   if (fill) {
     if (isInputValueSet) {
       const defaultedValue = new Set(parsers.map(parser => parser.next().value))
-      yield defaultedValue as Parsed
+      yield defaultedValue
 
       const linkedValue = new Set(parsers.map(parser => parser.next().value))
-      yield linkedValue as Parsed
+      yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as Parsed
+      yield defaultedValue as ParserYield<SetAttribute, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as Parsed
+      yield linkedValue as ParserYield<SetAttribute, OPTIONS>
     }
   }
 
@@ -93,24 +59,11 @@ export function* setAttrParser<ATTRIBUTE extends SetAttribute, OPTIONS extends P
   }
 
   if (transform) {
-    yield parsedValue as Parsed
+    yield parsedValue
   } else {
-    return parsedValue as Parsed
+    return parsedValue
   }
 
   const transformedValue = new Set(parsers.map(parser => parser.next().value))
-  return transformedValue as Parsed
+  return transformedValue
 }
-
-export type SetAttrParserInput<
-  ATTRIBUTE extends SetAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = SetAttribute extends ATTRIBUTE
-  ?
-      | undefined
-      | Set<AttrParserInput<SetAttribute['elements']>>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | Set<AttrParserInput<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'set'>

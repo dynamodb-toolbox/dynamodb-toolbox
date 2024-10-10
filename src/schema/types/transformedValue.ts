@@ -8,11 +8,8 @@ import type {
   Attribute,
   BinaryAttribute,
   BooleanAttribute,
-  ExtendedValue,
-  Extension,
   ListAttribute,
   MapAttribute,
-  Never,
   NullAttribute,
   NumberAttribute,
   PrimitiveAttribute,
@@ -29,50 +26,60 @@ import type {
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Transformer, TypeModifier } from '~/transformers/index.js'
-import type {
-  Extends,
-  If,
-  OptionalizeUndefinableProperties,
-  Overwrite,
-  SelectKeys
-} from '~/types/index.js'
+import type { Extends, If, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
-import type { ParsingMode } from './mode.js'
-
-interface TransformedValueOptions {
-  mode?: ParsingMode
-  extension?: Extension
-}
+import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type TransformedValue<
   SCHEMA extends Schema | Attribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends Schema
   ? SchemaTransformedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
     ? AttrTransformedValue<SCHEMA, OPTIONS>
     : never
 
+type MustBeDefined<
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends WriteValueOptions = {}
+> = OPTIONS extends { defined: true }
+  ? true
+  : OPTIONS extends { mode: 'update' | 'key' }
+    ? Extends<ATTRIBUTE, { required: Always }>
+    : Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
+
+type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteValueOptions = {}> = {
+  [KEY in keyof SCHEMA['attributes']]: If<
+    MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
+    never,
+    SCHEMA['attributes'][KEY] extends { savedAs: string }
+      ? SCHEMA['attributes'][KEY]['savedAs']
+      : KEY
+  >
+}[keyof SCHEMA['attributes']]
+
 type SchemaTransformedValue<
   SCHEMA extends Schema,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = Schema extends SCHEMA
-  ? { [KEY: string]: AttrTransformedValue<Attribute, OPTIONS> }
-  : OptionalizeUndefinableProperties<
+  ? { [KEY: string]: AttrTransformedValue<Attribute, Overwrite<OPTIONS, { defined: false }>> }
+  : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
           ? SelectKeys<SCHEMA['attributes'], { key: true }>
           : keyof SCHEMA['attributes'] as SCHEMA['attributes'][KEY] extends { savedAs: string }
           ? SCHEMA['attributes'][KEY]['savedAs']
-          : KEY]: AttrTransformedValue<SCHEMA['attributes'][KEY], OPTIONS>
+          : KEY]: AttrTransformedValue<
+          SCHEMA['attributes'][KEY],
+          Overwrite<OPTIONS, { defined: false }>
+        >
       },
-      // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-      SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: Never }>
+      OptionalKeys<SCHEMA, OPTIONS>
     >
 
 type AttrTransformedValue<
   ATTRIBUTE extends Attribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = Attribute extends ATTRIBUTE
   ? unknown
   :
@@ -86,38 +93,24 @@ type AttrTransformedValue<
       | (ATTRIBUTE extends RecordAttribute ? RecordAttrTransformedValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrTransformedValue<ATTRIBUTE, OPTIONS> : never)
 
-type MustBeDefined<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends TransformedValueOptions = {}
-> = OPTIONS extends { mode: 'update' | 'key' }
-  ? Extends<ATTRIBUTE, { required: Always }>
-  : Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
-
-type AttrExtendedTransformedValue<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends TransformedValueOptions = {}
-> = OPTIONS extends { extension: Extension }
-  ? ExtendedValue<OPTIONS['extension'], ATTRIBUTE['type']>
-  : never
-
 type AnyAttrTransformedValue<
   ATTRIBUTE extends AnyAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = AnyAttribute extends ATTRIBUTE
   ? unknown
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | ATTRIBUTE['castAs']
 
 type PrimitiveAttrTransformedValue<
   ATTRIBUTE extends PrimitiveAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = PrimitiveAttribute extends ATTRIBUTE
-  ? undefined | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS> | ResolvedPrimitiveAttribute
+  ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | ResolvedPrimitiveAttribute
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | (ATTRIBUTE extends { transform: Transformer }
           ?
               | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
@@ -145,33 +138,52 @@ type PrimitiveAttrTransformedValue<
 
 type SetAttrTransformedValue<
   ATTRIBUTE extends SetAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = SetAttribute extends ATTRIBUTE
-  ? Set<AttrTransformedValue<SetAttribute['elements'], Overwrite<OPTIONS, { mode: 'put' }>>>
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | Set<
+          AttrTransformedValue<
+            SetAttribute['elements'],
+            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
+          >
+        >
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
-      | Set<AttrTransformedValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { mode: 'put' }>>>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | Set<
+          AttrTransformedValue<
+            ATTRIBUTE['elements'],
+            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
+          >
+        >
 
 type ListAttrTransformedValue<
   ATTRIBUTE extends ListAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = ListAttribute extends ATTRIBUTE
-  ? unknown[]
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | unknown[]
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
-      | AttrTransformedValue<ATTRIBUTE['elements'], OPTIONS>[]
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | AttrTransformedValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type MapAttrTransformedValue<
   ATTRIBUTE extends MapAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = MapAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | { [KEY: string]: unknown }
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
-      | OptionalizeUndefinableProperties<
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
@@ -179,37 +191,47 @@ type MapAttrTransformedValue<
               savedAs: string
             }
               ? ATTRIBUTE['attributes'][KEY]['savedAs']
-              : KEY]: AttrTransformedValue<ATTRIBUTE['attributes'][KEY], OPTIONS>
+              : KEY]: AttrTransformedValue<
+              ATTRIBUTE['attributes'][KEY],
+              Overwrite<OPTIONS, { defined: false }>
+            >
           },
-          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
+          OptionalKeys<ATTRIBUTE, OPTIONS>
         >
 
 type RecordAttrTransformedValue<
   ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends TransformedValueOptions = {},
+  OPTIONS extends WriteValueOptions = {},
   KEYS extends string = Extract<AttrTransformedValue<ATTRIBUTE['keys'], OPTIONS>, string>
 > = RecordAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
+  ?
+      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | { [KEY: string]: unknown }
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       // We cannot use Record type as it messes up map resolution down the line
-      | { [KEY in KEYS]?: AttrTransformedValue<ATTRIBUTE['elements'], OPTIONS> }
+      | {
+          [KEY in KEYS]?: AttrTransformedValue<
+            ATTRIBUTE['elements'],
+            Overwrite<OPTIONS, { defined: false }>
+          >
+        }
 
 type AnyOfAttrTransformedValue<
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends TransformedValueOptions = {}
+  OPTIONS extends WriteValueOptions = {}
 > = AnyOfAttribute extends ATTRIBUTE
   ? unknown
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedTransformedValue<ATTRIBUTE, OPTIONS>
+      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | AnyOfAttrTransformedValueRec<ATTRIBUTE['elements'], OPTIONS>
 
 type AnyOfAttrTransformedValueRec<
   ELEMENTS extends Attribute[],
-  OPTIONS extends TransformedValueOptions = {},
+  OPTIONS extends WriteValueOptions = {},
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Attribute

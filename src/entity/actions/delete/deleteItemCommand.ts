@@ -3,10 +3,10 @@ import type { DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynam
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
-import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
+import type { KeyInputItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
@@ -42,16 +42,16 @@ export class DeleteItemCommand<
 {
   static override actionName = 'delete' as const;
 
-  [$key]?: KeyInput<ENTITY>;
+  [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
-  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
+  constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
-  key(nextKey: KeyInput<ENTITY>): DeleteItemCommand<ENTITY, OPTIONS> {
+  key(nextKey: KeyInputItem<ENTITY>): DeleteItemCommand<ENTITY, OPTIONS> {
     return new DeleteItemCommand(this.entity, nextKey, this[$options])
   }
 
@@ -61,7 +61,7 @@ export class DeleteItemCommand<
     return new DeleteItemCommand(this.entity, this[$key], nextOptions)
   }
 
-  [$sentArgs](): [KeyInput<ENTITY>, DeleteItemOptions<ENTITY>] {
+  [$sentArgs](): [KeyInputItem<ENTITY>, DeleteItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeleteItemCommand incomplete: Missing "key" property'

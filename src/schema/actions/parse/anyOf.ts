@@ -1,76 +1,20 @@
-import type {
-  AnyOfAttribute,
-  AnyOfAttributeElements,
-  Attribute,
-  ExtendedValue
-} from '~/attributes/index.js'
+import type { AnyOfAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { If } from '~/types/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import { attrParser } from './attribute.js'
-import type {
-  AttrParsedValue,
-  AttrParserInput,
-  MustBeDefined,
-  MustBeProvided
-} from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export type AnyOfAttrParsedValue<
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = AnyOfAttribute extends ATTRIBUTE
-  ? unknown
-  :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | ValidAnyOfAttrValueRec<ATTRIBUTE['elements'], OPTIONS>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>
-
-type ValidAnyOfAttrValueRec<
-  ELEMENTS extends Attribute[],
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions,
-  RESULTS = never
-> = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Attribute
-    ? ELEMENTS_TAIL extends Attribute[]
-      ? ValidAnyOfAttrValueRec<
-          ELEMENTS_TAIL,
-          OPTIONS,
-          RESULTS | AttrParsedValue<ELEMENTS_HEAD, OPTIONS>
-        >
-      : never
-    : never
-  : [RESULTS] extends [never]
-    ? unknown
-    : RESULTS
-
-export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOptions>(
+export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = {}>(
   attribute: AnyOfAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  AnyOfAttrParsedValue<AnyOfAttribute, FromParsingOptions<OPTIONS>>,
-  AnyOfAttrParsedValue<AnyOfAttribute, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-> {
+): Generator<ParserYield<AnyOfAttribute, OPTIONS>, ParserReturn<AnyOfAttribute, OPTIONS>> {
   const { fill = true, transform = true } = options
 
-  let parser:
-    | Generator<
-        ParsedValue<AnyOfAttributeElements, FromParsingOptions<OPTIONS>>,
-        ParsedValue<AnyOfAttributeElements, FromParsingOptions<OPTIONS>>,
-        ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-      >
-    | undefined = undefined
+  let parser: Generator<any, any> | undefined = undefined
   let _defaultedValue = undefined
   let _linkedValue = undefined
   let _parsedValue = undefined
@@ -129,13 +73,3 @@ export function* anyOfAttributeParser<OPTIONS extends ParsingOptions = ParsingOp
   const transformedValue = parser.next().value
   return transformedValue
 }
-
-export type AnyOfAttrParserInput<
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = AnyOfAttribute extends ATTRIBUTE
-  ? undefined | unknown | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrParserInput<ATTRIBUTE['elements'][number], OPTIONS>
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'anyOf'>

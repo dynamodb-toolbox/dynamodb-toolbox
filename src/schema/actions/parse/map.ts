@@ -1,79 +1,20 @@
-import type {
-  AnyAttribute,
-  Attribute,
-  ExtendedValue,
-  MapAttribute,
-  Never
-} from '~/attributes/index.js'
+import type { MapAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { If, OptionalizeUndefinableProperties } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type {
-  AttrParsedValue,
-  AttrParserInput,
-  MustBeDefined,
-  MustBeProvided
-} from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export type MapAttrParsedValue<
-  ATTRIBUTE extends MapAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = MapAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
-  :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | OptionalizeUndefinableProperties<
-          {
-            [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes'] & string as OPTIONS extends { transform: false }
-              ? KEY
-              : ATTRIBUTE['attributes'][KEY] extends { savedAs: string }
-                ? ATTRIBUTE['attributes'][KEY]['savedAs']
-                : KEY]: AttrParsedValue<ATTRIBUTE['attributes'][KEY], OPTIONS>
-          },
-          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-        >
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>
-
-export function* mapAttributeParser<
-  ATTRIBUTE extends MapAttribute,
-  OPTIONS extends ParsingOptions = ParsingOptions
->(
-  attribute: ATTRIBUTE,
+export function* mapAttributeParser<OPTIONS extends ParsingOptions = {}>(
+  attribute: MapAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  MapAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  MapAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-> {
-  type Parsed = MapAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
-
+): Generator<ParserYield<MapAttribute, OPTIONS>, ParserReturn<MapAttribute, OPTIONS>> {
   const { mode = 'put', fill = true, transform = true } = options
-  const parsers: Record<
-    string,
-    Generator<
-      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-      ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-    >
-  > = {}
+  const parsers: Record<string, Generator<any, any>> = {}
   let restEntries: [string, unknown][] = []
 
   const isInputValueObject = isObject(inputValue)
@@ -113,10 +54,10 @@ export function* mapAttributeParser<
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as Parsed
+      yield defaultedValue as ParserYield<MapAttribute, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as Parsed
+      yield linkedValue as ParserYield<MapAttribute, OPTIONS>
     }
   }
 
@@ -159,24 +100,3 @@ export function* mapAttributeParser<
   )
   return transformedValue
 }
-
-export type MapAttrParserInput<
-  ATTRIBUTE extends MapAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = MapAttribute extends ATTRIBUTE
-  ? undefined | { [KEY: string]: unknown } | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | OptionalizeUndefinableProperties<
-          {
-            [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes'] & string]: AttrParserInput<
-              ATTRIBUTE['attributes'][KEY],
-              Overwrite<OPTIONS, { defined: false }>
-            >
-          },
-          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          SelectKeys<ATTRIBUTE['attributes'], AnyAttribute & { required: Never }>
-        >
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'map'>

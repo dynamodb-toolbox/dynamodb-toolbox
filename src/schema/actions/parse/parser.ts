@@ -1,108 +1,89 @@
 import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { SchemaAction } from '~/schema/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { Merge } from '~/types/merge.js'
+import type {
+  FullValue,
+  InputValue,
+  Schema,
+  TransformedValue,
+  WriteValueOptions
+} from '~/schema/index.js'
 
 import { attrParser } from './attribute.js'
-import type { AttrParsedValue, AttrParserInput } from './attribute.js'
+import type { InferValueOptions, ParsingOptions } from './options.js'
 import { schemaParser } from './schema.js'
-import type { SchemaParsedValue, SchemaParserInput } from './schema.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingDefaultOptions,
-  ParsingOptions
-} from './types/options.js'
 
-/**
- * @deprecated Use Value or TransformedValue instead
- */
-export type ParsedValue<
+type ParserInput<
   SCHEMA extends Schema | Attribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = SCHEMA extends Schema
-  ? SchemaParsedValue<SCHEMA, OPTIONS>
-  : SCHEMA extends Attribute
-    ? AttrParsedValue<SCHEMA, OPTIONS>
-    : never
+  OPTIONS extends ParsingOptions = {},
+  WRITE_VALUE_OPTIONS extends WriteValueOptions = InferValueOptions<OPTIONS>
+> = OPTIONS extends { fill: false }
+  ? FullValue<SCHEMA, WRITE_VALUE_OPTIONS>
+  : InputValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
-/**
- * @deprecated Use InputValue or Value instead
- */
-export type ParserInput<
+export type ParserYield<
   SCHEMA extends Schema | Attribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = SCHEMA extends Schema
-  ? SchemaParserInput<SCHEMA, OPTIONS>
-  : SCHEMA extends Attribute
-    ? AttrParserInput<SCHEMA, OPTIONS>
-    : never
+  OPTIONS extends ParsingOptions = {},
+  WRITE_VALUE_OPTIONS extends WriteValueOptions = InferValueOptions<OPTIONS>
+> = OPTIONS extends { fill: false }
+  ? FullValue<SCHEMA, WRITE_VALUE_OPTIONS>
+  : InputValue<SCHEMA, WRITE_VALUE_OPTIONS> | FullValue<SCHEMA, WRITE_VALUE_OPTIONS>
+
+export type ParserReturn<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends ParsingOptions = {},
+  WRITE_VALUE_OPTIONS extends WriteValueOptions = InferValueOptions<OPTIONS>
+> = OPTIONS extends { transform: false }
+  ? FullValue<SCHEMA, WRITE_VALUE_OPTIONS>
+  : TransformedValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
 export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHEMA> {
-  constructor(schema: SCHEMA) {
-    super(schema)
-  }
-
-  start<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+  start<OPTIONS extends ParsingOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): Generator<
-    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>,
-    ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
-  > {
-    type Parsed = ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
-
+  ): Generator<ParserYield<SCHEMA, OPTIONS>, ParserReturn<SCHEMA, OPTIONS>> {
     if (this.schema.type === 'schema') {
-      return schemaParser<Schema, OPTIONS>(this.schema, inputValue, options) as Generator<
-        Parsed,
-        Parsed
+      return schemaParser(this.schema, inputValue, options) as Generator<
+        ParserYield<SCHEMA, OPTIONS>,
+        ParserReturn<SCHEMA, OPTIONS>
       >
     } else {
-      return attrParser<Attribute, OPTIONS>(this.schema, inputValue, options) as Generator<
-        Parsed,
-        Parsed
+      return attrParser(this.schema, inputValue, options) as Generator<
+        ParserYield<SCHEMA, OPTIONS>,
+        ParserReturn<SCHEMA, OPTIONS>
       >
     }
   }
 
-  parse<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
+  parse<OPTIONS extends ParsingOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
+  ): ParserReturn<SCHEMA, OPTIONS> {
     const parser = this.start(inputValue, options)
 
     let done = false
-    let value: ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>>
+    let value: ParserReturn<SCHEMA, OPTIONS>
     do {
       const nextState = parser.next()
       done = Boolean(nextState.done)
-      value = nextState.value
+      // TODO: Not cast
+      value = nextState.value as ParserReturn<SCHEMA, OPTIONS>
     } while (!done)
 
     return value
   }
 
-  reparse<OPTIONS extends ParsingOptions = ParsingDefaultOptions>(
-    inputValue: ParserInput<SCHEMA, FromParsingOptions<OPTIONS>>,
+  reparse<OPTIONS extends ParsingOptions = {}>(
+    inputValue: ParserInput<SCHEMA, OPTIONS>,
     options: OPTIONS = {} as OPTIONS
-  ): ParsedValue<SCHEMA, FromParsingOptions<OPTIONS>> {
+  ): ParserReturn<SCHEMA, OPTIONS> {
     return this.parse(inputValue, options)
   }
 
-  validate<
-    OPTIONS extends Pick<ParsingOptions, 'mode' | 'parseExtension'> = Pick<
-      ParsingDefaultOptions,
-      'mode' | 'parseExtension'
-    >
-  >(
+  validate<OPTIONS extends ParsingOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): inputValue is ParsedValue<
-    SCHEMA,
-    FromParsingOptions<Merge<{ fill: false; transform: false }, OPTIONS>>
-  > {
+  ): inputValue is ParserReturn<SCHEMA, OPTIONS> {
     try {
       this.parse(inputValue, { ...options, fill: false, transform: false })
     } catch (error) {

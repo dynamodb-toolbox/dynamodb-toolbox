@@ -1,6 +1,6 @@
 import type { AttributeBasicValue, MapAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import { $SET, isSetting } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'

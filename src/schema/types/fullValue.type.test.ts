@@ -1,9 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
 import type { pokemonSchema } from './fixtures.test.js'
-import type { Value } from './value.js'
+import type { FullValue } from './fullValue.js'
 
-type Put = Value<typeof pokemonSchema>
+type Put = FullValue<typeof pokemonSchema>
 const assertPut: A.Equals<
   Put,
   {
@@ -30,16 +30,15 @@ const assertPut: A.Equals<
 > = 1
 assertPut
 
-type Key = Value<typeof pokemonSchema, { mode: 'key' }>
+type Key = FullValue<typeof pokemonSchema, { mode: 'key' }>
 const assertKey: A.Equals<Key, { keyStr: string }> = 1
 assertKey
 
-type Update = Value<typeof pokemonSchema, { mode: 'update' }>
+type Update = FullValue<typeof pokemonSchema, { mode: 'update' }>
 const assertUpdate: A.Equals<
   Update,
   {
-    // TOFIX
-    any: unknown
+    any?: unknown
     nul?: null
     bool: boolean
     defaultedNum?: number

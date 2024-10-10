@@ -3,11 +3,11 @@ import type { GetCommandInput, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { FormattedItem } from '~/entity/actions/format/index.js'
-import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
+import type { KeyInputItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Merge } from '~/types/merge.js'
 
@@ -41,16 +41,16 @@ export class GetItemCommand<
 {
   static override actionName = 'get' as const;
 
-  [$key]?: KeyInput<ENTITY>;
+  [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
-  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
+  constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
-  key(nextKey: KeyInput<ENTITY>): GetItemCommand<ENTITY, OPTIONS> {
+  key(nextKey: KeyInputItem<ENTITY>): GetItemCommand<ENTITY, OPTIONS> {
     return new GetItemCommand(this.entity, nextKey, this[$options])
   }
 
@@ -60,7 +60,7 @@ export class GetItemCommand<
     return new GetItemCommand(this.entity, this[$key], nextOptions)
   }
 
-  [$sentArgs](): [KeyInput<ENTITY>, GetItemOptions<ENTITY>] {
+  [$sentArgs](): [KeyInputItem<ENTITY>, GetItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'GetItemCommand incomplete: Missing "key" property'

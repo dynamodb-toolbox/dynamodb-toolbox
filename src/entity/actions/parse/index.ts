@@ -1,12 +1,10 @@
 export { EntityParser } from './entityParser.js'
+export type { EntityParsingOptions } from './entityParser.js'
 export type {
-  EntityParsingOptions,
-  EntityParsingDefaultOptions,
-  FromEntityParsingOptions,
-  EntityParserInput,
-  KeyInput,
   ParsedItem,
   ParsedItemOptions,
   ParsedItemDefaultOptions,
-  SavedItem
-} from './entityParser.js'
+  EntityParsingDefaultOptions,
+  EntityParserInput,
+  KeyInput
+} from './deprecated.js'

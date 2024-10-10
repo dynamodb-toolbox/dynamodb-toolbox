@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { FullValue, Schema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
@@ -194,7 +193,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key'; fill: false }>
+      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $NumberAttribute<
     Overwrite<
@@ -225,9 +224,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
-    >
+    nextPutDefault: ValueOrGetter<FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -292,11 +289,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-          { mode: 'key'; fill: false }
-        >,
-        ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
+        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
+        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
       >
     >
   ): $NumberAttribute<
@@ -345,11 +339,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-      { mode: 'key'; fill: false }
-    >
+      keyInput: FullValue<SCHEMA, { mode: 'key' }>
+    ) => FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -380,8 +371,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
+      putItemInput: FullValue<SCHEMA>
+    ) => FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -444,18 +435,11 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<
-        FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-        { mode: 'key'; fill: false }
-      >,
-      ParserInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { fill: false }>
+      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
+      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
     >
   ): $NumberAttribute<
     Overwrite<
@@ -503,9 +487,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
+      FullValue<
         FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-        { mode: 'key'; fill: false; defined: true }
+        { mode: 'key'; defined: true }
       >,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
@@ -539,10 +523,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
-        FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-        { fill: false; defined: true }
-      >,
+      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
   ): $NumberAttribute<
@@ -610,14 +591,11 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
+        FullValue<
           FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-          { mode: 'key'; fill: false; defined: true }
+          { mode: 'key'; defined: true }
         >,
-        ParserInput<
-          FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-          { fill: false; defined: true }
-        >
+        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>
       >,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >

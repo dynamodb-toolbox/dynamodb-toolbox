@@ -15,20 +15,23 @@ export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './attributes/anyOf/index
 
 // schema
 export { schema, Schema, SchemaAction } from './schema/index.js'
+export type {
+  InputValue,
+  FullValue,
+  TransformedValue,
+  WriteMode,
+  WriteValueOptions,
+  ExtensionParser,
+  ExtensionParserOptions
+} from './schema/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type {
-  ParsedValue,
-  ExtensionParser,
-  ExtensionParserOptions,
-  ParsingMode,
-  ParsingOptions,
+  // deprecated
   ParsedValueOptions,
+  ParsingOptions,
   FromParsingOptions,
-  ParserInput,
-  SchemaParserInput,
-  SchemaParsedValue,
-  AttrParserInput,
-  AttrParsedValue
+  ParsedValue,
+  ParserInput
 } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
 export type {
@@ -71,7 +74,16 @@ export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
-export type { TimestampsOptions, TimestampsDefaultOptions } from './entity/index.js'
+export type {
+  TimestampsOptions,
+  TimestampsDefaultOptions,
+  InputItem,
+  KeyInputItem,
+  FullItem,
+  TransformedItem,
+  SavedItem,
+  WriteItemOptions
+} from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
 export { PutItemCommand } from './entity/actions/put/index.js'
@@ -158,8 +170,7 @@ export type {
   KeyInput,
   ParsedItem,
   ParsedItemOptions,
-  ParsedItemDefaultOptions,
-  SavedItem
+  ParsedItemDefaultOptions
 } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'

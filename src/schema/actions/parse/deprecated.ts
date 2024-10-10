@@ -1,14 +1,19 @@
-import type { Extension } from '~/attributes/index.js'
-
-import type { $contextExtension, $extension } from '../constants.js'
-import type { ExtensionParser } from './extensionParser.js'
-
-export type ParsingMode = 'key' | 'put' | 'update'
+import type { Attribute, Extension } from '~/attributes/index.js'
+import type {
+  $contextExtension,
+  $extension,
+  ExtensionParser,
+  FullValue,
+  InputValue,
+  Schema,
+  TransformedValue,
+  WriteMode
+} from '~/schema/index.js'
 
 export type ParsingOptions = {
   fill?: boolean
   transform?: boolean
-  mode?: ParsingMode
+  mode?: WriteMode
   parseExtension?: ExtensionParser
   defined?: boolean
 }
@@ -24,7 +29,7 @@ export type ParsingDefaultOptions = {
 export type ParsedValueOptions = {
   fill?: boolean
   transform?: boolean
-  mode?: ParsingMode
+  mode?: WriteMode
   extension?: Extension
   defined?: boolean
 }
@@ -42,7 +47,7 @@ export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends b
   transform: OPTIONS extends { transform: boolean }
     ? OPTIONS['transform']
     : ParsedValueDefaultOptions['transform']
-  mode: OPTIONS extends { mode: ParsingMode } ? OPTIONS['mode'] : ParsedValueDefaultOptions['mode']
+  mode: OPTIONS extends { mode: WriteMode } ? OPTIONS['mode'] : ParsedValueDefaultOptions['mode']
   extension: OPTIONS extends { parseExtension: ExtensionParser }
     ? NonNullable<OPTIONS['parseExtension'][CONTEXT extends true ? $contextExtension : $extension]>
     : ParsedValueDefaultOptions['extension']
@@ -50,3 +55,21 @@ export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends b
     ? OPTIONS['defined']
     : ParsedValueDefaultOptions['defined']
 }
+
+/**
+ * @deprecated Use Value or TransformedValue instead
+ */
+export type ParsedValue<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = OPTIONS extends { transform: false }
+  ? FullValue<SCHEMA, OPTIONS>
+  : TransformedValue<SCHEMA, OPTIONS>
+
+/**
+ * @deprecated Use InputValue or Value instead
+ */
+export type ParserInput<
+  SCHEMA extends Schema | Attribute,
+  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
+> = OPTIONS extends { fill: false } ? FullValue<SCHEMA, OPTIONS> : InputValue<SCHEMA, OPTIONS>

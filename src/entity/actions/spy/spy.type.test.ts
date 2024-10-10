@@ -2,8 +2,8 @@ import type { A } from 'ts-toolbelt'
 
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { GetItemOptions, GetItemResponse } from '~/entity/actions/get/index.js'
+import type { KeyInputItem } from '~/entity/index.js'
 
-import type { KeyInput } from '../parse/entityParser.js'
 import type { AwsError, Error } from './actionStub.js'
 import { TestEntity } from './spy.fixtures.test.js'
 import { EntitySpy } from './spy.js'
@@ -28,7 +28,7 @@ const assertMock: A.Equals<
   (typeof stub)['mock'],
   (
     mock: (
-      arg: KeyInput<typeof TestEntity>,
+      arg: KeyInputItem<typeof TestEntity>,
       options: GetItemOptions<typeof TestEntity>
     ) =>
       | Promise<GetItemResponse<typeof TestEntity>>
@@ -51,12 +51,12 @@ assertCount
 
 const assertArgs: A.Equals<
   (typeof sent)['args'],
-  (at: number) => [KeyInput<typeof TestEntity>, GetItemOptions<typeof TestEntity>] | undefined
+  (at: number) => [KeyInputItem<typeof TestEntity>, GetItemOptions<typeof TestEntity>] | undefined
 > = 1
 assertArgs
 
 const assertAllArgs: A.Equals<
   (typeof sent)['allArgs'],
-  () => [KeyInput<typeof TestEntity>, GetItemOptions<typeof TestEntity>][]
+  () => [KeyInputItem<typeof TestEntity>, GetItemOptions<typeof TestEntity>][]
 > = 1
 assertAllArgs

@@ -1,8 +1,14 @@
 import type { Attribute, AttributeBasicValue, Extension } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
-import type { $contextExtension, $extension } from '../constants.js'
-import type { ParsedValue } from '../parser.js'
+import type { FullValue } from './fullValue.js'
+import type { TransformedValue } from './transformedValue.js'
+
+export const $extension = Symbol('$extension')
+export type $extension = typeof $extension
+
+export const $contextExtension = Symbol('$contextExtension')
+export type $contextExtension = typeof $contextExtension
 
 export type ExtensionParserOptions = { transform?: boolean }
 
@@ -17,9 +23,9 @@ export type ExtensionParser<
   | {
       isExtension: true
       extensionParser: () => Generator<
-        ParsedValue<Attribute, { extension: EXTENSION }>,
-        ParsedValue<Attribute, { extension: EXTENSION }>,
-        ParsedValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
+        FullValue<Attribute, { extension: EXTENSION }>,
+        TransformedValue<Attribute, { extension: EXTENSION }>,
+        FullValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
       >
       basicInput?: never
     }

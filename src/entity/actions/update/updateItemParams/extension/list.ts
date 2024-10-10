@@ -1,12 +1,8 @@
 import type { Attribute, AttributeBasicValue, ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type {
-  ExtensionParser,
-  ExtensionParserOptions,
-  ParsedValue
-} from '~/schema/actions/parse/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type { FullValue, TransformedValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -29,9 +25,9 @@ function* listElementParser(
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions
 ): Generator<
-  ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
-  ParsedValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
-  ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
+  FullValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
+  | FullValue<Attribute, { extension: UpdateItemInputExtension }>
+  | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue
@@ -191,9 +187,9 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
-            ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
-            ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
+            FullValue<Attribute, { extension: UpdateItemInputExtension }>,
+            | FullValue<Attribute, { extension: UpdateItemInputExtension }>
+            | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
           >
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [

@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { FullValue, Schema } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -109,10 +108,7 @@ export class $SetAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
-        FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
-      >
+      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $SetAttribute<
     Overwrite<
@@ -146,7 +142,7 @@ export class $SetAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
   ): $SetAttribute<
     Overwrite<
@@ -216,11 +212,8 @@ export class $SetAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
-        >,
-        ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+        FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
       >
     >
   ): $SetAttribute<
@@ -271,11 +264,8 @@ export class $SetAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
-      { mode: 'key'; fill: false }
-    >
+      keyInput: FullValue<SCHEMA, { mode: 'key' }>
+    ) => FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $SetAttribute<
     Overwrite<
       STATE,
@@ -308,8 +298,8 @@ export class $SetAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      putItemInput: FullValue<SCHEMA>
+    ) => FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
   ): $SetAttribute<
     Overwrite<
       STATE,
@@ -376,18 +366,11 @@ export class $SetAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<
-        FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
-      >,
-      ParserInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { fill: false }>
+      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
   ): $SetAttribute<
     Overwrite<
@@ -437,9 +420,9 @@ export class $SetAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
+      FullValue<
         FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; fill: false; defined: true }
+        { mode: 'key'; defined: true }
       >,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
@@ -475,10 +458,7 @@ export class $SetAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
-        FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
-        { fill: false; defined: true }
-      >,
+      FullValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
   ): $SetAttribute<
@@ -550,14 +530,11 @@ export class $SetAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
+        FullValue<
           FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; fill: false; defined: true }
+          { mode: 'key'; defined: true }
         >,
-        ParserInput<
-          FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
-          { fill: false; defined: true }
-        >
+        FullValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>
       >,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >

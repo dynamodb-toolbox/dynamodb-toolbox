@@ -31,10 +31,6 @@ export type FormattedValue<
 export class Formatter<
   SCHEMA extends Schema | Attribute = Schema | Attribute
 > extends SchemaAction<SCHEMA> {
-  constructor(schema: SCHEMA) {
-    super(schema)
-  }
-
   format<OPTIONS extends FormatOptions<SCHEMA>>(
     rawValue: unknown,
     options: OPTIONS = {} as OPTIONS

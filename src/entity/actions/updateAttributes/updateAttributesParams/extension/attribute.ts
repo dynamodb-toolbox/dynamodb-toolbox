@@ -4,7 +4,7 @@ import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/e
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 import { parseListExtension } from './list.js'

@@ -38,8 +38,7 @@ type Update = InputValue<typeof pokemonSchema, { mode: 'update' }>
 const assertUpdate: A.Equals<
   Update,
   {
-    // Error here
-    any: unknown
+    any?: unknown
     nul?: null
     bool: boolean
     defaultedNum?: number

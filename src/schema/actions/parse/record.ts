@@ -1,72 +1,21 @@
-import type {
-  Attribute,
-  ExtendedValue,
-  RecordAttribute,
-  RecordAttributeKeys,
-  ResolveStringAttribute
-} from '~/attributes/index.js'
+import type { RecordAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { If } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type {
-  AttrParsedValue,
-  AttrParserInput,
-  MustBeDefined,
-  MustBeProvided
-} from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export type RecordAttrParsedValue<
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions,
-  KEYS extends string = Extract<AttrParsedValue<ATTRIBUTE['keys'], OPTIONS>, string>
-> = RecordAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
-  : // We cannot use Record type as it messes up map resolution down the line
-    | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | { [KEY in KEYS]?: AttrParsedValue<ATTRIBUTE['elements'], OPTIONS> }
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
-
-export function* recordAttributeParser<
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends ParsingOptions = ParsingOptions
->(
-  attribute: ATTRIBUTE,
+export function* recordAttributeParser<OPTIONS extends ParsingOptions = {}>(
+  attribute: RecordAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-> {
-  type Parsed = RecordAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
-
+): Generator<ParserYield<RecordAttribute, OPTIONS>, ParserReturn<RecordAttribute, OPTIONS>> {
   const { fill = true, transform = true } = options
 
-  const parsers: [
-    Generator<
-      ParsedValue<RecordAttributeKeys, FromParsingOptions<OPTIONS>>,
-      ParsedValue<RecordAttributeKeys, FromParsingOptions<OPTIONS>>,
-      undefined
-    >,
-    Generator<
-      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-      ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-      ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-    >
-  ][] = []
+  const parsers: [Generator<any, any>, Generator<any, any>][] = []
   const undefinedEntries: [string, undefined][] = []
 
   const isInputValueObject = isObject(inputValue)
@@ -92,7 +41,7 @@ export function* recordAttributeParser<
           .filter(([, element]) => element !== undefined),
         ...undefinedEntries
       ])
-      const itemInput = yield defaultedValue as Parsed
+      const itemInput = yield defaultedValue
 
       const linkedValue = Object.fromEntries([
         ...parsers
@@ -103,13 +52,13 @@ export function* recordAttributeParser<
           .filter(([, element]) => element !== undefined),
         ...undefinedEntries
       ])
-      yield linkedValue as Parsed
+      yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as Parsed
+      yield defaultedValue as ParserYield<RecordAttribute, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as Parsed
+      yield linkedValue as ParserYield<RecordAttribute, OPTIONS>
     }
   }
 
@@ -136,9 +85,9 @@ export function* recordAttributeParser<
   }
 
   if (transform) {
-    yield parsedValue as Parsed
+    yield parsedValue
   } else {
-    return parsedValue as Parsed
+    return parsedValue
   }
 
   const transformedValue = Object.fromEntries(
@@ -146,23 +95,5 @@ export function* recordAttributeParser<
       .map(([keyParser, elementParser]) => [keyParser.next().value, elementParser.next().value])
       .filter(([, element]) => element !== undefined)
   )
-  return transformedValue as Parsed
+  return transformedValue
 }
-
-export type RecordAttrParserInput<
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = RecordAttribute extends ATTRIBUTE
-  ?
-      | undefined
-      | { [KEY: string]: unknown }
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | {
-          [KEY in ResolveStringAttribute<ATTRIBUTE['keys']>]?: AttrParserInput<
-            ATTRIBUTE['elements'],
-            Overwrite<OPTIONS, { defined: false }>
-          >
-        }
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'record'>

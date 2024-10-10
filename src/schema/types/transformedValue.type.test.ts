@@ -38,8 +38,7 @@ type Update = TransformedValue<typeof pokemonSchema, { mode: 'update' }>
 const assertUpdate: A.Equals<
   Update,
   {
-    // TOFIX
-    any: unknown
+    any?: unknown
     nul?: null
     bool: boolean
     defaultedNum?: number

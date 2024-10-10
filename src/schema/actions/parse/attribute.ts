@@ -1,82 +1,30 @@
-import type {
-  Always,
-  AnyAttribute,
-  AnyOfAttribute,
-  AtLeastOnce,
-  Attribute,
-  ListAttribute,
-  MapAttribute,
-  PrimitiveAttribute,
-  RecordAttribute,
-  SetAttribute
-} from '~/attributes/index.js'
+import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { Extends } from '~/types/extends.js'
+import type { InputValue, Schema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
 import { anyAttrParser } from './any.js'
-import type { AnyAttrParsedValue, AnyAttrParserInput } from './any.js'
 import { anyOfAttributeParser } from './anyOf.js'
-import type { AnyOfAttrParsedValue, AnyOfAttrParserInput } from './anyOf.js'
 import { listAttrParser } from './list.js'
-import type { ListAttrParsedValue, ListAttrParserInput } from './list.js'
 import { mapAttributeParser } from './map.js'
-import type { MapAttrParsedValue, MapAttrParserInput } from './map.js'
-import type { ParsedValue } from './parser.js'
+import type { InferValueOptions, ParsingOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { primitiveAttrParser } from './primitive.js'
-import type { PrimitiveAttrParsedValue, PrimitiveAttrParserInput } from './primitive.js'
 import { recordAttributeParser } from './record.js'
-import type { RecordAttrParsedValue, RecordAttrParserInput } from './record.js'
 import { setAttrParser } from './set.js'
-import type { SetAttrParsedValue, SetAttrParserInput } from './set.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingDefaultOptions,
-  ParsingOptions
-} from './types/options.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
-export type MustBeDefined<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends ParsedValueOptions
-> = OPTIONS extends { mode: 'update' | 'key' }
-  ? Extends<ATTRIBUTE, { required: Always }>
-  : Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
-
-export type AttrParsedValue<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = Attribute extends ATTRIBUTE
-  ? unknown
-  :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends PrimitiveAttribute
-          ? PrimitiveAttrParsedValue<ATTRIBUTE, OPTIONS>
-          : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapAttribute ? MapAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrParsedValue<ATTRIBUTE, OPTIONS> : never)
-
-export function* attrParser<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends ParsingOptions = ParsingDefaultOptions
->(
+export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParsingOptions = {}>(
   attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  AttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  AttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
+  ParserYield<Attribute, OPTIONS>,
+  ParserReturn<Attribute, OPTIONS>,
+  // TODO: Define & use DefaultedValue here
+  InputValue<Schema, InferValueOptions<OPTIONS, true>> | undefined
 > {
-  type Parsed = AttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
-
   const {
     mode = 'put',
     fill = true,
@@ -88,23 +36,23 @@ export function* attrParser<
     parseExtension = defaultParseExtension as unknown as NonNullable<OPTIONS['parseExtension']>
   } = options
 
-  let filledValue: Parsed | undefined = inputValue as any
+  let filledValue = inputValue
   let nextFill = fill
 
   if (nextFill && filledValue === undefined) {
-    let defaultedValue: Parsed | undefined = undefined
+    let defaultedValue = undefined
 
     const modeDefault = attribute.defaults[attribute.key ? 'key' : mode]
     defaultedValue = isFunction(modeDefault) ? modeDefault() : (cloneDeep(modeDefault) as any)
 
-    const itemInput = yield defaultedValue as Parsed
+    const itemInput = yield defaultedValue
 
-    let linkedValue: Parsed | undefined = defaultedValue
+    let linkedValue = defaultedValue
     if (linkedValue === undefined && itemInput !== undefined) {
       const modeLink = attribute.links[attribute.key ? 'key' : mode]
       linkedValue = (isFunction(modeLink) ? modeLink(itemInput) : linkedValue) as any
     }
-    yield linkedValue as Parsed
+    yield linkedValue
 
     filledValue = linkedValue
     nextFill = false
@@ -120,13 +68,16 @@ export function* attrParser<
     if (nextFill) {
       // parseExtension does not fill values
       // If fill was set to `true` and input was defined, we yield it twice for fill steps
-      const defaultedValue = filledValue as Parsed
-      yield defaultedValue
+      const defaultedValue = filledValue
+      yield defaultedValue as ParserYield<ATTRIBUTE, OPTIONS>
 
-      const linkedValue = defaultedValue as Parsed
-      yield linkedValue
+      const linkedValue = defaultedValue
+      yield linkedValue as ParserYield<ATTRIBUTE, OPTIONS>
     }
-    return yield* extensionParser() as any
+    return yield* extensionParser() as Generator<
+      ParserYield<ATTRIBUTE, OPTIONS>,
+      ParserReturn<ATTRIBUTE, OPTIONS>
+    >
   }
 
   if (basicInput === undefined) {
@@ -143,74 +94,33 @@ export function* attrParser<
     const parsedValue = basicInput
 
     if (transform) {
-      yield parsedValue as Parsed
+      yield parsedValue as ParserYield<ATTRIBUTE, OPTIONS>
     } else {
-      return parsedValue as Parsed
+      return parsedValue as ParserReturn<ATTRIBUTE, OPTIONS>
     }
 
     const transformedValue = parsedValue
-    return transformedValue as Parsed
+    return transformedValue as ParserReturn<ATTRIBUTE, OPTIONS>
   }
 
   switch (attribute.type) {
     case 'any':
-      return yield* anyAttrParser(attribute, basicInput, nextOpts) as any
+      return yield* anyAttrParser(attribute, basicInput, nextOpts)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveAttrParser(attribute, basicInput, nextOpts) as any
+      return yield* primitiveAttrParser(attribute, basicInput, nextOpts)
     case 'set':
-      return yield* setAttrParser(attribute, basicInput, nextOpts) as any
+      return yield* setAttrParser(attribute, basicInput, nextOpts)
     case 'list':
-      return yield* listAttrParser(attribute, basicInput, nextOpts) as any
+      return yield* listAttrParser(attribute, basicInput, nextOpts)
     case 'map':
-      return yield* mapAttributeParser(attribute, basicInput, nextOpts) as any
+      return yield* mapAttributeParser(attribute, basicInput, nextOpts)
     case 'record':
-      return yield* recordAttributeParser(attribute, basicInput, nextOpts) as any
+      return yield* recordAttributeParser(attribute, basicInput, nextOpts)
     case 'anyOf':
-      return yield* anyOfAttributeParser(attribute, basicInput, nextOpts) as any
+      return yield* anyOfAttributeParser(attribute, basicInput, nextOpts)
   }
 }
-
-export type MustBeProvided<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = OPTIONS extends { defined: true }
-  ? true
-  : OPTIONS extends { mode: 'update' | 'key' }
-    ? OPTIONS extends { fill: false }
-      ? Extends<ATTRIBUTE, { required: Always }>
-      : Extends<
-          ATTRIBUTE,
-          { required: Always } & (
-            | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-            | { key: false; defaults: { update: undefined }; links: { update: undefined } }
-          )
-        >
-    : OPTIONS extends { fill: false }
-      ? Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
-      : Extends<
-          ATTRIBUTE,
-          { required: AtLeastOnce | Always } & (
-            | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-            | { key: false; defaults: { put: undefined }; links: { put: undefined } }
-          )
-        >
-
-export type AttrParserInput<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = Attribute extends ATTRIBUTE
-  ? unknown
-  :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrParserInput<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends PrimitiveAttribute
-          ? PrimitiveAttrParserInput<ATTRIBUTE, OPTIONS>
-          : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrParserInput<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrParserInput<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapAttribute ? MapAttrParserInput<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrParserInput<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrParserInput<ATTRIBUTE, OPTIONS> : never)
