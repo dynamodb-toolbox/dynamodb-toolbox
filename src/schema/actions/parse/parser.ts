@@ -16,6 +16,9 @@ import type {
   ParsingOptions
 } from './types/options.js'
 
+/**
+ * @deprecated Use Value or TransformedValue instead
+ */
 export type ParsedValue<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
@@ -25,6 +28,9 @@ export type ParsedValue<
     ? AttrParsedValue<SCHEMA, OPTIONS>
     : never
 
+/**
+ * @deprecated Use InputValue or Value instead
+ */
 export type ParserInput<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions

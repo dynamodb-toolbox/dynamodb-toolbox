@@ -20,6 +20,9 @@ export type ParsedItemOptions = ParsedValueOptions
 
 export type ParsedItemDefaultOptions = ParsedValueDefaultOptions
 
+/**
+ * @deprecated Use Item or TransformedItem instead
+ */
 export type ParsedItem<
   ENTITY extends Entity = Entity,
   OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions
@@ -35,6 +38,9 @@ export type EntityParsingDefaultOptions = Pick<ParsingDefaultOptions, 'mode' | '
 export type FromEntityParsingOptions<OPTIONS extends EntityParsingOptions> =
   FromParsingOptions<OPTIONS>
 
+/**
+ * @deprecated Use InputItem instead
+ */
 export type EntityParserInput<
   ENTITY extends Entity = Entity,
   OPTIONS extends ParsedItemOptions = ParsedItemDefaultOptions

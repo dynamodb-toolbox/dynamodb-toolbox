@@ -20,7 +20,6 @@ export interface ExpressionParser {
 }
 
 const defaultAnyAttribute = new AnyAttribute({
-  type: 'any',
   required: 'never',
   hidden: false,
   key: false,
