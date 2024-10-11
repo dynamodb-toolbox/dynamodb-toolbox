@@ -1,76 +1,31 @@
-import type { RecordAttribute, ResolveStringAttribute } from '~/attributes/index.js'
+import type { RecordAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { If } from '~/types/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { formatAttrRawValue } from './attribute.js'
-import type { AttrFormattedValue, MustBeDefined } from './attribute.js'
+import type { FormatValueOptions, InferValueOptions } from './options.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import type {
-  FormatOptions,
-  FormattedValueDefaultOptions,
-  FormattedValueOptions,
-  FromFormatOptions,
-  MatchKeys
-} from './types.js'
 import { sanitize } from './utils.js'
 import { matchProjection } from './utils.js'
 
-export type RecordAttrFormattedValue<
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions,
-  MATCHING_KEYS extends string = MatchKeys<
-    ResolveStringAttribute<ATTRIBUTE['keys']>,
-    '.',
-    OPTIONS['attributes']
-  >
-> = RecordAttribute extends ATTRIBUTE
-  ? { [KEY: string]: unknown }
-  : // Possible in case of anyOf subSchema
-    [MATCHING_KEYS] extends [never]
-    ? never
-    :
-        | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-        | {
-            [KEY in MATCHING_KEYS]?: AttrFormattedValue<
-              ATTRIBUTE['elements'],
-              {
-                partial: OPTIONS['partial']
-                attributes: OPTIONS extends { attributes: string }
-                  ? MATCHING_KEYS extends infer FILTERED_KEY
-                    ? FILTERED_KEY extends string
-                      ? `.${FILTERED_KEY}` extends OPTIONS['attributes']
-                        ? undefined
-                        : OPTIONS['attributes'] extends `.${FILTERED_KEY}${infer CHILDREN_FILTERED_ATTRIBUTES}`
-                          ? Extract<CHILDREN_FILTERED_ATTRIBUTES, Paths<ATTRIBUTE['elements']>>
-                          : undefined
-                      : never
-                    : never
-                  : undefined
-              }
-            >
-          }
-
 type RecordAttrRawValueFormatter = <
   ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options?: OPTIONS
-) => RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+) => FormattedValue<RecordAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
 
 export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
   ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
 ) => {
-  type Formatted = RecordAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
-
   if (!isObject(rawValue)) {
     const { path, type } = attribute
 
@@ -105,5 +60,5 @@ export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
     }
   })
 
-  return formattedRecord as Formatted
+  return formattedRecord
 }

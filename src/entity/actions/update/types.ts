@@ -23,8 +23,7 @@ import type {
   SetAttributeValue
 } from '~/attributes/index.js'
 import type { Entity } from '~/entity/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { FullValue, Paths, Schema } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
 import type { SelectKeys } from '~/types/selectKeys.js'

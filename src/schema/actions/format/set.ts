@@ -1,46 +1,28 @@
 import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { If } from '~/types/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
-import type { AttrFormattedValue } from './attribute.js'
 import { formatAttrRawValue } from './attribute.js'
-import type { MustBeDefined } from './attribute.js'
-import type {
-  FormatOptions,
-  FormattedValueDefaultOptions,
-  FormattedValueOptions,
-  FromFormatOptions
-} from './types.js'
-
-export type SetAttrFormattedValue<
-  ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
-> = SetAttribute extends ATTRIBUTE
-  ? Set<AttrFormattedValue<SetAttribute['elements']>>
-  :
-      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | Set<AttrFormattedValue<ATTRIBUTE['elements'], { partial: OPTIONS['partial'] }>>
+import type { FormatValueOptions, InferValueOptions } from './options.js'
 
 type SetAttrRawValueFormatter = <
   ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options?: OPTIONS
-) => SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+) => FormattedValue<SetAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
 
 export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
   ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ) => {
-  type Formatted = SetAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
-
   if (!isSet(rawValue)) {
     const { path, type } = attribute
 
@@ -53,18 +35,25 @@ export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
     })
   }
 
-  const parsedPutItemInput: SetAttrFormattedValue<SetAttribute> = new Set()
+  const parsedPutItemInput: FormattedValue<
+    SetAttribute,
+    InferValueOptions<ATTRIBUTE, OPTIONS>
+  > = new Set()
 
   for (const savedElement of rawValue) {
     const parsedElement = formatAttrRawValue(attribute.elements, savedElement, {
       ...options,
       attributes: undefined
-    })
+    }) as FormattedValue<SetAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>> extends Set<
+      infer ELEMENTS
+    >
+      ? ELEMENTS
+      : never
 
     if (parsedElement !== undefined) {
       parsedPutItemInput.add(parsedElement)
     }
   }
 
-  return parsedPutItemInput as Formatted
+  return parsedPutItemInput
 }

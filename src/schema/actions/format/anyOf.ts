@@ -1,72 +1,27 @@
-import type { AnyOfAttribute, Attribute } from '~/attributes/index.js'
+import type { AnyOfAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { If } from '~/types/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 
 import { formatAttrRawValue } from './attribute.js'
-import type { AttrFormattedValue, MustBeDefined } from './attribute.js'
-import type {
-  FormatOptions,
-  FormattedValueDefaultOptions,
-  FormattedValueOptions,
-  FromFormatOptions
-} from './types.js'
-
-export type AnyOfAttrFormattedValue<
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
-> = AnyOfAttribute extends ATTRIBUTE
-  ? unknown
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | AnyOfAttrFormattedValueRec<ATTRIBUTE, OPTIONS>
-
-type AnyOfAttrFormattedValueRec<
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormattedValueOptions<ATTRIBUTE>,
-  ELEMENTS extends Attribute[] = ATTRIBUTE['elements'],
-  RESULTS = never
-> = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Attribute
-    ? ELEMENTS_TAIL extends Attribute[]
-      ? AnyOfAttrFormattedValueRec<
-          ATTRIBUTE,
-          OPTIONS,
-          ELEMENTS_TAIL,
-          | RESULTS
-          | AttrFormattedValue<
-              ELEMENTS_HEAD,
-              {
-                attributes: OPTIONS extends { attributes: string }
-                  ? Extract<OPTIONS['attributes'], Paths<ELEMENTS_HEAD>>
-                  : undefined
-                partial: OPTIONS['partial']
-              }
-            >
-        >
-      : never
-    : never
-  : [RESULTS] extends [never]
-    ? unknown
-    : RESULTS
+import type { FormatValueOptions, InferValueOptions } from './options.js'
 
 type AnyOfAttrRawValueFormatter = <
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
-  attribute: ATTRIBUTE,
+  attribute: AnyOfAttribute,
   rawValue: unknown,
   options?: OPTIONS
-) => AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
+) => FormattedValue<AnyOfAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
 
 export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
   ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
-  attribute: ATTRIBUTE,
+  attribute: AnyOfAttribute,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ) => {
-  type Formatted = AnyOfAttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
-
   let formattedValue: unknown = undefined
 
   for (const element of attribute.elements) {
@@ -90,5 +45,5 @@ export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
     })
   }
 
-  return formattedValue as Formatted
+  return formattedValue
 }

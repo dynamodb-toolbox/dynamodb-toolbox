@@ -9,8 +9,7 @@ import type {
   SetAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { Extends } from '~/types/extends.js'
-import type { If } from '~/types/if.js'
+import type { Extends, If } from '~/types/index.js'
 
 type CharsToEscape = '[' | ']' | '.'
 type StringToEscape = `${string}${CharsToEscape}${string}`

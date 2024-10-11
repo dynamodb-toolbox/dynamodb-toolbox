@@ -1,6 +1,6 @@
 import type { $contextExtension, $extension, ExtensionParser, WriteMode } from '~/schema/index.js'
 
-export interface ParsingOptions {
+export interface ParseValueOptions {
   mode?: WriteMode
   fill?: boolean
   transform?: boolean
@@ -8,8 +8,8 @@ export interface ParsingOptions {
   parseExtension?: ExtensionParser
 }
 
-export interface InferValueOptions<
-  OPTIONS extends ParsingOptions,
+export interface InferWriteValueOptions<
+  OPTIONS extends ParseValueOptions,
   USE_CONTEXT_EXTENSION extends boolean = false
 > {
   mode: OPTIONS extends { mode: WriteMode } ? OPTIONS['mode'] : undefined

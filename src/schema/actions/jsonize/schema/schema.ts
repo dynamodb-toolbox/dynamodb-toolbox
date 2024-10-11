@@ -1,7 +1,7 @@
 import { record } from '~/attributes/record/index.js'
 import { string } from '~/attributes/string/index.js'
-import type { FormattedValue } from '~/schema/actions/format/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 import { schema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 

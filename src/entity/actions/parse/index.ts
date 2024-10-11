@@ -1,6 +1,7 @@
 export { EntityParser } from './entityParser.js'
-export type { EntityParsingOptions } from './entityParser.js'
+export type { ParseItemOptions, InferWriteItemOptions } from './entityParser.js'
 export type {
+  EntityParsingOptions,
   ParsedItem,
   ParsedItemOptions,
   ParsedItemDefaultOptions,

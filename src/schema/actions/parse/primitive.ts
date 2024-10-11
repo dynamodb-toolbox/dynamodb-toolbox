@@ -4,11 +4,11 @@ import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
-import type { ParsingOptions } from './options.js'
+import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* primitiveAttrParser<OPTIONS extends ParsingOptions = {}>(
+export function* primitiveAttrParser<OPTIONS extends ParseValueOptions = {}>(
   attribute: PrimitiveAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS

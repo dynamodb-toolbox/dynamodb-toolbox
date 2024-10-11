@@ -1,6 +1,2 @@
 export { EntityFormatter } from './entityFormatter.js'
-export type {
-  EntityFormattingOptions,
-  FormattedItem,
-  FormattedItemOptions
-} from './entityFormatter.js'
+export type { FormatItemOptions, InferReadItemOptions } from './entityFormatter.js'

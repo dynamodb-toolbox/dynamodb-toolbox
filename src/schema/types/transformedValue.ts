@@ -53,7 +53,8 @@ type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteVal
     MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
     never,
     SCHEMA['attributes'][KEY] extends { savedAs: string }
-      ? SCHEMA['attributes'][KEY]['savedAs']
+      ? // '& string' needed for old TS versions
+        SCHEMA['attributes'][KEY]['savedAs'] & string
       : KEY
   >
 }[keyof SCHEMA['attributes']]
@@ -187,7 +188,7 @@ type MapAttrTransformedValue<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes'] & string as ATTRIBUTE['attributes'][KEY] extends {
+              : keyof ATTRIBUTE['attributes'] as ATTRIBUTE['attributes'][KEY] extends {
               savedAs: string
             }
               ? ATTRIBUTE['attributes'][KEY]['savedAs']

@@ -6,10 +6,19 @@ import type {
   ParserInput,
   ParsingDefaultOptions
 } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, WriteMode } from '~/schema/index.js'
 
 /**
  * @debt v2 "remove all those types"
  */
+
+/**
+ * @deprecated Use ParseItemOptions instead
+ */
+export interface EntityParsingOptions {
+  mode?: WriteMode | undefined
+  parseExtension?: ExtensionParser | undefined
+}
 
 /**
  * @deprecated Use Item or TransformedItem instead

@@ -149,7 +149,7 @@ type MapAttrInputValue<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes'] & string]: AttrInputValue<
+              : keyof ATTRIBUTE['attributes']]: AttrInputValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >

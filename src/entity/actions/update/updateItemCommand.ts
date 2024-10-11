@@ -2,10 +2,10 @@ import { UpdateCommand } from '@aws-sdk/lib-dynamodb'
 import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
-import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
 import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
+import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {

@@ -1,37 +1,18 @@
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
-import type {
-  FormatOptions,
-  FormattedValue,
-  FormattedValueDefaultOptions,
-  FormattedValueOptions,
-  FromFormatOptions
-} from '~/schema/actions/format/index.js'
+import type { FormatValueOptions, InferValueOptions } from '~/schema/actions/format/index.js'
 
 import { $formatter } from './constants.js'
 
-export type FormattedItemOptions<ENTITY extends Entity = Entity> = FormattedValueOptions<
-  ENTITY['schema']
->
+export interface FormatItemOptions<ENTITY extends Entity = Entity>
+  extends FormatValueOptions<ENTITY['schema']> {}
 
-type FormattedItemOptionsDefault = FormattedValueDefaultOptions
-
-/**
- * Returned item of a fetch command (GET, QUERY ...) for a given Entity
- *
- * @param Entity Entity
- * @return Object
- */
-export type FormattedItem<
-  ENTITY extends Entity = Entity,
-  OPTIONS extends FormattedItemOptions<ENTITY> = FormattedItemOptionsDefault
-> = FormattedValue<ENTITY['schema'], OPTIONS>
-
-export type EntityFormattingOptions<ENTITY extends Entity = Entity> = FormatOptions<
-  ENTITY['schema']
->
+export interface InferReadItemOptions<
+  ENTITY extends Entity,
+  OPTIONS extends FormatItemOptions<ENTITY>
+> extends InferValueOptions<ENTITY['schema'], OPTIONS> {}
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';
@@ -42,10 +23,10 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     this[$formatter] = new Formatter(entity.schema)
   }
 
-  format<OPTIONS extends EntityFormattingOptions<ENTITY>>(
+  format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
-  ): FormattedItem<ENTITY, FromFormatOptions<ENTITY['schema'], OPTIONS>> {
+  ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
     try {
       return this[$formatter].format(item, options)
     } catch (error) {

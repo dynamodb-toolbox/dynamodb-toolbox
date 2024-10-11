@@ -4,8 +4,8 @@ import type { QueryCommandInput, QueryCommandOutput } from '@aws-sdk/lib-dynamod
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
-import type { FormattedItem } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
+import type { FormattedItem } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'

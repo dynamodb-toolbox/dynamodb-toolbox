@@ -19,8 +19,7 @@ import type {
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
-import type { AppendKey, Paths } from '~/schema/actions/parsePaths/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { AppendKey, Paths, Schema } from '~/schema/index.js'
 
 export type AnyAttrCondition<
   ATTRIBUTE_PATH extends string,

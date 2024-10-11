@@ -1,19 +1,13 @@
-import type { PrimitiveAttribute, ResolvePrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
-import type { If } from '~/types/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
-
-import type { MustBeDefined } from './attribute.js'
-
-export type PrimitiveAttrFormattedValue<ATTRIBUTE extends PrimitiveAttribute> =
-  | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-  | ResolvePrimitiveAttribute<ATTRIBUTE>
 
 type PrimitiveAttrRawValueFormatter = <ATTRIBUTE extends PrimitiveAttribute>(
   attribute: ATTRIBUTE,
   rawValue: unknown
-) => PrimitiveAttrFormattedValue<ATTRIBUTE>
+) => FormattedValue<PrimitiveAttribute>
 
 export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
   ATTRIBUTE extends PrimitiveAttribute
@@ -21,8 +15,6 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
   attribute: ATTRIBUTE,
   rawValue: unknown
 ) => {
-  type Formatted = PrimitiveAttrFormattedValue<ATTRIBUTE>
-
   if (!isValidPrimitive(attribute, rawValue)) {
     const { path, type } = attribute
 
@@ -51,5 +43,5 @@ export const formatPrimitiveAttrRawValue: PrimitiveAttrRawValueFormatter = <
     })
   }
 
-  return formattedValue as Formatted
+  return formattedValue
 }

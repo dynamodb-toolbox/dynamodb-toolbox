@@ -8,14 +8,14 @@ import { anyAttrParser } from './any.js'
 import { anyOfAttributeParser } from './anyOf.js'
 import { listAttrParser } from './list.js'
 import { mapAttributeParser } from './map.js'
-import type { InferValueOptions, ParsingOptions } from './options.js'
+import type { InferWriteValueOptions, ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { primitiveAttrParser } from './primitive.js'
 import { recordAttributeParser } from './record.js'
 import { setAttrParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
-export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParsingOptions = {}>(
+export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParseValueOptions = {}>(
   attribute: ATTRIBUTE,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
@@ -23,7 +23,7 @@ export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends Parsing
   ParserYield<Attribute, OPTIONS>,
   ParserReturn<Attribute, OPTIONS>,
   // TODO: Define & use DefaultedValue here
-  InputValue<Schema, InferValueOptions<OPTIONS, true>> | undefined
+  InputValue<Schema, InferWriteValueOptions<OPTIONS, true>> | undefined
 > {
   const {
     mode = 'put',

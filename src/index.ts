@@ -22,10 +22,17 @@ export type {
   WriteMode,
   WriteValueOptions,
   ExtensionParser,
-  ExtensionParserOptions
+  ExtensionParserOptions,
+  FormattedValue,
+  ReadValueOptions,
+  AttrPaths,
+  SchemaPaths,
+  Paths
 } from './schema/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type {
+  ParseValueOptions,
+  InferWriteValueOptions,
   // deprecated
   ParsedValueOptions,
   ParsingOptions,
@@ -34,15 +41,8 @@ export type {
   ParserInput
 } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
-export type {
-  FormattedValue,
-  FormatOptions,
-  FormattedValueOptions,
-  FormattedValueDefaultOptions,
-  FromFormatOptions
-} from './schema/actions/format/index.js'
+export type { FormatValueOptions, InferValueOptions } from './schema/actions/format/index.js'
 export { PathParser } from './schema/actions/parsePaths/index.js'
-export type { AttrPaths, SchemaPaths, Paths } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
@@ -82,7 +82,9 @@ export type {
   FullItem,
   TransformedItem,
   SavedItem,
-  WriteItemOptions
+  WriteItemOptions,
+  FormattedItem,
+  ReadItemOptions
 } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
@@ -158,14 +160,12 @@ export type { ConditionCheckOptions } from './entity/actions/transactCheck/index
 export { EntityPathParser } from './entity/actions/parsePaths/index.js'
 export type { EntityPaths } from './entity/actions/parsePaths/index.js'
 export { EntityFormatter } from './entity/actions/format/index.js'
-export type {
-  EntityFormattingOptions,
-  FormattedItem,
-  FormattedItemOptions
-} from './entity/actions/format/index.js'
+export type { FormatItemOptions, InferReadItemOptions } from './entity/actions/format/index.js'
 export { EntityParser } from './entity/actions/parse/index.js'
 export type {
-  EntityParsingOptions,
+  ParseItemOptions,
+  InferWriteItemOptions,
+  // deprecated
   EntityParserInput,
   KeyInput,
   ParsedItem,

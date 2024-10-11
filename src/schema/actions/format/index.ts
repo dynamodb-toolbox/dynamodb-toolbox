@@ -1,8 +1,2 @@
 export { Formatter } from './formatter.js'
-export type { FormattedValue } from './formatter.js'
-export type {
-  FormatOptions,
-  FormattedValueOptions,
-  FormattedValueDefaultOptions,
-  FromFormatOptions
-} from './types.js'
+export type { FormatValueOptions, InferValueOptions } from './options.js'

@@ -10,6 +10,9 @@ import type {
   WriteMode
 } from '~/schema/index.js'
 
+/**
+ * @deprecated Use ParseValueOptions
+ */
 export type ParsingOptions = {
   fill?: boolean
   transform?: boolean
@@ -18,6 +21,9 @@ export type ParsingOptions = {
   defined?: boolean
 }
 
+/**
+ * @deprecated
+ */
 export type ParsingDefaultOptions = {
   fill: true
   transform: true
@@ -26,6 +32,9 @@ export type ParsingDefaultOptions = {
   defined: false
 }
 
+/**
+ * @deprecated
+ */
 export type ParsedValueOptions = {
   fill?: boolean
   transform?: boolean
@@ -34,6 +43,9 @@ export type ParsedValueOptions = {
   defined?: boolean
 }
 
+/**
+ * @deprecated
+ */
 export type ParsedValueDefaultOptions = {
   fill: true
   transform: true
@@ -42,6 +54,9 @@ export type ParsedValueDefaultOptions = {
   defined: false
 }
 
+/**
+ * @deprecated
+ */
 export type FromParsingOptions<OPTIONS extends ParsingOptions, CONTEXT extends boolean = false> = {
   fill: OPTIONS extends { fill: boolean } ? OPTIONS['fill'] : ParsedValueDefaultOptions['fill']
   transform: OPTIONS extends { transform: boolean }

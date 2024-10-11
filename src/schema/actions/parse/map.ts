@@ -4,11 +4,11 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { ParsingOptions } from './options.js'
+import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* mapAttributeParser<OPTIONS extends ParsingOptions = {}>(
+export function* mapAttributeParser<OPTIONS extends ParseValueOptions = {}>(
   attribute: MapAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
