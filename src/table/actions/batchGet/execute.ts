@@ -6,11 +6,11 @@ import type {
 } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
-import type { FormattedItem } from '~/entity/actions/format/index.js'
+import type { FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { Paths } from '~/schema/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'

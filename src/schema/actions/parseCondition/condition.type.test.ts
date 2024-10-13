@@ -10,7 +10,7 @@ import type {
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { Paths } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {

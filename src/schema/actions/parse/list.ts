@@ -1,58 +1,21 @@
-import type { Attribute, ExtendedValue, ListAttribute } from '~/attributes/index.js'
+import type { ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { If } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrParser } from './attribute.js'
-import type {
-  AttrParsedValue,
-  AttrParserInput,
-  MustBeDefined,
-  MustBeProvided
-} from './attribute.js'
-import type { ParsedValue } from './parser.js'
-import type {
-  FromParsingOptions,
-  ParsedValueDefaultOptions,
-  ParsedValueOptions,
-  ParsingOptions
-} from './types/options.js'
+import type { ParseValueOptions } from './options.js'
+import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export type ListAttrParsedValue<
-  ATTRIBUTE extends ListAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = ListAttribute extends ATTRIBUTE
-  ? unknown[]
-  :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrParsedValue<ATTRIBUTE['elements'], OPTIONS>[]
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
-
-export function* listAttrParser<
-  ATTRIBUTE extends ListAttribute,
-  OPTIONS extends ParsingOptions = ParsingOptions
->(
-  attribute: ATTRIBUTE,
+export function* listAttrParser<OPTIONS extends ParseValueOptions = {}>(
+  attribute: ListAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<
-  ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>,
-  ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-> {
-  type Parsed = ListAttrParsedValue<ATTRIBUTE, FromParsingOptions<OPTIONS>>
-
+): Generator<ParserYield<ListAttribute, OPTIONS>, ParserReturn<ListAttribute, OPTIONS>> {
   const { fill = true, transform = true } = options
 
-  const parsers: Generator<
-    ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-    ParsedValue<Attribute, FromParsingOptions<OPTIONS>>,
-    ParsedValue<Schema, FromParsingOptions<OPTIONS, true>> | undefined
-  >[] = []
+  const parsers: Generator<any, any>[] = []
 
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
@@ -64,16 +27,16 @@ export function* listAttrParser<
   if (fill) {
     if (isInputValueArray) {
       const defaultedValue = parsers.map(parser => parser.next().value)
-      const itemInput = yield defaultedValue as Parsed
+      const itemInput = yield defaultedValue
 
       const linkedValue = parsers.map(parser => parser.next(itemInput).value)
-      yield linkedValue as Parsed
+      yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as Parsed
+      yield defaultedValue as ParserYield<ListAttribute, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as Parsed
+      yield linkedValue as ParserYield<ListAttribute, OPTIONS>
     }
   }
 
@@ -96,21 +59,11 @@ export function* listAttrParser<
   }
 
   if (transform) {
-    yield parsedValue as Parsed
+    yield parsedValue
   } else {
-    return parsedValue as Parsed
+    return parsedValue
   }
 
   const transformedValue = parsers.map(parser => parser.next().value)
-  return transformedValue as Parsed
+  return transformedValue
 }
-
-export type ListAttrParserInput<
-  ATTRIBUTE extends ListAttribute,
-  OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = ListAttribute extends ATTRIBUTE
-  ? undefined | unknown[] | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>
-  :
-      | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrParserInput<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
-      | ExtendedValue<NonNullable<OPTIONS['extension']>, 'list'>

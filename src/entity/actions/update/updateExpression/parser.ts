@@ -1,8 +1,7 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { Attribute, AttributeValue } from '~/attributes/index.js'
-import type { ParsedValue } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -44,43 +43,46 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    input: ParsedValue<Schema | Attribute, { mode: 'update'; extension: UpdateItemInputExtension }>,
+    parsedValue: ValidValue<
+      Schema | Attribute,
+      { mode: 'update'; extension: UpdateItemInputExtension }
+    >,
     currentPath: (string | number)[] = []
   ): void => {
-    if (input === undefined) {
+    if (parsedValue === undefined) {
       return
     }
 
-    if (isSetting(input)) {
+    if (isSetting(parsedValue)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
       /**
        * @debt type "Fix this cast"
        */
-      this.set.appendValidAttributeValue(input[$SET])
+      this.set.appendValidAttributeValue(parsedValue[$SET])
       return
     }
 
-    if (isGetting(input)) {
+    if (isGetting(parsedValue)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = ')
-      this.set.appendValidAttributeValue(input)
+      this.set.appendValidAttributeValue(parsedValue)
       return
     }
 
-    if (isRemoval(input)) {
+    if (isRemoval(parsedValue)) {
       this.remove.beginNewInstruction()
       this.remove.appendValidAttributePath(currentPath)
       return
     }
 
-    if (isSum(input)) {
+    if (isSum(parsedValue)) {
       /**
        * @debt type "Fix this cast"
        */
-      const [left, right] = input[$SUM] as [
+      const [left, right] = parsedValue[$SUM] as [
         AttributeValue<UpdateItemInputExtension>,
         AttributeValue<UpdateItemInputExtension>
       ]
@@ -93,11 +95,11 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (isSubtraction(input)) {
+    if (isSubtraction(parsedValue)) {
       /**
        * @debt type "Fix this cast"
        */
-      const [left, right] = input[$SUBTRACT] as [
+      const [left, right] = parsedValue[$SUBTRACT] as [
         AttributeValue<UpdateItemInputExtension>,
         AttributeValue<UpdateItemInputExtension>
       ]
@@ -110,18 +112,20 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (isAddition(input)) {
+    if (isAddition(parsedValue)) {
       this.add.beginNewInstruction()
       this.add.appendValidAttributePath(currentPath)
       this.add.appendToExpression(' ')
       /**
        * @debt type "Fix this cast"
        */
-      this.add.appendValidAttributeValue(input[$ADD] as AttributeValue<UpdateItemInputExtension>)
+      this.add.appendValidAttributeValue(
+        parsedValue[$ADD] as AttributeValue<UpdateItemInputExtension>
+      )
       return
     }
 
-    if (isDeletion(input)) {
+    if (isDeletion(parsedValue)) {
       this.delete.beginNewInstruction()
       this.delete.appendValidAttributePath(currentPath)
       this.delete.appendToExpression(' ')
@@ -129,12 +133,12 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.delete.appendValidAttributeValue(
-        input[$DELETE] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$DELETE] as AttributeValue<UpdateItemInputExtension>
       )
       return
     }
 
-    if (isAppending(input)) {
+    if (isAppending(parsedValue)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(if_not_exists(')
@@ -145,12 +149,14 @@ export class UpdateExpressionParser {
       /**
        * @debt type "Fix this cast"
        */
-      this.set.appendValidAttributeValue(input[$APPEND] as AttributeValue<UpdateItemInputExtension>)
+      this.set.appendValidAttributeValue(
+        parsedValue[$APPEND] as AttributeValue<UpdateItemInputExtension>
+      )
       this.set.appendToExpression(')')
       return
     }
 
-    if (isPrepending(input)) {
+    if (isPrepending(parsedValue)) {
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
       this.set.appendToExpression(' = list_append(')
@@ -158,7 +164,7 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.set.appendValidAttributeValue(
-        input[$PREPEND] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$PREPEND] as AttributeValue<UpdateItemInputExtension>
       )
       this.set.appendToExpression(', if_not_exists(')
       this.set.appendValidAttributePath(currentPath)
@@ -168,15 +174,15 @@ export class UpdateExpressionParser {
       return
     }
 
-    if (isObject(input)) {
-      for (const [key, value] of Object.entries(input)) {
+    if (isObject(parsedValue)) {
+      for (const [key, value] of Object.entries(parsedValue)) {
         this.parseUpdate(value, [...currentPath, key])
       }
       return
     }
 
-    if (isArray(input)) {
-      input.forEach((element, index) => {
+    if (isArray(parsedValue)) {
+      parsedValue.forEach((element, index) => {
         if (element === undefined) {
           return
         }
@@ -190,7 +196,7 @@ export class UpdateExpressionParser {
     this.set.beginNewInstruction()
     this.set.appendValidAttributePath(currentPath)
     this.set.appendToExpression(' = ')
-    this.set.appendValidAttributeValue(input)
+    this.set.appendValidAttributeValue(parsedValue)
   }
 
   toCommandOptions = (): ParsedUpdate => {

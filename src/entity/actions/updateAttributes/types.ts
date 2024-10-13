@@ -39,9 +39,7 @@ import type {
 } from '~/entity/actions/update/symbols/index.js'
 import type { Reference, ReferenceExtension } from '~/entity/actions/update/types.js'
 import type { Entity } from '~/entity/index.js'
-import type { AttrParserInput } from '~/schema/actions/parse/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Paths, Schema, ValidValue } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
@@ -156,7 +154,7 @@ export type UpdateAttributeInput<
           [
             ref: SCHEMA_ATTRIBUTE_PATHS,
             fallback?:
-              | AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>
+              | ValidValue<ATTRIBUTE, { defined: true }>
               | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
           ]
         >
@@ -204,43 +202,39 @@ export type UpdateAttributeInput<
           : never)
       | (ATTRIBUTE extends SetAttribute
           ?
-              | Set<AttrParserInput<ATTRIBUTE['elements']>>
-              | ADD<Set<AttrParserInput<ATTRIBUTE['elements']>>>
-              | DELETE<Set<AttrParserInput<ATTRIBUTE['elements']>>>
+              | Set<ValidValue<ATTRIBUTE['elements']>>
+              | ADD<Set<ValidValue<ATTRIBUTE['elements']>>>
+              | DELETE<Set<ValidValue<ATTRIBUTE['elements']>>>
           : never)
       | (ATTRIBUTE extends ListAttribute
           ?
-              | Basic<AttrParserInput<ATTRIBUTE['elements']>[]>
+              | Basic<ValidValue<ATTRIBUTE['elements']>[]>
               | APPEND<
                   // Not using Reference<...> for improved type display
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
-                          | AttrParserInput<ATTRIBUTE['elements']>[]
+                          | ValidValue<ATTRIBUTE['elements']>[]
                           | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
-                  | AttrParserInput<ATTRIBUTE['elements']>[]
+                  | ValidValue<ATTRIBUTE['elements']>[]
                 >
               | PREPEND<
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
-                          | AttrParserInput<ATTRIBUTE['elements']>[]
+                          | ValidValue<ATTRIBUTE['elements']>[]
                           | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
-                  | AttrParserInput<ATTRIBUTE['elements']>[]
+                  | ValidValue<ATTRIBUTE['elements']>[]
                 >
           : never)
-      | (ATTRIBUTE extends MapAttribute
-          ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
-          : never)
-      | (ATTRIBUTE extends RecordAttribute
-          ? Basic<AttrParserInput<ATTRIBUTE, { defined: true; fill: false }>>
-          : never)
+      | (ATTRIBUTE extends MapAttribute ? Basic<ValidValue<ATTRIBUTE>> : never)
+      | (ATTRIBUTE extends RecordAttribute ? Basic<ValidValue<ATTRIBUTE>> : never)
       | (ATTRIBUTE extends AnyOfAttribute
           ? UpdateAttributeInput<ATTRIBUTE['elements'][number], FILLED, SCHEMA_ATTRIBUTE_PATHS>
           : never)

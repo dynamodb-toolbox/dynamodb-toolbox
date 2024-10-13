@@ -4,12 +4,12 @@ title: Custom Validation
 
 # Custom Validation
 
-All attribute types support adding custom validation during the **parsing step** (see the [`Parser`](../16-actions/1-parse.md) action for more details).
+All attribute types support adding custom validation during the **parsing step** (see the [`Parser`](../17-actions/1-parse.md) action for more details).
 
 There are three kinds of validators:
 
-- `putValidate`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateValidate`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
+- `putValidate`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `updateValidate`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyValidate`: Overrides other validators on key attributes (ignored otherwise)
 
 The `validate` method is a shorthand that acts as `keyValidate` on key attributes and `putValidate` otherwise.
@@ -119,7 +119,7 @@ const bulletListSchema = schema({
 
 In those cases, type inference **only works partially** as the `subBulletList` property is inferred as `unknown`.
 
-However, a **slight override** of the inferred types will get you there:
+However, a **slight override** of the inferred types gets you there:
 
 ```ts
 import type { FormattedValue } from 'dynamodb-toolbox/schema/actions/format'

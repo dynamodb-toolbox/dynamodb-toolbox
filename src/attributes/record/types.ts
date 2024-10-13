@@ -21,4 +21,5 @@ export type $RecordAttributeElements = $AttributeNestedState & {
   [$state]: RecordAttributeElementConstraints
 }
 
+// TODO: Re-introduce constraint?
 export type RecordAttributeKeys = StringAttribute

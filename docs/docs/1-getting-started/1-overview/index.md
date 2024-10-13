@@ -18,12 +18,11 @@ It provides as a light abstraction layer over the SDK that **turns your DynamoDB
 - 🌈 **Type-safety pushed to the limit**: Increase your development velocity with **instantaneous feedbacks** and **slick auto-completion**.
 - 🌴 **Tree-shakable**: Only import what you need.
 - ☝️ **Single-table designs**: DynamoDB-Toolbox makes **querying multiple entities within the same table extremely simple**, although it works just as well with multiple tables.
+- 🪶 **LLRT compatible**: DynamoDB-Toolbox has no dependency and can be used within [LLRT functions](https://github.com/awslabs/llrt).
 
 ## Why use it?
 
-If you're here, we're assuming you know DynamoDB.
-
-If you don't, check out the [official AWS docs](https://aws.amazon.com/dynamodb).
+If you're here, we're assuming you know DynamoDB. If you don't, check out the [official AWS docs](https://aws.amazon.com/dynamodb).
 
 :::infoTL;DR
 

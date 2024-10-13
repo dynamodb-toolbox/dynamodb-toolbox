@@ -1,11 +1,9 @@
 import type { AttributeValue } from '@aws-sdk/client-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import type { ParsedItem, ParsedItemDefaultOptions } from '~/entity/actions/parse/index.js'
 import type { PutItemInput } from '~/entity/actions/put/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, ValidItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
 import type { Require } from '~/types/require.js'
 
 import { WriteTransaction } from '../transactWrite/transaction.js'
@@ -46,7 +44,7 @@ export class PutTransaction<
   }
 
   params(): Require<TransactWriteItem, 'Put'> & {
-    ToolboxItem: ParsedItem<ENTITY, Overwrite<ParsedItemDefaultOptions, { transform: false }>>
+    ToolboxItem: ValidItem<ENTITY>
   } {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {

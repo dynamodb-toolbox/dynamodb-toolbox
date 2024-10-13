@@ -1,6 +1,6 @@
 import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'

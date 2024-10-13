@@ -14,7 +14,7 @@ import {
   schema,
   string
 } from '~/index.js'
-import type { FormattedItem, KeyInput, SavedItem } from '~/index.js'
+import type { FormattedItem, KeyInputItem, SavedItem } from '~/index.js'
 import { pick } from '~/utils/pick.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
@@ -41,7 +41,7 @@ const EntityA = new Entity({
   }),
   table: TestTable1
 })
-const keyA: KeyInput<typeof EntityA> = { pkA: 'a', skA: 'a' }
+const keyA: KeyInputItem<typeof EntityA> = { pkA: 'a', skA: 'a' }
 const savedItemA: SavedItem<typeof EntityA> = {
   _et: 'EntityA',
   _ct: '2021-09-01T00:00:00.000Z',
@@ -70,7 +70,7 @@ const EntityB = new Entity({
   }),
   table: TestTable1
 })
-const keyB: KeyInput<typeof EntityB> = { pkB: 'b', skB: 'b' }
+const keyB: KeyInputItem<typeof EntityB> = { pkB: 'b', skB: 'b' }
 const savedItemB: SavedItem<typeof EntityB> = {
   _et: 'EntityB',
   _ct: '2021-09-01T00:00:00.000Z',
@@ -104,7 +104,7 @@ const EntityC = new Entity({
   }),
   table: TestTable2
 })
-const keyC: KeyInput<typeof EntityC> = { pkC: 'c', skC: 'c' }
+const keyC: KeyInputItem<typeof EntityC> = { pkC: 'c', skC: 'c' }
 const savedItemC: SavedItem<typeof EntityC> = {
   _et: 'EntityC',
   _ct: '2021-09-01T00:00:00.000Z',

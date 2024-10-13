@@ -44,6 +44,8 @@ DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **tur
 
 ☝️ **Single-table designs**: DynamoDB-Toolbox makes **querying multiple entities within the same table extremely simple**, although it works just as well with multiple tables.
 
+🪶 **LLRT compatible**: DynamoDB-Toolbox has no dependency and can be used within [LLRT functions](https://github.com/awslabs/llrt).
+
 ## Visit the 👉 [official documentation](https://dynamodbtoolbox.com/) 👈 to get started! <!-- omit in toc -->
 
 ## Why use it? <!-- omit in toc -->

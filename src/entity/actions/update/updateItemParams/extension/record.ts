@@ -1,11 +1,7 @@
 import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type {
-  ExtensionParser,
-  ExtensionParserOptions,
-  ParsedValue
-} from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { $SET, isRemoval, isSetting } from '../../symbols/index.js'
@@ -17,9 +13,9 @@ function* recordElementsParser(
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): Generator<
-  ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
-  ParsedValue<Attribute, { extension: UpdateItemInputExtension }>,
-  ParsedValue<Schema, { extension: UpdateItemInputExtension }> | undefined
+  ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
+  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
+  | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue

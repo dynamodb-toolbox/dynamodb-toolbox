@@ -5,9 +5,9 @@ import type {
   TransactGetCommandOutput
 } from '@aws-sdk/lib-dynamodb'
 
-import type { FormattedItem } from '~/entity/actions/format/index.js'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
+import type { FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseCapacityOption } from '~/options/capacity.js'

@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
@@ -189,10 +188,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
-        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-        { mode: 'key'; fill: false }
-      >
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $BooleanAttribute<
     Overwrite<
@@ -223,9 +219,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -290,11 +284,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-          { mode: 'key'; fill: false }
-        >,
-        ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
       >
     >
   ): $BooleanAttribute<
@@ -343,11 +334,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-      { mode: 'key'; fill: false }
-    >
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -378,8 +366,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -442,18 +430,11 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<
-        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-        { mode: 'key'; fill: false }
-      >,
-      ParserInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { fill: false }>
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
     >
   ): $BooleanAttribute<
     Overwrite<
@@ -501,9 +482,9 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
+      ValidValue<
         FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-        { mode: 'key'; fill: false; defined: true }
+        { mode: 'key'; defined: true }
       >,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
@@ -537,10 +518,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
-        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-        { fill: false; defined: true }
-      >,
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
   ): $BooleanAttribute<
@@ -608,14 +586,11 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
+        ValidValue<
           FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-          { mode: 'key'; fill: false; defined: true }
+          { mode: 'key'; defined: true }
         >,
-        ParserInput<
-          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-          { fill: false; defined: true }
-        >
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>
       >,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >

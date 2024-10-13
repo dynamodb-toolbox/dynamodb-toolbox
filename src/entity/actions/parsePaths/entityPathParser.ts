@@ -1,7 +1,7 @@
 import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { PathParser } from '~/schema/actions/parsePaths/index.js'
-import type { Paths } from '~/schema/actions/parsePaths/index.js'
+import type { Paths } from '~/schema/index.js'
 
 import { $pathParser } from './constants.js'
 

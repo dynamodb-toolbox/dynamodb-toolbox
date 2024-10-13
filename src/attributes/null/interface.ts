@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -96,7 +95,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>
+      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $NullAttribute<
     Overwrite<
@@ -127,9 +126,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>>
   ): $NullAttribute<
     Overwrite<
       STATE,
@@ -194,8 +191,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>,
-        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
+        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
       >
     >
   ): $NullAttribute<
@@ -244,8 +241,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
   ): $NullAttribute<
     Overwrite<
       STATE,
@@ -276,8 +273,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
   ): $NullAttribute<
     Overwrite<
       STATE,
@@ -340,15 +337,11 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; fill: false }>,
-      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false }>
+      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
     >
   ): $NullAttribute<
     Overwrite<
@@ -396,10 +389,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
-        FreezeNullAttribute<$NullAttributeState<STATE>>,
-        { mode: 'key'; fill: false; defined: true }
-      >,
+      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; defined: true }>,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
   ): $NullAttribute<
@@ -432,7 +422,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false; defined: true }>,
+      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { defined: true }>,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
   ): $NullAttribute<
@@ -500,11 +490,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
-          FreezeNullAttribute<$NullAttributeState<STATE>>,
-          { mode: 'key'; fill: false; defined: true }
-        >,
-        ParserInput<FreezeNullAttribute<$NullAttributeState<STATE>>, { fill: false; defined: true }>
+        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { defined: true }>
       >,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >

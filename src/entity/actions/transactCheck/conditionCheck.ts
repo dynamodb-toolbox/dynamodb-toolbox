@@ -1,7 +1,6 @@
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import type { KeyInput } from '~/entity/actions/parse/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, KeyInputItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Require } from '~/types/require.js'
 
@@ -20,13 +19,13 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
 {
   static override actionName = 'conditionCheck' as const
 
-  private [$key]?: KeyInput<ENTITY>
+  private [$key]?: KeyInputItem<ENTITY>
   private [$condition]?: Condition<ENTITY>
   private [$options]: ConditionCheckOptions
 
   constructor(
     entity: ENTITY,
-    key?: KeyInput<ENTITY>,
+    key?: KeyInputItem<ENTITY>,
     condition?: Condition<ENTITY>,
     options: ConditionCheckOptions = {}
   ) {
@@ -36,7 +35,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     this[$options] = options
   }
 
-  key(nextKey: KeyInput<ENTITY>): ConditionCheck<ENTITY> {
+  key(nextKey: KeyInputItem<ENTITY>): ConditionCheck<ENTITY> {
     return new ConditionCheck(this.entity, nextKey, this[$condition], this[$options])
   }
 

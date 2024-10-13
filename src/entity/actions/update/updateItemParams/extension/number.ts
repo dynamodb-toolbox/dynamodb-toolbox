@@ -2,7 +2,7 @@ import type { AttributeBasicValue, NumberAttribute } from '~/attributes/index.js
 import { number } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/actions/parse/index.js'
+import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { $ADD, $SUBTRACT, $SUM, isAddition, isSubtraction, isSum } from '../../symbols/index.js'

@@ -1,9 +1,8 @@
 import type { BatchWriteCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import type { EntityParserInput } from '~/entity/actions/parse/index.js'
 import { EntityParser } from '~/entity/actions/parse/index.js'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, InputItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $item } from './constants.js'
@@ -11,14 +10,14 @@ import { $item } from './constants.js'
 export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'batchPut' as const;
 
-  [$item]?: EntityParserInput<ENTITY>
+  [$item]?: InputItem<ENTITY>
 
-  constructor(entity: ENTITY, item?: EntityParserInput<ENTITY>) {
+  constructor(entity: ENTITY, item?: InputItem<ENTITY>) {
     super(entity)
     this[$item] = item
   }
 
-  item(nextItem: EntityParserInput<ENTITY>): BatchPutRequest<ENTITY> {
+  item(nextItem: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
     return new BatchPutRequest(this.entity, nextItem)
   }
 

@@ -2,8 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -133,9 +132,9 @@ export class $RecordAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ParserInput<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key' }
       >
     >
   ): $RecordAttribute<
@@ -172,10 +171,7 @@ export class $RecordAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ParserInput<
-        FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { fill: false }
-      >
+      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
   ): $RecordAttribute<
     Overwrite<
@@ -252,14 +248,11 @@ export class $RecordAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ParserInput<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-          { mode: 'key'; fill: false }
+          { mode: 'key' }
         >,
-        ParserInput<
-          FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-          { fill: false }
-        >
+        ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
       >
     >
   ): $RecordAttribute<
@@ -312,10 +305,10 @@ export class $RecordAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>
-    ) => ParserInput<
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<
       FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-      { mode: 'key'; fill: false }
+      { mode: 'key' }
     >
   ): $RecordAttribute<
     Overwrite<
@@ -351,11 +344,8 @@ export class $RecordAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: ParserInput<SCHEMA, { fill: false }>
-    ) => ParserInput<
-      FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-      { fill: false }
-    >
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
   ): $RecordAttribute<
     Overwrite<
       STATE,
@@ -429,21 +419,14 @@ export class $RecordAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<
-        STATE['key'],
-        ParserInput<SCHEMA, { mode: 'key'; fill: false }>,
-        ParserInput<SCHEMA, { fill: false }>
-      >
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ParserInput<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key'; fill: false }
+        { mode: 'key' }
       >,
-      ParserInput<
-        FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { fill: false }
-      >
+      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
   ): $RecordAttribute<
     Overwrite<
@@ -495,9 +478,9 @@ export class $RecordAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ParserInput<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key'; fill: false; defined: true }
+        { mode: 'key'; defined: true }
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
@@ -535,9 +518,9 @@ export class $RecordAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      ParserInput<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-        { fill: false; defined: true }
+        { defined: true }
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
@@ -617,13 +600,13 @@ export class $RecordAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        ParserInput<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-          { mode: 'key'; fill: false; defined: true }
+          { mode: 'key'; defined: true }
         >,
-        ParserInput<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
-          { fill: false; defined: true }
+          { defined: true }
         >
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>

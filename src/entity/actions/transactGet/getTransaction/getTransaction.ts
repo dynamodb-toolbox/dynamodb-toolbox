@@ -1,7 +1,6 @@
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import type { KeyInput } from '~/entity/actions/parse/index.js'
 import { EntityAction } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, KeyInputItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NonNull } from '~/types/nonNull.js'
 
@@ -16,16 +15,16 @@ export class GetTransaction<
 > extends EntityAction<ENTITY> {
   static override actionName = 'transactGet' as const;
 
-  [$key]?: KeyInput<ENTITY>;
+  [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
-  constructor(entity: ENTITY, key?: KeyInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
+  constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
-  key(nextKey: KeyInput<ENTITY>): GetTransaction<ENTITY> {
+  key(nextKey: KeyInputItem<ENTITY>): GetTransaction<ENTITY> {
     return new GetTransaction(this.entity, nextKey, this[$options])
   }
 

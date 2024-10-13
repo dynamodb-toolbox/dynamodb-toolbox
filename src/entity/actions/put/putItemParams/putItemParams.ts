@@ -1,9 +1,7 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import type { ParsedItem, ParsedItemDefaultOptions } from '~/entity/actions/parse/index.js'
-import type { Entity } from '~/entity/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Entity, ValidItem } from '~/entity/index.js'
 
 import type { PutItemOptions } from '../options.js'
 import type { PutItemInput } from '../types.js'
@@ -14,7 +12,7 @@ type PutItemParamsGetter = <ENTITY extends Entity, OPTIONS extends PutItemOption
   input: PutItemInput<ENTITY>,
   putItemOptions?: OPTIONS
 ) => PutCommandInput & {
-  ToolboxItem: ParsedItem<ENTITY, Overwrite<ParsedItemDefaultOptions, { transform: false }>>
+  ToolboxItem: ValidItem<ENTITY>
 }
 
 export const putItemParams: PutItemParamsGetter = <

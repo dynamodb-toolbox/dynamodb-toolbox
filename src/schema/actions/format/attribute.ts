@@ -1,61 +1,15 @@
-import type {
-  Always,
-  AnyAttribute,
-  AnyOfAttribute,
-  AtLeastOnce,
-  Attribute,
-  ListAttribute,
-  MapAttribute,
-  PrimitiveAttribute,
-  RecordAttribute,
-  RequiredOption,
-  SetAttribute
-} from '~/attributes/index.js'
+import type { Attribute, RequiredOption } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { FormattedValue } from '~/schema/index.js'
 
 import { formatAnyAttrRawValue } from './any.js'
-import type { AnyAttrFormattedValue } from './any.js'
 import { formatAnyOfAttrRawValue } from './anyOf.js'
-import type { AnyOfAttrFormattedValue } from './anyOf.js'
 import { formatListAttrRawValue } from './list.js'
-import type { ListAttrFormattedValue } from './list.js'
 import { formatMapAttrRawValue } from './map.js'
-import type { MapAttrFormattedValue } from './map.js'
+import type { FormatValueOptions, InferValueOptions } from './options.js'
 import { formatPrimitiveAttrRawValue } from './primitive.js'
-import type { PrimitiveAttrFormattedValue } from './primitive.js'
 import { formatRecordAttrRawValue } from './record.js'
-import type { RecordAttrFormattedValue } from './record.js'
 import { formatSavedSetAttribute } from './set.js'
-import type { SetAttrFormattedValue } from './set.js'
-import type {
-  FormatOptions,
-  FormattedValueDefaultOptions,
-  FormattedValueOptions,
-  FromFormatOptions
-} from './types.js'
-
-export type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
-  required: AtLeastOnce | Always
-}
-  ? true
-  : false
-
-export type AttrFormattedValue<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends FormattedValueOptions<ATTRIBUTE> = FormattedValueDefaultOptions
-> = Attribute extends ATTRIBUTE
-  ? unknown
-  :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrFormattedValue<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends Schema | MapAttribute
-          ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
-          : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
@@ -64,14 +18,12 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export const formatAttrRawValue = <
   ATTRIBUTE extends Attribute,
-  OPTIONS extends FormatOptions<ATTRIBUTE>
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): AttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>> => {
-  type Formatted = AttrFormattedValue<ATTRIBUTE, FromFormatOptions<ATTRIBUTE, OPTIONS>>
-
+): FormattedValue<Attribute, InferValueOptions<ATTRIBUTE, OPTIONS>> => {
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       const { path } = attribute
@@ -84,28 +36,28 @@ export const formatAttrRawValue = <
         payload: {}
       })
     } else {
-      return undefined as Formatted
+      return undefined
     }
   }
 
   switch (attribute.type) {
     case 'any':
-      return formatAnyAttrRawValue(attribute, rawValue) as Formatted
+      return formatAnyAttrRawValue(attribute, rawValue)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return formatPrimitiveAttrRawValue(attribute, rawValue) as Formatted
+      return formatPrimitiveAttrRawValue(attribute, rawValue)
     case 'set':
-      return formatSavedSetAttribute(attribute, rawValue, options) as Formatted
+      return formatSavedSetAttribute(attribute, rawValue, options)
     case 'list':
-      return formatListAttrRawValue(attribute, rawValue, options) as Formatted
+      return formatListAttrRawValue(attribute, rawValue, options)
     case 'map':
-      return formatMapAttrRawValue(attribute, rawValue, options) as Formatted
+      return formatMapAttrRawValue(attribute, rawValue, options)
     case 'record':
-      return formatRecordAttrRawValue(attribute, rawValue, options) as Formatted
+      return formatRecordAttrRawValue(attribute, rawValue, options)
     case 'anyOf':
-      return formatAnyOfAttrRawValue(attribute, rawValue, options) as Formatted
+      return formatAnyOfAttrRawValue(attribute, rawValue, options)
   }
 }

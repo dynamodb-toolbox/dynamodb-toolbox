@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { ParserInput } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'
 import type { If } from '~/types/if.js'
@@ -44,7 +43,7 @@ export class Entity<
   public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
-    keyInput: Schema extends SCHEMA ? any : ParserInput<SCHEMA, { mode: 'key'; fill: false }>
+    keyInput: Schema extends SCHEMA ? any : ValidValue<SCHEMA, { mode: 'key' }>
   ) => PrimaryKey<TABLE>;
 
   [$interceptor]?: (action: EntitySendableAction) => any
@@ -66,9 +65,7 @@ export class Entity<
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
     NeedsKeyCompute<SCHEMA, TABLE>,
-    {
-      computeKey: (keyInput: ParserInput<SCHEMA, { mode: 'key'; fill: false }>) => PrimaryKey<TABLE>
-    },
+    { computeKey: (keyInput: ValidValue<SCHEMA, { mode: 'key' }>) => PrimaryKey<TABLE> },
     { computeKey?: undefined }
   >) {
     this.type = 'entity'
