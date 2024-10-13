@@ -1,7 +1,7 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import type { Attribute, AttributeValue } from '~/attributes/index.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -43,7 +43,7 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    parsedValue: FullValue<
+    parsedValue: ValidValue<
       Schema | Attribute,
       { mode: 'update'; extension: UpdateItemInputExtension }
     >,

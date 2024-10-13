@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -108,7 +108,7 @@ export class $SetAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $SetAttribute<
     Overwrite<
@@ -142,7 +142,7 @@ export class $SetAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
   ): $SetAttribute<
     Overwrite<
@@ -212,8 +212,8 @@ export class $SetAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+        ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
       >
     >
   ): $SetAttribute<
@@ -264,8 +264,8 @@ export class $SetAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $SetAttribute<
     Overwrite<
       STATE,
@@ -298,8 +298,8 @@ export class $SetAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
   ): $SetAttribute<
     Overwrite<
       STATE,
@@ -366,11 +366,11 @@ export class $SetAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      FullValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
   ): $SetAttribute<
     Overwrite<
@@ -420,7 +420,7 @@ export class $SetAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
         { mode: 'key'; defined: true }
       >,
@@ -458,7 +458,7 @@ export class $SetAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>,
+      ValidValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
   ): $SetAttribute<
@@ -530,11 +530,11 @@ export class $SetAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>
+        ValidValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>
       >,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >

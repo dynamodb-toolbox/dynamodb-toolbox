@@ -1,8 +1,8 @@
 import type { Attribute, AttributeBasicValue, Extension } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 
-import type { FullValue } from './fullValue.js'
 import type { TransformedValue } from './transformedValue.js'
+import type { ValidValue } from './validValue.js'
 
 export const $extension = Symbol('$extension')
 export type $extension = typeof $extension
@@ -23,9 +23,9 @@ export type ExtensionParser<
   | {
       isExtension: true
       extensionParser: () => Generator<
-        FullValue<Attribute, { extension: EXTENSION }>,
+        ValidValue<Attribute, { extension: EXTENSION }>,
         TransformedValue<Attribute, { extension: EXTENSION }>,
-        FullValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
+        ValidValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
       >
       basicInput?: never
     }

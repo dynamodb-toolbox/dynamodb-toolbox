@@ -17,13 +17,13 @@ import type { Extends, If, Optional, Overwrite, SelectKeys } from '~/types/index
 
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
-export type FullValue<
+export type ValidValue<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends Schema
-  ? SchemaFullValue<SCHEMA, OPTIONS>
+  ? SchemaValidValue<SCHEMA, OPTIONS>
   : SCHEMA extends Attribute
-    ? AttrFullValue<SCHEMA, OPTIONS>
+    ? AttrValidValue<SCHEMA, OPTIONS>
     : never
 
 type MustBeDefined<
@@ -43,16 +43,16 @@ type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteVal
   >
 }[keyof SCHEMA['attributes']]
 
-type SchemaFullValue<
+type SchemaValidValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions
 > = Schema extends SCHEMA
-  ? { [KEY: string]: AttrFullValue<Attribute, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: AttrValidValue<Attribute, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
           ? SelectKeys<SCHEMA['attributes'], { key: true }>
-          : keyof SCHEMA['attributes']]: AttrFullValue<
+          : keyof SCHEMA['attributes']]: AttrValidValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
         >
@@ -60,21 +60,21 @@ type SchemaFullValue<
       OptionalKeys<SCHEMA, OPTIONS>
     >
 
-type AttrFullValue<
+type AttrValidValue<
   ATTRIBUTE extends Attribute,
   OPTIONS extends WriteValueOptions = {}
 > = Attribute extends ATTRIBUTE
   ? unknown
   :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapAttribute ? MapAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrFullValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFullValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyAttribute ? AnyAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends SetAttribute ? SetAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListAttribute ? ListAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends MapAttribute ? MapAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends RecordAttribute ? RecordAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrValidValue<ATTRIBUTE, OPTIONS> : never)
 
-type AnyAttrFullValue<
+type AnyAttrValidValue<
   ATTRIBUTE extends AnyAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = AnyAttribute extends ATTRIBUTE
@@ -84,7 +84,7 @@ type AnyAttrFullValue<
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | ATTRIBUTE['castAs']
 
-type PrimitiveAttrFullValue<
+type PrimitiveAttrValidValue<
   ATTRIBUTE extends PrimitiveAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = PrimitiveAttribute extends ATTRIBUTE
@@ -94,7 +94,7 @@ type PrimitiveAttrFullValue<
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | ResolvePrimitiveAttribute<ATTRIBUTE>
 
-type SetAttrFullValue<
+type SetAttrValidValue<
   ATTRIBUTE extends SetAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = SetAttribute extends ATTRIBUTE
@@ -102,7 +102,7 @@ type SetAttrFullValue<
       | undefined
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | Set<
-          AttrFullValue<
+          AttrValidValue<
             SetAttribute['elements'],
             Overwrite<OPTIONS, { mode: 'put'; defined: false }>
           >
@@ -111,10 +111,10 @@ type SetAttrFullValue<
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | Set<
-          AttrFullValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+          AttrValidValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
         >
 
-type ListAttrFullValue<
+type ListAttrValidValue<
   ATTRIBUTE extends ListAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = ListAttribute extends ATTRIBUTE
@@ -122,9 +122,9 @@ type ListAttrFullValue<
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | AttrFullValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+      | AttrValidValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
-type MapAttrFullValue<
+type MapAttrValidValue<
   ATTRIBUTE extends MapAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = MapAttribute extends ATTRIBUTE
@@ -136,7 +136,7 @@ type MapAttrFullValue<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
-              : keyof ATTRIBUTE['attributes']]: AttrFullValue<
+              : keyof ATTRIBUTE['attributes']]: AttrValidValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >
@@ -144,10 +144,10 @@ type MapAttrFullValue<
           OptionalKeys<ATTRIBUTE, OPTIONS>
         >
 
-type RecordAttrFullValue<
+type RecordAttrValidValue<
   ATTRIBUTE extends RecordAttribute,
   OPTIONS extends WriteValueOptions = {},
-  KEYS extends string = Extract<AttrFullValue<ATTRIBUTE['keys'], OPTIONS>, string>
+  KEYS extends string = Extract<AttrValidValue<ATTRIBUTE['keys'], OPTIONS>, string>
 > = RecordAttribute extends ATTRIBUTE
   ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | { [KEY: string]: unknown }
   :
@@ -155,13 +155,13 @@ type RecordAttrFullValue<
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       // We cannot use Record type as it messes up map resolution down the line
       | {
-          [KEY in KEYS]?: AttrFullValue<
+          [KEY in KEYS]?: AttrValidValue<
             ATTRIBUTE['elements'],
             Overwrite<OPTIONS, { defined: false }>
           >
         }
 
-type AnyOfAttrFullValue<
+type AnyOfAttrValidValue<
   ATTRIBUTE extends AnyOfAttribute,
   OPTIONS extends WriteValueOptions = {}
 > = AnyOfAttribute extends ATTRIBUTE
@@ -169,19 +169,19 @@ type AnyOfAttrFullValue<
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | AnyOfAttrFullValueRec<ATTRIBUTE['elements'], OPTIONS>
+      | AnyOfAttrValidValueRec<ATTRIBUTE['elements'], OPTIONS>
 
-type AnyOfAttrFullValueRec<
+type AnyOfAttrValidValueRec<
   ELEMENTS extends Attribute[],
   OPTIONS extends WriteValueOptions = {},
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Attribute
     ? ELEMENTS_TAIL extends Attribute[]
-      ? AnyOfAttrFullValueRec<
+      ? AnyOfAttrValidValueRec<
           ELEMENTS_TAIL,
           OPTIONS,
-          RESULTS | AttrFullValue<ELEMENTS_HEAD, OPTIONS>
+          RESULTS | AttrValidValue<ELEMENTS_HEAD, OPTIONS>
         >
       : never
     : never

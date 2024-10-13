@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -108,7 +108,7 @@ export class $MapAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
+      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
     >
   ): $MapAttribute<
     Overwrite<
@@ -142,7 +142,7 @@ export class $MapAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
     >
   ): $MapAttribute<
     Overwrite<
@@ -212,8 +212,8 @@ export class $MapAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
-        FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+        ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
+        ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
       >
     >
   ): $MapAttribute<
@@ -264,8 +264,8 @@ export class $MapAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
   ): $MapAttribute<
     Overwrite<
       STATE,
@@ -298,8 +298,8 @@ export class $MapAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
   ): $MapAttribute<
     Overwrite<
       STATE,
@@ -366,11 +366,11 @@ export class $MapAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
-      FullValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
+      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
     >
   ): $MapAttribute<
     Overwrite<
@@ -420,7 +420,7 @@ export class $MapAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
         { mode: 'key'; defined: true }
       >,
@@ -458,7 +458,7 @@ export class $MapAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { defined: true }>,
+      ValidValue<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { defined: true }>,
       FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
     >
   ): $MapAttribute<
@@ -530,11 +530,11 @@ export class $MapAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { defined: true }>
+        ValidValue<FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>, { defined: true }>
       >,
       FreezeMapAttribute<$MapAttribute<STATE, $ATTRIBUTES>>
     >

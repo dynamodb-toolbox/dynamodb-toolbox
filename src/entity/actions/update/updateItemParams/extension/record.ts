@@ -1,7 +1,7 @@
 import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
-import type { FullValue, TransformedValue } from '~/schema/index.js'
+import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { $SET, isRemoval, isSetting } from '../../symbols/index.js'
@@ -13,8 +13,8 @@ function* recordElementsParser(
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): Generator<
-  FullValue<Attribute, { extension: UpdateItemInputExtension }>,
-  | FullValue<Attribute, { extension: UpdateItemInputExtension }>
+  ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
+  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
   | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {

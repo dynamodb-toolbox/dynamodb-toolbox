@@ -4,7 +4,7 @@ import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
-import type { FullValue, Schema, TransformedValue } from '~/schema/index.js'
+import type { Schema, TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -86,7 +86,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,
-        FullValue<Attribute, { mode: 'update'; extension: ReferenceExtension }> | undefined
+        ValidValue<Attribute, { mode: 'update'; extension: ReferenceExtension }> | undefined
       ]
 
       if (fallback === undefined) {

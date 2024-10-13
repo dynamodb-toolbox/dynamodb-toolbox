@@ -1,5 +1,5 @@
 import { EntityAction } from '~/entity/index.js'
-import type { Entity, FullItem, InputItem, TransformedItem } from '~/entity/index.js'
+import type { Entity, InputItem, TransformedItem, ValidItem } from '~/entity/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { $extension, ExtensionParser, WriteMode } from '~/schema/index.js'
 import { PrimaryKeyParser } from '~/table/actions/parsePrimaryKey/index.js'
@@ -32,7 +32,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     input: { [KEY: string]: unknown },
     { mode, parseExtension }: OPTIONS = {} as OPTIONS
   ): {
-    parsedItem: FullItem<ENTITY, InferWriteItemOptions<OPTIONS>>
+    parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
     item: TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
     key: PrimaryKey<ENTITY['table']>
   } {
@@ -42,7 +42,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     /**
      * @debt type "we could remove those casts by using named generator yields: const parsedItem = parser.next<"parsed">().value"
      */
-    const parsedItem = parser.next().value as FullItem<ENTITY, InferWriteItemOptions<OPTIONS>>
+    const parsedItem = parser.next().value as ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
     const item = parser.next().value as TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>>
 
     const keyInput = this.entity.computeKey ? this.entity.computeKey(parsedItem) : item
@@ -59,7 +59,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     input: InputItem<ENTITY, InferWriteItemOptions<OPTIONS>>,
     options: OPTIONS = {} as OPTIONS
   ): {
-    parsedItem: FullItem<ENTITY, InferWriteItemOptions<OPTIONS>>
+    parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
     item: TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
     key: PrimaryKey<ENTITY['table']>
   } {

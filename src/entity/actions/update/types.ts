@@ -23,7 +23,7 @@ import type {
   SetAttributeValue
 } from '~/attributes/index.js'
 import type { Entity } from '~/entity/index.js'
-import type { FullValue, Paths, Schema } from '~/schema/index.js'
+import type { Paths, Schema, ValidValue } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
 import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
@@ -163,7 +163,7 @@ export type Reference<
   [
     ref: SCHEMA_ATTRIBUTE_PATHS,
     fallback?:
-      | FullValue<ATTRIBUTE, { defined: true }>
+      | ValidValue<ATTRIBUTE, { defined: true }>
       | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
   ]
 >
@@ -189,7 +189,7 @@ export type AttributeUpdateItemInput<
           [
             ref: SCHEMA_ATTRIBUTE_PATHS,
             fallback?:
-              | FullValue<ATTRIBUTE, { defined: true }>
+              | ValidValue<ATTRIBUTE, { defined: true }>
               | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
           ]
         >
@@ -237,9 +237,9 @@ export type AttributeUpdateItemInput<
           : never)
       | (ATTRIBUTE extends SetAttribute
           ?
-              | Set<FullValue<ATTRIBUTE['elements']>>
-              | ADD<Set<FullValue<ATTRIBUTE['elements']>>>
-              | DELETE<Set<FullValue<ATTRIBUTE['elements']>>>
+              | Set<ValidValue<ATTRIBUTE['elements']>>
+              | ADD<Set<ValidValue<ATTRIBUTE['elements']>>>
+              | DELETE<Set<ValidValue<ATTRIBUTE['elements']>>>
           : never)
       | (ATTRIBUTE extends ListAttribute
           ?
@@ -252,29 +252,29 @@ export type AttributeUpdateItemInput<
                       >
                     | REMOVE
                 }>
-              | SET<FullValue<ATTRIBUTE['elements']>[]>
+              | SET<ValidValue<ATTRIBUTE['elements']>[]>
               | APPEND<
                   // Not using Reference<...> for improved type display
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
-                          | FullValue<ATTRIBUTE['elements']>[]
+                          | ValidValue<ATTRIBUTE['elements']>[]
                           | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
-                  | FullValue<ATTRIBUTE['elements']>[]
+                  | ValidValue<ATTRIBUTE['elements']>[]
                 >
               | PREPEND<
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
                         fallback?:
-                          | FullValue<ATTRIBUTE['elements']>[]
+                          | ValidValue<ATTRIBUTE['elements']>[]
                           | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
-                  | FullValue<ATTRIBUTE['elements']>[]
+                  | ValidValue<ATTRIBUTE['elements']>[]
                 >
           : never)
       | (ATTRIBUTE extends MapAttribute
@@ -295,7 +295,7 @@ export type AttributeUpdateItemInput<
                     >
                   >
                 >
-              | SET<FullValue<ATTRIBUTE, { defined: true }>>
+              | SET<ValidValue<ATTRIBUTE, { defined: true }>>
           : never)
       | (ATTRIBUTE extends RecordAttribute
           ?
@@ -308,7 +308,7 @@ export type AttributeUpdateItemInput<
                       >
                     | REMOVE
                 }>
-              | SET<FullValue<ATTRIBUTE, { defined: true }>>
+              | SET<ValidValue<ATTRIBUTE, { defined: true }>>
           : never)
       | (ATTRIBUTE extends AnyOfAttribute
           ? AttributeUpdateItemInput<ATTRIBUTE['elements'][number], FILLED, SCHEMA_ATTRIBUTE_PATHS>

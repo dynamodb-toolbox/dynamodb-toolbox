@@ -1,5 +1,5 @@
 export type { InputValue } from './inputValue.js'
-export type { FullValue } from './fullValue.js'
+export type { ValidValue } from './validValue.js'
 export type { TransformedValue } from './transformedValue.js'
 export type { WriteMode, WriteValueOptions, ReadValueOptions } from './options.js'
 export type {

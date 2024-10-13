@@ -3,10 +3,10 @@ import type {
   $contextExtension,
   $extension,
   ExtensionParser,
-  FullValue,
   InputValue,
   Schema,
   TransformedValue,
+  ValidValue,
   WriteMode
 } from '~/schema/index.js'
 
@@ -78,7 +78,7 @@ export type ParsedValue<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
 > = OPTIONS extends { transform: false }
-  ? FullValue<SCHEMA, OPTIONS>
+  ? ValidValue<SCHEMA, OPTIONS>
   : TransformedValue<SCHEMA, OPTIONS>
 
 /**
@@ -87,4 +87,4 @@ export type ParsedValue<
 export type ParserInput<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends ParsedValueOptions = ParsedValueDefaultOptions
-> = OPTIONS extends { fill: false } ? FullValue<SCHEMA, OPTIONS> : InputValue<SCHEMA, OPTIONS>
+> = OPTIONS extends { fill: false } ? ValidValue<SCHEMA, OPTIONS> : InputValue<SCHEMA, OPTIONS>

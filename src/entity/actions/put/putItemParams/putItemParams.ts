@@ -1,7 +1,7 @@
 import type { PutCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import type { Entity, FullItem } from '~/entity/index.js'
+import type { Entity, ValidItem } from '~/entity/index.js'
 
 import type { PutItemOptions } from '../options.js'
 import type { PutItemInput } from '../types.js'
@@ -12,7 +12,7 @@ type PutItemParamsGetter = <ENTITY extends Entity, OPTIONS extends PutItemOption
   input: PutItemInput<ENTITY>,
   putItemOptions?: OPTIONS
 ) => PutCommandInput & {
-  ToolboxItem: FullItem<ENTITY>
+  ToolboxItem: ValidItem<ENTITY>
 }
 
 export const putItemParams: PutItemParamsGetter = <

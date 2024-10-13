@@ -7,7 +7,7 @@ import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
-import type { FullItem } from '~/entity/index.js'
+import type { ValidItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { Merge } from '~/types/merge.js'
@@ -33,7 +33,7 @@ export type PutItemResponse<
   Omit<PutCommandOutput, 'Attributes'>,
   {
     Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
-    ToolboxItem: FullItem<ENTITY>
+    ToolboxItem: ValidItem<ENTITY>
   }
 >
 
@@ -76,7 +76,7 @@ export class PutItemCommand<
   }
 
   params(): PutCommandInput & {
-    ToolboxItem: FullItem<ENTITY>
+    ToolboxItem: ValidItem<ENTITY>
   } {
     const [item, options] = this[$sentArgs]()
 

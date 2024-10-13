@@ -17,7 +17,7 @@ export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './attributes/anyOf/index
 export { schema, Schema, SchemaAction } from './schema/index.js'
 export type {
   InputValue,
-  FullValue,
+  ValidValue,
   TransformedValue,
   WriteMode,
   WriteValueOptions,
@@ -79,7 +79,7 @@ export type {
   TimestampsDefaultOptions,
   InputItem,
   KeyInputItem,
-  FullItem,
+  ValidItem,
   TransformedItem,
   SavedItem,
   WriteItemOptions,

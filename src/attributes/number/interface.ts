@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
@@ -193,7 +193,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $NumberAttribute<
     Overwrite<
@@ -224,7 +224,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -289,8 +289,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
-        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
       >
     >
   ): $NumberAttribute<
@@ -339,8 +339,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -371,8 +371,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
   ): $NumberAttribute<
     Overwrite<
       STATE,
@@ -435,11 +435,11 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
-      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
     >
   ): $NumberAttribute<
     Overwrite<
@@ -487,7 +487,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeNumberAttribute<$NumberAttributeState<STATE>>,
         { mode: 'key'; defined: true }
       >,
@@ -523,7 +523,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>,
+      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
   ): $NumberAttribute<
@@ -591,11 +591,11 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeNumberAttribute<$NumberAttributeState<STATE>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>
       >,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >

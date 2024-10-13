@@ -2,7 +2,7 @@ import type { Attribute, AttributeBasicValue, ListAttribute } from '~/attributes
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
-import type { FullValue, TransformedValue } from '~/schema/index.js'
+import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -25,8 +25,8 @@ function* listElementParser(
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions
 ): Generator<
-  FullValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
-  | FullValue<Attribute, { extension: UpdateItemInputExtension }>
+  ValidValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
+  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
   | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
@@ -187,8 +187,8 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            FullValue<Attribute, { extension: UpdateItemInputExtension }>,
-            | FullValue<Attribute, { extension: UpdateItemInputExtension }>
+            ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
+            | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
             | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
           >
         } = Object.fromEntries(

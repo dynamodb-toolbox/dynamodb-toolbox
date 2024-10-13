@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -132,7 +132,7 @@ export class $RecordAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
         { mode: 'key' }
       >
@@ -171,7 +171,7 @@ export class $RecordAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      FullValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
   ): $RecordAttribute<
     Overwrite<
@@ -248,11 +248,11 @@ export class $RecordAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
           { mode: 'key' }
         >,
-        FullValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+        ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
       >
     >
   ): $RecordAttribute<
@@ -305,8 +305,8 @@ export class $RecordAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<
       FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
       { mode: 'key' }
     >
@@ -344,8 +344,8 @@ export class $RecordAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
   ): $RecordAttribute<
     Overwrite<
       STATE,
@@ -419,14 +419,14 @@ export class $RecordAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
         { mode: 'key' }
       >,
-      FullValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
   ): $RecordAttribute<
     Overwrite<
@@ -478,7 +478,7 @@ export class $RecordAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
         { mode: 'key'; defined: true }
       >,
@@ -518,7 +518,7 @@ export class $RecordAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
         { defined: true }
       >,
@@ -600,11 +600,11 @@ export class $RecordAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<
+        ValidValue<
           FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>,
           { defined: true }
         >

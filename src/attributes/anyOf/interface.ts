@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -109,7 +109,7 @@ export class $AnyOfAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -143,7 +143,7 @@ export class $AnyOfAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -213,8 +213,8 @@ export class $AnyOfAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+        ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
       >
     >
   ): $AnyOfAttribute<
@@ -265,8 +265,8 @@ export class $AnyOfAttribute<
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $AnyOfAttribute<
     Overwrite<
       STATE,
@@ -299,8 +299,8 @@ export class $AnyOfAttribute<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
   ): $AnyOfAttribute<
     Overwrite<
       STATE,
@@ -370,11 +370,11 @@ export class $AnyOfAttribute<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      FullValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
   ): $AnyOfAttribute<
     Overwrite<
@@ -424,7 +424,7 @@ export class $AnyOfAttribute<
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
         { mode: 'key'; defined: true }
       >,
@@ -462,7 +462,7 @@ export class $AnyOfAttribute<
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>,
+      ValidValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
   ): $AnyOfAttribute<
@@ -534,11 +534,11 @@ export class $AnyOfAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>
+        ValidValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >

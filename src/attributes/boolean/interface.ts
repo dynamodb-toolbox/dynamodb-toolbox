@@ -2,7 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { FullValue, Schema } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, ValueOrGetter } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
@@ -188,7 +188,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $BooleanAttribute<
     Overwrite<
@@ -219,7 +219,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -284,8 +284,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
-        FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
       >
     >
   ): $BooleanAttribute<
@@ -334,8 +334,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
-      keyInput: FullValue<SCHEMA, { mode: 'key' }>
-    ) => FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -366,8 +366,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
-      putItemInput: FullValue<SCHEMA>
-    ) => FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+      putItemInput: ValidValue<SCHEMA>
+    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
   ): $BooleanAttribute<
     Overwrite<
       STATE,
@@ -430,11 +430,11 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], FullValue<SCHEMA, { mode: 'key' }>, FullValue<SCHEMA>>
+      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
-      FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
     >
   ): $BooleanAttribute<
     Overwrite<
@@ -482,7 +482,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyValidate(
     nextKeyValidator: Validator<
-      FullValue<
+      ValidValue<
         FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
         { mode: 'key'; defined: true }
       >,
@@ -518,7 +518,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putValidate(
     nextPutValidator: Validator<
-      FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>,
+      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
   ): $BooleanAttribute<
@@ -586,11 +586,11 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextValidator: Validator<
       If<
         STATE['key'],
-        FullValue<
+        ValidValue<
           FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
           { mode: 'key'; defined: true }
         >,
-        FullValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>
       >,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >

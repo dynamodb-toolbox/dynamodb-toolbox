@@ -1,9 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
 import type { testSchema } from './fixtures.test.js'
-import type { FullValue } from './fullValue.js'
+import type { ValidValue } from './validValue.js'
 
-type Put = FullValue<typeof testSchema>
+type Put = ValidValue<typeof testSchema>
 const assertPut: A.Equals<
   Put,
   {
@@ -28,11 +28,11 @@ const assertPut: A.Equals<
 > = 1
 assertPut
 
-type Key = FullValue<typeof testSchema, { mode: 'key' }>
+type Key = ValidValue<typeof testSchema, { mode: 'key' }>
 const assertKey: A.Equals<Key, { keyStr: string }> = 1
 assertKey
 
-type Update = FullValue<typeof testSchema, { mode: 'update' }>
+type Update = ValidValue<typeof testSchema, { mode: 'update' }>
 const assertUpdate: A.Equals<
   Update,
   {
