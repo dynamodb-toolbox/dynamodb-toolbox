@@ -21,6 +21,7 @@ export type QueryOptions<
   limit?: number
   maxPages?: number
   reverse?: boolean
+  entityAttrFilter?: boolean
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
