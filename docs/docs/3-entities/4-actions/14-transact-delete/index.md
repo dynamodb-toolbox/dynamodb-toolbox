@@ -43,12 +43,12 @@ const transaction = PokemonEntity.build(
 ).key({ pokemonId: 'pikachu1' })
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../17-parse/index.md) action to explicitly type an object as a `BatchDeleteItemRequest` key object:
+You can use the `KeyInputItem` generic type to explicitly type an object as a `BatchDeleteItemRequest` key object:
 
 ```ts
-import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
+import type { KeyInputItem } from 'dynamodb-toolbox/entity'
 
-const key: KeyInput<typeof PokemonEntity> = {
+const key: KeyInputItem<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
 }
 

@@ -54,12 +54,6 @@ const item: PutItemInput<typeof PokemonEntity> = {
 await PokemonEntity.build(PutItemCommand).item(item).send()
 ```
 
-:::info
-
-Note that `PutItemInput` differs from `ParsedItem` as defaulted and linked attributes are optional.
-
-:::
-
 ### `.options(...)`
 
 Provides additional options:

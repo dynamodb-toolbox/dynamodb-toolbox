@@ -227,12 +227,12 @@ const input: InputItem<
 > = { invalid: 'input' }
 ```
 
-Note that the `KeyInput` generic is actually based on it:
+Note that the `KeyInputItem` generic is actually based on it:
 
 ```ts
-import type { KeyInput } from 'dynamodb-toolbox/entity'
+import type { KeyInputItem } from 'dynamodb-toolbox/entity'
 
-const keyInput: KeyInput<typeof PokemonEntity> = {
+const keyInput: KeyInputItem<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
 }
 ```

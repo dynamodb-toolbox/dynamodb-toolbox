@@ -34,12 +34,12 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-You can use the `KeyInput` type from the [`EntityParser`](../17-parse/index.md) action to explicitly type an object as a `GetItemCommand` key object:
+You can use the `KeyInputItem` generic type to explicitly type an object as a `GetItemCommand` key object:
 
 ```ts
-import type { KeyInput } from 'dynamodb-toolbox/entity/actions/parse'
+import type { KeyInputItem } from 'dynamodb-toolbox/entity'
 
-const key: KeyInput<typeof PokemonEntity> = {
+const key: KeyInputItem<typeof PokemonEntity> = {
   pokemonId: 'pikachu1'
 }
 
