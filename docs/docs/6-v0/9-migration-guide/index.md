@@ -288,8 +288,8 @@ const PokemonEntity = new Entity({
 
 The `default` and `onUpdate` options have been reworked into the following options:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on key attributes (ignored otherwise)
 - `default`: Shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise
 
@@ -315,8 +315,8 @@ const PokemonEntity = new Entity({
 
 If a default value is derived from other attributes, the v1 introduces a new notion called `links`. See the [Defaults & Links section](../../4-schemas/3-defaults-and-links/index.md) for more details:
 
-- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
+- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyLink`: Overrides other links on key attributes (ignored otherwise)
 - `link`: Shorthand that acts as `keyLink` on key attributes and `putLink` otherwise
 
@@ -439,7 +439,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../4-schemas/17-transformers/1-usage.md) for more infos).
+The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../4-schemas/18-transformers/1-usage.md) for more infos).
 
 ### `coerce`
 

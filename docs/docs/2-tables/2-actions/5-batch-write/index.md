@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # BatchWriteCommand
 
-Groups one or several [`BatchPutRequest`](../../../3-entities/3-actions/8-batch-put/index.md) and [`BatchDeleteRequest`](../../../3-entities/3-actions/9-batch-delete/index.md) from the `Table` entities to execute a [BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html) operation.
+Groups one or several [`BatchPutRequest`](../../../3-entities/4-actions/8-batch-put/index.md) and [`BatchDeleteRequest`](../../../3-entities/4-actions/9-batch-delete/index.md) from the `Table` entities to execute a [BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html) operation.
 
 BatchWriteItem operations can affect **multiple tables**, so `BatchWriteCommands` do not have a `.send(...)` method. Instead, they should be performed via the dedicated `execute` function:
 
@@ -47,7 +47,7 @@ Note that batch operations are more efficient than running their equivalent comm
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-The [`BatchPutRequests`](../../../3-entities/3-actions/8-batch-put/index.md) and [`BatchDeleteRequests`](../../../3-entities/3-actions/9-batch-delete/index.md) to execute.
+The [`BatchPutRequests`](../../../3-entities/4-actions/8-batch-put/index.md) and [`BatchDeleteRequests`](../../../3-entities/4-actions/9-batch-delete/index.md) to execute.
 
 ### `.options(...)`
 

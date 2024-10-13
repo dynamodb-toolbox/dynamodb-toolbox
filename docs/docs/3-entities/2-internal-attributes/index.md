@@ -16,14 +16,13 @@ If the schema contains a conflicting attribute, the constructor throws a `reserv
 
 :::tip
 
-You can get familiar with the internal attributes by using the `FormattedItem` and `SavedItem` types, respectively from the [`Formatter`](../3-actions/20-format/index.md) and [`Parser`](../3-actions/17-parse/index.md) actions.
+You can get familiar with the internal attributes by using the `FormattedItem` and `SavedItem` types (see [Type Inference](../3-type-inference/index.md) for more details):
 
 <details className="details-in-admonition">
 <summary>🔎 <b>Show code</b></summary>
 
 ```ts
-import type { FormattedItem } from 'dynamodb-toolbox/entity/actions/format'
-import type { SavedItem } from 'dynamodb-toolbox/entity/actions/parse'
+import type { FormattedItem, SavedItem } from 'dynamodb-toolbox/entity'
 
 const PokemonEntity = new Entity({
   name: 'Pokemon',

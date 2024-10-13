@@ -103,7 +103,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
-DynamoDB operations like the [GetItemCommand](../../3-entities/3-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/3-actions/17-parse/index.md), [formatting](../../3-entities/3-actions/20-format/index.md) or [spying](../../3-entities/3-actions/21-spy/index.md).
+DynamoDB operations like the [GetItemCommand](../../3-entities/4-actions/1-get-item/index.md) are instances of actions, but DynamoDB-Toolbox also exposes utility actions, e.g. for [parsing](../../3-entities/4-actions/17-parse/index.md), [formatting](../../3-entities/4-actions/20-format/index.md) or [spying](../../3-entities/4-actions/21-spy/index.md).
 
 The syntax is a bit more verbose than a simple `PokemonEntity.get(key)`, but it allows for **extensibility**, **better code-splitting** and **lighter bundles** while keeping an intuitive **entity-oriented** and **type-inheriting syntax**.
 
@@ -117,7 +117,7 @@ Although all classes and actions are exposed in the main entry path, we recommen
 
 ## How do Actions work?
 
-There are three types of actions: [Table Actions](../../2-tables/2-actions/1-scan/index.md), [Entity Actions](../../3-entities/3-actions/1-get-item/index.md) and [Schema Actions](../../4-schemas/16-actions/1-parse.md).
+There are three types of actions: [Table Actions](../../2-tables/2-actions/1-scan/index.md), [Entity Actions](../../3-entities/4-actions/1-get-item/index.md) and [Schema Actions](../../4-schemas/17-actions/1-parse.md).
 
 Each type of action is essentially a class that respectively accepts a `Table`, `Entity` or a `Schema` as the first parameter of its constructor, with all other parameters being optional.
 
@@ -155,7 +155,7 @@ const pokeNameGetter = new NameGetter(PokemonEntity)
 
 Although, we find, this action-oriented syntax is **less readable** than the entity-oriented one, it leads to exactly the same result, so feel free to use it if you prefer!
 
-Here's a comparison of both syntaxes on the [`GetItemCommand`](../../3-entities/3-actions/1-get-item/index.md) action:
+Here's a comparison of both syntaxes on the [`GetItemCommand`](../../3-entities/4-actions/1-get-item/index.md) action:
 
 ```ts
 // 👇 Entity-oriented

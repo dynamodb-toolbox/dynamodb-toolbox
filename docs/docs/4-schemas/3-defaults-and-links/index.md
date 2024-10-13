@@ -8,8 +8,8 @@ title: Defaults & Links
 
 All attribute types support providing default values. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on key attributes (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise.
@@ -74,8 +74,8 @@ This is only required if you need type inference. In vanilla JS, `links` can be 
 
 Similarly to defaults, links come in three flavors:
 
-- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/3-actions/2-put-item/index.md))
-- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md))
+- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyLink`: Overrides other links on key attributes (ignored otherwise)
 
 The `link` method is a shorthand that acts as `keyLink` on key attributes and `putLink` otherwise.
@@ -86,7 +86,7 @@ The `link` method is a shorthand that acts as `keyLink` on key attributes and `p
 
 :::
 
-Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../16-actions/1-parse.md) action for more details).
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../17-actions/1-parse.md) action for more details).
 
 ### Update Syntax
 
@@ -110,7 +110,7 @@ const pokemonSchema = schema({
 }))
 ```
 
-If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/3-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
+If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
 
 ```ts
 import { isExtension } from 'dynamodb-toolbox/entity/actions/update/symbols'
