@@ -116,6 +116,7 @@ You can provide **parsing options** as a second argument. Available options:
 
 | Option           |           Type           | Default | Description                                                                                                                      |
 | ---------------- | :----------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------- |
+| `fill`           |        `boolean`         | `true`  | Whether to complete the input (with `defaults` and `links`) prior to validation or not.                                          |
 | `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.           |
 | `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
@@ -177,7 +178,7 @@ const { item } = PokemonEntity.build(EntityParser).parse(
 
 :::
 
-You can use the `TransformedItem` type to explicitly type an object as a parsing output object:
+You can use the `TransformedItem` generic type to explicitly type an object as a parsing output object:
 
 ```ts
 import type { TransformedItem } from 'dynamodb-toolbox/entity'
@@ -190,7 +191,7 @@ const transformedItem: TransformedItem<
 > = { invalid: 'input' }
 ```
 
-Note that the `SavedItem` type is actually based on it:
+Note that the `SavedItem` generic is actually based on it:
 
 ```ts
 import type { SavedItem } from 'dynamodb-toolbox/parse'
@@ -213,12 +214,12 @@ PokemonEntity.build(EntityParser)
   .reparse({ invalid: 'input' })
 ```
 
-You can use the `ItemInput` type to explicitly type an object as a parsing input object:
+You can use the `InputItem` generic type (or `ValidItem` if `fill` is set to `false`) to explicitly type an object as a parsing input object:
 
 ```ts
-import type { ItemInput } from 'dynamodb-toolbox/entity'
+import type { InputItem } from 'dynamodb-toolbox/entity'
 
-const input: ItemInput<
+const input: InputItem<
   typeof PokemonEntity,
   // 👇 Optional options
   { mode: 'key' }
@@ -226,7 +227,7 @@ const input: ItemInput<
 > = { invalid: 'input' }
 ```
 
-Note that the `KeyInput` type is actually based on it:
+Note that the `KeyInput` generic is actually based on it:
 
 ```ts
 import type { KeyInput } from 'dynamodb-toolbox/entity'

@@ -1,23 +1,20 @@
+import type { WriteItemOptions } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import type { Entity, InputItem, TransformedItem, ValidItem } from '~/entity/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { $extension, ExtensionParser, WriteMode } from '~/schema/index.js'
 import { PrimaryKeyParser } from '~/table/actions/parsePrimaryKey/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
 import { $parser } from './constants.js'
+import type { InferWriteItemOptions, ParseItemOptions } from './options.js'
 
-export interface ParseItemOptions {
-  mode?: WriteMode | undefined
-  parseExtension?: ExtensionParser | undefined
-}
-
-export interface InferWriteItemOptions<OPTIONS extends ParseItemOptions> {
-  mode: OPTIONS extends { mode: WriteMode } ? OPTIONS['mode'] : undefined
-  extension: OPTIONS extends { parseExtension: ExtensionParser }
-    ? NonNullable<OPTIONS['parseExtension'][$extension]>
-    : undefined
-}
+type EntityParserInput<
+  ENTITY extends Entity,
+  OPTIONS extends ParseItemOptions = {},
+  WRITE_ITEM_OPTIONS extends WriteItemOptions = InferWriteItemOptions<OPTIONS>
+> = OPTIONS extends { fill: false }
+  ? ValidItem<ENTITY, WRITE_ITEM_OPTIONS>
+  : InputItem<ENTITY, WRITE_ITEM_OPTIONS>
 
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parse';
@@ -30,15 +27,21 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
 
   parse<OPTIONS extends ParseItemOptions = {}>(
     input: { [KEY: string]: unknown },
-    { mode, parseExtension }: OPTIONS = {} as OPTIONS
+    options: OPTIONS = {} as OPTIONS
   ): {
     parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
     item: TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
     key: PrimaryKey<ENTITY['table']>
   } {
-    const parser = this[$parser].start(input, { mode, parseExtension } as OPTIONS)
-    parser.next() // defaulted
-    parser.next() // linked
+    const { fill = true } = options
+
+    const parser = this[$parser].start(input, options as OPTIONS)
+
+    if (fill) {
+      parser.next() // defaulted
+      parser.next() // linked
+    }
+
     /**
      * @debt type "we could remove those casts by using named generator yields: const parsedItem = parser.next<"parsed">().value"
      */
@@ -56,7 +59,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
   }
 
   reparse<OPTIONS extends ParseItemOptions = {}>(
-    input: InputItem<ENTITY, InferWriteItemOptions<OPTIONS>>,
+    input: EntityParserInput<ENTITY, InferWriteItemOptions<OPTIONS>>,
     options: OPTIONS = {} as OPTIONS
   ): {
     parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
