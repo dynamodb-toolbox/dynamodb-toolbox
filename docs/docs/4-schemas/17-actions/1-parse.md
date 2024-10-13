@@ -418,7 +418,7 @@ const validUpdate = pokemonSchema.build(Parser).parse(
 
 :::
 
-You can use the `TransformedValue` type (or `ValidValue` if `transform` is set to `false`) to explicitly type an object as a parsing output object:
+You can use the `TransformedValue` generic type (or `ValidValue` if `transform` is set to `false`) to explicitly type an object as a parsing output object:
 
 ```ts
 import type { TransformedValue } from 'dynamodb-toolbox/schema'
@@ -444,7 +444,7 @@ pokemonSchema
   .reparse({ invalid: 'input' })
 ```
 
-You can use the `InputValue` type to explicitly type an object as a parsing input object:
+You can use the `InputValue` generic type (or `ValidValue` if `fill` is set to `false`) to explicitly type an object as a parsing input object:
 
 ```ts
 import type { InputValue } from 'dynamodb-toolbox/schema'

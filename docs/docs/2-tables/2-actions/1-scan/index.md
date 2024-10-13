@@ -169,16 +169,6 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-          <td><code>entityAttrFilter</code></td>
-          <td align="center"><code>boolean</code></td>
-          <td align="center"><code>true</code></td>
-          <td>
-            By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-            <br/><br/>This option is useful for querying items that miss the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g. when migrating to DynamoDB-Toolbox), for instance in combination with <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a>.
-            <br/><br/>Note that this can result in types being wrongly inferred, so be extra careful.
-          </td>
-        </tr>
-        <tr>
             <td><code>attributes</code></td>
             <td align="center"><code>string[]</code></td>
             <td align="center">-</td>
@@ -187,6 +177,16 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.
               <br/><br/>See the <a href="../../entities/actions/parse-paths#paths"><code>PathParser</code></a> action for more details on how to write attribute paths.
             </td>
+        </tr>
+        <tr>
+          <td><code>entityAttrFilter</code></td>
+          <td align="center"><code>boolean</code></td>
+          <td align="center"><code>true</code></td>
+          <td>
+            By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
+            <br/><br/>This option is useful for querying items that miss the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g. when migrating to DynamoDB-Toolbox), for instance in combination with <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a>.
+            <br/><br/>Note that this can result in types being wrongly inferred, so be extra careful.
+          </td>
         </tr>
         <tr>
             <td rowSpan="2" align="center" class="vertical"><b>Parallelism</b></td>
