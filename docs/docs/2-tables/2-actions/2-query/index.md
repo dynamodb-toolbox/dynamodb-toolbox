@@ -249,9 +249,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({
-    consistent: true
-  })
+  .options({ consistent: true })
   .send()
 ```
 
@@ -276,9 +274,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({
-    reverse: true
-  })
+  .options({ reverse: true })
   .send()
 ```
 
@@ -289,9 +285,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
 ```
 
@@ -329,9 +323,7 @@ do {
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   // Retrieve all items from the partition (beware of RAM issues!)
-  .options({
-    maxPages: Infinity
-  })
+  .options({ maxPages: Infinity })
   .send()
 ```
 
@@ -366,9 +358,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
-  .options({
-    attributes: ['name', 'type']
-  })
+  .options({ attributes: ['name', 'type'] })
   .send()
 ```
 
