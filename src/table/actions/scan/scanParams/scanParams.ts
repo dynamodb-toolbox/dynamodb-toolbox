@@ -49,6 +49,7 @@ export const scanParams: ScanParamsGetter = <
     select,
     totalSegments,
     segment,
+    entityAttrFilter = true,
     filters: _filters,
     attributes: _attributes,
     tableName,
@@ -132,8 +133,12 @@ export const scanParams: ScanParamsGetter = <
     let projectionExpression: string | undefined = undefined
 
     entities.forEach((entity, index) => {
-      const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
       const entityFilter = filters[entity.name]
+      if (entityFilter === undefined && !entityAttrFilter) {
+        return
+      }
+
+      const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
 
       const {
         ExpressionAttributeNames: filterExpressionAttributeNames,

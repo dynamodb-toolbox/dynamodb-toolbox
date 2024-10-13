@@ -737,15 +737,25 @@ describe('query', () => {
     assertReturnedItems
   })
 
-  test('applies entity _et AND additional filter', () => {
+  test('does not apply entity _et filter if entityAttrFilter is false', () => {
+    const command = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1)
+      .options({ entityAttrFilter: false })
+
+    const { FilterExpression } = command.params()
+
+    expect(FilterExpression).toBe(undefined)
+  })
+
+  test('applies entity _et AND additional filter (even if entityAttrFilter is false)', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
         .entities(Entity1)
         .options({
-          filters: {
-            entity1: { attr: 'age', gte: 40 }
-          }
+          filters: { entity1: { attr: 'age', gte: 40 } },
+          entityAttrFilter: false
         })
         .params()
 
