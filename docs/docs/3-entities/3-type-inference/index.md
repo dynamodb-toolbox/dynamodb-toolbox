@@ -273,7 +273,7 @@ flowchart RL
   classDef mmdcontainer fill:#eee4,stroke-width:1px,stroke-dasharray:3,stroke:#ccc,font-weight:bold,font-size:large
   classDef mmdspace fill:none,stroke:none,color:#0000
 
-  SavedItem["<b>SavedItem</b>"]
+  TransformedItem["<b>TransformedItem</b>"]
 
   subgraph Formatting[ ]
     FormattingDescription["<b>Format</b>"]:::mmddescription
@@ -282,7 +282,7 @@ flowchart RL
 
   FormattedItem["<b>FormattedItem</b>"]
 
-  SavedItem.-FormattingDescription
+  TransformedItem.-FormattingDescription
   FormattingDescription.->FormattedItem
 
   space1( ):::mmdspace
