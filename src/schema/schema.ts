@@ -19,16 +19,16 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     this.type = 'schema'
     this.attributes = attributes
 
-    const savedAttributeNames = new Set<string>()
-    const keyAttributeNames = new Set<string>()
-    const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
+    this.savedAttributeNames = new Set<string>()
+    this.keyAttributeNames = new Set<string>()
+    this.requiredAttributeNames = {
       always: new Set(),
       atLeastOnce: new Set(),
       never: new Set()
     }
 
     for (const attributeName in attributes) {
-      if (savedAttributeNames.has(attributeName)) {
+      if (this.savedAttributeNames.has(attributeName)) {
         throw new DynamoDBToolboxError('schema.duplicateAttributeNames', {
           message: `Invalid schema: More than two attributes are named '${attributeName}'`,
           payload: { name: attributeName }
@@ -38,24 +38,48 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
       const attribute = attributes[attributeName]
 
       const attributeSavedAs = attribute.savedAs ?? attributeName
-      if (savedAttributeNames.has(attributeSavedAs)) {
+      if (this.savedAttributeNames.has(attributeSavedAs)) {
         throw new DynamoDBToolboxError('schema.duplicateSavedAsAttributes', {
           message: `Invalid schema: More than two attributes are saved as '${attributeSavedAs}'`,
           payload: { savedAs: attributeSavedAs }
         })
       }
-      savedAttributeNames.add(attributeSavedAs)
+      this.savedAttributeNames.add(attributeSavedAs)
 
       if (attribute.key) {
-        keyAttributeNames.add(attributeName)
+        this.keyAttributeNames.add(attributeName)
       }
 
-      requiredAttributeNames[attribute.required].add(attributeName)
+      this.requiredAttributeNames[attribute.required].add(attributeName)
+    }
+  }
+
+  pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): Schema<Pick<ATTRIBUTES, ATTRIBUTE_NAMES[number]>> {
+    const nextAttributes = {} as ATTRIBUTES
+
+    for (const attributeName of attributeNames) {
+      if (!(attributeName in this.attributes)) {
+        continue
+      }
+
+      nextAttributes[attributeName] = this.attributes[attributeName]
     }
 
-    this.savedAttributeNames = savedAttributeNames
-    this.keyAttributeNames = keyAttributeNames
-    this.requiredAttributeNames = requiredAttributeNames
+    return new Schema<Pick<ATTRIBUTES, ATTRIBUTE_NAMES[number]>>(nextAttributes)
+  }
+
+  omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): Schema<Omit<ATTRIBUTES, ATTRIBUTE_NAMES[number]>> {
+    const nextAttributes = { ...this.attributes }
+
+    for (const attributeName of attributeNames) {
+      delete nextAttributes[attributeName]
+    }
+
+    return new Schema<Omit<ATTRIBUTES, ATTRIBUTE_NAMES[number]>>(nextAttributes)
   }
 
   and<$ADDITIONAL_ATTRIBUTES extends $SchemaAttributeNestedStates = $SchemaAttributeNestedStates>(
