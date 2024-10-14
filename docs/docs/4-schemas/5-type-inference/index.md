@@ -55,7 +55,7 @@ import type {
   InputValue,
   ValidValue,
   TransformedValue
-} from 'dynamodb-toolbox/entity'
+} from 'dynamodb-toolbox/schema'
 
 type Input = InputValue<typeof pokemonSchema>
 type Valid = ValidValue<typeof pokemonSchema>
@@ -261,7 +261,7 @@ flowchart RL
   classDef mmdcontainer fill:#eee4,stroke-width:1px,stroke-dasharray:3,stroke:#ccc,font-weight:bold,font-size:large
   classDef mmdspace fill:none,stroke:none,color:#0000
 
-  SavedItem["<b>SavedItem</b>"]
+  TransformedValue["<b>TransformedValue</b>"]
 
   subgraph Formatting[ ]
     FormattingDescription["<b>Format</b>"]:::mmddescription
@@ -270,7 +270,7 @@ flowchart RL
 
   FormattedValue["<b>FormattedValue</b>"]
 
-  SavedItem.-FormattingDescription
+  TransformedValue.-FormattingDescription
   FormattingDescription.->FormattedValue
 
   space1( ):::mmdspace
@@ -280,7 +280,7 @@ flowchart RL
 ```
 
 ```ts
-import type { FormattedValue } from 'dynamodb-toolbox/entity'
+import type { FormattedValue } from 'dynamodb-toolbox/schema'
 
 type Formatted = FormattedValue<typeof PokemonEntity>
 ```
