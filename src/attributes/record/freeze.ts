@@ -173,8 +173,11 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  const frozenKeys = keys.freeze(path && `${path} (KEY)`) as FreezeAttribute<$KEYS>
-  const frozenElements = elements.freeze(`${path ?? ''}[string]`) as FreezeAttribute<$ELEMENTS>
+  const frozenKeys = keys.freeze(path && `${path} (KEY)`) as FreezeAttribute<$KEYS, true>
+  const frozenElements = elements.freeze(`${path ?? ''}[string]`) as FreezeAttribute<
+    $ELEMENTS,
+    true
+  >
 
   return new RecordAttribute_({
     path,

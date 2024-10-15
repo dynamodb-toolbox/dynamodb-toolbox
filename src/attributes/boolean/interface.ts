@@ -35,7 +35,7 @@ export interface $BooleanAttributeState<
 export interface $BooleanAttributeNestedState<
   STATE extends BooleanAttributeState = BooleanAttributeState
 > extends $BooleanAttributeState<STATE> {
-  freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+  freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
 }
 
 /**

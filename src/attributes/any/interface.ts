@@ -28,7 +28,7 @@ export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttribu
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
   extends $AnyAttributeState<STATE> {
-  freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>>
+  freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
 }
 
 /**

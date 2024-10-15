@@ -34,7 +34,7 @@ export interface $MapAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > extends $MapAttributeState<STATE, $ATTRIBUTES> {
-  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>
+  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
 }
 
 /**

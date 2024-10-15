@@ -1,10 +1,10 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { BinaryAttribute } from '~/attributes/binary/index.js'
+import { BinaryAttribute_ } from '~/attributes/binary/index.js'
 import type { Never } from '~/attributes/constants/requiredOptions.js'
-import type { Attribute } from '~/attributes/index.js'
-import { StringAttribute } from '~/attributes/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
+import type { Attribute_ } from '~/attributes/index.js'
+import { StringAttribute_ } from '~/attributes/index.js'
+import { NumberAttribute_ } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
@@ -37,14 +37,14 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute => {
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute_ => {
   switch (key.type) {
     case 'number':
-      return new NumberAttribute({ ...defaultAttribute, path: key.name })
+      return new NumberAttribute_({ ...defaultAttribute, path: key.name })
     case 'string':
-      return new StringAttribute({ ...defaultAttribute, path: key.name })
+      return new StringAttribute_({ ...defaultAttribute, path: key.name })
     case 'binary':
-      return new BinaryAttribute({ ...defaultAttribute, path: key.name })
+      return new BinaryAttribute_({ ...defaultAttribute, path: key.name })
   }
 }
 

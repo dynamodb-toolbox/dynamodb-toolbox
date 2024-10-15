@@ -4,6 +4,7 @@ import type { FreezeAttribute } from '~/attributes/freeze.js'
 import { binary, boolean, list, map, number, set, string } from '~/attributes/index.js'
 
 import { schema } from './schema.js'
+import type { ResetLinks } from './utils/resetLinks.js'
 
 describe('schema', () => {
   const reqStr = string()
@@ -158,17 +159,21 @@ describe('schema', () => {
   })
 
   test('pick', () => {
-    const sch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
-    const pickedSch = sch.pick('hidBool', 'defNum', 'savedAsBin', 'keyStr', 'enumStr')
+    const prevSch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const linkedStr = string().link<typeof prevSch>(({ reqStr }) => reqStr)
+    const sch = prevSch.and({ linkedStr })
+
+    const pickedSch = sch.pick('hidBool', 'defNum', 'savedAsBin', 'keyStr', 'enumStr', 'linkedStr')
 
     const assertSch: A.Equals<
       (typeof pickedSch)['attributes'],
       {
-        hidBool: FreezeAttribute<typeof hidBool, true>
-        defNum: FreezeAttribute<typeof defNum, true>
-        savedAsBin: FreezeAttribute<typeof savedAsBin, true>
-        keyStr: FreezeAttribute<typeof keyStr, true>
-        enumStr: FreezeAttribute<typeof enumStr, true>
+        hidBool: ResetLinks<FreezeAttribute<typeof hidBool, true>>
+        defNum: ResetLinks<FreezeAttribute<typeof defNum, true>>
+        savedAsBin: ResetLinks<FreezeAttribute<typeof savedAsBin, true>>
+        keyStr: ResetLinks<FreezeAttribute<typeof keyStr, true>>
+        enumStr: ResetLinks<FreezeAttribute<typeof enumStr, true>>
+        linkedStr: ResetLinks<FreezeAttribute<typeof linkedStr, true>>
       }
     > = 1
     assertSch
@@ -179,33 +184,39 @@ describe('schema', () => {
       keyStr: keyStr.freeze('keyStr'),
       enumStr: enumStr.freeze('enumStr')
     })
+    expect(pickedSch.attributes.linkedStr.links.put).toBe(undefined)
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')
   })
 
   test('omit', () => {
-    const sch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
-    const pickedSch = sch.omit('reqStr')
+    const prevSch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const linkedStr = string().link<typeof prevSch>(({ reqStr }) => reqStr)
+    const sch = prevSch.and({ linkedStr })
+
+    const omittedSch = sch.omit('reqStr')
 
     const assertSch: A.Equals<
-      (typeof pickedSch)['attributes'],
+      (typeof omittedSch)['attributes'],
       {
-        hidBool: FreezeAttribute<typeof hidBool, true>
-        defNum: FreezeAttribute<typeof defNum, true>
-        savedAsBin: FreezeAttribute<typeof savedAsBin, true>
-        keyStr: FreezeAttribute<typeof keyStr, true>
-        enumStr: FreezeAttribute<typeof enumStr, true>
+        hidBool: ResetLinks<FreezeAttribute<typeof hidBool, true>>
+        defNum: ResetLinks<FreezeAttribute<typeof defNum, true>>
+        savedAsBin: ResetLinks<FreezeAttribute<typeof savedAsBin, true>>
+        keyStr: ResetLinks<FreezeAttribute<typeof keyStr, true>>
+        enumStr: ResetLinks<FreezeAttribute<typeof enumStr, true>>
+        linkedStr: ResetLinks<FreezeAttribute<typeof linkedStr, true>>
       }
     > = 1
     assertSch
-    expect(pickedSch.attributes).toMatchObject({
+    expect(omittedSch.attributes).toMatchObject({
       hidBool: hidBool.freeze('hidBool'),
       defNum: defNum.freeze('defNum'),
       savedAsBin: savedAsBin.freeze('savedAsBin'),
       keyStr: keyStr.freeze('keyStr'),
       enumStr: enumStr.freeze('enumStr')
     })
+    expect(omittedSch.attributes.linkedStr.links.put).toBe(undefined)
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')

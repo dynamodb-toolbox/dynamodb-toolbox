@@ -33,7 +33,7 @@ export interface $NumberAttributeState<STATE extends NumberAttributeState = Numb
 export interface $NumberAttributeNestedState<
   STATE extends NumberAttributeState = NumberAttributeState
 > extends $NumberAttributeState<STATE> {
-  freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>>
+  freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
 }
 
 /**

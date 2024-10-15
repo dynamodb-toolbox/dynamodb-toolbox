@@ -42,7 +42,9 @@ export interface $RecordAttributeNestedState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > extends $RecordAttributeState<STATE, $KEYS, $ELEMENTS> {
-  freeze: (path?: string) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>
+  freeze: (
+    path?: string
+  ) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>, true>
 }
 
 /**

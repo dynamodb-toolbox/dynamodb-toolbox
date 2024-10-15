@@ -33,7 +33,7 @@ export interface $StringAttributeState<STATE extends StringAttributeState = Stri
 export interface $StringAttributeNestedState<
   STATE extends StringAttributeState = StringAttributeState
 > extends $StringAttributeState<STATE> {
-  freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>>
+  freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>, true>
 }
 
 /**

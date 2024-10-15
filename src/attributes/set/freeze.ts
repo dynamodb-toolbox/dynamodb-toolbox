@@ -83,7 +83,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
     })
   }
 
-  const frozenElements = elements.freeze(`${path ?? ''}[x]`) as FreezeAttribute<$ELEMENTS, false>
+  const frozenElements = elements.freeze(`${path ?? ''}[x]`) as FreezeAttribute<$ELEMENTS, true>
 
   return new SetAttribute_({ path, elements: frozenElements, ...state })
 }

@@ -28,7 +28,7 @@ export interface $NullAttributeState<STATE extends NullAttributeState = NullAttr
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
   extends $NullAttributeState<STATE> {
-  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>>
+  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
 }
 
 /**

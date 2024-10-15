@@ -34,7 +34,7 @@ export interface $SetAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
-  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
+  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
 }
 
 /**

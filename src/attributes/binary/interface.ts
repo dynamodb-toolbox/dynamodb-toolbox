@@ -33,7 +33,7 @@ export interface $BinaryAttributeState<STATE extends BinaryAttributeState = Bina
 export interface $BinaryAttributeNestedState<
   STATE extends BinaryAttributeState = BinaryAttributeState
 > extends $BinaryAttributeState<STATE> {
-  freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+  freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
 }
 
 /**

@@ -8,6 +8,9 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject } from '~/types/index.js'
 
+import type { ResetLinks } from './utils/resetLinks.js'
+import { resetLinks } from './utils/resetLinks.js'
+
 export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   type: 'schema'
   savedAttributeNames: Set<string>
@@ -56,30 +59,44 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
 
   pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
-  ): Schema<Pick<ATTRIBUTES, ATTRIBUTE_NAMES[number]>> {
-    const nextAttributes = {} as ATTRIBUTES
+  ): Schema<{
+    [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
+  }> {
+    const nextAttributes = {} as {
+      [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
+    }
 
     for (const attributeName of attributeNames) {
       if (!(attributeName in this.attributes)) {
         continue
       }
 
-      nextAttributes[attributeName] = this.attributes[attributeName]
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
     }
 
-    return new Schema<Pick<ATTRIBUTES, ATTRIBUTE_NAMES[number]>>(nextAttributes)
+    return new Schema(nextAttributes)
   }
 
   omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
-  ): Schema<Omit<ATTRIBUTES, ATTRIBUTE_NAMES[number]>> {
-    const nextAttributes = { ...this.attributes }
-
-    for (const attributeName of attributeNames) {
-      delete nextAttributes[attributeName]
+  ): Schema<{
+    [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
+  }> {
+    const nextAttributes = {} as {
+      [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
     }
 
-    return new Schema<Omit<ATTRIBUTES, ATTRIBUTE_NAMES[number]>>(nextAttributes)
+    const attributeNamesSet = new Set(attributeNames)
+    for (const _attributeName of Object.keys(this.attributes) as (keyof ATTRIBUTES)[]) {
+      if (attributeNamesSet.has(_attributeName)) {
+        continue
+      }
+
+      const attributeName = _attributeName as Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
+    }
+
+    return new Schema(nextAttributes)
   }
 
   and<$ADDITIONAL_ATTRIBUTES extends $SchemaAttributeNestedStates = $SchemaAttributeNestedStates>(

@@ -35,7 +35,7 @@ export interface $AnyOfAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > extends $AnyOfAttributeState<STATE, $ELEMENTS> {
-  freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>
+  freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
 }
 
 /**

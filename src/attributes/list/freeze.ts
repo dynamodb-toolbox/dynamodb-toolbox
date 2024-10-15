@@ -83,7 +83,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
     })
   }
 
-  const frozenElements = elements.freeze(`${path ?? ''}[n]`) as FreezeAttribute<$ELEMENTS, false>
+  const frozenElements = elements.freeze(`${path ?? ''}[n]`) as FreezeAttribute<$ELEMENTS, true>
 
   return new ListAttribute_({
     path,
