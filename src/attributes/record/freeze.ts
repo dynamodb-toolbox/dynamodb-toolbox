@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Update } from '~/types/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
@@ -7,21 +6,25 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { RecordAttribute } from './interface.js'
+import type { RecordAttribute } from './interface.js'
+import { RecordAttribute_ } from './interface.js'
 import type { $RecordAttributeState } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
-export type FreezeRecordAttribute<$RECORD_ATTRIBUTE extends $RecordAttributeState> =
-  // Applying void Update improves type display
-  Update<
-    RecordAttribute<
+export type FreezeRecordAttribute<
+  $RECORD_ATTRIBUTE extends $RecordAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? RecordAttribute_<
       $RECORD_ATTRIBUTE[$state],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
       FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
-    >,
-    never,
-    never
-  >
+    >
+  : RecordAttribute<
+      $RECORD_ATTRIBUTE[$state],
+      FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
+      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
+    >
 
 type RecordAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -32,7 +35,7 @@ type RecordAttributeFreezer = <
   keys: $KEYS,
   elements: $ELEMENTS,
   path?: string
-) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>
+) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `record` attribute
@@ -52,7 +55,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   keys: $KEYS,
   elements: $ELEMENTS,
   path?: string
-): FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>> => {
+) => {
   validateAttributeProperties(state, path)
 
   const {
@@ -170,10 +173,13 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  const frozenKeys = keys.freeze(path && `${path} (KEY)`) as FreezeAttribute<$KEYS>
-  const frozenElements = elements.freeze(`${path ?? ''}[string]`) as FreezeAttribute<$ELEMENTS>
+  const frozenKeys = keys.freeze(path && `${path} (KEY)`) as FreezeAttribute<$KEYS, true>
+  const frozenElements = elements.freeze(`${path ?? ''}[string]`) as FreezeAttribute<
+    $ELEMENTS,
+    true
+  >
 
-  return new RecordAttribute({
+  return new RecordAttribute_({
     path,
     keys: frozenKeys,
     elements: frozenElements,

@@ -2,9 +2,14 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
@@ -23,7 +28,7 @@ export interface $NullAttributeState<STATE extends NullAttributeState = NullAttr
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
   extends $NullAttributeState<STATE> {
-  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>>
+  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
 }
 
 /**
@@ -537,7 +542,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     )
   }
 
-  freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>> {
+  freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>, true> {
     return freezeNullAttribute(this[$state], path)
   }
 }
@@ -570,12 +575,26 @@ export class NullAttribute<STATE extends NullAttributeState = NullAttributeState
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class NullAttribute_<
+  STATE extends NullAttributeState = NullAttributeState
+> extends NullAttribute<STATE> {
+  clone<NEXT_STATE extends Partial<NullAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): NullAttribute<ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>> {
+    return new NullAttribute({
+      ...this,
+      defaults: { ...this.defaults },
+      links: { ...this.links },
+      validators: { ...this.validators },
+      ...nextState
+    } as ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>)
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

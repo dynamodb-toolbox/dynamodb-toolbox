@@ -8,6 +8,9 @@ import type {
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject } from '~/types/index.js'
 
+import type { ResetLinks } from './utils/resetLinks.js'
+import { resetLinks } from './utils/resetLinks.js'
+
 export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   type: 'schema'
   savedAttributeNames: Set<string>
@@ -19,16 +22,16 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     this.type = 'schema'
     this.attributes = attributes
 
-    const savedAttributeNames = new Set<string>()
-    const keyAttributeNames = new Set<string>()
-    const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
+    this.savedAttributeNames = new Set<string>()
+    this.keyAttributeNames = new Set<string>()
+    this.requiredAttributeNames = {
       always: new Set(),
       atLeastOnce: new Set(),
       never: new Set()
     }
 
     for (const attributeName in attributes) {
-      if (savedAttributeNames.has(attributeName)) {
+      if (this.savedAttributeNames.has(attributeName)) {
         throw new DynamoDBToolboxError('schema.duplicateAttributeNames', {
           message: `Invalid schema: More than two attributes are named '${attributeName}'`,
           payload: { name: attributeName }
@@ -38,24 +41,62 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
       const attribute = attributes[attributeName]
 
       const attributeSavedAs = attribute.savedAs ?? attributeName
-      if (savedAttributeNames.has(attributeSavedAs)) {
+      if (this.savedAttributeNames.has(attributeSavedAs)) {
         throw new DynamoDBToolboxError('schema.duplicateSavedAsAttributes', {
           message: `Invalid schema: More than two attributes are saved as '${attributeSavedAs}'`,
           payload: { savedAs: attributeSavedAs }
         })
       }
-      savedAttributeNames.add(attributeSavedAs)
+      this.savedAttributeNames.add(attributeSavedAs)
 
       if (attribute.key) {
-        keyAttributeNames.add(attributeName)
+        this.keyAttributeNames.add(attributeName)
       }
 
-      requiredAttributeNames[attribute.required].add(attributeName)
+      this.requiredAttributeNames[attribute.required].add(attributeName)
+    }
+  }
+
+  pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): Schema<{
+    [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
+  }> {
+    const nextAttributes = {} as {
+      [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
     }
 
-    this.savedAttributeNames = savedAttributeNames
-    this.keyAttributeNames = keyAttributeNames
-    this.requiredAttributeNames = requiredAttributeNames
+    for (const attributeName of attributeNames) {
+      if (!(attributeName in this.attributes)) {
+        continue
+      }
+
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
+    }
+
+    return new Schema(nextAttributes)
+  }
+
+  omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): Schema<{
+    [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
+  }> {
+    const nextAttributes = {} as {
+      [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
+    }
+
+    const attributeNamesSet = new Set(attributeNames)
+    for (const _attributeName of Object.keys(this.attributes) as (keyof ATTRIBUTES)[]) {
+      if (attributeNamesSet.has(_attributeName)) {
+        continue
+      }
+
+      const attributeName = _attributeName as Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
+    }
+
+    return new Schema(nextAttributes)
   }
 
   and<$ADDITIONAL_ATTRIBUTES extends $SchemaAttributeNestedStates = $SchemaAttributeNestedStates>(
@@ -66,7 +107,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     [KEY in
       | keyof ATTRIBUTES
       | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-      ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
+      ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY], true>
       : KEY extends keyof ATTRIBUTES
         ? ATTRIBUTES[KEY]
         : never
@@ -93,7 +134,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
         [KEY in
           | keyof ATTRIBUTES
           | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-          ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY]>
+          ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY], true>
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]
             : never
@@ -110,7 +151,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
 
 type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
   attributes: NarrowObject<$ATTRIBUTES>
-) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
+) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY], true> }>
 
 /**
  * Defines an Entity schema
@@ -123,7 +164,7 @@ export const schema: SchemaTyper = <
 >(
   attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
 ): Schema<{
-  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
+  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY], true>
 }> => new Schema<{}>({}).and(attributes)
 
 export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {

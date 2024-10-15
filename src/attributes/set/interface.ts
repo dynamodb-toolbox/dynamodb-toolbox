@@ -2,9 +2,14 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
@@ -29,7 +34,7 @@ export interface $SetAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
-  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
+  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -582,7 +587,7 @@ export class $SetAttribute<
     )
   }
 
-  freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>> {
+  freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true> {
     return freezeSetAttribute(this[$state], this[$elements], path)
   }
 }
@@ -615,12 +620,30 @@ export class SetAttribute<
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class SetAttribute_<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ELEMENTS extends SetAttributeElements = SetAttributeElements
+> extends SetAttribute<STATE, ELEMENTS> {
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): SetAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+    return new SetAttribute({
+      ...({
+        ...this,
+        defaults: { ...this.defaults },
+        links: { ...this.links },
+        validators: { ...this.validators },
+        ...nextState
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      elements: this.elements
+    })
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

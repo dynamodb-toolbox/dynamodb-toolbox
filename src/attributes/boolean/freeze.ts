@@ -1,19 +1,21 @@
-import type { Update } from '~/types/update.js'
-
 import type { $state } from '../constants/attributeOptions.js'
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { $BooleanAttributeState } from './interface.js'
-import { BooleanAttribute } from './interface.js'
+import type { BooleanAttribute } from './interface.js'
+import { BooleanAttribute_ } from './interface.js'
 import type { BooleanAttributeState } from './types.js'
 
-export type FreezeBooleanAttribute<$BOOLEAN_ATTRIBUTE extends $BooleanAttributeState> =
-  // Applying void Update improves type display
-  Update<BooleanAttribute<$BOOLEAN_ATTRIBUTE[$state]>, never, never>
+export type FreezeBooleanAttribute<
+  $BOOLEAN_ATTRIBUTE extends $BooleanAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? BooleanAttribute_<$BOOLEAN_ATTRIBUTE[$state]>
+  : BooleanAttribute<$BOOLEAN_ATTRIBUTE[$state]>
 
 type BooleanAttributeFreezer = <STATE extends BooleanAttributeState>(
   state: STATE,
   path?: string
-) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
 
 /**
  * Freezes a warm `boolean` attribute
@@ -22,13 +24,8 @@ type BooleanAttributeFreezer = <STATE extends BooleanAttributeState>(
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const freezeBooleanAttribute: BooleanAttributeFreezer = <
-  STATE extends BooleanAttributeState
->(
-  state: STATE,
-  path?: string
-): FreezeBooleanAttribute<$BooleanAttributeState<STATE>> => {
+export const freezeBooleanAttribute: BooleanAttributeFreezer = (state, path) => {
   validatePrimitiveAttribute({ type: 'boolean', ...state }, path)
 
-  return new BooleanAttribute({ path, ...state })
+  return new BooleanAttribute_({ path, ...state })
 }

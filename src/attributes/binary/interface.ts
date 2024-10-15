@@ -2,11 +2,16 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
-import type { Update } from '~/types/update.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  Update,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
@@ -28,7 +33,7 @@ export interface $BinaryAttributeState<STATE extends BinaryAttributeState = Bina
 export interface $BinaryAttributeNestedState<
   STATE extends BinaryAttributeState = BinaryAttributeState
 > extends $BinaryAttributeState<STATE> {
-  freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+  freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
 }
 
 /**
@@ -632,7 +637,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     )
   }
 
-  freeze(path?: string): FreezeBinaryAttribute<$BinaryAttributeState<STATE>> {
+  freeze(path?: string): FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true> {
     return freezeBinaryAttribute(this[$state], path)
   }
 }
@@ -665,12 +670,26 @@ export class BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribut
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class BinaryAttribute_<
+  STATE extends BinaryAttributeState = BinaryAttributeState
+> extends BinaryAttribute<STATE> {
+  clone<NEXT_STATE extends Partial<BinaryAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): BinaryAttribute<ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>> {
+    return new BinaryAttribute({
+      ...this,
+      defaults: { ...this.defaults },
+      links: { ...this.links },
+      validators: { ...this.validators },
+      ...nextState
+    } as ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>)
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

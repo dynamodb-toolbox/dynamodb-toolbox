@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Update } from '~/types/update.js'
 
 import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
@@ -7,17 +6,17 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { ListAttribute } from './interface.js'
+import type { ListAttribute } from './interface.js'
+import { ListAttribute_ } from './interface.js'
 import type { $ListAttributeState } from './interface.js'
 import type { $ListAttributeElements } from './types.js'
 
-export type FreezeListAttribute<$LIST_ATTRIBUTE extends $ListAttributeState> =
-  // Applying void Update improves type display
-  Update<
-    ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeListAttribute<
+  $LIST_ATTRIBUTE extends $ListAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? ListAttribute_<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
+  : ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -26,7 +25,7 @@ type ListAttributeFreezer = <
   state: STATE,
   $elements: $ELEMENTS,
   path?: string
-) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
+) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `list` attribute
@@ -43,7 +42,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
   state: STATE,
   elements: $ELEMENTS,
   path?: string
-): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> => {
+) => {
   validateAttributeProperties(state, path)
 
   const { required, hidden, savedAs } = elements[$state]
@@ -84,9 +83,9 @@ export const freezeListAttribute: ListAttributeFreezer = <
     })
   }
 
-  const frozenElements = elements.freeze(`${path ?? ''}[n]`) as FreezeAttribute<$ELEMENTS>
+  const frozenElements = elements.freeze(`${path ?? ''}[n]`) as FreezeAttribute<$ELEMENTS, true>
 
-  return new ListAttribute({
+  return new ListAttribute_({
     path,
     elements: frozenElements,
     ...state

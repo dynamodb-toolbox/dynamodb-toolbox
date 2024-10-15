@@ -2,9 +2,14 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
@@ -30,7 +35,7 @@ export interface $ListAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > extends $ListAttributeState<STATE, $ELEMENTS> {
-  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>
+  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -583,7 +588,7 @@ export class $ListAttribute<
     )
   }
 
-  freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>> {
+  freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true> {
     return freezeListAttribute(this[$state], this[$elements], path)
   }
 }
@@ -616,12 +621,30 @@ export class ListAttribute<
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class ListAttribute_<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ELEMENTS extends Attribute = Attribute
+> extends ListAttribute<STATE, ELEMENTS> {
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): ListAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+    return new ListAttribute({
+      ...({
+        ...this,
+        defaults: { ...this.defaults },
+        links: { ...this.links },
+        validators: { ...this.validators },
+        ...nextState
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      elements: this.elements
+    })
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }
