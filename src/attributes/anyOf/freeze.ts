@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Update } from '~/types/update.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { $state } from '../constants/attributeOptions.js'
@@ -9,7 +8,8 @@ import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
-import { AnyOfAttribute } from './interface.js'
+import type { AnyOfAttribute } from './interface.js'
+import { AnyOfAttribute_ } from './interface.js'
 import type { $AnyOfAttributeState } from './interface.js'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
 
@@ -21,20 +21,19 @@ type FreezeElements<
   : $ELEMENTS extends [infer $ELEMENTS_HEAD, ...infer $ELEMENTS_TAIL]
     ? $ELEMENTS_TAIL extends $AnyOfAttributeElements[]
       ? $ELEMENTS_HEAD extends $AttributeState
-        ? FreezeAttribute<$ELEMENTS_HEAD> extends AnyOfAttributeElements
-          ? FreezeElements<$ELEMENTS_TAIL, [...RESULTS, FreezeAttribute<$ELEMENTS_HEAD>]>
+        ? FreezeAttribute<$ELEMENTS_HEAD, false> extends AnyOfAttributeElements
+          ? FreezeElements<$ELEMENTS_TAIL, [...RESULTS, FreezeAttribute<$ELEMENTS_HEAD, false>]>
           : FreezeElements<$ELEMENTS_TAIL, RESULTS>
         : FreezeElements<$ELEMENTS_TAIL, RESULTS>
       : never
     : RESULTS
 
-export type FreezeAnyOfAttribute<$ANY_OF_ATTRIBUTE extends $AnyOfAttributeState> =
-  // Applying void O.Update improves type display
-  Update<
-    AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeAnyOfAttribute<
+  $ANY_OF_ATTRIBUTE extends $AnyOfAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? AnyOfAttribute_<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
+  : AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
 
 type AnyOfAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -43,7 +42,7 @@ type AnyOfAttributeFreezer = <
   state: STATE,
   elements: $ELEMENTS,
   path?: string
-) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>
+) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `anyOf` attribute
@@ -60,7 +59,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   state: STATE,
   elements: $ELEMENTS,
   path?: string
-): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>> => {
+) => {
   validateAttributeProperties(state, path)
 
   if (!isArray(elements)) {
@@ -123,7 +122,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
 
   const frozenElements = elements.map(element => element.freeze(path)) as FreezeElements<$ELEMENTS>
 
-  return new AnyOfAttribute({
+  return new AnyOfAttribute_({
     path,
     elements: frozenElements,
     ...state

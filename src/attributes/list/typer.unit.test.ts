@@ -615,4 +615,9 @@ describe('list', () => {
     > = 1
     assertList
   })
+
+  const thisIsATest = list(
+    list(list(list(list(list(list(list(list(list(list(list(list(list(list(string()))))))))))))))
+  ).freeze()
+  thisIsATest
 })

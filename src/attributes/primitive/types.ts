@@ -88,9 +88,12 @@ export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
         | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
         | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 
-export type FreezePrimitiveAttribute<ATTRIBUTE extends $PrimitiveAttributeState> =
-  | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends $BooleanAttributeState ? FreezeBooleanAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE> : never)
+export type FreezePrimitiveAttribute<
+  ATTRIBUTE extends $PrimitiveAttributeState,
+  EXTENDED extends boolean = false
+> =
+  | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends $BooleanAttributeState ? FreezeBooleanAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE, EXTENDED> : never)

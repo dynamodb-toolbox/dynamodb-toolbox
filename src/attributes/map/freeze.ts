@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Update } from '~/types/update.js'
 
 import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
@@ -8,24 +7,33 @@ import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
-import { MapAttribute } from './interface.js'
+import type { MapAttribute } from './interface.js'
+import { MapAttribute_ } from './interface.js'
 import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
-export type FreezeMapAttribute<$MAP_ATTRIBUTE extends $MapAttributeState> =
-  // Applying void Update improves type display
-  Update<
-    MapAttribute<
+export type FreezeMapAttribute<
+  $MAP_ATTRIBUTE extends $MapAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? MapAttribute_<
       $MAP_ATTRIBUTE[$state],
       {
         [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY]
+          $MAP_ATTRIBUTE[$attributes][KEY],
+          false
         >
       }
-    >,
-    never,
-    never
-  >
+    >
+  : MapAttribute<
+      $MAP_ATTRIBUTE[$state],
+      {
+        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
+          $MAP_ATTRIBUTE[$attributes][KEY],
+          false
+        >
+      }
+    >
 
 type MapAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -34,7 +42,7 @@ type MapAttributeFreezer = <
   state: STATE,
   attribute: $ATTRIBUTES,
   path?: string
-) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>
+) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
 
 /**
  * Freezes a warm `map` attribute
@@ -51,7 +59,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <
   state: STATE,
   attributes: $ATTRIBUTES,
   path?: string
-): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>> => {
+) => {
   validateAttributeProperties(state, path)
 
   const attributesSavedAs = new Set<string>()
@@ -92,10 +100,10 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     frozenAttributes[attributeName] = attribute.freeze([path, attributeName].join('.'))
   }
 
-  return new MapAttribute({
+  return new MapAttribute_({
     path,
     attributes: frozenAttributes as {
-      [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]>
+      [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY], false>
     },
     ...state
   })

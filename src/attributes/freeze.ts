@@ -7,19 +7,21 @@ import type { $RecordAttributeState, FreezeRecordAttribute } from './record/inde
 import type { $SetAttributeState, FreezeSetAttribute } from './set/index.js'
 import type { $AttributeState } from './types/index.js'
 
-export type FreezeAttribute<$ATTRIBUTE extends $AttributeState> =
-  $ATTRIBUTE extends $AnyAttributeState
-    ? FreezeAnyAttribute<$ATTRIBUTE>
-    : $ATTRIBUTE extends $PrimitiveAttributeState
-      ? FreezePrimitiveAttribute<$ATTRIBUTE>
-      : $ATTRIBUTE extends $SetAttributeState
-        ? FreezeSetAttribute<$ATTRIBUTE>
-        : $ATTRIBUTE extends $ListAttributeState
-          ? FreezeListAttribute<$ATTRIBUTE>
-          : $ATTRIBUTE extends $MapAttributeState
-            ? FreezeMapAttribute<$ATTRIBUTE>
-            : $ATTRIBUTE extends $RecordAttributeState
-              ? FreezeRecordAttribute<$ATTRIBUTE>
-              : $ATTRIBUTE extends $AnyOfAttributeState
-                ? FreezeAnyOfAttribute<$ATTRIBUTE>
-                : never
+export type FreezeAttribute<
+  $ATTRIBUTE extends $AttributeState,
+  EXTENDED extends boolean = false
+> = $ATTRIBUTE extends $AnyAttributeState
+  ? FreezeAnyAttribute<$ATTRIBUTE, EXTENDED>
+  : $ATTRIBUTE extends $PrimitiveAttributeState
+    ? FreezePrimitiveAttribute<$ATTRIBUTE, EXTENDED>
+    : $ATTRIBUTE extends $SetAttributeState
+      ? FreezeSetAttribute<$ATTRIBUTE, EXTENDED>
+      : $ATTRIBUTE extends $ListAttributeState
+        ? FreezeListAttribute<$ATTRIBUTE, EXTENDED>
+        : $ATTRIBUTE extends $MapAttributeState
+          ? FreezeMapAttribute<$ATTRIBUTE, EXTENDED>
+          : $ATTRIBUTE extends $RecordAttributeState
+            ? FreezeRecordAttribute<$ATTRIBUTE, EXTENDED>
+            : $ATTRIBUTE extends $AnyOfAttributeState
+              ? FreezeAnyOfAttribute<$ATTRIBUTE, EXTENDED>
+              : never

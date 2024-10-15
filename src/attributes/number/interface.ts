@@ -2,11 +2,16 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
-import type { Update } from '~/types/update.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  Update,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
@@ -641,7 +646,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     )
   }
 
-  freeze(path?: string): FreezeNumberAttribute<$NumberAttributeState<STATE>> {
+  freeze(path?: string): FreezeNumberAttribute<$NumberAttributeState<STATE>, true> {
     return freezeNumberAttribute(this[$state], path)
   }
 }
@@ -676,12 +681,26 @@ export class NumberAttribute<STATE extends NumberAttributeState = NumberAttribut
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class NumberAttribute_<
+  STATE extends NumberAttributeState = NumberAttributeState
+> extends NumberAttribute<STATE> {
+  clone<NEXT_STATE extends Partial<NumberAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): NumberAttribute<ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>> {
+    return new NumberAttribute({
+      ...this,
+      defaults: { ...this.defaults },
+      links: { ...this.links },
+      validators: { ...this.validators },
+      ...nextState
+    } as ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>)
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

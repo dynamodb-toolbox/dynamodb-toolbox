@@ -30,12 +30,12 @@ describe('schema', () => {
     const assertAttr: A.Equals<
       (typeof sch)['attributes'],
       {
-        reqStr: FreezeAttribute<typeof reqStr>
-        hidBool: FreezeAttribute<typeof hidBool>
-        defNum: FreezeAttribute<typeof defNum>
-        savedAsBin: FreezeAttribute<typeof savedAsBin>
-        keyStr: FreezeAttribute<typeof keyStr>
-        enumStr: FreezeAttribute<typeof enumStr>
+        reqStr: FreezeAttribute<typeof reqStr, true>
+        hidBool: FreezeAttribute<typeof hidBool, true>
+        defNum: FreezeAttribute<typeof defNum, true>
+        savedAsBin: FreezeAttribute<typeof savedAsBin, true>
+        keyStr: FreezeAttribute<typeof keyStr, true>
+        enumStr: FreezeAttribute<typeof enumStr, true>
       }
     > = 1
     assertAttr
@@ -74,9 +74,9 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof sch)['attributes'],
       {
-        optSet: FreezeAttribute<typeof optSet>
-        reqSet: FreezeAttribute<typeof reqSet>
-        hiddenSet: FreezeAttribute<typeof hiddenSet>
+        optSet: FreezeAttribute<typeof optSet, true>
+        reqSet: FreezeAttribute<typeof reqSet, true>
+        hiddenSet: FreezeAttribute<typeof hiddenSet, true>
       }
     > = 1
     assertSch
@@ -164,11 +164,11 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof pickedSch)['attributes'],
       {
-        hidBool: FreezeAttribute<typeof hidBool>
-        defNum: FreezeAttribute<typeof defNum>
-        savedAsBin: FreezeAttribute<typeof savedAsBin>
-        keyStr: FreezeAttribute<typeof keyStr>
-        enumStr: FreezeAttribute<typeof enumStr>
+        hidBool: FreezeAttribute<typeof hidBool, true>
+        defNum: FreezeAttribute<typeof defNum, true>
+        savedAsBin: FreezeAttribute<typeof savedAsBin, true>
+        keyStr: FreezeAttribute<typeof keyStr, true>
+        enumStr: FreezeAttribute<typeof enumStr, true>
       }
     > = 1
     assertSch
@@ -191,11 +191,11 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof pickedSch)['attributes'],
       {
-        hidBool: FreezeAttribute<typeof hidBool>
-        defNum: FreezeAttribute<typeof defNum>
-        savedAsBin: FreezeAttribute<typeof savedAsBin>
-        keyStr: FreezeAttribute<typeof keyStr>
-        enumStr: FreezeAttribute<typeof enumStr>
+        hidBool: FreezeAttribute<typeof hidBool, true>
+        defNum: FreezeAttribute<typeof defNum, true>
+        savedAsBin: FreezeAttribute<typeof savedAsBin, true>
+        keyStr: FreezeAttribute<typeof keyStr, true>
+        enumStr: FreezeAttribute<typeof enumStr, true>
       }
     > = 1
     assertSch

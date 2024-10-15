@@ -17,7 +17,7 @@ export type WithInternalAttribute<
   $ATTRIBUTE extends $AttributeNestedState
 > = Schema<{
   [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
-    ? FreezeAttribute<$ATTRIBUTE>
+    ? FreezeAttribute<$ATTRIBUTE, true>
     : KEY extends keyof SCHEMA['attributes']
       ? SCHEMA['attributes'][KEY]
       : never

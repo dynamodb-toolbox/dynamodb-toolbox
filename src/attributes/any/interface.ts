@@ -2,9 +2,14 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
@@ -530,7 +535,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     )
   }
 
-  freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>> {
+  freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>, true> {
     return freezeAnyAttribute(this[$state], path)
   }
 }
@@ -561,12 +566,26 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     this.validators = state.validators
     this.castAs = state.castAs
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class AnyAttribute_<
+  STATE extends AnyAttributeState = AnyAttributeState
+> extends AnyAttribute<STATE> {
+  clone<NEXT_STATE extends Partial<AnyAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): AnyAttribute<ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>> {
+    return new AnyAttribute({
+      ...this,
+      defaults: { ...this.defaults },
+      links: { ...this.links },
+      validators: { ...this.validators },
+      ...nextState
+    } as ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>)
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

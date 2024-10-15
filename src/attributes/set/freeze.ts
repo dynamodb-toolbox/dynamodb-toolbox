@@ -1,5 +1,4 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Update } from '~/types/update.js'
 
 import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
@@ -7,17 +6,17 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import { SetAttribute } from './interface.js'
+import type { SetAttribute } from './interface.js'
+import { SetAttribute_ } from './interface.js'
 import type { $SetAttributeState } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
 
-export type FreezeSetAttribute<$SET_ATTRIBUTE extends $SetAttributeState> =
-  // Applying void Update improves type display
-  Update<
-    SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>,
-    never,
-    never
-  >
+export type FreezeSetAttribute<
+  $SET_ATTRIBUTE extends $SetAttributeState,
+  EXTENDED extends boolean = false
+> = EXTENDED extends true
+  ? SetAttribute_<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
+  : SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
 
 type SetAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -26,7 +25,7 @@ type SetAttributeFreezer = <
   state: STATE,
   $elements: $ELEMENTS,
   path?: string
-) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>
+) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
 
 /**
  * Validates a set instance
@@ -43,7 +42,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
   state: STATE,
   elements: $ELEMENTS,
   path?: string
-): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>> => {
+) => {
   validateAttributeProperties(state, path)
 
   const { required, hidden, savedAs } = elements[$state]
@@ -84,7 +83,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
     })
   }
 
-  const frozenElements = elements.freeze(`${path ?? ''}[x]`) as FreezeAttribute<$ELEMENTS>
+  const frozenElements = elements.freeze(`${path ?? ''}[x]`) as FreezeAttribute<$ELEMENTS, false>
 
-  return new SetAttribute({ path, elements: frozenElements, ...state })
+  return new SetAttribute_({ path, elements: frozenElements, ...state })
 }

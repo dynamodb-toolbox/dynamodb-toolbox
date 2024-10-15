@@ -2,9 +2,14 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
@@ -582,7 +587,7 @@ export class $MapAttribute<
     )
   }
 
-  freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>> {
+  freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true> {
     return freezeMapAttribute(this[$state], this[$attributes], path)
   }
 }
@@ -639,12 +644,30 @@ export class MapAttribute<
     this.keyAttributeNames = keyAttributeNames
     this.requiredAttributeNames = requiredAttributeNames
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class MapAttribute_<
+  STATE extends SharedAttributeState = SharedAttributeState,
+  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
+> extends MapAttribute<STATE, ATTRIBUTES> {
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): MapAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ATTRIBUTES> {
+    return new MapAttribute({
+      ...({
+        ...this,
+        defaults: { ...this.defaults },
+        links: { ...this.links },
+        validators: { ...this.validators },
+        ...nextState
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      attributes: this.attributes
+    })
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }

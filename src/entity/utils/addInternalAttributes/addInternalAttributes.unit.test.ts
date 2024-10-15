@@ -36,7 +36,7 @@ describe('addInternalAttributes', () => {
     })
 
     test('adds entity attribute', () => {
-      const assertEntityAttribute: A.Equals<
+      const assertEntityAttribute: A.Contains<
         typeof enrichedSchema.attributes.id,
         {
           path?: string | undefined
@@ -46,21 +46,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: '__et__'
           enum: ['myEntity']
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -172,7 +160,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertCreatedAttribute: A.Equals<
+      const assertCreatedAttribute: A.Contains<
         typeof enrichedSchema.attributes.created,
         {
           path?: string | undefined
@@ -182,21 +170,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: '_ct'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -237,7 +213,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertPartialCustomCreatedAttribute: A.Equals<
+      const assertPartialCustomCreatedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.created,
         {
           path?: string | undefined
@@ -247,21 +223,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: 'c'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -304,7 +268,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertCustomCreatedAttribute: A.Equals<
+      const assertCustomCreatedAttribute: A.Contains<
         (typeof customSchema.attributes)['__created__'],
         {
           path?: string | undefined
@@ -314,21 +278,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: 'c'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -369,7 +321,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertModifiedAttribute: A.Equals<
+      const assertModifiedAttribute: A.Contains<
         typeof enrichedSchema.attributes.modified,
         {
           path?: string | undefined
@@ -379,21 +331,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: '_md'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -434,7 +374,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertPartialCustomModifiedAttribute: A.Equals<
+      const assertPartialCustomModifiedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.modified,
         {
           path?: string | undefined
@@ -444,21 +384,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: 'm'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1
@@ -500,7 +428,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const assertCustomModifiedAttribute: A.Equals<
+      const assertCustomModifiedAttribute: A.Contains<
         (typeof customSchema.attributes)['__modified__'],
         {
           path?: string | undefined
@@ -510,21 +438,9 @@ describe('addInternalAttributes', () => {
           key: false
           savedAs: 'm'
           enum: undefined
-          defaults: {
-            key: undefined
-            put: unknown
-            update: unknown
-          }
-          links: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-          validators: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
+          defaults: { key: undefined; put: unknown; update: unknown }
+          links: { key: undefined; put: undefined; update: undefined }
+          validators: { key: undefined; put: undefined; update: undefined }
           transform: undefined
         }
       > = 1

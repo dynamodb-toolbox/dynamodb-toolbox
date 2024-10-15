@@ -2,11 +2,16 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
+import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
-import type { If, ValueOrGetter } from '~/types/index.js'
-import type { Overwrite } from '~/types/overwrite.js'
-import type { Update } from '~/types/update.js'
+import type {
+  ConstrainedOverwrite,
+  If,
+  NarrowObject,
+  Overwrite,
+  Update,
+  ValueOrGetter
+} from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { update } from '~/utils/update.js'
@@ -636,7 +641,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     )
   }
 
-  freeze(path?: string): FreezeBooleanAttribute<$BooleanAttributeState<STATE>> {
+  freeze(path?: string): FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true> {
     return freezeBooleanAttribute(this[$state], path)
   }
 }
@@ -669,12 +674,26 @@ export class BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttri
     this.links = state.links
     this.validators = state.validators
   }
+}
 
-  // DO NOT DE-COMMENT right now as they trigger a ts(7056) error on even relatively small schemas
-  // TODO: Find a way not to trigger this error
-  // build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-  //   schemaAction: new (schema: this) => SCHEMA_ACTION
-  // ): SCHEMA_ACTION {
-  //   return new schemaAction(this)
-  // }
+export class BooleanAttribute_<
+  STATE extends BooleanAttributeState = BooleanAttributeState
+> extends BooleanAttribute<STATE> {
+  clone<NEXT_STATE extends Partial<BooleanAttributeState> = {}>(
+    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
+  ): BooleanAttribute<ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>> {
+    return new BooleanAttribute({
+      ...this,
+      defaults: { ...this.defaults },
+      links: { ...this.links },
+      validators: { ...this.validators },
+      ...nextState
+    } as ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>)
+  }
+
+  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    schemaAction: new (schema: this) => SCHEMA_ACTION
+  ): SCHEMA_ACTION {
+    return new schemaAction(this)
+  }
 }
