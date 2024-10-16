@@ -1,17 +1,47 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
 export type { Validator } from './attributes/index.js'
-export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
-export { nul, NullAttribute, $NullAttribute } from './attributes/null/index.js'
-export { boolean, BooleanAttribute, $BooleanAttribute } from './attributes/boolean/index.js'
-export { number, NumberAttribute, $NumberAttribute } from './attributes/number/index.js'
-export { string, StringAttribute, $StringAttribute } from './attributes/string/index.js'
-export { binary, BinaryAttribute, $BinaryAttribute } from './attributes/binary/index.js'
-export { set, SetAttribute, $SetAttribute } from './attributes/set/index.js'
-export { list, ListAttribute, $ListAttribute } from './attributes/list/index.js'
-export { map, MapAttribute, $MapAttribute } from './attributes/map/index.js'
-export { record, RecordAttribute, $RecordAttribute } from './attributes/record/index.js'
-export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './attributes/anyOf/index.js'
+export { any, AnyAttribute, $AnyAttribute, AnyAttribute_ } from './attributes/any/index.js'
+export { nul, NullAttribute, $NullAttribute, NullAttribute_ } from './attributes/null/index.js'
+export {
+  boolean,
+  BooleanAttribute,
+  $BooleanAttribute,
+  BooleanAttribute_
+} from './attributes/boolean/index.js'
+export {
+  number,
+  NumberAttribute,
+  $NumberAttribute,
+  NumberAttribute_
+} from './attributes/number/index.js'
+export {
+  string,
+  StringAttribute,
+  $StringAttribute,
+  StringAttribute_
+} from './attributes/string/index.js'
+export {
+  binary,
+  BinaryAttribute,
+  $BinaryAttribute,
+  BinaryAttribute_
+} from './attributes/binary/index.js'
+export { set, SetAttribute, $SetAttribute, SetAttribute_ } from './attributes/set/index.js'
+export { list, ListAttribute, $ListAttribute, ListAttribute_ } from './attributes/list/index.js'
+export { map, MapAttribute, $MapAttribute, MapAttribute_ } from './attributes/map/index.js'
+export {
+  record,
+  RecordAttribute,
+  $RecordAttribute,
+  RecordAttribute_
+} from './attributes/record/index.js'
+export {
+  anyOf,
+  AnyOfAttribute,
+  $AnyOfAttribute,
+  AnyOfAttribute_
+} from './attributes/anyOf/index.js'
 
 // schema
 export { schema, Schema, SchemaAction } from './schema/index.js'
@@ -187,3 +217,28 @@ export type {
   TypeModifier
 } from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'
+
+// type utils
+export type {
+  Cast,
+  Compute,
+  ComputeObject,
+  Extends,
+  If,
+  IsConstraint,
+  Keep,
+  ListOf,
+  Merge,
+  NarrowObject,
+  NonNull,
+  Not,
+  Optional,
+  OptionalizeUndefinableProperties,
+  Or,
+  Overwrite,
+  ConstrainedOverwrite,
+  Require,
+  SelectKeys,
+  Update,
+  ValueOrGetter
+} from './types/index.js'

@@ -3,3 +3,4 @@ export type { $StringAttributeState, $StringAttributeNestedState } from './inter
 export { $StringAttribute, StringAttribute, StringAttribute_ } from './interface.js'
 export type { FreezeStringAttribute } from './freeze.js'
 export type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
+export type { StringAttributeState } from './types.js'
