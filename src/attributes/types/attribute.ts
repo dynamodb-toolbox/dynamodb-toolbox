@@ -39,7 +39,7 @@ export type Attribute_ =
  * Any schema attributes
  */
 export interface SchemaAttributes {
-  [key: string]: Attribute_
+  [key: string]: Attribute
 }
 
 export type Extension = {
