@@ -143,6 +143,11 @@ export class ScanCommand<
       } = await this.table.getDocumentClient().send(new _ScanCommand(pageScanParams))
 
       for (const item of items) {
+        if (this[$entities].length === 0) {
+          formattedItems.push(item)
+          continue
+        }
+
         const itemEntityName = item[this.table.entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {
@@ -152,9 +157,6 @@ export class ScanCommand<
         const formatter = formattersByName[itemEntityName]
 
         if (formatter === undefined) {
-          if (this[$entities].length === 0) {
-            formattedItems.push(item)
-          }
           continue
         }
 

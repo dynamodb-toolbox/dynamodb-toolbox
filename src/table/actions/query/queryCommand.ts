@@ -146,9 +146,9 @@ export class QueryCommand<
   async send(): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
     const queryParams = this.params()
 
-    const formatters: Record<string, EntityFormatter> = {}
+    const formattersByName: Record<string, EntityFormatter> = {}
     this[$entities].forEach(entity => {
-      formatters[entity.name] = entity.build(EntityFormatter)
+      formattersByName[entity.name] = entity.build(EntityFormatter)
     })
 
     const formattedItems: FormattedItem[] = []
@@ -180,18 +180,20 @@ export class QueryCommand<
       } = await this.table.getDocumentClient().send(new _QueryCommand(pageQueryParams))
 
       for (const item of items) {
+        if (this[$entities].length === 0) {
+          formattedItems.push(item)
+          continue
+        }
+
         const itemEntityName = item[this.table.entityAttributeSavedAs]
 
         if (!isString(itemEntityName)) {
           continue
         }
 
-        const formatter = formatters[itemEntityName]
+        const formatter = formattersByName[itemEntityName]
 
         if (formatter === undefined) {
-          if (this[$entities].length === 0) {
-            formattedItems.push(item)
-          }
           continue
         }
 
