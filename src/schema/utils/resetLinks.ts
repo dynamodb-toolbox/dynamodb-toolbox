@@ -1,34 +1,23 @@
 import type {
   AnyAttribute,
-  AnyAttribute_,
   AnyOfAttribute,
-  AnyOfAttribute_,
   Attribute,
   Attribute_,
   BinaryAttribute,
-  BinaryAttribute_,
   BooleanAttribute,
-  BooleanAttribute_,
   ListAttribute,
-  ListAttribute_,
   MapAttribute,
-  MapAttribute_,
   NullAttribute,
-  NullAttribute_,
   NumberAttribute,
-  NumberAttribute_,
   RecordAttribute,
-  RecordAttribute_,
   SetAttribute,
-  SetAttribute_,
-  StringAttribute,
-  StringAttribute_
+  StringAttribute
 } from '~/attributes/index.js'
 import type { Overwrite } from '~/types/index.js'
 
 export type ResetLinks<ATTRIBUTE extends Attribute> =
   | (ATTRIBUTE extends AnyAttribute
-      ? AnyAttribute_<
+      ? AnyAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof AnyAttribute>,
@@ -37,7 +26,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends NullAttribute
-      ? NullAttribute_<
+      ? NullAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof NullAttribute>,
@@ -46,7 +35,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends BooleanAttribute
-      ? BooleanAttribute_<
+      ? BooleanAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof BooleanAttribute>,
@@ -55,7 +44,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends NumberAttribute
-      ? NumberAttribute_<
+      ? NumberAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof NumberAttribute>,
@@ -64,7 +53,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends StringAttribute
-      ? StringAttribute_<
+      ? StringAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof StringAttribute>,
@@ -73,7 +62,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends BinaryAttribute
-      ? BinaryAttribute_<
+      ? BinaryAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof BinaryAttribute>,
@@ -82,7 +71,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends SetAttribute
-      ? SetAttribute_<
+      ? SetAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof SetAttribute>,
@@ -92,7 +81,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends ListAttribute
-      ? ListAttribute_<
+      ? ListAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof ListAttribute>,
@@ -102,7 +91,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends MapAttribute
-      ? MapAttribute_<
+      ? MapAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof MapAttribute>,
@@ -112,7 +101,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends RecordAttribute
-      ? RecordAttribute_<
+      ? RecordAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof RecordAttribute>,
@@ -123,7 +112,7 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
   | (ATTRIBUTE extends AnyOfAttribute
-      ? AnyOfAttribute_<
+      ? AnyOfAttribute<
           Overwrite<
             // Improves type display
             Pick<ATTRIBUTE, keyof AnyOfAttribute>,
@@ -133,8 +122,9 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
 
-type LinksResetter = <ATTRIBUTE extends Attribute_>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
+type LinksResetter = <ATTRIBUTE extends Attribute>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
 
 export const resetLinks: LinksResetter = attribute =>
-  // @ts-expect-error
-  attribute.clone({ links: { key: undefined, put: undefined, update: undefined } })
+  (attribute as Attribute_)
+    // @ts-expect-error Signatures don't match but we don't care
+    .clone({ links: { key: undefined, put: undefined, update: undefined } })

@@ -151,7 +151,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
 
 type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
   attributes: NarrowObject<$ATTRIBUTES>
-) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY], true> }>
+) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
 
 /**
  * Defines an Entity schema
@@ -164,7 +164,7 @@ export const schema: SchemaTyper = <
 >(
   attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
 ): Schema<{
-  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY], true>
+  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
 }> => new Schema<{}>({}).and(attributes)
 
 export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {
