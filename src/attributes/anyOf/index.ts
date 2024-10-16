@@ -3,3 +3,4 @@ export type { $AnyOfAttributeState, $AnyOfAttributeNestedState } from './interfa
 export { $AnyOfAttribute, AnyOfAttribute, AnyOfAttribute_ } from './interface.js'
 export type { FreezeAnyOfAttribute } from './freeze.js'
 export type { AnyOfAttributeElements } from './types.js'
+export type { AnyOfAttributeOptions, AnyOfAttributeDefaultOptions } from './options.js'

@@ -4,3 +4,4 @@ export { $BinaryAttribute, BinaryAttribute, BinaryAttribute_ } from './interface
 export type { FreezeBinaryAttribute } from './freeze.js'
 export type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'
 export type { BinaryAttributeState } from './types.js'
+export type { BinaryAttributeOptions, BinaryAttributeDefaultOptions } from './options.js'
