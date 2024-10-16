@@ -8,6 +8,9 @@
     <img alt="" src="https://img.shields.io/github/license/dynamodb-toolbox/dynamodb-toolbox?color=%230e355b&style=for-the-badge">
   </a>
     <img alt="" src=https://img.shields.io/npm/dt/dynamodb-toolbox?color=%232e6ca9&style=for-the-badge>
+  <a aria-label="Gurubase" href="https://gurubase.io/g/dynamodb-toolbox">
+    <img alt="DynamoDB-Toolbox Guru Badge" src="https://img.shields.io/badge/Gurubase-Ask%20DynamoDB%20Toolbox%20Guru-006BFF?style=for-the-badge">
+  </a>
     <br/>
     <br/>
 </p>
