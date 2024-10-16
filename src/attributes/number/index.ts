@@ -4,3 +4,4 @@ export { $NumberAttribute, NumberAttribute, NumberAttribute_ } from './interface
 export type { FreezeNumberAttribute } from './freeze.js'
 export type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
 export type { NumberAttributeState } from './types.js'
+export type { NumberAttributeOptions, NumberAttributeDefaultOptions } from './options.js'

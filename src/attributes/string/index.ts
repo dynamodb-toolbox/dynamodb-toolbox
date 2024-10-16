@@ -4,3 +4,4 @@ export { $StringAttribute, StringAttribute, StringAttribute_ } from './interface
 export type { FreezeStringAttribute } from './freeze.js'
 export type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
 export type { StringAttributeState } from './types.js'
+export type { StringAttributeOptions, StringAttributeDefaultOptions } from './options.js'
