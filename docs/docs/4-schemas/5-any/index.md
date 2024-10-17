@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../14-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,7 +80,7 @@ const metadataSchema = any({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../17-actions/1-parse.md) (at root level or within [Maps](../14-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const metadataSchema = any().savedAs('meta')
@@ -91,7 +91,7 @@ const metadataSchema = any({ savedAs: 'meta' })
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;unknown&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::noteExamples
 
@@ -163,7 +163,7 @@ const metadataSchema = any({
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, unknown&gt;</code></i></p>
 
-Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
@@ -180,7 +180,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;unknown&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::noteExamples
 

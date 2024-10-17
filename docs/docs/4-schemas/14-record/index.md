@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../14-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
+Defines a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../13-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
 import { record } from 'dynamodb-toolbox/attributes/record'
@@ -44,7 +44,7 @@ const strRecord = record(string(), string().key())
 const strRecord = record(string(), string().default('foo'))
 ```
 
-Record keys share the same constraints and must be of type [`string`](../10-string/index.md).
+Record keys share the same constraints and must be of type [`string`](../9-string/index.md).
 
 ## Options
 
@@ -52,7 +52,7 @@ Record keys share the same constraints and must be of type [`string`](../10-stri
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../14-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -114,7 +114,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../17-actions/1-parse.md) (at root level or within [Maps](../14-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const weaknessesSchema = record(
@@ -128,7 +128,7 @@ const weaknessesSchema = record(..., { savedAs: 'w' })
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;ATTRIBUTES&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::noteExamples
 
@@ -188,7 +188,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, ATTRIBUTES&gt;</code></i></p>
 
-Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
 const pokemonSchema = schema({
@@ -210,7 +210,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;ATTRIBUTES&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::noteExamples
 

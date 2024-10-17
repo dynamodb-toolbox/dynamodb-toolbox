@@ -20,7 +20,7 @@ const formattedPikachu =
 
 :::info
 
-This action is mostly a **wrapper around the schema [`Formatter`](../../../4-schemas/17-actions/2-format.md) action**.
+This action is mostly a **wrapper around the schema [`Formatter`](../../../4-schemas/16-actions/2-format.md) action**.
 
 :::
 
