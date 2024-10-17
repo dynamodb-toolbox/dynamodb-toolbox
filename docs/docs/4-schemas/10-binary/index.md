@@ -32,7 +32,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../14-map/index.md)). Possible values are:
+Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -80,7 +80,7 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../17-actions/1-parse.md) (at root level or within [Maps](../14-map/index.md)):
+Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
 
 ```ts
 const hashSchema = binary().savedAs('h')
@@ -113,7 +113,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../17-actions/1-parse.md):
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
 
 ```ts
 const PREFIX = new Uint8Array([1, 2, 3])
@@ -136,13 +136,13 @@ const hashSchema = binary().transform(prefix)
 const hashSchema = binary({ transform: prefix })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Uint8Array&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::noteExamples
 
@@ -216,7 +216,7 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>Link&lt;SCHEMA, Uint8Array&gt;</code></i></p>
 
-Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../3-defaults-and-links/index.md) for more details:
+Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
 const encoder = new TextEncoder()
@@ -235,7 +235,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;Uint8Array&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../4-custom-validation/index.md) for more details:
+Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::noteExamples
 

@@ -259,7 +259,7 @@ const pokeTypeCheck: Condition<typeof PokemonEntity> = {
 
 ### Range conditions
 
-Range conditions evaluate whether an attribute of sortable type (i.e. [number](../../../4-schemas/9-number/index.md), [string](../../../4-schemas/10-string/index.md) or [binary](../../../4-schemas/11-binary/index.md)) is **within a certain range**.
+Range conditions evaluate whether an attribute of sortable type (i.e. [number](../../../4-schemas/8-number/index.md), [string](../../../4-schemas/9-string/index.md) or [binary](../../../4-schemas/10-binary/index.md)) is **within a certain range**.
 
 :::info
 

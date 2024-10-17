@@ -4,18 +4,16 @@ title: Usage
 
 # Transformers
 
-Transformers allow modifying a primitive attribute value during the [transformation step](../17-actions/1-parse.md):
+Transformers allow modifying a primitive attribute value during the [transformation step](../16-actions/1-parse.md):
 
 ```ts
-import type { Transformer } from 'dynamodb-toolbox/transformers/prefix'
-
 const PREFIX = 'POKEMON#'
 
-const prefix: Transformer<string, string> = {
+const prefix = {
   // Updates the value during parsing
-  parse: input => [PREFIX, input].join(''),
+  parse: (input: string) => [PREFIX, input].join(''),
   // Updates the value back during formatting
-  format: saved => saved.slice(PREFIX.length)
+  format: (saved: string) => saved.slice(PREFIX.length)
 }
 
 // Saves the prefixed value

@@ -313,7 +313,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-If a default value is derived from other attributes, the v1 introduces a new notion called `links`. See the [Defaults & Links section](../../4-schemas/3-defaults-and-links/index.md) for more details:
+If a default value is derived from other attributes, the v1 introduces a new notion called `links`. See the [Defaults & Links section](../../4-schemas/2-defaults-and-links/index.md) for more details:
 
 - `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
 - `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
@@ -439,7 +439,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../4-schemas/18-transformers/1-usage.md) for more infos).
+The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../4-schemas/17-transformers/1-usage.md) for more infos).
 
 ### `coerce`
 

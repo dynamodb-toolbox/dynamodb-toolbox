@@ -383,7 +383,7 @@ const response: UpdateItemResponse<
 
 ## Extended Syntax
 
-In some contexts, like when defining [`updateLinks`](../../../4-schemas/3-defaults-and-links/index.md), it may be useful to understand extended syntax in greater details.
+In some contexts, like when defining [`updateLinks`](../../../4-schemas/2-defaults-and-links/index.md), it may be useful to understand extended syntax in greater details.
 
 To avoid conflicts with regular syntax, extensions are defined through **objects** with [symbols](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol) as keys:
 

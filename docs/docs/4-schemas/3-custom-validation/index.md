@@ -4,7 +4,7 @@ title: Custom Validation
 
 # Custom Validation
 
-All attribute types support adding custom validation during the **parsing step** (see the [`Parser`](../17-actions/1-parse.md) action for more details).
+All attribute types support adding custom validation during the **parsing step** (see the [`Parser`](../16-actions/1-parse.md) action for more details).
 
 There are three kinds of validators:
 

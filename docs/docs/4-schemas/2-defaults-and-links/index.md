@@ -52,9 +52,22 @@ const pokemonSchema = schema({
 })
 ```
 
-The solution is to make good use of the `.and(...)` method (see [Extending Schemas](../2-warm-vs-frozen/index.md#extension)) and build the schema **in two steps**:
+The solution is to make good use of the `.and(...)` method (see [Updating Schemas](../1-usage/index.md#updating-schemas)) and build the schema **in two steps**:
 
 ```ts
+const basePokemonSchema = schema({
+  ...,
+  level: number()
+})
+
+const completePokemonSchema = basePokemonSchema.and({
+  levelPlusOne: number().link<typeof basePokemonSchema>(
+    // 🙌 Correctly typed!
+    ({ level }) => level + 1
+  )
+})
+
+// 👇 OR we can use the getter form:
 const pokemonSchema = schema({
   ...
   level: number()
@@ -72,7 +85,7 @@ This is only required if you need type inference. In vanilla JS, `links` can be 
 
 :::
 
-Similarly to defaults, links come in three flavors:
+Similarly to defaults, links come in three modes:
 
 - `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
 - `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
@@ -86,7 +99,7 @@ The `link` method is a shorthand that acts as `keyLink` on key attributes and `p
 
 :::
 
-Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../17-actions/1-parse.md) action for more details).
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../16-actions/1-parse.md) action for more details).
 
 ### Update Syntax
 

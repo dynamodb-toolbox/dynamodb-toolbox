@@ -49,17 +49,17 @@ const nameAttr = attr.string()
 
 Available attribute types are:
 
-- [**`any`**](../6-any/index.md) - Contains any value
-- [**`null`**](../7-null/index.md) - Contains [null](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
-- [**`boolean`**](../8-boolean/index.md) - Contains [booleans](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
-- [**`number`**](../9-number/index.md): Contains [numbers](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
-- [**`string`**](../10-string/index.md): Contains [strings](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
-- [**`binary`**](../11-binary/index.md): Contains [binaries](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
-- [**`set`**](../12-set/index.md): Contains [sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of either `number`, `string`, or `binary` elements
-- [**`list`**](../13-list/index.md): Contains [lists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of elements of any type
-- [**`map`**](../14-map/index.md): Contains [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), i.e. a finite list of key-value pairs, values being child attributes of any type
-- [**`record`**](../15-record/index.md): Contains a different kind of [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Records differ from `maps` as they have a non-explicit (potentially infinite) range of keys, but with a single value type
-- [**`anyOf`**](../6-any/index.md): Contains a finite **union** of possible attributes
+- [**`any`**](../5-any/index.md) - Contains any value
+- [**`null`**](../6-null/index.md) - Contains [null](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
+- [**`boolean`**](../7-boolean/index.md) - Contains [booleans](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
+- [**`number`**](../8-number/index.md): Contains [numbers](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
+- [**`string`**](../9-string/index.md): Contains [strings](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
+- [**`binary`**](../10-binary/index.md): Contains [binaries](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
+- [**`set`**](../11-set/index.md): Contains [sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of either `number`, `string`, or `binary` elements
+- [**`list`**](../12-list/index.md): Contains [lists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of elements of any type
+- [**`map`**](../13-map/index.md): Contains [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), i.e. a finite list of key-value pairs, values being child attributes of any type
+- [**`record`**](../14-record/index.md): Contains a different kind of [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Records differ from `maps` as they have a non-explicit (potentially infinite) range of keys, but with a single value type
+- [**`anyOf`**](../5-any/index.md): Contains a finite **union** of possible attributes
 
 :::info
 
@@ -76,7 +76,7 @@ const namesAttr = list(nameAttr)
 
 :::info
 
-Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../17-actions/1-parse.md) and [format](../17-actions/2-format.md) data for instance) and might even be moved into a separate library one day.
+Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../16-actions/1-parse.md) and [format](../16-actions/2-format.md) data for instance) and might even be moved into a separate library one day.
 
 :::
 
@@ -108,19 +108,137 @@ const pokeTypeAttr = string()
   .savedAs('t')
 ```
 
-See each [attribute type](#attribute-types) documentation (for instance the [`string`](../10-string/index.md) page) to learn about available options.
+## Warm vs Frozen
 
-Finally, note that once `schema` is applied, attributes **cannot be modified** anymore (check the [Warm vs Frozen](../2-warm-vs-frozen/index.md) section for more details):
+Prior to being wrapped in a `schema` declaration, attributes are called **warm:** They are **not validated** (at run-time) and can be used to build other schemas. By inspecting their types, you can see that they are prefixed with `$`.
 
 ```ts
-const pokemonSchema = schema({
-  name: string().required('always'),
-  ...
-})
+const $nameSchema = string().required('always')
+// => $StringAttribute
+```
+
+Once **frozen**, validation is applied and building methods are stripped:
+
+```ts
+const nameSchema = $nameSchema.freeze()
+// => StringAttribute
+
+nameSchema.required
+// => 'always'
+nameSchema.required('never')
+// => ❌ 'required' is not a function
+```
+
+Wrapping attributes in a `schema` declaration **freezes them** under the hood:
+
+```ts
+const pokemonSchema = schema({ name: $nameSchema })
+// => Schema<{ name: StringAttribute }>
 
 pokemonSchema.attributes.name.required
 // => 'always'
+```
 
-pokemonSchema.attributes.name.required('atLeastOnce')
-// => ❌ `required` is not a function
+The main takeaway is that **warm schemas can be composed** while **frozen schemas cannot**:
+
+```ts
+const pokemonSchema = schema({
+  // 👍 No problemo
+  pokemonName: $nameSchema,
+  ...
+});
+
+const pokedexSchema = schema({
+  // ❌ Not possible
+  pokemon: pokemonSchema,
+  ...
+});
+```
+
+## Updating Schemas
+
+As we've just seen, once frozen, schemas **cannot be updated**.
+
+However, you can use them to build **new schemas** with the following methods:
+
+### `and(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(attr: $NEW_ATTR | (Schema&lt;OLD_ATTR&gt; => $NEW_ATTR)) => Schema&lt;OLD_ATTR & NEW_ATTR&gt;</code></i></p>
+
+Allows **extending** a schema with **new attributes**:
+
+```ts
+const extendedSchema = baseSchema.and({
+  newAttribute: string(),
+  ...
+})
+```
+
+:::info
+
+In case of naming conflicts, new attributes will **override** the previous ones.
+
+:::
+
+The method also accepts functions that return a (warm) schema. In this case, the previous schema is provided as an argument (which is particularly useful for building [Links](../2-defaults-and-links/index.md#links)):
+
+```ts
+const extendedSchema = mySchema.and(prevSchema => ({
+  newAttribute: string(),
+  ...
+}))
+```
+
+### `pick(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(...attrNames: ATTR_NAMES[]) => Schema&lt;Pick&lt;ATTR, ATTR_NAMES&gt;&gt;</code></i></p>
+
+Produces a **new schema** by keeping only certain **attributes** of the original schema:
+
+```ts
+const picked = pokemonSchema.pick('name', 'pokemonLevel')
+```
+
+Due to the potential disruptive nature of this method on [links](../2-defaults-and-links/index.md#links), they are **reset** in the process:
+
+```ts
+const nameSchema = schema({
+  firstName: string(),
+  lastName: string(),
+  completeName: string().link(({ firstName, lastName }) =>
+    [firstName, lastName].join(' ')
+  )
+})
+
+const picked = nameSchema.pick('lastName', 'completeName')
+
+picked.attributes.completeName.links.put
+// => undefined
+```
+
+### `omit(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(...attrNames: ATTR_NAMES[]) => Schema&lt;Omit&lt;ATTR, ATTR_NAMES&gt;&gt;</code></i></p>
+
+Produces a **new schema** by removing certain **attributes** out of the original schema:
+
+```ts
+const omitted = pokemonSchema.omit('name', 'pokemonLevel')
+```
+
+Due to the potential disruptive nature of this method on [links](../2-defaults-and-links/index.md#links), they are **reset** in the process:
+
+```ts
+const nameSchema = schema({
+  firstName: string(),
+  lastName: string(),
+  completeName: string().link(({ firstName, lastName }) =>
+    [firstName, lastName].join(' ')
+  )
+})
+
+const omitted = nameSchema.omit('firstName')
+
+omitted.attributes.completeName.links.put
+// => undefined
 ```
