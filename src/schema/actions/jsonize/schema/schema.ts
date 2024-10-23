@@ -8,10 +8,12 @@ import type { Overwrite } from '~/types/overwrite.js'
 import { $jsonizedAttrSchema } from './attribute.js'
 import type { JSONizedAttr } from './attribute.js'
 
-export const jsonizedSchemaSchema = schema({
+export const jsonizedSchemaAttributes = {
   type: string().const('schema'),
   attributes: record(string(), $jsonizedAttrSchema)
-})
+}
+
+export const jsonizedSchemaSchema = schema(jsonizedSchemaAttributes)
 
 export type JSONizedSchema = Overwrite<
   FormattedValue<typeof jsonizedSchemaSchema>,

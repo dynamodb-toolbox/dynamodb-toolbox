@@ -27,6 +27,7 @@ export class Entity<
   public type: 'entity'
   public name: NAME
   public table: TABLE
+  public constructorSchema: SCHEMA
   public schema: WithInternalAttributes<
     SCHEMA,
     TABLE,
@@ -81,6 +82,7 @@ export class Entity<
       })
     }
 
+    this.constructorSchema = schema
     this.schema = addInternalAttributes({
       schema,
       table: this.table,
