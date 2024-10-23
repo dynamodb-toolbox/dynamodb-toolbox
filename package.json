@@ -260,6 +260,16 @@
         "default": "./dist/cjs/schema/actions/format/index.js"
       }
     },
+    "./schema/actions/jsonSchemer": {
+      "import": {
+        "types": "./dist/esm/schema/actions/jsonSchemer/index.d.ts",
+        "default": "./dist/esm/schema/actions/jsonSchemer/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/actions/jsonSchemer/index.d.ts",
+        "default": "./dist/cjs/schema/actions/jsonSchemer/index.js"
+      }
+    },
     "./schema/actions/jsonize": {
       "import": {
         "types": "./dist/esm/schema/actions/jsonize/index.d.ts",
@@ -280,14 +290,14 @@
         "default": "./dist/cjs/schema/actions/jsonize/schema/index.js"
       }
     },
-    "./schema/actions/jsonSchemer": {
+    "./schema/actions/fromJSON": {
       "import": {
-        "types": "./dist/esm/schema/actions/jsonSchemer/index.d.ts",
-        "default": "./dist/esm/schema/actions/jsonSchemer/index.js"
+        "types": "./dist/esm/schema/actions/fromJSON/index.d.ts",
+        "default": "./dist/esm/schema/actions/fromJSON/index.js"
       },
       "require": {
-        "types": "./dist/cjs/schema/actions/jsonSchemer/index.d.ts",
-        "default": "./dist/cjs/schema/actions/jsonSchemer/index.js"
+        "types": "./dist/cjs/schema/actions/fromJSON/index.d.ts",
+        "default": "./dist/cjs/schema/actions/fromJSON/index.js"
       }
     },
     "./table": {
@@ -358,6 +368,36 @@
       "require": {
         "types": "./dist/cjs/table/actions/spy/index.d.ts",
         "default": "./dist/cjs/table/actions/spy/index.js"
+      }
+    },
+    "./table/actions/jsonize": {
+      "import": {
+        "types": "./dist/esm/table/actions/jsonize/index.d.ts",
+        "default": "./dist/esm/table/actions/jsonize/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/jsonize/index.d.ts",
+        "default": "./dist/cjs/table/actions/jsonize/index.js"
+      }
+    },
+    "./table/actions/jsonize/schema": {
+      "import": {
+        "types": "./dist/esm/table/actions/jsonize/schema.d.ts",
+        "default": "./dist/esm/table/actions/jsonize/schema.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/jsonize/schema.d.ts",
+        "default": "./dist/cjs/table/actions/jsonize/schema.js"
+      }
+    },
+    "./table/actions/fromJSON": {
+      "import": {
+        "types": "./dist/esm/table/actions/fromJSON/index.d.ts",
+        "default": "./dist/esm/table/actions/fromJSON/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/fromJSON/index.d.ts",
+        "default": "./dist/cjs/table/actions/fromJSON/index.js"
       }
     },
     "./entity": {
@@ -568,6 +608,36 @@
       "require": {
         "types": "./dist/cjs/entity/actions/spy/index.d.ts",
         "default": "./dist/cjs/entity/actions/spy/index.js"
+      }
+    },
+    "./entity/actions/jsonize": {
+      "import": {
+        "types": "./dist/esm/entity/actions/jsonize/index.d.ts",
+        "default": "./dist/esm/entity/actions/jsonize/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/jsonize/index.d.ts",
+        "default": "./dist/cjs/entity/actions/jsonize/index.js"
+      }
+    },
+    "./entity/actions/jsonize/schema": {
+      "import": {
+        "types": "./dist/esm/entity/actions/jsonize/schema.d.ts",
+        "default": "./dist/esm/entity/actions/jsonize/schema.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/jsonize/schema.d.ts",
+        "default": "./dist/cjs/entity/actions/jsonize/schema.js"
+      }
+    },
+    "./entity/actions/fromJSON": {
+      "import": {
+        "types": "./dist/esm/entity/actions/fromJSON/index.d.ts",
+        "default": "./dist/esm/entity/actions/fromJSON/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/fromJSON/index.d.ts",
+        "default": "./dist/cjs/entity/actions/fromJSON/index.js"
       }
     },
     "./errors": {

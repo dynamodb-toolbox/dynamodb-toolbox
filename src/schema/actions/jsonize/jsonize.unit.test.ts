@@ -78,7 +78,7 @@ describe('jsonize', () => {
   })
 
   test('correctly jsonize rich schema', () => {
-    const simpleSchema = schema({
+    const richSchema = schema({
       any: any().key(),
       null: nul().hidden(),
       bool: boolean().required('always'),
@@ -86,7 +86,7 @@ describe('jsonize', () => {
       str: string().savedAs('_st')
     })
 
-    const json = simpleSchema.build(JSONizer).jsonize()
+    const json = richSchema.build(JSONizer).jsonize()
 
     const assertJSON: A.Equals<typeof json, JSONizedSchema> = 1
     assertJSON

@@ -47,6 +47,8 @@ export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
 export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
+export { JSONizer } from './schema/actions/jsonize/index.js'
+export type { JSONizedSchema, JSONizedAttr } from './schema/actions/jsonize/index.js'
 
 // tables
 export { Table, TableAction } from './table/index.js'
@@ -71,6 +73,8 @@ export type {
 } from './table/actions/batchWrite/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
+export { TableJSONizer } from './table/actions/jsonize/index.js'
+export type { JSONizedTable } from './table/actions/jsonize/index.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
@@ -175,6 +179,8 @@ export type {
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'
+export { EntityJSONizer } from './entity/actions/jsonize/index.js'
+export type { JSONizedEntity } from './entity/actions/jsonize/index.js'
 
 // errors
 export { DynamoDBToolboxError } from './errors/index.js'
