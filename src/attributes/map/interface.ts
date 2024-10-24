@@ -652,8 +652,8 @@ export class MapAttribute_<
 > extends MapAttribute<STATE, ATTRIBUTES> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): MapAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ATTRIBUTES> {
-    return new MapAttribute({
+  ): MapAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ATTRIBUTES> {
+    return new MapAttribute_({
       ...({
         ...this,
         defaults: { ...this.defaults },

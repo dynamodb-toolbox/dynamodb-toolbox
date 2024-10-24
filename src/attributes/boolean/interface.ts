@@ -681,8 +681,8 @@ export class BooleanAttribute_<
 > extends BooleanAttribute<STATE> {
   clone<NEXT_STATE extends Partial<BooleanAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BooleanAttribute<ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>> {
-    return new BooleanAttribute({
+  ): BooleanAttribute_<ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>> {
+    return new BooleanAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

@@ -573,8 +573,8 @@ export class AnyAttribute_<
 > extends AnyAttribute<STATE> {
   clone<NEXT_STATE extends Partial<AnyAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyAttribute<ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>> {
-    return new AnyAttribute({
+  ): AnyAttribute_<ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>> {
+    return new AnyAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

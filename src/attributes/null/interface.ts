@@ -582,8 +582,8 @@ export class NullAttribute_<
 > extends NullAttribute<STATE> {
   clone<NEXT_STATE extends Partial<NullAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NullAttribute<ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>> {
-    return new NullAttribute({
+  ): NullAttribute_<ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>> {
+    return new NullAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

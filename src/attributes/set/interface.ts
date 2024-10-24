@@ -628,8 +628,8 @@ export class SetAttribute_<
 > extends SetAttribute<STATE, ELEMENTS> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): SetAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
-    return new SetAttribute({
+  ): SetAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+    return new SetAttribute_({
       ...({
         ...this,
         defaults: { ...this.defaults },

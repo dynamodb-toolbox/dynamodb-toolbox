@@ -688,8 +688,8 @@ export class NumberAttribute_<
 > extends NumberAttribute<STATE> {
   clone<NEXT_STATE extends Partial<NumberAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NumberAttribute<ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>> {
-    return new NumberAttribute({
+  ): NumberAttribute_<ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>> {
+    return new NumberAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

@@ -632,8 +632,8 @@ export class AnyOfAttribute_<
 > extends AnyOfAttribute<STATE, ELEMENTS> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyOfAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
-    return new AnyOfAttribute({
+  ): AnyOfAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+    return new AnyOfAttribute_({
       ...({
         ...this,
         defaults: { ...this.defaults },
