@@ -629,8 +629,8 @@ export class ListAttribute_<
 > extends ListAttribute<STATE, ELEMENTS> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): ListAttribute<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
-    return new ListAttribute({
+  ): ListAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+    return new ListAttribute_({
       ...({
         ...this,
         defaults: { ...this.defaults },

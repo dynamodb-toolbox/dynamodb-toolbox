@@ -677,8 +677,8 @@ export class BinaryAttribute_<
 > extends BinaryAttribute<STATE> {
   clone<NEXT_STATE extends Partial<BinaryAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BinaryAttribute<ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>> {
-    return new BinaryAttribute({
+  ): BinaryAttribute_<ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>> {
+    return new BinaryAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

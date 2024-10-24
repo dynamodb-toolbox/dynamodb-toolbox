@@ -3,13 +3,10 @@ import { string } from '~/attributes/string/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ValidValue } from '~/schema/index.js'
 import { schema } from '~/schema/index.js'
-import type { IndexableKeyType } from '~/table/types/keyType.js'
-
-const INDEXABLE_KEY_TYPES: IndexableKeyType[] = ['string', 'number', 'binary']
 
 const keySchema = map({
   name: string(),
-  type: string().enum(...INDEXABLE_KEY_TYPES)
+  type: string().enum('string', 'number', 'binary')
 })
 
 export const tableDTOAttributes = {

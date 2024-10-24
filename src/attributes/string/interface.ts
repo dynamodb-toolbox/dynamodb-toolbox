@@ -677,8 +677,8 @@ export class StringAttribute_<
 > extends StringAttribute<STATE> {
   clone<NEXT_STATE extends Partial<StringAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): StringAttribute<ConstrainedOverwrite<StringAttributeState, STATE, NEXT_STATE>> {
-    return new StringAttribute({
+  ): StringAttribute_<ConstrainedOverwrite<StringAttributeState, STATE, NEXT_STATE>> {
+    return new StringAttribute_({
       ...this,
       defaults: { ...this.defaults },
       links: { ...this.links },

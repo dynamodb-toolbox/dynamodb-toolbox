@@ -716,12 +716,12 @@ export class RecordAttribute_<
 > extends RecordAttribute<STATE, KEYS, ELEMENTS> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): RecordAttribute<
+  ): RecordAttribute_<
     ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>,
     KEYS,
     ELEMENTS
   > {
-    return new RecordAttribute({
+    return new RecordAttribute_({
       ...({
         ...this,
         defaults: { ...this.defaults },
