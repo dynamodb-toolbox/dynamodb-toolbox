@@ -270,34 +270,34 @@
         "default": "./dist/cjs/schema/actions/jsonSchemer/index.js"
       }
     },
-    "./schema/actions/jsonize": {
+    "./schema/actions/dto": {
       "import": {
-        "types": "./dist/esm/schema/actions/jsonize/index.d.ts",
-        "default": "./dist/esm/schema/actions/jsonize/index.js"
+        "types": "./dist/esm/schema/actions/dto/index.d.ts",
+        "default": "./dist/esm/schema/actions/dto/index.js"
       },
       "require": {
-        "types": "./dist/cjs/schema/actions/jsonize/index.d.ts",
-        "default": "./dist/cjs/schema/actions/jsonize/index.js"
+        "types": "./dist/cjs/schema/actions/dto/index.d.ts",
+        "default": "./dist/cjs/schema/actions/dto/index.js"
       }
     },
-    "./schema/actions/jsonize/schema": {
+    "./schema/actions/dto/schema": {
       "import": {
-        "types": "./dist/esm/schema/actions/jsonize/schema/index.d.ts",
-        "default": "./dist/esm/schema/actions/jsonize/schema/index.js"
+        "types": "./dist/esm/schema/actions/dto/schema/index.d.ts",
+        "default": "./dist/esm/schema/actions/dto/schema/index.js"
       },
       "require": {
-        "types": "./dist/cjs/schema/actions/jsonize/schema/index.d.ts",
-        "default": "./dist/cjs/schema/actions/jsonize/schema/index.js"
+        "types": "./dist/cjs/schema/actions/dto/schema/index.d.ts",
+        "default": "./dist/cjs/schema/actions/dto/schema/index.js"
       }
     },
-    "./schema/actions/fromJSON": {
+    "./schema/actions/fromDTO": {
       "import": {
-        "types": "./dist/esm/schema/actions/fromJSON/index.d.ts",
-        "default": "./dist/esm/schema/actions/fromJSON/index.js"
+        "types": "./dist/esm/schema/actions/fromDTO/index.d.ts",
+        "default": "./dist/esm/schema/actions/fromDTO/index.js"
       },
       "require": {
-        "types": "./dist/cjs/schema/actions/fromJSON/index.d.ts",
-        "default": "./dist/cjs/schema/actions/fromJSON/index.js"
+        "types": "./dist/cjs/schema/actions/fromDTO/index.d.ts",
+        "default": "./dist/cjs/schema/actions/fromDTO/index.js"
       }
     },
     "./table": {
@@ -370,34 +370,34 @@
         "default": "./dist/cjs/table/actions/spy/index.js"
       }
     },
-    "./table/actions/jsonize": {
+    "./table/actions/dto": {
       "import": {
-        "types": "./dist/esm/table/actions/jsonize/index.d.ts",
-        "default": "./dist/esm/table/actions/jsonize/index.js"
+        "types": "./dist/esm/table/actions/dto/index.d.ts",
+        "default": "./dist/esm/table/actions/dto/index.js"
       },
       "require": {
-        "types": "./dist/cjs/table/actions/jsonize/index.d.ts",
-        "default": "./dist/cjs/table/actions/jsonize/index.js"
+        "types": "./dist/cjs/table/actions/dto/index.d.ts",
+        "default": "./dist/cjs/table/actions/dto/index.js"
       }
     },
-    "./table/actions/jsonize/schema": {
+    "./table/actions/dto/schema": {
       "import": {
-        "types": "./dist/esm/table/actions/jsonize/schema.d.ts",
-        "default": "./dist/esm/table/actions/jsonize/schema.js"
+        "types": "./dist/esm/table/actions/dto/schema.d.ts",
+        "default": "./dist/esm/table/actions/dto/schema.js"
       },
       "require": {
-        "types": "./dist/cjs/table/actions/jsonize/schema.d.ts",
-        "default": "./dist/cjs/table/actions/jsonize/schema.js"
+        "types": "./dist/cjs/table/actions/dto/schema.d.ts",
+        "default": "./dist/cjs/table/actions/dto/schema.js"
       }
     },
-    "./table/actions/fromJSON": {
+    "./table/actions/fromDTO": {
       "import": {
-        "types": "./dist/esm/table/actions/fromJSON/index.d.ts",
-        "default": "./dist/esm/table/actions/fromJSON/index.js"
+        "types": "./dist/esm/table/actions/fromDTO/index.d.ts",
+        "default": "./dist/esm/table/actions/fromDTO/index.js"
       },
       "require": {
-        "types": "./dist/cjs/table/actions/fromJSON/index.d.ts",
-        "default": "./dist/cjs/table/actions/fromJSON/index.js"
+        "types": "./dist/cjs/table/actions/fromDTO/index.d.ts",
+        "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
     "./entity": {
@@ -610,34 +610,34 @@
         "default": "./dist/cjs/entity/actions/spy/index.js"
       }
     },
-    "./entity/actions/jsonize": {
+    "./entity/actions/dto": {
       "import": {
-        "types": "./dist/esm/entity/actions/jsonize/index.d.ts",
-        "default": "./dist/esm/entity/actions/jsonize/index.js"
+        "types": "./dist/esm/entity/actions/dto/index.d.ts",
+        "default": "./dist/esm/entity/actions/dto/index.js"
       },
       "require": {
-        "types": "./dist/cjs/entity/actions/jsonize/index.d.ts",
-        "default": "./dist/cjs/entity/actions/jsonize/index.js"
+        "types": "./dist/cjs/entity/actions/dto/index.d.ts",
+        "default": "./dist/cjs/entity/actions/dto/index.js"
       }
     },
-    "./entity/actions/jsonize/schema": {
+    "./entity/actions/dto/schema": {
       "import": {
-        "types": "./dist/esm/entity/actions/jsonize/schema.d.ts",
-        "default": "./dist/esm/entity/actions/jsonize/schema.js"
+        "types": "./dist/esm/entity/actions/dto/schema.d.ts",
+        "default": "./dist/esm/entity/actions/dto/schema.js"
       },
       "require": {
-        "types": "./dist/cjs/entity/actions/jsonize/schema.d.ts",
-        "default": "./dist/cjs/entity/actions/jsonize/schema.js"
+        "types": "./dist/cjs/entity/actions/dto/schema.d.ts",
+        "default": "./dist/cjs/entity/actions/dto/schema.js"
       }
     },
-    "./entity/actions/fromJSON": {
+    "./entity/actions/fromDTO": {
       "import": {
-        "types": "./dist/esm/entity/actions/fromJSON/index.d.ts",
-        "default": "./dist/esm/entity/actions/fromJSON/index.js"
+        "types": "./dist/esm/entity/actions/fromDTO/index.d.ts",
+        "default": "./dist/esm/entity/actions/fromDTO/index.js"
       },
       "require": {
-        "types": "./dist/cjs/entity/actions/fromJSON/index.d.ts",
-        "default": "./dist/cjs/entity/actions/fromJSON/index.js"
+        "types": "./dist/cjs/entity/actions/fromDTO/index.d.ts",
+        "default": "./dist/cjs/entity/actions/fromDTO/index.js"
       }
     },
     "./errors": {
