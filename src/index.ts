@@ -47,8 +47,9 @@ export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
 export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
-export { JSONizer } from './schema/actions/jsonize/index.js'
-export type { JSONizedSchema, JSONizedAttr } from './schema/actions/jsonize/index.js'
+export { SchemaDTO } from './schema/actions/dto/index.js'
+export type { ISchemaDTO, IAttributeDTO } from './schema/actions/dto/index.js'
+export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables
 export { Table, TableAction } from './table/index.js'
@@ -73,8 +74,9 @@ export type {
 } from './table/actions/batchWrite/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
-export { TableJSONizer } from './table/actions/jsonize/index.js'
-export type { JSONizedTable } from './table/actions/jsonize/index.js'
+export { TableDTO } from './table/actions/dto/index.js'
+export type { ITableDTO } from './table/actions/dto/index.js'
+export { fromTableDTO } from './table/actions/fromDTO/index.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
@@ -179,8 +181,9 @@ export type {
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'
-export { EntityJSONizer } from './entity/actions/jsonize/index.js'
-export type { JSONizedEntity } from './entity/actions/jsonize/index.js'
+export { EntityDTO } from './entity/actions/dto/index.js'
+export type { IEntityDTO } from './entity/actions/dto/index.js'
+export { fromEntityDTO } from './entity/actions/fromDTO/index.js'
 
 // errors
 export { DynamoDBToolboxError } from './errors/index.js'
