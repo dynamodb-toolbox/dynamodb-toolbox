@@ -8,7 +8,7 @@ import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* mapAttributeParser<OPTIONS extends ParseValueOptions = {}>(
+export function* mapAttrParser<OPTIONS extends ParseValueOptions = {}>(
   attribute: MapAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS

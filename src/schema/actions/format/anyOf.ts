@@ -1,39 +1,37 @@
 import type { AnyOfAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 
-import { formatAttrRawValue } from './attribute.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
+import { attrFormatter } from './attribute.js'
+import type { FormatterReturn, FormatterYield } from './formatter.js'
+import type { FormatValueOptions } from './options.js'
 
-type AnyOfAttrRawValueFormatter = <
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: AnyOfAttribute,
-  rawValue: unknown,
-  options?: OPTIONS
-) => FormattedValue<AnyOfAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
-
-export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
-  ATTRIBUTE extends AnyOfAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
+export function* anyOfAttrFormatter<OPTIONS extends FormatValueOptions<AnyOfAttribute> = {}>(
   attribute: AnyOfAttribute,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-) => {
-  let formattedValue: unknown = undefined
+): Generator<FormatterYield<AnyOfAttribute, OPTIONS>, FormatterReturn<AnyOfAttribute, OPTIONS>> {
+  const { transform = true } = options
+
+  let formatter: Generator<any, any> | undefined = undefined
+  let _transformedValue = undefined
+  let _formattedValue = undefined
 
   for (const element of attribute.elements) {
     try {
-      formattedValue = formatAttrRawValue(element, rawValue, options)
+      formatter = attrFormatter(element, rawValue, options)
+      if (transform) {
+        _transformedValue = formatter.next().value
+      }
+      _formattedValue = formatter.next().value
       break
     } catch (error) {
       continue
     }
   }
 
-  if (formattedValue === undefined) {
+  const transformedValue = _transformedValue
+  const formattedValue = _formattedValue
+  if (formatter === undefined || formattedValue === undefined) {
     const { path } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -43,6 +41,10 @@ export const formatAnyOfAttrRawValue: AnyOfAttrRawValueFormatter = <
       path,
       payload: { received: rawValue }
     })
+  }
+
+  if (transform) {
+    yield transformedValue
   }
 
   return formattedValue

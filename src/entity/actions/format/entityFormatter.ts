@@ -2,7 +2,7 @@ import { EntityAction } from '~/entity/index.js'
 import type { Entity, FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
-import type { FormatValueOptions, InferValueOptions } from '~/schema/actions/format/index.js'
+import type { FormatValueOptions, InferReadValueOptions } from '~/schema/actions/format/index.js'
 
 import { $formatter } from './constants.js'
 
@@ -12,7 +12,7 @@ export interface FormatItemOptions<ENTITY extends Entity = Entity>
 export interface InferReadItemOptions<
   ENTITY extends Entity,
   OPTIONS extends FormatItemOptions<ENTITY>
-> extends InferValueOptions<ENTITY['schema'], OPTIONS> {}
+> extends InferReadValueOptions<ENTITY['schema'], OPTIONS> {}
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';

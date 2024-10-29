@@ -23,6 +23,7 @@ export type {
   WriteValueOptions,
   ExtensionParser,
   ExtensionParserOptions,
+  ReadValue,
   FormattedValue,
   ReadValueOptions,
   AttrPaths,
@@ -41,7 +42,7 @@ export type {
   ParserInput
 } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
-export type { FormatValueOptions, InferValueOptions } from './schema/actions/format/index.js'
+export type { FormatValueOptions, InferReadValueOptions } from './schema/actions/format/index.js'
 export { PathParser } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'

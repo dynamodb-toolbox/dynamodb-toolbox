@@ -1,29 +1,26 @@
 import type { Attribute, RequiredOption } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 
-import { formatAnyAttrRawValue } from './any.js'
-import { formatAnyOfAttrRawValue } from './anyOf.js'
-import { formatListAttrRawValue } from './list.js'
-import { formatMapAttrRawValue } from './map.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
-import { formatPrimitiveAttrRawValue } from './primitive.js'
-import { formatRecordAttrRawValue } from './record.js'
-import { formatSavedSetAttribute } from './set.js'
+import { anyAttrFormatter } from './any.js'
+import { anyOfAttrFormatter } from './anyOf.js'
+import type { FormatterReturn, FormatterYield } from './formatter.js'
+import { listAttrFormatter } from './list.js'
+import { mapAttrFormatter } from './map.js'
+import type { FormatValueOptions } from './options.js'
+import { primitiveAttrFormatter } from './primitive.js'
+import { recordAttrFormatter } from './record.js'
+import { setAttrFormatter } from './set.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
 export const isRequired = (attribute: Attribute): boolean =>
   requiringOptions.has(attribute.required)
 
-export const formatAttrRawValue = <
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
+export function* attrFormatter<OPTIONS extends FormatValueOptions<Attribute> = {}>(
+  attribute: Attribute,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): FormattedValue<Attribute, InferValueOptions<ATTRIBUTE, OPTIONS>> => {
+): Generator<FormatterYield<Attribute, OPTIONS>, FormatterReturn<Attribute, OPTIONS>> {
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       const { path } = attribute
@@ -42,22 +39,22 @@ export const formatAttrRawValue = <
 
   switch (attribute.type) {
     case 'any':
-      return formatAnyAttrRawValue(attribute, rawValue)
+      return yield* anyAttrFormatter(attribute, rawValue)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return formatPrimitiveAttrRawValue(attribute, rawValue)
+      return yield* primitiveAttrFormatter(attribute, rawValue)
     case 'set':
-      return formatSavedSetAttribute(attribute, rawValue, options)
+      return yield* setAttrFormatter(attribute, rawValue, options)
     case 'list':
-      return formatListAttrRawValue(attribute, rawValue, options)
+      return yield* listAttrFormatter(attribute, rawValue, options)
     case 'map':
-      return formatMapAttrRawValue(attribute, rawValue, options)
+      return yield* mapAttrFormatter(attribute, rawValue, options)
     case 'record':
-      return formatRecordAttrRawValue(attribute, rawValue, options)
+      return yield* recordAttrFormatter(attribute, rawValue, options)
     case 'anyOf':
-      return formatAnyOfAttrRawValue(attribute, rawValue, options)
+      return yield* anyOfAttrFormatter(attribute, rawValue, options)
   }
 }

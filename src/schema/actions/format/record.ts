@@ -1,31 +1,19 @@
 import type { RecordAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { formatAttrRawValue } from './attribute.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
-import { formatPrimitiveAttrRawValue } from './primitive.js'
-import { sanitize } from './utils.js'
-import { matchProjection } from './utils.js'
+import { attrFormatter } from './attribute.js'
+import { Formatter, type FormatterReturn, type FormatterYield } from './formatter.js'
+import type { FormatValueOptions } from './options.js'
+import { matchProjection, sanitize } from './utils.js'
 
-type RecordAttrRawValueFormatter = <
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
-  rawValue: unknown,
-  options?: OPTIONS
-) => FormattedValue<RecordAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
-
-export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
-  ATTRIBUTE extends RecordAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
+export function* recordAttrFormatter<OPTIONS extends FormatValueOptions<RecordAttribute> = {}>(
+  attribute: RecordAttribute,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-) => {
+): Generator<FormatterYield<RecordAttribute, OPTIONS>, FormatterReturn<RecordAttribute, OPTIONS>> {
+  const { transform = true } = restOptions
+
   if (!isObject(rawValue)) {
     const { path, type } = attribute
 
@@ -38,27 +26,46 @@ export const formatRecordAttrRawValue: RecordAttrRawValueFormatter = <
     })
   }
 
-  const formattedRecord: Record<string, unknown> = {}
+  const formatters: [string, Generator<any, any>][] = []
+  for (const [key, element] of Object.entries(rawValue)) {
+    if (element === undefined) {
+      continue
+    }
 
-  Object.entries(rawValue).forEach(([key, element]) => {
-    const parsedKey = formatPrimitiveAttrRawValue(attribute.keys, key) as string
-
-    const sanitizedKey = sanitize(parsedKey)
-    // We don't need isProjected: We used the saved value key so we know it is
-    const { childrenAttributes } = matchProjection(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const formattedKey = new Formatter(attribute.keys).format(key, { transform })!
+    const sanitizedKey = sanitize(formattedKey)
+    const { isProjected, childrenAttributes } = matchProjection(
       new RegExp(`^\\.${sanitizedKey}|^\\['${sanitizedKey}']`),
       attributes
     )
 
-    const formattedAttribute = formatAttrRawValue(attribute.elements, element, {
-      attributes: childrenAttributes,
-      ...restOptions
-    })
-
-    if (formattedAttribute !== undefined) {
-      formattedRecord[parsedKey] = formattedAttribute
+    if (!isProjected) {
+      continue
     }
-  })
 
-  return formattedRecord
+    formatters.push([
+      formattedKey,
+      attrFormatter(attribute.elements, element, {
+        attributes: childrenAttributes,
+        ...restOptions
+      })
+    ])
+  }
+
+  if (transform) {
+    const transformedValue = Object.fromEntries(
+      formatters
+        .map(([key, formatter]) => [key, formatter.next().value])
+        .filter(([, element]) => element !== undefined)
+    )
+    yield transformedValue
+  }
+
+  const formattedValue = Object.fromEntries(
+    formatters
+      .map(([key, formatter]) => [key, formatter.next().value])
+      .filter(([, element]) => element !== undefined)
+  )
+  return formattedValue
 }

@@ -1,28 +1,18 @@
 import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
-import { formatAttrRawValue } from './attribute.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
+import { attrFormatter } from './attribute.js'
+import type { FormatterReturn, FormatterYield } from './formatter.js'
+import type { FormatValueOptions } from './options.js'
 
-type SetAttrRawValueFormatter = <
-  ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
-  rawValue: unknown,
-  options?: OPTIONS
-) => FormattedValue<SetAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
-
-export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
-  ATTRIBUTE extends SetAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
+export function* setAttrFormatter<OPTIONS extends FormatValueOptions<SetAttribute> = {}>(
+  attribute: SetAttribute,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-) => {
+): Generator<FormatterYield<SetAttribute, OPTIONS>, FormatterReturn<SetAttribute, OPTIONS>> {
+  const { transform = true } = options
+
   if (!isSet(rawValue)) {
     const { path, type } = attribute
 
@@ -35,25 +25,19 @@ export const formatSavedSetAttribute: SetAttrRawValueFormatter = <
     })
   }
 
-  const parsedPutItemInput: FormattedValue<
-    SetAttribute,
-    InferValueOptions<ATTRIBUTE, OPTIONS>
-  > = new Set()
+  const formatters: Generator<any, any>[] = [...rawValue.values()].map(value =>
+    attrFormatter(attribute.elements, value, options)
+  )
 
-  for (const savedElement of rawValue) {
-    const parsedElement = formatAttrRawValue(attribute.elements, savedElement, {
-      ...options,
-      attributes: undefined
-    }) as FormattedValue<SetAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>> extends Set<
-      infer ELEMENTS
-    >
-      ? ELEMENTS
-      : never
-
-    if (parsedElement !== undefined) {
-      parsedPutItemInput.add(parsedElement)
-    }
+  if (transform) {
+    const transformedValue = new Set(
+      formatters.map(formatter => formatter.next().value).filter(value => value !== undefined)
+    )
+    yield transformedValue
   }
 
-  return parsedPutItemInput
+  const formattedValue = new Set(
+    formatters.map(formatter => formatter.next().value).filter(value => value !== undefined)
+  )
+  return formattedValue
 }
