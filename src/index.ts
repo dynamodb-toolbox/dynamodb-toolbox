@@ -90,6 +90,7 @@ export type {
   TransformedItem,
   SavedItem,
   WriteItemOptions,
+  ReadItem,
   FormattedItem,
   ReadItemOptions
 } from './entity/index.js'
