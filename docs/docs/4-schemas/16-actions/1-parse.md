@@ -43,8 +43,8 @@ flowchart LR
   subgraph Filling
     space1( ):::mmdspace
 
-    defaults(Applies<br/><b>defaults<b/>)
-    links(Applies<br/><b>links<b/>)
+    defaults(Applies<br/><b>defaults</b>)
+    links(Applies<br/><b>links</b>)
     fillDescr(...clones the item, adds<br/><b>defaults</b> and <b>links</b><br/>):::mmddescription
 
     defaults --> links
@@ -69,7 +69,7 @@ flowchart LR
   subgraph Transforming
     space3( ):::mmdspace
 
-    transform(Last <b>transforms<b/>)
+    transform(Last <b>transforms</b>)
     transformDescr(...<b>renames</b><br/>and <b>transforms</b>.):::mmddescription
 
     parsing-->transform
@@ -77,11 +77,17 @@ flowchart LR
 
   Transforming:::mmdcontainer
 
-  output(Output)
-  output:::mmddescription
+  transformed("Transformed'")
+  transformed:::mmddescription
 
-  transform .-> output
+  transform .-> transformed
 ```
+
+Note that:
+
+- Additional fields are omitted, but inputs are not mutated
+- The mode `defaults` and `links` are applied by default
+- Transformations (i.e. `savedAs` and `transforms`) are applied by default
 
 :::noteExample
 

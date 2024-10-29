@@ -265,34 +265,61 @@ type Saved = SavedItem<typeof PokemonEntity>
 
 ## Reads
 
-DynamoDB-Toolbox exposes the `FormattedItem` generic type which is similar to `ValidItem`, except that `hidden` fields are omitted:
+For read operations, DynamoDB-Toolbox exposes the following generic types:
+
+- `ReadItem`: A valid entity item (differs from `ValidItem` as options are different, see below)
+- `FormattedItem`: Similar to `ReadItem`, but with `hidden` attributes omitted
 
 ```mermaid
 flowchart RL
   classDef mmddescription fill:none,stroke:none
   classDef mmdcontainer fill:#eee4,stroke-width:1px,stroke-dasharray:3,stroke:#ccc,font-weight:bold,font-size:large
-  classDef mmdspace fill:none,stroke:none,color:#0000
 
   TransformedItem["<b>TransformedItem</b>"]
 
-  subgraph Formatting[ ]
-    FormattingDescription["<b>Format</b>"]:::mmddescription
+  subgraph Transform[ ]
+    TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
+    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
   end
-  Formatting:::mmdcontainer
+  Transform:::mmdcontainer
+
+  ReadItem["<b>ReadItem</b>"]
+
+  TransformedItem.-TransformDescription
+  TransformDescription.->ReadItem
+
+  subgraph Format[ ]
+    FormatDescription["<b>Format</b>"]:::mmddescription
+    transformDescr(+ omits hidden<br/>attributes):::mmddescription
+  end
+  Format:::mmdcontainer
 
   FormattedItem["<b>FormattedItem</b>"]
 
-  TransformedItem.-FormattingDescription
-  FormattingDescription.->FormattedItem
-
-  space1( ):::mmdspace
-
-  FormattedItem ~~~~~~ space1
+  ReadItem.-FormatDescription
+  FormatDescription.->FormattedItem
 
 ```
 
 ```ts
-import type { FormattedItem } from 'dynamodb-toolbox/entity'
+import type {
+  ReadItem,
+  FormattedItem
+} from 'dynamodb-toolbox/schema'
 
+type Read = ReadItem<typeof PokemonEntity>
 type Formatted = FormattedItem<typeof PokemonEntity>
+```
+
+By default, those generics return complete items, but you can filter attributes and/or apply `Partial` (deeply) with the `attributes` and `partial` options:
+
+```ts
+type Filtered = FormattedItem<
+  typeof PokemonEntity,
+  { attributes: 'level' | 'name' | 'deep.attr[0].path' }
+>
+type Partial = FormattedItem<
+  typeof PokemonEntity,
+  { partial: true }
+>
 ```

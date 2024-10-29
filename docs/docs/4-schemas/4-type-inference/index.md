@@ -253,34 +253,61 @@ const pokemonSchema = schema({
 
 ## Reads
 
-DynamoDB-Toolbox exposes the `FormattedValue` generic type which is similar to `ValidValue`, except that `hidden` fields are omitted:
+For read operations, DynamoDB-Toolbox exposes the following generic types:
+
+- `ReadValue`: A valid schema item (differs from `ValidValue` as options are different, see below)
+- `FormattedValue`: Similar to `ReadValue`, but with `hidden` attributes omitted
 
 ```mermaid
 flowchart RL
   classDef mmddescription fill:none,stroke:none
   classDef mmdcontainer fill:#eee4,stroke-width:1px,stroke-dasharray:3,stroke:#ccc,font-weight:bold,font-size:large
-  classDef mmdspace fill:none,stroke:none,color:#0000
 
   TransformedValue["<b>TransformedValue</b>"]
 
-  subgraph Formatting[ ]
-    FormattingDescription["<b>Format</b>"]:::mmddescription
+  subgraph Transform[ ]
+    TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
+    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
   end
-  Formatting:::mmdcontainer
+  Transform:::mmdcontainer
+
+  ReadValue["<b>ReadValue</b>"]
+
+  TransformedValue.-TransformDescription
+  TransformDescription.->ReadValue
+
+  subgraph Format[ ]
+    FormatDescription["<b>Format</b>"]:::mmddescription
+    transformDescr(+ omits hidden<br/>attributes):::mmddescription
+  end
+  Format:::mmdcontainer
 
   FormattedValue["<b>FormattedValue</b>"]
 
-  TransformedValue.-FormattingDescription
-  FormattingDescription.->FormattedValue
-
-  space1( ):::mmdspace
-
-  FormattedValue ~~~~~~ space1
+  ReadValue.-FormatDescription
+  FormatDescription.->FormattedValue
 
 ```
 
 ```ts
-import type { FormattedValue } from 'dynamodb-toolbox/schema'
+import type {
+  ReadValue,
+  FormattedValue
+} from 'dynamodb-toolbox/schema'
 
-type Formatted = FormattedValue<typeof PokemonEntity>
+type Read = ReadValue<typeof pokemonSchema>
+type Formatted = FormattedValue<typeof pokemonSchema>
+```
+
+By default, those generics return complete items, but you can filter attributes and/or apply `Partial` (deeply) with the `attributes` and `partial` options:
+
+```ts
+type Filtered = FormattedValue<
+  typeof pokemonSchema,
+  { attributes: 'level' | 'name' | 'deep.attr[0].path' }
+>
+type Partial = FormattedValue<
+  typeof pokemonSchema,
+  { partial: true }
+>
 ```
