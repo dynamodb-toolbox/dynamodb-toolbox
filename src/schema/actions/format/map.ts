@@ -1,31 +1,21 @@
 import type { MapAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { formatAttrRawValue } from './attribute.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
+import { attrFormatter } from './attribute.js'
+import type { FormatterReturn, FormatterYield } from './formatter.js'
+import type { FormatValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-type MapAttrRawValueFormatter = <
-  ATTRIBUTE extends MapAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
-  rawValue: unknown,
-  options?: OPTIONS
-) => FormattedValue<MapAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
-
-export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
-  ATTRIBUTE extends MapAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
+export function* mapAttrFormatter<OPTIONS extends FormatValueOptions<MapAttribute> = {}>(
+  mapAttribute: MapAttribute,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-) => {
+): Generator<FormatterYield<MapAttribute, OPTIONS>, FormatterReturn<MapAttribute, OPTIONS>> {
+  const { transform = true } = restOptions
+
   if (!isObject(rawValue)) {
-    const { path, type } = attribute
+    const { path, type } = mapAttribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -36,12 +26,9 @@ export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
     })
   }
 
-  const formattedMap: Record<string, unknown> = {}
-
-  Object.entries(attribute.attributes).forEach(([attributeName, attribute]) => {
-    if (attribute.hidden) {
-      return
-    }
+  const formatters: Record<string, Generator<any, any>> = {}
+  for (const [attributeName, attribute] of Object.entries(mapAttribute.attributes)) {
+    const { savedAs } = attribute
 
     const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
@@ -50,20 +37,33 @@ export const formatMapAttrRawValue: MapAttrRawValueFormatter = <
     )
 
     if (!isProjected) {
-      return
+      continue
     }
 
-    const attributeSavedAs = attribute.savedAs ?? attributeName
-
-    const formattedAttribute = formatAttrRawValue(attribute, rawValue[attributeSavedAs], {
+    const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
+    formatters[attributeName] = attrFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
       ...restOptions
     })
+  }
 
-    if (formattedAttribute !== undefined) {
-      formattedMap[attributeName] = formattedAttribute
-    }
-  })
+  if (transform) {
+    const transformedValue = Object.fromEntries(
+      Object.entries(formatters)
+        .map(([attrName, formatter]) => [attrName, formatter.next().value])
+        .filter(([, attrValue]) => attrValue !== undefined)
+    )
+    yield transformedValue
+  }
 
-  return formattedMap
+  const formattedValue = Object.fromEntries(
+    Object.entries(formatters)
+      .map(([attrName, formatter]) => [attrName, formatter.next().value])
+      .filter(
+        ([attrName, attrValue]) =>
+          mapAttribute.attributes[attrName]?.hidden !== true && attrValue !== undefined
+      )
+  )
+
+  return formattedValue
 }

@@ -30,25 +30,22 @@ describe('setAttrParser', () => {
       options
     )
 
-    const defaultedState = parser.next()
-    expect(defaultedState.done).toBe(false)
-    expect(defaultedState.value).toStrictEqual(new Set(['foo', 'bar']))
+    const { value: defaultedValue } = parser.next()
+    expect(defaultedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrParser).toHaveBeenCalledTimes(2)
     expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', { ...options, defined: false })
     expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', { ...options, defined: false })
 
-    const linkedState = parser.next()
-    expect(linkedState.done).toBe(false)
-    expect(linkedState.value).toStrictEqual(new Set(['foo', 'bar']))
+    const { value: linkedValue } = parser.next()
+    expect(linkedValue).toStrictEqual(new Set(['foo', 'bar']))
 
-    const parsedState = parser.next()
-    expect(parsedState.done).toBe(false)
-    expect(parsedState.value).toStrictEqual(new Set(['foo', 'bar']))
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual(new Set(['foo', 'bar']))
 
-    const transformedState = parser.next()
-    expect(transformedState.done).toBe(true)
-    expect(transformedState.value).toStrictEqual(new Set(['foo', 'bar']))
+    const { done, value: transformedValue } = parser.next()
+    expect(done).toBe(true)
+    expect(transformedValue).toStrictEqual(new Set(['foo', 'bar']))
   })
 
   test('applies validation if any', () => {
@@ -56,8 +53,10 @@ describe('setAttrParser', () => {
       .validate(input => input.has('foo'))
       .freeze('root')
 
-    const { value: parsed } = setAttrParser(setA, new Set(['foo', 'bar']), { fill: false }).next()
-    expect(parsed).toStrictEqual(new Set(['foo', 'bar']))
+    const { value: parsedValue } = setAttrParser(setA, new Set(['foo', 'bar']), {
+      fill: false
+    }).next()
+    expect(parsedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     const invalidCallA = () => setAttrParser(setA, new Set(['bar']), { fill: false }).next()
 

@@ -9,4 +9,5 @@ export type {
   ExtensionParserOptions
 } from './extensionParser.js'
 export type { FormattedValue } from './formattedValue.js'
+export type { ReadValue } from './readValue.js'
 export type { Paths, AttrPaths, SchemaPaths, AppendKey } from './paths.js'

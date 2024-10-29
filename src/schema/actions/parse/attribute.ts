@@ -7,7 +7,7 @@ import { isFunction } from '~/utils/validation/isFunction.js'
 import { anyAttrParser } from './any.js'
 import { anyOfAttributeParser } from './anyOf.js'
 import { listAttrParser } from './list.js'
-import { mapAttributeParser } from './map.js'
+import { mapAttrParser } from './map.js'
 import type { InferWriteValueOptions, ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { primitiveAttrParser } from './primitive.js'
@@ -15,8 +15,8 @@ import { recordAttributeParser } from './record.js'
 import { setAttrParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
-export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParseValueOptions = {}>(
-  attribute: ATTRIBUTE,
+export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
+  attribute: Attribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
@@ -69,14 +69,14 @@ export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParseVa
       // parseExtension does not fill values
       // If fill was set to `true` and input was defined, we yield it twice for fill steps
       const defaultedValue = filledValue
-      yield defaultedValue as ParserYield<ATTRIBUTE, OPTIONS>
+      yield defaultedValue as ParserYield<Attribute, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<ATTRIBUTE, OPTIONS>
+      yield linkedValue as ParserYield<Attribute, OPTIONS>
     }
     return yield* extensionParser() as Generator<
-      ParserYield<ATTRIBUTE, OPTIONS>,
-      ParserReturn<ATTRIBUTE, OPTIONS>
+      ParserYield<Attribute, OPTIONS>,
+      ParserReturn<Attribute, OPTIONS>
     >
   }
 
@@ -94,13 +94,13 @@ export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParseVa
     const parsedValue = basicInput
 
     if (transform) {
-      yield parsedValue as ParserYield<ATTRIBUTE, OPTIONS>
+      yield parsedValue as ParserYield<Attribute, OPTIONS>
     } else {
-      return parsedValue as ParserReturn<ATTRIBUTE, OPTIONS>
+      return parsedValue as ParserReturn<Attribute, OPTIONS>
     }
 
     const transformedValue = parsedValue
-    return transformedValue as ParserReturn<ATTRIBUTE, OPTIONS>
+    return transformedValue as ParserReturn<Attribute, OPTIONS>
   }
 
   switch (attribute.type) {
@@ -117,7 +117,7 @@ export function* attrParser<ATTRIBUTE extends Attribute, OPTIONS extends ParseVa
     case 'list':
       return yield* listAttrParser(attribute, basicInput, nextOpts)
     case 'map':
-      return yield* mapAttributeParser(attribute, basicInput, nextOpts)
+      return yield* mapAttrParser(attribute, basicInput, nextOpts)
     case 'record':
       return yield* recordAttributeParser(attribute, basicInput, nextOpts)
     case 'anyOf':

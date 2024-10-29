@@ -31,9 +31,8 @@ describe('recordAttributeParser', () => {
       options
     )
 
-    const defaultedState = parser.next()
-    expect(defaultedState.done).toBe(false)
-    expect(defaultedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    const { value: defaultedValue } = parser.next()
+    expect(defaultedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
     expect(attrParser).toHaveBeenCalledTimes(4)
     expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
@@ -47,28 +46,26 @@ describe('recordAttributeParser', () => {
       defined: false
     })
 
-    const linkedState = parser.next()
-    expect(linkedState.done).toBe(false)
-    expect(linkedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    const { value: linkedValue } = parser.next()
+    expect(linkedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
-    const parsedState = parser.next()
-    expect(parsedState.done).toBe(false)
-    expect(parsedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
-    const transformedState = parser.next()
-    expect(transformedState.done).toBe(true)
-    expect(transformedState.value).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
+    const { done, value: transformedValue } = parser.next()
+    expect(done).toBe(true)
+    expect(transformedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
   })
 
   test('ignores undefined values', () => {
     const recordA = record(string(), string()).freeze('root')
 
-    const { value: parsed } = recordAttributeParser(
+    const { value: parsedValue } = recordAttributeParser(
       recordA,
       { foo: 'bar', baz: undefined },
       { fill: false }
     ).next()
-    expect(parsed).toStrictEqual({ foo: 'bar' })
+    expect(parsedValue).toStrictEqual({ foo: 'bar' })
   })
 
   test('applies validation if any', () => {
@@ -76,8 +73,12 @@ describe('recordAttributeParser', () => {
       .validate(input => 'foo' in input)
       .freeze('root')
 
-    const { value: parsed } = recordAttributeParser(recordA, { foo: 'bar' }, { fill: false }).next()
-    expect(parsed).toStrictEqual({ foo: 'bar' })
+    const { value: parsedValue } = recordAttributeParser(
+      recordA,
+      { foo: 'bar' },
+      { fill: false }
+    ).next()
+    expect(parsedValue).toStrictEqual({ foo: 'bar' })
 
     const invalidCallA = () =>
       recordAttributeParser(recordA, { bar: 'foo' }, { fill: false }).next()

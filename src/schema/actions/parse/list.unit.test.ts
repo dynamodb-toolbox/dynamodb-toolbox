@@ -30,9 +30,8 @@ describe('listAttrParser', () => {
       options
     )
 
-    const defaultedState = parser.next()
-    expect(defaultedState.done).toBe(false)
-    expect(defaultedState.value).toStrictEqual(['foo', 'bar'])
+    const { value: defaultedValue } = parser.next()
+    expect(defaultedValue).toStrictEqual(['foo', 'bar'])
 
     expect(attrParser).toHaveBeenCalledTimes(2)
     expect(attrParser).toHaveBeenCalledWith(listAttr.elements, 'foo', {
@@ -44,17 +43,15 @@ describe('listAttrParser', () => {
       defined: false
     })
 
-    const linkedState = parser.next()
-    expect(linkedState.done).toBe(false)
-    expect(linkedState.value).toStrictEqual(['foo', 'bar'])
+    const { value: linkedValue } = parser.next()
+    expect(linkedValue).toStrictEqual(['foo', 'bar'])
 
-    const parsedState = parser.next()
-    expect(parsedState.done).toBe(false)
-    expect(parsedState.value).toStrictEqual(['foo', 'bar'])
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual(['foo', 'bar'])
 
-    const transformedState = parser.next()
-    expect(transformedState.done).toBe(true)
-    expect(transformedState.value).toStrictEqual(['foo', 'bar'])
+    const { done, value: transformedValue } = parser.next()
+    expect(done).toBe(true)
+    expect(transformedValue).toStrictEqual(['foo', 'bar'])
   })
 
   test('applies validation if any', () => {

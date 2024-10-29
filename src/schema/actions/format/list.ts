@@ -1,29 +1,19 @@
 import type { ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { FormattedValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { formatAttrRawValue } from './attribute.js'
-import type { FormatValueOptions, InferValueOptions } from './options.js'
+import { attrFormatter } from './attribute.js'
+import type { FormatterReturn, FormatterYield } from './formatter.js'
+import type { FormatValueOptions } from './options.js'
 import { matchProjection } from './utils.js'
 
-type ListAttrRawValueFormatter = <
-  ATTRIBUTE extends ListAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
-  rawValue: unknown,
-  options?: OPTIONS
-) => FormattedValue<ListAttribute, InferValueOptions<ATTRIBUTE, OPTIONS>>
-
-export const formatListAttrRawValue: ListAttrRawValueFormatter = <
-  ATTRIBUTE extends ListAttribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
->(
-  attribute: ATTRIBUTE,
+export function* listAttrFormatter<OPTIONS extends FormatValueOptions<ListAttribute> = {}>(
+  attribute: ListAttribute,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-) => {
+): Generator<FormatterYield<ListAttribute, OPTIONS>, FormatterReturn<ListAttribute, OPTIONS>> {
+  const { transform = true } = restOptions
+
   if (!isArray(rawValue)) {
     const { path, type } = attribute
 
@@ -42,17 +32,15 @@ export const formatListAttrRawValue: ListAttrRawValueFormatter = <
   // - Either projection is deep => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
-  const formattedValues: unknown[] = []
-  for (const rawElement of rawValue) {
-    const formattedElement = formatAttrRawValue(attribute.elements, rawElement, {
-      attributes: childrenAttributes,
-      ...restOptions
-    })
+  const formatters: Generator<any, any>[] = rawValue.map(element =>
+    attrFormatter(attribute.elements, element, { attributes: childrenAttributes, ...restOptions })
+  )
 
-    if (formattedElement !== undefined) {
-      formattedValues.push(formattedElement)
-    }
+  if (transform) {
+    const transformedValue = formatters.map(formatter => formatter.next().value)
+    yield transformedValue
   }
 
-  return formattedValues
+  const formattedValue = formatters.map(formatter => formatter.next().value)
+  return formattedValue
 }
