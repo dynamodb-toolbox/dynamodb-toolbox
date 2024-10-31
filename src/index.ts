@@ -56,10 +56,15 @@ export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 export { Table, TableAction } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
-export { QueryCommand } from './table/actions/query/index.js'
+export { QueryCommand, $entity } from './table/actions/query/index.js'
 export type { Query, QueryOptions, QueryResponse } from './table/actions/query/index.js'
 export { ScanCommand } from './table/actions/scan/index.js'
 export type { ScanOptions, ScanResponse } from './table/actions/scan/index.js'
+export { DeletePartitionCommand } from './table/actions/deletePartition/index.js'
+export type {
+  DeletePartitionOptions,
+  DeletePartitionResponse
+} from './table/actions/deletePartition/index.js'
 export { BatchGetCommand, execute as executeBatchGet } from './table/actions/batchGet/index.js'
 export type {
   BatchGetCommandOptions,

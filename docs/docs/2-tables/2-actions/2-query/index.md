@@ -35,11 +35,7 @@ The partition to query, with optional index and range condition:
 ```ts
 // Get 'ashKetchum' pokemons with a level ≥ 50
 await PokeTable.build(QueryCommand)
-  .query({
-    index: 'byTrainerId',
-    partition: 'TRAINER:ashKetchum',
-    range: { gte: 50 }
-  })
+  .query({ partition: 'ashKetchum' })
   .send()
 ```
 
@@ -48,9 +44,10 @@ You can use the `Query` type to explicitly type an object as a `QueryCommand` qu
 ```ts
 import type { Query } from 'dynamodb-toolbox/table/actions/query'
 
+// Get 'ashKetchum' pokemons with a level ≥ 50
 const query: Query<typeof PokeTable> = {
   index: 'byTrainerId',
-  partition: 'TRAINER:ashKetchum1',
+  partition: 'ashKetchum1',
   range: { gte: 50 }
 }
 
@@ -61,7 +58,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also formats them and types the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also **formats** them and **types** the response:
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -69,6 +66,25 @@ const { Items } = await PokeTable.build(QueryCommand)
   .query(query)
   .entities(PokemonEntity, TrainerEntity)
   .send()
+```
+
+Returned items are also **tagged** with their respective entity names through the `$entity` symbol:
+
+```ts
+import { $entity } from 'dynamodb-toolbox/table/actions/query'
+
+const { Items = [] } = await queryCommand.send()
+
+for (const item of Items) {
+  switch (item[$entity]) {
+    case "pokemon":
+      // 🙌 Typed as Pokemon
+      ...
+    case "trainer":
+      // 🙌 Typed as Trainer
+      ...
+  }
+}
 ```
 
 ### `.options(...)`
@@ -127,22 +143,13 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="5" align="center" class="vertical"><b>General</b></td>
+            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
             <td>
               By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
               <br/><br/>Set to <code>true</code> to use <b>strongly</b> consistent reads (unavailable on secondary indexes).
-            </td>
-        </tr>
-        <tr>
-            <td><code>index</code></td>
-            <td align="center"><code>string</code></td>
-            <td align="center">-</td>
-            <td>
-              The name of a secondary index to query.
-              <br/><br/>This index can be any local secondary index or global secondary index.
             </td>
         </tr>
         <tr>
@@ -177,8 +184,9 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
             <td>
-              The maximum number of items to evaluate for 1 page.
+              The maximum number of items to evaluate
               <br/><br/>Note that DynamoDB may return a lower number of items if it reaches the limit of 1MB, or if filters are applied.
+              <br/><br/>Applies for each page if <code>maxPages</code> is used.
             </td>
         </tr>
         <tr>
@@ -260,7 +268,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({
     index: 'byTrainerId',
-    partition: 'TRAINER:ashKetchum',
+    partition: 'ashKetchum',
     range: { gte: 50 }
   })
   .entities(PokemonEntity)
@@ -390,7 +398,7 @@ You can use the `QueryResponse` type to explicitly type an object as a `QueryCom
 ```ts
 import type { QueryResponse } from 'dynamodb-toolbox/table/actions/query'
 
-const scanResponse: QueryResponse<
+const queryResponse: QueryResponse<
   typeof PokeTable,
   // 👇 Query
   { partition: 'ashKetchum' },
