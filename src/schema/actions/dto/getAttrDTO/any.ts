@@ -2,13 +2,13 @@ import type { AnyAttribute } from '~/attributes/any/index.js'
 import { ANY_DEFAULT_OPTIONS } from '~/attributes/any/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { IAttributeDTO } from '../schema/index.js'
+import type { AnyAttrDTO } from '../types.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
- * @debt feature "handle JSONizable defaults, links & validators"
+ * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getAnyAttrDTO = (attr: AnyAttribute): IAttributeDTO => {
+export const getAnyAttrDTO = (attr: AnyAttribute): AnyAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
 
   return {

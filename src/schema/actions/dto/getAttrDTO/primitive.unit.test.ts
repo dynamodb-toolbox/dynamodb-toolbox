@@ -48,7 +48,7 @@ describe('getPrimitiveAttributeDTO', () => {
     expect(getPrimitiveAttrDTO(bin)).toStrictEqual({ type: 'binary', enum: ['AQID', 'BAUG'] })
   })
 
-  test('correctly exports transformed attribute (JSONizable transformer)', () => {
+  test('correctly exports transformed attribute (with transformer DTO)', () => {
     const attr = string().transform(prefix('PREFIX')).freeze()
 
     expect(getPrimitiveAttrDTO(attr)).toStrictEqual({

@@ -1,6 +1,6 @@
 import type { Strings } from 'hotscript'
 
-import type { JSONizableTransformer } from './transformer.js'
+import type { TypedTransformerWithDTO } from './transformer.js'
 
 interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
@@ -8,7 +8,7 @@ interface PrefixerOptions<DELIMITER extends string> {
 
 export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   implements
-    JSONizableTransformer<
+    TypedTransformerWithDTO<
       string,
       string,
       string,
@@ -38,7 +38,7 @@ export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
       : transformed
   }
 
-  jsonize() {
+  toJSON() {
     return {
       transformerId: this.transformerId,
       prefix: this.prefix,

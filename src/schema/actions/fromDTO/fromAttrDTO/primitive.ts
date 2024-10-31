@@ -5,11 +5,11 @@ import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
 import type { NumberAttributeState } from '~/attributes/number/types.js'
 import { string } from '~/attributes/string/index.js'
-import type { IAttributeDTO } from '~/schema/actions/dto/index.js'
+import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 type PrimitiveAttrDTO = Extract<
-  IAttributeDTO,
+  AttributeDTO,
   { type: 'null' | 'boolean' | 'number' | 'string' | 'binary' }
 >
 

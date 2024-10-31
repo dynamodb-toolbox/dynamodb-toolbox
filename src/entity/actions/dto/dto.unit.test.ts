@@ -6,7 +6,7 @@ import { schema } from '~/schema/index.js'
 import { Table } from '~/table/table.js'
 
 import { EntityDTO } from './dto.js'
-import type { IEntityDTO } from './schema.js'
+import type { IEntityDTO } from './dto.js'
 
 const table = new Table({
   partitionKey: { name: 'pk', type: 'string' }

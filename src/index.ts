@@ -49,7 +49,7 @@ export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
 export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
 export { SchemaDTO } from './schema/actions/dto/index.js'
-export type { ISchemaDTO, IAttributeDTO } from './schema/actions/dto/index.js'
+export type { ISchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables
@@ -194,7 +194,7 @@ export { DynamoDBToolboxError } from './errors/index.js'
 export type {
   Transformer,
   TypedTransformer,
-  JSONizableTransformer,
+  TypedTransformerWithDTO,
   TypeModifier
 } from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'

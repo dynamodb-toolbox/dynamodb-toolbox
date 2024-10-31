@@ -2,7 +2,7 @@ import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
 
 import { getAttrDTO } from './getAttrDTO/index.js'
-import type { ISchemaDTO } from './schema/index.js'
+import type { ISchemaDTO } from './types.js'
 
 export class SchemaDTO<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>

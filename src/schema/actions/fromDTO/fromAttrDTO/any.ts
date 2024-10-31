@@ -1,8 +1,8 @@
 import { any } from '~/attributes/any/index.js'
 import type { $AnyAttributeNestedState } from '~/attributes/any/index.js'
-import type { IAttributeDTO } from '~/schema/actions/dto/index.js'
+import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
-type AnyAttrDTO = Extract<IAttributeDTO, { type: 'any' }>
+type AnyAttrDTO = Extract<AttributeDTO, { type: 'any' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
