@@ -22,13 +22,13 @@ export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends 
   ? TRANSFORMER['_typeModifier']
   : Constant<ReturnType<TRANSFORMER['parse']>>
 
-export interface JSONizableTransformer<
+export interface TypedTransformerWithDTO<
   FORMATTED_CONSTRAINT = any,
   FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
   TRANSFORMED = any,
   TYPE_MODIFIER extends Fn = Fn,
-  JSONIZED extends { transformerId: string } & object = { transformerId: string } & object
+  DTO extends { transformerId: string } & object = { transformerId: string } & object
 > extends TypedTransformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED, TYPE_MODIFIER> {
-  transformerId: JSONIZED['transformerId']
-  jsonize: () => JSONIZED
+  transformerId: DTO['transformerId']
+  toJSON: () => DTO
 }

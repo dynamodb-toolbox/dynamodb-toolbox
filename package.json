@@ -280,16 +280,6 @@
         "default": "./dist/cjs/schema/actions/dto/index.js"
       }
     },
-    "./schema/actions/dto/schema": {
-      "import": {
-        "types": "./dist/esm/schema/actions/dto/schema/index.d.ts",
-        "default": "./dist/esm/schema/actions/dto/schema/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/schema/actions/dto/schema/index.d.ts",
-        "default": "./dist/cjs/schema/actions/dto/schema/index.js"
-      }
-    },
     "./schema/actions/fromDTO": {
       "import": {
         "types": "./dist/esm/schema/actions/fromDTO/index.d.ts",
@@ -378,16 +368,6 @@
       "require": {
         "types": "./dist/cjs/table/actions/dto/index.d.ts",
         "default": "./dist/cjs/table/actions/dto/index.js"
-      }
-    },
-    "./table/actions/dto/schema": {
-      "import": {
-        "types": "./dist/esm/table/actions/dto/schema.d.ts",
-        "default": "./dist/esm/table/actions/dto/schema.js"
-      },
-      "require": {
-        "types": "./dist/cjs/table/actions/dto/schema.d.ts",
-        "default": "./dist/cjs/table/actions/dto/schema.js"
       }
     },
     "./table/actions/fromDTO": {
@@ -618,16 +598,6 @@
       "require": {
         "types": "./dist/cjs/entity/actions/dto/index.d.ts",
         "default": "./dist/cjs/entity/actions/dto/index.js"
-      }
-    },
-    "./entity/actions/dto/schema": {
-      "import": {
-        "types": "./dist/esm/entity/actions/dto/schema.d.ts",
-        "default": "./dist/esm/entity/actions/dto/schema.js"
-      },
-      "require": {
-        "types": "./dist/cjs/entity/actions/dto/schema.d.ts",
-        "default": "./dist/cjs/entity/actions/dto/schema.js"
       }
     },
     "./entity/actions/fromDTO": {

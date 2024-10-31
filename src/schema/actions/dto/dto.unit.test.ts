@@ -14,7 +14,7 @@ import { string } from '~/attributes/string/index.js'
 import { schema } from '~/schema/index.js'
 
 import { SchemaDTO } from './dto.js'
-import type { ISchemaDTO } from './schema/index.js'
+import type { ISchemaDTO } from './types.js'
 
 describe('dto', () => {
   test('correctly builds simple schema DTO', () => {

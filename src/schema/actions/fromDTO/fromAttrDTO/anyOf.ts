@@ -2,11 +2,11 @@ import { anyOf } from '~/attributes/anyOf/index.js'
 import type { $AnyOfAttribute, $AnyOfAttributeNestedState } from '~/attributes/anyOf/index.js'
 import { ANY_OF_DEFAULT_OPTIONS } from '~/attributes/anyOf/options.js'
 import type { $AnyOfAttributeElements } from '~/attributes/anyOf/types.js'
-import type { IAttributeDTO } from '~/schema/actions/dto/index.js'
+import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
 
-type AnyOfAttrDTO = Extract<IAttributeDTO, { type: 'anyOf' }>
+type AnyOfAttrDTO = Extract<AttributeDTO, { type: 'anyOf' }>
 
 /**
  * @debt feature "handle defaults, links & validators"

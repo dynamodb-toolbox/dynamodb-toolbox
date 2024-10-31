@@ -2,14 +2,14 @@ import type { MapAttribute } from '~/attributes/map/index.js'
 import { MAP_DEFAULT_OPTIONS } from '~/attributes/map/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
-import type { IAttributeDTO } from '../schema/index.js'
+import type { MapAttrDTO } from '../types.js'
 import { getAttrDTO } from './attribute.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
- * @debt feature "handle JSONizable defaults, links & validators"
+ * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getMapAttrDTO = (attr: MapAttribute): IAttributeDTO => {
+export const getMapAttrDTO = (attr: MapAttribute): MapAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
 
   return {

@@ -1,7 +1,19 @@
 import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/table.js'
+import type { IndexableKeyType } from '~/table/types/keyType.js'
 
-import type { ITableDTO } from './schema.js'
+export interface ITableDTO {
+  name?: string | undefined
+  partitionKey: {
+    type: IndexableKeyType
+    name: string
+  }
+  sortKey?: {
+    type: 'string' | 'number' | 'binary'
+    name: string
+  }
+  entityAttributeSavedAs?: string
+}
 
 export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> implements ITableDTO {
   static override actionName = 'dto' as const

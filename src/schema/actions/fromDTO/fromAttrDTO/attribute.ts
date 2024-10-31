@@ -1,5 +1,5 @@
 import type { $AttributeNestedState } from '~/attributes/index.js'
-import type { IAttributeDTO } from '~/schema/actions/dto/index.js'
+import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromJSONAnyAttr } from './any.js'
 import { fromJSONAnyOfAttr } from './anyOf.js'
@@ -9,7 +9,7 @@ import { fromJSONPrimitiveAttr } from './primitive.js'
 import { fromJSONRecordAttr } from './record.js'
 import { fromJSONSetAttr } from './set.js'
 
-export const fromAttrDTO = (attrDTO: IAttributeDTO): $AttributeNestedState => {
+export const fromAttrDTO = (attrDTO: AttributeDTO): $AttributeNestedState => {
   switch (attrDTO.type) {
     case 'any':
       return fromJSONAnyAttr(attrDTO)

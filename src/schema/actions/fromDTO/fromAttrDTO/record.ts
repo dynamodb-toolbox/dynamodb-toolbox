@@ -1,11 +1,11 @@
 import type { $RecordAttributeNestedState } from '~/attributes/record/index.js'
 import { record } from '~/attributes/record/index.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from '~/attributes/record/types.js'
-import type { IAttributeDTO } from '~/schema/actions/dto/index.js'
+import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
 
-type RecordAttrDTO = Extract<IAttributeDTO, { type: 'record' }>
+type RecordAttrDTO = Extract<AttributeDTO, { type: 'record' }>
 
 /**
  * @debt feature "handle defaults, links & validators"

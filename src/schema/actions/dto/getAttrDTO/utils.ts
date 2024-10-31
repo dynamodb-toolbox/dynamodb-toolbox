@@ -1,10 +1,10 @@
 import type { Attribute } from '~/attributes/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
-import type { IAttributeDTO } from '../schema/index.js'
+import type { AttributeDTO } from '../types.js'
 
-export const getDefaultsDTO = (attr: Attribute): NonNullable<IAttributeDTO['defaults']> => {
-  const defaultsDTO: NonNullable<IAttributeDTO['defaults']> = {}
+export const getDefaultsDTO = (attr: Attribute): NonNullable<AttributeDTO['defaults']> => {
+  const defaultsDTO: NonNullable<AttributeDTO['defaults']> = {}
 
   for (const mode of ['put', 'key', 'update'] as const) {
     const modeDefault = attr.defaults[mode]

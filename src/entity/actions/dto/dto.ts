@@ -1,9 +1,22 @@
 import type { Entity } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { SchemaDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 import { TableDTO } from '~/table/actions/dto/index.js'
+import type { ITableDTO } from '~/table/actions/dto/index.js'
 
-import type { IEntityDTO } from './schema.js'
+type TimestampOption = boolean | { name?: string; savedAs?: string; hidden?: boolean }
+
+type TimestampOptions = boolean | { created: TimestampOption; modified: TimestampOption }
+
+export interface IEntityDTO {
+  name: string
+  entityAttributeName?: string
+  entityAttributeHidden?: boolean
+  timestamps?: TimestampOptions
+  schema: ISchemaDTO
+  table: ITableDTO
+}
 
 export class EntityDTO<ENTITY extends Entity = Entity>
   extends EntityAction<ENTITY>

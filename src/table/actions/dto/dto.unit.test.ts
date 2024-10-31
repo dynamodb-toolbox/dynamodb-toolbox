@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { Table } from '~/table/table.js'
 
 import { TableDTO } from './dto.js'
-import type { ITableDTO } from './schema.js'
+import type { ITableDTO } from './dto.js'
 
 describe('DTO', () => {
   test('correctly builds table DTO (full)', () => {
