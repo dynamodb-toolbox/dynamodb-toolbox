@@ -136,10 +136,10 @@ export class DeletePartitionCommand<
 
       const {
         Items: items = [],
-        LastEvaluatedKey: pageLastEvaluatedKey,
         Count: pageCount,
         ScannedCount: pageScannedCount,
-        ConsumedCapacity: pageQueryConsumedCapacity
+        ConsumedCapacity: pageQueryConsumedCapacity,
+        ...queryOutput
       } = await this.queryCommand({ exclusiveStartKey: lastEvaluatedKey }).send()
 
       for (const itemChunk of chunk(items, 25)) {
@@ -173,7 +173,7 @@ export class DeletePartitionCommand<
         }
       }
 
-      lastEvaluatedKey = pageLastEvaluatedKey
+      lastEvaluatedKey = queryOutput.LastEvaluatedKey
 
       if (count !== undefined) {
         count = pageCount !== undefined ? count + pageCount : undefined
