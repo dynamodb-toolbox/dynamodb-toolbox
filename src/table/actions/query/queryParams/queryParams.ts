@@ -113,6 +113,14 @@ export const queryParams: QueryParamsGetter = <
     commandOptions.Select = parseSelectOption(select, { index, attributes })
   }
 
+  if (!isBoolean(entityAttrFilter)) {
+    // entityAttrFilter is a meta-option, validated but not used here
+    throw new DynamoDBToolboxError('queryCommand.invalidEntityAttrFilterOption', {
+      message: 'Invalid "entityAttrFilter" options: Must be a boolean',
+      payload: { entityAttrFilter }
+    })
+  }
+
   const expressionAttributeNames: Record<string, string> = {}
   const expressionAttributeValues: Record<string, any> = {}
 

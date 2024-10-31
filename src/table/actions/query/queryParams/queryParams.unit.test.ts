@@ -11,6 +11,9 @@ import {
   string
 } from '~/index.js'
 import type { FormattedItem } from '~/index.js'
+import type { Merge } from '~/types/merge.js'
+
+import type { $entity } from '../constants.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -699,6 +702,20 @@ describe('query', () => {
     )
   })
 
+  test('fails on invalid entityAttrFilter option', () => {
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        // @ts-expect-error
+        .options({ entityAttrFilter: 'true' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'queryCommand.invalidEntityAttrFilterOption' })
+    )
+  })
+
   test('overrides tableName', () => {
     const { TableName } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
@@ -732,7 +749,7 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      FormattedItem<typeof Entity1>[] | undefined
+      Merge<FormattedItem<typeof Entity1>, { [$entity]: 'entity1' }>[] | undefined
     > = 1
     assertReturnedItems
   })
@@ -789,7 +806,11 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      (FormattedItem<typeof Entity1> | FormattedItem<typeof Entity2>)[] | undefined
+      | (
+          | Merge<FormattedItem<typeof Entity1>, { [$entity]: 'entity1' }>
+          | Merge<FormattedItem<typeof Entity2>, { [$entity]: 'entity2' }>
+        )[]
+      | undefined
     > = 1
     assertReturnedItems
   })
@@ -873,7 +894,11 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>[] | undefined
+      | Merge<
+          FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>,
+          { [$entity]: 'entity1' }
+        >[]
+      | undefined
     > = 1
     assertReturnedItems
 
@@ -898,8 +923,14 @@ describe('query', () => {
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
       | (
-          | FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>
-          | FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>
+          | Merge<
+              FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>,
+              { [$entity]: 'entity1' }
+            >
+          | Merge<
+              FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>,
+              { [$entity]: 'entity2' }
+            >
         )[]
       | undefined
     > = 1

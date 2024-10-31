@@ -61,7 +61,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also formats them and types the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also **formats** them and **types** the response:
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -69,6 +69,25 @@ const { Items } = await PokeTable.build(QueryCommand)
   .query(query)
   .entities(PokemonEntity, TrainerEntity)
   .send()
+```
+
+Returned items are also **tagged** with their respective entity names through the `$entity` symbol:
+
+```ts
+import { $entity } from 'dynamodb-toolbox/table/actions/query'
+
+const { Items = [] } = await queryCommand.send()
+
+for (const item of Items) {
+  switch (item[$entity]) {
+    case "pokemon":
+      // 🙌 Typed as Pokemon
+      ...
+    case "trainer":
+      // 🙌 Typed as Trainer
+      ...
+  }
+}
 ```
 
 ### `.options(...)`
@@ -177,8 +196,9 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
             <td>
-              The maximum number of items to evaluate for 1 page.
+              The maximum number of items to evaluate
               <br/><br/>Note that DynamoDB may return a lower number of items if it reaches the limit of 1MB, or if filters are applied.
+              <br/><br/>Applies for each page if <code>maxPages</code> is used.
             </td>
         </tr>
         <tr>

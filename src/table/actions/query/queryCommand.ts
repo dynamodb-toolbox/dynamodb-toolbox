@@ -5,8 +5,7 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
-import type { FormattedItem } from '~/entity/index.js'
-import type { Entity } from '~/entity/index.js'
+import type { Entity, FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $sentArgs } from '~/table/constants.js'
@@ -16,7 +15,7 @@ import type { Table, TableSendableAction } from '~/table/table.js'
 import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $options, $query } from './constants.js'
+import { $entity, $options, $query } from './constants.js'
 import type { QueryOptions } from './options.js'
 import { queryParams } from './queryParams/index.js'
 import type { Query } from './types.js'
@@ -32,13 +31,16 @@ type ReturnedItems<
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
         ? ENTITY extends Entity
-          ? FormattedItem<
-              ENTITY,
-              {
-                attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-                  ? OPTIONS['attributes'][number]
-                  : undefined
-              }
+          ? Merge<
+              FormattedItem<
+                ENTITY,
+                {
+                  attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                    ? OPTIONS['attributes'][number]
+                    : undefined
+                }
+              >,
+              { [$entity]: ENTITY['name'] }
             >
           : never
         : never)[]
@@ -88,24 +90,17 @@ export class QueryCommand<
     TABLE,
     NEXT_ENTITIES,
     QUERY,
-    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
       ? OPTIONS
-      : QueryOptions<TABLE, NEXT_ENTITIES>
+      : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
   > {
-    return new QueryCommand<
-      TABLE,
-      NEXT_ENTITIES,
-      QUERY,
-      OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-        ? OPTIONS
-        : QueryOptions<TABLE, NEXT_ENTITIES>
-    >(
+    return new QueryCommand(
       this.table,
       nextEntities,
       this[$query],
-      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
         ? OPTIONS
-        : QueryOptions<TABLE, NEXT_ENTITIES>
+        : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
     )
   }
 
@@ -197,7 +192,8 @@ export class QueryCommand<
           continue
         }
 
-        formattedItems.push(formatter.format(item, { attributes }))
+        const formattedItem = formatter.format(item, { attributes })
+        formattedItems.push({ ...formattedItem, [$entity]: itemEntityName })
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey
