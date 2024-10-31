@@ -146,6 +146,16 @@ const nameCheck: Condition<typeof PokemonEntity> = {
 ```
 
 </TabItem>
+<TabItem value="special-char" label="Special characters">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: "name['.first#Name!']",
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
 <TabItem value="size" label="Size">
 
 ```ts

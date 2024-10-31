@@ -60,6 +60,11 @@ export { QueryCommand, $entity } from './table/actions/query/index.js'
 export type { Query, QueryOptions, QueryResponse } from './table/actions/query/index.js'
 export { ScanCommand } from './table/actions/scan/index.js'
 export type { ScanOptions, ScanResponse } from './table/actions/scan/index.js'
+export { DeletePartitionCommand } from './table/actions/deletePartition/index.js'
+export type {
+  DeletePartitionOptions,
+  DeletePartitionResponse
+} from './table/actions/deletePartition/index.js'
 export { BatchGetCommand, execute as executeBatchGet } from './table/actions/batchGet/index.js'
 export type {
   BatchGetCommandOptions,

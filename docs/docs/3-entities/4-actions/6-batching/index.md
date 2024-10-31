@@ -8,11 +8,11 @@ sidebar_custom_props:
 
 DynamoDB-Toolbox exposes the following actions to perform batch operations:
 
-- [`BatchGetRequest`](../7-batch-get/index.md): Builds a request to get an entity item, to be used within [`BatchGetCommands`](../../../2-tables/2-actions/4-batch-get/index.md)
-- [`BatchPutRequest`](../8-batch-put/index.md): Builds a request to put an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/5-batch-write/index.md)
-- [`BatchDeleteRequest`](../9-batch-delete/index.md): Builds a request to delete an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/5-batch-write/index.md)
+- [`BatchGetRequest`](../7-batch-get/index.md): Builds a request to get an entity item, to be used within [`BatchGetCommands`](../../../2-tables/2-actions/5-batch-get/index.md)
+- [`BatchPutRequest`](../8-batch-put/index.md): Builds a request to put an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/6-batch-write/index.md)
+- [`BatchDeleteRequest`](../9-batch-delete/index.md): Builds a request to delete an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/6-batch-write/index.md)
 
 See also the following table actions:
 
-- [`BatchGetCommand`](../../../2-tables/2-actions/4-batch-get/index.md): Groups one or several `BatchGetRequests` from the `Table` entities to execute a [BatchGetItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html) operation
-- [`BatchWriteCommand`](../../../2-tables/2-actions/5-batch-write/index.md): Groups one or several `BatchPutRequests` and `BatchDeleteRequests` from the `Table` entities to execute a [BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html) operation
+- [`BatchGetCommand`](../../../2-tables/2-actions/5-batch-get/index.md): Groups one or several `BatchGetRequests` from the `Table` entities to execute a [BatchGetItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html) operation
+- [`BatchWriteCommand`](../../../2-tables/2-actions/6-batch-write/index.md): Groups one or several `BatchPutRequests` and `BatchDeleteRequests` from the `Table` entities to execute a [BatchWriteItem](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html) operation

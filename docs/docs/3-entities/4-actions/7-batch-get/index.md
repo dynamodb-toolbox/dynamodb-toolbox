@@ -6,7 +6,7 @@ sidebar_custom_props:
 
 # BatchGetRequest
 
-Builds a request to get an entity item, to be used within [`BatchGetCommands`](../../../2-tables/2-actions/4-batch-get/index.md):
+Builds a request to get an entity item, to be used within [`BatchGetCommands`](../../../2-tables/2-actions/5-batch-get/index.md):
 
 ```ts
 import { BatchGetRequest } from 'dynamodb-toolbox/entity/actions/batchGet'

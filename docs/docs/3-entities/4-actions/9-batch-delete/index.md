@@ -6,7 +6,7 @@ sidebar_custom_props:
 
 # BatchDeleteRequest
 
-Builds a request to delete an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/5-batch-write/index.md):
+Builds a request to delete an entity item, to be used within [`BatchWriteCommands`](../../../2-tables/2-actions/6-batch-write/index.md):
 
 ```ts
 import { BatchDeleteRequest } from 'dynamodb-toolbox/entity/actions/batchDelete'

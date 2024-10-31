@@ -320,6 +320,16 @@
         "default": "./dist/cjs/table/actions/query/index.js"
       }
     },
+    "./table/actions/deletePartition": {
+      "import": {
+        "types": "./dist/esm/table/actions/deletePartition/index.d.ts",
+        "default": "./dist/esm/table/actions/deletePartition/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/deletePartition/index.d.ts",
+        "default": "./dist/cjs/table/actions/deletePartition/index.js"
+      }
+    },
     "./table/actions/batchGet": {
       "import": {
         "types": "./dist/esm/table/actions/batchGet/index.d.ts",
