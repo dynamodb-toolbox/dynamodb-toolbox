@@ -5,6 +5,7 @@ import {
   boolean,
   list,
   map,
+  nul,
   number,
   record,
   set,
@@ -13,12 +14,11 @@ import {
 import { schema } from '~/schema/index.js'
 
 export const mySchema = schema({
-  parentId: string().key().savedAs('pk'),
-  childId: string().key().savedAs('sk'),
   any: any(),
-  const: string().const('const'),
-  num: number(),
+  nul: nul(),
   bool: boolean(),
+  num: number(),
+  str: string().key().savedAs('pk').enum('foo', 'bar'),
   bin: binary(),
   stringSet: set(string()),
   stringList: list(string()),

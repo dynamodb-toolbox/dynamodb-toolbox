@@ -12,7 +12,7 @@ import type { Schema } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 type CharsToEscape = '[' | ']' | '.'
-type StringToEscape = `${string}${CharsToEscape}${string}`
+export type StringToEscape = `${string}${CharsToEscape}${string}`
 
 export type AppendKey<PATH extends string, KEY extends string> =
   | `${PATH}['${KEY}']`

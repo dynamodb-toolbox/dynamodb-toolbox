@@ -1,239 +1,329 @@
 import type { A } from 'ts-toolbelt'
 
 import type {
-  Attribute,
+  AnyOfAttribute,
   BinaryAttribute,
   BooleanAttribute,
   ListAttribute,
-  NullAttribute,
+  MapAttribute,
   NumberAttribute,
+  RecordAttribute,
   SetAttribute,
   StringAttribute
 } from '~/attributes/index.js'
-import type { Paths } from '~/schema/index.js'
+import type { AppendKey, Paths } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {
+  AnyOfAttrCondition,
   AttrCondition,
-  AttrOrSize,
-  BaseAttrCondition,
+  BinaryAttrCondition,
+  BooleanAttrCondition,
   ConditionType,
+  ExistsCondition,
   ListAttrCondition,
+  MapAttrCondition,
   NonLogicalCondition,
-  PrimitiveAttrCondition,
+  NullAttrCondition,
+  NumberAttrCondition,
+  RecordAttrCondition,
   SchemaCondition,
-  SetAttrCondition
+  SetAttrCondition,
+  SizeCondition,
+  StringAttrCondition,
+  TypeCondition
 } from './condition.js'
 
 type ATTRIBUTES = (typeof mySchema)['attributes']
-type ATTRIBUTE_PATHS = Paths<typeof mySchema>
+type ALL_PATHS = Paths<typeof mySchema>
 
-type PARENT_ID_CONDITION = AttrCondition<'parentId', ATTRIBUTES['parentId'], ATTRIBUTE_PATHS>
-const assertParentIdCondition: A.Equals<
-  AttrOrSize<'parentId'> &
-    (
-      | BaseAttrCondition<'parentId'>
-      | ({ transform?: boolean } & (
-          | { eq: string | { attr: ATTRIBUTE_PATHS } }
-          | { ne: string | { attr: ATTRIBUTE_PATHS } }
-          | { in: (string | { attr: ATTRIBUTE_PATHS })[] }
-          | { lt: string | { attr: ATTRIBUTE_PATHS } }
-          | { lte: string | { attr: ATTRIBUTE_PATHS } }
-          | { gt: string | { attr: ATTRIBUTE_PATHS } }
-          | { gte: string | { attr: ATTRIBUTE_PATHS } }
-          | { between: [string | { attr: ATTRIBUTE_PATHS }, string | { attr: ATTRIBUTE_PATHS }] }
-          | { contains: string | { attr: ATTRIBUTE_PATHS } }
-          | { beginsWith: string | { attr: ATTRIBUTE_PATHS } }
-        ))
-    ),
-  PARENT_ID_CONDITION
-> = 1
-assertParentIdCondition
-
-type CHILD_ID_CONDITION = AttrCondition<'childId', ATTRIBUTES['childId'], ATTRIBUTE_PATHS>
-
-type ANY_CONDITION = AttrCondition<'any', ATTRIBUTES['any'], ATTRIBUTE_PATHS>
-
+type ANY_ATTR_PATH = 'any' | "['any']"
+type ANY_CONDITION = AttrCondition<ANY_ATTR_PATH, ATTRIBUTES['any'], ALL_PATHS>
 const anyCondition: A.Equals<
   ANY_CONDITION,
-  | (AttrOrSize<'any'> & ({ exists: boolean } | { type: ConditionType }))
-  | (AttrOrSize<`any${string}`> & ({ exists: boolean } | { type: ConditionType }))
-  | PrimitiveAttrCondition<`any${string}`, NullAttribute, ATTRIBUTE_PATHS>
-  | PrimitiveAttrCondition<`any${string}`, BooleanAttribute, ATTRIBUTE_PATHS>
-  | PrimitiveAttrCondition<`any${string}`, NumberAttribute, ATTRIBUTE_PATHS>
-  | PrimitiveAttrCondition<`any${string}`, StringAttribute, ATTRIBUTE_PATHS>
-  | PrimitiveAttrCondition<`any${string}`, BinaryAttribute, ATTRIBUTE_PATHS>
-  | SetAttrCondition<`any${string}`, SetAttribute, ATTRIBUTE_PATHS>
-  | ListAttrCondition<`any${string}`, ListAttribute, ATTRIBUTE_PATHS>
+  | ExistsCondition<`${ANY_ATTR_PATH}${string}`>
+  | TypeCondition<`${ANY_ATTR_PATH}${string}`>
+  | NullAttrCondition<`${ANY_ATTR_PATH}${string}`>
+  | BooleanAttrCondition<`${ANY_ATTR_PATH}${string}`, BooleanAttribute, ALL_PATHS>
+  | NumberAttrCondition<`${ANY_ATTR_PATH}${string}`, NumberAttribute, ALL_PATHS>
+  | StringAttrCondition<`${ANY_ATTR_PATH}${string}`, StringAttribute, ALL_PATHS>
+  | BinaryAttrCondition<`${ANY_ATTR_PATH}${string}`, BinaryAttribute, ALL_PATHS>
+  | SetAttrCondition<`${ANY_ATTR_PATH}${string}`, SetAttribute, ALL_PATHS>
+  | ListAttrCondition<`${ANY_ATTR_PATH}${string}`, ListAttribute, ALL_PATHS>
+  | MapAttrCondition<`${ANY_ATTR_PATH}${string}`, MapAttribute, ALL_PATHS>
+  | RecordAttrCondition<`${ANY_ATTR_PATH}${string}`, RecordAttribute, ALL_PATHS>
+  | AnyOfAttrCondition<`${ANY_ATTR_PATH}${string}`, AnyOfAttribute, ALL_PATHS>
 > = 1
 anyCondition
 
-type NUM_CONDITION = AttrCondition<'num', ATTRIBUTES['num'], ATTRIBUTE_PATHS>
-const assertNumCondition: A.Equals<
-  AttrOrSize<'num'> &
-    (
-      | BaseAttrCondition<'num'>
-      | ({ transform?: boolean } & (
-          | { eq: number | { attr: ATTRIBUTE_PATHS } }
-          | { ne: number | { attr: ATTRIBUTE_PATHS } }
-          | { in: (number | { attr: ATTRIBUTE_PATHS })[] }
-          | { lt: number | { attr: ATTRIBUTE_PATHS } }
-          | { lte: number | { attr: ATTRIBUTE_PATHS } }
-          | { gt: number | { attr: ATTRIBUTE_PATHS } }
-          | { gte: number | { attr: ATTRIBUTE_PATHS } }
-          | { between: [number | { attr: ATTRIBUTE_PATHS }, number | { attr: ATTRIBUTE_PATHS }] }
-        ))
-    ),
-  NUM_CONDITION
+type NULL_ATTR_PATH = 'nul' | "['nul']"
+type NULL_CONDITION = AttrCondition<NULL_ATTR_PATH, ATTRIBUTES['nul'], ALL_PATHS>
+const assertNullCondition: A.Equals<
+  { attr: NULL_ATTR_PATH; exists: boolean } | { attr: NULL_ATTR_PATH; type: ConditionType },
+  NULL_CONDITION
 > = 1
-assertNumCondition
+assertNullCondition
 
-type BOOL_CONDITION = AttrCondition<'bool', ATTRIBUTES['bool'], ATTRIBUTE_PATHS>
+type BOOL_ATTR_PATH = 'bool' | "['bool']"
+type BOOL_CONDITION = AttrCondition<BOOL_ATTR_PATH, ATTRIBUTES['bool'], ALL_PATHS>
 const assertBoolCondition: A.Equals<
-  AttrOrSize<'bool'> &
-    (
-      | BaseAttrCondition<'bool'>
-      | ({ transform?: boolean } & (
-          | { eq: boolean | { attr: ATTRIBUTE_PATHS } }
-          | { ne: boolean | { attr: ATTRIBUTE_PATHS } }
-          | { in: (boolean | { attr: ATTRIBUTE_PATHS })[] }
-        ))
-    ),
-  BOOL_CONDITION
+  BOOL_CONDITION,
+  | { attr: BOOL_ATTR_PATH; exists: boolean }
+  | { attr: BOOL_ATTR_PATH; type: ConditionType }
+  | { attr: BOOL_ATTR_PATH; eq: boolean | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BOOL_ATTR_PATH; ne: boolean | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BOOL_ATTR_PATH; in: (boolean | { attr: ALL_PATHS })[]; transform?: boolean }
 > = 1
 assertBoolCondition
 
-type BIN_CONDITION = AttrCondition<'bin', ATTRIBUTES['bin'], ATTRIBUTE_PATHS>
+type NUM_ATTR_PATH = 'num' | "['num']"
+type NUM_CONDITION = AttrCondition<NUM_ATTR_PATH, ATTRIBUTES['num'], ALL_PATHS>
+const assertNumCondition: A.Equals<
+  NUM_CONDITION,
+  | { attr: NUM_ATTR_PATH; exists: boolean }
+  | { attr: NUM_ATTR_PATH; type: ConditionType }
+  | { attr: NUM_ATTR_PATH; eq: number | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: NUM_ATTR_PATH; ne: number | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: NUM_ATTR_PATH; in: (number | { attr: ALL_PATHS })[]; transform?: boolean }
+  | {
+      attr: NUM_ATTR_PATH
+      lt: number | bigint | { attr: ALL_PATHS }
+      transform?: boolean
+    }
+  | {
+      attr: NUM_ATTR_PATH
+      lte: number | bigint | { attr: ALL_PATHS }
+      transform?: boolean
+    }
+  | {
+      attr: NUM_ATTR_PATH
+      gt: number | bigint | { attr: ALL_PATHS }
+      transform?: boolean
+    }
+  | {
+      attr: NUM_ATTR_PATH
+      gte: number | bigint | { attr: ALL_PATHS }
+      transform?: boolean
+    }
+  | {
+      attr: NUM_ATTR_PATH
+      between: [number | bigint | { attr: ALL_PATHS }, number | bigint | { attr: ALL_PATHS }]
+      transform?: boolean
+    }
+> = 1
+assertNumCondition
+
+type STR_ATTR_PATH = 'str' | "['str']"
+type STR_CONDITION_PARENT_ID = AttrCondition<STR_ATTR_PATH, ATTRIBUTES['str'], ALL_PATHS>
+const assertStrCondition: A.Equals<
+  STR_CONDITION_PARENT_ID,
+  | { attr: STR_ATTR_PATH; exists: boolean }
+  | { attr: STR_ATTR_PATH; type: ConditionType }
+  | { attr: STR_ATTR_PATH; eq: 'foo' | 'bar' | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: STR_ATTR_PATH; ne: 'foo' | 'bar' | { attr: ALL_PATHS }; transform?: boolean }
+  | {
+      attr: STR_ATTR_PATH
+      in: ('foo' | 'bar' | { attr: ALL_PATHS })[]
+      transform?: boolean
+    }
+  | { attr: STR_ATTR_PATH; lt: string | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: STR_ATTR_PATH; lte: string | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: STR_ATTR_PATH; gt: string | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: STR_ATTR_PATH; gte: string | { attr: ALL_PATHS }; transform?: boolean }
+  | {
+      attr: STR_ATTR_PATH
+      between: [string | { attr: ALL_PATHS }, string | { attr: ALL_PATHS }]
+      transform?: boolean
+    }
+  | {
+      attr: STR_ATTR_PATH
+      beginsWith: string | { attr: ALL_PATHS }
+      transform?: boolean
+    }
+  | { attr: STR_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
+  // Using size
+  | { size: STR_ATTR_PATH; eq: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; ne: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; in: (number | bigint | { attr: ALL_PATHS })[] }
+  | { size: STR_ATTR_PATH; lt: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; lte: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; gt: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; gte: number | bigint | { attr: ALL_PATHS } }
+  | {
+      size: STR_ATTR_PATH
+      between: [number | bigint | { attr: ALL_PATHS }, number | bigint | { attr: ALL_PATHS }]
+    }
+> = 1
+assertStrCondition
+
+type BIN_ATTR_PATH = 'bin' | "['bin']"
+type BIN_CONDITION = AttrCondition<BIN_ATTR_PATH, ATTRIBUTES['bin'], ALL_PATHS>
 const assertBinCondition: A.Equals<
   BIN_CONDITION,
-  AttrOrSize<'bin'> &
-    (
-      | BaseAttrCondition<'bin'>
-      | ({ transform?: boolean } & (
-          | { eq: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | { ne: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | { in: (Uint8Array | { attr: ATTRIBUTE_PATHS })[] }
-          | { lt: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | { lte: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | { gt: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | { gte: Uint8Array | { attr: ATTRIBUTE_PATHS } }
-          | {
-              between: [
-                Uint8Array | { attr: ATTRIBUTE_PATHS },
-                Uint8Array | { attr: ATTRIBUTE_PATHS }
-              ]
-            }
-        ))
-    )
+  | { attr: BIN_ATTR_PATH; exists: boolean }
+  | { attr: BIN_ATTR_PATH; type: ConditionType }
+  | { attr: BIN_ATTR_PATH; eq: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BIN_ATTR_PATH; ne: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | {
+      attr: BIN_ATTR_PATH
+      in: (Uint8Array | { attr: ALL_PATHS })[]
+      transform?: boolean
+    }
+  | { attr: BIN_ATTR_PATH; lt: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BIN_ATTR_PATH; lte: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BIN_ATTR_PATH; gt: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: BIN_ATTR_PATH; gte: Uint8Array | { attr: ALL_PATHS }; transform?: boolean }
+  | {
+      attr: BIN_ATTR_PATH
+      between: [Uint8Array | { attr: ALL_PATHS }, Uint8Array | { attr: ALL_PATHS }]
+      transform?: boolean
+    }
+  // Already tested above
+  | SizeCondition<BIN_ATTR_PATH, ALL_PATHS>
 > = 1
 assertBinCondition
 
-type STRING_SET_CONDITION = AttrCondition<'stringSet', ATTRIBUTES['stringSet'], ATTRIBUTE_PATHS>
+type STRING_SET_ATTR_PATH = 'stringSet' | "['stringSet']"
+type STRING_SET_CONDITION = AttrCondition<STRING_SET_ATTR_PATH, ATTRIBUTES['stringSet'], ALL_PATHS>
 const assertStringSetCondition: A.Equals<
   STRING_SET_CONDITION,
-  AttrOrSize<'stringSet'> &
-    (BaseAttrCondition<'stringSet'> | { contains: string | { attr: ATTRIBUTE_PATHS } })
+  | { attr: STRING_SET_ATTR_PATH; exists: boolean }
+  | { attr: STRING_SET_ATTR_PATH; type: ConditionType }
+  | { attr: STRING_SET_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
+  // Already tested above
+  | SizeCondition<STRING_SET_ATTR_PATH, ALL_PATHS>
 > = 1
 assertStringSetCondition
 
-type STRING_LIST_CONDITION = AttrCondition<'stringList', ATTRIBUTES['stringList'], ATTRIBUTE_PATHS>
+type STRING_LIST_ATTR_PATH = 'stringList' | "['stringList']"
+type STRING_LIST_CONDITION = AttrCondition<
+  STRING_LIST_ATTR_PATH,
+  ATTRIBUTES['stringList'],
+  ALL_PATHS
+>
 const assertStringListCondition: A.Equals<
   STRING_LIST_CONDITION,
-  | BaseAttrCondition<'stringList'>
-  | (AttrOrSize<'stringList'> & { contains: string | { attr: ATTRIBUTE_PATHS } })
-  | AttrCondition<`stringList[${number}]`, ATTRIBUTES['stringList']['elements'], ATTRIBUTE_PATHS>
+  | { attr: STRING_LIST_ATTR_PATH; exists: boolean }
+  | { attr: STRING_LIST_ATTR_PATH; type: ConditionType }
+  | { attr: STRING_LIST_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
+  // Already tested above
+  | StringAttrCondition<
+      `${STRING_LIST_ATTR_PATH}[${number}]`,
+      ATTRIBUTES['stringList']['elements'],
+      ALL_PATHS
+    >
+  // Already tested above
+  | SizeCondition<STRING_LIST_ATTR_PATH, ALL_PATHS>
 > = 1
 assertStringListCondition
 
-type MAP_LIST_CONDITION = AttrCondition<'mapList', ATTRIBUTES['mapList'], ATTRIBUTE_PATHS>
+type MAP_LIST_ATTR_PATH = 'mapList' | "['mapList']"
+type MAP_LIST_CONDITION = AttrCondition<MAP_LIST_ATTR_PATH, ATTRIBUTES['mapList'], ALL_PATHS>
 const assertMapListCondition: A.Equals<
-  | BaseAttrCondition<'mapList'>
-  | AttrCondition<`mapList[${number}]`, ATTRIBUTES['mapList']['elements'], ATTRIBUTE_PATHS>,
-  MAP_LIST_CONDITION
+  MAP_LIST_CONDITION,
+  | { attr: MAP_LIST_ATTR_PATH; exists: boolean }
+  | { attr: MAP_LIST_ATTR_PATH; type: ConditionType }
+  // Already tested below
+  | MapAttrCondition<
+      `${MAP_LIST_ATTR_PATH}[${number}]`,
+      ATTRIBUTES['mapList']['elements'],
+      ALL_PATHS
+    >
+  // Already tested above
+  | SizeCondition<MAP_LIST_ATTR_PATH, ALL_PATHS>
 > = 1
 assertMapListCondition
 
-type MAP_CONDITION = AttrCondition<'map', ATTRIBUTES['map'], ATTRIBUTE_PATHS>
+type MAP_ATTR_PATH = 'map' | "['map']"
+type MAP_CONDITION = AttrCondition<MAP_ATTR_PATH, ATTRIBUTES['map'], ALL_PATHS>
 const assertMapCondition: A.Equals<
   MAP_CONDITION,
-  | BaseAttrCondition<'map'>
-  | AttrCondition<
-      `map${'.num' | `['num']`}`,
+  | { attr: MAP_ATTR_PATH; exists: boolean }
+  | { attr: MAP_ATTR_PATH; type: ConditionType }
+  | NumberAttrCondition<
+      AppendKey<MAP_ATTR_PATH, 'num'>,
       ATTRIBUTES['map']['attributes']['num'],
-      ATTRIBUTE_PATHS
+      ALL_PATHS
     >
-  | AttrCondition<
-      `map${'.stringList' | `['stringList']`}`,
+  | ListAttrCondition<
+      AppendKey<MAP_ATTR_PATH, 'stringList'>,
       ATTRIBUTES['map']['attributes']['stringList'],
-      ATTRIBUTE_PATHS
+      ALL_PATHS
     >
-  | AttrCondition<
-      `map${'.map' | `['map']`}`,
+  | MapAttrCondition<
+      AppendKey<MAP_ATTR_PATH, 'map'>,
       ATTRIBUTES['map']['attributes']['map'],
-      ATTRIBUTE_PATHS
+      ALL_PATHS
     >
+  // Already tested above
+  | SizeCondition<MAP_ATTR_PATH, ALL_PATHS>
 > = 1
 assertMapCondition
 
-type RECORD_CONDITION = AttrCondition<'record', ATTRIBUTES['record'], ATTRIBUTE_PATHS>
+type RECORD_ATTR_PATH = 'record' | "['record']"
+type RECORD_CONDITION = AttrCondition<RECORD_ATTR_PATH, ATTRIBUTES['record'], ALL_PATHS>
 const assertRecordCondition: A.Equals<
   RECORD_CONDITION,
-  | BaseAttrCondition<'record'>
+  | { attr: RECORD_ATTR_PATH; exists: boolean }
+  | { attr: RECORD_ATTR_PATH; type: ConditionType }
+  // Already tested above (map)
   | AttrCondition<
-      `record${'.foo' | `['foo']` | '.bar' | `['bar']`}`,
+      AppendKey<RECORD_ATTR_PATH, 'foo' | 'bar'>,
       ATTRIBUTES['record']['elements'],
-      ATTRIBUTE_PATHS
+      ALL_PATHS
     >
+  // Already tested above
+  | SizeCondition<RECORD_ATTR_PATH, ALL_PATHS>
 > = 1
 assertRecordCondition
 
-type DICT_CONDITION = AttrCondition<'dict', ATTRIBUTES['dict'], ATTRIBUTE_PATHS>
+type DICT_ATTR_PATH = 'dict' | "['dict']"
+type DICT_CONDITION = AttrCondition<DICT_ATTR_PATH, ATTRIBUTES['dict'], ALL_PATHS>
 const assertDictCondition: A.Equals<
   DICT_CONDITION,
-  | BaseAttrCondition<'dict'>
-  | AttrCondition<
-      `dict${`.${string}` | `['${string}']`}`,
-      ATTRIBUTES['dict']['elements'],
-      ATTRIBUTE_PATHS
-    >
+  | { attr: DICT_ATTR_PATH; exists: boolean }
+  | { attr: DICT_ATTR_PATH; type: ConditionType }
+  // Already tested above (string)
+  | AttrCondition<AppendKey<DICT_ATTR_PATH, string>, ATTRIBUTES['dict']['elements'], ALL_PATHS>
+  // Already tested above
+  | SizeCondition<DICT_ATTR_PATH, ALL_PATHS>
 > = 1
 assertDictCondition
 
-type UNION_CONDITION = AttrCondition<'union', ATTRIBUTES['union'], ATTRIBUTE_PATHS>
+type UNION_ATTR_PATH = 'union' | "['union']"
+type UNION_CONDITION = AttrCondition<UNION_ATTR_PATH, ATTRIBUTES['union'], ALL_PATHS>
 const assertUnionCondition: A.Equals<
   UNION_CONDITION,
-  | BaseAttrCondition<'union'>
-  | (ATTRIBUTES['union']['elements'][number] extends infer ELEMENT
-      ? ELEMENT extends Attribute
-        ? AttrCondition<'union', ELEMENT, ATTRIBUTE_PATHS>
-        : never
-      : never)
+  | { attr: UNION_ATTR_PATH; exists: boolean }
+  | { attr: UNION_ATTR_PATH; type: ConditionType }
+  // Already tested above (map)
+  | AttrCondition<UNION_ATTR_PATH, ATTRIBUTES['union']['elements'][0], ALL_PATHS>
+  | AttrCondition<UNION_ATTR_PATH, ATTRIBUTES['union']['elements'][1], ALL_PATHS>
 > = 1
 assertUnionCondition
 
 type NON_LOGICAL_CONDITION = NonLogicalCondition<typeof mySchema>
-const assertNonLogicalCondition: A.Contains<
-  | PARENT_ID_CONDITION
-  | CHILD_ID_CONDITION
+const assertNonLogicalCondition: A.Equals<
   | ANY_CONDITION
-  | NUM_CONDITION
+  | NULL_CONDITION
   | BOOL_CONDITION
+  | NUM_CONDITION
+  | STR_CONDITION_PARENT_ID
   | BIN_CONDITION
   | STRING_SET_CONDITION
   | STRING_LIST_CONDITION
   | MAP_LIST_CONDITION
   | MAP_CONDITION
   | RECORD_CONDITION
+  | DICT_CONDITION
   | UNION_CONDITION,
   NON_LOGICAL_CONDITION
 > = 1
 assertNonLogicalCondition
 
-const assertEntityCondition: A.Contains<
-  | NON_LOGICAL_CONDITION
-  | { or: NON_LOGICAL_CONDITION[] }
-  | { and: NON_LOGICAL_CONDITION[] }
-  | { not: NON_LOGICAL_CONDITION },
-  SchemaCondition<typeof mySchema>
+type CONDITION = SchemaCondition<typeof mySchema>
+const assertSchemaCondition: A.Equals<
+  SchemaCondition<typeof mySchema>,
+  NON_LOGICAL_CONDITION | { or: CONDITION[] } | { and: CONDITION[] } | { not: CONDITION }
 > = 1
-assertEntityCondition
+assertSchemaCondition
