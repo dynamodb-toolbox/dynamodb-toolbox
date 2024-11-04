@@ -32,13 +32,12 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   const comparisonOperator = Object.keys(condition).find(isTwoArgsFnOperator) as keyof CONDITION &
     TwoArgsFnOperator
 
-  // TOIMPROVE: It doesn't make sense to use size in two args fns
-  const attributePath = condition.size ?? condition.attr
+  const attributePath = condition.attr
   const expressionAttributeValue = condition[comparisonOperator]
   const { transform = true } = condition as { transform?: boolean }
 
   conditionParser.resetExpression(`${twoArgsFnOperatorExpression[comparisonOperator]}(`)
-  const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
+  const attribute = conditionParser.appendAttributePath(attributePath)
   conditionParser.appendToExpression(', ')
 
   let targetAttribute: Attribute

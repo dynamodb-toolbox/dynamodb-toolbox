@@ -1,3 +1,5 @@
+import { has } from '~/utils/has.js'
+
 import type { ConditionParser } from '../../conditionParser.js'
 import { isComparisonOperator } from './types.js'
 import type { ComparisonCondition, ComparisonOperator } from './types.js'
@@ -11,26 +13,29 @@ const comparisonOperatorExpression: Record<ComparisonOperator, string> = {
   lte: '<='
 }
 
-type ComparisonConditionParser = <CONDITION extends ComparisonCondition>(
+export const parseComparisonCondition = (
   conditionParser: ConditionParser,
-  condition: CONDITION
-) => void
-
-export const parseComparisonCondition: ComparisonConditionParser = <
-  CONDITION extends ComparisonCondition
->(
-  conditionParser: ConditionParser,
-  condition: CONDITION
+  condition: ComparisonCondition
 ) => {
-  const comparisonOperator = Object.keys(condition).find(isComparisonOperator) as keyof CONDITION &
-    ComparisonOperator
+  let attributePath: string
+  let transform: boolean
 
-  const attributePath = condition.size ?? condition.attr
+  const size = has(condition, 'size')
+  if (size) {
+    attributePath = condition.size
+    transform = false
+  } else {
+    attributePath = condition.attr
+    transform = condition.transform ?? true
+  }
+
+  const comparisonOperator = Object.keys(condition).find(
+    isComparisonOperator
+  ) as keyof ComparisonCondition
   const expressionAttributeValue = condition[comparisonOperator]
-  const { transform = true } = condition
 
   conditionParser.resetExpression()
-  const attribute = conditionParser.appendAttributePath(attributePath, { size: !!condition.size })
+  const attribute = conditionParser.appendAttributePath(attributePath, { size })
   conditionParser.appendToExpression(` ${comparisonOperatorExpression[comparisonOperator]} `)
   conditionParser.appendAttributeValueOrPath(attribute, expressionAttributeValue, { transform })
 }
