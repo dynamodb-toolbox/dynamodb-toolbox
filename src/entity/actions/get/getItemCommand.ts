@@ -9,6 +9,7 @@ import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import type { KeyInputItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 
 import { $key, $options } from './constants.js'
@@ -75,12 +76,14 @@ export class GetItemCommand<
   }
 
   @sender()
-  async send(): Promise<GetItemResponse<ENTITY, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<GetItemResponse<ENTITY, OPTIONS>> {
     const getItemParams = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
-      .send(new GetCommand(getItemParams))
+      .send(new GetCommand(getItemParams), documentClientOptions)
 
     const { Item: item, ...restCommandOutput } = commandOutput
 

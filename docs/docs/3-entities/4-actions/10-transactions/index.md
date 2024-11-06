@@ -43,7 +43,7 @@ Only **one transaction per item** is supported. For instance, you cannot run a `
 
 ### Options
 
-The `execute` function accepts an additional object as a first argument for **operation-level** options:
+The `execute` function accepts an additional object as a first argument for **operation-level** options, as well as DocumentClient options such as [`abortSignal`](https://github.com/aws/aws-sdk-js-v3?tab=readme-ov-file#abortcontroller-example):
 
 ```ts
 await execute(options, ...writeTransactions)
@@ -102,6 +102,19 @@ await execute(
   { documentClient },
   ...writeTransactions
 )
+```
+
+</TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+await execute({ abortSignal }, ...writeTransactions)
+
+// 👇 Aborts the command
+abortController.abort()
 ```
 
 </TabItem>

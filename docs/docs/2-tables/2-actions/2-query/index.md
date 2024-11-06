@@ -383,6 +383,21 @@ const { Count } = await PokeTable.build(QueryCommand)
 ```
 
 </TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
+</TabItem>
 </Tabs>
 
 :::

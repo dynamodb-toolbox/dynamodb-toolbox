@@ -152,6 +152,26 @@ await PokemonEntity.build(PutItemCommand)
 ```
 
 </TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+await PokemonEntity.build(PutItemCommand)
+  .item({
+    pokemonId: 'pikachu1',
+    name: 'Pikachu',
+    pokeType: 'electric',
+    level: 50
+  })
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
+</TabItem>
 </Tabs>
 
 :::

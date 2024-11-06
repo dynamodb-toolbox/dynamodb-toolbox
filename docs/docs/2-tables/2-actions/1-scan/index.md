@@ -246,6 +246,21 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```
 
 </TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Items } = await PokeTable.build(ScanCommand).send({
+  abortSignal
+})
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
+</TabItem>
 </Tabs>
 
 :::

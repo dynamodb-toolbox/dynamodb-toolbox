@@ -12,6 +12,7 @@ import { $sentArgs } from '~/table/constants.js'
 import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -106,7 +107,9 @@ export class ScanCommand<
   }
 
   @sender()
-  async send(): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
     const scanParams = this.params()
 
     const formattersByName: Record<string, EntityFormatter> = {}
@@ -140,7 +143,9 @@ export class ScanCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this.table.getDocumentClient().send(new _ScanCommand(pageScanParams))
+      } = await this.table
+        .getDocumentClient()
+        .send(new _ScanCommand(pageScanParams), documentClientOptions)
 
       for (const item of items) {
         if (this[$entities].length === 0) {

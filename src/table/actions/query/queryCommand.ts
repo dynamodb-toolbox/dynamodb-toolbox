@@ -12,6 +12,7 @@ import { $sentArgs } from '~/table/constants.js'
 import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -138,7 +139,9 @@ export class QueryCommand<
   }
 
   @sender()
-  async send(): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
     const queryParams = this.params()
 
     const formattersByName: Record<string, EntityFormatter> = {}
@@ -172,7 +175,9 @@ export class QueryCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageConsumedCapacity,
         $metadata: pageMetadata
-      } = await this.table.getDocumentClient().send(new _QueryCommand(pageQueryParams))
+      } = await this.table
+        .getDocumentClient()
+        .send(new _QueryCommand(pageQueryParams), documentClientOptions)
 
       for (const item of items) {
         if (this[$entities].length === 0) {

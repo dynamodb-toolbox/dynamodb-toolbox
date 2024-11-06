@@ -107,7 +107,7 @@ Only one `BatchWriteCommand` per Table is supported.
 
 ### Options
 
-The `execute` function accepts an additional object as a first argument for **operation-level** options:
+The `execute` function accepts an additional object as a first argument for **operation-level** options, as well as DocumentClient options such as [`abortSignal`](https://github.com/aws/aws-sdk-js-v3?tab=readme-ov-file#abortcontroller-example):
 
 ```ts
 await execute(options, ...batchWriteCommands)
@@ -162,10 +162,20 @@ await execute(
 <TabItem value="retries" label="Retries">
 
 ```ts
-const { Response } = await execute(
-  { maxAttempts: 3 },
-  ...batchGetCommands
-)
+await execute({ maxAttempts: 3 }, ...batchWriteCommands)
+```
+
+</TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+await execute({ abortSignal }, ...batchWriteCommands)
+
+// 👇 Aborts the command
+abortController.abort()
 ```
 
 </TabItem>

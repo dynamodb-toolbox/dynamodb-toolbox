@@ -13,11 +13,12 @@ import type { ClientRequestToken } from '~/options/clientRequestToken.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import type { MetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 
 import type { WriteTransactionImplementation } from './transaction.js'
 import { isWriteTransactionImplementation } from './transaction.js'
 
-export interface ExecuteTransactWriteOptions {
+export interface ExecuteTransactWriteOptions extends DocumentClientOptions {
   documentClient?: DynamoDBDocumentClient
   capacity?: CapacityOption
   metrics?: MetricsOption
@@ -103,10 +104,15 @@ export const execute: ExecuteTransactWrite = async <
     })
   }
 
-  const { documentClient: optionsDocumentClient, ...restOptions } = options
-  const documentClient = optionsDocumentClient ?? firstTransaction.entity.table.getDocumentClient()
+  const { documentClient, capacity, metrics, clientRequestToken, ...documentClientOptions } =
+    options
+  const docClient = documentClient ?? firstTransaction.entity.table.getDocumentClient()
 
-  const { TransactItems = [], ...restCommandInput } = getCommandInput(transactions, restOptions)
+  const { TransactItems = [], ...restCommandInput } = getCommandInput(transactions, {
+    capacity,
+    metrics,
+    clientRequestToken
+  })
 
   const toolboxItems: unknown[] = []
 
@@ -116,8 +122,9 @@ export const execute: ExecuteTransactWrite = async <
     delete transactItem.ToolboxItem
   }
 
-  const response = await documentClient.send(
-    new TransactWriteCommand({ TransactItems, ...restCommandInput })
+  const response = await docClient.send(
+    new TransactWriteCommand({ TransactItems, ...restCommandInput }),
+    documentClientOptions
   )
 
   return {

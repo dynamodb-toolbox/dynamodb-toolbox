@@ -2,6 +2,7 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -95,5 +96,5 @@ export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] 
 
 export interface TableSendableAction<TABLE extends Table = Table> extends TableAction<TABLE> {
   [$sentArgs](): any[]
-  send(): Promise<any>
+  send(documentClientOptions?: DocumentClientOptions): Promise<any>
 }

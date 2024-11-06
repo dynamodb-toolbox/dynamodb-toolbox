@@ -8,6 +8,7 @@ import { sender } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
@@ -75,12 +76,14 @@ export class UpdateAttributesCommand<
   }
 
   @sender()
-  async send(): Promise<UpdateAttributesResponse<ENTITY, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<UpdateAttributesResponse<ENTITY, OPTIONS>> {
     const { ToolboxItem, ...getItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
-      .send(new UpdateCommand(getItemParams))
+      .send(new UpdateCommand(getItemParams), documentClientOptions)
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 
