@@ -14,6 +14,7 @@ import { $sentArgs } from '~/table/constants.js'
 import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 import { chunk } from '~/utils/chunk.js'
 
@@ -116,7 +117,7 @@ export class DeletePartitionCommand<
   }
 
   @sender()
-  async send(): Promise<DeletePartitionResponse> {
+  async send(documentClientOptions?: DocumentClientOptions): Promise<DeletePartitionResponse> {
     const entitiesByName: Record<string, Entity> = {}
     this[$entities].forEach(entity => {
       entitiesByName[entity.name] = entity
@@ -140,7 +141,9 @@ export class DeletePartitionCommand<
         ScannedCount: pageScannedCount,
         ConsumedCapacity: pageQueryConsumedCapacity,
         ...queryOutput
-      } = await this.queryCommand({ exclusiveStartKey: lastEvaluatedKey }).send()
+      } = await this.queryCommand({ exclusiveStartKey: lastEvaluatedKey }).send(
+        documentClientOptions
+      )
 
       for (const itemChunk of chunk(items, 25)) {
         if (itemChunk.length === 0) {
@@ -159,7 +162,7 @@ export class DeletePartitionCommand<
 
         // TODO: Merge across pages and return ItemCollectionMetrics
         const { ConsumedCapacity: chunkBatchWriteConsumedCapacity } = await execute(
-          { maxAttempts: Infinity, capacity },
+          { maxAttempts: Infinity, capacity, ...documentClientOptions },
           this.table
             .build(BatchWriteCommand)
             .options({ tableName })

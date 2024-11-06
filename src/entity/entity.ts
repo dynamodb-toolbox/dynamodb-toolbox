@@ -2,6 +2,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema, ValidValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { If } from '~/types/if.js'
 
 import { $interceptor, $sentArgs } from './constants.js'
@@ -110,5 +111,5 @@ export class EntityAction<ENTITY extends Entity = Entity> {
 
 export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   [$sentArgs](): any[]
-  send(): Promise<any>
+  send(documentClientOptions?: DocumentClientOptions): Promise<any>
 }

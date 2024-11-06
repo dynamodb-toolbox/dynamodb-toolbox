@@ -115,6 +115,24 @@ Although all classes and actions are exposed in the main entry path, we recommen
 
 :::
 
+## Aborting an Action
+
+All the actions that use the DocumentClient (like the [GetItemCommand](../../3-entities/4-actions/1-get-item/index.md)) expose an asynchronous `.send()` method to perform the underlying operation.
+
+Any option provided to this method is passed to the DocumentClient. This includes the `abortSignal` option mentioned in the [AWS SDK documentation](https://github.com/aws/aws-sdk-js-v3?tab=readme-ov-file#abortcontroller-example):
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key(key)
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
 ## How do Actions work?
 
 There are three types of actions: [Table Actions](../../2-tables/2-actions/1-scan/index.md), [Entity Actions](../../3-entities/4-actions/1-get-item/index.md) and [Schema Actions](../../4-schemas/16-actions/1-parse.md).

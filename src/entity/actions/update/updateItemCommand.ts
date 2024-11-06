@@ -15,6 +15,7 @@ import type {
   UpdatedNewReturnValuesOption,
   UpdatedOldReturnValuesOption
 } from '~/options/returnValues.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
@@ -100,12 +101,14 @@ export class UpdateItemCommand<
   }
 
   @sender()
-  async send(): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {
     const { ToolboxItem, ...getItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
-      .send(new UpdateCommand(getItemParams))
+      .send(new UpdateCommand(getItemParams), documentClientOptions)
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 

@@ -128,6 +128,21 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 ```
 
 </TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key({ pokemonId: 'pikachu1' })
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
+</TabItem>
 </Tabs>
 
 :::

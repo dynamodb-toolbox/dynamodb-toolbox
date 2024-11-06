@@ -176,7 +176,7 @@ const extendedSchema = baseSchema.and({
 
 :::info
 
-In case of naming conflicts, new attributes will **override** the previous ones.
+In case of naming conflicts, new attributes **override** the previous ones.
 
 :::
 

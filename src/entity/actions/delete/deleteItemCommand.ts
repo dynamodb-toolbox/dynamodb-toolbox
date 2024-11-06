@@ -10,6 +10,7 @@ import type { KeyInputItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 
 import { $key, $options } from './constants.js'
@@ -76,12 +77,14 @@ export class DeleteItemCommand<
   }
 
   @sender()
-  async send(): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     const deleteItemParams = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
-      .send(new DeleteCommand(deleteItemParams))
+      .send(new DeleteCommand(deleteItemParams), documentClientOptions)
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 

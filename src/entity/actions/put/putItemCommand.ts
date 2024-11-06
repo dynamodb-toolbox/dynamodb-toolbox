@@ -10,6 +10,7 @@ import { EntityAction } from '~/entity/index.js'
 import type { ValidItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { Merge } from '~/types/merge.js'
 
 import { $item, $options } from './constants.js'
@@ -84,12 +85,14 @@ export class PutItemCommand<
   }
 
   @sender()
-  async send(): Promise<PutItemResponse<ENTITY, OPTIONS>> {
+  async send(
+    documentClientOptions?: DocumentClientOptions
+  ): Promise<PutItemResponse<ENTITY, OPTIONS>> {
     const { ToolboxItem, ...putItemParams } = this.params()
 
     const commandOutput = await this.entity.table
       .getDocumentClient()
-      .send(new PutCommand(putItemParams))
+      .send(new PutCommand(putItemParams), documentClientOptions)
 
     const { Attributes: attributes, ...restCommandOutput } = commandOutput
 

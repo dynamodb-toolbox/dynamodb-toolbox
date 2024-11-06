@@ -219,7 +219,7 @@ await execute(...commands)
 
 ### Options
 
-The `execute` function accepts an additional object as a first argument for **operation-level** options:
+The `execute` function accepts an additional object as a first argument for **operation-level** options, as well as DocumentClient options such as [`abortSignal`](https://github.com/aws/aws-sdk-js-v3?tab=readme-ov-file#abortcontroller-example):
 
 ```ts
 await execute(options, ...batchGetCommands)
@@ -267,6 +267,22 @@ const { Response } = await execute(
   { maxAttempts: 3 },
   ...batchGetCommands
 )
+```
+
+</TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Response } = await execute(
+  { abortSignal },
+  ...batchGetCommands
+)
+
+// 👇 Aborts the command
+abortController.abort()
 ```
 
 </TabItem>

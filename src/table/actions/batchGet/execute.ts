@@ -11,13 +11,14 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { Paths } from '~/schema/index.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
 import type { BatchGetCommandOptions, BatchGetRequestProps } from './batchGetCommand.js'
 import { $options, $requests } from './constants.js'
 
-export interface ExecuteBatchGetOptions {
+export interface ExecuteBatchGetOptions extends DocumentClientOptions {
   capacity?: CapacityOption
   documentClient?: DynamoDBDocumentClient
   maxAttempts?: number
@@ -154,13 +155,12 @@ export const execute: ExecuteBatchGet = async <
     })
   }
 
-  const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
+  const { maxAttempts = 1, documentClient, capacity, ...documentClientOptions } = options
+  const docClient = documentClient ?? firstCommand.table.getDocumentClient()
 
-  const { maxAttempts = 1 } = options
-  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(
-    commands,
-    options
-  )
+  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(commands, {
+    capacity
+  })
 
   let attemptCount = 0
   let requestItems: BatchGetCommandInput['RequestItems'] = initialRequestItems
@@ -177,8 +177,9 @@ export const execute: ExecuteBatchGet = async <
       UnprocessedKeys: attemptUnprocessedKeys = {},
       ConsumedCapacity: attemptConsumedCapacity,
       $metadata: attemptMetadata
-    } = await documentClient.send(
-      new _BatchGetCommand({ RequestItems: requestItems, ...commandOptions })
+    } = await docClient.send(
+      new _BatchGetCommand({ RequestItems: requestItems, ...commandOptions }),
+      documentClientOptions
     )
 
     if (attemptResponses !== undefined) {

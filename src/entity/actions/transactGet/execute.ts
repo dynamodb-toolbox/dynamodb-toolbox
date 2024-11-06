@@ -12,13 +12,14 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 
 import { $options } from './getTransaction/constants.js'
 import { GetTransaction } from './getTransaction/getTransaction.js'
 
 type GetTransactionProps = Pick<GetTransaction, 'entity' | $options | 'params'>
 
-export interface ExecuteTransactGetOptions {
+export interface ExecuteTransactGetOptions extends DocumentClientOptions {
   documentClient?: DynamoDBDocumentClient
   capacity?: CapacityOption
 }
@@ -131,11 +132,12 @@ export const execute: ExecuteTransactGet = async <
     })
   }
 
-  const { documentClient: optionsDocumentClient, ...restOptions } = options
-  const documentClient = optionsDocumentClient ?? firstTransaction.entity.table.getDocumentClient()
+  const { documentClient, capacity, ...documentClientOptions } = options
+  const docClient = documentClient ?? firstTransaction.entity.table.getDocumentClient()
 
-  const { Responses, ...restResponse } = await documentClient.send(
-    new TransactGetCommand(getCommandInput(transactions, restOptions))
+  const { Responses, ...restResponse } = await docClient.send(
+    new TransactGetCommand(getCommandInput(transactions, { capacity })),
+    documentClientOptions
   )
 
   if (Responses === undefined) {

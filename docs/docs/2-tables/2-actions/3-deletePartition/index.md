@@ -231,6 +231,21 @@ await PokeTable.build(DeletePartitionCommand)
 ```
 
 </TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+await PokeTable.build(DeletePartitionCommand)
+  .query({ partition: 'ashKetchum' })
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
+```
+
+</TabItem>
 </Tabs>
 
 :::

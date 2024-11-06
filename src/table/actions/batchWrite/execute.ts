@@ -10,11 +10,12 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import type { MetricsOption } from '~/options/metrics.js'
+import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
-export interface ExecuteBatchWriteOptions {
+export interface ExecuteBatchWriteOptions extends DocumentClientOptions {
   capacity?: CapacityOption
   metrics?: MetricsOption
   documentClient?: DynamoDBDocumentClient
@@ -42,13 +43,13 @@ export const execute = async (
     })
   }
 
-  const documentClient = options.documentClient ?? firstCommand.table.getDocumentClient()
+  const { maxAttempts = 1, metrics, capacity, documentClient, ...documentClientOptions } = options
+  const docClient = documentClient ?? firstCommand.table.getDocumentClient()
 
-  const { maxAttempts = 1 } = options
-  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(
-    commands,
-    options
-  )
+  const { RequestItems: initialRequestItems, ...commandOptions } = getCommandInput(commands, {
+    metrics,
+    capacity
+  })
 
   let attemptCount = 0
   let requestItems: BatchWriteCommandInput['RequestItems'] = initialRequestItems
@@ -65,8 +66,9 @@ export const execute = async (
       ConsumedCapacity: attemptConsumedCapacity,
       ItemCollectionMetrics: attemptCollectionMetrics,
       $metadata: attemptMetadata
-    } = await documentClient.send(
-      new _BatchWriteCommand({ RequestItems: requestItems, ...commandOptions })
+    } = await docClient.send(
+      new _BatchWriteCommand({ RequestItems: requestItems, ...commandOptions }),
+      documentClientOptions
     )
 
     requestItems = attemptUnprocessedItems
