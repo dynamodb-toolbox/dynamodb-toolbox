@@ -34,16 +34,14 @@ export const parseNumberExtension = (
 
         const [left, right] = sumElements
         const parsers = [
-          new Parser(number().freeze(`${attribute.path}[$SUM][0]`)).start(left, {
-            fill: false,
-            transform,
-            parseExtension: parseReferenceExtension
-          }),
-          new Parser(number().freeze(`${attribute.path}[$SUM][1]`)).start(right, {
-            fill: false,
-            transform,
-            parseExtension: parseReferenceExtension
-          })
+          new Parser(number({ big: attribute.big }).freeze(`${attribute.path}[$SUM][0]`)).start(
+            left,
+            { fill: false, transform, parseExtension: parseReferenceExtension }
+          ),
+          new Parser(number({ big: attribute.big }).freeze(`${attribute.path}[$SUM][1]`)).start(
+            right,
+            { fill: false, transform, parseExtension: parseReferenceExtension }
+          )
         ]
 
         const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
@@ -81,12 +79,16 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          new Parser(number().freeze(`${attribute.path}[$SUBTRACT][0]`)).start(left, {
+          new Parser(
+            number({ big: attribute.big }).freeze(`${attribute.path}[$SUBTRACT][0]`)
+          ).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
           }),
-          new Parser(number().freeze(`${attribute.path}[$SUBTRACT][1]`)).start(right, {
+          new Parser(
+            number({ big: attribute.big }).freeze(`${attribute.path}[$SUBTRACT][1]`)
+          ).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension
@@ -108,7 +110,9 @@ export const parseNumberExtension = (
   }
 
   if (isAddition(inputValue) && inputValue[$ADD] !== undefined) {
-    const parser = new Parser(number().freeze(`${attribute.path}[$ADD]`)).start(inputValue[$ADD], {
+    const parser = new Parser(
+      number({ big: attribute.big }).freeze(`${attribute.path}[$ADD]`)
+    ).start(inputValue[$ADD], {
       fill: false,
       transform,
       parseExtension: parseReferenceExtension

@@ -2,7 +2,6 @@ import type {
   Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   AttributeValue,
   Item,
@@ -41,8 +40,7 @@ import type { Reference, ReferenceExtension } from '~/entity/actions/update/type
 import type { Entity } from '~/entity/index.js'
 import type { Paths, Schema, ValidValue } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
-import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { Optional } from '~/types/optional.js'
 
 export type UpdateAttributesInputExtension =
   | ReferenceExtension
@@ -99,6 +97,14 @@ type MustBeDefined<
     ? true
     : false
 
+type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean = false> = {
+  [KEY in keyof SCHEMA['attributes']]: If<
+    MustBeDefined<SCHEMA['attributes'][KEY], FILLED>,
+    never,
+    KEY
+  >
+}[keyof SCHEMA['attributes']]
+
 type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
   ? true
   : false
@@ -118,7 +124,7 @@ export type UpdateAttributesInput<
   : Schema extends SCHEMA
     ? Item<UpdateAttributesInputExtension>
     : SCHEMA extends Schema
-      ? OptionalizeUndefinableProperties<
+      ? Optional<
           {
             [KEY in keyof SCHEMA['attributes']]: UpdateAttributeInput<
               SCHEMA['attributes'][KEY],
@@ -126,12 +132,15 @@ export type UpdateAttributesInput<
               Paths<SCHEMA>
             >
           },
-          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
+          OptionalKeys<SCHEMA, FILLED>
         >
       : SCHEMA extends Entity
         ? UpdateAttributesInput<SCHEMA['schema'], FILLED>
         : never
+
+type NumberUpdate<ATTRIBUTE extends NumberAttribute> =
+  | number
+  | (ATTRIBUTE extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given Attribute
@@ -162,40 +171,48 @@ export type UpdateAttributeInput<
       | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
       | (ATTRIBUTE extends NumberAttribute
           ?
-              | ADD<number>
+              | ADD<NumberUpdate<ATTRIBUTE>>
               | SUM<
                   // Not using Reference<...> for improved type display
-                  | number
+                  | NumberUpdate<ATTRIBUTE>
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        fallback?:
+                          | NumberUpdate<ATTRIBUTE>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >,
                   // Not using Reference<...> for improved type display
-                  | number
+                  | NumberUpdate<ATTRIBUTE>
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        fallback?:
+                          | NumberUpdate<ATTRIBUTE>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
                 >
               | SUBTRACT<
                   // Not using Reference<...> for improved type display
-                  | number
+                  | NumberUpdate<ATTRIBUTE>
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        fallback?:
+                          | NumberUpdate<ATTRIBUTE>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >,
                   // Not using Reference<...> for improved type display
-                  | number
+                  | NumberUpdate<ATTRIBUTE>
                   | GET<
                       [
                         ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?: number | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        fallback?:
+                          | NumberUpdate<ATTRIBUTE>
+                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
                       ]
                     >
                 >

@@ -773,19 +773,22 @@ describe('update', () => {
         .item({
           email: 'test-pk',
           sort: 'test-sk',
+          test_big_number: $add(BigInt('10000000')),
           test_number_default: $add(10),
           test_number_set: $add(new Set([1, 2, 3]))
         })
         .params()
 
-    expect(UpdateExpression).toContain('ADD #a_1 :a_1, #a_2 :a_2')
+    expect(UpdateExpression).toContain('ADD #a_1 :a_1, #a_2 :a_2, #a_3 :a_3')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#a_1': 'test_number_set',
-      '#a_2': 'test_number_default'
+      '#a_1': 'test_big_number',
+      '#a_2': 'test_number_set',
+      '#a_3': 'test_number_default'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':a_1': new Set([1, 2, 3]),
-      ':a_2': 10
+      ':a_1': BigInt('10000000'),
+      ':a_2': new Set([1, 2, 3]),
+      ':a_3': 10
     })
   })
 
