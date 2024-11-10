@@ -16,12 +16,18 @@ export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'
 export const isRequired = (attribute: Attribute): boolean =>
   requiringOptions.has(attribute.required)
 
-export function* attrFormatter<OPTIONS extends FormatValueOptions<Attribute> = {}>(
-  attribute: Attribute,
+export function* attrFormatter<
+  ATTRIBUTE extends Attribute,
+  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
+>(
+  attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<Attribute, OPTIONS>, FormatterReturn<Attribute, OPTIONS>> {
-  const { transform = true } = options
+): Generator<
+  FormatterYield<Attribute, FormatValueOptions<Attribute>>,
+  FormatterReturn<Attribute, FormatValueOptions<Attribute>>
+> {
+  const { format = true, transform = true } = options
 
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
@@ -37,7 +43,11 @@ export function* attrFormatter<OPTIONS extends FormatValueOptions<Attribute> = {
     }
 
     if (transform) {
-      yield undefined
+      if (format) {
+        yield undefined
+      } else {
+        return undefined
+      }
     }
 
     return undefined

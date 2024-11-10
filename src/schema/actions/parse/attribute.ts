@@ -69,15 +69,12 @@ export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
       // parseExtension does not fill values
       // If fill was set to `true` and input was defined, we yield it twice for fill steps
       const defaultedValue = filledValue
-      yield defaultedValue as ParserYield<Attribute, OPTIONS>
+      yield defaultedValue
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<Attribute, OPTIONS>
+      yield linkedValue
     }
-    return yield* extensionParser() as Generator<
-      ParserYield<Attribute, OPTIONS>,
-      ParserReturn<Attribute, OPTIONS>
-    >
+    return yield* extensionParser()
   }
 
   if (basicInput === undefined) {
@@ -94,13 +91,13 @@ export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
     const parsedValue = basicInput
 
     if (transform) {
-      yield parsedValue as ParserYield<Attribute, OPTIONS>
+      yield parsedValue
     } else {
-      return parsedValue as ParserReturn<Attribute, OPTIONS>
+      return parsedValue
     }
 
     const transformedValue = parsedValue
-    return transformedValue as ParserReturn<Attribute, OPTIONS>
+    return transformedValue
   }
 
   switch (attribute.type) {

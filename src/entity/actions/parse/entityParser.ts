@@ -34,8 +34,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     key: PrimaryKey<ENTITY['table']>
   } {
     const { fill = true } = options
-
-    const parser = this[$parser].start(input, options as OPTIONS)
+    const parser = this[$parser].start(input, { ...options, transform: true } as OPTIONS)
 
     if (fill) {
       parser.next() // defaulted

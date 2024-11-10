@@ -25,9 +25,9 @@ export type ParserYield<
   SCHEMA extends Schema | Attribute,
   OPTIONS extends ParseValueOptions = {},
   WRITE_VALUE_OPTIONS extends WriteValueOptions = InferWriteValueOptions<OPTIONS>
-> = OPTIONS extends { fill: false }
-  ? ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
-  : InputValue<SCHEMA, WRITE_VALUE_OPTIONS> | ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
+> =
+  | (OPTIONS extends { fill: false } ? never : InputValue<SCHEMA, WRITE_VALUE_OPTIONS>)
+  | ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
 export type ParserReturn<
   SCHEMA extends Schema | Attribute,
@@ -80,10 +80,10 @@ export class Parser<SCHEMA extends Schema | Attribute> extends SchemaAction<SCHE
     return this.parse(inputValue, options)
   }
 
-  validate<OPTIONS extends ParseValueOptions = {}>(
+  validate<OPTIONS extends Omit<ParseValueOptions, 'fill' | 'transform'> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
-  ): inputValue is ParserReturn<SCHEMA, OPTIONS> {
+  ): inputValue is ValidValue<SCHEMA, OPTIONS> {
     try {
       this.parse(inputValue, { ...options, fill: false, transform: false })
     } catch (error) {

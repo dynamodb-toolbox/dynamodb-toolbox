@@ -6,14 +6,15 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 
-export function* primitiveAttrFormatter<
-  OPTIONS extends FormatValueOptions<PrimitiveAttribute> = {}
->(
+export function* primitiveAttrFormatter(
   attribute: PrimitiveAttribute,
   rawValue: unknown,
-  options: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<PrimitiveAttribute>, FormatterReturn<PrimitiveAttribute>> {
-  const { transform = true } = options
+  options: FormatValueOptions<PrimitiveAttribute> = {}
+): Generator<
+  FormatterYield<PrimitiveAttribute, FormatValueOptions<PrimitiveAttribute>>,
+  FormatterReturn<PrimitiveAttribute, FormatValueOptions<PrimitiveAttribute>>
+> {
+  const { format = true, transform = true } = options
 
   if (!isValidPrimitive(attribute, rawValue)) {
     const { path, type } = attribute
@@ -48,7 +49,11 @@ export function* primitiveAttrFormatter<
   }
 
   if (transform) {
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   const formattedValue = transformedValue
