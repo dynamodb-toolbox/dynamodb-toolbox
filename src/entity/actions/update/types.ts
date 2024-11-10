@@ -2,7 +2,6 @@ import type {
   Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   AttributeValue,
   Item,
@@ -25,8 +24,7 @@ import type {
 import type { Entity } from '~/entity/index.js'
 import type { Paths, Schema, ValidValue } from '~/schema/index.js'
 import type { If } from '~/types/if.js'
-import type { OptionalizeUndefinableProperties } from '~/types/optionalizeUndefinableProperties.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { Optional } from '~/types/optional.js'
 
 import type {
   $ADD,
@@ -122,6 +120,14 @@ type MustBeDefined<
     ? true
     : false
 
+type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean = false> = {
+  [KEY in keyof SCHEMA['attributes']]: If<
+    MustBeDefined<SCHEMA['attributes'][KEY], FILLED>,
+    never,
+    KEY
+  >
+}[keyof SCHEMA['attributes']]
+
 type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
   ? true
   : false
@@ -141,7 +147,7 @@ export type UpdateItemInput<
   : Schema extends SCHEMA
     ? Item<UpdateItemInputExtension>
     : SCHEMA extends Schema
-      ? OptionalizeUndefinableProperties<
+      ? Optional<
           {
             [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
               SCHEMA['attributes'][KEY],
@@ -149,8 +155,7 @@ export type UpdateItemInput<
               Paths<SCHEMA>
             >
           },
-          // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-          SelectKeys<SCHEMA['attributes'], AnyAttribute & { required: AtLeastOnce | Never }>
+          OptionalKeys<SCHEMA, FILLED>
         >
       : SCHEMA extends Entity
         ? UpdateItemInput<SCHEMA['schema'], FILLED>
@@ -280,7 +285,7 @@ export type AttributeUpdateItemInput<
       | (ATTRIBUTE extends MapAttribute
           ?
               | Basic<
-                  OptionalizeUndefinableProperties<
+                  Optional<
                     {
                       [KEY in keyof ATTRIBUTE['attributes']]: AttributeUpdateItemInput<
                         ATTRIBUTE['attributes'][KEY],
@@ -288,11 +293,7 @@ export type AttributeUpdateItemInput<
                         SCHEMA_ATTRIBUTE_PATHS
                       >
                     },
-                    // Sadly we override optional AnyAttributes as 'unknown | undefined' => 'unknown' (undefined lost in the process)
-                    SelectKeys<
-                      ATTRIBUTE['attributes'],
-                      AnyAttribute & { required: AtLeastOnce | Never }
-                    >
+                    OptionalKeys<ATTRIBUTE, FILLED>
                   >
                 >
               | SET<ValidValue<ATTRIBUTE, { defined: true }>>
