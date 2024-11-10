@@ -6,6 +6,7 @@ import type {
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
+import type { ComputeObject } from '~/types/computeObject.js'
 import type { If } from '~/types/if.js'
 
 import type { TimestampsOptions } from './options.js'
@@ -15,13 +16,15 @@ export type WithInternalAttribute<
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
   $ATTRIBUTE extends $AttributeNestedState
-> = Schema<{
-  [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
-    ? FreezeAttribute<$ATTRIBUTE, true>
-    : KEY extends keyof SCHEMA['attributes']
-      ? SCHEMA['attributes'][KEY]
-      : never
-}>
+> = Schema<
+  ComputeObject<{
+    [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
+      ? FreezeAttribute<$ATTRIBUTE, true>
+      : KEY extends keyof SCHEMA['attributes']
+        ? SCHEMA['attributes'][KEY]
+        : never
+  }>
+>
 
 export type $EntityAttribute<
   TABLE extends Table,
