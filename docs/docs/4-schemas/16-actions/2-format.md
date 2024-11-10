@@ -82,6 +82,7 @@ You can provide **formatting options** as a second argument. Available options:
 | Option       |       Type       | Default | Description                                                                                                                                                                                                            |
 | ------------ | :--------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `transform`  |    `boolean`     | `true`  | Whether to transform back the input (with `savedAs` and `transform`) prior to formatting or not.                                                                                                                       |
+| `format`     |    `boolean`     | `true`  | Whether to format the input (hide `hidden` attributes) after transformation.<br/><br/>No effect if `transform` is set to `false`.                                                                                      |
 | `partial`    |    `boolean`     | `false` | Allow every attribute (flat or deep) to be optional while formatting.                                                                                                                                                  |
 | `attributes` | `Path<Schema>[]` |    -    | To specify a list of attributes to format (other attributes are omitted).<br/><br/>See the [`PathParser`](../../3-entities/4-actions/19-parse-paths/index.md) action for more details on how to write attribute paths. |
 
@@ -91,32 +92,32 @@ You can provide **formatting options** as a second argument. Available options:
 <TabItem value="partial" label="Partial">
 
 ```ts
-const saved = {
+const transformed = {
   pokemonId: 'pikachu1',
   name: 'Pikachu'
 }
 
-// 🙌 Typed as `DeepPartial<Pokemon>`
+// 🙌 Typed as `DeepPartial<FormattedPokemon>`
 const formatted = pokemonSchema
   .build(Formatter)
-  .format(saved, { partial: true })
+  .format(transformed, { partial: true })
 ```
 
 </TabItem>
 <TabItem value="attributes" label="Attributes">
 
 ```ts
-const saved = {
+const transformed = {
   pokemonId: 'pikachu1',
   name: 'Pikachu',
   level: 42,
   ...
 }
 
-// 🙌 Typed as `Pick<Pokemon, 'name' | 'level'>`
+// 🙌 Typed as `Pick<FormattedPokemon, 'name' | 'level'>`
 const formatted = pokemonSchema
   .build(Formatter)
-  .format(saved, { attributes: ['name', 'level'] })
+  .format(transformed, { attributes: ['name', 'level'] })
 ```
 
 </TabItem>
@@ -131,10 +132,27 @@ const valid = {
   ...
 }
 
-// 👇 Simply omits hidden attributes
+// 👇 Only omits hidden attributes
 const formatted = pokemonSchema
   .build(Formatter)
   .format(valid, { transform: false })
+```
+
+</TabItem>
+<TabItem value="transform-only" label="Transform only">
+
+```ts
+const transformed = {
+  pokemonId: 'pikachu1',
+  name: 'Pikachu',
+  level: 42,
+  ...
+}
+
+// 👇 Keeps hidden attributes
+const valid = pokemonSchema
+  .build(Formatter)
+  .format(transformed, { format: false })
 ```
 
 </TabItem>
@@ -191,3 +209,25 @@ const formattedPokemon = formattingGenerator.next().value
 </Tabs>
 
 :::
+
+### `validate(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(input: unknown) => boolean</code></i></p>
+
+Runs only the **transform step** of the formatting workflow on the provided input. Returns `true` if the input is valid, catches any parsing error and returns `false` otherwise:
+
+```ts
+const isValid = pokemonSchema
+  .build(Formatter)
+  .validate(input)
+```
+
+Note that `.validate(...)` acts as a [type guard](https://www.typescriptlang.org/docs/handbook/advanced-types.html):
+
+```ts
+if (pokemonSchema.build(Formatter).validate(input)) {
+  // 🙌 Typed as `TransformedPokemon`!
+  const { level, name } = input
+  ...
+}
+```

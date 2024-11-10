@@ -1,18 +1,10 @@
-import { EntityAction } from '~/entity/index.js'
 import type { Entity, FormattedItem } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
-import type { FormatValueOptions, InferReadValueOptions } from '~/schema/actions/format/index.js'
 
 import { $formatter } from './constants.js'
-
-export interface FormatItemOptions<ENTITY extends Entity = Entity>
-  extends FormatValueOptions<ENTITY['schema']> {}
-
-export interface InferReadItemOptions<
-  ENTITY extends Entity,
-  OPTIONS extends FormatItemOptions<ENTITY>
-> extends InferReadValueOptions<ENTITY['schema'], OPTIONS> {}
+import type { FormatItemOptions, InferReadItemOptions } from './options.js'
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';
@@ -27,8 +19,19 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
   ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
+    const { transform = true } = options
     try {
-      return this[$formatter].format(item, options)
+      const formatter = this[$formatter].start(item, { ...options, format: true })
+      if (transform) {
+        formatter.next() // transformed
+      }
+
+      const formattedItem = formatter.next().value as FormattedItem<
+        ENTITY,
+        InferReadItemOptions<ENTITY, OPTIONS>
+      >
+
+      return formattedItem
     } catch (error) {
       if (!DynamoDBToolboxError.match(error, 'formatter.')) throw error
 

@@ -1,24 +1,27 @@
-import type { AnyOfAttribute } from '~/attributes/index.js'
+import type { AnyOfAttribute, Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 
-export function* anyOfAttrFormatter<OPTIONS extends FormatValueOptions<AnyOfAttribute> = {}>(
+export function* anyOfAttrFormatter(
   attribute: AnyOfAttribute,
   rawValue: unknown,
-  options: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<AnyOfAttribute, OPTIONS>, FormatterReturn<AnyOfAttribute, OPTIONS>> {
-  const { transform = true } = options
+  options: FormatValueOptions<AnyOfAttribute> = {}
+): Generator<
+  FormatterYield<AnyOfAttribute, FormatValueOptions<AnyOfAttribute>>,
+  FormatterReturn<AnyOfAttribute, FormatValueOptions<AnyOfAttribute>>
+> {
+  const { format = true, transform = true } = options
 
-  let formatter: Generator<any, any> | undefined = undefined
+  let formatter: Generator<unknown, unknown> | undefined = undefined
   let _transformedValue = undefined
   let _formattedValue = undefined
 
   for (const element of attribute.elements) {
     try {
-      formatter = attrFormatter(element, rawValue, options)
+      formatter = attrFormatter(element, rawValue, options as FormatValueOptions<Attribute>)
       if (transform) {
         _transformedValue = formatter.next().value
       }
@@ -44,7 +47,11 @@ export function* anyOfAttrFormatter<OPTIONS extends FormatValueOptions<AnyOfAttr
   }
 
   if (transform) {
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   return formattedValue

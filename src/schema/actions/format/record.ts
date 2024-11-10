@@ -7,12 +7,15 @@ import { Formatter, type FormatterReturn, type FormatterYield } from './formatte
 import type { FormatValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* recordAttrFormatter<OPTIONS extends FormatValueOptions<RecordAttribute> = {}>(
+export function* recordAttrFormatter(
   attribute: RecordAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<RecordAttribute, OPTIONS>, FormatterReturn<RecordAttribute, OPTIONS>> {
-  const { transform = true } = restOptions
+  { attributes, ...restOptions }: FormatValueOptions<RecordAttribute> = {}
+): Generator<
+  FormatterYield<RecordAttribute, FormatValueOptions<RecordAttribute>>,
+  FormatterReturn<RecordAttribute, FormatValueOptions<RecordAttribute>>
+> {
+  const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
     const { path, type } = attribute
@@ -26,7 +29,7 @@ export function* recordAttrFormatter<OPTIONS extends FormatValueOptions<RecordAt
     })
   }
 
-  const formatters: [string, Generator<any, any>][] = []
+  const formatters: [string, Generator<unknown, unknown>][] = []
   for (const [key, element] of Object.entries(rawValue)) {
     if (element === undefined) {
       continue
@@ -46,10 +49,7 @@ export function* recordAttrFormatter<OPTIONS extends FormatValueOptions<RecordAt
 
     formatters.push([
       formattedKey,
-      attrFormatter(attribute.elements, element, {
-        attributes: childrenAttributes,
-        ...restOptions
-      })
+      attrFormatter(attribute.elements, element, { attributes: childrenAttributes, ...restOptions })
     ])
   }
 
@@ -59,7 +59,11 @@ export function* recordAttrFormatter<OPTIONS extends FormatValueOptions<RecordAt
         .map(([key, formatter]) => [key, formatter.next().value])
         .filter(([, element]) => element !== undefined)
     )
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   const formattedValue = Object.fromEntries(

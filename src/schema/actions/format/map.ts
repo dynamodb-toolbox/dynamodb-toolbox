@@ -7,12 +7,15 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* mapAttrFormatter<OPTIONS extends FormatValueOptions<MapAttribute> = {}>(
+export function* mapAttrFormatter(
   mapAttribute: MapAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<MapAttribute, OPTIONS>, FormatterReturn<MapAttribute, OPTIONS>> {
-  const { transform = true } = restOptions
+  { attributes, ...restOptions }: FormatValueOptions<MapAttribute> = {}
+): Generator<
+  FormatterYield<MapAttribute, FormatValueOptions<MapAttribute>>,
+  FormatterReturn<MapAttribute, FormatValueOptions<MapAttribute>>
+> {
+  const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
     const { path, type } = mapAttribute
@@ -26,7 +29,7 @@ export function* mapAttrFormatter<OPTIONS extends FormatValueOptions<MapAttribut
     })
   }
 
-  const formatters: Record<string, Generator<any, any>> = {}
+  const formatters: Record<string, Generator<unknown, unknown>> = {}
   for (const [attributeName, attribute] of Object.entries(mapAttribute.attributes)) {
     const { savedAs } = attribute
 
@@ -53,12 +56,16 @@ export function* mapAttrFormatter<OPTIONS extends FormatValueOptions<MapAttribut
         .map(([attrName, formatter]) => [attrName, formatter.next().value])
         .filter(([, attrValue]) => attrValue !== undefined)
     )
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   const formattedValue = Object.fromEntries(
     Object.entries(formatters)
-      .map(([attrName, formatter]) => [attrName, formatter.next().value])
+      .map(([attrName, formatter]) => [attrName, formatter.next().value] as [string, unknown])
       .filter(
         ([attrName, attrValue]) =>
           mapAttribute.attributes[attrName]?.hidden !== true && attrValue !== undefined

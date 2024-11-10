@@ -12,7 +12,7 @@ export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
 ): Generator<FormatterYield<Schema, OPTIONS>, FormatterReturn<Schema, OPTIONS>> {
-  const { transform = true } = restOptions
+  const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
     throw new DynamoDBToolboxError('formatter.invalidItem', {
@@ -48,7 +48,11 @@ export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}
         .map(([attrName, formatter]) => [attrName, formatter.next().value])
         .filter(([, attrValue]) => attrValue !== undefined)
     )
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   const formattedValue = Object.fromEntries(

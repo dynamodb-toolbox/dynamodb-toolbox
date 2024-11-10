@@ -7,12 +7,15 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 import { matchProjection } from './utils.js'
 
-export function* listAttrFormatter<OPTIONS extends FormatValueOptions<ListAttribute> = {}>(
+export function* listAttrFormatter(
   attribute: ListAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<ListAttribute, OPTIONS>, FormatterReturn<ListAttribute, OPTIONS>> {
-  const { transform = true } = restOptions
+  { attributes, ...restOptions }: FormatValueOptions<ListAttribute> = {}
+): Generator<
+  FormatterYield<ListAttribute, FormatValueOptions<ListAttribute>>,
+  FormatterReturn<ListAttribute, FormatValueOptions<ListAttribute>>
+> {
+  const { format = true, transform = true } = restOptions
 
   if (!isArray(rawValue)) {
     const { path, type } = attribute
@@ -32,13 +35,17 @@ export function* listAttrFormatter<OPTIONS extends FormatValueOptions<ListAttrib
   // - Either projection is deep => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
-  const formatters: Generator<any, any>[] = rawValue.map(element =>
+  const formatters = rawValue.map(element =>
     attrFormatter(attribute.elements, element, { attributes: childrenAttributes, ...restOptions })
   )
 
   if (transform) {
     const transformedValue = formatters.map(formatter => formatter.next().value)
-    yield transformedValue
+    if (format) {
+      yield transformedValue
+    } else {
+      return transformedValue
+    }
   }
 
   const formattedValue = formatters.map(formatter => formatter.next().value)
