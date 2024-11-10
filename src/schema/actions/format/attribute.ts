@@ -21,6 +21,8 @@ export function* attrFormatter<OPTIONS extends FormatValueOptions<Attribute> = {
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<FormatterYield<Attribute, OPTIONS>, FormatterReturn<Attribute, OPTIONS>> {
+  const { transform = true } = options
+
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
       const { path } = attribute
@@ -32,20 +34,27 @@ export function* attrFormatter<OPTIONS extends FormatValueOptions<Attribute> = {
         path,
         payload: {}
       })
-    } else {
-      return undefined
     }
+
+    if (transform) {
+      yield undefined
+    }
+
+    return undefined
   }
 
   switch (attribute.type) {
     case 'any':
-      return yield* anyAttrFormatter(attribute, rawValue)
+      return yield* anyAttrFormatter(attribute, rawValue, options)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveAttrFormatter(attribute, rawValue)
+      return yield* primitiveAttrFormatter(attribute, rawValue, {
+        ...options,
+        attributes: undefined
+      })
     case 'set':
       return yield* setAttrFormatter(attribute, rawValue, options)
     case 'list':
