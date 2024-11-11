@@ -24,7 +24,7 @@ It provides as a light abstraction layer over the SDK that **turns your DynamoDB
 
 If you're here, we're assuming you know DynamoDB. If you don't, check out the [official AWS docs](https://aws.amazon.com/dynamodb).
 
-:::infoTL;DR
+:::info[TL;DR]
 
 [DynamoDB](https://aws.amazon.com/dynamodb) is a key-value DB designed to run high-performance applications at any scale. It **automatically scales** up and down based on your current traffic, and removes the need to maintain connections, which makes it the **go-to DB for many projects**, including (but not limited to) **serverless applications**.
 
