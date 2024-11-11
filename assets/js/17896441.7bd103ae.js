@@ -1,1 +1,0 @@
-(self.webpackChunkmy_website=self.webpackChunkmy_website||[]).push([[8401],{24508:(e,n,r)=>{var o={"./locale":25762,"./locale.js":25762};function t(e){var n=s(e);return r(n)}function s(e){if(!r.o(o,e)){var n=new Error("Cannot find module '"+e+"'");throw n.code="MODULE_NOT_FOUND",n}return o[e]}t.keys=function(){return Object.keys(o)},t.resolve=s,e.exports=t,t.id=24508}}]);
