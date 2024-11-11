@@ -19,7 +19,7 @@ yarn add @aws-sdk/lib-dynamodb @aws-sdk/client-dynamodb
 
 ```
 
-## Install DynamoDB Toolbox using aws-sdk v2 (<v0.8.0)
+## Install DynamoDB Toolbox using aws-sdk v2 (\<v0.8.0)
 
 Using your favorite package manager, install DynamoDB Toolbox and aws-sdk v2 in your project by running one of the following commands:
 
@@ -68,7 +68,7 @@ export const DocumentClient = DynamoDBDocumentClient.from(
 )
 ```
 
-## Load the DocumentClient using aws-sdk v2 (<v0.8.0)
+## Load the DocumentClient using aws-sdk v2 (\<v0.8.0)
 
 ```typescript title="TypeScript"
 import DynamoDB from 'aws-sdk/clients/dynamodb'

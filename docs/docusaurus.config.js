@@ -1,12 +1,12 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+// @ts-expect-error
 const lightCodeTheme = require('prism-react-renderer/themes/vsLight')
+// @ts-expect-error
 const darkCodeTheme = require('prism-react-renderer/themes/vsDark')
 
-// @ts-expect-error bad typing
 lightCodeTheme.plain.backgroundColor = '#f8f8f8'
-// @ts-expect-error bad typing
 darkCodeTheme.plain.backgroundColor = '#242424'
 
 /** @type {import('@docusaurus/types').Config} */
@@ -107,12 +107,6 @@ const config = {
         // searchParameters: {},
         // Optional: path for search page that enabled by default (`false` to disable it)
         searchPagePath: 'search'
-      },
-      announcementBar: {
-        id: 'v1_announcement',
-        content:
-          '🙌 <b>The v1 of DynamoDB-Toolbox is OUT!</b> 🙌<br/><div><a href="/docs/getting-started/overview">Get started</a> • <a href="/docs/v0/migration-guide">Migrate</a> • <a href="/docs/v0/introduction/what-is-dynamodb-toolbox">v0 docs</a></div>',
-        isCloseable: true
       }
     })
 }

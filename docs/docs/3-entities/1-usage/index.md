@@ -39,7 +39,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-:::caution
+:::warning
 
 DynamoDB-Toolbox automatically tags your items with their respective entity names (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
 
@@ -65,7 +65,7 @@ The [`Table`](../../2-tables/1-usage/index.md) of the `Entity`.
 
 DynamoDB-Toolbox must check that an entity `schema` matches its `Table` primary key somehow. In simple cases, both schemas can **simply fit**:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="direct-match" label="Direct match">
@@ -172,7 +172,7 @@ In this case, the `Entity` constructor requires a `computeKey` function to deriv
 
 This can be useful for more complex cases like mapping several attributes to the same key:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="renaming" label="Renaming">

@@ -12,7 +12,7 @@ If you used the v0 of DynamoDB-Toolbox, here are the changes you need to be awar
 
 The good news is that the breaking changes **only concern the API**: You won't need any data migration 🥳
 
-:::caution
+:::warning
 
 Well, probably... as there are two exceptions:
 

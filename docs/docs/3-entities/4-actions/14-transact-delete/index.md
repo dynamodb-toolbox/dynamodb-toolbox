@@ -96,7 +96,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 | `tableName` |             `string`              |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="condition" label="Conditional write">

@@ -120,7 +120,7 @@ You can provide **parsing options** as a second argument. Available options:
 | `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.           |
 | `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put" label="Put">

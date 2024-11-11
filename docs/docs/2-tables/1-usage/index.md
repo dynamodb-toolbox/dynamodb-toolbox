@@ -74,7 +74,7 @@ PokeTable.documentClient = documentClient
 
 A `string` (or function returning a `string`) that matches the [name](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.Basics.html#WorkingWithTables.Basics.CreateTable) of your DynamoDB table:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="fixed" label="Fixed">
@@ -133,7 +133,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 The [partition key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey) attribute name and type of your DynamoDB table:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="string" label="String">
@@ -201,9 +201,9 @@ Secondary indexes are represented as key-value pairs, keys being the index names
 
 - The `type` of the secondary index (`"local"` or `"global"`)
 - For global secondary indexes, the `partitionKey` of the index (similar to the main [`partitionKey`](#partitionkey))
-- The `sortKey` of the index (similar to the main [`sortKey`](#sortKey))
+- The `sortKey` of the index (similar to the main [`sortKey`](#sortkey))
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="gsi" label="Global Index">
@@ -256,7 +256,7 @@ const MyTable = new Table({
 
 :::
 
-:::caution
+:::warning
 
 When whitelisted, the projected attributes of a secondary index MUST include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
 
@@ -278,9 +278,7 @@ const MyTable = new Table({
 });
 ```
 
-<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
-
-:::caution
+:::warning
 
 ☝️ This property **cannot be updated** once your Table has its first item (at least not without a data migration first), so choose wisely!
 

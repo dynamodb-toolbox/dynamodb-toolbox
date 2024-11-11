@@ -89,7 +89,7 @@ Note that:
 - The mode `defaults` and `links` are applied by default
 - Transformations (i.e. `savedAs` and `transforms`) are applied by default
 
-:::noteExample
+:::note[Example]
 
 Here are **step-by-step** parsing examples:
 
@@ -365,7 +365,7 @@ You can provide options as a second argument. Available options:
 | `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts which `default` and `link` should be used, as well as requiredness during validation.           |
 | `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put" label="Put">
@@ -469,7 +469,7 @@ const keyInput: InputValue<
 
 Similar to [`.parse`](#parse), but returns the underlying [Generator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator) to inspect the intermediate results of the parsing steps:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="complete" label="Complete">
@@ -544,7 +544,7 @@ Available options:
 | `mode`           | `put`, `key` or `update` |  `put`  | The mode of the parsing: Impacts requiredness during validation.                                                                 |
 | `parseExtension` |       _(internal)_       |    -    | Dependency injection required to parse extended syntax (`$get`, `$add` etc.) when using the `update` mode (check example below). |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put" label="Put">

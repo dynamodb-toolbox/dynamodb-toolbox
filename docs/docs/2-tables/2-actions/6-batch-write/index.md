@@ -79,7 +79,7 @@ Available options:
 | ----------- | :------: | :-----: | --------------------------------------------------------------------------------------------------------- |
 | `tableName` | `string` |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy). |
 
-:::noteExamples
+:::note[Examples]
 
 ```ts
 const command = PokeTable.build(BatchWriteCommand)
@@ -99,7 +99,7 @@ import { execute } from 'dynamodb-toolbox/table/actions/batchWrite'
 await execute(...batchWriteCommands)
 ```
 
-:::caution
+:::warning
 
 Only one `BatchWriteCommand` per Table is supported.
 
@@ -122,7 +122,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `documentClient` | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `BatchWriteCommand` is used to execute the operation.<br/><br/>Use this option to override this behavior.          |
 | `maxAttempts`    |  `integer ≥ 1`   |   `1`    | A "meta" option provided by DynamoDB-Toolbox to retry failed requests in a single promise.<br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.                |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="capacity" label="Capacity">

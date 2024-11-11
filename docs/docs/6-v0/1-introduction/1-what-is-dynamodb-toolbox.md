@@ -66,9 +66,7 @@ Require or import `Table` and `Entity` from `dynamodb-toolbox`:
 import { Table, Entity } from 'dynamodb-toolbox'
 ```
 
-<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
-
-:::caution Please Note
+:::warning Please Note
 
 This library **DOES NOT** create DynamoDB Tables for you. You must create the tables yourself (either via the console or some form of Infrastructure as Code).
 

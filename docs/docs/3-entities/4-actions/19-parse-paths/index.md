@@ -30,7 +30,7 @@ Parses a list of paths. Throws an `invalidExpressionAttributePath` error if a pa
 PokemonEntity.build(PathParser).parse(['name', 'level'])
 ```
 
-Note that the `parse` method should only be used once per instance (for now). See [Building Paths](#building-paths) for more details on how to write paths.
+Note that the `parse` method should only be used once per instance (for now). See [Paths](#paths) for more details on how to write paths.
 
 ### `toCommandOptions()`
 
