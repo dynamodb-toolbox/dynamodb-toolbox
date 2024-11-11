@@ -111,7 +111,7 @@ const MyEntity = new Entity({
 
 ### Using an `array` for composite keys
 
-:::warning Deprecation Notice
+:::warning[Deprecation Notice]
 
 Please note that this feature will likely be deprecated in a future release.
 
