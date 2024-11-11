@@ -25,7 +25,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-Schemas always start with a **root object**, listing [**attributes**](#attributes) by their names.
+Schemas always start with a **root object**, listing [**attributes**](#attribute-types) by their names.
 
 ## Attribute Types
 

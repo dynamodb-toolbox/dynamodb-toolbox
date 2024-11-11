@@ -35,7 +35,7 @@ const check = PokemonEntity.build(ConditionCheck).key(...).condition(...)
 await execute(put, update, del, check, ...otherTransactions)
 ```
 
-:::caution
+:::warning
 
 Only **one transaction per item** is supported. For instance, you cannot run a `ConditionCheck` and an `UpdateTransaction` on the same item: You can, however, condition the `UpdateTransaction` itself.
 
@@ -58,7 +58,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `clientRequestToken` |     `string`     |    -     | Providing a `clientRequestToken` makes the execution idempotent, meaning that multiple identical calls have the same effect as one single call.                                          |
 | `documentClient`     | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `WriteTransaction` is used to execute the operation.<br/><br/>Use this option to override this behavior.           |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="capacity" label="Capacity">

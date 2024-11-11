@@ -58,7 +58,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Also **formats** them and **types** the response:
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/2-internal-attributes/index.md#entity) attribute). Also **formats** them and **types** the response:
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -248,7 +248,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </tbody>
 </table>
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="consistent" label="Strongly consistent">
@@ -302,7 +302,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 :::
 
-:::notePaginated
+:::note[Paginated]
 
 <Tabs>
 <TabItem value="paginated" label="Paginated">
@@ -341,7 +341,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 :::
 
-:::noteFiltered
+:::note[Filtered]
 
 <Tabs>
 <TabItem value="filtered" label="Filtered">

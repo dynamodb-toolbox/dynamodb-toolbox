@@ -64,7 +64,7 @@ It also differs from [`UpdateItemInput`](../3-update-item/index.md#item) as deep
 
 Root attributes, wether flat or deep, benefit from the same syntax as the [`UpdateItemCommand`](../3-update-item/index.md#removing-an-attribute) command:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="remove" label="$remove">

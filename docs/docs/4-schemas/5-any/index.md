@@ -93,7 +93,7 @@ const metadataSchema = any({ savedAs: 'meta' })
 
 Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put" label="Put">
@@ -182,7 +182,7 @@ const pokemonSchema = schema({
 
 Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
-:::noteExamples
+:::note[Examples]
 
 ```ts
 const metadataSchema = any().validate(

@@ -114,7 +114,7 @@ const pokeTypesSchema = list(..., { savedAs: 'pt' })
 
 Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put-update" label="Put/Update">
@@ -205,7 +205,7 @@ const pokemonSchema = schema({
 
 Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
-:::noteExamples
+:::note[Examples]
 
 ```ts
 const nonEmptyListSchema = list(string()).validate(

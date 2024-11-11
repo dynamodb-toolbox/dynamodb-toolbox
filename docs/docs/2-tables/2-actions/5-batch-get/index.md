@@ -53,7 +53,7 @@ The [`BatchGetRequests`](../../../3-entities/4-actions/7-batch-get/index.md) to 
 
 Note that the requests can be provided as **tuples** or **arrays** (the output is typed accordingly):
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="tuple" label="Tuple">
@@ -128,7 +128,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `attributes` | `string[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>Requires [requests](#requests). Paths must be common to all requested entities.<br/><br/>See the [PathParser](../../../3-entities/4-actions/19-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `tableName`  |  `string`  |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                                                                                                                                   |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="consistent" label="Strongly consistent">
@@ -176,7 +176,7 @@ import { execute } from 'dynamodb-toolbox/table/actions/batchGet'
 await execute(...batchGetCommands)
 ```
 
-:::caution
+:::warning
 
 Only one `BatchGetCommand` per Table is supported.
 
@@ -184,7 +184,7 @@ Only one `BatchGetCommand` per Table is supported.
 
 Note that the commands can be provided as **tuples** or **arrays** (the output is typed accordingly):
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="tuple" label="Tuple">
@@ -233,7 +233,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `documentClient` | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `BatchGetCommand` is used to execute the operation.<br/><br/>Use this option to override this behavior.            |
 | `maxAttempts`    |  `integer ≥ 1`   |   `1`    | A "meta" option provided by DynamoDB-Toolbox to retry failed requests in a single promise.<br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.                |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="capacity" label="Capacity">

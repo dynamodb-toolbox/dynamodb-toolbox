@@ -96,7 +96,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                      |
 | `tableName`    |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                     |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="conditional" label="Conditional write">

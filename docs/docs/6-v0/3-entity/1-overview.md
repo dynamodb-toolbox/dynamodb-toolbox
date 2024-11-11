@@ -111,9 +111,7 @@ const MyEntity = new Entity({
 
 ### Using an `array` for composite keys
 
-<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
-
-:::caution Deprecation Notice
+:::warning Deprecation Notice
 
 Please note that this feature will likely be deprecated in a future release.
 

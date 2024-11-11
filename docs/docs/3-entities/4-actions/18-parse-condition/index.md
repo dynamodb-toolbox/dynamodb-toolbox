@@ -113,7 +113,7 @@ You can only specify one operator per condition. To combine multiple conditions,
 
 `attr` contains the path of the attribute value to check (potentially deep). You can also specify `size` instead of `attr` if you want to check the **size** of an attribute (in which case the attribute type becomes `number`):
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="root" label="Root">
@@ -187,7 +187,7 @@ Value conditions evaluate against the **value** of an attribute:
 <!-- prettier-ignore -->
 <sup><i>*<a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes">Scalar</a> = <code>boolean</code>, <code>number</code>, <code>string</code> or <code>binary</code></i></sup>
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="eq" label="Equal">
@@ -290,7 +290,7 @@ Apart from the [`eq` value condition](#value-conditions), only range conditions 
 <!-- prettier-ignore -->
 <sup><i>* Sortable = <code>number</code>, <code>string</code> or <code>binary</code></i></sup>
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="greater-than" label="≥">
@@ -357,9 +357,7 @@ const capturedIn2024: Condition<typeof PokemonEntity> = {
 
 :::
 
-<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
-
-:::caution
+:::warning
 
 Again, only one operator can be applied per condition: Using `gte` and `lte` simultaneously does **not** result in a `between`.
 
@@ -375,7 +373,7 @@ You can **combine conditions logically** with the `or`, `and` and `not` operator
 | `and` | `Condition<ENTITY>[]` |       -        | Checks that **all of** the child conditions evaluate to `true` |
 | `not` |  `Condition<ENTITY>`  |       -        | **Negates** the evaluation of the condition                    |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="or" label="Or">
@@ -448,9 +446,7 @@ const atMaxLevel: Condition<typeof PokemonEntity> = {
 }
 ```
 
-<!-- NOTE: 'caution' became 'warning' in docusaurus v3 -->
-
-:::caution
+:::warning
 
 Note that the compared attribute path is type-checked and validated, but whether its type CAN be compared is **not** for the moment, so be extra-careful:
 

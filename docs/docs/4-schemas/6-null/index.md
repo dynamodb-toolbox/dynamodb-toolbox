@@ -107,7 +107,7 @@ const nullishSchema = nul({ savedAs: '_n' })
 
 Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="put" label="Put">

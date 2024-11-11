@@ -26,7 +26,7 @@ Check the [Transaction Documentation](../10-transactions/index.md#transactwrite)
 
 :::
 
-:::caution
+:::warning
 
 Only **one transaction per item** is supported. For instance, you cannot run a `ConditionCheck` and an `UpdateTransaction` on the same item: You can, however, condition the `UpdateTransaction` itself.
 
@@ -101,7 +101,7 @@ Available options:
 | ----------- | :------: | :-----: | --------------------------------------------------------------------------------------------------------- |
 | `tableName` | `string` |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy). |
 
-:::noteExamples
+:::note[Examples]
 
 ```ts
 const transaction = PokemonEntity.build(ConditionCheck)

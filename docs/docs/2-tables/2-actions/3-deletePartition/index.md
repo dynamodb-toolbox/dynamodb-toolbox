@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # DeletePartition
 
-:::caution
+:::warning
 
 `DeletePartitionCommand` is exposed as a quality of life improvement, but is NOT an official DynamoDB operation (eventhough we wish it was).
 
@@ -59,7 +59,7 @@ See the [`QueryCommand`](../2-query/index.md#query) documentation for more detai
 
 <p style={{ marginTop: '-15px' }}><i>(required)</i></p>
 
-Provides a list of entities to filter the deleted items (via the internal [`entity`](../../../3-entities/1-usage/index.md#entity-attribute) attribute). Required to build underlying [`BatchDeleteRequests`](../../../3-entities/4-actions/9-batch-delete/index.md):
+Provides a list of entities to filter the deleted items (via the internal [`entity`](../../../3-entities/2-internal-attributes/index.md#entity) attribute). Required to build underlying [`BatchDeleteRequests`](../../../3-entities/4-actions/9-batch-delete/index.md):
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
@@ -176,7 +176,7 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
     </tbody>
 </table>
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="consistent" label="Strongly consistent">

@@ -75,7 +75,7 @@ type ValidUpdate = ValidValue<
 >
 ```
 
-:::noteExample
+:::note[Example]
 
 Here are **step-by-step** examples:
 

@@ -96,7 +96,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../19-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `tableName`  |     `string`     |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                 |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="attributes" label="Attributes">
@@ -135,7 +135,7 @@ await execute(...getTransactions)
 
 Note that the transactions can be provided as **tuples** or **arrays** (the output is typed accordingly):
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="tuple" label="Tuple">
@@ -184,7 +184,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`       | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 | `documentClient` | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `GetTransaction` entity is used to execute the operation.<br/><br/>Use this option to override this behavior.      |
 
-:::noteExamples
+:::note[Examples]
 
 <Tabs>
 <TabItem value="capacity" label="Capacity">
