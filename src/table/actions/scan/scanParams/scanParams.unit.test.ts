@@ -419,6 +419,29 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
+  test('applies blind filter if no entity has been provided', () => {
+    const command = TestTable.build(ScanCommand).options({ filter: { attr: 'foo', eq: 'bar' } })
+    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      command.params()
+
+    expect(FilterExpression).toBe('#c_1 = :c_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'foo' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c_1': 'bar' })
+  })
+
+  test('ignores filter if entities have been provided', () => {
+    const command = TestTable.build(ScanCommand)
+      .entities(Entity1)
+      .options({
+        // @ts-expect-error
+        filter: { attr: 'foo', eq: 'bar' }
+      })
+    const { ExpressionAttributeNames = {}, ExpressionAttributeValues = {} } = command.params()
+
+    expect(Object.values(ExpressionAttributeNames)).not.toContain('foo')
+    expect(Object.values(ExpressionAttributeValues)).not.toContain('bar')
+  })
+
   test('applies entity _et filter', () => {
     const command = TestTable.build(ScanCommand).entities(Entity1)
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =

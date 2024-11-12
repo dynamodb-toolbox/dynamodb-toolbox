@@ -1,5 +1,6 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
+import { AnyAttribute } from '~/attributes/any/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
@@ -14,6 +15,7 @@ import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
 import { parseTableNameOption } from '~/options/tableName.js'
+import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
@@ -33,6 +35,17 @@ type QueryParamsGetter = <
   query: QUERY,
   options?: OPTIONS
 ) => QueryCommandInput
+
+const defaultAnyAttribute = new AnyAttribute({
+  required: 'never',
+  hidden: false,
+  key: false,
+  savedAs: undefined,
+  defaults: { key: undefined, put: undefined, update: undefined },
+  links: { key: undefined, put: undefined, update: undefined },
+  validators: { key: undefined, put: undefined, update: undefined },
+  castAs: undefined
+})
 
 export const queryParams: QueryParamsGetter = <
   TABLE extends Table,
@@ -55,6 +68,7 @@ export const queryParams: QueryParamsGetter = <
     reverse,
     select,
     entityAttrFilter = true,
+    filter,
     filters: _filters,
     attributes: _attributes,
     tableName,
@@ -134,14 +148,50 @@ export const queryParams: QueryParamsGetter = <
   Object.assign(expressionAttributeNames, keyConditionExpressionAttributeNames)
   Object.assign(expressionAttributeValues, keyConditionExpressionAttributeValues)
 
+  if (entities.length === 0 && filter !== undefined) {
+    const {
+      ExpressionAttributeNames: filterExpressionAttributeNames,
+      ExpressionAttributeValues: filterExpressionAttributeValues,
+      ConditionExpression: filterExpression
+    } = new ConditionParser(defaultAnyAttribute).parse(filter).toCommandOptions()
+
+    Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
+    Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
+    commandOptions.FilterExpression = filterExpression
+  }
+
   if (entities.length > 0) {
     const filterExpressions: string[] = []
     let projectionExpression: string | undefined = undefined
 
-    entities.forEach((entity, index) => {
+    let index = 0
+    for (const entity of entities) {
+      /**
+       * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
+       */
+      if (projectionExpression === undefined && attributes !== undefined) {
+        const { entityAttributeName } = entity
+
+        const {
+          ExpressionAttributeNames: projectionExpressionAttributeNames,
+          ProjectionExpression
+        } = entity
+          .build(EntityPathParser)
+          .parse(
+            // entityAttributeName is required at all times for formatting
+            attributes.includes(entityAttributeName)
+              ? attributes
+              : [entityAttributeName, ...attributes]
+          )
+          .toCommandOptions()
+
+        Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
+        projectionExpression = ProjectionExpression
+      }
+
       const entityFilter = filters[entity.name]
       if (entityFilter === undefined && !entityAttrFilter) {
-        return
+        continue
       }
 
       const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
@@ -163,29 +213,8 @@ export const queryParams: QueryParamsGetter = <
       Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
       filterExpressions.push(filterExpression)
 
-      /**
-       * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
-       */
-      if (attributes !== undefined) {
-        const { entityAttributeName } = entity
-
-        const {
-          ExpressionAttributeNames: projectionExpressionAttributeNames,
-          ProjectionExpression
-        } = entity
-          .build(EntityPathParser)
-          .parse(
-            // entityAttributeName is required at all times for formatting
-            attributes.includes(entityAttributeName)
-              ? attributes
-              : [entityAttributeName, ...attributes]
-          )
-          .toCommandOptions()
-
-        Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
-        projectionExpression = ProjectionExpression
-      }
-    })
+      index++
+    }
 
     if (filterExpressions.length > 0) {
       commandOptions.FilterExpression =

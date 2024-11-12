@@ -16,6 +16,7 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
   limit?: number
   maxPages?: number
   entityAttrFilter?: boolean
+  filter?: Entity[] extends ENTITIES ? Condition : never
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
