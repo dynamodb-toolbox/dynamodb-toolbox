@@ -69,6 +69,7 @@ export const appendAttributePath = (
   let attributeMatches = [...attributePath.matchAll(pathRegex)]
   let attributePathTail: string | undefined
 
+  let root = true
   while (attributeMatches.length > 0) {
     const attributeMatch = attributeMatches.shift() as RegExpMatchArray
 
@@ -93,7 +94,7 @@ export const appendAttributePath = (
           }
           default: {
             const expressionAttributeNameIndex = parser.expressionAttributeNames.push(matchedKey)
-            expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+            expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
           }
         }
 
@@ -118,7 +119,7 @@ export const appendAttributePath = (
         const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false }) as string
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
-        expressionPath += `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+        expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
 
         parentAttribute = parentAttribute.elements
         break
@@ -134,10 +135,7 @@ export const appendAttributePath = (
           childAttribute.savedAs ?? matchedKey
         )
 
-        expressionPath +=
-          parentAttribute.type === 'schema'
-            ? `#${expressionAttributePrefix}${expressionAttributeNameIndex}`
-            : `.#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+        expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
         parentAttribute = childAttribute
         break
       }
@@ -171,13 +169,15 @@ export const appendAttributePath = (
         }
 
         parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
-        expressionPath += validElementExpressionParser.expression
+        expressionPath += `${root ? '' : '.'}${validElementExpressionParser.expression}`
         // No need to go over the rest of the path
         attributeMatches = []
 
         break
       }
     }
+
+    root = false
   }
 
   if (

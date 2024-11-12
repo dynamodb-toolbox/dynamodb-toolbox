@@ -206,7 +206,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowSpan="4" align="center" class="vertical"><b>Filters</b></td>
+            <td rowSpan="5" align="center" class="vertical"><b>Filters</b></td>
             <td><code>select</code></td>
             <td align="center"><code>SelectOption</code></td>
             <td align="center">-</td>
@@ -222,6 +222,16 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td>
               For each entity name, a condition that must be satisfied in order for evaluated items of this entity to be returned (improves performances but does not reduce costs).
               <br/><br/>Requires <a href="#entities"><code>entities</code></a>.
+              <br/><br/>See the <a href="../../entities/actions/parse-condition#building-conditions"><code>ConditionParser</code></a> action for more details on how to write conditions.
+            </td>
+        </tr>
+        <tr>
+            <td><code>filter</code></td>
+            <td align="center"><code>Condition</code></td>
+            <td align="center">-</td>
+            <td>
+              An untyped condition that must be satisfied in order for evaluated items to be returned (improves performances but does not reduce costs).
+              <br/><br/>No effect if <a href="#entities"><code>entities</code></a> are provided (use <code>filters</code> instead).
               <br/><br/>See the <a href="../../entities/actions/parse-condition#building-conditions"><code>ConditionParser</code></a> action for more details on how to write conditions.
             </td>
         </tr>
@@ -344,7 +354,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 :::note[Filtered]
 
 <Tabs>
-<TabItem value="filtered" label="Filtered">
+<TabItem value="filters" label="Filters">
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
@@ -355,6 +365,18 @@ const { Items } = await PokeTable.build(QueryCommand)
       POKEMONS: { attr: 'pokeType', eq: 'fire' },
       TRAINERS: { attr: 'age', gt: 18 }
     }
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="filter" label="Filter">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .options({
+    filters: { attr: 'pokeType', eq: 'fire' }
   })
   .send()
 ```

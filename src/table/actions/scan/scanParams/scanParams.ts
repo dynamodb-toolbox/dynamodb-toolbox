@@ -1,5 +1,6 @@
 import type { ScanCommandInput } from '@aws-sdk/lib-dynamodb'
 
+import { AnyAttribute } from '~/attributes/any/index.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
@@ -14,6 +15,7 @@ import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
 import { parseTableNameOption } from '~/options/tableName.js'
+import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
@@ -29,6 +31,17 @@ type ScanParamsGetter = <
   entities?: ENTITIES,
   options?: OPTIONS
 ) => ScanCommandInput
+
+const defaultAnyAttribute = new AnyAttribute({
+  required: 'never',
+  hidden: false,
+  key: false,
+  savedAs: undefined,
+  defaults: { key: undefined, put: undefined, update: undefined },
+  links: { key: undefined, put: undefined, update: undefined },
+  validators: { key: undefined, put: undefined, update: undefined },
+  castAs: undefined
+})
 
 export const scanParams: ScanParamsGetter = <
   TABLE extends Table,
@@ -50,11 +63,13 @@ export const scanParams: ScanParamsGetter = <
     totalSegments,
     segment,
     entityAttrFilter = true,
+    filter,
     filters: _filters,
     attributes: _attributes,
     tableName,
     ...extraOptions
   } = options
+  rejectExtraOptions(extraOptions)
 
   const filters = (_filters ?? {}) as Record<string, Condition>
   const attributes = _attributes as EntityPaths[] | undefined
@@ -126,36 +141,27 @@ export const scanParams: ScanParamsGetter = <
     commandOptions.Segment = segment
   }
 
+  const expressionAttributeNames: Record<string, string> = {}
+  const expressionAttributeValues: Record<string, any> = {}
+
+  if (entities.length === 0 && filter !== undefined) {
+    const {
+      ExpressionAttributeNames: filterExpressionAttributeNames,
+      ExpressionAttributeValues: filterExpressionAttributeValues,
+      ConditionExpression: filterExpression
+    } = new ConditionParser(defaultAnyAttribute).parse(filter).toCommandOptions()
+
+    Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
+    Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
+    commandOptions.FilterExpression = filterExpression
+  }
+
   if (entities.length > 0) {
-    const expressionAttributeNames: Record<string, string> = {}
-    const expressionAttributeValues: Record<string, any> = {}
     const filterExpressions: string[] = []
     let projectionExpression: string | undefined = undefined
 
-    entities.forEach((entity, index) => {
-      const entityFilter = filters[entity.name]
-      if (entityFilter === undefined && !entityAttrFilter) {
-        return
-      }
-
-      const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
-
-      const {
-        ExpressionAttributeNames: filterExpressionAttributeNames,
-        ExpressionAttributeValues: filterExpressionAttributeValues,
-        ConditionExpression: filterExpression
-      } = entity
-        .build(EntityConditionParser)
-        .setId(index.toString())
-        .parse(
-          entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter
-        )
-        .toCommandOptions()
-
-      Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
-      Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
-      filterExpressions.push(filterExpression)
-
+    let index = 0
+    for (const entity of entities) {
       /**
        * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
        */
@@ -178,14 +184,31 @@ export const scanParams: ScanParamsGetter = <
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression
       }
-    })
 
-    if (!isEmpty(expressionAttributeNames)) {
-      commandOptions.ExpressionAttributeNames = expressionAttributeNames
-    }
+      const entityFilter = filters[entity.name]
+      if (entityFilter === undefined && !entityAttrFilter) {
+        continue
+      }
 
-    if (!isEmpty(expressionAttributeValues)) {
-      commandOptions.ExpressionAttributeValues = expressionAttributeValues
+      const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
+
+      const {
+        ExpressionAttributeNames: filterExpressionAttributeNames,
+        ExpressionAttributeValues: filterExpressionAttributeValues,
+        ConditionExpression: filterExpression
+      } = entity
+        .build(EntityConditionParser)
+        .setId(index.toString())
+        .parse(
+          entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter
+        )
+        .toCommandOptions()
+
+      Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
+      Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
+      filterExpressions.push(filterExpression)
+
+      index++
     }
 
     if (filterExpressions.length > 0) {
@@ -200,7 +223,13 @@ export const scanParams: ScanParamsGetter = <
     }
   }
 
-  rejectExtraOptions(extraOptions)
+  if (!isEmpty(expressionAttributeNames)) {
+    commandOptions.ExpressionAttributeNames = expressionAttributeNames
+  }
+
+  if (!isEmpty(expressionAttributeValues)) {
+    commandOptions.ExpressionAttributeValues = expressionAttributeValues
+  }
 
   return commandOptions
 }
