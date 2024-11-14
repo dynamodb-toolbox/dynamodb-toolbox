@@ -153,7 +153,7 @@ export const queryParams: QueryParamsGetter = <
       ExpressionAttributeNames: filterExpressionAttributeNames,
       ExpressionAttributeValues: filterExpressionAttributeValues,
       ConditionExpression: filterExpression
-    } = new ConditionParser(defaultAnyAttribute).parse(filter).toCommandOptions()
+    } = new ConditionParser(defaultAnyAttribute).setId('1').parse(filter).toCommandOptions()
 
     Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
     Object.assign(expressionAttributeValues, filterExpressionAttributeValues)

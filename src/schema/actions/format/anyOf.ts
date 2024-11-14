@@ -35,12 +35,12 @@ export function* anyOfAttrFormatter(
   const transformedValue = _transformedValue
   const formattedValue = _formattedValue
   if (formatter === undefined || formattedValue === undefined) {
-    const { path } = attribute
+    const { path, savedAs } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting. Attribute does not match any of the possible sub-types${
         path !== undefined ? `: '${path}'` : ''
-      }.`,
+      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}.`,
       path,
       payload: { received: rawValue }
     })

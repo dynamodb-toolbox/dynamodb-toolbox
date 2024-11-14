@@ -18,12 +18,12 @@ export function* recordAttrFormatter(
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { path, type } = attribute
+    const { path, type, savedAs } = attribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }. Should be a ${type}.`,
+      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })

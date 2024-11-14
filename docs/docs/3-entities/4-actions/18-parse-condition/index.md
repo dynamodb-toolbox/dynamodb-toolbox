@@ -284,7 +284,7 @@ Apart from the [`eq` value condition](#value-conditions), only range conditions 
 |    `lte`     |       `sortable`       |   `sortable`   | Checks that the attribute is **lower than or equal to** the specified value         |
 |     `lt`     |       `sortable`       |   `sortable`   | Checks that the attribute is **strictly lower than** the specified value            |
 |  `between`   | `[sortable, sortable]` |   `sortable`   | Checks that the attribute is **between** two values (inclusive)                     |
-| `beginsWith` |   `[string, string]`   |    `string`    | Checks that the `string` attribute specified **begins with a particular substring** |
+| `beginsWith` |        `string`        |    `string`    | Checks that the `string` attribute specified **begins with a particular substring** |
 
 <!-- Required for prettier not to prefix * with anti-slash -->
 <!-- prettier-ignore -->
