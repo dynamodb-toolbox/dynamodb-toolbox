@@ -745,9 +745,9 @@ describe('query', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       command.params()
 
-    expect(FilterExpression).toBe('#c_1 = :c_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'foo' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c_1': 'bar' })
+    expect(FilterExpression).toBe('#c1_1 = :c1_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': 'foo' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': 'bar' })
   })
 
   test('ignores filter if entities have been provided', () => {

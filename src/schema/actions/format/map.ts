@@ -18,12 +18,12 @@ export function* mapAttrFormatter(
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { path, type } = mapAttribute
+    const { path, type, savedAs } = mapAttribute
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }. Should be a ${type}.`,
+      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })
