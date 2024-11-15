@@ -6,10 +6,11 @@ import { anyOfAttrFormatter } from './anyOf.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import { listAttrFormatter } from './list.js'
 import { mapAttrFormatter } from './map.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
 import { primitiveAttrFormatter } from './primitive.js'
 import { recordAttrFormatter } from './record.js'
 import { setAttrFormatter } from './set.js'
+import { formatValuePath } from './utils.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
@@ -18,25 +19,25 @@ export const isRequired = (attribute: Attribute): boolean =>
 
 export function* attrFormatter<
   ATTRIBUTE extends Attribute,
-  OPTIONS extends FormatValueOptions<ATTRIBUTE> = {}
+  OPTIONS extends FormatAttrValueOptions<ATTRIBUTE> = {}
 >(
   attribute: ATTRIBUTE,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  FormatterYield<Attribute, FormatValueOptions<Attribute>>,
-  FormatterReturn<Attribute, FormatValueOptions<Attribute>>
+  FormatterYield<Attribute, FormatAttrValueOptions<Attribute>>,
+  FormatterReturn<Attribute, FormatAttrValueOptions<Attribute>>
 > {
-  const { format = true, transform = true } = options
+  const { format = true, transform = true, valuePath } = options
 
   if (rawValue === undefined) {
     if (isRequired(attribute) && options.partial !== true) {
-      const { path, savedAs } = attribute
+      const path = formatValuePath(valuePath)
 
       throw new DynamoDBToolboxError('formatter.missingAttribute', {
         message: `Missing required attribute for formatting${
           path !== undefined ? `: '${path}'` : ''
-        }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}.`,
+        }.`,
         path,
         payload: {}
       })

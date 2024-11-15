@@ -38,8 +38,14 @@ describe('schemaFormatter', () => {
     expect(transformedValue).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, 'bar', {
+      ...options,
+      valuePath: ['bar']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -56,6 +62,7 @@ describe('schemaFormatter', () => {
     expect(attrFormatter).toHaveBeenCalledTimes(1)
     expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', {
       ...options,
+      valuePath: ['_f'],
       attributes: undefined
     })
 
@@ -72,8 +79,14 @@ describe('schemaFormatter', () => {
     expect(transformedValue).toStrictEqual({ foo: 'foo' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, undefined, options)
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, undefined, {
+      ...options,
+      valuePath: ['bar']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -89,8 +102,14 @@ describe('schemaFormatter', () => {
     expect(formattedValue).toStrictEqual({ foo: 'foo' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['foo']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_schema.attributes.bar, 'bar', {
+      ...options,
+      valuePath: ['bar']
+    })
   })
 
   // TODO: Apply validation

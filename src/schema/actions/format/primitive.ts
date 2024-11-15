@@ -4,25 +4,29 @@ import type { Transformer } from '~/transformers/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 
 export function* primitiveAttrFormatter(
   attribute: PrimitiveAttribute,
   rawValue: unknown,
-  options: FormatValueOptions<PrimitiveAttribute> = {}
+  {
+    format = true,
+    transform = true,
+    valuePath = []
+  }: FormatAttrValueOptions<PrimitiveAttribute> = {}
 ): Generator<
-  FormatterYield<PrimitiveAttribute, FormatValueOptions<PrimitiveAttribute>>,
-  FormatterReturn<PrimitiveAttribute, FormatValueOptions<PrimitiveAttribute>>
+  FormatterYield<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>,
+  FormatterReturn<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>
 > {
-  const { format = true, transform = true } = options
-
   if (!isValidPrimitive(attribute, rawValue)) {
-    const { path, type, savedAs } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
+      }. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })
@@ -37,12 +41,12 @@ export function* primitiveAttrFormatter(
   }
 
   if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(transformedValue)) {
-    const { path, savedAs } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
+      }. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
       path,
       payload: { received: transformedValue, expected: attribute.enum }
     })

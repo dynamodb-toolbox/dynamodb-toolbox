@@ -22,20 +22,21 @@ describe('setAttrFormatter', () => {
   })
 
   test('applies attrFormatter on input elements otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const formatter = setAttrFormatter(
-      setAttr,
-      new Set(['foo', 'bar']),
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const formatter = setAttrFormatter(setAttr, new Set(['foo', 'bar']), options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'foo', {
+      ...options,
+      valuePath: ['root', 0]
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'bar', {
+      ...options,
+      valuePath: ['root', 1]
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)

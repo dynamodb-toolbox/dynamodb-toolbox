@@ -33,13 +33,8 @@ describe('attrFormatter', () => {
   })
 
   test('applies expected formatter on input otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const formatter = attrFormatter(
-      strAttr,
-      'foo',
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const formatter = attrFormatter(strAttr, 'foo', options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual('foo')

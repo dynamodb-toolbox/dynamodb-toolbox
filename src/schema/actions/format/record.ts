@@ -4,26 +4,28 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'
 import { Formatter, type FormatterReturn, type FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* recordAttrFormatter(
   attribute: RecordAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: FormatValueOptions<RecordAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<RecordAttribute> = {}
 ): Generator<
-  FormatterYield<RecordAttribute, FormatValueOptions<RecordAttribute>>,
-  FormatterReturn<RecordAttribute, FormatValueOptions<RecordAttribute>>
+  FormatterYield<RecordAttribute, FormatAttrValueOptions<RecordAttribute>>,
+  FormatterReturn<RecordAttribute, FormatAttrValueOptions<RecordAttribute>>
 > {
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { path, type, savedAs } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
+      }. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })
@@ -35,8 +37,15 @@ export function* recordAttrFormatter(
       continue
     }
 
+    // NOTE: If transform is true, `key` is the transformed value which is what we want
+    // If not, `key` should already be formatted, which is what we also want
+    const elmtValuePath = [...valuePath, key]
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const formattedKey = new Formatter(attribute.keys).format(key, { transform })!
+    const formattedKey = new Formatter(attribute.keys).format(key, {
+      transform,
+      valuePath: elmtValuePath
+    })!
     const sanitizedKey = sanitize(formattedKey)
     const { isProjected, childrenAttributes } = matchProjection(
       new RegExp(`^\\.${sanitizedKey}|^\\['${sanitizedKey}']`),
@@ -49,7 +58,11 @@ export function* recordAttrFormatter(
 
     formatters.push([
       formattedKey,
-      attrFormatter(attribute.elements, element, { attributes: childrenAttributes, ...restOptions })
+      attrFormatter(attribute.elements, element, {
+        attributes: childrenAttributes,
+        valuePath: elmtValuePath,
+        ...restOptions
+      })
     ])
   }
 

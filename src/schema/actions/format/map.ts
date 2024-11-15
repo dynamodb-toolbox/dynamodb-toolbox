@@ -4,26 +4,28 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* mapAttrFormatter(
   mapAttribute: MapAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: FormatValueOptions<MapAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapAttribute> = {}
 ): Generator<
-  FormatterYield<MapAttribute, FormatValueOptions<MapAttribute>>,
-  FormatterReturn<MapAttribute, FormatValueOptions<MapAttribute>>
+  FormatterYield<MapAttribute, FormatAttrValueOptions<MapAttribute>>,
+  FormatterReturn<MapAttribute, FormatAttrValueOptions<MapAttribute>>
 > {
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { path, type, savedAs } = mapAttribute
+    const { type } = mapAttribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
+      }. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })
@@ -46,6 +48,7 @@ export function* mapAttrFormatter(
     const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
     formatters[attributeName] = attrFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
+      valuePath: [...valuePath, attributeSavedAs],
       ...restOptions
     })
   }
