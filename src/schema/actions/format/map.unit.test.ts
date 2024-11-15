@@ -25,20 +25,21 @@ describe('mapAttrFormatter', () => {
   })
 
   test('applies attrFormatter on input properties otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const formatter = mapAttrFormatter(
-      mapAttr,
-      { _f: 'foo', bar: 'bar' },
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const formatter = mapAttrFormatter(mapAttr, { _f: 'foo', bar: 'bar' }, options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['root', '_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', {
+      ...options,
+      valuePath: ['root', 'bar']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -55,6 +56,7 @@ describe('mapAttrFormatter', () => {
     expect(attrFormatter).toHaveBeenCalledTimes(1)
     expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
       ...options,
+      valuePath: ['_f'],
       attributes: undefined
     })
 
@@ -71,8 +73,14 @@ describe('mapAttrFormatter', () => {
     expect(transformedValue).toStrictEqual({ foo: 'foo' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, undefined, options)
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, undefined, {
+      ...options,
+      valuePath: ['bar']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -88,8 +96,14 @@ describe('mapAttrFormatter', () => {
     expect(formattedValue).toStrictEqual({ foo: 'foo' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
+      ...options,
+      valuePath: ['foo']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', {
+      ...options,
+      valuePath: ['bar']
+    })
   })
 
   // TODO: Apply validation

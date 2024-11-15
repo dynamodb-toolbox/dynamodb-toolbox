@@ -2,15 +2,15 @@ import type { AnyAttribute } from '~/attributes/any/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
 
 export function* anyAttrFormatter(
   _: AnyAttribute,
   rawValue: unknown,
-  options: FormatValueOptions<AnyAttribute> = {}
+  options: FormatAttrValueOptions<AnyAttribute> = {}
 ): Generator<
-  FormatterYield<AnyAttribute, FormatValueOptions<AnyAttribute>>,
-  FormatterReturn<AnyAttribute, FormatValueOptions<AnyAttribute>>
+  FormatterYield<AnyAttribute, FormatAttrValueOptions<AnyAttribute>>,
+  FormatterReturn<AnyAttribute, FormatAttrValueOptions<AnyAttribute>>
 > {
   const { format = true, transform = true } = options
 

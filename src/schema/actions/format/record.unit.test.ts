@@ -26,22 +26,29 @@ describe('recordAttrFormatter', () => {
   })
 
   test('applies attrFormatter on input properties otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const formatter = recordAttrFormatter(
-      _record,
-      { _f: '_foo', _b: '_bar' },
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const formatter = recordAttrFormatter(_record, { _f: '_foo', _b: '_bar' }, options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ f: 'foo', b: 'bar' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(4)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_f', { transform: true })
-    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, '_foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_b', { transform: true })
-    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, '_bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_f', {
+      transform: true,
+      valuePath: ['root', '_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, '_foo', {
+      ...options,
+      valuePath: ['root', '_f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_b', {
+      transform: true,
+      valuePath: ['root', '_b']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, '_bar', {
+      ...options,
+      valuePath: ['root', '_b']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -56,12 +63,19 @@ describe('recordAttrFormatter', () => {
     expect(transformedValue).toStrictEqual({ f: 'foo' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(3)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_f', { transform: true })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_f', {
+      transform: true,
+      valuePath: ['_f']
+    })
     expect(attrFormatter).toHaveBeenCalledWith(_record.elements, '_foo', {
       ...options,
+      valuePath: ['_f'],
       attributes: undefined
     })
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_b', { transform: true })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, '_b', {
+      transform: true,
+      valuePath: ['_b']
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -77,10 +91,16 @@ describe('recordAttrFormatter', () => {
     expect(formattedValue).toStrictEqual({ f: 'foo', b: 'bar' })
 
     expect(attrFormatter).toHaveBeenCalledTimes(4)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, 'f', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, 'b', options)
-    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, 'f', { ...options, valuePath: ['f'] })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, 'foo', {
+      ...options,
+      valuePath: ['f']
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.keys, 'b', { ...options, valuePath: ['b'] })
+    expect(attrFormatter).toHaveBeenCalledWith(_record.elements, 'bar', {
+      ...options,
+      valuePath: ['b']
+    })
   })
 
   // TODO: Apply validation

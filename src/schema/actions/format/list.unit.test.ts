@@ -22,20 +22,21 @@ describe('listAttrFormatter', () => {
   })
 
   test('applies attrFormatter on input elements otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const formatter = listAttrFormatter(
-      listAttr,
-      ['foo', 'bar'],
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const formatter = listAttrFormatter(listAttr, ['foo', 'bar'], options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual(['foo', 'bar'])
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'foo', {
+      ...options,
+      valuePath: ['root', 0]
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'bar', {
+      ...options,
+      valuePath: ['root', 1]
+    })
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -51,8 +52,14 @@ describe('listAttrFormatter', () => {
     expect(formattedValue).toStrictEqual(['foo', 'bar'])
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'foo', options)
-    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'bar', options)
+    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'foo', {
+      ...options,
+      valuePath: [0]
+    })
+    expect(attrFormatter).toHaveBeenCalledWith(listAttr.elements, 'bar', {
+      ...options,
+      valuePath: [1]
+    })
   })
 
   // TODO: Apply validation

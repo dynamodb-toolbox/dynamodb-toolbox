@@ -3,17 +3,18 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 
 export function* anyOfAttrFormatter(
   attribute: AnyOfAttribute,
   rawValue: unknown,
-  options: FormatValueOptions<AnyOfAttribute> = {}
+  options: FormatAttrValueOptions<AnyOfAttribute> = {}
 ): Generator<
-  FormatterYield<AnyOfAttribute, FormatValueOptions<AnyOfAttribute>>,
-  FormatterReturn<AnyOfAttribute, FormatValueOptions<AnyOfAttribute>>
+  FormatterYield<AnyOfAttribute, FormatAttrValueOptions<AnyOfAttribute>>,
+  FormatterReturn<AnyOfAttribute, FormatAttrValueOptions<AnyOfAttribute>>
 > {
-  const { format = true, transform = true } = options
+  const { format = true, transform = true, valuePath } = options
 
   let formatter: Generator<unknown, unknown> | undefined = undefined
   let _transformedValue = undefined
@@ -21,7 +22,7 @@ export function* anyOfAttrFormatter(
 
   for (const element of attribute.elements) {
     try {
-      formatter = attrFormatter(element, rawValue, options as FormatValueOptions<Attribute>)
+      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<Attribute>)
       if (transform) {
         _transformedValue = formatter.next().value
       }
@@ -35,12 +36,12 @@ export function* anyOfAttrFormatter(
   const transformedValue = _transformedValue
   const formattedValue = _formattedValue
   if (formatter === undefined || formattedValue === undefined) {
-    const { path, savedAs } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting. Attribute does not match any of the possible sub-types${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}.`,
+      }.`,
       path,
       payload: { received: rawValue }
     })

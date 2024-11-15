@@ -4,33 +4,39 @@ import { isSet } from '~/utils/validation/isSet.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 
 export function* setAttrFormatter(
   attribute: SetAttribute,
   rawValue: unknown,
-  options: FormatValueOptions<SetAttribute> = {}
+  { valuePath = [], ...options }: FormatAttrValueOptions<SetAttribute> = {}
 ): Generator<
-  FormatterYield<SetAttribute, FormatValueOptions<SetAttribute>>,
-  FormatterReturn<SetAttribute, FormatValueOptions<SetAttribute>>
+  FormatterYield<SetAttribute, FormatAttrValueOptions<SetAttribute>>,
+  FormatterReturn<SetAttribute, FormatAttrValueOptions<SetAttribute>>
 > {
   const { format = true, transform = true } = options
 
   if (!isSet(rawValue)) {
-    const { path, type, savedAs } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
-      path: path,
+      }. Should be a ${type}.`,
+      path,
       payload: { received: rawValue, expected: type }
     })
   }
 
   // TODO: Remove this cast
-  const formatters: Generator<any, any>[] = [...rawValue.values()].map(value =>
-    attrFormatter(attribute.elements, value, { ...options, attributes: undefined })
+  const formatters: Generator<any, any>[] = [...rawValue.values()].map((value, index) =>
+    attrFormatter(attribute.elements, value, {
+      ...options,
+      valuePath: [...valuePath, index],
+      attributes: undefined
+    })
   )
 
   if (transform) {

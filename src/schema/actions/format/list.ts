@@ -4,26 +4,28 @@ import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import type { FormatValueOptions } from './options.js'
+import type { FormatAttrValueOptions } from './options.js'
+import { formatValuePath } from './utils.js'
 import { matchProjection } from './utils.js'
 
 export function* listAttrFormatter(
   attribute: ListAttribute,
   rawValue: unknown,
-  { attributes, ...restOptions }: FormatValueOptions<ListAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<ListAttribute> = {}
 ): Generator<
-  FormatterYield<ListAttribute, FormatValueOptions<ListAttribute>>,
-  FormatterReturn<ListAttribute, FormatValueOptions<ListAttribute>>
+  FormatterYield<ListAttribute, FormatAttrValueOptions<ListAttribute>>,
+  FormatterReturn<ListAttribute, FormatAttrValueOptions<ListAttribute>>
 > {
   const { format = true, transform = true } = restOptions
 
   if (!isArray(rawValue)) {
-    const { path, type, savedAs } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }${savedAs !== undefined ? ` (saved as '${savedAs}')` : ''}. Should be a ${type}.`,
+      }. Should be a ${type}.`,
       path,
       payload: { received: rawValue, expected: type }
     })
@@ -35,8 +37,12 @@ export function* listAttrFormatter(
   // - Either projection is deep => childrenAttributes defined
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
-  const formatters = rawValue.map(element =>
-    attrFormatter(attribute.elements, element, { attributes: childrenAttributes, ...restOptions })
+  const formatters = rawValue.map((element, index) =>
+    attrFormatter(attribute.elements, element, {
+      attributes: childrenAttributes,
+      valuePath: [...valuePath, index],
+      ...restOptions
+    })
   )
 
   if (transform) {

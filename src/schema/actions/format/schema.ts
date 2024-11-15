@@ -38,6 +38,7 @@ export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}
     const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
     formatters[attributeName] = attrFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
+      valuePath: [attributeSavedAs],
       ...restOptions
     })
   }
