@@ -108,7 +108,7 @@ export const execute: ExecuteTransactGet = async <
 ) => {
   type RESPONSE = TRANSACTIONS extends GetTransactionProps[]
     ? ExecuteTransactGetResponse<TRANSACTIONS>
-    : TRANSACTIONS extends [unknown, ...infer TRANSACTIONS_TAIL]
+    : TRANSACTIONS extends [ExecuteTransactGetOptions, ...infer TRANSACTIONS_TAIL]
       ? TRANSACTIONS_TAIL extends GetTransactionProps[]
         ? ExecuteTransactGetResponse<TRANSACTIONS_TAIL>
         : never
