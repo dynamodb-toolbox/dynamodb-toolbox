@@ -8,6 +8,10 @@ export interface ParseValueOptions {
   parseExtension?: ExtensionParser
 }
 
+export interface ParseAttrValueOptions extends ParseValueOptions {
+  valuePath?: (string | number)[]
+}
+
 export interface InferWriteValueOptions<
   OPTIONS extends ParseValueOptions,
   USE_CONTEXT_EXTENSION extends boolean = false

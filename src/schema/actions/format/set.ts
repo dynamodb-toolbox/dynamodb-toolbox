@@ -1,11 +1,11 @@
 import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
-import { formatValuePath } from './utils.js'
 
 export function* setAttrFormatter(
   attribute: SetAttribute,

@@ -22,13 +22,8 @@ describe('listAttrParser', () => {
   })
 
   test('applies attrParser on input elements otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const parser = listAttrParser(
-      listAttr,
-      ['foo', 'bar'],
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const parser = listAttrParser(listAttr, ['foo', 'bar'], options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual(['foo', 'bar'])
@@ -36,10 +31,12 @@ describe('listAttrParser', () => {
     expect(attrParser).toHaveBeenCalledTimes(2)
     expect(attrParser).toHaveBeenCalledWith(listAttr.elements, 'foo', {
       ...options,
+      valuePath: ['root', 0],
       defined: false
     })
     expect(attrParser).toHaveBeenCalledWith(listAttr.elements, 'bar', {
       ...options,
+      valuePath: ['root', 1],
       defined: false
     })
 
@@ -57,12 +54,13 @@ describe('listAttrParser', () => {
   test('applies validation if any', () => {
     const listA = list(string())
       .validate(input => input.includes('foo'))
-      .freeze('root')
+      .freeze()
 
     const { value: parsed } = listAttrParser(listA, ['foo', 'bar'], { fill: false }).next()
     expect(parsed).toStrictEqual(['foo', 'bar'])
 
-    const invalidCallA = () => listAttrParser(listA, ['bar'], { fill: false }).next()
+    const invalidCallA = () =>
+      listAttrParser(listA, ['bar'], { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -74,9 +72,10 @@ describe('listAttrParser', () => {
 
     const listB = list(string())
       .validate(input => (input.includes('foo') ? true : 'Oh no...'))
-      .freeze('root')
+      .freeze()
 
-    const invalidCallB = () => listAttrParser(listB, ['bar'], { fill: false }).next()
+    const invalidCallB = () =>
+      listAttrParser(listB, ['bar'], { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

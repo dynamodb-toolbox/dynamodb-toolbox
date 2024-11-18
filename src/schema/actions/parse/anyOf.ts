@@ -1,18 +1,19 @@
 import type { AnyOfAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import { attrParser } from './attribute.js'
-import type { ParseValueOptions } from './options.js'
+import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* anyOfAttributeParser<OPTIONS extends ParseValueOptions = {}>(
+export function* anyOfAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
   attribute: AnyOfAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<AnyOfAttribute, OPTIONS>, ParserReturn<AnyOfAttribute, OPTIONS>> {
-  const { fill = true, transform = true } = options
+  const { fill = true, transform = true, valuePath = [] } = options
 
   let parser: Generator<any, any> | undefined = undefined
   let _defaultedValue = undefined
@@ -48,16 +49,14 @@ export function* anyOfAttributeParser<OPTIONS extends ParseValueOptions = {}>(
 
   const parsedValue = _parsedValue
   if (parser === undefined || parsedValue === undefined) {
-    const { path } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${
-        path !== undefined ? `'${path}' ` : ''
-      }does not match any of the possible sub-types.`,
+      message: `Attribute${
+        path !== undefined ? ` '${path}'` : ''
+      } does not match any of the possible sub-types.`,
       path,
-      payload: {
-        received: inputValue
-      }
+      payload: { received: inputValue }
     })
   }
   if (parsedValue !== undefined) {

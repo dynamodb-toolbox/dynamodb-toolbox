@@ -1,11 +1,11 @@
 import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
-import { formatValuePath } from './utils.js'
 
 export function* primitiveAttrFormatter(
   attribute: PrimitiveAttribute,

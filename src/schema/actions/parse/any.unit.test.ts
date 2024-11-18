@@ -13,9 +13,10 @@ describe('anyAttrParser', () => {
   test('applies validation if any', () => {
     const anyA = any()
       .validate(input => input === 'foo')
-      .freeze('root')
+      .freeze()
 
-    const invalidCallA = () => anyAttrParser(anyA, 'bar', { fill: false }).next()
+    const invalidCallA = () =>
+      anyAttrParser(anyA, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -29,7 +30,8 @@ describe('anyAttrParser', () => {
       .validate(input => (input === 'foo' ? true : 'Oh no...'))
       .freeze('root')
 
-    const invalidCallB = () => anyAttrParser(anyB, 'bar', { fill: false }).next()
+    const invalidCallB = () =>
+      anyAttrParser(anyB, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

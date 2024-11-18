@@ -1,11 +1,11 @@
 import type { AnyAttribute } from '~/attributes/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
-import type { ParseValueOptions } from './options.js'
+import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* anyAttrParser<OPTIONS extends ParseValueOptions = {}>(
+export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   attribute: AnyAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS

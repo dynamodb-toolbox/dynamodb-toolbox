@@ -1,27 +1,33 @@
 import type { ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrParser } from './attribute.js'
-import type { ParseValueOptions } from './options.js'
+import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* listAttrParser<OPTIONS extends ParseValueOptions = {}>(
+export function* listAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   attribute: ListAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<ListAttribute, OPTIONS>, ParserReturn<ListAttribute, OPTIONS>> {
-  const { fill = true, transform = true } = options
+  const { valuePath = [], ...restOptions } = options
+  const { fill = true, transform = true } = restOptions
 
-  const parsers: Generator<any, any>[] = []
+  let parsers: Generator<any, any>[] = []
 
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
-    for (const element of inputValue) {
-      parsers.push(attrParser(attribute.elements, element, { ...options, defined: false }))
-    }
+    parsers = inputValue.map((element, index) =>
+      attrParser(attribute.elements, element, {
+        ...restOptions,
+        valuePath: [...valuePath, index],
+        defined: false
+      })
+    )
   }
 
   if (fill) {
@@ -41,15 +47,13 @@ export function* listAttrParser<OPTIONS extends ParseValueOptions = {}>(
   }
 
   if (!isInputValueArray) {
-    const { path, type } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
+      message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,
       path,
-      payload: {
-        received: inputValue,
-        expected: type
-      }
+      payload: { received: inputValue, expected: type }
     })
   }
 

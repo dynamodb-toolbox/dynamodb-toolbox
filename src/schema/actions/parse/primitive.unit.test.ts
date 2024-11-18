@@ -5,7 +5,7 @@ import { primitiveAttrParser } from './primitive.js'
 
 describe('primitiveAttrParser', () => {
   test('throws an error if input is not a string', () => {
-    const str = string().freeze('root')
+    const str = string().freeze()
     const invalidCall = () => primitiveAttrParser(str, 42, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
@@ -15,12 +15,13 @@ describe('primitiveAttrParser', () => {
   test('applies validation if any', () => {
     const strA = string()
       .validate(input => input === 'foo')
-      .freeze('root')
+      .freeze()
 
     const { value: parsed } = primitiveAttrParser(strA, 'foo', { fill: false }).next()
     expect(parsed).toBe('foo')
 
-    const invalidCallA = () => primitiveAttrParser(strA, 'bar', { fill: false }).next()
+    const invalidCallA = () =>
+      primitiveAttrParser(strA, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -32,9 +33,10 @@ describe('primitiveAttrParser', () => {
 
     const strB = string()
       .validate(input => (input === 'foo' ? true : 'Oh no...'))
-      .freeze('root')
+      .freeze()
 
-    const invalidCallB = () => primitiveAttrParser(strB, 'bar', { fill: false }).next()
+    const invalidCallB = () =>
+      primitiveAttrParser(strB, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

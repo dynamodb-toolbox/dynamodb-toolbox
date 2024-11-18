@@ -1,5 +1,6 @@
 import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { InputValue, Schema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
@@ -8,14 +9,14 @@ import { anyAttrParser } from './any.js'
 import { anyOfAttributeParser } from './anyOf.js'
 import { listAttrParser } from './list.js'
 import { mapAttrParser } from './map.js'
-import type { InferWriteValueOptions, ParseValueOptions } from './options.js'
+import type { InferWriteValueOptions, ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { primitiveAttrParser } from './primitive.js'
 import { recordAttributeParser } from './record.js'
 import { setAttrParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
-export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
+export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   attribute: Attribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
@@ -33,7 +34,8 @@ export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
     /**
      * @debt type "Maybe there's a way not to have to cast here"
      */
-    parseExtension = defaultParseExtension as unknown as NonNullable<OPTIONS['parseExtension']>
+    parseExtension = defaultParseExtension as unknown as NonNullable<OPTIONS['parseExtension']>,
+    valuePath = []
   } = options
 
   let filledValue = inputValue
@@ -78,12 +80,12 @@ export function* attrParser<OPTIONS extends ParseValueOptions = {}>(
   }
 
   if (basicInput === undefined) {
-    const { path } = attribute
+    const path = formatValuePath(valuePath)
 
     // We don't need to fill
     if (isRequired(attribute, mode) || defined) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
-        message: `Attribute ${path !== undefined ? `'${path}' ` : ''}is required.`,
+        message: `Attribute${path !== undefined ? ` '${path}'` : ''} is required.`,
         path
       })
     }

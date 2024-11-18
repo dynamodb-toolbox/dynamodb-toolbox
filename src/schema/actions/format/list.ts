@@ -1,11 +1,11 @@
 import type { ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
-import { formatValuePath } from './utils.js'
 import { matchProjection } from './utils.js'
 
 export function* listAttrFormatter(
