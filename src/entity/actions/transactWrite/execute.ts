@@ -80,7 +80,7 @@ export const execute: ExecuteTransactWrite = async <
 ) => {
   type RESPONSE = TRANSACTIONS extends WriteTransactionImplementation[]
     ? ExecuteTransactWriteResponse<TRANSACTIONS>
-    : TRANSACTIONS extends [unknown, ...infer TRANSACTIONS_TAIL]
+    : TRANSACTIONS extends [ExecuteTransactWriteOptions, ...infer TRANSACTIONS_TAIL]
       ? TRANSACTIONS_TAIL extends WriteTransactionImplementation[]
         ? ExecuteTransactWriteResponse<TRANSACTIONS_TAIL>
         : never
