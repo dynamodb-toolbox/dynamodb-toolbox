@@ -1,11 +1,11 @@
 import type { RecordAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'
 import { Formatter, type FormatterReturn, type FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
-import { formatValuePath } from './utils.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* recordAttrFormatter(

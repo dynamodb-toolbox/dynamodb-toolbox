@@ -23,26 +23,29 @@ describe('recordAttributeParser', () => {
   })
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const parser = recordAttributeParser(
-      recordAttr,
-      { foo: 'foo1', bar: 'bar1' },
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const parser = recordAttributeParser(recordAttr, { foo: 'foo1', bar: 'bar1' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
     expect(attrParser).toHaveBeenCalledTimes(4)
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', options)
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'bar', options)
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', {
+      ...options,
+      valuePath: ['root', 'foo']
+    })
+    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'bar', {
+      ...options,
+      valuePath: ['root', 'bar']
+    })
     expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'foo1', {
       ...options,
+      valuePath: ['root', 'foo'],
       defined: false
     })
     expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'bar1', {
       ...options,
+      valuePath: ['root', 'bar'],
       defined: false
     })
 
@@ -71,7 +74,7 @@ describe('recordAttributeParser', () => {
   test('applies validation if any', () => {
     const recordA = record(string(), string())
       .validate(input => 'foo' in input)
-      .freeze('root')
+      .freeze()
 
     const { value: parsedValue } = recordAttributeParser(
       recordA,
@@ -81,7 +84,7 @@ describe('recordAttributeParser', () => {
     expect(parsedValue).toStrictEqual({ foo: 'bar' })
 
     const invalidCallA = () =>
-      recordAttributeParser(recordA, { bar: 'foo' }, { fill: false }).next()
+      recordAttributeParser(recordA, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -96,7 +99,7 @@ describe('recordAttributeParser', () => {
       .freeze('root')
 
     const invalidCallB = () =>
-      recordAttributeParser(recordB, { bar: 'foo' }, { fill: false }).next()
+      recordAttributeParser(recordB, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

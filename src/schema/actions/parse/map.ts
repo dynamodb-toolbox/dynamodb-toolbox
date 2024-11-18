@@ -1,19 +1,21 @@
 import type { MapAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrParser } from './attribute.js'
-import type { ParseValueOptions } from './options.js'
+import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* mapAttrParser<OPTIONS extends ParseValueOptions = {}>(
+export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   attribute: MapAttribute,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<MapAttribute, OPTIONS>, ParserReturn<MapAttribute, OPTIONS>> {
-  const { mode = 'put', fill = true, transform = true } = options
+  const { valuePath = [], ...restOptions } = options
+  const { mode = 'put', fill = true, transform = true } = restOptions
   const parsers: Record<string, Generator<any, any>> = {}
   let restEntries: [string, unknown][] = []
 
@@ -24,7 +26,11 @@ export function* mapAttrParser<OPTIONS extends ParseValueOptions = {}>(
     Object.entries(attribute.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], { ...options, defined: false })
+        parsers[attrName] = attrParser(attr, inputValue[attrName], {
+          ...restOptions,
+          valuePath: [...valuePath, attrName],
+          defined: false
+        })
 
         additionalAttributeNames.delete(attrName)
       })
@@ -62,15 +68,13 @@ export function* mapAttrParser<OPTIONS extends ParseValueOptions = {}>(
   }
 
   if (!isInputValueObject) {
-    const { path, type } = attribute
+    const { type } = attribute
+    const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-      message: `Attribute ${path !== undefined ? `'${path}' ` : ''}should be a ${type}.`,
+      message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,
       path,
-      payload: {
-        received: inputValue,
-        expected: type
-      }
+      payload: { received: inputValue, expected: type }
     })
   }
 

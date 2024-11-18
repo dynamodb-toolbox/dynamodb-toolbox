@@ -1,5 +1,6 @@
 import type { Attribute, RequiredOption } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 
 import { anyAttrFormatter } from './any.js'
 import { anyOfAttrFormatter } from './anyOf.js'
@@ -10,7 +11,6 @@ import type { FormatAttrValueOptions } from './options.js'
 import { primitiveAttrFormatter } from './primitive.js'
 import { recordAttrFormatter } from './record.js'
 import { setAttrFormatter } from './set.js'
-import { formatValuePath } from './utils.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 

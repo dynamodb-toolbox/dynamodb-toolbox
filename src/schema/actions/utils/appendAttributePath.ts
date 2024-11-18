@@ -63,19 +63,19 @@ export const appendAttributePath = (
 ): Attribute => {
   const { size = false } = options
 
-  const expressionAttributePrefix = parser.expressionAttributePrefix
-  let parentAttribute: Schema | Attribute = parser.schema
+  const expressionAttrPrefix = parser.expressionAttributePrefix
+  let parentAttr: Schema | Attribute = parser.schema
   let expressionPath = ''
-  let attributeMatches = [...attributePath.matchAll(pathRegex)]
-  let attributePathTail: string | undefined
+  let attrMatches = [...attributePath.matchAll(pathRegex)]
+  let attrPathTail: string | undefined
 
   let root = true
-  while (attributeMatches.length > 0) {
-    const attributeMatch = attributeMatches.shift() as RegExpMatchArray
+  while (attrMatches.length > 0) {
+    const attrMatch = attrMatches.shift() as RegExpMatchArray
 
     // NOTE: Order of those matches follows those of combined regExps above
-    const [match, listIndexMatch, escapedStrMatch, tail] = attributeMatch
-    attributePathTail = tail
+    const [match, listIndexMatch, escapedStrMatch, tail] = attrMatch
+    attrPathTail = tail
 
     const matchedKey: string = escapedStrMatch ?? listIndexMatch ?? match
     const matchType: MatchType =
@@ -85,7 +85,7 @@ export const appendAttributePath = (
           ? 'listIndex'
           : 'regularStr'
 
-    switch (parentAttribute.type) {
+    switch (parentAttr.type) {
       case 'any': {
         switch (matchType) {
           case 'listIndex': {
@@ -94,15 +94,13 @@ export const appendAttributePath = (
           }
           default: {
             const expressionAttributeNameIndex = parser.expressionAttributeNames.push(matchedKey)
-            expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+            expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
           }
         }
 
-        parentAttribute = new AnyAttribute({
+        parentAttr = new AnyAttribute({
           ...defaultAnyAttribute,
-          path: [parentAttribute.path, match]
-            .filter(Boolean)
-            .join(matchType === 'regularStr' ? '.' : '')
+          path: [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
         })
         break
       }
@@ -114,19 +112,19 @@ export const appendAttributePath = (
         throw getInvalidExpressionAttributePathError(attributePath)
 
       case 'record': {
-        const keyAttribute = parentAttribute.keys
+        const keyAttribute = parentAttr.keys
         // TODO: Maybe re-introduce constraints to record key attributes
         const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false }) as string
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
-        expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
+        expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
 
-        parentAttribute = parentAttribute.elements
+        parentAttr = parentAttr.elements
         break
       }
       case 'schema':
       case 'map': {
-        const childAttribute = parentAttribute.attributes[matchedKey]
+        const childAttribute = parentAttr.attributes[matchedKey]
         if (!childAttribute) {
           throw getInvalidExpressionAttributePathError(attributePath)
         }
@@ -135,8 +133,8 @@ export const appendAttributePath = (
           childAttribute.savedAs ?? matchedKey
         )
 
-        expressionPath += `${root ? '' : '.'}#${expressionAttributePrefix}${expressionAttributeNameIndex}`
-        parentAttribute = childAttribute
+        expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
+        parentAttr = childAttribute
         break
       }
       case 'list': {
@@ -145,19 +143,19 @@ export const appendAttributePath = (
         }
 
         expressionPath += match
-        parentAttribute = parentAttribute.elements
+        parentAttr = parentAttr.elements
         break
       }
       case 'anyOf': {
         let validElementExpressionParser: ExpressionParser | undefined = undefined
-        const subPath = attributePath.slice(attributeMatch.index)
+        const subPath = attributePath.slice(attrMatch.index)
 
-        for (const element of parentAttribute.elements) {
+        for (const element of parentAttr.elements) {
           try {
-            parentAttribute = element
+            parentAttr = element
             const elementExpressionParser = parser.clone(element)
             elementExpressionParser.resetExpression()
-            parentAttribute = elementExpressionParser.appendAttributePath(subPath, options)
+            parentAttr = elementExpressionParser.appendAttributePath(subPath, options)
             validElementExpressionParser = elementExpressionParser
             break
             /* eslint-disable no-empty */
@@ -171,7 +169,7 @@ export const appendAttributePath = (
         parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
         expressionPath += `${root ? '' : '.'}${validElementExpressionParser.expression}`
         // No need to go over the rest of the path
-        attributeMatches = []
+        attrMatches = []
 
         break
       }
@@ -180,16 +178,13 @@ export const appendAttributePath = (
     root = false
   }
 
-  if (
-    parentAttribute.type === 'schema' ||
-    (attributePathTail !== undefined && attributePathTail.length > 0)
-  ) {
+  if (parentAttr.type === 'schema' || (attrPathTail !== undefined && attrPathTail.length > 0)) {
     throw getInvalidExpressionAttributePathError(attributePath)
   }
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
   return size
-    ? new NumberAttribute({ ...defaultNumberAttribute, path: parentAttribute.path })
-    : parentAttribute
+    ? new NumberAttribute({ ...defaultNumberAttribute, path: parentAttr.path })
+    : parentAttr
 }

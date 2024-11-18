@@ -22,13 +22,8 @@ describe('mapAttributeParser', () => {
   })
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const parser = mapAttrParser(
-      mapAttr,
-      { foo: 'foo', bar: 'bar' },
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const parser = mapAttrParser(mapAttr, { foo: 'foo', bar: 'bar' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo', bar: 'bar' })
@@ -36,10 +31,12 @@ describe('mapAttributeParser', () => {
     expect(attrParser).toHaveBeenCalledTimes(2)
     expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
       ...options,
+      valuePath: ['root', 'foo'],
       defined: false
     })
     expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', {
       ...options,
+      valuePath: ['root', 'bar'],
       defined: false
     })
 
@@ -57,12 +54,13 @@ describe('mapAttributeParser', () => {
   test('applies validation if any', () => {
     const mapA = map({ str: string() })
       .validate(input => input.str === 'foo')
-      .freeze('root')
+      .freeze()
 
     const { value: parsedValue } = mapAttrParser(mapA, { str: 'foo' }, { fill: false }).next()
     expect(parsedValue).toStrictEqual({ str: 'foo' })
 
-    const invalidCallA = () => mapAttrParser(mapA, { str: 'bar' }, { fill: false }).next()
+    const invalidCallA = () =>
+      mapAttrParser(mapA, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -74,9 +72,10 @@ describe('mapAttributeParser', () => {
 
     const mapB = map({ str: string() })
       .validate(input => (input.str === 'foo' ? true : 'Oh no...'))
-      .freeze('root')
+      .freeze()
 
-    const invalidCallB = () => mapAttrParser(mapB, { str: 'bar' }, { fill: false }).next()
+    const invalidCallB = () =>
+      mapAttrParser(mapB, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

@@ -29,7 +29,11 @@ export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueO
     Object.entries(schema.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], { ...options, defined: false })
+        parsers[attrName] = attrParser(attr, inputValue[attrName], {
+          ...options,
+          valuePath: [attrName],
+          defined: false
+        })
 
         additionalAttributeNames.delete(attrName)
       })

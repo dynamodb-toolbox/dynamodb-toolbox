@@ -22,20 +22,23 @@ describe('setAttrParser', () => {
   })
 
   test('applies attrParser on input elements otherwise (and pass options)', () => {
-    const options = { some: 'options' }
-    const parser = setAttrParser(
-      setAttr,
-      new Set(['foo', 'bar']),
-      // @ts-expect-error we don't really care about the type here
-      options
-    )
+    const options = { valuePath: ['root'] }
+    const parser = setAttrParser(setAttr, new Set(['foo', 'bar']), options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', { ...options, defined: false })
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', { ...options, defined: false })
+    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', {
+      ...options,
+      valuePath: ['root', 0],
+      defined: false
+    })
+    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', {
+      ...options,
+      valuePath: ['root', 1],
+      defined: false
+    })
 
     const { value: linkedValue } = parser.next()
     expect(linkedValue).toStrictEqual(new Set(['foo', 'bar']))
@@ -51,14 +54,15 @@ describe('setAttrParser', () => {
   test('applies validation if any', () => {
     const setA = set(string())
       .validate(input => input.has('foo'))
-      .freeze('root')
+      .freeze()
 
     const { value: parsedValue } = setAttrParser(setA, new Set(['foo', 'bar']), {
       fill: false
     }).next()
     expect(parsedValue).toStrictEqual(new Set(['foo', 'bar']))
 
-    const invalidCallA = () => setAttrParser(setA, new Set(['bar']), { fill: false }).next()
+    const invalidCallA = () =>
+      setAttrParser(setA, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -72,7 +76,8 @@ describe('setAttrParser', () => {
       .validate(input => (input.has('foo') ? true : 'Oh no...'))
       .freeze('root')
 
-    const invalidCallB = () => setAttrParser(setB, new Set(['bar']), { fill: false }).next()
+    const invalidCallB = () =>
+      setAttrParser(setB, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
