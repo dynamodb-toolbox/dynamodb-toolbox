@@ -18,7 +18,7 @@ export type BatchWriteCommandOptions = {
   tableName?: string
 }
 
-type RequestEntities<
+export type RequestEntities<
   REQUESTS extends BatchWriteRequestProps[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']

@@ -390,6 +390,16 @@
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
+    "./table/actions/repository": {
+      "import": {
+        "types": "./dist/esm/table/actions/repository/index.d.ts",
+        "default": "./dist/esm/table/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/repository/index.d.ts",
+        "default": "./dist/cjs/table/actions/repository/index.js"
+      }
+    },
     "./entity": {
       "import": {
         "types": "./dist/esm/entity/index.d.ts",
@@ -618,6 +628,16 @@
       "require": {
         "types": "./dist/cjs/entity/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/entity/actions/fromDTO/index.js"
+      }
+    },
+    "./entity/actions/repository": {
+      "import": {
+        "types": "./dist/esm/entity/actions/repository/index.d.ts",
+        "default": "./dist/esm/entity/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/repository/index.d.ts",
+        "default": "./dist/cjs/entity/actions/repository/index.js"
       }
     },
     "./errors": {

@@ -25,7 +25,7 @@ export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   // => execute(TestTable1.build(BatchGetCommand).requests(...).options({ attributes: ['attr'] }))
 } & ({ attributes?: undefined } | { attributes: EntityPathsIntersection<ENTITIES>[] })
 
-type RequestEntities<
+export type RequestEntities<
   REQUESTS extends BatchGetRequestProps[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']

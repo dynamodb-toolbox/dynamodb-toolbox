@@ -24,9 +24,11 @@ export interface ExecuteBatchGetOptions extends DocumentClientOptions {
   maxAttempts?: number
 }
 
-type ExecuteBatchGet = <
-  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
->(
+export type ExecuteBatchGetInput =
+  | BatchGetCommand[]
+  | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
+
+type ExecuteBatchGet = <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS
 ) => Promise<
   COMMANDS extends BatchGetCommand[]
@@ -37,6 +39,15 @@ type ExecuteBatchGet = <
         : never
       : never
 >
+
+export type ExecuteBatchGetResponses<COMMANDS extends ExecuteBatchGetInput> =
+  COMMANDS extends BatchGetCommand[]
+    ? ExecuteBatchGetResponse<COMMANDS>
+    : COMMANDS extends [ExecuteBatchGetOptions, ...infer REQUESTS_TAIL]
+      ? REQUESTS_TAIL extends BatchGetCommand[]
+        ? ExecuteBatchGetResponse<REQUESTS_TAIL>
+        : never
+      : never
 
 type ExecuteBatchGetResponse<COMMAND extends BatchGetCommand[]> = Omit<
   BatchGetCommandOutput,
@@ -124,19 +135,9 @@ type BatchGetRequestResponses<
       ]
     : ITEMS
 
-export const execute: ExecuteBatchGet = async <
-  COMMANDS extends BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
->(
+export const execute: ExecuteBatchGet = async <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS
 ) => {
-  type RESPONSE = COMMANDS extends BatchGetCommand[]
-    ? ExecuteBatchGetResponse<COMMANDS>
-    : COMMANDS extends [ExecuteBatchGetOptions, ...infer REQUESTS_TAIL]
-      ? REQUESTS_TAIL extends BatchGetCommand[]
-        ? ExecuteBatchGetResponse<REQUESTS_TAIL>
-        : never
-      : never
-
   const [headCommandOrOptions = {}, ...tailCommands] = _commands
 
   const commands = tailCommands as BatchGetCommand[]
@@ -248,7 +249,7 @@ export const execute: ExecuteBatchGet = async <
           ...(responseMetadata !== undefined ? { $metadata: responseMetadata } : {})
         }
       : {})
-  } as RESPONSE
+  } as ExecuteBatchGetResponses<COMMANDS>
 }
 
 export const getCommandInput = (
