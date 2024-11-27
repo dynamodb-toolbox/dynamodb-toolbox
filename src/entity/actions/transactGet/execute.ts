@@ -24,11 +24,15 @@ export interface ExecuteTransactGetOptions extends DocumentClientOptions {
   capacity?: CapacityOption
 }
 
-type ExecuteTransactGet = <
-  TRANSACTIONS extends GetTransactionProps[] | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
->(
+export type ExecuteTransactGetInput =
+  | GetTransactionProps[]
+  | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
+
+type ExecuteTransactGet = <TRANSACTIONS extends ExecuteTransactGetInput>(
   ..._transactions: TRANSACTIONS
-) => Promise<
+) => Promise<ExecuteTransactGetResponses<TRANSACTIONS>>
+
+export type ExecuteTransactGetResponses<TRANSACTIONS extends ExecuteTransactGetInput> =
   TRANSACTIONS extends GetTransactionProps[]
     ? ExecuteTransactGetResponse<TRANSACTIONS>
     : TRANSACTIONS extends [ExecuteTransactGetOptions, ...infer TRANSACTIONS_TAIL]
@@ -36,7 +40,6 @@ type ExecuteTransactGet = <
         ? ExecuteTransactGetResponse<TRANSACTIONS_TAIL>
         : never
       : never
->
 
 type ExecuteTransactGetResponse<TRANSACTIONS extends GetTransactionProps[]> = Omit<
   TransactGetCommandOutput,
@@ -106,14 +109,6 @@ export const execute: ExecuteTransactGet = async <
 >(
   ..._transactions: TRANSACTIONS
 ) => {
-  type RESPONSE = TRANSACTIONS extends GetTransactionProps[]
-    ? ExecuteTransactGetResponse<TRANSACTIONS>
-    : TRANSACTIONS extends [ExecuteTransactGetOptions, ...infer TRANSACTIONS_TAIL]
-      ? TRANSACTIONS_TAIL extends GetTransactionProps[]
-        ? ExecuteTransactGetResponse<TRANSACTIONS_TAIL>
-        : never
-      : never
-
   const [headTransactionOrOptions = {}, ...tailTransactions] = _transactions
 
   const transactions = tailTransactions as GetTransactionProps[]
@@ -141,13 +136,13 @@ export const execute: ExecuteTransactGet = async <
   )
 
   if (Responses === undefined) {
-    return restResponse as RESPONSE
+    return restResponse as ExecuteTransactGetResponses<TRANSACTIONS>
   }
 
   return {
     ...restResponse,
     Responses: formatResponses(Responses, ...transactions)
-  } as RESPONSE
+  } as ExecuteTransactGetResponses<TRANSACTIONS>
 }
 
 export const getCommandInput = (

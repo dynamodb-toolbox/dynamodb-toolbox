@@ -191,6 +191,7 @@ export { EntitySpy } from './entity/actions/spy/index.js'
 export { EntityDTO } from './entity/actions/dto/index.js'
 export type { IEntityDTO } from './entity/actions/dto/index.js'
 export { fromEntityDTO } from './entity/actions/fromDTO/index.js'
+export { Repository as EntityRepository } from './entity/actions/repository/index.js'
 
 // errors
 export { DynamoDBToolboxError } from './errors/index.js'
