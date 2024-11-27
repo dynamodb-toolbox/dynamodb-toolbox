@@ -407,13 +407,15 @@ describe('binary', () => {
       })
     )
 
+    const bin = new Uint8Array([1, 2, 3])
+
     const binA = binary()
-      .enum(new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4]))
-      .default(new Uint8Array([1, 2, 3]))
-    const sayFoo = (): Uint8Array => new Uint8Array([1, 2, 3])
+      .enum(bin, new Uint8Array([2, 3, 4]))
+      .default(bin)
+    const sayBin = (): typeof bin => bin
     const binB = binary()
-      .enum(new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4]))
-      .default(sayFoo)
+      .enum(bin, new Uint8Array([2, 3, 4]))
+      .default(sayBin)
 
     const assertBinA: A.Contains<
       (typeof binA)[$state],
@@ -430,7 +432,7 @@ describe('binary', () => {
     > = 1
     assertBinB
 
-    expect(binB[$state].defaults).toMatchObject({ put: sayFoo })
+    expect(binB[$state].defaults).toMatchObject({ put: sayBin })
     expect(binB[$state].enum).toStrictEqual([new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4])])
   })
 
