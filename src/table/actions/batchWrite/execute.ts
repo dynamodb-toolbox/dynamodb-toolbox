@@ -15,6 +15,10 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
+export type ExecuteBatchWriteInput =
+  | [ExecuteBatchWriteOptions, ...BatchWriteCommand[]]
+  | BatchWriteCommand[]
+
 export interface ExecuteBatchWriteOptions extends DocumentClientOptions {
   capacity?: CapacityOption
   metrics?: MetricsOption
@@ -23,7 +27,7 @@ export interface ExecuteBatchWriteOptions extends DocumentClientOptions {
 }
 
 export const execute = async (
-  ..._commands: [ExecuteBatchWriteOptions, ...BatchWriteCommand[]] | BatchWriteCommand[]
+  ..._commands: ExecuteBatchWriteInput
 ): Promise<BatchWriteCommandOutput> => {
   const [headCommandOrOptions = {}, ...tailCommands] = _commands
 

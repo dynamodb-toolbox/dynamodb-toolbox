@@ -83,6 +83,7 @@ export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 export { TableDTO } from './table/actions/dto/index.js'
 export type { ITableDTO } from './table/actions/dto/index.js'
 export { fromTableDTO } from './table/actions/fromDTO/index.js'
+export { Repository as TableRepository } from './table/actions/repository/index.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
