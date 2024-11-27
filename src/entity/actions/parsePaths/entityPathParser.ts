@@ -9,7 +9,7 @@ export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityActi
   static override actionName: 'parsePaths';
   [$pathParser]: PathParser<ENTITY['schema']>
 
-  constructor(entity: ENTITY, id = '') {
+  constructor(entity: ENTITY, id: string = '') {
     super(entity)
     this[$pathParser] = new PathParser(entity.schema, id)
   }

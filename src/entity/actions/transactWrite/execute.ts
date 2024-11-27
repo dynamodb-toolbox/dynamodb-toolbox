@@ -25,13 +25,15 @@ export interface ExecuteTransactWriteOptions extends DocumentClientOptions {
   clientRequestToken?: ClientRequestToken
 }
 
-type ExecuteTransactWrite = <
-  TRANSACTIONS extends
-    | WriteTransactionImplementation[]
-    | [ExecuteTransactWriteOptions, ...WriteTransactionImplementation[]]
->(
+export type ExecuteTransactWriteInput =
+  | WriteTransactionImplementation[]
+  | [ExecuteTransactWriteOptions, ...WriteTransactionImplementation[]]
+
+type ExecuteTransactWrite = <TRANSACTIONS extends ExecuteTransactWriteInput>(
   ...transactions: TRANSACTIONS
-) => Promise<
+) => Promise<ExecuteTransactWriteResponses<TRANSACTIONS>>
+
+export type ExecuteTransactWriteResponses<TRANSACTIONS extends ExecuteTransactWriteInput> =
   TRANSACTIONS extends WriteTransactionImplementation[]
     ? ExecuteTransactWriteResponse<TRANSACTIONS>
     : TRANSACTIONS extends [ExecuteTransactWriteOptions, ...infer TRANSACTIONS_TAIL]
@@ -39,7 +41,6 @@ type ExecuteTransactWrite = <
         ? ExecuteTransactWriteResponse<TRANSACTIONS_TAIL>
         : never
       : never
->
 
 type ExecuteTransactWriteResponse<TRANSACTIONS extends WriteTransactionImplementation[]> =
   TransactWriteCommandOutput & { ToolboxItems: ToolboxItems<TRANSACTIONS> }
@@ -78,14 +79,6 @@ export const execute: ExecuteTransactWrite = async <
 >(
   ..._transactions: TRANSACTIONS
 ) => {
-  type RESPONSE = TRANSACTIONS extends WriteTransactionImplementation[]
-    ? ExecuteTransactWriteResponse<TRANSACTIONS>
-    : TRANSACTIONS extends [ExecuteTransactWriteOptions, ...infer TRANSACTIONS_TAIL]
-      ? TRANSACTIONS_TAIL extends WriteTransactionImplementation[]
-        ? ExecuteTransactWriteResponse<TRANSACTIONS_TAIL>
-        : never
-      : never
-
   const [headTransactionOrOptions = {}, ...tailTransactions] = _transactions
 
   const transactions = tailTransactions as WriteTransactionImplementation[]
@@ -127,10 +120,7 @@ export const execute: ExecuteTransactWrite = async <
     documentClientOptions
   )
 
-  return {
-    ToolboxItems: toolboxItems,
-    ...response
-  } as RESPONSE
+  return { ToolboxItems: toolboxItems, ...response } as ExecuteTransactWriteResponses<TRANSACTIONS>
 }
 
 const parseOptions = (

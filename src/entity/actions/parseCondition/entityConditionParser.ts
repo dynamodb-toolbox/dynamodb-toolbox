@@ -11,7 +11,7 @@ export class EntityConditionParser<ENTITY extends Entity = Entity> extends Entit
   static override actionName: 'parseCondition';
   [$conditionParser]: ConditionParser<ENTITY['schema']>
 
-  constructor(entity: ENTITY, id = '') {
+  constructor(entity: ENTITY, id: string = '') {
     super(entity)
     this[$conditionParser] = new ConditionParser(entity.schema, id)
   }
