@@ -1,1 +1,1 @@
-export { Repository } from './repository.js'
+export { TableRepository } from './repository.js'

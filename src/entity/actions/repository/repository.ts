@@ -60,47 +60,8 @@ import type {
 import { EntityAction } from '~/entity/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
-export class Repository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
+export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
-
-  parse<OPTIONS extends ParseItemOptions = {}>(
-    item: { [KEY: string]: unknown },
-    options: OPTIONS = {} as OPTIONS
-  ): {
-    parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
-    item: TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
-    key: PrimaryKey<ENTITY['table']>
-  } {
-    return new EntityParser(this.entity).parse(item, options)
-  }
-
-  parseCondition(
-    condition: Condition<ENTITY>,
-    id: string = ''
-  ): {
-    ConditionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-    ExpressionAttributeValues: Record<string, NativeAttributeValue>
-  } {
-    return new EntityConditionParser(this.entity, id).parse(condition).toCommandOptions()
-  }
-
-  parsePaths(
-    attributes: EntityPaths<ENTITY>[],
-    id: string = ''
-  ): {
-    ProjectionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-  } {
-    return new EntityPathParser(this.entity, id).parse(attributes).toCommandOptions()
-  }
-
-  format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(
-    item: { [KEY: string]: unknown },
-    options: OPTIONS = {} as OPTIONS
-  ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
-    return new EntityFormatter(this.entity).format(item, options)
-  }
 
   async put<OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>>(
     item: PutItemInput<ENTITY>,
@@ -139,16 +100,29 @@ export class Repository<ENTITY extends Entity = Entity> extends EntityAction<ENT
     return new DeleteItemCommand(this.entity, key, options).send()
   }
 
-  batchPutRequest(item: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
-    return new BatchPutRequest(this.entity, item)
-  }
-
-  batchGetRequest(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {
+  batchGet(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {
     return new BatchGetRequest(this.entity, key)
   }
 
-  batchDeleteRequest(key: KeyInputItem<ENTITY>): BatchDeleteRequest<ENTITY> {
+  batchPut(item: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
+    return new BatchPutRequest(this.entity, item)
+  }
+
+  batchDelete(key: KeyInputItem<ENTITY>): BatchDeleteRequest<ENTITY> {
     return new BatchDeleteRequest(this.entity, key)
+  }
+
+  static executeTransactGet<TRANSACTIONS extends ExecuteTransactGetInput>(
+    ...transactions: TRANSACTIONS
+  ): Promise<ExecuteTransactGetResponses<TRANSACTIONS>> {
+    return executeTransactGet<TRANSACTIONS>(...transactions)
+  }
+
+  transactGet<OPTIONS extends GetTransactionOptions<ENTITY> = GetTransactionOptions<ENTITY>>(
+    key: KeyInputItem<ENTITY>,
+    options: OPTIONS = {} as OPTIONS
+  ): GetTransaction<ENTITY> {
+    return new GetTransaction(this.entity, key, options)
   }
 
   static executeTransactWrite<TRANSACTIONS extends ExecuteTransactWriteInput>(
@@ -190,16 +164,42 @@ export class Repository<ENTITY extends Entity = Entity> extends EntityAction<ENT
     return new ConditionCheck(this.entity, key, condition, options)
   }
 
-  static executeTransactGet<TRANSACTIONS extends ExecuteTransactGetInput>(
-    ...transactions: TRANSACTIONS
-  ): Promise<ExecuteTransactGetResponses<TRANSACTIONS>> {
-    return executeTransactGet<TRANSACTIONS>(...transactions)
+  parse<OPTIONS extends ParseItemOptions = {}>(
+    item: { [KEY: string]: unknown },
+    options: OPTIONS = {} as OPTIONS
+  ): {
+    parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>
+    item: TransformedItem<ENTITY, InferWriteItemOptions<OPTIONS>> & PrimaryKey<ENTITY['table']>
+    key: PrimaryKey<ENTITY['table']>
+  } {
+    return new EntityParser(this.entity).parse(item, options)
   }
 
-  transactGet<OPTIONS extends GetTransactionOptions<ENTITY> = GetTransactionOptions<ENTITY>>(
-    key: KeyInputItem<ENTITY>,
+  parseCondition(
+    condition: Condition<ENTITY>,
+    id: string = ''
+  ): {
+    ConditionExpression: string
+    ExpressionAttributeNames: Record<string, string>
+    ExpressionAttributeValues: Record<string, NativeAttributeValue>
+  } {
+    return new EntityConditionParser(this.entity, id).parse(condition).toCommandOptions()
+  }
+
+  parsePaths(
+    attributes: EntityPaths<ENTITY>[],
+    id: string = ''
+  ): {
+    ProjectionExpression: string
+    ExpressionAttributeNames: Record<string, string>
+  } {
+    return new EntityPathParser(this.entity, id).parse(attributes).toCommandOptions()
+  }
+
+  format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(
+    item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
-  ): GetTransaction<ENTITY> {
-    return new GetTransaction(this.entity, key, options)
+  ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
+    return new EntityFormatter(this.entity).format(item, options)
   }
 }

@@ -173,7 +173,7 @@ const command = PokeTable.build(BatchGetCommand)
 ```ts
 import { execute } from 'dynamodb-toolbox/table/actions/batchGet'
 
-await execute(...batchGetCommands)
+const { Responses } = await execute(...batchGetCommands)
 ```
 
 :::warning
@@ -190,7 +190,7 @@ Note that the commands can be provided as **tuples** or **arrays** (the output i
 <TabItem value="tuple" label="Tuple">
 
 ```ts
-await execute(
+const { Response } = await execute(
   PokeTable.build(BatchGetCommand).requests(...),
   OtherTable.build(BatchGetCommand).requests(...),
   ...
@@ -209,7 +209,7 @@ const commands: (
   OtherTable.build(BatchGetCommand).requests(...)
 ]
 
-await execute(...commands)
+const { Response } = await execute(...commands)
 ```
 
 </TabItem>

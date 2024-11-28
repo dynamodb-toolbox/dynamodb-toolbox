@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # UpdateAttributesCommand
 
-Performs a [UpdateAttributes Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateAttributes.html) on an entity item. Similar to [`UpdateItemCommand`](../3-update-item/index.md) except than deep attribute updates are **non-partial**:
+Performs an [UpdateAttributes Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateAttributes.html) on an entity item. Similar to [`UpdateItemCommand`](../3-update-item/index.md) except than deep attribute updates are **non-partial**:
 
 ```ts
 import { UpdateAttributesCommand } from 'dynamodb-toolbox/entity/actions/updateAttributes'

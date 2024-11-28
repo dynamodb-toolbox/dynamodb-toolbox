@@ -204,7 +204,7 @@ import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
 const documentClient = new DynamoDBDocumentClient(...)
 
-const { Response } = await execute(
+const { Responses } = await execute(
   { documentClient },
   ...getTransactions
 )
@@ -217,7 +217,7 @@ const { Response } = await execute(
 const abortController = new AbortController()
 const abortSignal = abortController.signal
 
-const { Response } = await execute(
+const { Responses } = await execute(
   { abortSignal },
   ...getTransactions
 )
