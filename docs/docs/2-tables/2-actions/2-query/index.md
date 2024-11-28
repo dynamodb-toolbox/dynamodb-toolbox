@@ -33,7 +33,7 @@ The partition to query, with optional index and range condition:
 - <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range or Equality Condition</a>
 
 ```ts
-// Get 'ashKetchum' pokemons with a level ≥ 50
+// Get 'ashKetchum' pokemons
 await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .send()
@@ -44,7 +44,7 @@ You can use the `Query` type to explicitly type an object as a `QueryCommand` qu
 ```ts
 import type { Query } from 'dynamodb-toolbox/table/actions/query'
 
-// Get 'ashKetchum' pokemons with a level ≥ 50
+// Get 'ashKetchum1' pokemons with a level ≥ 50
 const query: Query<typeof PokeTable> = {
   index: 'byTrainerId',
   partition: 'ashKetchum1',

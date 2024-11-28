@@ -139,12 +139,12 @@ export class Repository<ENTITY extends Entity = Entity> extends EntityAction<ENT
     return new DeleteItemCommand(this.entity, key, options).send()
   }
 
-  batchPutRequest(item: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
-    return new BatchPutRequest(this.entity, item)
-  }
-
   batchGetRequest(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {
     return new BatchGetRequest(this.entity, key)
+  }
+
+  batchPutRequest(item: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
+    return new BatchPutRequest(this.entity, item)
   }
 
   batchDeleteRequest(key: KeyInputItem<ENTITY>): BatchDeleteRequest<ENTITY> {
