@@ -6,7 +6,7 @@ sidebar_custom_props:
 
 # PathParser
 
-Builds a [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that can be used to filter the returned attributes of a read operation like a [GetItem](../1-get-item/index.md), [Query](/docs/tables/actions/query) or [Scan](/docs/tables/actions/scan):
+Builds a [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that can be used to filter the returned attributes of a read operation like a [GetItem](../1-get-item/index.md), [Query](../../../2-tables/2-actions/2-query/index.md) or [Scan](../../../2-tables/2-actions/1-scan/index.md):
 
 ```ts
 import { PathParser } from 'dynamodb-toolbox/entity/actions/parsePaths'

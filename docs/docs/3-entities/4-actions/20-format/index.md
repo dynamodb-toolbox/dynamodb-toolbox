@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # EntityFormatter
 
-Given a saved item, validates that it respects the schema of the `Entity`, applies transformations backward and hide hidden attributes:
+Given a transformed item, validates that it respects the schema of the `Entity`, applies transformations backward and hide hidden attributes:
 
 ```ts
 import { EntityFormatter } from 'dynamodb-toolbox/entity/actions/format'

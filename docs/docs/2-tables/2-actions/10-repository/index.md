@@ -216,9 +216,9 @@ const batchGetCommand = pokeTableRepository.batchGet(
 
 ### `executeBatchGet(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>static (opt?: OPTIONS, ...cmd: COMMANDS) => ExecuteBatchGetResponses&lt;COMMANDS&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code><b>static</b> (opt?: OPTIONS, ...cmd: COMMANDS) => ExecuteBatchGetResponses&lt;COMMANDS&gt;</code></i></p>
 
-The [`BatchGetCommand` executor](../5-batch-get/index.md#execution) exposed as a static method:
+The [`BatchGetCommand` executor](../5-batch-get/index.md#execution) exposed as a **static** method:
 
 :::note[Examples]
 
@@ -298,9 +298,9 @@ const batchWriteCommand = pokeTableRepository.batchWrite(
 
 ### `executeBatchWrite(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>static (opt?: OPTIONS, ...cmd: COMMANDS) => BatchWriteCommandOutput</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code><b>static</b> (opt?: OPTIONS, ...cmd: COMMANDS) => BatchWriteCommandOutput</code></i></p>
 
-The [`BatchWriteCommand` executor](../6-batch-write/index.md#execution) exposed as a static method:
+The [`BatchWriteCommand` executor](../6-batch-write/index.md#execution) exposed as a **static** method:
 
 :::note[Examples]
 
