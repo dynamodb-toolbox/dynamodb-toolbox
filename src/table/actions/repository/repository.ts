@@ -41,7 +41,7 @@ const isBatchWriteRequest = (
 ): input is BatchWriteRequestProps =>
   input instanceof BatchPutRequest || input instanceof BatchDeleteRequest
 
-export class Repository<
+export class TableRepository<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[]
 > extends TableAction<TABLE, ENTITIES> {
@@ -53,8 +53,8 @@ export class Repository<
 
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
-  ): Repository<TABLE, NEXT_ENTITIES> {
-    return new Repository<TABLE, NEXT_ENTITIES>(this.table, nextEntities)
+  ): TableRepository<TABLE, NEXT_ENTITIES> {
+    return new TableRepository<TABLE, NEXT_ENTITIES>(this.table, nextEntities)
   }
 
   parsePrimaryKey(keyInput: { [KEY: string]: unknown }): PrimaryKey<TABLE> {

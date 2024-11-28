@@ -13,3 +13,4 @@ DynamoDB-Toolbox exposes the following _utility_ actions for `Entities`:
 - [`PathParser`](../19-parse-paths/index.md): Builds a [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html) that can be used to filter the returned attributes of a read operation like a [GetItem](../1-get-item/index.md), [Query](/docs/tables/actions/query) or [Scan](/docs/tables/actions/scan)
 - [`EntityFormatter`](../20-format/index.md): Given a saved item, validates that it respects the schema of the `Entity` and formats it
 - [`EntitySpy`](../21-spy/index.md): Enables [spying](https://en.wikipedia.org/wiki/Mock_object) the provided `Entity`
+- [`EntityRepository`](../22-repository/index.md): A utility action that exposes all entity actions as **methods**

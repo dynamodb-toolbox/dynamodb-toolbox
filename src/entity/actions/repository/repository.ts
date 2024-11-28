@@ -60,7 +60,7 @@ import type {
 import { EntityAction } from '~/entity/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
-export class Repository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
+export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
 
   async put<OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>>(

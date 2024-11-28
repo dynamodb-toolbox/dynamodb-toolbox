@@ -1,5 +1,5 @@
 ---
-title: Repository
+title: TableRepository
 sidebar_custom_props:
   sidebarActionType: util
 ---
@@ -7,14 +7,14 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Repository
+# TableRepository
 
-A utility action that exposes table actions as **methods**. Using it leads to heavier bundles (as it necessarily imports all of their code) but provides a more concise syntax:
+A utility action that exposes all table actions as **methods**. Using it leads to heavier bundles (as it necessarily imports all of their code) but provides a more concise syntax:
 
 ```ts
-import { Repository } from 'dynamodb-toolbox/table/actions/repository'
+import { TableRepository } from 'dynamodb-toolbox/table/actions/repository'
 
-const pokeTableRepository = PokeTable.build(Repository)
+const pokeTableRepository = PokeTable.build(TableRepository)
 
 // 👇 Sends a `ScanCommand`
 await pokeTableRepository.scan()
@@ -31,7 +31,7 @@ Note that [`Spies`](../9-spy/index.md) can still be used in cunjunction with `Re
 You can provide a list of entities to the repository. Those are then provided to all underlying actions:
 
 ```ts
-const pokeTableRepository = PokeTable.build(Repository)
+const pokeTableRepository = PokeTable.build(TableRepository)
   .entities(PokemonEntity, TrainerEntity, ...)
 
 // 👇 Typed as (Pokemon | Trainer | ...)[]
@@ -226,7 +226,7 @@ The [`BatchGetCommand` executor](../5-batch-get/index.md#execution) exposed as a
 <TabItem value="usage" label="Usage">
 
 ```ts
-const { Responses } = await Repository.executeBatchGet(
+const { Responses } = await TableRepository.executeBatchGet(
   // Only one `BatchGetCommand` per table is supported
   pokeTableRepository.batchGet(...),
   otherTableRepository.batchGet(...),
@@ -237,7 +237,7 @@ const { Responses } = await Repository.executeBatchGet(
 <TabItem value="options" label="Options">
 
 ```ts
-const { Responses } = await Repository.executeBatchGet(
+const { Responses } = await TableRepository.executeBatchGet(
   { maxAttempts: Infinity },
   // Only one `BatchGetCommand` per table is supported
   pokeTableRepository.batchGet(...),
@@ -308,7 +308,7 @@ The [`BatchWriteCommand` executor](../6-batch-write/index.md#execution) exposed 
 <TabItem value="usage" label="Usage">
 
 ```ts
-await Repository.executeBatchWrite(
+await TableRepository.executeBatchWrite(
   // Only one `BatchWriteCommand` per table is supported
   pokeTableRepository.batchWrite(...),
   otherTableRepository.batchWrite(...),
@@ -319,7 +319,7 @@ await Repository.executeBatchWrite(
 <TabItem value="options" label="Options">
 
 ```ts
-await Repository.executeBatchWrite(
+await TableRepository.executeBatchWrite(
   { maxAttempts: Infinity },
   // Only one `BatchWriteCommand` per table is supported
   pokeTableRepository.batchWrite(...),

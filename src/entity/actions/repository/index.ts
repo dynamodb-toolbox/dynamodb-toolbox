@@ -1,1 +1,1 @@
-export { Repository } from './repository.js'
+export { EntityRepository } from './repository.js'

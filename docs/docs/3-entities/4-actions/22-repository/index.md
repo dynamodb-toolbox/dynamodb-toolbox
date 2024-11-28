@@ -1,5 +1,5 @@
 ---
-title: Repository
+title: EntityRepository
 sidebar_custom_props:
   sidebarActionType: util
 ---
@@ -7,14 +7,16 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Repository
+# EntityRepository
 
-A utility action that exposes entity actions as **methods**. Using it leads to heavier bundles (as it necessarily imports all of their code) but provides a more concise syntax:
+A utility action that exposes all entity actions as **methods**. Using it leads to heavier bundles (as it necessarily imports all of their code) but provides a more concise syntax:
 
 ```ts
-import { Repository } from 'dynamodb-toolbox/entity/actions/repository'
+import { EntityRepository } from 'dynamodb-toolbox/entity/actions/repository'
 
-const pokemonRepository = PokemonEntity.build(Repository)
+const pokemonRepository = PokemonEntity.build(
+  EntityRepository
+)
 
 // 👇 Sends a `PutItemCommand`
 await pokemonRepository.put(pokemon)
@@ -308,7 +310,7 @@ The [`TransactGet` executor](../11-transact-get/index.md#execution) exposed as a
 <TabItem value="usage" label="Usage">
 
 ```ts
-const { Responses } = await Repository.executeTransactGet(
+const { Responses } = await EntityRepository.executeTransactGet(
   pokemonRepository.transactGet(...),
   pokemonRepository.transactGet(...),
 )
@@ -318,7 +320,7 @@ const { Responses } = await Repository.executeTransactGet(
 <TabItem value="options" label="Options">
 
 ```ts
-const { Responses } = await Repository.executeTransactGet(
+const { Responses } = await EntityRepository.executeTransactGet(
    { capacity: 'TOTAL' },
   pokemonRepository.transactGet(...),
   pokemonRepository.transactGet(...),
@@ -488,7 +490,7 @@ The [`TransactGet` executor](../11-transact-get/index.md#execution) exposed as a
 <TabItem value="usage" label="Usage">
 
 ```ts
-const { Responses } = await Repository.executeTransactGet(
+const { Responses } = await EntityRepository.executeTransactGet(
   pokemonRepository.transactGet(...),
   pokemonRepository.transactGet(...),
 )
@@ -498,7 +500,7 @@ const { Responses } = await Repository.executeTransactGet(
 <TabItem value="options" label="Options">
 
 ```ts
-const { Responses } = await Repository.executeTransactGet(
+const { Responses } = await EntityRepository.executeTransactGet(
    { capacity: 'TOTAL' },
   pokemonRepository.transactGet(...),
   pokemonRepository.transactGet(...),
