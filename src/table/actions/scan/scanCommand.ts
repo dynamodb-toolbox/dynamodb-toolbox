@@ -110,6 +110,7 @@ export class ScanCommand<
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
+    const entityAttrSavedAs = this.table.entityAttributeSavedAs
     const scanParams = this.params()
 
     const formattersByName: Record<string, EntityFormatter> = {}
@@ -153,10 +154,21 @@ export class ScanCommand<
           continue
         }
 
-        const itemEntityName = item[this.table.entityAttributeSavedAs]
+        const itemEntityName = item[entityAttrSavedAs]
 
         if (!isString(itemEntityName)) {
-          continue
+          // NOTE: Can only happen if `entityAttrFilter` is false
+          // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
+          for (const [entityName, formatter] of Object.entries(formattersByName)) {
+            try {
+              formattedItems.push(
+                formatter.format({ ...item, [entityAttrSavedAs]: entityName }, { attributes })
+              )
+              break
+            } catch {
+              continue
+            }
+          }
         }
 
         const formatter = formattersByName[itemEntityName]
