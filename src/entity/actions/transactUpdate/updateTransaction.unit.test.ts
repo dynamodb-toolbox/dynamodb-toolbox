@@ -1745,6 +1745,33 @@ describe('update transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
   })
 
+  test('sets returnValuesOnConditionCheckFailure options', () => {
+    const {
+      Update: { ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(UpdateTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValuesOnConditionCheckFailure: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionCheckFailure option', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionCheckFailure: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionCheckFailureOption' })
+    )
+  })
+
   test('overrides tableName', () => {
     const {
       Update: { TableName }

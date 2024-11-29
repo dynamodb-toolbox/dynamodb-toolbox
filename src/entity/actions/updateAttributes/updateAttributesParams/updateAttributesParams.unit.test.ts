@@ -1332,6 +1332,31 @@ describe('update', () => {
     )
   })
 
+  test('sets returnValuesOnConditionCheckFailure options', () => {
+    const { ReturnValuesOnConditionCheckFailure } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValuesOnConditionCheckFailure: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionCheckFailure option', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionCheckFailure: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionCheckFailureOption' })
+    )
+  })
+
   test('overrides tableName', () => {
     const { TableName } = TestEntity.build(UpdateAttributesCommand)
       .item({ email: 'x', sort: 'y' })

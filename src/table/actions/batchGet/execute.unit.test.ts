@@ -1,4 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import type { __MetadataBearer } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, BatchGetCommand as _BatchGetCommand } from '@aws-sdk/lib-dynamodb'
 import { mockClient } from 'aws-sdk-client-mock'
 import type { AwsStub } from 'aws-sdk-client-mock'
@@ -22,7 +23,7 @@ import { execute, getCommandInput } from './execute.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
-let documentClientMock: AwsStub<object, unknown, unknown>
+let documentClientMock: AwsStub<object, __MetadataBearer, unknown>
 
 const TestTable1 = new Table({
   name: 'test-table-1',

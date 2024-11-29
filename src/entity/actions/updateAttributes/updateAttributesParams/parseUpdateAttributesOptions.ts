@@ -6,6 +6,7 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
+import { parseReturnValuesOnConditionCheckFailureOption } from '~/options/returnValuesOnConditionCheckFailure.js'
 import { parseTableNameOption } from '~/options/tableName.js'
 
 import { updateAttributesCommandReturnValuesOptionsSet } from '../options.js'
@@ -24,8 +25,15 @@ export const parseUpdateAttributesOptions: UpdateAttributesOptionsParser = (
 ) => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, condition, tableName, ...extraOptions } =
-    updateItemOptions
+  const {
+    capacity,
+    metrics,
+    returnValues,
+    returnValuesOnConditionCheckFailure,
+    condition,
+    tableName,
+    ...extraOptions
+  } = updateItemOptions
   rejectExtraOptions(extraOptions)
 
   if (capacity !== undefined) {
@@ -41,6 +49,11 @@ export const parseUpdateAttributesOptions: UpdateAttributesOptionsParser = (
       updateAttributesCommandReturnValuesOptionsSet,
       returnValues
     )
+  }
+
+  if (returnValuesOnConditionCheckFailure !== undefined) {
+    commandOptions.ReturnValuesOnConditionCheckFailure =
+      parseReturnValuesOnConditionCheckFailureOption(returnValuesOnConditionCheckFailure)
   }
 
   if (condition !== undefined) {
