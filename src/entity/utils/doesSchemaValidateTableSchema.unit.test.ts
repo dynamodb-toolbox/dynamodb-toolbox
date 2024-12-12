@@ -23,6 +23,17 @@ describe('doesSchemaValidateTableSchema', () => {
     ).toBe(true)
   })
 
+  test('returns false if attribute is savedAs incorrectly', () => {
+    expect(
+      doesSchemaValidateTableSchemaKey(
+        schema({
+          pk: string().key().savedAs('partitionKey')
+        }),
+        { name: 'pk', type: 'string' }
+      )
+    ).toBe(false)
+  })
+
   test('returns false if attribute is not always required', () => {
     expect(
       doesSchemaValidateTableSchemaKey(schema({ pk: string().key().optional() }), {

@@ -1,6 +1,6 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
-export type { Validator } from './attributes/index.js'
+export type { Attribute, Validator } from './attributes/index.js'
 export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
 export { nul, NullAttribute, $NullAttribute } from './attributes/null/index.js'
 export { boolean, BooleanAttribute, $BooleanAttribute } from './attributes/boolean/index.js'
@@ -68,7 +68,9 @@ export type {
 export { BatchGetCommand, execute as executeBatchGet } from './table/actions/batchGet/index.js'
 export type {
   BatchGetCommandOptions,
-  ExecuteBatchGetOptions
+  ExecuteBatchGetInput,
+  ExecuteBatchGetOptions,
+  ExecuteBatchGetResponses
 } from './table/actions/batchGet/index.js'
 export {
   BatchWriteCommand,
@@ -76,6 +78,7 @@ export {
 } from './table/actions/batchWrite/index.js'
 export type {
   BatchWriteCommandOptions,
+  ExecuteBatchWriteInput,
   ExecuteBatchWriteOptions
 } from './table/actions/batchWrite/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
@@ -159,10 +162,18 @@ export { BatchGetRequest } from './entity/actions/batchGet/index.js'
 export { BatchDeleteRequest } from './entity/actions/batchDelete/index.js'
 export { BatchPutRequest } from './entity/actions/batchPut/index.js'
 export { execute as executeTransactGet } from './entity/actions/transactGet/index.js'
-export type { ExecuteTransactGetOptions } from './entity/actions/transactGet/index.js'
+export type {
+  ExecuteTransactGetInput,
+  ExecuteTransactGetOptions,
+  ExecuteTransactGetResponses
+} from './entity/actions/transactGet/index.js'
 export { GetTransaction } from './entity/actions/transactGet/index.js'
 export { execute as executeTransactWrite } from './entity/actions/transactWrite/index.js'
-export type { ExecuteTransactWriteOptions } from './entity/actions/transactWrite/index.js'
+export type {
+  ExecuteTransactWriteInput,
+  ExecuteTransactWriteOptions,
+  ExecuteTransactWriteResponses
+} from './entity/actions/transactWrite/index.js'
 export { PutTransaction } from './entity/actions/transactPut/index.js'
 export type { PutTransactionOptions } from './entity/actions/transactPut/index.js'
 export { UpdateTransaction } from './entity/actions/transactUpdate/index.js'

@@ -30,15 +30,7 @@ export type ExecuteBatchGetInput =
 
 type ExecuteBatchGet = <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS
-) => Promise<
-  COMMANDS extends BatchGetCommand[]
-    ? ExecuteBatchGetResponse<COMMANDS>
-    : COMMANDS extends [ExecuteBatchGetOptions, ...infer REQUESTS_TAIL]
-      ? REQUESTS_TAIL extends BatchGetCommand[]
-        ? ExecuteBatchGetResponse<REQUESTS_TAIL>
-        : never
-      : never
->
+) => Promise<ExecuteBatchGetResponses<COMMANDS>>
 
 export type ExecuteBatchGetResponses<COMMANDS extends ExecuteBatchGetInput> =
   COMMANDS extends BatchGetCommand[]
