@@ -76,7 +76,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   }
 
   /**
-   * Tag attribute as needed for Primary Key computing
+   * Tag attribute as a primary key attribute or linked to a primary attribute
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY

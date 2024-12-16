@@ -83,7 +83,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   }
 
   /**
-   * Tag attribute as needed for Primary Key computing
+   * Tag attribute as a primary key attribute or linked to a primary attribute
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY

@@ -112,7 +112,7 @@ Available options:
 
 ```ts
 const transaction = PokemonEntity.build(ConditionCheck)
-  .key()
+  .key(...)
   // 👇 Makes sure level is above 50
   .condition({ attr: 'level', gte: 50 })
   .options({

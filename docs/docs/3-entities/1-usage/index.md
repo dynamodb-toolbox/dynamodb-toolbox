@@ -88,27 +88,6 @@ const PokemonEntity = new Entity({
 ```
 
 </TabItem>
-<TabItem value="single-partition" label="Single partition">
-
-```ts
-const PokeTable = new Table({
-  partitionKey: { name: 'pk', type: 'string' },
-  sortKey: { name: 'sk', type: 'number' },
-  ...
-})
-
-const PokemonEntity = new Entity({
-  table: PokeTable,
-  schema: schema({
-    // 👇 constant partition key
-    pk: string().const('POKEMON').key(),
-    sk: number().key(),
-    ...
-  })
-})
-```
-
-</TabItem>
 <TabItem value="saving-as" label="Renaming">
 
 ```ts
@@ -158,6 +137,33 @@ const PokemonEntity = new Entity({
 👉 See the [transformers section](../../4-schemas/17-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
+<TabItem value="linked" label="Linked">
+
+```ts
+const PokeTable = new Table({
+  partitionKey: { name: 'pk', type: 'string' },
+  ...
+})
+
+const PokemonEntity = new Entity({
+  table: PokeTable,
+  schema: schema({
+    // 👇 linked attributes should also be tagged as `.key()`
+    pokemonId: string().key(),
+    trainerId: string().key(),
+    ...
+  }).and(prevSchema => ({
+    pk: string()
+      .key()
+      .link<typeof prevSchema>(
+        ({ trainerId, pokemonId }) =>
+          `${trainerId}#${pokemonId}`
+      )
+  }))
+})
+```
+
+</TabItem>
 </Tabs>
 
 :::
@@ -181,6 +187,7 @@ This can be useful for more complex cases like mapping several attributes to the
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
+    // 👇 linked attributes should also be tagged as `.key()`
     pokemonId: string().key(),
     level: number().key(),
     ...
@@ -200,6 +207,7 @@ const PokemonEntity = new Entity({
 const PokemonEntity = new Entity({
   table: PokeTable,
   schema: schema({
+    // 👇 linked attributes should also be tagged as `.key()`
     specifiers: list(string()).key(),
     sk: number().key(),
     ...

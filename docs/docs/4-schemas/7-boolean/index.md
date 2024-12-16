@@ -66,7 +66,7 @@ const isLegendarySchema = boolean({ hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as needed to compute the primary key:
+Tags the attribute as a primary key attribute or linked to a primary attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'

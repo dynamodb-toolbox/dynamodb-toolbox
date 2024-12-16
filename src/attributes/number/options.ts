@@ -21,7 +21,7 @@ export type NumberAttributeOptions = {
    */
   hidden: boolean
   /**
-   * Tag attribute as needed for Primary Key computing
+   * Tag attribute as a primary key attribute or linked to a primary attribute
    */
   key: boolean
   /**
