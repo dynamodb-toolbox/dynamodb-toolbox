@@ -93,6 +93,35 @@ describe('condition check transaction', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'actions.invalidCondition' }))
   })
 
+  test('sets returnValuesOnConditionFalse options', () => {
+    const {
+      ConditionCheck: { ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(ConditionCheck)
+      .key({ email: 'x', sort: 'y' })
+      .condition({ attr: 'email', gt: 'test' })
+      .options({ returnValuesOnConditionFalse: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionFalse option', () => {
+    const invalidCall = () =>
+      TestEntity.build(ConditionCheck)
+        .key({ email: 'x', sort: 'y' })
+        .condition({ attr: 'email', gt: 'test' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionFalse: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionFalseOption' })
+    )
+  })
+
   test('overrides tableName', () => {
     const {
       ConditionCheck: { TableName }

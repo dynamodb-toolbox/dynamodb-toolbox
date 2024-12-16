@@ -101,6 +101,33 @@ describe('delete transaction', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
+  test('sets returnValuesOnConditionFalse options', () => {
+    const {
+      Delete: { ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(DeleteTransaction)
+      .key({ email: 'x', sort: 'y' })
+      .options({ returnValuesOnConditionFalse: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionFalse option', () => {
+    const invalidCall = () =>
+      TestEntity.build(DeleteTransaction)
+        .key({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionFalse: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionFalseOption' })
+    )
+  })
+
   // Options
   test('overrides tableName', () => {
     const {

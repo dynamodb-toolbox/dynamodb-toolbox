@@ -6,6 +6,7 @@ import { parseCapacityOption } from '~/options/capacity.js'
 import { parseMetricsOption } from '~/options/metrics.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseReturnValuesOption } from '~/options/returnValues.js'
+import { parseReturnValuesOnConditionFalseOption } from '~/options/returnValuesOnConditionFalse.js'
 import { parseTableNameOption } from '~/options/tableName.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
@@ -22,8 +23,15 @@ type DeleteItemOptionsParser = <ENTITY extends Entity>(
 export const parseDeleteItemOptions: DeleteItemOptionsParser = (entity, deleteItemOptions) => {
   const commandOptions: CommandOptions = {}
 
-  const { capacity, metrics, returnValues, condition, tableName, ...extraOptions } =
-    deleteItemOptions
+  const {
+    capacity,
+    metrics,
+    returnValues,
+    returnValuesOnConditionFalse,
+    condition,
+    tableName,
+    ...extraOptions
+  } = deleteItemOptions
   rejectExtraOptions(extraOptions)
 
   if (capacity !== undefined) {
@@ -38,6 +46,12 @@ export const parseDeleteItemOptions: DeleteItemOptionsParser = (entity, deleteIt
     commandOptions.ReturnValues = parseReturnValuesOption(
       deleteItemCommandReturnValuesOptionsSet,
       returnValues
+    )
+  }
+
+  if (returnValuesOnConditionFalse !== undefined) {
+    commandOptions.ReturnValuesOnConditionCheckFailure = parseReturnValuesOnConditionFalseOption(
+      returnValuesOnConditionFalse
     )
   }
 

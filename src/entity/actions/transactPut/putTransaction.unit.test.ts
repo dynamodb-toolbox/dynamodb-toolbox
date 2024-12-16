@@ -397,6 +397,33 @@ describe('put transaction', () => {
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
+  test('sets returnValuesOnConditionFalse options', () => {
+    const {
+      Put: { ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(PutTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValuesOnConditionFalse: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionFalse option', () => {
+    const invalidCall = () =>
+      TestEntity.build(PutTransaction)
+        .item({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionFalse: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionFalseOption' })
+    )
+  })
+
   // Options
   test('overrides tableName', () => {
     const {

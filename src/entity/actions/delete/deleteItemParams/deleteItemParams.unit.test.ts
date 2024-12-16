@@ -178,6 +178,31 @@ describe('delete', () => {
     )
   })
 
+  test('sets returnValuesOnConditionFalse options', () => {
+    const { ReturnValuesOnConditionCheckFailure } = TestEntity.build(DeleteItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ returnValuesOnConditionFalse: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
+  })
+
+  test('fails on invalid returnValuesOnConditionFalse option', () => {
+    const invalidCall = () =>
+      TestEntity.build(DeleteItemCommand)
+        .key({ email: 'x', sort: 'y' })
+        .options({
+          // @ts-expect-error
+          returnValuesOnConditionFalse: 'ALL_NEW'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidReturnValuesOnConditionFalseOption' })
+    )
+  })
+
   test('overrides tableName', () => {
     const { TableName } = TestEntity.build(DeleteItemCommand)
       .key({ email: 'x', sort: 'y' })

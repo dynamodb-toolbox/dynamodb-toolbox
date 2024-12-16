@@ -1,4 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
+import type { __MetadataBearer } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, ScanCommand as _ScanCommand } from '@aws-sdk/lib-dynamodb'
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
@@ -11,7 +12,7 @@ import { ScanCommand } from './scanCommand.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
-let documentClientMock: AwsStub<object, unknown, unknown>
+let documentClientMock: AwsStub<object, __MetadataBearer, unknown>
 
 const TestTable = new Table({
   name: 'test-table',

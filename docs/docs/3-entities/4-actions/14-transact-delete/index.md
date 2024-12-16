@@ -91,10 +91,11 @@ const transaction = PokemonEntity.build(
 
 Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html#API_TransactWriteItems_RequestParameters) for more details):
 
-| Option      |               Type                | Default | Description                                                                                                                                                                                                                      |
-| ----------- | :-------------------------------: | :-----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition` | `Condition<typeof PokemonEntity>` |    -    | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
-| `tableName` |             `string`              |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
+| Option                                          |               Type                | Default  | Description                                                                                                                                                                                                                      |
+| ----------------------------------------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`                                     | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| <code>returnValuesOn<wbr/>ConditionFalse</code> |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                                                      |
+| `tableName`                                     |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
 
 :::note[Examples]
 
@@ -105,7 +106,10 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 const transaction = PokemonEntity.build(DeleteTransaction)
   .key({ pokemonId: 'pikachu1' })
   .options({
-    condition: { attr: 'archived', eq: true }
+    // 👇 Makes sure pokemon was archived
+    condition: { attr: 'archived', eq: true },
+    // 👇 Includes the Item in the error if not so
+    returnValuesOnConditionFalse: 'ALL_OLD'
   })
 ```
 
