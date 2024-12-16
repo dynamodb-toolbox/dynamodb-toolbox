@@ -88,13 +88,14 @@ await PokemonEntity.build(PutItemCommand)
 
 Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#API_PutItem_RequestParameters) for more details):
 
-| Option         |               Type                | Default  | Description                                                                                                                                                                                                                   |
-| -------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`    | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `PutItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
-| `returnValues` |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                 |
-| `metrics`      |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                  |
-| `capacity`     |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                      |
-| `tableName`    |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                     |
+| Option                                          |               Type                | Default  | Description                                                                                                                                                                                                                   |
+| ----------------------------------------------- | :-------------------------------: | :------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `condition`                                     | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `PutItemCommand` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `returnValues`                                  |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes as they appeared before they were updated with the request.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                 |
+| <code>returnValuesOn<wbr/>ConditionFalse</code> |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                                                   |
+| `metrics`                                       |          `MetricsOption`          | `"NONE"` | Determines whether item collection metrics are returned.<br/><br/>Possible values are `"NONE"` and `"SIZE"`.                                                                                                                  |
+| `capacity`                                      |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                      |
+| `tableName`                                     |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                     |
 
 :::note[Examples]
 
@@ -111,7 +112,9 @@ await PokemonEntity.build(PutItemCommand)
   })
   .options({
     // 👇 Checks that item didn't previously exist
-    condition: { attr: 'pokemonId', exists: false }
+    condition: { attr: 'pokemonId', exists: false },
+    // 👇 Includes the Item in the error if so
+    returnValuesOnConditionFalse: 'ALL_OLD'
   })
   .send()
 ```

@@ -60,6 +60,12 @@ type InvalidReturnValuesOptionErrorBlueprint = ErrorBlueprint<{
   payload: { returnValues: unknown }
 }>
 
+type InvalidReturnValuesOnConditionFalseOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidReturnValuesOnConditionFalseOption'
+  hasPath: false
+  payload: { returnValues: unknown }
+}>
+
 type InvalidSelectOptionErrorBlueprint = ErrorBlueprint<{
   code: 'options.invalidSelectOption'
   hasPath: false
@@ -95,6 +101,7 @@ export type OptionsErrorBlueprints =
   | InvalidMaxPagesOptionErrorBlueprint
   | InvalidMetricsOptionErrorBlueprint
   | InvalidReturnValuesOptionErrorBlueprint
+  | InvalidReturnValuesOnConditionFalseOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
   | InvalidTableNameOptionErrorBlueprint
   | UnknownOptionErrorBlueprint

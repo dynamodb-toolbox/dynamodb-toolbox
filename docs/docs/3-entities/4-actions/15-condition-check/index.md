@@ -4,6 +4,9 @@ sidebar_custom_props:
   sidebarActionType: util
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # ConditionCheck
 
 Builds a condition to check against an entity item for the transaction to succeed, to be used within [TransactWriteItems operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html):
@@ -97,11 +100,29 @@ const transaction = PokemonEntity.build(ConditionCheck)
 
 Available options:
 
-| Option      |   Type   | Default | Description                                                                                               |
-| ----------- | :------: | :-----: | --------------------------------------------------------------------------------------------------------- |
-| `tableName` | `string` |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy). |
+| Option                                          |         Type         | Default  | Description                                                                                                 |
+| ----------------------------------------------- | :------------------: | :------: | ----------------------------------------------------------------------------------------------------------- |
+| <code>returnValuesOn<wbr/>ConditionFalse</code> | `ReturnValuesOption` | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`. |
+| `tableName`                                     |       `string`       |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).   |
 
 :::note[Examples]
+
+<Tabs>
+<TabItem value="return-values" label="Return Values">
+
+```ts
+const transaction = PokemonEntity.build(ConditionCheck)
+  .key()
+  // 👇 Makes sure level is above 50
+  .condition({ attr: 'level', gte: 50 })
+  .options({
+    // 👇 Includes the Item in the error if not so
+    returnValuesOnConditionFalse: 'ALL_OLD'
+  })
+```
+
+</TabItem>
+<TabItem value="multitenant" label="Multitenant">
 
 ```ts
 const transaction = PokemonEntity.build(ConditionCheck)
@@ -111,5 +132,8 @@ const transaction = PokemonEntity.build(ConditionCheck)
     tableName: `tenant-${tenantId}-pokemons`
   })
 ```
+
+</TabItem>
+</Tabs>
 
 :::

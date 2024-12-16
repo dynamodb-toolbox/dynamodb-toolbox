@@ -1,3 +1,4 @@
+import type { __MetadataBearer } from '@aws-sdk/client-dynamodb'
 import { QueryCommand as _QueryCommand } from '@aws-sdk/lib-dynamodb'
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
@@ -8,7 +9,7 @@ import { QueryCommand } from '~/table/actions/query/index.js'
 import { TestEntity, TestTable, documentClient } from './spy.fixtures.test.js'
 import { TableSpy } from './spy.js'
 
-let documentClientMock: AwsStub<object, unknown, unknown>
+let documentClientMock: AwsStub<object, __MetadataBearer, unknown>
 
 const formattedItem: FormattedItem<typeof TestEntity> = {
   email: 'some@email.com',
