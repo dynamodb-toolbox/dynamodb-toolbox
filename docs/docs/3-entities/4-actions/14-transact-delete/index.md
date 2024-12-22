@@ -131,6 +131,6 @@ const transaction = PokemonEntity.build(DeleteTransaction)
 
 :::info
 
-Contrary to [`DeleteItemCommands`](../5-delete-item/index.md), delete transactions cannot return the values of the deleted items.
+Contrary to [`DeleteItemCommand`](../5-delete-item/index.md), delete transactions cannot return the values of the deleted items.
 
 :::
