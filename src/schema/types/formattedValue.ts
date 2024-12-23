@@ -110,9 +110,7 @@ type AttrFormattedValue<
           : never)
       | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends Schema | MapAttribute
-          ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS>
-          : never)
+      | (ATTRIBUTE extends MapAttribute ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
