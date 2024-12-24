@@ -24,19 +24,19 @@ export const fromJSONAnyOfAttr = ({
   defaults
   links
 
-  if (required !== ANY_OF_DEFAULT_OPTIONS.required) {
+  if (required !== undefined && required !== ANY_OF_DEFAULT_OPTIONS.required) {
     $attr = $attr.required(required) as $AnyOfAttribute
   }
 
-  if (hidden !== ANY_OF_DEFAULT_OPTIONS.hidden) {
+  if (hidden !== undefined && hidden !== ANY_OF_DEFAULT_OPTIONS.hidden) {
     $attr = $attr.hidden(hidden) as $AnyOfAttribute
   }
 
-  if (key !== ANY_OF_DEFAULT_OPTIONS.key) {
+  if (key !== undefined && key !== ANY_OF_DEFAULT_OPTIONS.key) {
     $attr = $attr.key(key) as $AnyOfAttribute
   }
 
-  if (savedAs !== ANY_OF_DEFAULT_OPTIONS.savedAs) {
+  if (savedAs !== undefined && savedAs !== ANY_OF_DEFAULT_OPTIONS.savedAs) {
     $attr = $attr.savedAs(savedAs) as $AnyOfAttribute
   }
 
