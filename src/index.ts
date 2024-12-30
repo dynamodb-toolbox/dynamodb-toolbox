@@ -53,7 +53,7 @@ export type { ISchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables
-export { Table, TableAction } from './table/index.js'
+export { Table, TableAction, $entities } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
 export { QueryCommand, $entity } from './table/actions/query/index.js'
