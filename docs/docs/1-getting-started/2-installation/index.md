@@ -28,8 +28,8 @@ pnpm add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 yarn add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 ```
 
-:::info
+:::note
 
-Already have `@aws-sdk/client-dynamodb` and `@aws-sdk/lib-dynamodb` as part of your runtime and using a bundler? We recommend marking these dependencies as external to not have several copies of them
+If you use TypeScript, make sure to activate the [`strict`](https://www.typescriptlang.org/tsconfig/#strict) option in your `tsconfig.json` to avoid Type Inference issues.
 
 :::
