@@ -347,11 +347,11 @@ const Home = (): JSX.Element => (
                 <b>reliability</b> of your code.
               </p>
               <p className="text-sm dark:text-gray-200 leading-6">
-                DynamoDB-Toolbox exposes rich schema syntax
-                that supports a broad range of edge cases
-                like <b>defaults</b>, <b>composition</b>,{' '}
-                <b>transformations</b> and{' '}
-                <b>polymorphism</b>.
+                DynamoDB-Toolbox exposes a rich schema
+                syntax that supports a broad range of edge
+                cases like <b>defaults</b>,{' '}
+                <b>composition</b>, <b>transformations</b>{' '}
+                and <b>polymorphism</b>.
               </p>
             </div>
           </div>
