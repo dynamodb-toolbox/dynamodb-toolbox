@@ -87,7 +87,10 @@ export const scanParams: ScanParamsGetter = <
   }
 
   if (consistent !== undefined) {
-    commandOptions.ConsistentRead = parseConsistentOption(consistent, index)
+    commandOptions.ConsistentRead = parseConsistentOption(
+      consistent,
+      index !== undefined ? table.indexes[index] : undefined
+    )
   }
 
   if (exclusiveStartKey !== undefined) {

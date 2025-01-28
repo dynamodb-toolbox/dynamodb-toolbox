@@ -33,6 +33,13 @@ const TestTable = new Table({
         name: 'gsi_sk',
         type: 'string'
       }
+    },
+    lsi: {
+      type: 'local',
+      sortKey: {
+        name: 'gsi_sk',
+        type: 'string'
+      }
     }
   }
 })
@@ -96,9 +103,17 @@ describe('scan', () => {
   })
 
   test('sets consistent option', () => {
-    const { ConsistentRead } = TestTable.build(ScanCommand).options({ consistent: true }).params()
+    const { ConsistentRead: ConsistentReadA } = TestTable.build(ScanCommand)
+      .options({ consistent: true })
+      .params()
 
-    expect(ConsistentRead).toBe(true)
+    expect(ConsistentReadA).toBe(true)
+
+    const { ConsistentRead: ConsistentReadB } = TestTable.build(ScanCommand)
+      .options({ index: 'lsi', consistent: true })
+      .params()
+
+    expect(ConsistentReadB).toBe(true)
   })
 
   test('fails on invalid consistent option', () => {

@@ -27,12 +27,14 @@ export type QueryOptions<
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
   tableName?: string
-} & (QUERY['index'] extends string
-  ? {
-      // consistent must be false if a secondary index is queried
-      consistent?: false
-      select?: SelectOption
-    }
+} & (QUERY['index'] extends keyof TABLE['indexes']
+  ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
+    ? {
+        // consistent must be false if a global secondary index is queried
+        consistent?: false
+        select?: SelectOption
+      }
+    : { consistent?: boolean; select?: SelectOption }
   : {
       consistent?: boolean
       // "ALL_PROJECTED_ATTRIBUTES" is only available if a secondary index is queried

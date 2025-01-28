@@ -1,5 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
+import type { FormattedItem } from '~/index.js'
 import {
   DynamoDBToolboxError,
   Entity,
@@ -10,7 +11,6 @@ import {
   schema,
   string
 } from '~/index.js'
-import type { FormattedItem } from '~/index.js'
 import type { Merge } from '~/types/merge.js'
 
 import type { $entity } from '../constants.js'
@@ -207,9 +207,11 @@ describe('query', () => {
     const {
       KeyConditionExpression: KeyConditionExpressionC,
       ExpressionAttributeNames: ExpressionAttributeNamesC,
-      ExpressionAttributeValues: ExpressionAttributeValuesC
+      ExpressionAttributeValues: ExpressionAttributeValuesC,
+      ConsistentRead
     } = TestTable.build(QueryCommand)
       .query({ index: 'lsi', partition: 'foo', range: { gte: 42 } })
+      .options({ consistent: true })
       .params()
 
     expect(KeyConditionExpressionC).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
@@ -221,6 +223,7 @@ describe('query', () => {
       ':c0_1': 'foo',
       ':c0_2': 42
     })
+    expect(ConsistentRead).toBe(true)
   })
 
   test('throws on invalid LSI query', () => {
@@ -281,11 +284,7 @@ describe('query', () => {
 
     const invalidCallE = () =>
       TestTable.build(QueryCommand)
-        .query({
-          index: 'lsi',
-          partition: 'foo',
-          range: { gt: 42 }
-        })
+        .query({ index: 'gsiSimple', partition: 'foo' })
         .options({
           // @ts-expect-error
           consistent: true

@@ -91,16 +91,19 @@ export const queryParams: QueryParamsGetter = <
     commandOptions.ReturnConsumedCapacity = parseCapacityOption(capacity)
   }
 
+  if (index !== undefined) {
+    commandOptions.IndexName = parseIndexOption(table, index)
+  }
+
   if (consistent !== undefined) {
-    commandOptions.ConsistentRead = parseConsistentOption(consistent, index)
+    commandOptions.ConsistentRead = parseConsistentOption(
+      consistent,
+      index !== undefined ? table.indexes[index] : undefined
+    )
   }
 
   if (exclusiveStartKey !== undefined) {
     commandOptions.ExclusiveStartKey = exclusiveStartKey
-  }
-
-  if (index !== undefined) {
-    commandOptions.IndexName = parseIndexOption(table, index)
   }
 
   if (limit !== undefined) {

@@ -16,9 +16,11 @@ export type DeletePartitionOptions<
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
   tableName?: string
-} & (QUERY['index'] extends string
-  ? {
-      // consistent MUST be false if a secondary index is queried
-      consistent?: false
-    }
+} & (QUERY['index'] extends keyof TABLE['indexes']
+  ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
+    ? {
+        // consistent must be false if a global secondary index is queried
+        consistent?: false
+      }
+    : { consistent?: boolean }
   : { consistent?: boolean })
