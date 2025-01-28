@@ -149,7 +149,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center"><code>false</code></td>
             <td>
               By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
-              <br/><br/>Set to <code>true</code> to use <b>strongly</b> consistent reads (unavailable on secondary indexes).
+              <br/><br/>Set to <code>true</code> to use <b>strongly</b> consistent reads (unavailable on global secondary indexes).
             </td>
         </tr>
         <tr>
