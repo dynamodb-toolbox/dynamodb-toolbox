@@ -50,7 +50,7 @@ export type QueryResponse<
   TABLE extends Table,
   QUERY extends Query<TABLE>,
   ENTITIES extends Entity[],
-  OPTIONS extends QueryOptions<TABLE, ENTITIES>
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
 > = Merge<
   Omit<QueryCommandOutput, 'Items' | '$metadata'>,
   {
@@ -107,8 +107,22 @@ export class QueryCommand<
 
   query<NEXT_QUERY extends Query<TABLE>>(
     nextQuery: NEXT_QUERY
-  ): QueryCommand<TABLE, ENTITIES, NEXT_QUERY, OPTIONS> {
-    return new QueryCommand(this.table, this[$entities], nextQuery, this[$options])
+  ): QueryCommand<
+    TABLE,
+    ENTITIES,
+    NEXT_QUERY,
+    OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+      ? OPTIONS
+      : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+  > {
+    return new QueryCommand(
+      this.table,
+      this[$entities],
+      nextQuery,
+      this[$options] as OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+        ? OPTIONS
+        : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+    )
   }
 
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(

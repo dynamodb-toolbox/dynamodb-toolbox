@@ -34,10 +34,15 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
         index?: undefined
       }
     | {
-        // consistent must be false if an index is present
+        // consistent must be false if a secondary index is present
         consistent?: false
         select?: SelectOption
-        index: IndexNames<TABLE>
+        index: IndexNames<TABLE, 'global'>
+      }
+    | {
+        consistent?: boolean
+        select?: SelectOption
+        index: IndexNames<TABLE, 'local'>
       }
   ) &
   (
