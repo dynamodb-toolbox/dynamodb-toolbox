@@ -128,7 +128,7 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
             <td align="center"><code>false</code></td>
             <td>
               By default, read operations are <b>eventually</b> consistent (which improves performances and reduces costs).
-              <br/><br/>Set to <code>true</code> to use a <b>strongly</b> consistent query (unavailable on secondary indexes).
+              <br/><br/>Set to <code>true</code> to use a <b>strongly</b> consistent query (unavailable on global secondary indexes).
             </td>
         </tr>
         <tr>
