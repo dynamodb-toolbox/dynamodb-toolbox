@@ -32,6 +32,13 @@ export class EntityDTO<ENTITY extends Entity = Entity>
 
   constructor(entity: ENTITY) {
     super(entity)
+
+    if (entity.computeKey !== undefined) {
+      console.warn(
+        'Entity DTO schema is probably incomplete when using `computeKey`: Please define explicit Primary Key attributes and use `links` instead (https://www.dynamodbtoolbox.com/docs/schemas/defaults-and-links#links).'
+      )
+    }
+
     this.name = this.entity.name
     this.schema = this.entity.constructorSchema.build(SchemaDTO).toJSON()
     this.entityAttributeName = this.entity.entityAttributeName
