@@ -3,6 +3,7 @@
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { Transformer } from '~/transformers/index.js'
 import type {
   ConstrainedOverwrite,
   If,
@@ -17,8 +18,9 @@ import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeAnyAttribute } from './freeze.js'
 import type { FreezeAnyAttribute } from './freeze.js'
+import { freezeAnyAttribute } from './freeze.js'
+import type { ResolveAnyAttribute } from './resolve.js'
 import type { AnyAttributeState } from './types.js'
 
 export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
@@ -100,6 +102,20 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextCastAs = undefined as unknown as NEXT_CAST_AS
   ): $AnyAttribute<Overwrite<STATE, { castAs: NEXT_CAST_AS }>> {
     return new $AnyAttribute(overwrite(this[$state], { castAs: nextCastAs }))
+  }
+
+  /**
+   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
+   *
+   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
+   */
+  transform<
+    TRANSFORMER extends Transformer<
+      unknown,
+      ResolveAnyAttribute<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
+    >
+  >(transform: TRANSFORMER): $AnyAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $AnyAttribute(overwrite(this[$state], { transform }))
   }
 
   /**
@@ -549,10 +565,11 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   hidden: STATE['hidden']
   key: STATE['key']
   savedAs: STATE['savedAs']
+  castAs: STATE['castAs']
+  transform: STATE['transform']
   defaults: STATE['defaults']
   links: STATE['links']
   validators: STATE['validators']
-  castAs: STATE['castAs']
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'any'
@@ -561,10 +578,11 @@ export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     this.hidden = state.hidden
     this.key = state.key
     this.savedAs = state.savedAs
+    this.castAs = state.castAs
+    this.transform = state.transform
     this.defaults = state.defaults
     this.links = state.links
     this.validators = state.validators
-    this.castAs = state.castAs
   }
 }
 

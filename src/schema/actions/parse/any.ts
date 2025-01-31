@@ -1,4 +1,5 @@
 import type { AnyAttribute } from '~/attributes/index.js'
+import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { ParseAttrValueOptions } from './options.js'
@@ -32,6 +33,9 @@ export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     return parsedValue
   }
 
-  const transformedValue = parsedValue
+  const transformedValue =
+    attribute.transform !== undefined
+      ? (attribute.transform as Transformer).parse(parsedValue)
+      : parsedValue
   return transformedValue
 }

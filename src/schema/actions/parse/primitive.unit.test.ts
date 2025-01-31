@@ -1,5 +1,6 @@
 import { string } from '~/attributes/string/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { prefix } from '~/transformers/prefix.js'
 
 import { primitiveAttrParser } from './primitive.js'
 
@@ -10,6 +11,19 @@ describe('primitiveAttrParser', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('uses parser if transformer has been provided', () => {
+    const str = string().transform(prefix('TEST')).freeze('path')
+
+    const parser = primitiveAttrParser(str, 'bar', { fill: false })
+
+    const { value: parsed } = parser.next()
+    expect(parsed).toBe('bar')
+
+    const { value: transformed, done } = parser.next()
+    expect(transformed).toBe('TEST#bar')
+    expect(done).toBe(true)
   })
 
   test('applies validation if any', () => {

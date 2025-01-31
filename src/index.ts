@@ -212,7 +212,8 @@ export { DynamoDBToolboxError } from './errors/index.js'
 export type {
   Transformer,
   TypedTransformer,
-  TypedTransformerWithDTO,
+  SerializableTransformer,
   TypeModifier
 } from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'
+export { jsonStringify } from './transformers/jsonStringify.js'

@@ -14,6 +14,7 @@ import type {
   NumberAttribute,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveAnyAttribute,
   ResolveBinaryAttribute,
   ResolveBooleanAttribute,
   ResolveNumberAttribute,
@@ -102,7 +103,9 @@ type AnyAttrTransformedValue<
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | ATTRIBUTE['castAs']
+      | (ATTRIBUTE extends { transform: Transformer }
+          ? Call<TypeModifier<ATTRIBUTE['transform']>, ResolveAnyAttribute<ATTRIBUTE>>
+          : ResolveAnyAttribute<ATTRIBUTE>)
 
 type PrimitiveAttrTransformedValue<
   ATTRIBUTE extends PrimitiveAttribute,

@@ -1,6 +1,6 @@
 import type { Strings } from 'hotscript'
 
-import type { TypedTransformerWithDTO } from './transformer.js'
+import type { SerializableTransformer } from './transformer.js'
 
 interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
@@ -8,7 +8,7 @@ interface PrefixerOptions<DELIMITER extends string> {
 
 export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   implements
-    TypedTransformerWithDTO<
+    SerializableTransformer<
       string,
       string,
       string,

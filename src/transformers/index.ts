@@ -1,6 +1,6 @@
 export type {
   Transformer,
   TypedTransformer,
-  TypedTransformerWithDTO,
+  SerializableTransformer,
   TypeModifier
 } from './transformer.js'
