@@ -3,7 +3,7 @@ import { ANY_DEFAULT_OPTIONS } from '~/attributes/any/options.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { AnyAttrDTO } from '../types.js'
-import { getDefaultsDTO } from './utils.js'
+import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
@@ -17,6 +17,13 @@ export const getAnyAttrDTO = (attr: AnyAttribute): AnyAttrDTO => {
     ...(attr.hidden !== ANY_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
     ...(attr.key !== ANY_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
     ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
+    ...(attr.transform !== undefined
+      ? {
+          transform: isTransformerWithDTO(attr.transform)
+            ? attr.transform.toJSON()
+            : { transformerId: 'custom' }
+        }
+      : {}),
     ...(!isEmpty(defaultsDTO) ? { defaults: defaultsDTO } : {})
   }
 }

@@ -1,11 +1,12 @@
 import type { AnyAttribute } from '~/attributes/any/index.js'
+import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
 export function* anyAttrFormatter(
-  _: AnyAttribute,
+  attribute: AnyAttribute,
   rawValue: unknown,
   options: FormatAttrValueOptions<AnyAttribute> = {}
 ): Generator<
@@ -16,7 +17,9 @@ export function* anyAttrFormatter(
 
   let transformedValue = undefined
   if (transform) {
-    transformedValue = cloneDeep(rawValue)
+    const transformer = attribute.transform as Transformer
+    transformedValue =
+      transformer !== undefined ? transformer.format(rawValue) : cloneDeep(rawValue)
 
     if (format) {
       yield transformedValue

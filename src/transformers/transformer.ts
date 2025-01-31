@@ -22,7 +22,7 @@ export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends 
   ? TRANSFORMER['_typeModifier']
   : Constant<ReturnType<TRANSFORMER['parse']>>
 
-export interface TypedTransformerWithDTO<
+export interface SerializableTransformer<
   FORMATTED_CONSTRAINT = any,
   FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
   TRANSFORMED = any,

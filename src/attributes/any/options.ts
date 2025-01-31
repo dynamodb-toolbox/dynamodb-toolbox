@@ -1,3 +1,5 @@
+import type { Transformer } from '~/transformers/index.js'
+
 import type { AtLeastOnce, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 
@@ -23,6 +25,7 @@ export interface AnyAttributeOptions {
    * Rename attribute before save commands
    */
   savedAs: string | undefined
+  transform: undefined | Transformer<unknown>
   /**
    * Provide default values for attribute
    */
@@ -54,6 +57,7 @@ export type AnyAttributeDefaultOptions = {
   hidden: false
   key: false
   savedAs: undefined
+  transform: undefined
   defaults: {
     key: undefined
     put: undefined
@@ -76,6 +80,7 @@ export const ANY_DEFAULT_OPTIONS: AnyAttributeDefaultOptions = {
   hidden: false,
   key: false,
   savedAs: undefined,
+  transform: undefined,
   defaults: {
     key: undefined,
     put: undefined,

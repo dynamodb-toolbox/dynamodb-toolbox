@@ -4,7 +4,7 @@ title: Usage
 
 # Transformers
 
-Transformers allow modifying a primitive attribute value during the [transformation step](../16-actions/1-parse.md):
+Transformers allow modifying a primitive or `any` attribute value during the [transformation step](../16-actions/1-parse.md):
 
 ```ts
 const PREFIX = 'POKEMON#'
@@ -21,8 +21,9 @@ const pokemonIdSchema = string().transform(prefix)
 const pokemonIdSchema = string({ transform: prefix })
 ```
 
-For the moment, there's only one available off-the-shelf transformer, but we hope there will be more in the future:
+For the moment, there's only two available off-the-shelf transformers, but we hope there will be more in the future:
 
-- [`prefix`](./2-prefix.md): Prefixes a string value
+- [`prefix`](./2-prefix.md): Prefixes a `string` value
+- [`jsonStringify`](./3-json-stringify.md): Applies `JSON.stringify` to any value
 
 If you think of a transformer that you'd like to see open-sourced, feel free to open an issue or submit a PR 🤗

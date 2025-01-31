@@ -1,14 +1,9 @@
 import type { PrimitiveAttribute } from '~/attributes/index.js'
-import type { TypedTransformerWithDTO } from '~/transformers/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
-import { isObject } from '~/utils/validation/isObject.js'
 
 import type { PrimitiveAttrDTO } from '../types.js'
-import { getDefaultsDTO } from './utils.js'
-
-const isTransformerWithDTO = (transformer: unknown): transformer is TypedTransformerWithDTO =>
-  isObject(transformer) && 'transformerId' in transformer && 'toJSON' in transformer
+import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"

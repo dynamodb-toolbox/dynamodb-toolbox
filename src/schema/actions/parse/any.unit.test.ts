@@ -1,5 +1,6 @@
 import { any } from '~/attributes/any/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { anyAttrParser } from './any.js'
 
@@ -8,6 +9,20 @@ describe('anyAttrParser', () => {
     const _any = any().freeze('root')
     const { value } = anyAttrParser(_any, 42, { fill: false }).next()
     expect(value).toStrictEqual(42)
+  })
+
+  test('uses parser if transformer has been provided', () => {
+    const _any = any().transform(jsonStringify()).freeze('path')
+
+    const input = { foo: 'bar' }
+    const parser = anyAttrParser(_any, input, { fill: false })
+
+    const { value: parsed } = parser.next()
+    expect(parsed).toStrictEqual(input)
+
+    const { value: transformed, done } = parser.next()
+    expect(transformed).toBe(JSON.stringify(input))
+    expect(done).toBe(true)
   })
 
   test('applies validation if any', () => {

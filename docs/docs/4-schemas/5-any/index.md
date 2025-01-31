@@ -87,6 +87,35 @@ const metadataSchema = any().savedAs('meta')
 const metadataSchema = any({ savedAs: 'meta' })
 ```
 
+### `.castAs<TYPE>()`
+
+<p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>
+
+Overrides the resolved type of the attribute:
+
+```ts
+const metadataSchema = any().castAs<{ foo: 'bar' }>()
+```
+
+### `.transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;unknown&gt;</code></i></p>
+
+Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+
+```ts
+const jsonStringify = {
+  parse: JSON.stringify,
+  format: JSON.parse
+}
+
+// JSON stringifies the value
+const stringifiedSchema = any().transform(prefix)
+const stringifiedSchema = any({ transform: prefix })
+```
+
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md) (including [`jsonStringify`](../17-transformers/3-json-stringify.md)), so feel free to use them!
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;unknown&gt;</code></i></p>
@@ -203,13 +232,3 @@ const metadataSchema = any({
 ```
 
 :::
-
-### `.castAs<TYPE>()`
-
-<p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>
-
-Overrides the resolved type of the attribute:
-
-```ts
-const metadataSchema = any().castAs<{ foo: 'bar' }>()
-```

@@ -41,10 +41,11 @@ const defaultAnyAttribute = new AnyAttribute({
   hidden: false,
   key: false,
   savedAs: undefined,
+  castAs: undefined,
+  transform: undefined,
   defaults: { key: undefined, put: undefined, update: undefined },
   links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined },
-  castAs: undefined
+  validators: { key: undefined, put: undefined, update: undefined }
 })
 
 export const queryParams: QueryParamsGetter = <

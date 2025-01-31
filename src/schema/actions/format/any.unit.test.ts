@@ -1,4 +1,5 @@
 import { any } from '~/attributes/index.js'
+import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { anyAttrFormatter } from './any.js'
 
@@ -27,6 +28,20 @@ describe('anyAttrFormatter', () => {
 
     const { done, value: formattedValue } = formatter.next()
     expect(formattedValue).toStrictEqual(raw)
+    expect(done).toBe(true)
+  })
+
+  test('uses formatter if transformer has been provided', () => {
+    const _any = any().transform(jsonStringify()).freeze('path')
+
+    const formatted = { foo: 'bar' }
+    const formatter = anyAttrFormatter(_any, JSON.stringify(formatted))
+
+    const transformedValue = formatter.next().value
+    expect(transformedValue).toStrictEqual(formatted)
+
+    const { done, value: formattedValue } = formatter.next()
+    expect(formattedValue).toStrictEqual(formatted)
     expect(done).toBe(true)
   })
 

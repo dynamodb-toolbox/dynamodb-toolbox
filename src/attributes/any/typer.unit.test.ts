@@ -1,5 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
+import { jsonStringify } from '~/transformers/jsonStringify.js'
+
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
@@ -22,10 +24,11 @@ describe('anyAttribute', () => {
         hidden: false
         key: false
         savedAs: undefined
+        castAs: unknown
+        transform: undefined
         defaults: { key: undefined; put: undefined; update: undefined }
         links: { key: undefined; put: undefined; update: undefined }
         validators: { key: undefined; put: undefined; update: undefined }
-        castAs: unknown
       }
     > = 1
     assertState
@@ -34,10 +37,11 @@ describe('anyAttribute', () => {
       hidden: false,
       key: false,
       savedAs: undefined,
+      castAs: undefined,
+      transform: undefined,
       defaults: { key: undefined, put: undefined, update: undefined },
       links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined },
-      castAs: undefined
+      validators: { key: undefined, put: undefined, update: undefined }
     })
 
     const assertExtends: A.Extends<typeof anyInstance, $AnyAttributeState> = 1
@@ -159,6 +163,26 @@ describe('anyAttribute', () => {
 
     // Keeps cast type at type level only
     expect(anyInstance[$state].castAs).toBeUndefined()
+  })
+
+  test('returns transformed any (option)', () => {
+    const transformer = jsonStringify()
+    const anyInstance = any({ transform: transformer })
+
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { transform: typeof transformer }> = 1
+    assertAny
+
+    expect(anyInstance[$state].transform).toBe(transformer)
+  })
+
+  test('returns transformed any (method)', () => {
+    const transformer = jsonStringify()
+    const anyInstance = any().transform(transformer)
+
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { transform: typeof transformer }> = 1
+    assertAny
+
+    expect(anyInstance[$state].transform).toBe(transformer)
   })
 
   test('returns any with default value (option)', () => {
