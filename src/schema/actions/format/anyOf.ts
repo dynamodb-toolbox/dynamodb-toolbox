@@ -26,7 +26,9 @@ export function* anyOfAttrFormatter(
       if (transform) {
         _transformedValue = formatter.next().value
       }
-      _formattedValue = formatter.next().value
+      if (format) {
+        _formattedValue = formatter.next().value
+      }
       break
     } catch (error) {
       continue
@@ -35,7 +37,7 @@ export function* anyOfAttrFormatter(
 
   const transformedValue = _transformedValue
   const formattedValue = _formattedValue
-  if (formatter === undefined || formattedValue === undefined) {
+  if ((transform && transformedValue === undefined) || (format && formattedValue === undefined)) {
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
