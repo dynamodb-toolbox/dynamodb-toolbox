@@ -227,6 +227,16 @@
         "default": "./dist/cjs/transformers/prefix.js"
       }
     },
+    "./transformers/jsonStringify": {
+      "import": {
+        "types": "./dist/esm/transformers/jsonStringify.d.ts",
+        "default": "./dist/esm/transformers/jsonStringify.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/jsonStringify.d.ts",
+        "default": "./dist/cjs/transformers/jsonStringify.js"
+      }
+    },
     "./schema": {
       "import": {
         "types": "./dist/esm/schema/index.d.ts",
