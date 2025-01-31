@@ -170,8 +170,6 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
 
   /**
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
-   *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
   transform<
     TRANSFORMER extends Transformer<

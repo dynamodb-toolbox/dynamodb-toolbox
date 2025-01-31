@@ -106,8 +106,6 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
 
   /**
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
-   *
-   * @param nextDefault `key/putAttributeInput | (() => key/putAttributeInput)`
    */
   transform<
     TRANSFORMER extends Transformer<
