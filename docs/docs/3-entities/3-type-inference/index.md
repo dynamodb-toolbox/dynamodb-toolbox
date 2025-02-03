@@ -34,8 +34,8 @@ flowchart LR
 
   ValidItem["<b>ValidItem</b>"]
 
-  InputItem.-FillDescription
-  FillDescription.->ValidItem
+  InputItem .- FillDescription
+  FillDescription .-> ValidItem
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b>"]:::mmddescription
@@ -45,8 +45,8 @@ flowchart LR
 
   TransformedItem["<b>TransformedItem</b><br/><i>(+ SavedItem)</i>"]
 
-  ValidItem.-TransformDescription
-  TransformDescription.->TransformedItem
+  ValidItem .- TransformDescription
+  TransformDescription .-> TransformedItem
 
 ```
 
@@ -285,8 +285,8 @@ flowchart RL
 
   ReadItem["<b>ReadItem</b>"]
 
-  TransformedItem.-TransformDescription
-  TransformDescription.->ReadItem
+  TransformedItem .- TransformDescription
+  TransformDescription .-> ReadItem
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
@@ -296,8 +296,8 @@ flowchart RL
 
   FormattedItem["<b>FormattedItem</b>"]
 
-  ReadItem.-FormatDescription
-  FormatDescription.->FormattedItem
+  ReadItem .- FormatDescription
+  FormatDescription .-> FormattedItem
 
 ```
 
@@ -322,4 +322,8 @@ type Partial = FormattedItem<
   typeof PokemonEntity,
   { partial: true }
 >
+```
+
+```
+
 ```

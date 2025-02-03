@@ -47,7 +47,7 @@ flowchart LR
 
     defaults(Applies<br/><b>defaults</b>)
     links(Applies<br/><b>links</b>)
-    fillDescr(...clones the item, adds<br/><b>defaults</b> and <b>links</b><br/>):::mmddescription
+    fillDescr(...clones the item, adds<br/><b>defaults</b> and <b>links</b>.<br/>):::mmddescription
 
     defaults --> links
   end
@@ -79,7 +79,7 @@ flowchart LR
 
   Transforming:::mmdcontainer
 
-  transformed(Transformed')
+  transformed(Transformed.)
   transformed:::mmddescription
 
   transform .-> transformed

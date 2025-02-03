@@ -27,7 +27,7 @@ flowchart RL
   classDef mmdcontainer fill:#eee4,stroke-width:1px,stroke-dasharray:3,stroke:#ccc,font-weight:bold,font-size:large
   classDef mmdspace fill:none,stroke:none,color:#0000
 
-  transformed(Transformed')
+  transformed(Transformed.)
   transformed:::mmddescription
 
   subgraph Transforming
@@ -52,7 +52,7 @@ flowchart RL
 
   Formatting:::mmdcontainer
 
-  formatted(Formatted')
+  formatted(Formatted.)
   formatted:::mmddescription
 
   format .-> formatted

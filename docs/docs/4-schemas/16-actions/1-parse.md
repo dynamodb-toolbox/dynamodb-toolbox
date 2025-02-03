@@ -77,7 +77,7 @@ flowchart LR
 
   Transforming:::mmdcontainer
 
-  transformed("Transformed'")
+  transformed("Transformed.")
   transformed:::mmddescription
 
   transform .-> transformed
