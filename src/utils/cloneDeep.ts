@@ -13,6 +13,14 @@ export const cloneDeep: DeepCloner = <OBJ>(obj: OBJ): OBJ => {
     return obj.map(cloneDeep) as unknown as OBJ
   }
 
+  if (obj instanceof Set) {
+    return new Set([...obj.values()].map(cloneDeep)) as unknown as OBJ
+  }
+
+  if (obj instanceof Uint8Array) {
+    return Uint8Array.from(obj) as unknown as OBJ
+  }
+
   if (obj instanceof Object) {
     return Object.fromEntries([
       ...Object.entries(obj).map(([key, value]) => [key, cloneDeep(value)]),
