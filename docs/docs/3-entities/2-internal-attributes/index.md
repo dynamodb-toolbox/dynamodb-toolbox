@@ -170,3 +170,78 @@ const PokemonEntity = new Entity({
   }
 })
 ```
+
+### Referencing timestamp attributes
+
+It is possible to reference timestamp attributes to be used elsewhere in the schema.
+The main use case for this is to sort items efficiently when querying. [Effective data sorting with Amazon DynamoDB
+](https://aws.amazon.com/blogs/database/effective-data-sorting-with-amazon-dynamodb/) explains this concept well.
+
+In this example we define a `PostEntity` that can be queried by user sorted by date: it is possible to get a single post by using its `postId`, or query all posts sorted by create date from an `ownerId` by using the GSI:
+
+```ts
+const PostEntity = new Entity({
+  name: "POST",
+  table: UsersTable,
+  // We set the created/modified timestamps manually
+  timestamps: {
+    created: false,
+    modified: false,
+  },
+  schema: schema({
+    postId: string().key().required("always"),
+    ownerId: string().required("atLeastOnce"),
+
+    // We set the created timestamp manually
+    created: string()
+      .default(() => new Date().toISOString())
+      .savedAs("_ct"),
+
+    // We set the modified timestamp manually (not required for this example - but this is how it's done)
+    modified: string()
+      .putDefault(() => new Date().toISOString())
+      .updateDefault(() => new Date().toISOString())
+      .savedAs("_mt"),
+
+  }).and((linkSchema) => ({
+
+    GSIPK: string()
+      .link<typeof linkSchema>(({ ownerId }) => ownerId)
+      .transform(prefix("UP"))
+      .hidden(),
+
+    GSISK: string()
+      .putLink<typeof linkSchema>(
+        ({ postId, created }) => `${created}#${postId}`,
+        //                         ^^^^^^^^ reference to the created attribute
+      )
+      .hidden(),
+  })),
+  computeKey: ({ postId }) => ({
+    PK: `LINK#${postId}`,
+    SK: `LINK#${postId}`,
+  }),
+})
+```
+
+Query the posts by `ownerId`:
+
+```ts
+import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
+
+const userId = "123";
+
+await UsersTable.build(QueryCommand)
+  .query({
+    partition: `UP#${userId}`,
+    index: "GSI",
+  })
+  .entities(LinkEntity)
+  .options({
+    maxPages: Infinity, // Beware of RAM issues
+    reverse: true, // Sort descending (new first)
+  })
+  .send();
+
+```
+
