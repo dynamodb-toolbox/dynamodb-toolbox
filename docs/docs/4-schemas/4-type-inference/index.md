@@ -34,8 +34,8 @@ flowchart LR
 
   ValidValue["<b>ValidValue</b>"]
 
-  InputValue.-FillDescription
-  FillDescription.->ValidValue
+  InputValue .- FillDescription
+  FillDescription .-> ValidValue
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b>"]:::mmddescription
@@ -45,8 +45,8 @@ flowchart LR
 
   TransformedValue["<b>TransformedValue</b>"]
 
-  ValidValue.-TransformDescription
-  TransformDescription.->TransformedValue
+  ValidValue .- TransformDescription
+  TransformDescription .-> TransformedValue
 
 ```
 
@@ -273,8 +273,8 @@ flowchart RL
 
   ReadValue["<b>ReadValue</b>"]
 
-  TransformedValue.-TransformDescription
-  TransformDescription.->ReadValue
+  TransformedValue .- TransformDescription
+  TransformDescription .-> ReadValue
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
@@ -284,8 +284,8 @@ flowchart RL
 
   FormattedValue["<b>FormattedValue</b>"]
 
-  ReadValue.-FormatDescription
-  FormatDescription.->FormattedValue
+  ReadValue .- FormatDescription
+  FormatDescription .-> FormattedValue
 
 ```
 
