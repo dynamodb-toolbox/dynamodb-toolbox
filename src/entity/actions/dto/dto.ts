@@ -36,7 +36,10 @@ export class EntityDTO<ENTITY extends Entity = Entity>
     const constructorShemaDTO = this.entity.constructorSchema.build(SchemaDTO)
 
     const { partitionKey, sortKey } = this.entity.table
-    if (!(partitionKey.name in constructorShemaDTO.attributes)) {
+    const partitionKeyAttr = Object.entries(constructorShemaDTO.attributes).find(
+      ([attrName, attr]) => (attr.savedAs ?? attrName) === partitionKey.name
+    )
+    if (partitionKeyAttr === undefined) {
       constructorShemaDTO.attributes[partitionKey.name] = {
         type: partitionKey.type,
         key: true,
@@ -45,12 +48,18 @@ export class EntityDTO<ENTITY extends Entity = Entity>
       }
     }
 
-    if (sortKey !== undefined && !(sortKey.name in constructorShemaDTO.attributes)) {
-      constructorShemaDTO.attributes[sortKey.name] = {
-        type: sortKey.type,
-        key: true,
-        required: 'always',
-        hidden: true
+    if (sortKey !== undefined) {
+      const sortKeyAttr = Object.entries(constructorShemaDTO.attributes).find(
+        ([attrName, attr]) => (attr.savedAs ?? attrName) === sortKey.name
+      )
+
+      if (sortKeyAttr === undefined) {
+        constructorShemaDTO.attributes[sortKey.name] = {
+          type: sortKey.type,
+          key: true,
+          required: 'always',
+          hidden: true
+        }
       }
     }
 

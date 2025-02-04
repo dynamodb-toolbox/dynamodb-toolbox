@@ -117,4 +117,23 @@ describe('DTO', () => {
       }
     })
   })
+
+  test('does not append PK/SK if they are savedAs in the schema', () => {
+    const entity = new Entity({
+      name: 'entity',
+      schema: schema({ key: string().key().savedAs('pk'), attr: string() }),
+      table
+    })
+
+    const dto = entity.build(EntityDTO)
+
+    const entityObj = JSON.parse(JSON.stringify(dto))
+    expect(entityObj).not.toMatchObject({
+      schema: {
+        attributes: {
+          pk: { key: true }
+        }
+      }
+    })
+  })
 })
