@@ -88,7 +88,7 @@ const invalidItem = {
   sk: 'c'
 }
 
-describe('execute (batchGet)', () => {
+describe('scanCommand', () => {
   beforeAll(() => {
     documentClientMock = mockClient(documentClient)
     MockDate.set(new Date())

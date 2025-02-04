@@ -154,25 +154,24 @@ export class ScanCommand<
           continue
         }
 
-        const itemEntityName = item[entityAttrSavedAs]
+        const itemEntityName = item[entityAttrSavedAs] as unknown
 
         if (!isString(itemEntityName)) {
-          // NOTE: Can only happen if `entityAttrFilter` is false
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
-          for (const [entityName, formatter] of Object.entries(formattersByName)) {
+          // (NOTE: Can only happen if `entityAttrFilter` is false)
+          for (const formatter of Object.values(formattersByName)) {
             try {
-              formattedItems.push(
-                formatter.format({ ...item, [entityAttrSavedAs]: entityName }, { attributes })
-              )
+              formattedItems.push(formatter.format(item, { attributes }))
               break
             } catch {
               continue
             }
           }
+          // NOTE: Maybe we should throw here? (No formatter worked)
+          continue
         }
 
         const formatter = formattersByName[itemEntityName]
-
         if (formatter === undefined) {
           continue
         }

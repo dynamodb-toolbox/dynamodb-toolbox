@@ -58,7 +58,13 @@ await PokemonEntity.build(UpdateItemCommand).item(item).send()
 
 `UpdateItemInput` differs from [`PutItemInput`](../2-put-item/index.md#item) as it is **partial by default**, except for `always` required attributes without defaults or links.
 
-It also benefits from an **extended syntax** that reflects the [capabilities of DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html):
+It also benefits from an **extended syntax** that reflects the [capabilities of DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.UpdateExpressions.html).
+
+:::warning
+
+Note that the extended syntax (`$get`, `$add`, `$append`...) only adds clauses to the command [`UpdateExpression`](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#DDB-UpdateItem-request-UpdateExpression) but does **not** trigger an item fetch.
+
+:::
 
 ### Removing an attribute
 

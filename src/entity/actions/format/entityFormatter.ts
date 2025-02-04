@@ -20,8 +20,18 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     options: OPTIONS = {} as OPTIONS
   ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
     const { transform = true } = options
+    const { entityAttributeSavedAs } = this.entity.table
+
     try {
-      const formatter = this[$formatter].start(item, { ...options, format: true })
+      const formatter = this[$formatter].start(
+        {
+          ...item,
+          ...(item[entityAttributeSavedAs] === undefined
+            ? { [entityAttributeSavedAs]: this.entity.name }
+            : {})
+        },
+        { ...options, format: true }
+      )
       if (transform) {
         formatter.next() // transformed
       }
