@@ -170,3 +170,57 @@ const PokemonEntity = new Entity({
   }
 })
 ```
+
+### Linking Timestamps
+
+It can be useful to link Timestamp Attributes elsewhere in the schema, for instance to [query sorted items efficiently](https://aws.amazon.com/blogs/database/effective-data-sorting-with-amazon-dynamodb/).
+
+Timestamp Attributes are automatically added by the `Entity` class constructor. Thus, while direct references work in vanilla JS, **they need to be reintroduced manually in TypeScript** to keep type inference working.
+
+In this example, we define a `PostEntity` to allow querying posts by `ownerId` (using a GSI) and returning them sorted by creation date:
+
+```ts
+const now = () => new Date().toISOString()
+
+const PostEntity = new Entity({
+  name: 'POST',
+  table: PostsTable,
+  // Deactivate internal attributes
+  timestamps: false,
+  schema: schema({
+    postId: string().key(),
+    ownerId: string(),
+    // We set the timestamp attributes manually
+    created: string().default(now).savedAs('_ct'),
+    modified: string()
+      .putDefault(now)
+      .updateDefault(now)
+      .savedAs('_md')
+  }).and(prevSchema => ({
+    byOwnerPK: string()
+      .link<typeof prevSchema>(({ ownerId }) => ownerId)
+      .hidden(),
+    byOwnerSK: string()
+      .link<typeof prevSchema>(
+        // 🙌 Type inference works!
+        ({ created, postId }) => `${created}#${postId}`
+      )
+      .hidden()
+  }))
+})
+```
+
+We can now query all posts by `ownerId`, sorted by creation date, using the `byOwner` GSI:
+
+```ts
+import { QueryCommand } from 'dynamodb-toolbox/table/actions/query'
+
+await PostsTable.build(QueryCommand)
+  .entities(PostEntity)
+  .query({ index: 'byOwner', partition: ownerId })
+  .options({
+    maxPages: Infinity, // Beware of RAM issues
+    reverse: true // Sort descending (new first)
+  })
+  .send()
+```
