@@ -171,77 +171,56 @@ const PokemonEntity = new Entity({
 })
 ```
 
-### Referencing timestamp attributes
+### Linking Timestamps
 
-It is possible to reference timestamp attributes to be used elsewhere in the schema.
-The main use case for this is to sort items efficiently when querying. [Effective data sorting with Amazon DynamoDB
-](https://aws.amazon.com/blogs/database/effective-data-sorting-with-amazon-dynamodb/) explains this concept well.
+It can be useful to link Timestamp Attributes elsewhere in the schema, for instance to [query sorted items efficiently](https://aws.amazon.com/blogs/database/effective-data-sorting-with-amazon-dynamodb/).
 
-In this example we define a `PostEntity` that can be queried by user sorted by date: it is possible to get a single post by using its `postId`, or query all posts sorted by create date from an `ownerId` by using the GSI:
+Timestamp Attributes are automatically added by the `Entity` class constructor. Thus, while direct references work in vanilla JS, **they need to be reintroduced manually in TypeScript** to keep type inference working.
+
+In this example, we define a `PostEntity` to allow querying posts by `ownerId` (using a GSI) and returning them sorted by creation date:
 
 ```ts
+const now = () => new Date().toISOString()
+
 const PostEntity = new Entity({
-  name: "POST",
-  table: UsersTable,
-  // We set the created/modified timestamps manually
-  timestamps: {
-    created: false,
-    modified: false,
-  },
+  name: 'POST',
+  table: PostsTable,
+  // Deactivate internal attributes
+  timestamps: false,
   schema: schema({
-    postId: string().key().required("always"),
-    ownerId: string().required("atLeastOnce"),
-
-    // We set the created timestamp manually
-    created: string()
-      .default(() => new Date().toISOString())
-      .savedAs("_ct"),
-
-    // We set the modified timestamp manually (not required for this example - but this is how it's done)
+    postId: string().key(),
+    ownerId: string(),
+    // We set the timestamp attributes manually
+    created: string().default(now).savedAs('_ct'),
     modified: string()
-      .putDefault(() => new Date().toISOString())
-      .updateDefault(() => new Date().toISOString())
-      .savedAs("_mt"),
-
-  }).and((linkSchema) => ({
-
-    GSIPK: string()
-      .link<typeof linkSchema>(({ ownerId }) => ownerId)
-      .transform(prefix("UP"))
+      .putDefault(now)
+      .updateDefault(now)
+      .savedAs('_md')
+  }).and(prevSchema => ({
+    byOwnerPK: string()
+      .link<typeof prevSchema>(({ ownerId }) => ownerId)
       .hidden(),
-
-    GSISK: string()
-      .putLink<typeof linkSchema>(
-        ({ postId, created }) => `${created}#${postId}`,
-        //                         ^^^^^^^^ reference to the created attribute
+    byOwnerSK: string()
+      .link<typeof prevSchema>(
+        // 🙌 Type inference works!
+        ({ created, postId }) => `${created}#${postId}`
       )
-      .hidden(),
-  })),
-  computeKey: ({ postId }) => ({
-    PK: `LINK#${postId}`,
-    SK: `LINK#${postId}`,
-  }),
+      .hidden()
+  }))
 })
 ```
 
-Query the posts by `ownerId`:
+We can now query all posts by `ownerId`, sorted by creation date, using the `byOwner` GSI:
 
 ```ts
-import { QueryCommand } from "dynamodb-toolbox/table/actions/query";
+import { QueryCommand } from 'dynamodb-toolbox/table/actions/query'
 
-const userId = "123";
-
-await UsersTable.build(QueryCommand)
-  .query({
-    partition: `UP#${userId}`,
-    index: "GSI",
-  })
-  .entities(LinkEntity)
+await PostsTable.build(QueryCommand)
+  .entities(PostEntity)
+  .query({ index: 'byOwner', partition: ownerId })
   .options({
     maxPages: Infinity, // Beware of RAM issues
-    reverse: true, // Sort descending (new first)
+    reverse: true // Sort descending (new first)
   })
-  .send();
-
+  .send()
 ```
-
