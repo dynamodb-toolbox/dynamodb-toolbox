@@ -10,7 +10,7 @@ type TimestampOption = boolean | { name?: string; savedAs?: string; hidden?: boo
 type TimestampOptions = boolean | { created: TimestampOption; modified: TimestampOption }
 
 export interface IEntityDTO {
-  name: string
+  entityName: string
   entityAttributeName?: string
   entityAttributeHidden?: boolean
   timestamps?: TimestampOptions
@@ -23,38 +23,53 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   implements IEntityDTO
 {
   static override actionName = 'dto' as const
-  name: string
-  schema: IEntityDTO['schema']
+  entityName: string
+  schema: SchemaDTO
   entityAttributeName: IEntityDTO['entityAttributeName']
   entityAttributeHidden: IEntityDTO['entityAttributeHidden']
   timestamps: IEntityDTO['timestamps']
-  table: IEntityDTO['table']
+  table: TableDTO
 
   constructor(entity: ENTITY) {
     super(entity)
 
-    if (entity.computeKey !== undefined) {
-      console.warn(
-        'Entity DTO schema is probably incomplete when using `computeKey`: Please define explicit Primary Key attributes and use `links` instead (https://www.dynamodbtoolbox.com/docs/schemas/defaults-and-links#links).'
-      )
+    const constructorShemaDTO = this.entity.constructorSchema.build(SchemaDTO)
+
+    const { partitionKey, sortKey } = this.entity.table
+    if (!(partitionKey.name in constructorShemaDTO.attributes)) {
+      constructorShemaDTO.attributes[partitionKey.name] = {
+        type: partitionKey.type,
+        key: true,
+        required: 'always',
+        hidden: true
+      }
     }
 
-    this.name = this.entity.name
-    this.schema = this.entity.constructorSchema.build(SchemaDTO).toJSON()
+    if (sortKey !== undefined && !(sortKey.name in constructorShemaDTO.attributes)) {
+      constructorShemaDTO.attributes[sortKey.name] = {
+        type: sortKey.type,
+        key: true,
+        required: 'always',
+        hidden: true
+      }
+    }
+
+    this.entityName = this.entity.name
+    this.schema = constructorShemaDTO
     this.entityAttributeName = this.entity.entityAttributeName
     this.entityAttributeHidden = this.entity.entityAttributeHidden
     this.timestamps = this.entity.timestamps
-    this.table = this.entity.table.build(TableDTO).toJSON()
+    this.table = this.entity.table.build(TableDTO)
   }
 
   toJSON(): IEntityDTO {
     return {
-      name: this.name,
-      schema: this.schema,
+      entityName: this.entityName,
+      schema: this.schema.toJSON(),
       entityAttributeName: this.entity.entityAttributeName,
       entityAttributeHidden: this.entity.entityAttributeHidden,
       timestamps: this.entity.timestamps,
-      table: this.table
+      table: this.table.toJSON()
     }
   }
 }

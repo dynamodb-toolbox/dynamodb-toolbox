@@ -6,7 +6,7 @@ import { fromTableDTO } from './fromTableDTO.js'
 describe('fromDTO - table', () => {
   test('creates correct table (full)', () => {
     const tableDTO: ITableDTO = {
-      name: 'pokemons',
+      tableName: 'pokemons',
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'number' },
       entityAttributeSavedAs: '__entity__'

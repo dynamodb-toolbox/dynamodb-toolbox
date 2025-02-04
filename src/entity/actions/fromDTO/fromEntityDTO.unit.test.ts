@@ -8,7 +8,7 @@ import { fromEntityDTO } from './fromEntityDTO.js'
 describe('fromDTO - entity', () => {
   test('creates correct entity', () => {
     const entityDTO: IEntityDTO = {
-      name: 'pokemons',
+      entityName: 'pokemons',
       schema: {
         type: 'schema',
         attributes: {
