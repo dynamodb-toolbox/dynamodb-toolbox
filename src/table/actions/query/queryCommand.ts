@@ -200,23 +200,22 @@ export class QueryCommand<
           continue
         }
 
-        const itemEntityName = item[entityAttrSavedAs]
+        const itemEntityName = item[entityAttrSavedAs] as unknown
 
         if (!isString(itemEntityName)) {
-          // NOTE: Can only happen if `entityAttrFilter` is false
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
+          // (NOTE: Can only happen if `entityAttrFilter` is false)
           for (const [entityName, formatter] of Object.entries(formattersByName)) {
             try {
-              const formattedItem = formatter.format(
-                { ...item, [entityAttrSavedAs]: entityName },
-                { attributes }
-              )
+              const formattedItem = formatter.format(item, { attributes })
               formattedItems.push({ ...formattedItem, [$entity]: entityName })
               break
             } catch {
               continue
             }
           }
+          // NOTE: Maybe we should throw here? (No formatter worked)
+          continue
         }
 
         const formatter = formattersByName[itemEntityName]
