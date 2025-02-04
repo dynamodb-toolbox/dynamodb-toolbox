@@ -30,7 +30,7 @@ describe('DTO', () => {
 
     const entityObj = JSON.parse(JSON.stringify(dto))
     expect(entityObj).toStrictEqual({
-      name: 'simple',
+      entityName: 'simple',
       schema: {
         type: 'schema',
         attributes: {
@@ -71,7 +71,7 @@ describe('DTO', () => {
 
     const entityObj = JSON.parse(JSON.stringify(dto))
     expect(entityObj).toStrictEqual({
-      name: 'rich',
+      entityName: 'rich',
       schema: {
         type: 'schema',
         attributes: {
@@ -88,6 +88,32 @@ describe('DTO', () => {
       table: {
         entityAttributeSavedAs: '_et',
         partitionKey: { name: 'pk', type: 'string' }
+      }
+    })
+  })
+
+  test('appends PK/SK if they miss from the schema', () => {
+    const sortedTable = new Table({
+      partitionKey: { name: 'pk', type: 'string' },
+      sortKey: { name: 'sk', type: 'string' }
+    })
+
+    const entity = new Entity({
+      name: 'entity',
+      schema: schema({ key: string().key(), attr: string() }),
+      computeKey: ({ key }) => ({ pk: key, sk: key }),
+      table: sortedTable
+    })
+
+    const dto = entity.build(EntityDTO)
+
+    const entityObj = JSON.parse(JSON.stringify(dto))
+    expect(entityObj).toMatchObject({
+      schema: {
+        attributes: {
+          pk: { type: 'string', key: true, required: 'always', hidden: true },
+          sk: { type: 'string', key: true, required: 'always', hidden: true }
+        }
       }
     })
   })

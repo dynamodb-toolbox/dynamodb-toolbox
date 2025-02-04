@@ -21,7 +21,7 @@ describe('DTO', () => {
 
     const tableObj = JSON.parse(JSON.stringify(dto))
     expect(tableObj).toStrictEqual({
-      name: 'super-table',
+      tableName: 'super-table',
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'string' },
       entityAttributeSavedAs: '__entity__'

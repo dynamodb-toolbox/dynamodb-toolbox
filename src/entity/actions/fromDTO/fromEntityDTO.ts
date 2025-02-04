@@ -4,8 +4,15 @@ import type { TimestampsDefaultOptions } from '~/entity/index.js'
 import { fromSchemaDTO } from '~/schema/actions/fromDTO/index.js'
 import { fromTableDTO } from '~/table/actions/fromDTO/index.js'
 
-export const fromEntityDTO = ({ schema, table, timestamps, ...entity }: IEntityDTO): Entity =>
+export const fromEntityDTO = ({
+  entityName,
+  schema,
+  table,
+  timestamps,
+  ...entity
+}: IEntityDTO): Entity =>
   new Entity({
+    name: entityName,
     schema: fromSchemaDTO(schema),
     table: fromTableDTO(table),
     timestamps: timestamps as TimestampsDefaultOptions,
