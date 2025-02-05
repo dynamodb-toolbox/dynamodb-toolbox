@@ -9,6 +9,14 @@ describe('fromDTO - table', () => {
       tableName: 'pokemons',
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'number' },
+      indexes: {
+        global: {
+          type: 'global',
+          partitionKey: { name: 'gsipk', type: 'string' },
+          sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
+      },
       entityAttributeSavedAs: '__entity__'
     }
 
@@ -21,6 +29,15 @@ describe('fromDTO - table', () => {
     expect(table.sortKey).toStrictEqual({ name: 'sk', type: 'number' })
 
     expect(table.entityAttributeSavedAs).toBe('__entity__')
+
+    expect(table.indexes).toStrictEqual({
+      global: {
+        type: 'global',
+        partitionKey: { name: 'gsipk', type: 'string' },
+        sortKey: { name: 'gsisk', type: 'binary' }
+      },
+      local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
+    })
   })
 
   test('creates correct table (light)', () => {
