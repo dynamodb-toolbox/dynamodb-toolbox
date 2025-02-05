@@ -11,6 +11,14 @@ describe('DTO', () => {
       name: 'super-table',
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'string' },
+      indexes: {
+        global: {
+          type: 'global',
+          partitionKey: { name: 'gsipk', type: 'string' },
+          sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
+      },
       entityAttributeSavedAs: '__entity__'
     })
 
@@ -24,6 +32,14 @@ describe('DTO', () => {
       tableName: 'super-table',
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'string' },
+      indexes: {
+        global: {
+          type: 'global',
+          partitionKey: { name: 'gsipk', type: 'string' },
+          sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
+      },
       entityAttributeSavedAs: '__entity__'
     })
   })
