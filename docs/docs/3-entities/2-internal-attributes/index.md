@@ -118,6 +118,12 @@ const PokemonEntity = new Entity({
 
 <h4 style={{ fontSize: "large" }}>Customizing Timestamps:</h4>
 
+:::info
+
+The customized timestamps options should be provided inline in the entity configuration, as in the examples below, to preserve correct types. When given as a variable, such as `timestamps: timestampConfig`, typescript types for the entity will be incorrect.
+
+:::
+
 Instead of `true`, you can provide an object to **fine-tune each attribute**. Available options:
 
 ### `name`
