@@ -53,6 +53,21 @@ describe('parseCondition - Logical combination', () => {
     })
   })
 
+  test('parses child condition if OR has only one of them', () => {
+    expect(
+      mySchema
+        .build(ConditionParser)
+        .parse({
+          or: [{ attr: 'num', eq: 42 }]
+        })
+        .toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: '#c_1 = :c_1',
+      ExpressionAttributeNames: { '#c_1': 'num' },
+      ExpressionAttributeValues: { ':c_1': 42 }
+    })
+  })
+
   test('combines AND children conditions (value)', () => {
     expect(
       mySchema
@@ -91,6 +106,21 @@ describe('parseCondition - Logical combination', () => {
         '#c_4': 'otherStr'
       },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('parses child condition if AND has only one of them', () => {
+    expect(
+      mySchema
+        .build(ConditionParser)
+        .parse({
+          or: [{ attr: 'num', eq: 42 }]
+        })
+        .toCommandOptions()
+    ).toStrictEqual({
+      ConditionExpression: '#c_1 = :c_1',
+      ExpressionAttributeNames: { '#c_1': 'num' },
+      ExpressionAttributeValues: { ':c_1': 42 }
     })
   })
 

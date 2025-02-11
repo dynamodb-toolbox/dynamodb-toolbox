@@ -30,9 +30,14 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
     conditionParser.parse(childCondition)
     childrenConditionExpressions.push(conditionParser.expression)
   }
-  conditionParser.resetExpression(
-    `(${childrenConditionExpressions.join(
-      `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
-    )})`
-  )
+
+  if (childrenConditionExpressions.length === 1) {
+    conditionParser.resetExpression(childrenConditionExpressions[0])
+  } else {
+    conditionParser.resetExpression(
+      `(${childrenConditionExpressions.join(
+        `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
+      )})`
+    )
+  }
 }
