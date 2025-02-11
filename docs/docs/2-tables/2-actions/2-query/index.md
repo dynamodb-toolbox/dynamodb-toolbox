@@ -376,7 +376,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .options({
-    filters: { attr: 'pokeType', eq: 'fire' }
+    filter: { attr: 'pokeType', eq: 'fire' }
   })
   .send()
 ```
