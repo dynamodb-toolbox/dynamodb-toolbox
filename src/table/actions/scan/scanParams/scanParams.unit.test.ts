@@ -11,6 +11,7 @@ import {
   string
 } from '~/index.js'
 import type { FormattedItem } from '~/index.js'
+import type { Merge } from '~/types/merge.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -89,7 +90,7 @@ describe('scan', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  test('fails on invalid capacity option', () => {
+  test('throws on invalid capacity option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -116,7 +117,7 @@ describe('scan', () => {
     expect(ConsistentReadB).toBe(true)
   })
 
-  test('fails on invalid consistent option', () => {
+  test('throws on invalid consistent option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -159,7 +160,7 @@ describe('scan', () => {
     expect(IndexName).toBe('gsi')
   })
 
-  test('fails on invalid index option', () => {
+  test('throws on invalid index option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -189,7 +190,7 @@ describe('scan', () => {
     expect(Select).toBe('COUNT')
   })
 
-  test('fails on invalid select option', () => {
+  test('throws on invalid select option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -210,7 +211,7 @@ describe('scan', () => {
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
   })
 
-  test('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
+  test('throws if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         // @ts-expect-error
@@ -230,7 +231,7 @@ describe('scan', () => {
     expect(Select).toBe('SPECIFIC_ATTRIBUTES')
   })
 
-  test('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
+  test('throws if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .entities(Entity1)
@@ -248,7 +249,7 @@ describe('scan', () => {
     expect(Limit).toBe(3)
   })
 
-  test('fails on invalid limit option', () => {
+  test('throws on invalid limit option', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -269,7 +270,7 @@ describe('scan', () => {
     expect(validCallB).not.toThrow()
   })
 
-  test('fails on invalid maxPages option', () => {
+  test('throws on invalid maxPages option', () => {
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
         .options({
@@ -297,7 +298,7 @@ describe('scan', () => {
     expect(TotalSegments).toBe(4)
   })
 
-  test('fails on invalid segment and/or totalSegments options', () => {
+  test('throws on invalid segment and/or totalSegments options', () => {
     // segment without totalSegment option
     const invalidCallA = () =>
       TestTable.build(ScanCommand)
@@ -407,7 +408,7 @@ describe('scan', () => {
     expect(TableName).toBe('tableName')
   })
 
-  test('fails on invalid tableName option', () => {
+  test('throws on invalid tableName option', () => {
     // segment without totalSegment option
     const invalidCall = () =>
       TestTable.build(ScanCommand)
@@ -421,7 +422,31 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
   })
 
-  test('fails on extra options', () => {
+  test('appends entity name if showEntityAttr is true', () => {
+    const command = TestTable.build(ScanCommand).entities(Entity1).options({ showEntityAttr: true })
+    command.params()
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      Merge<FormattedItem<typeof Entity1>, { entity: 'entity1' }>[] | undefined
+    > = 1
+    assertReturnedItems
+  })
+
+  test('throws on invalid showEntityAttr option', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        // @ts-expect-error
+        .options({ showEntityAttr: 'true' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidShowEntityAttrOption' })
+    )
+  })
+
+  test('throws on extra options', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
         .options({

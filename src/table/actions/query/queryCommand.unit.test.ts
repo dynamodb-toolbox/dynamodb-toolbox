@@ -6,8 +6,9 @@ import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { $entity, Entity, Table, number, schema, string } from '~/index.js'
+import { Entity, Table, number, schema, string } from '~/index.js'
 
+import { $entity } from './constants.js'
 import { QueryCommand } from './queryCommand.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
@@ -120,6 +121,23 @@ describe('queryCommand', () => {
     ])
   })
 
+  test('appends entityAttribute if showEntityAttr is true', async () => {
+    documentClientMock.on(_QueryCommand).resolves({
+      Items: [completeSavedItemA, completeSavedItemB]
+    })
+
+    const { Items } = await TestTable.build(QueryCommand)
+      .entities(EntityA, EntityB)
+      .query({ partition: 'a' })
+      .options({ showEntityAttr: true })
+      .send()
+
+    expect(Items).toStrictEqual([
+      { [$entity]: EntityA.name, [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
+      { [$entity]: EntityB.name, [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+    ])
+  })
+
   test('still tries all formatters if entityAttribute misses (omit invalid items)', async () => {
     documentClientMock.on(_QueryCommand).resolves({
       Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
@@ -134,6 +152,23 @@ describe('queryCommand', () => {
     expect(Items).toStrictEqual([
       { [$entity]: EntityA.name, ...formattedItemA },
       { [$entity]: EntityB.name, ...formattedItemB }
+    ])
+  })
+
+  test('still appends entityAttribute if showEntityAttr is true', async () => {
+    documentClientMock.on(_QueryCommand).resolves({
+      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
+    })
+
+    const { Items } = await TestTable.build(QueryCommand)
+      .entities(EntityA, EntityB)
+      .query({ partition: 'a' })
+      .options({ entityAttrFilter: false, showEntityAttr: true })
+      .send()
+
+    expect(Items).toStrictEqual([
+      { [$entity]: EntityA.name, [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
+      { [$entity]: EntityB.name, [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
     ])
   })
 })

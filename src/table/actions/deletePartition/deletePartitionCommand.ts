@@ -9,7 +9,8 @@ import { BatchDeleteRequest } from '~/entity/actions/batchDelete/batchDeleteRequ
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { BatchWriteCommand, execute } from '~/table/actions/batchWrite/index.js'
-import { $entity, type Query, QueryCommand } from '~/table/actions/query/index.js'
+import { $entity, QueryCommand } from '~/table/actions/query/index.js'
+import type { Query } from '~/table/actions/query/index.js'
 import { $sentArgs } from '~/table/constants.js'
 import { sender } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
@@ -77,6 +78,12 @@ export class DeletePartitionCommand<
   }
 
   [$sentArgs](): [Entity[], Query<TABLE>, DeletePartitionOptions<TABLE, Entity[], Query<TABLE>>] {
+    if (this[$entities].length === 0) {
+      throw new DynamoDBToolboxError('actions.incompleteAction', {
+        message: 'DeletePartitionCommand incomplete: Missing "entities" property'
+      })
+    }
+
     if (!this[$query]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'DeletePartitionCommand incomplete: Missing "query" property'

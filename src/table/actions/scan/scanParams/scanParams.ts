@@ -9,11 +9,13 @@ import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseConsistentOption } from '~/options/consistent.js'
+import { parseEntityAttrFilterOption } from '~/options/entityAttrFilter.js'
 import { parseIndexOption } from '~/options/index.js'
 import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
+import { parseShowEntityAttrOption } from '~/options/showEntityAttr.js'
 import { parseTableNameOption } from '~/options/tableName.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { Table } from '~/table/index.js'
@@ -63,11 +65,12 @@ export const scanParams: ScanParamsGetter = <
     select,
     totalSegments,
     segment,
-    entityAttrFilter = true,
     filter,
     filters: _filters,
     attributes: _attributes,
     tableName,
+    entityAttrFilter = true,
+    showEntityAttr,
     ...extraOptions
   } = options
   rejectExtraOptions(extraOptions)
@@ -113,6 +116,14 @@ export const scanParams: ScanParamsGetter = <
 
   if (select !== undefined) {
     commandOptions.Select = parseSelectOption(select, { index, attributes })
+  }
+
+  // entityAttrFilter is a meta-option, validated but not used here
+  parseEntityAttrFilterOption(entityAttrFilter)
+
+  if (showEntityAttr !== undefined) {
+    // showEntityAttr is a meta-option, validated but not used here
+    parseShowEntityAttrOption(showEntityAttr)
   }
 
   if (segment !== undefined) {

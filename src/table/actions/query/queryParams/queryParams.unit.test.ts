@@ -13,8 +13,6 @@ import {
 } from '~/index.js'
 import type { Merge } from '~/types/merge.js'
 
-import type { $entity } from '../constants.js'
-
 const TestTable = new Table({
   name: 'test-table',
   partitionKey: { type: 'string', name: 'pk' },
@@ -486,7 +484,7 @@ describe('query', () => {
     expect(ReturnConsumedCapacity).toBe('NONE')
   })
 
-  test('fails on invalid capacity option', () => {
+  test('throws on invalid capacity option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -528,7 +526,7 @@ describe('query', () => {
   })
 
   // TO MOVE IN QUERY TEST?
-  test('fails on invalid index', () => {
+  test('throws on invalid index', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({
@@ -563,7 +561,7 @@ describe('query', () => {
     expect(Select).toBe('COUNT')
   })
 
-  test('fails on invalid select option', () => {
+  test('throws on invalid select option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -586,7 +584,7 @@ describe('query', () => {
     expect(Select).toBe('ALL_PROJECTED_ATTRIBUTES')
   })
 
-  test('fails if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
+  test('throws if select option is "ALL_PROJECTED_ATTRIBUTES" but no index is provided', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -608,7 +606,7 @@ describe('query', () => {
     expect(Select).toBe('SPECIFIC_ATTRIBUTES')
   })
 
-  test('fails if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
+  test('throws if a projection expression has been provided but select option is NOT "SPECIFIC_ATTRIBUTES"', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -630,7 +628,7 @@ describe('query', () => {
     expect(Limit).toBe(3)
   })
 
-  test('fails on invalid limit option', () => {
+  test('throws on invalid limit option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -657,7 +655,7 @@ describe('query', () => {
     expect(validCallB).not.toThrow()
   })
 
-  test('fails on invalid maxPages option', () => {
+  test('throws on invalid maxPages option', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -686,7 +684,7 @@ describe('query', () => {
     expect(ScanIndexForward).toBe(false)
   })
 
-  test('fails on invalid reverse option', () => {
+  test('throws on invalid reverse option', () => {
     // segment without totalSegment option
     const invalidCall = () =>
       TestTable.build(QueryCommand)
@@ -701,7 +699,7 @@ describe('query', () => {
     )
   })
 
-  test('fails on invalid entityAttrFilter option', () => {
+  test('throws on invalid entityAttrFilter option', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -711,7 +709,7 @@ describe('query', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'queryCommand.invalidEntityAttrFilterOption' })
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
     )
   })
 
@@ -724,7 +722,7 @@ describe('query', () => {
     expect(TableName).toBe('tableName')
   })
 
-  test('fails on invalid tableName option', () => {
+  test('throws on invalid tableName option', () => {
     // segment without totalSegment option
     const invalidCall = () =>
       TestTable.build(QueryCommand)
@@ -735,6 +733,35 @@ describe('query', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
+  test('appends entity name if showEntityAttr is true', () => {
+    const command = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1)
+      .options({ showEntityAttr: true })
+
+    command.params()
+
+    const assertReturnedItems: A.Equals<
+      Awaited<ReturnType<typeof command.send>>['Items'],
+      Merge<FormattedItem<typeof Entity1>, { entity: 'entity1' }>[] | undefined
+    > = 1
+    assertReturnedItems
+  })
+
+  test('throws on invalid showEntityAttr option', () => {
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        // @ts-expect-error
+        .options({ showEntityAttr: 'true' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidShowEntityAttrOption' })
+    )
   })
 
   test('applies any filter if no entity has been provided', () => {
@@ -774,7 +801,7 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      Merge<FormattedItem<typeof Entity1>, { [$entity]: 'entity1' }>[] | undefined
+      FormattedItem<typeof Entity1>[] | undefined
     > = 1
     assertReturnedItems
   })
@@ -831,11 +858,7 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      | (
-          | Merge<FormattedItem<typeof Entity1>, { [$entity]: 'entity1' }>
-          | Merge<FormattedItem<typeof Entity2>, { [$entity]: 'entity2' }>
-        )[]
-      | undefined
+      (FormattedItem<typeof Entity1> | FormattedItem<typeof Entity2>)[] | undefined
     > = 1
     assertReturnedItems
   })
@@ -919,11 +942,7 @@ describe('query', () => {
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
-      | Merge<
-          FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>,
-          { [$entity]: 'entity1' }
-        >[]
-      | undefined
+      FormattedItem<typeof Entity1, { attributes: 'age' | 'name' }>[] | undefined
     > = 1
     assertReturnedItems
 
@@ -948,14 +967,8 @@ describe('query', () => {
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
       | (
-          | Merge<
-              FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>,
-              { [$entity]: 'entity1' }
-            >
-          | Merge<
-              FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>,
-              { [$entity]: 'entity2' }
-            >
+          | FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>
+          | FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>
         )[]
       | undefined
     > = 1
@@ -969,7 +982,7 @@ describe('query', () => {
     })
   })
 
-  test('fails on extra options', () => {
+  test('throws on extra options', () => {
     const invalidCall = () =>
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })

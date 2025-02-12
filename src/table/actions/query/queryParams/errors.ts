@@ -6,12 +6,6 @@ type InvalidReverseOptionErrorBlueprint = ErrorBlueprint<{
   payload: { reverse?: unknown }
 }>
 
-type InvalidEntityAttrFilterOptionErrorBlueprint = ErrorBlueprint<{
-  code: 'queryCommand.invalidEntityAttrFilterOption'
-  hasPath: false
-  payload: { entityAttrFilter?: unknown }
-}>
-
 type InvalidIndexErrorBlueprint = ErrorBlueprint<{
   code: 'queryCommand.invalidIndex'
   hasPath: false
@@ -26,6 +20,5 @@ type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
 
 export type QueryCommandErrorBlueprints =
   | InvalidReverseOptionErrorBlueprint
-  | InvalidEntityAttrFilterOptionErrorBlueprint
   | InvalidIndexErrorBlueprint
   | InvalidPartitionErrorBlueprint

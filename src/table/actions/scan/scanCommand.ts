@@ -30,14 +30,26 @@ type ReturnedItems<
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
         ? ENTITY extends Entity
-          ? FormattedItem<
-              ENTITY,
-              {
-                attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-                  ? OPTIONS['attributes'][number]
-                  : undefined
-              }
-            >
+          ? OPTIONS['showEntityAttr'] extends true
+            ? Merge<
+                FormattedItem<
+                  ENTITY,
+                  {
+                    attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                      ? OPTIONS['attributes'][number]
+                      : undefined
+                  }
+                >,
+                { [KEY in ENTITY['entityAttributeName']]: ENTITY['name'] }
+              >
+            : FormattedItem<
+                ENTITY,
+                {
+                  attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                    ? OPTIONS['attributes'][number]
+                    : undefined
+                }
+              >
           : never
         : never)[]
 
@@ -126,7 +138,7 @@ export class ScanCommand<
     let responseMetadata: ScanCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1 } = this[$options]
+    const { attributes, maxPages = 1, showEntityAttr = false } = this[$options]
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -159,9 +171,13 @@ export class ScanCommand<
         if (!isString(itemEntityName)) {
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
           // (NOTE: Can only happen if `entityAttrFilter` is false)
-          for (const formatter of Object.values(formattersByName)) {
+          for (const [entityName, formatter] of Object.entries(formattersByName)) {
             try {
-              formattedItems.push(formatter.format(item, { attributes }))
+              const formattedItem = formatter.format(item, { attributes })
+              formattedItems.push({
+                ...formattedItem,
+                ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: entityName } : {})
+              })
               break
             } catch {
               continue
@@ -176,7 +192,11 @@ export class ScanCommand<
           continue
         }
 
-        formattedItems.push(formatter.format(item, { attributes }))
+        const formattedItem = formatter.format(item, { attributes })
+        formattedItems.push({
+          ...formattedItem,
+          ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: itemEntityName } : {})
+        })
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey

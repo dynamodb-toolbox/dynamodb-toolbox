@@ -21,11 +21,12 @@ export type QueryOptions<
   limit?: number
   maxPages?: number
   reverse?: boolean
-  entityAttrFilter?: boolean
   filter?: Entity[] extends ENTITIES ? Condition : never
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+  entityAttrFilter?: boolean
+  showEntityAttr?: boolean
   tableName?: string
 } & (QUERY['index'] extends keyof TABLE['indexes']
   ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'

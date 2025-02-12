@@ -1,6 +1,6 @@
 import type { ConsumedCapacity } from '@aws-sdk/client-dynamodb'
-import { QueryCommand as _QueryCommand } from '@aws-sdk/lib-dynamodb'
 import type { QueryCommandInput, QueryCommandOutput } from '@aws-sdk/lib-dynamodb'
+import { QueryCommand as _QueryCommand } from '@aws-sdk/lib-dynamodb'
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
@@ -32,17 +32,26 @@ type ReturnedItems<
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
         ? ENTITY extends Entity
-          ? Merge<
-              FormattedItem<
+          ? OPTIONS['showEntityAttr'] extends true
+            ? Merge<
+                FormattedItem<
+                  ENTITY,
+                  {
+                    attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
+                      ? OPTIONS['attributes'][number]
+                      : undefined
+                  }
+                >,
+                { [KEY in ENTITY['entityAttributeName']]: ENTITY['name'] }
+              >
+            : FormattedItem<
                 ENTITY,
                 {
                   attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
                     ? OPTIONS['attributes'][number]
                     : undefined
                 }
-              >,
-              { [$entity]: ENTITY['name'] }
-            >
+              >
           : never
         : never)[]
 
@@ -172,7 +181,7 @@ export class QueryCommand<
     let responseMetadata: QueryCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1 } = this[$options]
+    const { attributes, maxPages = 1, showEntityAttr = false } = this[$options]
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -208,7 +217,12 @@ export class QueryCommand<
           for (const [entityName, formatter] of Object.entries(formattersByName)) {
             try {
               const formattedItem = formatter.format(item, { attributes })
-              formattedItems.push({ ...formattedItem, [$entity]: entityName })
+              formattedItems.push({
+                ...formattedItem,
+                ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: entityName } : {}),
+                // $entity symbol is useful for the DeletePartition command
+                [$entity]: entityName
+              })
               break
             } catch {
               continue
@@ -219,13 +233,17 @@ export class QueryCommand<
         }
 
         const formatter = formattersByName[itemEntityName]
-
         if (formatter === undefined) {
           continue
         }
 
         const formattedItem = formatter.format(item, { attributes })
-        formattedItems.push({ ...formattedItem, [$entity]: itemEntityName })
+        formattedItems.push({
+          ...formattedItem,
+          ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: itemEntityName } : {}),
+          // $entity symbol is useful for the DeletePartition command
+          [$entity]: itemEntityName
+        })
       }
 
       lastEvaluatedKey = pageLastEvaluatedKey
