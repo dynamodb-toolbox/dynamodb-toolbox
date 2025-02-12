@@ -44,8 +44,8 @@ The partition to query, with optional index and range condition:
 ```ts
 // Delete 'ashKetchum' pokemons
 await PokeTable.build(DeletePartitionCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .send()
 ```
 
@@ -63,9 +63,9 @@ Provides a list of entities to filter the deleted items (via the internal [`enti
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
-  .query(query)
   // Deletes only `Pokemons` and `Trainers`
   .entities(PokemonEntity, TrainerEntity)
+  .query(query)
   .send()
 ```
 
@@ -98,8 +98,8 @@ const queryOptions: DeletePartitionOptions<
 }
 
 await PokeTable.build(DeletePartitionCommand)
-  .query(query)
   .entities(PokemonEntity, TrainerEntity)
+  .query(query)
   .options(queryOptions)
   .send()
 ```
@@ -183,8 +183,8 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ consistent: true })
   .send()
 ```
@@ -194,12 +194,12 @@ await PokeTable.build(DeletePartitionCommand)
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
+  .entities(PokemonEntity)
   .query({
     index: 'byTrainerId',
     partition: 'ashKetchum',
     range: { gte: 50 }
   })
-  .entities(PokemonEntity)
   .send()
 ```
 
@@ -208,8 +208,8 @@ await PokeTable.build(DeletePartitionCommand)
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity, TrainerEntity)
+  .query({ partition: 'ashKetchum' })
   .options({
     filters: {
       POKEMONS: { attr: 'pokeType', eq: 'fire' },
@@ -224,8 +224,8 @@ await PokeTable.build(DeletePartitionCommand)
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
 ```

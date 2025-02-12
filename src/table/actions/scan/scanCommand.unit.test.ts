@@ -1,5 +1,5 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import type { __MetadataBearer } from '@aws-sdk/client-dynamodb'
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient, ScanCommand as _ScanCommand } from '@aws-sdk/lib-dynamodb'
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
@@ -116,6 +116,22 @@ describe('scanCommand', () => {
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
   })
 
+  test('appends entityAttribute if showEntityAttr is true', async () => {
+    documentClientMock.on(_ScanCommand).resolves({
+      Items: [completeSavedItemA, completeSavedItemB]
+    })
+
+    const { Items } = await TestTable.build(ScanCommand)
+      .entities(EntityA, EntityB)
+      .options({ entityAttrFilter: false, showEntityAttr: true })
+      .send()
+
+    expect(Items).toStrictEqual([
+      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
+      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+    ])
+  })
+
   test('still tries all formatters if entityAttribute misses (omit invalid items)', async () => {
     documentClientMock.on(_ScanCommand).resolves({
       Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
@@ -127,5 +143,21 @@ describe('scanCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
+  })
+
+  test('still appends entityAttribute if showEntityAttr is true', async () => {
+    documentClientMock.on(_ScanCommand).resolves({
+      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
+    })
+
+    const { Items } = await TestTable.build(ScanCommand)
+      .entities(EntityA, EntityB)
+      .options({ entityAttrFilter: false, showEntityAttr: true })
+      .send()
+
+    expect(Items).toStrictEqual([
+      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
+      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+    ])
   })
 })

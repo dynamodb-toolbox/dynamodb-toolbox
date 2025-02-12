@@ -78,6 +78,18 @@ type InvalidTableNameOptionErrorBlueprint = ErrorBlueprint<{
   payload: { tableName: unknown }
 }>
 
+type InvalidEntityAttrFilterOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidEntityAttrFilterOption'
+  hasPath: false
+  payload: { entityAttrFilter?: unknown }
+}>
+
+type InvalidShowEntityAttrOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidShowEntityAttrOption'
+  hasPath: false
+  payload: { showEntityAttr: unknown }
+}>
+
 type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   code: 'options.unknownOption'
   hasPath: false
@@ -104,5 +116,7 @@ export type OptionsErrorBlueprints =
   | InvalidReturnValuesOnConditionFalseOptionErrorBlueprint
   | InvalidSelectOptionErrorBlueprint
   | InvalidTableNameOptionErrorBlueprint
+  | InvalidEntityAttrFilterOptionErrorBlueprint
+  | InvalidShowEntityAttrOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | MissingDocumentClientErrorBlueprint
