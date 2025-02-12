@@ -63,28 +63,9 @@ Provides a list of entities to filter the returned items (via the internal [`ent
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
 const { Items } = await PokeTable.build(QueryCommand)
-  .query(query)
   .entities(PokemonEntity, TrainerEntity)
+  .query(query)
   .send()
-```
-
-Returned items are also **tagged** with their respective entity names through the `$entity` symbol:
-
-```ts
-import { $entity } from 'dynamodb-toolbox/table/actions/query'
-
-const { Items = [] } = await queryCommand.send()
-
-for (const item of Items) {
-  switch (item[$entity]) {
-    case "pokemon":
-      // 🙌 Typed as Pokemon
-      ...
-    case "trainer":
-      // 🙌 Typed as Trainer
-      ...
-  }
-}
 ```
 
 ### `.options(...)`
@@ -117,8 +98,8 @@ const queryOptions: QueryOptions<
 }
 
 const { Items } = await PokeTable.build(QueryCommand)
-  .query(query)
   .entities(PokemonEntity, TrainerEntity)
+  .query(query)
   .options(queryOptions)
   .send()
 ```
@@ -143,7 +124,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
+            <td rowSpan="5" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -170,12 +151,20 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
               <br/><br/>Possible values are <code>"NONE"</code>, <code>"TOTAL"</code> and <code>"INDEXES"</code>.
             </td>
         </tr>
-            <tr>
+        <tr>
             <td><code>tableName</code></td>
             <td align="center"><code>string</code></td>
             <td align="center">-</td>
             <td>
               Overrides the <code>Table</code> name. Mostly useful for <a href="https://en.wikipedia.org/wiki/Multitenancy">multitenancy</a>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>showEntityAttr</code></td>
+            <td align="center"><code>boolean</code></td>
+            <td align="center"><code>false</code></td>
+            <td>
+              Includes the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute in the returned items. Useful for easily distinguishing items based on their entities.
             </td>
         </tr>
         <tr>
@@ -251,8 +240,8 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
           <td align="center"><code>true</code></td>
           <td>
             By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-            <br/><br/>This option is useful for querying items that miss the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g. when migrating to DynamoDB-Toolbox). You can use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to introduce it manually.
-            <br/><br/>Note that this can result in types being wrongly inferred, so be extra careful.
+            <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
+            <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute.
           </td>
         </tr>
     </tbody>
@@ -265,8 +254,8 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ consistent: true })
   .send()
 ```
@@ -276,12 +265,12 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
+  .entities(PokemonEntity)
   .query({
     index: 'byTrainerId',
     partition: 'ashKetchum',
     range: { gte: 50 }
   })
-  .entities(PokemonEntity)
   .send()
 ```
 
@@ -290,8 +279,8 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ reverse: true })
   .send()
 ```
@@ -301,10 +290,47 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
+```
+
+</TabItem>
+<TabItem value="multi-entity" label="Multi-Entities">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .entities(TrainerEntity, PokemonEntity)
+  .query({ partition: 'ashKetchum' })
+  .options({ showEntityAttr: true })
+  .send()
+
+for (const item of Items) {
+  switch (item.entity) {
+    case 'trainer':
+      // 🙌 Typed as Trainer
+      ...
+    case 'pokemon':
+      // 🙌 Typed as Pokemon
+      ...
+  }
+}
+```
+
+</TabItem>
+<TabItem value="aborted" label="Aborted">
+
+```ts
+const abortController = new AbortController()
+const abortSignal = abortController.signal
+
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .send({ abortSignal })
+
+// 👇 Aborts the command
+abortController.abort()
 ```
 
 </TabItem>
@@ -358,8 +384,8 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity, TrainerEntity)
+  .query({ partition: 'ashKetchum' })
   .options({
     filters: {
       POKEMONS: { attr: 'pokeType', eq: 'fire' },
@@ -386,8 +412,8 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
   .options({ attributes: ['name', 'type'] })
   .send()
 ```
@@ -398,9 +424,7 @@ const { Items } = await PokeTable.build(QueryCommand)
 ```ts
 const { Count } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
-  .options({
-    select: 'COUNT'
-  })
+  .options({ select: 'COUNT' })
   .send()
 ```
 

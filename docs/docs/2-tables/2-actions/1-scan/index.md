@@ -87,7 +87,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowspan="4" align="center" class="vertical"><b>General</b></td>
+            <td rowspan="5" align="center" class="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -120,6 +120,14 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center">-</td>
             <td>
               Overrides the <code>Table</code> name. Mostly useful for <a href="https://en.wikipedia.org/wiki/Multitenancy">multitenancy</a>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>showEntityAttr</code></td>
+            <td align="center"><code>boolean</code></td>
+            <td align="center"><code>false</code></td>
+            <td>
+              Includes the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute in the returned items. Useful for easily distinguishing items based on their entities.
             </td>
         </tr>
         <tr>
@@ -194,8 +202,8 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
           <td align="center"><code>true</code></td>
           <td>
             By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-            <br/><br/>This option is useful for querying items that miss the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g. when migrating to DynamoDB-Toolbox), for instance in combination with <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a>.
-            <br/><br/>Note that this can result in types being wrongly inferred, so be extra careful.
+            <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
+            <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute.
           </td>
         </tr>
         <tr>
@@ -253,6 +261,27 @@ const { Items } = await PokeTable.build(ScanCommand)
     tableName: `tenant-${tenantId}-pokemons`
   })
   .send()
+```
+
+</TabItem>
+<TabItem value="multi-entity" label="Multi-Entities">
+
+```ts
+const { Items } = await PokeTable.build(ScanCommand)
+  .entities(TrainerEntity, PokemonEntity)
+  .options({ showEntityAttr: true })
+  .send()
+
+for (const item of Items) {
+  switch (item.entity) {
+    case 'trainer':
+      // 🙌 Typed as Trainer
+      ...
+    case 'pokemon':
+      // 🙌 Typed as Pokemon
+      ...
+  }
+}
 ```
 
 </TabItem>
@@ -315,9 +344,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
   // Retrieve all pokemons from the table (beware of RAM issues!)
-  .options({
-    maxPages: Infinity
-  })
+  .options({ maxPages: Infinity })
   .send()
 ```
 
@@ -360,9 +387,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
   .entities(PokemonEntity)
-  .options({
-    attributes: ['name', 'type']
-  })
+  .options({ attributes: ['name', 'type'] })
   .send()
 ```
 
