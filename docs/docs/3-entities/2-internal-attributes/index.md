@@ -176,7 +176,7 @@ const PokemonEntity = new Entity({
 When assigned to a variable, narrow the object type with `as const` to preserve correct typescript types for the entity.
 
 ```ts
-const customTimestamps: TimestampsConfig = {
+const customTimestamps = {
   created: false,
   modified: {
     name: 'updatedAt'
