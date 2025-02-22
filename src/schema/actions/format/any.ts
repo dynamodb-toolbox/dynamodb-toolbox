@@ -19,7 +19,7 @@ export function* anyAttrFormatter(
   if (transform) {
     const transformer = attribute.transform as Transformer
     transformedValue =
-      transformer !== undefined ? transformer.format(rawValue) : cloneDeep(rawValue)
+      transformer !== undefined ? transformer.decode(rawValue) : cloneDeep(rawValue)
 
     if (format) {
       yield transformedValue

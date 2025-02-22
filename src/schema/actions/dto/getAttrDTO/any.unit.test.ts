@@ -51,7 +51,7 @@ describe('getAnyAttrDTO', () => {
 
   test('correctly exports transformed attribute (custom transformer)', () => {
     const attr = any()
-      .transform({ parse: () => 'a', format: () => 'b' })
+      .transform({ encode: () => 'a', decode: () => 'b' })
       .freeze()
 
     expect(getAnyAttrDTO(attr)).toStrictEqual({

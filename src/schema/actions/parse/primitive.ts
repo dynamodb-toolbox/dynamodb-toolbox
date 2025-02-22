@@ -60,7 +60,7 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
 
   const transformedValue =
     attribute.transform !== undefined
-      ? (attribute.transform as Transformer).parse(parsedValue)
+      ? (attribute.transform as Transformer).encode(parsedValue)
       : parsedValue
   return transformedValue
 }

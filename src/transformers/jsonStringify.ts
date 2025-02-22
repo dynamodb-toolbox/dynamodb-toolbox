@@ -32,11 +32,11 @@ export class JSONStringifier
     this.reviver = reviver
   }
 
-  parse(formatted: unknown): string {
+  encode(formatted: unknown): string {
     return JSON.stringify(formatted, this.replacer, this.space)
   }
 
-  format(transformed: string): unknown {
+  decode(transformed: string): unknown {
     return JSON.parse(transformed, this.reviver)
   }
 

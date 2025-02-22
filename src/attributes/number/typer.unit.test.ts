@@ -269,8 +269,8 @@ describe('number', () => {
 
   test('returns transformed number (option)', () => {
     const transformer = {
-      parse: (input: number | bigint): number => (typeof input === 'number' ? input + 1 : 0),
-      format: (raw: number): number => raw - 1
+      encode: (input: number | bigint): number => (typeof input === 'number' ? input + 1 : 0),
+      decode: (raw: number): number => raw - 1
     }
 
     const num = number({ transform: transformer })
@@ -283,8 +283,8 @@ describe('number', () => {
 
   test('returns transformed number (method)', () => {
     const transformer = {
-      parse: (input: number): number => input + 1,
-      format: (raw: number | bigint): number => (typeof raw === 'number' ? raw - 1 : 0)
+      encode: (input: number): number => input + 1,
+      decode: (raw: number | bigint): number => (typeof raw === 'number' ? raw - 1 : 0)
     }
 
     const num = number().transform(transformer)
