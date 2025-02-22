@@ -44,7 +44,11 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          sidebarPath: require.resolve('./sidebars.js')
+          sidebarPath: require.resolve('./sidebars.js'),
+          lastVersion: 'current',
+          versions: {
+            current: { label: 'v1', path: '/' }
+          }
         },
         blog: false,
         theme: {
@@ -72,6 +76,10 @@ const config = {
           src: 'img/dynamodb-toolbox-icon.svg'
         },
         items: [
+          {
+            type: 'docsVersionDropdown',
+            position: 'left'
+          },
           {
             href: 'https://github.com/dynamodb-toolbox/dynamodb-toolbox',
             position: 'right',
