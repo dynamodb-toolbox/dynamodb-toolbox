@@ -35,7 +35,7 @@ export function* primitiveAttrFormatter(
   let transformedValue = undefined
   if (transform) {
     const transformer = attribute.transform as Transformer
-    transformedValue = transformer !== undefined ? transformer.format(rawValue) : rawValue
+    transformedValue = transformer !== undefined ? transformer.decode(rawValue) : rawValue
   } else {
     transformedValue = rawValue
   }
