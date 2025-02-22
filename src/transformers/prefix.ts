@@ -28,11 +28,11 @@ export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
     this.delimiter = delimiter
   }
 
-  parse(formatted: string): string {
+  encode(formatted: string): string {
     return [this.prefix, formatted].join(this.delimiter)
   }
 
-  format(transformed: string): string {
+  decode(transformed: string): string {
     return transformed.startsWith([this.prefix, ''].join(this.delimiter))
       ? transformed.slice(this.prefix.length + this.delimiter.length)
       : transformed

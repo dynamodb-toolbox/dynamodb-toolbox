@@ -59,7 +59,7 @@ describe('getPrimitiveAttributeDTO', () => {
 
   test('correctly exports transformed attribute (custom transformer)', () => {
     const attr = string()
-      .transform({ parse: () => 'a', format: () => 'b' })
+      .transform({ encode: () => 'a', decode: () => 'b' })
       .freeze()
 
     expect(getPrimitiveAttrDTO(attr)).toStrictEqual({

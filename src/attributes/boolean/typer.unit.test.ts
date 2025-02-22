@@ -254,8 +254,8 @@ describe('boolean', () => {
 
   test('returns transformed boolean (option)', () => {
     const negate = {
-      parse: (input: boolean) => !input,
-      format: (saved: boolean) => !saved
+      encode: (input: boolean) => !input,
+      decode: (saved: boolean) => !saved
     }
 
     const bool = boolean({ transform: negate })
@@ -268,8 +268,8 @@ describe('boolean', () => {
 
   test('returns transformed boolean (method)', () => {
     const negate = {
-      parse: (input: boolean) => !input,
-      format: (saved: boolean) => !saved
+      encode: (input: boolean) => !input,
+      decode: (saved: boolean) => !saved
     }
 
     const bool = boolean().transform(negate)
