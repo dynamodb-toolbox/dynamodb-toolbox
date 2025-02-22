@@ -171,6 +171,24 @@ const PokemonEntity = new Entity({
 })
 ```
 
+### From variable
+
+When assigned to a variable, narrow the object type with `as const` to preserve correct typescript types for the entity.
+
+```ts
+const customTimestamps = {
+  created: false,
+  modified: {
+    name: 'updatedAt'
+  }
+} as const
+
+const PokemonEntity = new Entity({
+  ...
+  timestamps: customTimestamps
+})
+```
+
 ### Linking Timestamps
 
 It can be useful to link Timestamp Attributes elsewhere in the schema, for instance to [query sorted items efficiently](https://aws.amazon.com/blogs/database/effective-data-sorting-with-amazon-dynamodb/).
