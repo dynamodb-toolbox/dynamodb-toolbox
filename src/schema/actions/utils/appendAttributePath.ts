@@ -52,7 +52,7 @@ const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDB
 
 const listIndexRegex = /\[(\d+)\]/g
 const escapedStrRegex = /\['(.+)'\]/g
-const regularStrRegex = /[\w#-]+(?=(\.|\[|$))/g
+const regularStrRegex = /[\w#@-]+(?=(\.|\[|$))/g
 const pathRegex = combineRegExp(listIndexRegex, escapedStrRegex, regularStrRegex)
 
 type MatchType = 'regularStr' | 'escapedStr' | 'listIndex'
