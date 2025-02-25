@@ -5,9 +5,6 @@ import type { RequiredOption } from './requiredOptions.js'
 export const $type = Symbol('$type')
 export type $type = typeof $type
 
-export const $state = Symbol('$state')
-export type $state = typeof $state
-
 export const $elements = Symbol('$elements')
 export type $elements = typeof $elements
 

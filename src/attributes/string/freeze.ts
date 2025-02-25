@@ -1,7 +1,5 @@
-import type { $state } from '../constants/attributeOptions.js'
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
-import type { $StringAttributeState } from './interface.js'
-import type { StringAttribute } from './interface.js'
+import type { $StringAttributeState, StringAttribute } from './interface.js'
 import { StringAttribute_ } from './interface.js'
 import type { StringAttributeState } from './types.js'
 
@@ -9,8 +7,8 @@ export type FreezeStringAttribute<
   $STRING_ATTRIBUTE extends $StringAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? StringAttribute_<$STRING_ATTRIBUTE[$state]>
-  : StringAttribute<$STRING_ATTRIBUTE[$state]>
+  ? StringAttribute_<$STRING_ATTRIBUTE['state']>
+  : StringAttribute<$STRING_ATTRIBUTE['state']>
 
 type StringAttributeFreezer = <STATE extends StringAttributeState>(
   state: STATE,

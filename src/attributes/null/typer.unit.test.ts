@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $state, $type } from '../constants/attributeOptions.js'
+import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
@@ -19,9 +19,9 @@ describe('null', () => {
     assertType
     expect(nil[$type]).toBe('null')
 
-    const assertState: A.Equals<(typeof nil)[$state], {}> = 1
+    const assertState: A.Equals<(typeof nil)['state'], {}> = 1
     assertState
-    expect(nil[$state]).toStrictEqual({})
+    expect(nil.state).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof nil, $NullAttributeState> = 1
     assertExtends
@@ -37,18 +37,18 @@ describe('null', () => {
     const nullNever = nul({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      (typeof nullAtLeastOnce)[$state],
+      (typeof nullAtLeastOnce)['state'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof nullAlways)[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof nullAlways)['state'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof nullNever)[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof nullNever)['state'], { required: Never }> = 1
     assertNever
 
-    expect(nullAtLeastOnce[$state].required).toBe('atLeastOnce')
-    expect(nullAlways[$state].required).toBe('always')
-    expect(nullNever[$state].required).toBe('never')
+    expect(nullAtLeastOnce.state.required).toBe('atLeastOnce')
+    expect(nullAlways.state.required).toBe('always')
+    expect(nullNever.state.required).toBe('never')
   })
 
   test('returns required null (method)', () => {
@@ -58,76 +58,76 @@ describe('null', () => {
     const numOpt = nul().optional()
 
     const assertAtLeastOnce: A.Contains<
-      (typeof nullAtLeastOnce)[$state],
+      (typeof nullAtLeastOnce)['state'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof nullAlways)[$state], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof nullAlways)['state'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof nullNever)[$state], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof nullNever)['state'], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<(typeof numOpt)[$state], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof numOpt)['state'], { required: Never }> = 1
     assertOpt
 
-    expect(nullAtLeastOnce[$state].required).toBe('atLeastOnce')
-    expect(nullAlways[$state].required).toBe('always')
-    expect(nullNever[$state].required).toBe('never')
-    expect(numOpt[$state].required).toBe('never')
+    expect(nullAtLeastOnce.state.required).toBe('atLeastOnce')
+    expect(nullAlways.state.required).toBe('always')
+    expect(nullNever.state.required).toBe('never')
+    expect(numOpt.state.required).toBe('never')
   })
 
   test('returns hidden null (option)', () => {
     const nil = nul({ hidden: true })
 
-    const assertNull: A.Contains<(typeof nil)[$state], { hidden: true }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { hidden: true }> = 1
     assertNull
 
-    expect(nil[$state].hidden).toBe(true)
+    expect(nil.state.hidden).toBe(true)
   })
 
   test('returns hidden null (method)', () => {
     const nil = nul().hidden()
 
-    const assertNull: A.Contains<(typeof nil)[$state], { hidden: true }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { hidden: true }> = 1
     assertNull
 
-    expect(nil[$state].hidden).toBe(true)
+    expect(nil.state.hidden).toBe(true)
   })
 
   test('returns key null (option)', () => {
     const nil = nul({ key: true })
 
-    const assertNull: A.Contains<(typeof nil)[$state], { key: true }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { key: true }> = 1
     assertNull
 
-    expect(nil[$state].key).toBe(true)
+    expect(nil.state.key).toBe(true)
   })
 
   test('returns key null (method)', () => {
     const nil = nul().key()
 
-    const assertNull: A.Contains<(typeof nil)[$state], { key: true; required: Always }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { key: true; required: Always }> = 1
     assertNull
 
-    expect(nil[$state].key).toBe(true)
-    expect(nil[$state].required).toBe('always')
+    expect(nil.state.key).toBe(true)
+    expect(nil.state.required).toBe('always')
   })
 
   test('returns savedAs null (option)', () => {
     const nil = nul({ savedAs: 'foo' })
 
-    const assertNull: A.Contains<(typeof nil)[$state], { savedAs: 'foo' }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { savedAs: 'foo' }> = 1
     assertNull
 
-    expect(nil[$state].savedAs).toBe('foo')
+    expect(nil.state.savedAs).toBe('foo')
   })
 
   test('returns savedAs null (method)', () => {
     const nil = nul().savedAs('foo')
 
-    const assertNull: A.Contains<(typeof nil)[$state], { savedAs: 'foo' }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { savedAs: 'foo' }> = 1
     assertNull
 
-    expect(nil[$state].savedAs).toBe('foo')
+    expect(nil.state.savedAs).toBe('foo')
   })
 
   test('returns defaulted null (option)', () => {
@@ -153,20 +153,20 @@ describe('null', () => {
     const returnNull = () => null
     const nullC = nul({ updateDefault: returnNull })
 
-    const assertNullA: A.Contains<(typeof nullA)[$state], { keyDefault: null }> = 1
+    const assertNullA: A.Contains<(typeof nullA)['state'], { keyDefault: null }> = 1
     assertNullA
 
-    expect(nullA[$state].keyDefault).toBe(null)
+    expect(nullA.state.keyDefault).toBe(null)
 
-    const assertNullB: A.Contains<(typeof nullB)[$state], { putDefault: null }> = 1
+    const assertNullB: A.Contains<(typeof nullB)['state'], { putDefault: null }> = 1
     assertNullB
 
-    expect(nullB[$state].putDefault).toBe(null)
+    expect(nullB.state.putDefault).toBe(null)
 
-    const assertNullC: A.Contains<(typeof nullC)[$state], { updateDefault: () => null }> = 1
+    const assertNullC: A.Contains<(typeof nullC)['state'], { updateDefault: () => null }> = 1
     assertNullC
 
-    expect(nullC[$state].updateDefault).toBe(returnNull)
+    expect(nullC.state.updateDefault).toBe(returnNull)
   })
 
   test('returns defaulted null (method)', () => {
@@ -190,38 +190,38 @@ describe('null', () => {
     const returnNull = () => null
     const nullC = nul().updateDefault(returnNull)
 
-    const assertNullA: A.Contains<(typeof nullA)[$state], { keyDefault: unknown }> = 1
+    const assertNullA: A.Contains<(typeof nullA)['state'], { keyDefault: unknown }> = 1
     assertNullA
 
-    expect(nullA[$state].keyDefault).toBe(null)
+    expect(nullA.state.keyDefault).toBe(null)
 
-    const assertNullB: A.Contains<(typeof nullB)[$state], { putDefault: unknown }> = 1
+    const assertNullB: A.Contains<(typeof nullB)['state'], { putDefault: unknown }> = 1
     assertNullB
 
-    expect(nullB[$state].putDefault).toBe(null)
+    expect(nullB.state.putDefault).toBe(null)
 
-    const assertNullC: A.Contains<(typeof nullC)[$state], { updateDefault: unknown }> = 1
+    const assertNullC: A.Contains<(typeof nullC)['state'], { updateDefault: unknown }> = 1
     assertNullC
 
-    expect(nullC[$state].updateDefault).toBe(returnNull)
+    expect(nullC.state.updateDefault).toBe(returnNull)
   })
 
   test('returns null with PUT default value if it is not key (default shorthand)', () => {
     const nil = nul().default(null)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { putDefault: unknown }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { putDefault: unknown }> = 1
     assertNull
 
-    expect(nil[$state].putDefault).toBe(null)
+    expect(nil.state.putDefault).toBe(null)
   })
 
   test('returns null with KEY default value if it is key (default shorthand)', () => {
     const nil = nul().key().default(null)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { keyDefault: unknown }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { keyDefault: unknown }> = 1
     assertNull
 
-    expect(nil[$state].keyDefault).toBe(null)
+    expect(nil.state.keyDefault).toBe(null)
   })
 
   test('returns linked null (method)', () => {
@@ -230,40 +230,40 @@ describe('null', () => {
     const nullB = nul().putLink(returnNull)
     const nullC = nul().updateLink(returnNull)
 
-    const assertNullA: A.Contains<(typeof nullA)[$state], { keyLink: unknown }> = 1
+    const assertNullA: A.Contains<(typeof nullA)['state'], { keyLink: unknown }> = 1
     assertNullA
 
-    expect(nullA[$state].keyLink).toBe(returnNull)
+    expect(nullA.state.keyLink).toBe(returnNull)
 
-    const assertNullB: A.Contains<(typeof nullB)[$state], { putLink: unknown }> = 1
+    const assertNullB: A.Contains<(typeof nullB)['state'], { putLink: unknown }> = 1
     assertNullB
 
-    expect(nullB[$state].putLink).toBe(returnNull)
+    expect(nullB.state.putLink).toBe(returnNull)
 
-    const assertNullC: A.Contains<(typeof nullC)[$state], { updateLink: unknown }> = 1
+    const assertNullC: A.Contains<(typeof nullC)['state'], { updateLink: unknown }> = 1
     assertNullC
 
-    expect(nullC[$state].updateLink).toBe(returnNull)
+    expect(nullC.state.updateLink).toBe(returnNull)
   })
 
   test('returns null with PUT linked value if it is not key (link shorthand)', () => {
     const returnNull = () => null
     const nil = nul().link(returnNull)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { putLink: unknown }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { putLink: unknown }> = 1
     assertNull
 
-    expect(nil[$state].putLink).toBe(returnNull)
+    expect(nil.state.putLink).toBe(returnNull)
   })
 
   test('returns null with KEY linked value if it is key (link shorthand)', () => {
     const returnNull = () => null
     const nil = nul().key().link(returnNull)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { keyLink: unknown }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { keyLink: unknown }> = 1
     assertNull
 
-    expect(nil[$state].keyLink).toBe(returnNull)
+    expect(nil.state.keyLink).toBe(returnNull)
   })
 
   test('returns null with validator (option)', () => {
@@ -273,20 +273,20 @@ describe('null', () => {
     const nullB = nul({ putValidator: pass })
     const nullC = nul({ updateValidator: pass })
 
-    const assertNullA: A.Contains<(typeof nullA)[$state], { keyValidator: Validator }> = 1
+    const assertNullA: A.Contains<(typeof nullA)['state'], { keyValidator: Validator }> = 1
     assertNullA
 
-    expect(nullA[$state].keyValidator).toBe(pass)
+    expect(nullA.state.keyValidator).toBe(pass)
 
-    const assertNullB: A.Contains<(typeof nullB)[$state], { putValidator: Validator }> = 1
+    const assertNullB: A.Contains<(typeof nullB)['state'], { putValidator: Validator }> = 1
     assertNullB
 
-    expect(nullB[$state].putValidator).toBe(pass)
+    expect(nullB.state.putValidator).toBe(pass)
 
-    const assertNullC: A.Contains<(typeof nullC)[$state], { updateValidator: Validator }> = 1
+    const assertNullC: A.Contains<(typeof nullC)['state'], { updateValidator: Validator }> = 1
     assertNullC
 
-    expect(nullC[$state].updateValidator).toBe(pass)
+    expect(nullC.state.updateValidator).toBe(pass)
   })
 
   test('returns null with validator (method)', () => {
@@ -296,20 +296,20 @@ describe('null', () => {
     const nullB = nul().putValidate(pass)
     const nullC = nul().updateValidate(pass)
 
-    const assertNullA: A.Contains<(typeof nullA)[$state], { keyValidator: Validator }> = 1
+    const assertNullA: A.Contains<(typeof nullA)['state'], { keyValidator: Validator }> = 1
     assertNullA
 
-    expect(nullA[$state].keyValidator).toBe(pass)
+    expect(nullA.state.keyValidator).toBe(pass)
 
-    const assertNullB: A.Contains<(typeof nullB)[$state], { putValidator: Validator }> = 1
+    const assertNullB: A.Contains<(typeof nullB)['state'], { putValidator: Validator }> = 1
     assertNullB
 
-    expect(nullB[$state].putValidator).toBe(pass)
+    expect(nullB.state.putValidator).toBe(pass)
 
-    const assertNullC: A.Contains<(typeof nullC)[$state], { updateValidator: Validator }> = 1
+    const assertNullC: A.Contains<(typeof nullC)['state'], { updateValidator: Validator }> = 1
     assertNullC
 
-    expect(nullC[$state].updateValidator).toBe(pass)
+    expect(nullC.state.updateValidator).toBe(pass)
 
     const prevNum = nul()
     prevNum.validate((...args) => {
@@ -332,19 +332,19 @@ describe('null', () => {
     const pass = () => true
     const nil = nul().validate(pass)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { putValidator: Validator }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { putValidator: Validator }> = 1
     assertNull
 
-    expect(nil[$state].putValidator).toBe(pass)
+    expect(nil.state.putValidator).toBe(pass)
   })
 
   test('returns null with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const nil = nul().key().validate(pass)
 
-    const assertNull: A.Contains<(typeof nil)[$state], { keyValidator: Validator }> = 1
+    const assertNull: A.Contains<(typeof nil)['state'], { keyValidator: Validator }> = 1
     assertNull
 
-    expect(nil[$state].keyValidator).toBe(pass)
+    expect(nil.state.keyValidator).toBe(pass)
   })
 })

@@ -1,4 +1,3 @@
-import type { $state } from '../constants/attributeOptions.js'
 import type { AtLeastOnce } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { $AttributeNestedState, Attribute } from '../types/index.js'
@@ -16,7 +15,7 @@ interface ListAttributeElementState extends SharedAttributeState {
 }
 
 export type $ListAttributeElements = $AttributeNestedState & {
-  [$state]: ListAttributeElementState
+  state: ListAttributeElementState
 }
 
 export type ListAttributeElements = Attribute & { state: ListAttributeElementState }

@@ -16,7 +16,7 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $state, $type } from '../constants/attributeOptions.js'
+import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
@@ -26,7 +26,7 @@ import type { StringAttributeState } from './types.js'
 
 export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
   [$type]: 'string'
-  [$state]: STATE
+  state: STATE
 }
 
 export interface $StringAttributeNestedState<
@@ -41,12 +41,12 @@ export interface $StringAttributeNestedState<
 export class $StringAttribute<STATE extends StringAttributeState = StringAttributeState>
   implements $StringAttributeNestedState<STATE>
 {
-  [$type]: 'string';
-  [$state]: STATE
+  [$type]: 'string'
+  state: STATE
 
   constructor(state: STATE) {
     this[$type] = 'string'
-    this[$state] = state
+    this.state = state
   }
 
   /**
@@ -60,7 +60,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): $StringAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $StringAttribute(overwrite(this[$state], { required: nextRequired }))
+    return new $StringAttribute(overwrite(this.state, { required: nextRequired }))
   }
 
   /**
@@ -76,7 +76,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
   ): $StringAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $StringAttribute(overwrite(this[$state], { hidden: nextHidden }))
+    return new $StringAttribute(overwrite(this.state, { hidden: nextHidden }))
   }
 
   /**
@@ -85,7 +85,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
   ): $StringAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $StringAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
+    return new $StringAttribute(overwrite(this.state, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -94,7 +94,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
   ): $StringAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $StringAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
+    return new $StringAttribute(overwrite(this.state, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -110,7 +110,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       FreezeStringAttribute<$StringAttributeState<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $StringAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new $StringAttribute(overwrite(this[$state], { enum: writable(nextEnum) }))
+    return new $StringAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -130,12 +130,12 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     $StringAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
+      this.state.key as STATE['key'],
       new $StringAttribute(
-        overwrite(this[$state], { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new $StringAttribute(
-        overwrite(this[$state], { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -149,7 +149,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
     >
   >(transform: TRANSFORMER): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new $StringAttribute(overwrite(this[$state], { transform }))
+    return new $StringAttribute(overwrite(this.state, { transform }))
   }
 
   /**
@@ -162,7 +162,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $StringAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
+    return new $StringAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -173,7 +173,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>>
   ): $StringAttribute<Overwrite<STATE, { putDefault: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
+    return new $StringAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -187,7 +187,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     >
   ): $StringAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $StringAttribute(
-      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
+      overwrite(this.state, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -210,9 +210,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     $StringAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $StringAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
-      new $StringAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
+      this.state.key as STATE['key'],
+      new $StringAttribute(overwrite(this.state, { keyDefault: nextDefault as unknown })),
+      new $StringAttribute(overwrite(this.state, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -226,7 +226,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>
   ): $StringAttribute<Overwrite<STATE, { keyLink: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
+    return new $StringAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -239,7 +239,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>
   ): $StringAttribute<Overwrite<STATE, { putLink: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
+    return new $StringAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -252,7 +252,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
   ): $StringAttribute<Overwrite<STATE, { updateLink: unknown }>> {
-    return new $StringAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
+    return new $StringAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -274,9 +274,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     $StringAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $StringAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
-      new $StringAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
+      this.state.key as STATE['key'],
+      new $StringAttribute(overwrite(this.state, { keyLink: nextLink as unknown })),
+      new $StringAttribute(overwrite(this.state, { putLink: nextLink as unknown }))
     )
   }
 
@@ -295,7 +295,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     >
   ): $StringAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $StringAttribute(
-      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
+      overwrite(this.state, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -311,7 +311,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     >
   ): $StringAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $StringAttribute(
-      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
+      overwrite(this.state, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -327,7 +327,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     >
   ): $StringAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $StringAttribute(
-      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -354,14 +354,14 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     $StringAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $StringAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
-      new $StringAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
+      this.state.key as STATE['key'],
+      new $StringAttribute(overwrite(this.state, { keyValidator: nextValidator as Validator })),
+      new $StringAttribute(overwrite(this.state, { putValidator: nextValidator as Validator }))
     )
   }
 
   freeze(path?: string): FreezeStringAttribute<$StringAttributeState<STATE>, true> {
-    return freezeStringAttribute(this[$state], path)
+    return freezeStringAttribute(this.state, path)
   }
 }
 

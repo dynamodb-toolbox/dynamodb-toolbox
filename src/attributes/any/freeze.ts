@@ -1,4 +1,3 @@
-import type { $state } from '../constants/attributeOptions.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { AnyAttribute } from './interface.js'
 import { AnyAttribute_ } from './interface.js'
@@ -9,8 +8,8 @@ export type FreezeAnyAttribute<
   $ANY_ATTRIBUTE extends $AnyAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? AnyAttribute_<$ANY_ATTRIBUTE[$state]>
-  : AnyAttribute<$ANY_ATTRIBUTE[$state]>
+  ? AnyAttribute_<$ANY_ATTRIBUTE['state']>
+  : AnyAttribute<$ANY_ATTRIBUTE['state']>
 
 type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,
