@@ -1,7 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -30,8 +29,8 @@ export type FreezeAnyOfAttribute<
   $ANY_OF_ATTRIBUTE extends $AnyOfAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? AnyOfAttribute_<$ANY_OF_ATTRIBUTE['state'], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
-  : AnyOfAttribute<$ANY_OF_ATTRIBUTE['state'], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
+  ? AnyOfAttribute_<$ANY_OF_ATTRIBUTE['state'], FreezeElements<$ANY_OF_ATTRIBUTE['elements']>>
+  : AnyOfAttribute<$ANY_OF_ATTRIBUTE['state'], FreezeElements<$ANY_OF_ATTRIBUTE['elements']>>
 
 type AnyOfAttributeFreezer = <
   STATE extends SharedAttributeState,

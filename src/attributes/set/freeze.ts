@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -13,8 +12,8 @@ export type FreezeSetAttribute<
   $SET_ATTRIBUTE extends $SetAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? SetAttribute_<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
-  : SetAttribute<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
+  ? SetAttribute_<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE['elements']>>
+  : SetAttribute<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE['elements']>>
 
 type SetAttributeFreezer = <
   STATE extends SharedAttributeState,

@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $elements } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
@@ -95,9 +94,9 @@ describe('set', () => {
     assertState
     expect(st.state).toStrictEqual({})
 
-    const assertElmt: A.Equals<(typeof st)[$elements], typeof strElement> = 1
+    const assertElmt: A.Equals<(typeof st)['elements'], typeof strElement> = 1
     assertElmt
-    expect(st[$elements]).toBe(strElement)
+    expect(st.elements).toBe(strElement)
 
     const assertExtends: A.Extends<typeof st, $SetAttributeState> = 1
     assertExtends

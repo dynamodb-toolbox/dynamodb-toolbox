@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -13,8 +12,8 @@ export type FreezeListAttribute<
   $LIST_ATTRIBUTE extends $ListAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? ListAttribute_<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
-  : ListAttribute<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
+  ? ListAttribute_<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE['elements'], false>>
+  : ListAttribute<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE['elements'], false>>
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,

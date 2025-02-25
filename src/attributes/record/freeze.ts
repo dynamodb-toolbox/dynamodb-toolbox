@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { $elements, $keys } from '../constants/attributeOptions.js'
+import type { $keys } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -16,12 +16,12 @@ export type FreezeRecordAttribute<
   ? RecordAttribute_<
       $RECORD_ATTRIBUTE['state'],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
+      FreezeAttribute<$RECORD_ATTRIBUTE['elements']>
     >
   : RecordAttribute<
       $RECORD_ATTRIBUTE['state'],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
-      FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
+      FreezeAttribute<$RECORD_ATTRIBUTE['elements']>
     >
 
 type RecordAttributeFreezer = <
