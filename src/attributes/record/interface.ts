@@ -15,7 +15,7 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeRecordAttribute } from './freeze.js'
@@ -27,7 +27,7 @@ import type {
 } from './types.js'
 
 export interface $RecordAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > {
@@ -38,7 +38,7 @@ export interface $RecordAttributeState<
 }
 
 export interface $RecordAttributeNestedState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > extends $RecordAttributeState<STATE, $KEYS, $ELEMENTS> {
@@ -51,7 +51,7 @@ export interface $RecordAttributeNestedState<
  * Record attribute interface
  */
 export class $RecordAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
@@ -429,7 +429,7 @@ export class $RecordAttribute<
 }
 
 export class RecordAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
 > {
@@ -454,14 +454,14 @@ export class RecordAttribute<
 }
 
 export class RecordAttribute_<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
 > extends RecordAttribute<STATE, KEYS, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
   ): RecordAttribute_<
-    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
+    ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>,
     KEYS,
     ELEMENTS
   > {
@@ -470,7 +470,7 @@ export class RecordAttribute_<
         ...(this.path !== undefined ? { path: this.path } : {}),
         ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
       keys: this.keys,
       elements: this.elements
     })

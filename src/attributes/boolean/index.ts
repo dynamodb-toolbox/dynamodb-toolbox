@@ -3,4 +3,4 @@ export type { $BooleanAttributeState, $BooleanAttributeNestedState } from './int
 export { $BooleanAttribute, BooleanAttribute, BooleanAttribute_ } from './interface.js'
 export type { FreezeBooleanAttribute } from './freeze.js'
 export type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
-export type { BooleanAttributeStateConstraint } from './types.js'
+export type { BooleanAttributeState } from './types.js'

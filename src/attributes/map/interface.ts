@@ -15,14 +15,14 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $attributes, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeMapAttribute } from './freeze.js'
 import { freezeMapAttribute } from './freeze.js'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
 
 export interface $MapAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > {
   [$type]: 'map'
@@ -31,7 +31,7 @@ export interface $MapAttributeState<
 }
 
 export interface $MapAttributeNestedState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > extends $MapAttributeState<STATE, $ATTRIBUTES> {
   freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
@@ -41,7 +41,7 @@ export interface $MapAttributeNestedState<
  * MapAttribute attribute interface
  */
 export class $MapAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
@@ -359,7 +359,7 @@ export class $MapAttribute<
 }
 
 export class MapAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
 > {
   type: 'map'
@@ -401,21 +401,18 @@ export class MapAttribute<
 }
 
 export class MapAttribute_<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
 > extends MapAttribute<STATE, ATTRIBUTES> {
-  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): MapAttribute_<
-    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
-    ATTRIBUTES
-  > {
+  ): MapAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ATTRIBUTES> {
     return new MapAttribute_({
       ...({
         ...(this.path !== undefined ? { path: this.path } : {}),
         ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
       attributes: this.attributes
     })
   }

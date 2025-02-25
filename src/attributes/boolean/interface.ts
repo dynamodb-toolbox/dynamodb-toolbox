@@ -20,17 +20,17 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
 import { freezeBooleanAttribute } from './freeze.js'
 import type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
-import type { BooleanAttributeStateConstraint } from './types.js'
+import type { BooleanAttributeState } from './types.js'
 
 export interface $BooleanAttributeState<
-  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
+  STATE extends BooleanAttributeState = BooleanAttributeState
 > {
   [$type]: 'boolean'
   [$state]: STATE
 }
 
 export interface $BooleanAttributeNestedState<
-  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
+  STATE extends BooleanAttributeState = BooleanAttributeState
 > extends $BooleanAttributeState<STATE> {
   freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
 }
@@ -38,9 +38,8 @@ export interface $BooleanAttributeNestedState<
 /**
  * Boolean attribute (warm)
  */
-export class $BooleanAttribute<
-  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
-> implements $BooleanAttributeNestedState<STATE>
+export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
+  implements $BooleanAttributeNestedState<STATE>
 {
   [$type]: 'boolean';
   [$state]: STATE
@@ -370,9 +369,7 @@ export class $BooleanAttribute<
   }
 }
 
-export class BooleanAttribute<
-  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
-> {
+export class BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState> {
   type: 'boolean'
   path?: string
   state: STATE
@@ -385,16 +382,16 @@ export class BooleanAttribute<
 }
 
 export class BooleanAttribute_<
-  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
+  STATE extends BooleanAttributeState = BooleanAttributeState
 > extends BooleanAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<BooleanAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<BooleanAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BooleanAttribute_<ConstrainedOverwrite<BooleanAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): BooleanAttribute_<ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>> {
     return new BooleanAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<BooleanAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

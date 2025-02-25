@@ -20,25 +20,22 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
 import { freezeAnyAttribute } from './freeze.js'
 import type { ResolveAnyAttribute } from './resolve.js'
-import type { AnyAttributeStateConstraint } from './types.js'
+import type { AnyAttributeState } from './types.js'
 
-export interface $AnyAttributeState<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> {
+export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
   [$type]: 'any'
   [$state]: STATE
 }
 
-export interface $AnyAttributeNestedState<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
-> extends $AnyAttributeState<STATE> {
+export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
+  extends $AnyAttributeState<STATE> {
   freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
 }
 
 /**
  * Any attribute (warm)
  */
-export class $AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint>
+export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   implements $AnyAttributeNestedState<STATE>
 {
   [$type]: 'any';
@@ -325,7 +322,7 @@ export class $AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttrib
   }
 }
 
-export class AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint> {
+export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState> {
   type: 'any'
   path?: string
   state: STATE
@@ -338,16 +335,16 @@ export class AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttribu
 }
 
 export class AnyAttribute_<
-  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
+  STATE extends AnyAttributeState = AnyAttributeState
 > extends AnyAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<AnyAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<AnyAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyAttribute_<ConstrainedOverwrite<AnyAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): AnyAttribute_<ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>> {
     return new AnyAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<AnyAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

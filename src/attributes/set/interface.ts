@@ -15,14 +15,14 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeSetAttribute } from './freeze.js'
 import { freezeSetAttribute } from './freeze.js'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
   [$type]: 'set'
@@ -31,7 +31,7 @@ export interface $SetAttributeState<
 }
 
 export interface $SetAttributeNestedState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
@@ -41,7 +41,7 @@ export interface $SetAttributeNestedState<
  * Set attribute interface
  */
 export class $SetAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -356,7 +356,7 @@ export class $SetAttribute<
 }
 
 export class SetAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
 > {
   type: 'set'
@@ -373,21 +373,18 @@ export class SetAttribute<
 }
 
 export class SetAttribute_<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
 > extends SetAttribute<STATE, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): SetAttribute_<
-    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
-    ELEMENTS
-  > {
+  ): SetAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
     return new SetAttribute_({
       ...({
         ...(this.path !== undefined ? { path: this.path } : {}),
         ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
       elements: this.elements
     })
   }

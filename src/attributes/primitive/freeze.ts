@@ -2,20 +2,20 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
-import type { BinaryAttributeStateConstraint } from '../binary/types.js'
-import type { BooleanAttributeStateConstraint } from '../boolean/types.js'
-import type { NullAttributeStateConstraint } from '../null/types.js'
-import type { NumberAttributeStateConstraint } from '../number/types.js'
+import type { BinaryAttributeState } from '../binary/types.js'
+import type { BooleanAttributeState } from '../boolean/types.js'
+import type { NullAttributeState } from '../null/types.js'
+import type { NumberAttributeState } from '../number/types.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { StringAttributeStateConstraint } from '../string/types.js'
+import type { StringAttributeState } from '../string/types.js'
 
 export const validatePrimitiveAttribute = (
   attribute:
-    | ({ type: 'null' } & { state: NullAttributeStateConstraint })
-    | ({ type: 'boolean' } & { state: BooleanAttributeStateConstraint })
-    | ({ type: 'number' } & { state: NumberAttributeStateConstraint })
-    | ({ type: 'string' } & { state: StringAttributeStateConstraint })
-    | ({ type: 'binary' } & { state: BinaryAttributeStateConstraint }),
+    | ({ type: 'null' } & { state: NullAttributeState })
+    | ({ type: 'boolean' } & { state: BooleanAttributeState })
+    | ({ type: 'number' } & { state: NumberAttributeState })
+    | ({ type: 'string' } & { state: StringAttributeState })
+    | ({ type: 'binary' } & { state: BinaryAttributeState }),
   path?: string
 ): void => {
   validateAttributeProperties(attribute.state, path)

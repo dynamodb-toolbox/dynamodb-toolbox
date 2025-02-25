@@ -4,7 +4,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { SetAttribute } from './interface.js'
 import { SetAttribute_ } from './interface.js'
@@ -19,7 +19,7 @@ export type FreezeSetAttribute<
   : SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
 
 type SetAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,
@@ -36,7 +36,7 @@ type SetAttributeFreezer = <
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,

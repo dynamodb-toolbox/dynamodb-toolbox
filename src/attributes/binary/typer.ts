@@ -1,9 +1,9 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
 import { $BinaryAttribute } from './interface.js'
-import type { BinaryAttributeStateConstraint } from './types.js'
+import type { BinaryAttributeState } from './types.js'
 
-type BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeStateConstraint, 'enum'> = {}>(
+type BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeState, 'enum'> = {}>(
   state?: NarrowObject<STATE>
 ) => $BinaryAttribute<STATE>
 
@@ -12,8 +12,6 @@ type BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeStateConstraint, 
  *
  * @param state _(optional)_ Attribute Options
  */
-export const binary: BinaryAttributeTyper = <
-  STATE extends Omit<BinaryAttributeStateConstraint, 'enum'> = {}
->(
+export const binary: BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeState, 'enum'> = {}>(
   state: NarrowObject<STATE> = {} as STATE
 ) => new $BinaryAttribute(state)

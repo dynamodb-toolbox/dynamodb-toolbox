@@ -1,13 +1,13 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { $RecordAttribute } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 type RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = {}
+  STATE extends SharedAttributeState = {}
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
@@ -30,7 +30,7 @@ type RecordAttributeTyper = <
 export const record: RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  STATE extends SharedAttributeStateConstraint = {}
+  STATE extends SharedAttributeState = {}
 >(
   keys: $KEYS,
   elements: $ELEMENTS,

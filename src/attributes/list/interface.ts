@@ -15,7 +15,7 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeListAttribute } from './freeze.js'
@@ -23,7 +23,7 @@ import { freezeListAttribute } from './freeze.js'
 import type { $ListAttributeElements } from './types.js'
 
 export interface $ListAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > {
   [$type]: 'list'
@@ -32,7 +32,7 @@ export interface $ListAttributeState<
 }
 
 export interface $ListAttributeNestedState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > extends $ListAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
@@ -42,7 +42,7 @@ export interface $ListAttributeNestedState<
  * List attribute interface
  */
 export class $ListAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -357,7 +357,7 @@ export class $ListAttribute<
 }
 
 export class ListAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute = Attribute
 > {
   type: 'list'
@@ -374,21 +374,18 @@ export class ListAttribute<
 }
 
 export class ListAttribute_<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute = Attribute
 > extends ListAttribute<STATE, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): ListAttribute_<
-    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
-    ELEMENTS
-  > {
+  ): ListAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
     return new ListAttribute_({
       ...({
         ...(this.path !== undefined ? { path: this.path } : {}),
         ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
       elements: this.elements
     })
   }

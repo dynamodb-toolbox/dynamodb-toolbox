@@ -1,9 +1,9 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
 import { $BooleanAttribute } from './interface.js'
-import type { BooleanAttributeStateConstraint } from './types.js'
+import type { BooleanAttributeState } from './types.js'
 
-type BooleanAttributeTyper = <STATE extends BooleanAttributeStateConstraint = {}>(
+type BooleanAttributeTyper = <STATE extends BooleanAttributeState = {}>(
   state?: NarrowObject<STATE>
 ) => $BooleanAttribute<STATE>
 
@@ -12,6 +12,6 @@ type BooleanAttributeTyper = <STATE extends BooleanAttributeStateConstraint = {}
  *
  * @param state _(optional)_ Attribute Options
  */
-export const boolean: BooleanAttributeTyper = <STATE extends BooleanAttributeStateConstraint = {}>(
+export const boolean: BooleanAttributeTyper = <STATE extends BooleanAttributeState = {}>(
   state: NarrowObject<STATE> = {} as STATE
 ) => new $BooleanAttribute(state)

@@ -3,7 +3,7 @@ import { validateAttributeProperties } from '../shared/validate.js'
 import type { AnyAttribute } from './interface.js'
 import { AnyAttribute_ } from './interface.js'
 import type { $AnyAttributeState } from './interface.js'
-import type { AnyAttributeStateConstraint } from './types.js'
+import type { AnyAttributeState } from './types.js'
 
 export type FreezeAnyAttribute<
   $ANY_ATTRIBUTE extends $AnyAttributeState,
@@ -12,7 +12,7 @@ export type FreezeAnyAttribute<
   ? AnyAttribute_<$ANY_ATTRIBUTE[$state]>
   : AnyAttribute<$ANY_ATTRIBUTE[$state]>
 
-type AnyAttributeFreezer = <STATE extends AnyAttributeStateConstraint>(
+type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,
   path?: string
 ) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
