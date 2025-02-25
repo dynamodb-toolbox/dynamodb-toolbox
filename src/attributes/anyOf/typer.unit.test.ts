@@ -23,6 +23,13 @@ describe('anyOf', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.missingElements', path })
     )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.missingElements', path })
+    )
   })
 
   test('rejects non-required elements', () => {
@@ -36,6 +43,13 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.optionalElements', path })
+    )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.optionalElements', path })
     )
   })
@@ -53,6 +67,13 @@ describe('anyOf', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.hiddenElements', path })
     )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.hiddenElements', path })
+    )
   })
 
   test('rejects elements with savedAs values', () => {
@@ -66,6 +87,13 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.savedAsElements', path })
+    )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.savedAsElements', path })
     )
   })
@@ -83,6 +111,13 @@ describe('anyOf', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
     )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+    )
   })
 
   test('rejects elements with linked values', () => {
@@ -96,6 +131,13 @@ describe('anyOf', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+    )
+
+    const superInvalidCall = () => invalidAnyOf.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
     )
   })

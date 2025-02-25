@@ -2,6 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type {
   ConstrainedOverwrite,
@@ -14,7 +15,9 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeSetAttribute } from './freeze.js'
 import { freezeSetAttribute } from './freeze.js'
@@ -33,6 +36,8 @@ export interface $SetAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
 }
 
@@ -45,6 +50,7 @@ export class $SetAttribute<
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
   type: 'set'
+  path?: string
   state: STATE
   elements: $ELEMENTS
 
@@ -351,6 +357,64 @@ export class $SetAttribute<
 
   freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true> {
     return freezeSetAttribute(this.state, this.elements, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validateAttributeProperties(this.state, path)
+
+    const { required, hidden, savedAs } = this.elements.state
+
+    if (required !== undefined && required !== 'atLeastOnce') {
+      throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {
+        message: `Invalid set elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: Set elements must be required.`,
+        path
+      })
+    }
+
+    if (hidden !== undefined && hidden !== false) {
+      throw new DynamoDBToolboxError('schema.setAttribute.hiddenElements', {
+        message: `Invalid set elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: Set elements cannot be hidden.`,
+        path
+      })
+    }
+
+    if (savedAs !== undefined) {
+      throw new DynamoDBToolboxError('schema.setAttribute.savedAsElements', {
+        message: `Invalid set elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: Set elements cannot be renamed (have savedAs option).`,
+        path
+      })
+    }
+
+    if (hasDefinedDefault(this.elements)) {
+      throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
+        message: `Invalid set elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: Set elements cannot have default or linked values.`,
+        path
+      })
+    }
+
+    this.elements.check(`${path ?? ''}[x]`)
+
+    Object.freeze(this.state)
+    Object.freeze(this.elements)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

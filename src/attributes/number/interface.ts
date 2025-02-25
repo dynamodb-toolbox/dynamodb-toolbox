@@ -17,6 +17,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
 import { freezeNumberAttribute } from './freeze.js'
@@ -31,6 +32,8 @@ export interface $NumberAttributeState<STATE extends NumberAttributeState = Numb
 export interface $NumberAttributeNestedState<
   STATE extends NumberAttributeState = NumberAttributeState
 > extends $NumberAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
 }
 
@@ -41,6 +44,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   implements $NumberAttributeNestedState<STATE>
 {
   type: 'number'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -370,6 +374,24 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
 
   freeze(path?: string): FreezeNumberAttribute<$NumberAttributeState<STATE>, true> {
     return freezeNumberAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validatePrimitiveAttribute(this, path)
+    // TODO: Validate that big is a boolean
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

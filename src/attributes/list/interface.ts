@@ -2,6 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type {
   ConstrainedOverwrite,
@@ -14,7 +15,9 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeListAttribute } from './freeze.js'
@@ -34,6 +37,8 @@ export interface $ListAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > extends $ListAttributeState<STATE, $ELEMENTS> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
 }
 
@@ -46,6 +51,7 @@ export class $ListAttribute<
 > implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
   type: 'list'
+  path?: string
   state: STATE
   elements: $ELEMENTS
 
@@ -349,6 +355,64 @@ export class $ListAttribute<
 
   freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true> {
     return freezeListAttribute(this.state, this.elements, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validateAttributeProperties(this.state, path)
+
+    const { required, hidden, savedAs } = this.elements.state
+
+    if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
+      throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
+        message: `Invalid list elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: List elements must be required.`,
+        path
+      })
+    }
+
+    if (hidden !== undefined && hidden !== false) {
+      throw new DynamoDBToolboxError('schema.listAttribute.hiddenElements', {
+        message: `Invalid list elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: List elements cannot be hidden.`,
+        path
+      })
+    }
+
+    if (savedAs !== undefined) {
+      throw new DynamoDBToolboxError('schema.listAttribute.savedAsElements', {
+        message: `Invalid list elements at path ${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: List elements cannot be renamed (have savedAs option).`,
+        path
+      })
+    }
+
+    if (hasDefinedDefault(this.elements)) {
+      throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
+        message: `Invalid list elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: List elements cannot have default or linked values.`,
+        path
+      })
+    }
+
+    this.elements.check(`${path ?? ''}[n]`)
+
+    Object.freeze(this.state)
+    Object.freeze(this.elements)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

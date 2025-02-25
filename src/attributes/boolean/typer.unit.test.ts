@@ -143,6 +143,13 @@ describe('boolean', () => {
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
+    const superInvalidCall = () => invalidBool.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
+    )
+
     const bool = boolean().enum(true)
 
     const assertBool: A.Contains<(typeof bool)['state'], { enum: [true] }> = 1
@@ -161,6 +168,13 @@ describe('boolean', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
+    const superInvalidCall = () => invalidBool.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
     )
 
@@ -230,6 +244,13 @@ describe('boolean', () => {
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
     )
 
+    const superInvalidCall = () => invalidBool.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
     boolean()
       // @ts-expect-error Unable to throw here (it would require executing the fn)
       .updateDefault(() => 'foo')
@@ -289,6 +310,16 @@ describe('boolean', () => {
       })
     )
 
+    const superInvalidCall = () => invalidBool.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({
+        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
+        path
+      })
+    )
+
     const boolA = boolean().enum(true).default(true)
     const returnTrue = (): true => true
     const boolB = boolean().enum(true).default(returnTrue)
@@ -318,6 +349,13 @@ describe('boolean', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
+    )
+
+    const superInvalidCall = () => invalidBool.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 

@@ -142,6 +142,13 @@ describe('null', () => {
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
     )
 
+    const superInvalidCall = () => invalidNull.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
     nul({
       // TOIMPROVE: add type constraints here
       updateDefault: () => 42
@@ -177,6 +184,13 @@ describe('null', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
+    const superInvalidCall = () => invalidNull.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
     )
 

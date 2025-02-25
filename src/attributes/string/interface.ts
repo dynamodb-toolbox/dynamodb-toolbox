@@ -17,6 +17,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
 import { freezeStringAttribute } from './freeze.js'
@@ -31,6 +32,8 @@ export interface $StringAttributeState<STATE extends StringAttributeState = Stri
 export interface $StringAttributeNestedState<
   STATE extends StringAttributeState = StringAttributeState
 > extends $StringAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>, true>
 }
 
@@ -41,6 +44,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   implements $StringAttributeNestedState<STATE>
 {
   type: 'string'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -361,6 +365,23 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
 
   freeze(path?: string): FreezeStringAttribute<$StringAttributeState<STATE>, true> {
     return freezeStringAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validatePrimitiveAttribute(this, path)
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 
