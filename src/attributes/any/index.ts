@@ -3,5 +3,4 @@ export type { $AnyAttributeState, $AnyAttributeNestedState } from './interface.j
 export { $AnyAttribute, AnyAttribute, AnyAttribute_ } from './interface.js'
 export type { FreezeAnyAttribute } from './freeze.js'
 export type { ResolveAnyAttribute } from './resolve.js'
-export type { AnyAttributeState } from './types.js'
-export type { AnyAttributeOptions, AnyAttributeDefaultOptions } from './options.js'
+export type { AnyAttributeStateConstraint } from './types.js'

@@ -7,7 +7,7 @@ import { isNull } from './isNull.js'
 import { isNumber } from './isNumber.js'
 import { isString } from './isString.js'
 
-export const isValidPrimitive = <ATTRIBUTE extends Pick<PrimitiveAttribute, 'type'>>(
+export const isValidPrimitive = <ATTRIBUTE extends PrimitiveAttribute>(
   attribute: ATTRIBUTE,
   candidate: unknown
 ): candidate is ResolvedPrimitiveAttribute => {
@@ -17,10 +17,7 @@ export const isValidPrimitive = <ATTRIBUTE extends Pick<PrimitiveAttribute, 'typ
     case 'boolean':
       return isBoolean(candidate)
     case 'number':
-      return (
-        isNumber(candidate) ||
-        Boolean((attribute as Record<string, unknown>).big && isBigInt(candidate))
-      )
+      return isNumber(candidate) || Boolean(attribute.state.big && isBigInt(candidate))
     case 'string':
       return isString(candidate)
     case 'binary':

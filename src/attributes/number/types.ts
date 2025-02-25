@@ -1,7 +1,7 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 
-export interface NumberAttributeState extends SharedAttributeState {
-  big: boolean
-  enum: (number | bigint)[] | undefined
-  transform: undefined | unknown
+export interface NumberAttributeStateConstraint extends SharedAttributeStateConstraint {
+  big?: boolean
+  enum?: (number | bigint)[]
+  transform?: unknown
 }

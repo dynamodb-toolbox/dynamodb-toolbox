@@ -91,28 +91,9 @@ describe('list', () => {
     assertType
     expect(lst[$type]).toBe('list')
 
-    const assertState: A.Equals<
-      (typeof lst)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        defaults: { key: undefined; put: undefined; update: undefined }
-        links: { key: undefined; put: undefined; update: undefined }
-        validators: { key: undefined; put: undefined; update: undefined }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof lst)[$state], {}> = 1
     assertState
-    expect(lst[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      key: false,
-      hidden: false,
-      savedAs: undefined,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(lst[$state]).toStrictEqual({})
 
     const assertElmts: A.Equals<(typeof lst)[$elements], typeof strElement> = 1
     assertElmts
@@ -190,11 +171,10 @@ describe('list', () => {
   test('returns key list (option)', () => {
     const lst = list(strElement, { key: true })
 
-    const assertList: A.Contains<(typeof lst)[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertList: A.Contains<(typeof lst)[$state], { key: true }> = 1
     assertList
 
     expect(lst[$state].key).toBe(true)
-    expect(lst[$state].required).toBe('atLeastOnce')
   })
 
   test('returns key list (method)', () => {
@@ -228,259 +208,174 @@ describe('list', () => {
   test('returns defaulted list (option)', () => {
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      defaults: { key: ['foo'], put: undefined, update: undefined }
+      keyDefault: ['foo']
     })
 
-    const assertListA: A.Contains<
-      (typeof lstA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof lstA)[$state], { keyDefault: unknown }> = 1
     assertListA
 
-    expect(lstA[$state].defaults).toStrictEqual({ key: ['foo'], put: undefined, update: undefined })
+    expect(lstA[$state].keyDefault).toStrictEqual(['foo'])
 
     const lstB = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      defaults: { key: undefined, put: ['bar'], update: undefined }
+      putDefault: ['bar']
     })
 
-    const assertListB: A.Contains<
-      (typeof lstB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof lstB)[$state], { putDefault: unknown }> = 1
     assertListB
 
-    expect(lstB[$state].defaults).toStrictEqual({ key: undefined, put: ['bar'], update: undefined })
+    expect(lstB[$state].putDefault).toStrictEqual(['bar'])
 
     const lstC = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      defaults: { key: undefined, put: undefined, update: ['baz'] }
+      updateDefault: ['baz']
     })
 
-    const assertListC: A.Contains<
-      (typeof lstC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertListC: A.Contains<(typeof lstC)[$state], { updateDefault: unknown }> = 1
     assertListC
 
-    expect(lstC[$state].defaults).toStrictEqual({ key: undefined, put: undefined, update: ['baz'] })
+    expect(lstC[$state].updateDefault).toStrictEqual(['baz'])
   })
 
   test('returns defaulted list (method)', () => {
     const lstA = list(strElement).keyDefault(['foo'])
 
-    const assertListA: A.Contains<
-      (typeof lstA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof lstA)[$state], { keyDefault: unknown }> = 1
     assertListA
 
-    expect(lstA[$state].defaults).toStrictEqual({ key: ['foo'], put: undefined, update: undefined })
+    expect(lstA[$state].keyDefault).toStrictEqual(['foo'])
 
     const lstB = list(strElement).putDefault(['bar'])
 
-    const assertListB: A.Contains<
-      (typeof lstB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof lstB)[$state], { putDefault: unknown }> = 1
     assertListB
 
-    expect(lstB[$state].defaults).toStrictEqual({ key: undefined, put: ['bar'], update: undefined })
+    expect(lstB[$state].putDefault).toStrictEqual(['bar'])
 
     const lstC = list(strElement).updateDefault(['baz'])
 
-    const assertListC: A.Contains<
-      (typeof lstC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertListC: A.Contains<(typeof lstC)[$state], { updateDefault: unknown }> = 1
     assertListC
 
-    expect(lstC[$state].defaults).toStrictEqual({ key: undefined, put: undefined, update: ['baz'] })
+    expect(lstC[$state].updateDefault).toStrictEqual(['baz'])
   })
 
   test('returns list with PUT default value if it is not key (default shorthand)', () => {
     const listAttr = list(strElement).default(['foo'])
 
-    const assertList: A.Contains<
-      (typeof listAttr)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof listAttr)[$state], { putDefault: unknown }> = 1
     assertList
 
-    expect(listAttr[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: ['foo'],
-      update: undefined
-    })
+    expect(listAttr[$state].putDefault).toStrictEqual(['foo'])
   })
 
   test('returns list with KEY default value if it is key (default shorthand)', () => {
     const listAttr = list(strElement).key().default(['bar'])
 
-    const assertList: A.Contains<
-      (typeof listAttr)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof listAttr)[$state], { keyDefault: unknown }> = 1
     assertList
 
-    expect(listAttr[$state].defaults).toStrictEqual({
-      key: ['bar'],
-      put: undefined,
-      update: undefined
-    })
+    expect(listAttr[$state].keyDefault).toStrictEqual(['bar'])
   })
 
   test('returns linked list (option)', () => {
     const sayHello = () => ['hello']
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      links: { key: sayHello, put: undefined, update: undefined }
+      keyLink: sayHello
     })
 
-    const assertListA: A.Contains<
-      (typeof lstA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof lstA)[$state], { keyLink: unknown }> = 1
     assertListA
 
-    expect(lstA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(lstA[$state].keyLink).toBe(sayHello)
 
     const lstB = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      links: { key: undefined, put: sayHello, update: undefined }
+      putLink: sayHello
     })
 
-    const assertListB: A.Contains<
-      (typeof lstB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof lstB)[$state], { putLink: unknown }> = 1
     assertListB
 
-    expect(lstB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(lstB[$state].putLink).toBe(sayHello)
 
     const lstC = list(strElement, {
       // TOIMPROVE: Add type constraints here
-      links: { key: undefined, put: undefined, update: sayHello }
+      updateLink: sayHello
     })
 
-    const assertListC: A.Contains<
-      (typeof lstC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertListC: A.Contains<(typeof lstC)[$state], { updateLink: unknown }> = 1
     assertListC
 
-    expect(lstC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+    expect(lstC[$state].updateLink).toBe(sayHello)
   })
 
   test('returns linked list (method)', () => {
     const sayHello = () => ['hello']
     const lstA = list(strElement).keyLink(sayHello)
 
-    const assertListA: A.Contains<
-      (typeof lstA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof lstA)[$state], { keyLink: unknown }> = 1
     assertListA
 
-    expect(lstA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(lstA[$state].keyLink).toBe(sayHello)
 
     const lstB = list(strElement).putLink(sayHello)
 
-    const assertListB: A.Contains<
-      (typeof lstB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof lstB)[$state], { putLink: unknown }> = 1
     assertListB
 
-    expect(lstB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(lstB[$state].putLink).toBe(sayHello)
 
     const lstC = list(strElement).updateLink(sayHello)
 
-    const assertListC: A.Contains<
-      (typeof lstC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertListC: A.Contains<(typeof lstC)[$state], { updateLink: unknown }> = 1
     assertListC
 
-    expect(lstC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+    expect(lstC[$state].updateLink).toBe(sayHello)
   })
 
   test('returns list with PUT default value if it is not key (default shorthand)', () => {
     const sayHello = () => ['hello']
     const listAttr = list(strElement).link(sayHello)
 
-    const assertList: A.Contains<
-      (typeof listAttr)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof listAttr)[$state], { putLink: unknown }> = 1
     assertList
 
-    expect(listAttr[$state].links).toStrictEqual({
-      key: undefined,
-      put: sayHello,
-      update: undefined
-    })
+    expect(listAttr[$state].putLink).toBe(sayHello)
   })
 
   test('returns list with KEY default value if it is key (default shorthand)', () => {
     const sayHello = () => ['hello']
     const listAttr = list(strElement).key().link(sayHello)
 
-    const assertList: A.Contains<
-      (typeof listAttr)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof listAttr)[$state], { keyLink: unknown }> = 1
     assertList
 
-    expect(listAttr[$state].links).toStrictEqual({
-      key: sayHello,
-      put: undefined,
-      update: undefined
-    })
+    expect(listAttr[$state].keyLink).toBe(sayHello)
   })
 
   test('returns list with validator (option)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
-    const listA = list(string(), { validators: { key: pass, put: undefined, update: undefined } })
-    const listB = list(string(), { validators: { key: undefined, put: pass, update: undefined } })
-    const listC = list(string(), { validators: { key: undefined, put: undefined, update: pass } })
+    const listA = list(string(), { keyValidator: pass })
+    const listB = list(string(), { putValidator: pass })
+    const listC = list(string(), { updateValidator: pass })
 
-    const assertListA: A.Contains<
-      (typeof listA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof listA)[$state], { keyValidator: Validator }> = 1
     assertListA
 
-    expect(listA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(listA[$state].keyValidator).toBe(pass)
 
-    const assertListB: A.Contains<
-      (typeof listB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof listB)[$state], { putValidator: Validator }> = 1
     assertListB
 
-    expect(listB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(listB[$state].putValidator).toBe(pass)
 
-    const assertListC: A.Contains<
-      (typeof listC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertListC: A.Contains<(typeof listC)[$state], { updateValidator: Validator }> = 1
     assertListC
 
-    expect(listC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(listC[$state].updateValidator).toBe(pass)
   })
 
   test('returns list with validator (method)', () => {
@@ -490,41 +385,20 @@ describe('list', () => {
     const listB = list(string()).putValidate(pass)
     const listC = list(string()).updateValidate(pass)
 
-    const assertListA: A.Contains<
-      (typeof listA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertListA: A.Contains<(typeof listA)[$state], { keyValidator: Validator }> = 1
     assertListA
 
-    expect(listA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(listA[$state].keyValidator).toBe(pass)
 
-    const assertListB: A.Contains<
-      (typeof listB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertListB: A.Contains<(typeof listB)[$state], { putValidator: Validator }> = 1
     assertListB
 
-    expect(listB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(listB[$state].putValidator).toBe(pass)
 
-    const assertListC: A.Contains<
-      (typeof listC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertListC: A.Contains<(typeof listC)[$state], { updateValidator: Validator }> = 1
     assertListC
 
-    expect(listC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(listC[$state].updateValidator).toBe(pass)
 
     const prevList = list(string())
     prevList.validate((...args) => {
@@ -548,34 +422,20 @@ describe('list', () => {
     const pass = () => true
     const _list = list(string()).validate(pass)
 
-    const assertList: A.Contains<
-      (typeof _list)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof _list)[$state], { putValidator: Validator }> = 1
     assertList
 
-    expect(_list[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(_list[$state].putValidator).toBe(pass)
   })
 
   test('returns list with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _list = list(string()).key().validate(pass)
 
-    const assertList: A.Contains<
-      (typeof _list)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertList: A.Contains<(typeof _list)[$state], { keyValidator: Validator }> = 1
     assertList
 
-    expect(_list[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(_list[$state].keyValidator).toBe(pass)
   })
 
   test('list of lists', () => {
@@ -588,29 +448,9 @@ describe('list', () => {
         [$elements]: {
           [$type]: 'list'
           [$elements]: typeof strElement
-          [$state]: {
-            required: AtLeastOnce
-            hidden: false
-            key: false
-            savedAs: undefined
-            defaults: {
-              key: undefined
-              put: undefined
-              update: undefined
-            }
-          }
+          [$state]: {}
         }
-        [$state]: {
-          required: AtLeastOnce
-          hidden: false
-          key: false
-          savedAs: undefined
-          defaults: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-        }
+        [$state]: {}
       }
     > = 1
     assertList

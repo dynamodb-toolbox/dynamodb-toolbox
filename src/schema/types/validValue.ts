@@ -2,18 +2,19 @@ import type {
   Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   ListAttribute,
   MapAttribute,
+  Never,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   ResolvedPrimitiveAttribute,
   SetAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { Extends, If, Optional, Overwrite, SelectKeys } from '~/types/index.js'
+import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
@@ -26,14 +27,15 @@ export type ValidValue<
     ? AttrValidValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends WriteValueOptions
-> = OPTIONS extends { defined: true }
-  ? true
-  : OPTIONS extends { mode: 'update' | 'key' }
-    ? Extends<ATTRIBUTE, { required: Always }>
-    : Extends<ATTRIBUTE, { required: AtLeastOnce | Always }>
+type MustBeDefined<ATTRIBUTE extends Attribute, OPTIONS extends WriteValueOptions> = If<
+  Extends<OPTIONS, { defined: true }>,
+  true,
+  If<
+    Extends<OPTIONS, { mode: 'update' | 'key' }>,
+    Extends<ATTRIBUTE['state'], { required: Always }>,
+    Not<Extends<ATTRIBUTE['state'], { required: Never }>>
+  >
+>
 
 type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteValueOptions = {}> = {
   [KEY in keyof SCHEMA['attributes']]: If<
@@ -51,7 +53,7 @@ type SchemaValidValue<
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { key: true }>
+          ? SelectKeys<SCHEMA['attributes'], { state: { key: true } }>
           : keyof SCHEMA['attributes']]: AttrValidValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
@@ -82,7 +84,7 @@ type AnyAttrValidValue<
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | ATTRIBUTE['castAs']
+      | ResolveAnyAttribute<ATTRIBUTE>
 
 type PrimitiveAttrValidValue<
   ATTRIBUTE extends PrimitiveAttribute,
@@ -135,7 +137,7 @@ type MapAttrValidValue<
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+              ? SelectKeys<ATTRIBUTE['attributes'], { state: { key: true } }>
               : keyof ATTRIBUTE['attributes']]: AttrValidValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>

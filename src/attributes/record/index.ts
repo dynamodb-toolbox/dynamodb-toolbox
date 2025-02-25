@@ -3,4 +3,3 @@ export type { $RecordAttributeState, $RecordAttributeNestedState } from './inter
 export { $RecordAttribute, RecordAttribute, RecordAttribute_ } from './interface.js'
 export type { FreezeRecordAttribute } from './freeze.js'
 export type { RecordAttributeKeys } from './types.js'
-export type { RecordAttributeOptions, RecordAttributeDefaultOptions } from './options.js'

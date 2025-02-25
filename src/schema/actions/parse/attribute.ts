@@ -1,7 +1,7 @@
 import type { Attribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { InputValue, Schema } from '~/schema/index.js'
+import type { InputValue, Schema, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
@@ -44,14 +44,14 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   if (nextFill && filledValue === undefined) {
     let defaultedValue = undefined
 
-    const modeDefault = attribute.defaults[attribute.key ? 'key' : mode]
+    const modeDefault = getDefaulter(attribute, mode)
     defaultedValue = isFunction(modeDefault) ? modeDefault() : (cloneDeep(modeDefault) as any)
 
     const itemInput = yield defaultedValue
 
     let linkedValue = defaultedValue
     if (linkedValue === undefined && itemInput !== undefined) {
-      const modeLink = attribute.links[attribute.key ? 'key' : mode]
+      const modeLink = getLinker(attribute, mode)
       linkedValue = (isFunction(modeLink) ? modeLink(itemInput) : linkedValue) as any
     }
     yield linkedValue
@@ -121,5 +121,39 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       return yield* recordAttributeParser(attribute, basicInput, nextOpts)
     case 'anyOf':
       return yield* anyOfAttributeParser(attribute, basicInput, nextOpts)
+  }
+}
+
+const getDefaulter = (attribute: Attribute, mode: WriteMode) => {
+  const { state } = attribute
+
+  if (state.key) {
+    return state.keyDefault
+  }
+
+  switch (mode) {
+    case 'key':
+      return state.keyDefault
+    case 'put':
+      return state.putDefault
+    case 'update':
+      return state.updateDefault
+  }
+}
+
+const getLinker = (attribute: Attribute, mode: WriteMode) => {
+  const { state } = attribute
+
+  if (state.key) {
+    return state.keyLink
+  }
+
+  switch (mode) {
+    case 'key':
+      return state.keyLink
+    case 'put':
+      return state.putLink
+    case 'update':
+      return state.updateLink
   }
 }

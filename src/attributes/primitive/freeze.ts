@@ -2,27 +2,29 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
-import type { BinaryAttributeState } from '../binary/types.js'
-import type { BooleanAttributeState } from '../boolean/types.js'
-import type { NullAttributeState } from '../null/types.js'
-import type { NumberAttributeState } from '../number/types.js'
+import type { BinaryAttributeStateConstraint } from '../binary/types.js'
+import type { BooleanAttributeStateConstraint } from '../boolean/types.js'
+import type { NullAttributeStateConstraint } from '../null/types.js'
+import type { NumberAttributeStateConstraint } from '../number/types.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { StringAttributeState } from '../string/types.js'
+import type { StringAttributeStateConstraint } from '../string/types.js'
 
 export const validatePrimitiveAttribute = (
-  state:
-    | ({ type: 'null' } & NullAttributeState)
-    | ({ type: 'boolean' } & BooleanAttributeState)
-    | ({ type: 'number' } & NumberAttributeState)
-    | ({ type: 'string' } & StringAttributeState)
-    | ({ type: 'binary' } & BinaryAttributeState),
+  attribute:
+    | ({ type: 'null' } & { state: NullAttributeStateConstraint })
+    | ({ type: 'boolean' } & { state: BooleanAttributeStateConstraint })
+    | ({ type: 'number' } & { state: NumberAttributeStateConstraint })
+    | ({ type: 'string' } & { state: StringAttributeStateConstraint })
+    | ({ type: 'binary' } & { state: BinaryAttributeStateConstraint }),
   path?: string
 ): void => {
-  validateAttributeProperties(state, path)
+  validateAttributeProperties(attribute.state, path)
 
-  const { type, enum: enumValues } = state
+  const { type, state } = attribute
+  const { enum: enumValues } = state
+
   enumValues?.forEach(enumValue => {
-    if (!isValidPrimitive(state, enumValue)) {
+    if (!isValidPrimitive(attribute, enumValue)) {
       throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
         message: `Invalid enum value type${
           path !== undefined ? ` at path '${path}'` : ''
@@ -33,9 +35,13 @@ export const validatePrimitiveAttribute = (
     }
   })
 
-  for (const defaultValue of Object.values(state.defaults)) {
-    if (defaultValue !== undefined && isStaticDefault(defaultValue)) {
-      if (!isValidPrimitive(state, defaultValue)) {
+  for (const defaultValue of [state.keyDefault, state.putDefault, state.updateDefault]) {
+    if (defaultValue === undefined) {
+      continue
+    }
+
+    if (isStaticDefault(defaultValue)) {
+      if (!isValidPrimitive(attribute, defaultValue)) {
         throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
           message: `Invalid default value type${
             path !== undefined ? ` at path '${path}'` : ''

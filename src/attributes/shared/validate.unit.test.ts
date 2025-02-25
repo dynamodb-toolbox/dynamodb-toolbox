@@ -1,53 +1,12 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Never } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from './interface.js'
+import type { SharedAttributeStateConstraint } from './interface.js'
 import { validateAttributeProperties } from './validate.js'
 
 describe('shared properties validation', () => {
   const path = 'some/path'
 
-  const validProperties: SharedAttributeState<{
-    required: Never
-    hidden: false
-    key: false
-    savedAs: undefined
-    defaults: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    links: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-    validators: {
-      key: undefined
-      put: undefined
-      update: undefined
-    }
-  }> = {
-    required: 'never',
-    hidden: false,
-    key: false,
-    savedAs: undefined,
-    defaults: {
-      key: undefined,
-      put: undefined,
-      update: undefined
-    },
-    links: {
-      key: undefined,
-      put: undefined,
-      update: undefined
-    },
-    validators: {
-      key: undefined,
-      put: undefined,
-      update: undefined
-    }
-  }
+  const validProperties: SharedAttributeStateConstraint = { required: 'never' }
 
   test('throws if required option is invalid', () => {
     const invalidRequiredOption = 'invalid'

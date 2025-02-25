@@ -1,9 +1,9 @@
 import type { MapAttribute } from '~/attributes/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { OmitKeys } from '~/types/omitKeys.js'
 
-import { getFormattedAttrJSONSchema } from './attribute.js'
 import type { FormattedAttrJSONSchema } from './attribute.js'
+import { getFormattedAttrJSONSchema } from './attribute.js'
 import type { RequiredProperties } from './shared.js'
 
 export type FormattedMapAttrJSONSchema<
@@ -13,9 +13,10 @@ export type FormattedMapAttrJSONSchema<
   {
     type: 'object'
     properties: {
-      [KEY in SelectKeys<ATTRIBUTE['attributes'], { hidden: false }>]: FormattedAttrJSONSchema<
-        ATTRIBUTE['attributes'][KEY]
-      >
+      [KEY in OmitKeys<
+        ATTRIBUTE['attributes'],
+        { state: { hidden: true } }
+      >]: FormattedAttrJSONSchema<ATTRIBUTE['attributes'][KEY]>
     }
   } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
 >
@@ -24,7 +25,7 @@ export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapAttribute>(
   attr: ATTRIBUTE
 ): FormattedMapAttrJSONSchema<ATTRIBUTE> => {
   const displayedAttrEntries = Object.entries(attr.attributes).filter(
-    ([, attribute]) => !attribute.hidden
+    ([, attr]) => !attr.state.hidden
   )
 
   const requiredProperties = displayedAttrEntries.map(([attributeName]) => attributeName)

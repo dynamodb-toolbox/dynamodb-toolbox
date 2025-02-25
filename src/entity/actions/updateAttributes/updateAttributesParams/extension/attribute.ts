@@ -22,7 +22,8 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     return {
       isExtension: true,
       *extensionParser() {
-        const { path, required } = attribute
+        const { path, state } = attribute
+        const { required } = state
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {

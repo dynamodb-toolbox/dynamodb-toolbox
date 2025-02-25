@@ -41,22 +41,12 @@ export const addInternalAttributes: InternalAttributesAdder = <
   const internalAttributes: Record<string, $AttributeNestedState> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
-    required: 'atLeastOnce',
-    defaults: {
-      key: undefined,
-      put: entityName,
-      update: () => $get(entityAttributeName, entityName)
-    }
+    hidden: entityAttributeHidden,
+    enum: [entityName] as [ENTITY_NAME],
+    putDefault: entityName,
+    updateDefault: () => $get(entityAttributeName, entityName),
+    savedAs: table.entityAttributeSavedAs
   })
-    /**
-     * @debt type "when provided in options, 'hidden' is not correctly inferred"
-     */
-    .hidden(entityAttributeHidden)
-    .enum(entityName as ENTITY_NAME)
-    /**
-     * @debt type "when provided in options, savedAs is inferred as potentially undefined"
-     */
-    .savedAs(table.entityAttributeSavedAs)
 
   internalAttributes[entityAttributeName] = entityAttribute
 
@@ -67,21 +57,11 @@ export const addInternalAttributes: InternalAttributesAdder = <
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
     > = string({
-      required: 'atLeastOnce',
-      defaults: {
-        key: undefined,
-        put: () => new Date().toISOString(),
-        update: () => $get(createdName, new Date().toISOString())
-      }
+      hidden: getTimestampOptionValue(timestamps, 'created', 'hidden'),
+      savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
+      putDefault: () => new Date().toISOString(),
+      updateDefault: () => $get(createdName, new Date().toISOString())
     })
-      /**
-       * @debt type "when provided in options, 'hidden' is not correctly inferred"
-       */
-      .hidden(getTimestampOptionValue(timestamps, 'created', 'hidden'))
-      /**
-       * @debt type "when provided in options, 'savedAs' is inferred as potentially undefined"
-       */
-      .savedAs(getTimestampOptionValue(timestamps, 'created', 'savedAs'))
 
     internalAttributes[createdName] = createdAttribute
   }
@@ -93,21 +73,11 @@ export const addInternalAttributes: InternalAttributesAdder = <
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
     > = string({
-      required: 'atLeastOnce',
-      defaults: {
-        key: undefined,
-        put: () => new Date().toISOString(),
-        update: () => new Date().toISOString()
-      }
+      hidden: getTimestampOptionValue(timestamps, 'modified', 'hidden'),
+      savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
+      putDefault: () => new Date().toISOString(),
+      updateDefault: () => new Date().toISOString()
     })
-      /**
-       * @debt type "when provided in options, 'hidden' is not correctly inferred"
-       */
-      .hidden(getTimestampOptionValue(timestamps, 'modified', 'hidden'))
-      /**
-       * @debt type "when provided in options, 'savedAs' is inferred as potentially undefined"
-       */
-      .savedAs(getTimestampOptionValue(timestamps, 'modified', 'savedAs'))
 
     internalAttributes[modifiedName] = modifiedAttribute
   }

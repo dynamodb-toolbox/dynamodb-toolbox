@@ -15,14 +15,14 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeSetAttribute } from './freeze.js'
 import type { FreezeSetAttribute } from './freeze.js'
+import { freezeSetAttribute } from './freeze.js'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
 export interface $SetAttributeState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
   [$type]: 'set'
@@ -31,7 +31,7 @@ export interface $SetAttributeState<
 }
 
 export interface $SetAttributeNestedState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > extends $SetAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
@@ -41,7 +41,7 @@ export interface $SetAttributeNestedState<
  * Set attribute interface
  */
 export class $SetAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -115,27 +115,9 @@ export class $SetAttribute<
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }),
       this[$elements]
     )
   }
@@ -149,27 +131,9 @@ export class $SetAttribute<
     nextPutDefault: ValueOrGetter<
       ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { putDefault: nextPutDefault as unknown }),
       this[$elements]
     )
   }
@@ -183,27 +147,9 @@ export class $SetAttribute<
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      }),
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown }),
       this[$elements]
     )
   }
@@ -221,44 +167,21 @@ export class $SetAttribute<
         ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
       >
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $SetAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS>,
+    $SetAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS>
   > {
-    return new $SetAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: nextDefault as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $SetAttribute(
+        overwrite(this[$state], { keyDefault: nextDefault as unknown }),
+        this[$elements]
+      ),
+      new $SetAttribute(
+        overwrite(this[$state], { putDefault: nextDefault as unknown }),
+        this[$elements]
+      )
     )
   }
 
@@ -271,27 +194,9 @@ export class $SetAttribute<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { keyLink: nextKeyLink as unknown }),
       this[$elements]
     )
   }
@@ -305,27 +210,9 @@ export class $SetAttribute<
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { putLink: nextPutLink as unknown }),
       this[$elements]
     )
   }
@@ -339,27 +226,9 @@ export class $SetAttribute<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      }),
+      overwrite(this[$state], { updateLink: nextUpdateLink as unknown }),
       this[$elements]
     )
   }
@@ -377,44 +246,15 @@ export class $SetAttribute<
       ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
       ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $SetAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS>,
+    $SetAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS>
   > {
-    return new $SetAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key,
-            put: nextLink as unknown,
-            update: this[$state].links.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $SetAttribute(overwrite(this[$state], { keyLink: nextLink as unknown }), this[$elements]),
+      new $SetAttribute(overwrite(this[$state], { putLink: nextLink as unknown }), this[$elements])
     )
   }
 
@@ -431,27 +271,9 @@ export class $SetAttribute<
       >,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator }),
       this[$elements]
     )
   }
@@ -466,27 +288,9 @@ export class $SetAttribute<
       ValidValue<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { putValidator: Validator }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator }),
       this[$elements]
     )
   }
@@ -501,27 +305,9 @@ export class $SetAttribute<
       AttributeUpdateItemInput<FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>, true>,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $SetAttribute<Overwrite<STATE, { updateValidator: Validator }>, $ELEMENTS> {
     return new $SetAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      }),
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator }),
       this[$elements]
     )
   }
@@ -543,47 +329,24 @@ export class $SetAttribute<
       >,
       FreezeSetAttribute<$SetAttribute<STATE, $ELEMENTS>>
     >
-  ): $SetAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $SetAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ELEMENTS>,
+    $SetAttribute<Overwrite<STATE, { putValidator: Validator }>, $ELEMENTS>
   > {
-    return new $SetAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      /**
+       * @debt type "remove this cast"
+       */
+      this[$state].key as STATE['key'],
+      new $SetAttribute(
+        overwrite(this[$state], { keyValidator: nextValidator as Validator }),
+        this[$elements]
+      ),
+      new $SetAttribute(
+        overwrite(this[$state], { putValidator: nextValidator as Validator }),
+        this[$elements]
+      )
     )
   }
 
@@ -593,50 +356,38 @@ export class $SetAttribute<
 }
 
 export class SetAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
-> implements SharedAttributeState<STATE>
-{
+> {
   type: 'set'
   path?: string
   elements: ELEMENTS
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'set'
     this.path = path
     this.elements = elements
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as unknown as STATE
   }
 }
 
 export class SetAttribute_<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   ELEMENTS extends SetAttributeElements = SetAttributeElements
 > extends SetAttribute<STATE, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): SetAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+  ): SetAttribute_<
+    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
+    ELEMENTS
+  > {
     return new SetAttribute_({
       ...({
-        ...this,
-        defaults: { ...this.defaults },
-        links: { ...this.links },
-        validators: { ...this.validators },
+        ...(this.path !== undefined ? { path: this.path } : {}),
+        ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
       elements: this.elements
     })
   }

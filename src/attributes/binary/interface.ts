@@ -9,29 +9,28 @@ import type {
   If,
   NarrowObject,
   Overwrite,
-  Update,
   ValueOrGetter
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeBinaryAttribute } from './freeze.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
+import { freezeBinaryAttribute } from './freeze.js'
 import type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'
-import type { BinaryAttributeState } from './types.js'
+import type { BinaryAttributeStateConstraint } from './types.js'
 
-export interface $BinaryAttributeState<STATE extends BinaryAttributeState = BinaryAttributeState> {
+export interface $BinaryAttributeState<
+  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
+> {
   [$type]: 'binary'
   [$state]: STATE
 }
 
 export interface $BinaryAttributeNestedState<
-  STATE extends BinaryAttributeState = BinaryAttributeState
+  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
 > extends $BinaryAttributeState<STATE> {
   freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
 }
@@ -39,8 +38,9 @@ export interface $BinaryAttributeNestedState<
 /**
  * Number attribute (warm)
  */
-export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttributeState>
-  implements $BinaryAttributeNestedState<STATE>
+export class $BinaryAttribute<
+  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
+> implements $BinaryAttributeNestedState<STATE>
 {
   [$type]: 'binary';
   [$state]: STATE
@@ -107,13 +107,15 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    NEXT_ENUM extends ResolveBinaryAttribute<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>[]
+    const NEXT_ENUM extends ResolveBinaryAttribute<
+      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+    >[]
   >(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $BinaryAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $BinaryAttribute(update(this[$state], 'enum', nextEnum))
+   */ $BinaryAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { enum: nextEnum }))
   }
 
   /**
@@ -127,44 +129,19 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     CONSTANT extends ResolveBinaryAttribute<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
   >(
     constant: CONSTANT
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        enum: [CONSTANT]
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BinaryAttribute<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    $BinaryAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        enum: [constant],
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: constant as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: constant as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BinaryAttribute(
+        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+      ),
+      new $BinaryAttribute(
+        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+      )
     )
   }
 
@@ -189,27 +166,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $BinaryAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -219,27 +177,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>>
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $BinaryAttribute<Overwrite<STATE, { putDefault: unknown }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -251,26 +190,9 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
+  ): $BinaryAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $BinaryAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      })
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -287,42 +209,15 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
         ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
       >
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BinaryAttribute<Overwrite<STATE, { keyDefault: unknown }>>,
+    $BinaryAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key as unknown,
-            put: nextDefault,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BinaryAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
+      new $BinaryAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -335,27 +230,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $BinaryAttribute<Overwrite<STATE, { keyLink: unknown }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -367,27 +243,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $BinaryAttribute<Overwrite<STATE, { putLink: unknown }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -399,27 +256,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      })
-    )
+  ): $BinaryAttribute<Overwrite<STATE, { updateLink: unknown }>> {
+    return new $BinaryAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -435,42 +273,15 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>,
       ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BinaryAttribute<Overwrite<STATE, { keyLink: unknown }>>,
+    $BinaryAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key as unknown,
-            put: nextLink,
-            update: this[$state].links.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BinaryAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
+      new $BinaryAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
     )
   }
 
@@ -487,26 +298,9 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       >,
       FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $BinaryAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $BinaryAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -520,26 +314,9 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { defined: true }>,
       FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $BinaryAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $BinaryAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -553,26 +330,9 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>,
       FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >
-  > {
+  ): $BinaryAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $BinaryAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      })
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -593,45 +353,15 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       >,
       FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
     >
-  ): $BinaryAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BinaryAttribute<Overwrite<STATE, { keyValidator: Validator }>>,
+    $BinaryAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
-    return new $BinaryAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BinaryAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
+      new $BinaryAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
     )
   }
 
@@ -640,49 +370,31 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   }
 }
 
-export class BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttributeState>
-  implements SharedAttributeState<STATE>
-{
+export class BinaryAttribute<
+  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
+> {
   type: 'binary'
   path?: string
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  enum: STATE['enum']
-  transform: STATE['transform']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'binary'
     this.path = path
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.enum = state.enum
-    this.transform = state.transform
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as STATE
   }
 }
 
 export class BinaryAttribute_<
-  STATE extends BinaryAttributeState = BinaryAttributeState
+  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
 > extends BinaryAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<BinaryAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<BinaryAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BinaryAttribute_<ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>> {
+  ): BinaryAttribute_<ConstrainedOverwrite<BinaryAttributeStateConstraint, STATE, NEXT_STATE>> {
     return new BinaryAttribute_({
-      ...this,
-      defaults: { ...this.defaults },
-      links: { ...this.links },
-      validators: { ...this.validators },
+      ...(this.path !== undefined ? { path: this.path } : {}),
+      ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<BinaryAttributeStateConstraint, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

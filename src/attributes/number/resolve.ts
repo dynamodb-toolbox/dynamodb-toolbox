@@ -1,10 +1,10 @@
 import type { NumberAttribute } from './interface.js'
-import type { NumberAttributeState } from './types.js'
 
-export type ResolveNumberAttribute<ATTRIBUTE extends NumberAttribute> = ATTRIBUTE extends {
-  enum: NonNullable<NumberAttributeState['enum']>
-}
-  ? ATTRIBUTE['enum'][number]
-  : number | (true extends ATTRIBUTE['big'] ? bigint : never)
+export type ResolveNumberAttribute<ATTRIBUTE extends NumberAttribute> =
+  ATTRIBUTE['state']['enum'] extends (number | bigint)[]
+    ? ATTRIBUTE['state']['enum'][number]
+    : number | BigInt<ATTRIBUTE['state']['big']>
+
+type BigInt<BIG extends boolean | undefined> = BIG extends true ? bigint : never
 
 export type ResolvedNumberAttribute = ResolveNumberAttribute<NumberAttribute>

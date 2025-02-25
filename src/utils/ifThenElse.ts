@@ -1,6 +1,6 @@
 import type { If } from '~/types/index.js'
 
-export const ifThenElse = <CONDITION extends boolean, THEN, ELSE>(
+export const ifThenElse = <CONDITION extends boolean | undefined, THEN, ELSE>(
   condition: CONDITION,
   then: THEN,
   els: ELSE

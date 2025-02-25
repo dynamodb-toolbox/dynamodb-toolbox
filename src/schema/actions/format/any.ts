@@ -17,7 +17,7 @@ export function* anyAttrFormatter(
 
   let transformedValue = undefined
   if (transform) {
-    const transformer = attribute.transform as Transformer
+    const transformer = attribute.state.transform as Transformer
     transformedValue =
       transformer !== undefined ? transformer.decode(rawValue) : cloneDeep(rawValue)
 

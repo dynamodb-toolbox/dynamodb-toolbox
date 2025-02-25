@@ -23,7 +23,7 @@ export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}
 
   const formatters: Record<string, Generator<any, any>> = {}
   for (const [attributeName, attribute] of Object.entries(schema.attributes)) {
-    const { savedAs } = attribute
+    const { savedAs } = attribute.state
 
     const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
@@ -61,7 +61,7 @@ export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}
       .map(([attrName, formatter]) => [attrName, formatter.next().value])
       .filter(
         ([attrName, attrValue]) =>
-          schema.attributes[attrName]?.hidden !== true && attrValue !== undefined
+          schema.attributes[attrName]?.state.hidden !== true && attrValue !== undefined
       )
   )
   return formattedValue

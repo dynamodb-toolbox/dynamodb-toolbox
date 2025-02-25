@@ -4,7 +4,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { SetAttribute } from './interface.js'
 import { SetAttribute_ } from './interface.js'
@@ -19,7 +19,7 @@ export type FreezeSetAttribute<
   : SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
 
 type SetAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,
@@ -36,7 +36,7 @@ type SetAttributeFreezer = <
  * @return void
  */
 export const freezeSetAttribute: SetAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $SetAttributeElements
 >(
   state: STATE,
@@ -47,7 +47,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 
   const { required, hidden, savedAs } = elements[$state]
 
-  if (required !== 'atLeastOnce') {
+  if (required !== undefined && required !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {
       message: `Invalid set elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -56,7 +56,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
     })
   }
 
-  if (hidden !== false) {
+  if (hidden !== undefined && hidden !== false) {
     throw new DynamoDBToolboxError('schema.setAttribute.hiddenElements', {
       message: `Invalid set elements${
         path !== undefined ? ` at path '${path}'` : ''

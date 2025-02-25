@@ -6,6 +6,12 @@ interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
 }
 
+export interface PrefixerDTO {
+  transformerId: 'prefix'
+  prefix: string
+  delimiter: string
+}
+
 export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
   implements
     SerializableTransformer<
@@ -13,7 +19,7 @@ export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
       string,
       string,
       Strings.Prepend<`${PREFIX}${DELIMITER}`>,
-      { transformerId: 'prefix'; prefix: PREFIX; delimiter: DELIMITER }
+      PrefixerDTO
     >
 {
   // @ts-expect-error

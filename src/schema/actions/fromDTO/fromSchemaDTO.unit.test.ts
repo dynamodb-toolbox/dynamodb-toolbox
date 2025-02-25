@@ -55,17 +55,17 @@ describe('fromDTO - schema', () => {
     expect(attributes.null).toBeInstanceOf(NullAttribute)
 
     expect(attributes.boolean).toBeInstanceOf(BooleanAttribute)
-    expect(attributes.boolean?.key).toBe(true)
+    expect(attributes.boolean?.state.key).toBe(true)
 
     expect(attributes.number).toBeInstanceOf(NumberAttribute)
-    expect((attributes.number as NumberAttribute).enum).toStrictEqual([0, 1, 2])
+    expect((attributes.number as NumberAttribute).state.enum).toStrictEqual([0, 1, 2])
 
     expect(attributes.str).toBeInstanceOf(StringAttribute)
-    expect(attributes.str?.required).toBe('always')
+    expect(attributes.str?.state.required).toBe('always')
 
     expect(attributes.binary).toBeInstanceOf(BinaryAttribute)
-    expect(attributes.binary?.savedAs).toBe('_b')
-    expect((attributes.binary as BinaryAttribute).enum).toStrictEqual([
+    expect(attributes.binary?.state.savedAs).toBe('_b')
+    expect((attributes.binary as BinaryAttribute).state.enum).toStrictEqual([
       new Uint8Array([1, 2, 3]),
       new Uint8Array([4, 5, 6])
     ])
@@ -82,7 +82,7 @@ describe('fromDTO - schema', () => {
 
     expect(attributes.record).toBeInstanceOf(RecordAttribute)
     expect((attributes.record as RecordAttribute).keys.type).toBe('string')
-    expect((attributes.record as RecordAttribute).keys.enum).toStrictEqual(['a', 'b', 'c'])
+    expect((attributes.record as RecordAttribute).keys.state.enum).toStrictEqual(['a', 'b', 'c'])
     expect((attributes.record as RecordAttribute).elements.type).toBe('string')
 
     expect(attributes.anyOf).toBeInstanceOf(AnyOfAttribute)

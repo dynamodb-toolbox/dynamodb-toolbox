@@ -1,35 +1,38 @@
 import type { RequiredOption } from '~/attributes/constants/requiredOptions.js'
 import type { AtLeastOnce } from '~/attributes/index.js'
+import type { JSONStringifyDTO } from '~/transformers/jsonStringify.js'
+import type { PrefixerDTO } from '~/transformers/prefix.js'
 
 // TODO: Infer from actual list of defaulters
 type AttrDefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
 
 interface AttrDefaultsDTO {
-  put?: AttrDefaulterDTO
-  key?: AttrDefaulterDTO
-  update?: AttrDefaulterDTO
+  keyDefault?: AttrDefaulterDTO
+  putDefault?: AttrDefaulterDTO
+  updateDefault?: AttrDefaulterDTO
 }
 
 // TODO: Infer from actual list of linkers
 type AttrLinkerDTO = { linkerId: 'custom' }
 
 interface AttrLinksDTO {
-  put?: AttrLinkerDTO
-  key?: AttrLinkerDTO
-  update?: AttrLinkerDTO
+  keyLink?: AttrLinkerDTO
+  putLink?: AttrLinkerDTO
+  updateLink?: AttrLinkerDTO
 }
 
-interface AttrStateDTO {
+interface AttrStateDTO extends AttrDefaultsDTO, AttrLinksDTO {
   required?: RequiredOption
   hidden?: boolean
   key?: boolean
   savedAs?: string
-  defaults?: AttrDefaultsDTO
-  links?: AttrLinksDTO
 }
+
+export type AnyAttrTransformerDTO = JSONStringifyDTO | { transformerId: 'custom' }
 
 export interface AnyAttrDTO extends AttrStateDTO {
   type: 'any'
+  transform?: AnyAttrTransformerDTO
 }
 
 export interface NullAttrDTO extends AttrStateDTO {
@@ -47,14 +50,7 @@ export interface NumberAttrDTO extends AttrStateDTO {
   enum?: (number | string)[]
 }
 
-// TODO: Infer from actual list of transformers
-type StringAttrTransformerDTO =
-  | {
-      transformerId: 'prefix'
-      prefix: string
-      delimiter: string
-    }
-  | { transformerId: 'custom' }
+type StringAttrTransformerDTO = PrefixerDTO | { transformerId: 'custom' }
 
 export interface StringAttrDTO extends AttrStateDTO {
   type: 'string'
@@ -80,8 +76,12 @@ export interface SetAttrDTO extends AttrStateDTO {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
-    defaults?: undefined
-    links?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
   }
 }
 
@@ -91,8 +91,12 @@ export interface ListAttrDTO extends AttrStateDTO {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
-    defaults?: undefined
-    links?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
   }
 }
 
@@ -108,16 +112,24 @@ export interface RecordAttrDTO extends AttrStateDTO {
     hidden?: false
     key?: false
     savedAs?: undefined
-    defaults?: undefined
-    links?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
   }
   elements: AttributeDTO & {
     required?: AtLeastOnce
     hidden?: false
     key?: false
     savedAs?: undefined
-    defaults?: undefined
-    links?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
   }
 }
 
@@ -127,8 +139,12 @@ export interface AnyOfAttrDTO extends AttrStateDTO {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
-    defaults?: undefined
-    links?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
   })[]
 }
 

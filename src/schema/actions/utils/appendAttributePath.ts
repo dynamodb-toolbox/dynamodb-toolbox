@@ -19,30 +19,9 @@ export interface ExpressionParser {
   appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
 }
 
-const defaultAnyAttribute = new AnyAttribute({
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  castAs: undefined,
-  transform: undefined,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-})
+const defaultAnyAttribute = new AnyAttribute({ required: 'never' })
 
-const defaultNumberAttribute = new NumberAttribute({
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  enum: undefined,
-  transform: undefined,
-  big: false,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-})
+const defaultNumberAttribute = new NumberAttribute({ required: 'never' })
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
   new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
@@ -131,7 +110,7 @@ export const appendAttributePath = (
         }
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          childAttribute.savedAs ?? matchedKey
+          childAttribute.state.savedAs ?? matchedKey
         )
 
         expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
@@ -186,6 +165,6 @@ export const appendAttributePath = (
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
   return size
-    ? new NumberAttribute({ ...defaultNumberAttribute, path: parentAttr.path })
+    ? new NumberAttribute({ ...defaultNumberAttribute.state, path: parentAttr.path })
     : parentAttr
 }

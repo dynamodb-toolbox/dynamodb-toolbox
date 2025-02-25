@@ -23,8 +23,7 @@ import type {
 } from '~/attributes/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { Paths, Schema, ValidValue } from '~/schema/index.js'
-import type { If } from '~/types/if.js'
-import type { Optional } from '~/types/optional.js'
+import type { Extends, If, Not, Optional } from '~/types/index.js'
 
 import type {
   $ADD,
@@ -98,27 +97,19 @@ export type UpdateItemInputExtension =
       value: Extension<{ [$SET]: RecordAttributeValue }>
     }
 
-type MustBeDefined<
-  ATTRIBUTE extends Attribute,
-  FILLED extends boolean = false
-> = FILLED extends true
-  ? ATTRIBUTE extends { required: Always }
-    ? true
-    : false
-  : ATTRIBUTE extends { required: Always } & (
-        | {
-            key: true
-            defaults: { key: undefined }
-            links: { key: undefined }
-          }
-        | {
-            key: false
-            defaults: { update: undefined }
-            links: { update: undefined }
-          }
-      )
-    ? true
-    : false
+type MustBeDefined<ATTRIBUTE extends Attribute, FILLED extends boolean = false> = If<
+  FILLED,
+  Extends<ATTRIBUTE['state'], { required: Always }>,
+  If<
+    Not<Extends<ATTRIBUTE['state'], { required: Always }>>,
+    false,
+    If<
+      Extends<ATTRIBUTE['state'], { key: true }>,
+      Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
+      Not<Extends<ATTRIBUTE['state'], { updateDefault: unknown } | { updateLink: unknown }>>
+    >
+  >
+>
 
 type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean = false> = {
   [KEY in keyof SCHEMA['attributes']]: If<
@@ -128,7 +119,7 @@ type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean =
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE extends { required: Never }
+type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE['state'] extends { required: Never }
   ? true
   : false
 
@@ -175,7 +166,7 @@ export type Reference<
 
 type NumberUpdate<ATTRIBUTE extends NumberAttribute> =
   | number
-  | (ATTRIBUTE extends { big: true } ? bigint : never)
+  | (ATTRIBUTE['state'] extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given Attribute

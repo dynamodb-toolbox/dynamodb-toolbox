@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 
-export interface AnyAttributeState extends SharedAttributeState {
-  castAs: unknown
-  transform: undefined | unknown
+export interface AnyAttributeStateConstraint extends SharedAttributeStateConstraint {
+  castAs?: unknown
+  transform?: undefined | unknown
 }

@@ -5,7 +5,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
 import type { AnyOfAttribute } from './interface.js'
@@ -36,7 +36,7 @@ export type FreezeAnyOfAttribute<
   : AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
 
 type AnyOfAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,
@@ -53,7 +53,7 @@ type AnyOfAttributeFreezer = <
  * @return void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,
@@ -83,7 +83,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
   elements.forEach(element => {
     const { required, hidden, savedAs } = element[$state]
 
-    if (required !== 'atLeastOnce' && required !== 'always') {
+    if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
         message: `Invalid anyOf elements${
           path !== undefined ? ` at path '${path}'` : ''
@@ -92,7 +92,7 @@ export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
       })
     }
 
-    if (hidden !== false) {
+    if (hidden !== undefined && hidden !== false) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.hiddenElements', {
         message: `Invalid anyOf elements${
           path !== undefined ? ` at path '${path}'` : ''
