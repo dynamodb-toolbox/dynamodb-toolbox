@@ -16,7 +16,7 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $state, $type } from '../constants/attributeOptions.js'
+import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
@@ -26,7 +26,7 @@ import type { NullAttributeState } from './types.js'
 
 export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
   [$type]: 'null'
-  [$state]: STATE
+  state: STATE
 }
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
@@ -40,12 +40,12 @@ export interface $NullAttributeNestedState<STATE extends NullAttributeState = Nu
 export class $NullAttribute<STATE extends NullAttributeState = NullAttributeState>
   implements $NullAttributeNestedState<STATE>
 {
-  [$type]: 'null';
-  [$state]: STATE
+  [$type]: 'null'
+  state: STATE
 
   constructor(state: STATE) {
     this[$type] = 'null'
-    this[$state] = state
+    this.state = state
   }
 
   /**
@@ -59,7 +59,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): $NullAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new $NullAttribute(overwrite(this[$state], { required: nextRequired }))
+    return new $NullAttribute(overwrite(this.state, { required: nextRequired }))
   }
 
   /**
@@ -75,7 +75,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
   ): $NullAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new $NullAttribute(overwrite(this[$state], { hidden: nextHidden }))
+    return new $NullAttribute(overwrite(this.state, { hidden: nextHidden }))
   }
 
   /**
@@ -84,7 +84,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
   ): $NullAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new $NullAttribute(overwrite(this[$state], { key: nextKey, required: 'always' }))
+    return new $NullAttribute(overwrite(this.state, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -93,7 +93,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
   ): $NullAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new $NullAttribute(overwrite(this[$state], { savedAs: nextSavedAs }))
+    return new $NullAttribute(overwrite(this.state, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -107,7 +107,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   enum<const NEXT_ENUM extends readonly ResolvedNullAttribute[]>(
     ...nextEnum: NEXT_ENUM
   ): $NullAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new $NullAttribute(overwrite(this[$state], { enum: writable(nextEnum) }))
+    return new $NullAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -125,12 +125,12 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     $NullAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
+      this.state.key as STATE['key'],
       new $NullAttribute(
-        overwrite(this[$state], { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new $NullAttribute(
-        overwrite(this[$state], { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -141,7 +141,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   transform<TRANSFORMER extends Transformer<ResolvedNullAttribute>>(
     transform: TRANSFORMER
   ): $NullAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new $NullAttribute(overwrite(this[$state], { transform }))
+    return new $NullAttribute(overwrite(this.state, { transform }))
   }
 
   /**
@@ -154,7 +154,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
     >
   ): $NullAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
+    return new $NullAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -165,7 +165,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>>
   ): $NullAttribute<Overwrite<STATE, { putDefault: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
+    return new $NullAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -179,7 +179,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     >
   ): $NullAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NullAttribute(
-      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
+      overwrite(this.state, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -202,9 +202,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     $NullAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $NullAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
-      new $NullAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
+      this.state.key as STATE['key'],
+      new $NullAttribute(overwrite(this.state, { keyDefault: nextDefault as unknown })),
+      new $NullAttribute(overwrite(this.state, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -218,7 +218,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
   ): $NullAttribute<Overwrite<STATE, { keyLink: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
+    return new $NullAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -231,7 +231,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
   ): $NullAttribute<Overwrite<STATE, { putLink: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
+    return new $NullAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -244,7 +244,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
   ): $NullAttribute<Overwrite<STATE, { updateLink: unknown }>> {
-    return new $NullAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
+    return new $NullAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -266,9 +266,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     $NullAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $NullAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
-      new $NullAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
+      this.state.key as STATE['key'],
+      new $NullAttribute(overwrite(this.state, { keyLink: nextLink as unknown })),
+      new $NullAttribute(overwrite(this.state, { putLink: nextLink as unknown }))
     )
   }
 
@@ -284,7 +284,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     >
   ): $NullAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
+      overwrite(this.state, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -300,7 +300,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     >
   ): $NullAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
+      overwrite(this.state, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -316,7 +316,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     >
   ): $NullAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -340,14 +340,14 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     $NullAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this[$state].key as STATE['key'],
-      new $NullAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
-      new $NullAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
+      this.state.key as STATE['key'],
+      new $NullAttribute(overwrite(this.state, { keyValidator: nextValidator as Validator })),
+      new $NullAttribute(overwrite(this.state, { putValidator: nextValidator as Validator }))
     )
   }
 
   freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>, true> {
-    return freezeNullAttribute(this[$state], path)
+    return freezeNullAttribute(this.state, path)
   }
 }
 

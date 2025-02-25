@@ -1,22 +1,20 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { SetAttribute } from './interface.js'
+import type { $SetAttributeState, SetAttribute } from './interface.js'
 import { SetAttribute_ } from './interface.js'
-import type { $SetAttributeState } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
 
 export type FreezeSetAttribute<
   $SET_ATTRIBUTE extends $SetAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? SetAttribute_<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
-  : SetAttribute<$SET_ATTRIBUTE[$state], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
+  ? SetAttribute_<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
+  : SetAttribute<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE[$elements]>>
 
 type SetAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -45,7 +43,7 @@ export const freezeSetAttribute: SetAttributeFreezer = <
 ) => {
   validateAttributeProperties(state, path)
 
-  const { required, hidden, savedAs } = elements[$state]
+  const { required, hidden, savedAs } = elements.state
 
   if (required !== undefined && required !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {

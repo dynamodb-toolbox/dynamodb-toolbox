@@ -1,14 +1,13 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
+import { $type } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { RecordAttribute } from './interface.js'
+import type { $RecordAttributeState, RecordAttribute } from './interface.js'
 import { RecordAttribute_ } from './interface.js'
-import type { $RecordAttributeState } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 export type FreezeRecordAttribute<
@@ -16,12 +15,12 @@ export type FreezeRecordAttribute<
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? RecordAttribute_<
-      $RECORD_ATTRIBUTE[$state],
+      $RECORD_ATTRIBUTE['state'],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
       FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
     >
   : RecordAttribute<
-      $RECORD_ATTRIBUTE[$state],
+      $RECORD_ATTRIBUTE['state'],
       FreezeAttribute<$RECORD_ATTRIBUTE[$keys]>,
       FreezeAttribute<$RECORD_ATTRIBUTE[$elements]>
     >
@@ -72,7 +71,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     hidden: keysHidden,
     key: keysKey,
     savedAs: keysSavedAs
-  } = keys[$state]
+  } = keys.state
 
   // Checking $key before $required as $key implies attribute is always $required
   if (keysKey !== undefined && keysKey !== false) {
@@ -125,7 +124,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     required: elementsRequired,
     hidden: elementsHidden,
     savedAs: elementsSavedAs
-  } = elements[$state]
+  } = elements.state
 
   // Checking $key before $required as $key implies attribute is always $required
   if (elementsKey !== undefined && elementsKey !== false) {

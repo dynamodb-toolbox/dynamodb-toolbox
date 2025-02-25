@@ -1,16 +1,14 @@
-import type { $state } from '../constants/attributeOptions.js'
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import type { $NullAttributeState } from './interface.js'
-import type { NullAttribute } from './interface.js'
+import type { $NullAttributeState, NullAttribute } from './interface.js'
 import { NullAttribute_ } from './interface.js'
 
 export type FreezeNullAttribute<
   $NULL_ATTRIBUTE extends $NullAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? NullAttribute_<$NULL_ATTRIBUTE[$state]>
-  : NullAttribute<$NULL_ATTRIBUTE[$state]>
+  ? NullAttribute_<$NULL_ATTRIBUTE['state']>
+  : NullAttribute<$NULL_ATTRIBUTE['state']>
 
 type NullAttributeFreezer = <STATE extends SharedAttributeState>(
   state: STATE,
