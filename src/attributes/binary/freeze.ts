@@ -3,7 +3,7 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { $BinaryAttributeState } from './interface.js'
 import type { BinaryAttribute } from './interface.js'
 import { BinaryAttribute_ } from './interface.js'
-import type { BinaryAttributeStateConstraint } from './types.js'
+import type { BinaryAttributeState } from './types.js'
 
 export type FreezeBinaryAttribute<
   $BINARY_ATTRIBUTE extends $BinaryAttributeState,
@@ -12,7 +12,7 @@ export type FreezeBinaryAttribute<
   ? BinaryAttribute_<$BINARY_ATTRIBUTE[$state]>
   : BinaryAttribute<$BINARY_ATTRIBUTE[$state]>
 
-type BinaryAttributeFreezer = <STATE extends BinaryAttributeStateConstraint>(
+type BinaryAttributeFreezer = <STATE extends BinaryAttributeState>(
   state: STATE,
   path?: string
 ) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>

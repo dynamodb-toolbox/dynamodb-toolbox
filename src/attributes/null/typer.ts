@@ -1,9 +1,9 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { $NullAttribute } from './interface.js'
 
-type NullAttributeTyper = <STATE extends Omit<SharedAttributeStateConstraint, 'enum'> = {}>(
+type NullAttributeTyper = <STATE extends Omit<SharedAttributeState, 'enum'> = {}>(
   state?: NarrowObject<STATE>
 ) => $NullAttribute<STATE>
 
@@ -12,6 +12,6 @@ type NullAttributeTyper = <STATE extends Omit<SharedAttributeStateConstraint, 'e
  *
  * @param state _(optional)_ Attribute Options
  */
-export const nul: NullAttributeTyper = <STATE extends SharedAttributeStateConstraint = {}>(
+export const nul: NullAttributeTyper = <STATE extends SharedAttributeState = {}>(
   state: NarrowObject<STATE> = {} as STATE
 ) => new $NullAttribute(state)

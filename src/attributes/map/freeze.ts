@@ -4,7 +4,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
 import type { MapAttribute } from './interface.js'
@@ -36,7 +36,7 @@ export type FreezeMapAttribute<
     >
 
 type MapAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,
@@ -53,7 +53,7 @@ type MapAttributeFreezer = <
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,

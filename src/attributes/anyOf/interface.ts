@@ -15,7 +15,7 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
@@ -23,7 +23,7 @@ import { freezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeElements } from './types.js'
 
 export interface $AnyOfAttributeState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
   [$type]: 'anyOf'
@@ -32,7 +32,7 @@ export interface $AnyOfAttributeState<
 }
 
 export interface $AnyOfAttributeNestedState<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > extends $AnyOfAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
@@ -42,7 +42,7 @@ export interface $AnyOfAttributeNestedState<
  * AnyOf attribute interface
  */
 export class $AnyOfAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -363,7 +363,7 @@ export class $AnyOfAttribute<
 }
 
 export class AnyOfAttribute<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute[] = Attribute[]
 > {
   type: 'anyOf'
@@ -380,21 +380,18 @@ export class AnyOfAttribute<
 }
 
 export class AnyOfAttribute_<
-  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState = SharedAttributeState,
   ELEMENTS extends Attribute[] = Attribute[]
 > extends AnyOfAttribute<STATE, ELEMENTS> {
-  clone<NEXT_STATE extends SharedAttributeStateConstraint = {}>(
+  clone<NEXT_STATE extends SharedAttributeState = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyOfAttribute_<
-    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
-    ELEMENTS
-  > {
+  ): AnyOfAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
     return new AnyOfAttribute_({
       ...({
         ...(this.path !== undefined ? { path: this.path } : {}),
         ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
       elements: this.elements
     })
   }

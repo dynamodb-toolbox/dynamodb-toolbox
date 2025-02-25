@@ -4,7 +4,7 @@ import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { RecordAttribute } from './interface.js'
 import { RecordAttribute_ } from './interface.js'
@@ -27,7 +27,7 @@ export type FreezeRecordAttribute<
     >
 
 type RecordAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(
@@ -47,7 +47,7 @@ type RecordAttributeFreezer = <
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(

@@ -20,27 +20,23 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
 import { freezeNullAttribute } from './freeze.js'
 import type { ResolvedNullAttribute } from './resolve.js'
-import type { NullAttributeStateConstraint } from './types.js'
+import type { NullAttributeState } from './types.js'
 
-export interface $NullAttributeState<
-  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
-> {
+export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
   [$type]: 'null'
   [$state]: STATE
 }
 
-export interface $NullAttributeNestedState<
-  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
-> extends $NullAttributeState<STATE> {
+export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
+  extends $NullAttributeState<STATE> {
   freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
 }
 
 /**
  * Null attribute (warm)
  */
-export class $NullAttribute<
-  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
-> implements $NullAttributeNestedState<STATE>
+export class $NullAttribute<STATE extends NullAttributeState = NullAttributeState>
+  implements $NullAttributeNestedState<STATE>
 {
   [$type]: 'null';
   [$state]: STATE
@@ -355,9 +351,7 @@ export class $NullAttribute<
   }
 }
 
-export class NullAttribute<
-  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
-> {
+export class NullAttribute<STATE extends NullAttributeState = NullAttributeState> {
   type: 'null'
   path?: string
   state: STATE
@@ -370,16 +364,16 @@ export class NullAttribute<
 }
 
 export class NullAttribute_<
-  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
+  STATE extends NullAttributeState = NullAttributeState
 > extends NullAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<NullAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<NullAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NullAttribute_<ConstrainedOverwrite<NullAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): NullAttribute_<ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>> {
     return new NullAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<NullAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

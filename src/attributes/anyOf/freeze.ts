@@ -5,7 +5,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
 import type { AnyOfAttribute } from './interface.js'
@@ -36,7 +36,7 @@ export type FreezeAnyOfAttribute<
   : AnyOfAttribute<$ANY_OF_ATTRIBUTE[$state], FreezeElements<$ANY_OF_ATTRIBUTE[$elements]>>
 
 type AnyOfAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,
@@ -53,7 +53,7 @@ type AnyOfAttributeFreezer = <
  * @return void
  */
 export const freezeAnyOfAttribute: AnyOfAttributeFreezer = <
-  STATE extends SharedAttributeStateConstraint,
+  STATE extends SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[]
 >(
   state: STATE,

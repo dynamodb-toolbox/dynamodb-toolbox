@@ -1,10 +1,10 @@
 import type { $state } from '../constants/attributeOptions.js'
 import type { AtLeastOnce } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { $StringAttributeNestedState, StringAttribute } from '../string/index.js'
 import type { $AttributeNestedState } from '../types/index.js'
 
-export interface RecordAttributeElementConstraints extends SharedAttributeStateConstraint {
+export interface RecordAttributeElementState extends SharedAttributeState {
   required?: AtLeastOnce
   hidden?: false
   key?: false
@@ -18,11 +18,11 @@ export interface RecordAttributeElementConstraints extends SharedAttributeStateC
 }
 
 export type $RecordAttributeKeys = $StringAttributeNestedState & {
-  [$state]: RecordAttributeElementConstraints
+  [$state]: RecordAttributeElementState
 }
 
 export type $RecordAttributeElements = $AttributeNestedState & {
-  [$state]: RecordAttributeElementConstraints
+  [$state]: RecordAttributeElementState
 }
 
 // TODO: Re-introduce constraint?

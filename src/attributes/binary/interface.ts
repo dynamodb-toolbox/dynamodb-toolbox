@@ -20,17 +20,15 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
 import { freezeBinaryAttribute } from './freeze.js'
 import type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'
-import type { BinaryAttributeStateConstraint } from './types.js'
+import type { BinaryAttributeState } from './types.js'
 
-export interface $BinaryAttributeState<
-  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
-> {
+export interface $BinaryAttributeState<STATE extends BinaryAttributeState = BinaryAttributeState> {
   [$type]: 'binary'
   [$state]: STATE
 }
 
 export interface $BinaryAttributeNestedState<
-  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
+  STATE extends BinaryAttributeState = BinaryAttributeState
 > extends $BinaryAttributeState<STATE> {
   freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
 }
@@ -38,9 +36,8 @@ export interface $BinaryAttributeNestedState<
 /**
  * Number attribute (warm)
  */
-export class $BinaryAttribute<
-  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
-> implements $BinaryAttributeNestedState<STATE>
+export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttributeState>
+  implements $BinaryAttributeNestedState<STATE>
 {
   [$type]: 'binary';
   [$state]: STATE
@@ -370,9 +367,7 @@ export class $BinaryAttribute<
   }
 }
 
-export class BinaryAttribute<
-  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
-> {
+export class BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttributeState> {
   type: 'binary'
   path?: string
   state: STATE
@@ -385,16 +380,16 @@ export class BinaryAttribute<
 }
 
 export class BinaryAttribute_<
-  STATE extends BinaryAttributeStateConstraint = BinaryAttributeStateConstraint
+  STATE extends BinaryAttributeState = BinaryAttributeState
 > extends BinaryAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<BinaryAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<BinaryAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BinaryAttribute_<ConstrainedOverwrite<BinaryAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): BinaryAttribute_<ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>> {
     return new BinaryAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<BinaryAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<BinaryAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
