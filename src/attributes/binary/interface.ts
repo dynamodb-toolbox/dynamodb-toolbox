@@ -17,6 +17,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
 import { freezeBinaryAttribute } from './freeze.js'
@@ -31,6 +32,8 @@ export interface $BinaryAttributeState<STATE extends BinaryAttributeState = Bina
 export interface $BinaryAttributeNestedState<
   STATE extends BinaryAttributeState = BinaryAttributeState
 > extends $BinaryAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
 }
 
@@ -41,6 +44,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   implements $BinaryAttributeNestedState<STATE>
 {
   type: 'binary'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -361,6 +365,23 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
 
   freeze(path?: string): FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true> {
     return freezeBinaryAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validatePrimitiveAttribute(this, path)
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

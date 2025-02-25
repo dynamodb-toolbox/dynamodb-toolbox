@@ -2,6 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type {
   ConstrainedOverwrite,
@@ -15,6 +16,7 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeMapAttribute } from './freeze.js'
 import { freezeMapAttribute } from './freeze.js'
@@ -33,6 +35,8 @@ export interface $MapAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > extends $MapAttributeState<STATE, $ATTRIBUTES> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
 }
 
@@ -45,6 +49,7 @@ export class $MapAttribute<
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
   type: 'map'
+  path?: string
   state: STATE
   attributes: $ATTRIBUTES
 
@@ -348,6 +353,62 @@ export class $MapAttribute<
 
   freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true> {
     return freezeMapAttribute(this.state, this.attributes, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validateAttributeProperties(this.state, path)
+
+    const attributesSavedAs = new Set<string>()
+    const keyAttributeNames = new Set<string>()
+    const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
+      always: new Set(),
+      atLeastOnce: new Set(),
+      never: new Set()
+    }
+
+    for (const [attributeName, attribute] of Object.entries(this.attributes)) {
+      const {
+        savedAs: attributeSavedAs = attributeName,
+        key: attributeKey,
+        required: attributeRequired = 'atLeastOnce'
+      } = attribute.state
+
+      if (attributesSavedAs.has(attributeSavedAs)) {
+        throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
+          message: `Invalid map attributes${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: More than two attributes are saved as '${attributeSavedAs}'.`,
+          path,
+          payload: { savedAs: attributeSavedAs }
+        })
+      }
+
+      attributesSavedAs.add(attributeSavedAs)
+
+      if (attributeKey !== undefined && attributeKey) {
+        keyAttributeNames.add(attributeName)
+      }
+
+      requiredAttributeNames[attributeRequired].add(attributeName)
+    }
+
+    for (const [attributeName, attribute] of Object.entries(this.attributes)) {
+      attribute.check([path, attributeName].filter(Boolean).join('.'))
+    }
+
+    Object.freeze(this.state)
+    Object.freeze(this.attributes)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

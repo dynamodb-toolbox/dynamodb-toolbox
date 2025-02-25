@@ -17,6 +17,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
 import { freezeBooleanAttribute } from './freeze.js'
@@ -33,6 +34,8 @@ export interface $BooleanAttributeState<
 export interface $BooleanAttributeNestedState<
   STATE extends BooleanAttributeState = BooleanAttributeState
 > extends $BooleanAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
 }
 
@@ -43,6 +46,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   implements $BooleanAttributeNestedState<STATE>
 {
   type: 'boolean'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -363,6 +367,23 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
 
   freeze(path?: string): FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true> {
     return freezeBooleanAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validatePrimitiveAttribute(this, path)
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

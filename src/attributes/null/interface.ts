@@ -17,6 +17,7 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
 import { freezeNullAttribute } from './freeze.js'
@@ -30,6 +31,8 @@ export interface $NullAttributeState<STATE extends NullAttributeState = NullAttr
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
   extends $NullAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
 }
 
@@ -40,6 +43,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   implements $NullAttributeNestedState<STATE>
 {
   type: 'null'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -347,6 +351,23 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
 
   freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>, true> {
     return freezeNullAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validatePrimitiveAttribute(this, path)
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

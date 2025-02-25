@@ -2,6 +2,7 @@
  * @debt circular "Remove & prevent imports from entity to schema"
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
 import type {
   ConstrainedOverwrite,
@@ -12,9 +13,12 @@ import type {
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
+import { isArray } from '~/utils/validation/isArray.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
@@ -34,6 +38,8 @@ export interface $AnyOfAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > extends $AnyOfAttributeState<STATE, $ELEMENTS> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
 }
 
@@ -46,6 +52,7 @@ export class $AnyOfAttribute<
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
   type: 'anyOf'
+  path?: string
   state: STATE
   elements: $ELEMENTS
 
@@ -352,6 +359,86 @@ export class $AnyOfAttribute<
 
   freeze(path?: string): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true> {
     return freezeAnyOfAttribute(this.state, this.elements, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validateAttributeProperties(this.state, path)
+
+    if (!isArray(this.elements)) {
+      throw new DynamoDBToolboxError('schema.anyOfAttribute.invalidElements', {
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf elements must be an array.`,
+        path
+      })
+    }
+
+    if (this.elements.length === 0) {
+      throw new DynamoDBToolboxError('schema.anyOfAttribute.missingElements', {
+        message: `Invalid anyOf elements${
+          path !== undefined ? ` at path '${path}'` : ''
+        }: AnyOf attributes must have at least one element.`,
+        path
+      })
+    }
+
+    for (const element of this.elements) {
+      const { required, hidden, savedAs } = element.state
+
+      if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
+        throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
+          message: `Invalid anyOf elements${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: AnyOf elements must be required.`,
+          path
+        })
+      }
+
+      if (hidden !== undefined && hidden !== false) {
+        throw new DynamoDBToolboxError('schema.anyOfAttribute.hiddenElements', {
+          message: `Invalid anyOf elements${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: AnyOf elements cannot be hidden.`,
+          path
+        })
+      }
+
+      if (savedAs !== undefined) {
+        throw new DynamoDBToolboxError('schema.anyOfAttribute.savedAsElements', {
+          message: `Invalid anyOf elements${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: AnyOf elements cannot be renamed (have savedAs option).`,
+          path
+        })
+      }
+
+      if (hasDefinedDefault(element)) {
+        throw new DynamoDBToolboxError('schema.anyOfAttribute.defaultedElements', {
+          message: `Invalid anyOf elements${
+            path !== undefined ? ` at path '${path}'` : ''
+          }: AnyOf elements cannot have default or linked values.`,
+          path
+        })
+      }
+    }
+
+    this.elements.forEach((element, index) => {
+      element.check(`${path ?? ''}[${index}]`)
+    })
+
+    Object.freeze(this.state)
+    Object.freeze(this.elements)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 

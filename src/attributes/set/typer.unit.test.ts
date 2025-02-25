@@ -25,6 +25,13 @@ describe('set', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.optionalElements', path })
     )
+
+    const superInvalidCall = () => invalidSet.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.optionalElements', path })
+    )
   })
 
   test('rejects hidden elements', () => {
@@ -37,6 +44,13 @@ describe('set', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.hiddenElements', path })
+    )
+
+    const superInvalidCall = () => invalidSet.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.hiddenElements', path })
     )
   })
@@ -53,6 +67,13 @@ describe('set', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.savedAsElements', path })
     )
+
+    const superInvalidCall = () => invalidSet.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.savedAsElements', path })
+    )
   })
 
   test('rejects elements with default values', () => {
@@ -67,6 +88,13 @@ describe('set', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
     )
+
+    const superInvalidCall = () => invalidSet.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+    )
   })
 
   test('rejects elements with linked values', () => {
@@ -79,6 +107,13 @@ describe('set', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+    )
+
+    const superInvalidCall = () => invalidSet.check(path)
+
+    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
+    expect(superInvalidCall).toThrow(
       expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
     )
   })
