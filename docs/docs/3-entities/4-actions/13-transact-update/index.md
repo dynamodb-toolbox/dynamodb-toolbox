@@ -105,13 +105,27 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | <code>returnValuesOn<wbr/>ConditionFalse</code> |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                                                      |
 | `tableName`                                     |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="condition" label="Conditional write">
+<TabItem value="basic" label="Basic">
 
 ```ts
-PokemonEntity.build(UpdateTransaction)
+const transac = PokemonEntity.build(UpdateTransaction)
+  .item({
+    pokemonId: 'pikachu1',
+    level: $add(1),
+    ...
+  })
+```
+
+</TabItem>
+<TabItem value="condition" label="Conditional">
+
+```ts
+const transac = PokemonEntity.build(UpdateTransaction)
   .item(...)
   .options({
     // 👇 Makes sure that 'level' stays <= 99
@@ -125,11 +139,9 @@ PokemonEntity.build(UpdateTransaction)
 <TabItem value="multitenant" label="Multitenant">
 
 ```ts
-PokemonEntity.build(UpdateTransaction)
+const transac = PokemonEntity.build(UpdateTransaction)
   .item(...)
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
 ```
 
 </TabItem>

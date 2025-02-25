@@ -170,16 +170,29 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
           <td align="center"><code>true</code></td>
           <td>
             By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-            <br/><br/>This option is useful for deleting items that miss the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g. when migrating to DynamoDB-Toolbox). You can use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to introduce it manually.
+                  <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
+                  <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute.
           </td>
         </tr>
     </tbody>
 </table>
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="consistent" label="Strongly consistent">
+<TabItem value="basic" label="Basic">
+
+```ts
+await PokeTable.build(DeletePartitionCommand)
+  .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
+  .send()
+```
+
+</TabItem>
+<TabItem value="consistent" label="Consistent">
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
@@ -190,7 +203,7 @@ await PokeTable.build(DeletePartitionCommand)
 ```
 
 </TabItem>
-<TabItem value="indexed" label="On index">
+<TabItem value="indexed" label="Index">
 
 ```ts
 await PokeTable.build(DeletePartitionCommand)
@@ -238,6 +251,7 @@ const abortController = new AbortController()
 const abortSignal = abortController.signal
 
 await PokeTable.build(DeletePartitionCommand)
+  .entities(PokemonEntity)
   .query({ partition: 'ashKetchum' })
   .send({ abortSignal })
 

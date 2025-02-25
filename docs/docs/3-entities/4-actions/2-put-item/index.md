@@ -97,10 +97,26 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`                                      |         `CapacityOption`          | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                      |
 | `tableName`                                     |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                     |
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="conditional" label="Conditional write">
+<TabItem value="basic" label="Basic">
+
+```ts
+await PokemonEntity.build(PutItemCommand)
+  .item({
+    pokemonId: 'pikachu1',
+    name: 'Pikachu',
+    pokeType: 'electric',
+    level: 50
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="conditional" label="Conditional">
 
 ```ts
 await PokemonEntity.build(PutItemCommand)
@@ -131,9 +147,7 @@ const { Attributes: prevPikachu } =
       pokeType: 'electric',
       level: 50
     })
-    .options({
-      returnValues: 'ALL_OLD'
-    })
+    .options({ returnValues: 'ALL_OLD' })
     .send()
 ```
 
@@ -148,9 +162,7 @@ await PokemonEntity.build(PutItemCommand)
     pokeType: 'electric',
     level: 50
   })
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
 ```
 

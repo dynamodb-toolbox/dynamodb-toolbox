@@ -89,17 +89,26 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`   | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`.                                  |
 | `tableName`  |     `string`     |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                 |
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="consistent" label="Consistent read">
+<TabItem value="basic" label="Basic">
 
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
-  .options({
-    consistent: true
-  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="consistent" label="Consistent">
+
+```ts
+const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key({ pokemonId: 'pikachu1' })
+  .options({ consistent: true })
   .send()
 ```
 
@@ -109,9 +118,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
-  .options({
-    attributes: ['type', 'level']
-  })
+  .options({ attributes: ['type', 'level'] })
   .send()
 ```
 
@@ -121,9 +128,7 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 ```ts
 const { Item } = await PokemonEntity.build(GetItemCommand)
   .key({ pokemonId: 'pikachu1' })
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
 ```
 

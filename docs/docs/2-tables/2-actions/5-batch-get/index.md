@@ -128,9 +128,36 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `attributes` | `string[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>Requires [requests](#requests). Paths must be common to all requested entities.<br/><br/>See the [PathParser](../../../3-entities/4-actions/19-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `tableName`  |  `string`  |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                                                                                                                                   |
 
+### Examples
+
 :::note[Examples]
 
 <Tabs>
+<TabItem value="tuple" label="Tuple">
+
+```ts
+const command = PokeTable.build(BatchGetCommand).requests(
+  PokemonEntity.build(BatchGetRequest).key(pikachuKey),
+  PokemonEntity.build(BatchGetRequest).key(charizardKey),
+  ...
+)
+```
+
+</TabItem>
+<TabItem value="array" label="Array">
+
+```ts
+const requests: BatchGetRequest<typeof PokemonEntity>[] = [
+  PokemonEntity.build(BatchGetRequest).key(pikachuKey),
+  PokemonEntity.build(BatchGetRequest).key(charizardKey),
+  ...
+]
+
+const command =
+  PokeTable.build(BatchGetCommand).requests(...requests)
+```
+
+</TabItem>
 <TabItem value="consistent" label="Strongly consistent">
 
 ```ts
@@ -233,9 +260,37 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `documentClient` | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `BatchGetCommand` is used to execute the operation.<br/><br/>Use this option to override this behavior.            |
 | `maxAttempts`    |  `integer ≥ 1`   |   `1`    | A "meta" option provided by DynamoDB-Toolbox to retry failed requests in a single promise.<br/><br/>Note that <code>Infinity</code> is a valid (albeit dangerous) option.                |
 
+### Examples
+
 :::note[Examples]
 
 <Tabs>
+<TabItem value="tuple" label="Tuple">
+
+```ts
+const { Response } = await execute(
+  PokeTable.build(BatchGetCommand).requests(...),
+  OtherTable.build(BatchGetCommand).requests(...),
+  ...
+)
+```
+
+</TabItem>
+<TabItem value="array" label="Array">
+
+```ts
+const commands: (
+  | BatchGetCommand<typeof PokeTable>
+  | BatchGetCommand<typeof OtherTable>
+)[] = [
+  PokeTable.build(BatchGetCommand).requests(...),
+  OtherTable.build(BatchGetCommand).requests(...)
+]
+
+const { Response } = await execute(...commands)
+```
+
+</TabItem>
 <TabItem value="capacity" label="Capacity">
 
 ```ts

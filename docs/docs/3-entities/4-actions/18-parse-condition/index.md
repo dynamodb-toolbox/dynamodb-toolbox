@@ -459,3 +459,282 @@ const invalidCondition: Condition<typeof PokemonEntity> = {
 ```
 
 :::
+
+## Examples
+
+:::note[Paths]
+
+<Tabs>
+<TabItem value="root" label="Root">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'name',
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="deep-map" label="Deep (Map)">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'name.firstName',
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="deep-list" label="Deep (List)">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'names[0]',
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="special-char" label="Special characters">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: "name['.first#Name!']",
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="size" label="Size">
+
+```ts
+const imgLte64KB: Condition<typeof PokemonEntity> = {
+  size: 'image',
+  lte: 64_000
+}
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::note[Value Conditions]
+
+<Tabs>
+<TabItem value="eq" label="Equal">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'name',
+  eq: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="neq" label="Not equal">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'name',
+  ne: 'Pikachu'
+}
+```
+
+</TabItem>
+<TabItem value="in" label="In">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'name',
+  in: ['Pikachu', 'Charizard', 'MewTwo']
+}
+```
+
+</TabItem>
+<TabItem value="contains-set-list" label="Contains">
+
+```ts
+const pokeTypeCheck: Condition<typeof PokemonEntity> = {
+  // 👇 `pokeTypes` = list/set of strings
+  attr: 'pokeTypes',
+  contains: 'fire'
+}
+```
+
+</TabItem>
+<TabItem value="contains-string" label="Contains (string)">
+
+```ts
+const nameCheck: Condition<typeof PokemonEntity> = {
+  // 👇 string
+  attr: 'name',
+  contains: 'Pika'
+}
+```
+
+</TabItem>
+<TabItem value="exists" label="Exists">
+
+```ts
+const customNameCheck: Condition<typeof PokemonEntity> = {
+  attr: 'customName',
+  exists: true
+}
+```
+
+</TabItem>
+<TabItem value="type" label="Type">
+
+```ts
+const pokeTypeCheck: Condition<typeof PokemonEntity> = {
+  // 👇 Checks that `pokeTypes` is a list
+  attr: 'pokeTypes',
+  type: 'L'
+}
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::note[Range Conditions]
+
+<Tabs>
+<TabItem value="greater-than" label="≥">
+
+```ts
+const levelGte50: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  gte: 50
+}
+```
+
+</TabItem>
+<TabItem value="greater-than-strict" label=">">
+
+```ts
+const levelAbove50: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  gt: 50
+}
+```
+
+</TabItem>
+<TabItem value="lower-than" label="≤">
+
+```ts
+const levelLte50: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  lte: 50
+}
+```
+
+</TabItem>
+<TabItem value="lower-than-strict" label="<">
+
+```ts
+const levelBelow50: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  lt: 50
+}
+```
+
+</TabItem>
+<TabItem value="between" label="Between">
+
+```ts
+const levelFrom50To70: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  between: [50, 70]
+}
+```
+
+</TabItem>
+<TabItem value="begins-with" label="Begins with">
+
+```ts
+const capturedIn2024: Condition<typeof PokemonEntity> = {
+  attr: 'captureDate',
+  beginsWith: '2024'
+}
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::note[Logical Combinations]
+
+<Tabs>
+<TabItem value="or" label="Or">
+
+```ts
+const lvlGte50OrElec: Condition<typeof PokemonEntity> = {
+  or: [
+    { attr: 'level', gte: 50 },
+    { attr: 'pokeType', eq: 'electric' }
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="and" label="And">
+
+```ts
+const lvlGte50AndElec: Condition<typeof PokemonEntity> = {
+  and: [
+    { attr: 'level', gte: 50 },
+    { attr: 'pokeType', eq: 'electric' }
+  ]
+}
+```
+
+</TabItem>
+<TabItem value="not" label="Not">
+
+```ts
+const notElectric: Condition<typeof PokemonEntity> = {
+  not: {
+    attr: 'pokeType',
+    eq: 'electric'
+  }
+}
+```
+
+</TabItem>
+<TabItem value="deep" label="Deep">
+
+```ts
+const deepCondition: Condition<typeof PokemonEntity> = {
+  and: [
+    {
+      // Level ≥ 50 or ≤ 20...
+      or: [
+        { attr: 'level', gte: 50 },
+        { not: { attr: 'level', gt: 20 } }
+      ]
+    },
+    // ...and pokeType not 'electric'
+    { not: { attr: 'pokeType', eq: 'electric' } }
+  ]
+}
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::note[Comparing Attributes]
+
+```ts
+const atMaxLevel: Condition<typeof PokemonEntity> = {
+  attr: 'level',
+  eq: { attr: 'maxLevel' }
+}
+```
+
+:::
