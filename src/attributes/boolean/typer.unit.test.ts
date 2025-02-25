@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
@@ -15,9 +14,9 @@ describe('boolean', () => {
   test('returns default boolean', () => {
     const bool = boolean()
 
-    const assertType: A.Equals<(typeof bool)[$type], 'boolean'> = 1
+    const assertType: A.Equals<(typeof bool)['type'], 'boolean'> = 1
     assertType
-    expect(bool[$type]).toBe('boolean')
+    expect(bool.type).toBe('boolean')
 
     const assertState: A.Equals<(typeof bool)['state'], {}> = 1
     assertState

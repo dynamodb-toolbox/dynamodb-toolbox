@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
@@ -15,9 +14,9 @@ describe('null', () => {
   test('returns default null', () => {
     const nil = nul()
 
-    const assertType: A.Equals<(typeof nil)[$type], 'null'> = 1
+    const assertType: A.Equals<(typeof nil)['type'], 'null'> = 1
     assertType
-    expect(nil[$type]).toBe('null')
+    expect(nil.type).toBe('null')
 
     const assertState: A.Equals<(typeof nil)['state'], {}> = 1
     assertState

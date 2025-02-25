@@ -13,7 +13,7 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $elements, $type } from '../constants/attributeOptions.js'
+import { $elements } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
@@ -25,7 +25,7 @@ export interface $SetAttributeState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
-  [$type]: 'set'
+  type: 'set'
   state: STATE
   [$elements]: $ELEMENTS
 }
@@ -45,12 +45,12 @@ export class $SetAttribute<
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > implements $SetAttributeNestedState<STATE, $ELEMENTS>
 {
-  [$type]: 'set'
+  type: 'set'
   state: STATE;
   [$elements]: $ELEMENTS
 
   constructor(state: STATE, elements: $ELEMENTS) {
-    this[$type] = 'set'
+    this.type = 'set'
     this.state = state
     this[$elements] = elements
   }

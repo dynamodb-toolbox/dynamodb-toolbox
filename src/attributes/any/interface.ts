@@ -14,7 +14,6 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
@@ -23,7 +22,7 @@ import type { ResolveAnyAttribute } from './resolve.js'
 import type { AnyAttributeState } from './types.js'
 
 export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
-  [$type]: 'any'
+  type: 'any'
   state: STATE
 }
 
@@ -38,11 +37,11 @@ export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyA
 export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   implements $AnyAttributeNestedState<STATE>
 {
-  [$type]: 'any'
+  type: 'any'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'any'
+    this.type = 'any'
     this.state = state
   }
 

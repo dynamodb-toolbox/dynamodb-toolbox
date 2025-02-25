@@ -13,7 +13,7 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $elements, $keys, $type } from '../constants/attributeOptions.js'
+import { $elements, $keys } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
@@ -31,7 +31,7 @@ export interface $RecordAttributeState<
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > {
-  [$type]: 'record'
+  type: 'record'
   state: STATE
   [$keys]: $KEYS
   [$elements]: $ELEMENTS
@@ -56,13 +56,13 @@ export class $RecordAttribute<
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
 {
-  [$type]: 'record'
+  type: 'record'
   state: STATE;
   [$keys]: $KEYS;
   [$elements]: $ELEMENTS
 
   constructor(state: STATE, keys: $KEYS, elements: $ELEMENTS) {
-    this[$type] = 'record'
+    this.type = 'record'
     this.state = state
     this[$keys] = keys
     this[$elements] = elements

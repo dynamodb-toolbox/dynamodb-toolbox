@@ -13,7 +13,7 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $attributes, $type } from '../constants/attributeOptions.js'
+import { $attributes } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
@@ -25,7 +25,7 @@ export interface $MapAttributeState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > {
-  [$type]: 'map'
+  type: 'map'
   state: STATE
   [$attributes]: $ATTRIBUTES
 }
@@ -45,12 +45,12 @@ export class $MapAttribute<
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
-  [$type]: 'map'
+  type: 'map'
   state: STATE;
   [$attributes]: $ATTRIBUTES
 
   constructor(state: STATE, attributes: $ATTRIBUTES) {
-    this[$type] = 'map'
+    this.type = 'map'
     this.state = state
     this[$attributes] = attributes
   }

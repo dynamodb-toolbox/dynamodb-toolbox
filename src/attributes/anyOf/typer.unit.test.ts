@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { $elements } from '../constants/index.js'
 import { number } from '../number/index.js'
@@ -105,9 +104,9 @@ describe('anyOf', () => {
   test('returns default anyOf', () => {
     const anyOfAttr = anyOf(str)
 
-    const assertType: A.Equals<(typeof anyOfAttr)[$type], 'anyOf'> = 1
+    const assertType: A.Equals<(typeof anyOfAttr)['type'], 'anyOf'> = 1
     assertType
-    expect(anyOfAttr[$type]).toBe('anyOf')
+    expect(anyOfAttr.type).toBe('anyOf')
 
     const assertElements: A.Equals<(typeof anyOfAttr)[$elements], [typeof str]> = 1
     assertElements

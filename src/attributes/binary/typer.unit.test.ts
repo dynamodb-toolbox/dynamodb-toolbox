@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
@@ -15,9 +14,9 @@ describe('binary', () => {
   test('returns default binary', () => {
     const bin = binary()
 
-    const assertType: A.Equals<(typeof bin)[$type], 'binary'> = 1
+    const assertType: A.Equals<(typeof bin)['type'], 'binary'> = 1
     assertType
-    expect(bin[$type]).toBe('binary')
+    expect(bin.type).toBe('binary')
 
     const assertState: A.Equals<(typeof bin)['state'], {}> = 1
     assertState

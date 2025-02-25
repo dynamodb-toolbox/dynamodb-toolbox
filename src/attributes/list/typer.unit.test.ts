@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $elements, $type } from '../constants/attributeOptions.js'
+import { $elements } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
@@ -87,9 +87,9 @@ describe('list', () => {
   test('returns default list', () => {
     const lst = list(strElement)
 
-    const assertType: A.Equals<(typeof lst)[$type], 'list'> = 1
+    const assertType: A.Equals<(typeof lst)['type'], 'list'> = 1
     assertType
-    expect(lst[$type]).toBe('list')
+    expect(lst.type).toBe('list')
 
     const assertState: A.Equals<(typeof lst)['state'], {}> = 1
     assertState
@@ -444,9 +444,9 @@ describe('list', () => {
     const assertList: A.Contains<
       typeof lst,
       {
-        [$type]: 'list'
+        type: 'list'
         [$elements]: {
-          [$type]: 'list'
+          type: 'list'
           [$elements]: typeof strElement
           state: {}
         }

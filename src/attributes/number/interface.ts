@@ -16,7 +16,6 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
@@ -25,7 +24,7 @@ import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.
 import type { NumberAttributeState } from './types.js'
 
 export interface $NumberAttributeState<STATE extends NumberAttributeState = NumberAttributeState> {
-  [$type]: 'number'
+  type: 'number'
   state: STATE
 }
 
@@ -41,11 +40,11 @@ export interface $NumberAttributeNestedState<
 export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttributeState>
   implements $NumberAttributeNestedState<STATE>
 {
-  [$type]: 'number'
+  type: 'number'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'number'
+    this.type = 'number'
     this.state = state
   }
 

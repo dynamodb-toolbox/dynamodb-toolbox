@@ -16,7 +16,6 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
@@ -25,7 +24,7 @@ import type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.
 import type { BinaryAttributeState } from './types.js'
 
 export interface $BinaryAttributeState<STATE extends BinaryAttributeState = BinaryAttributeState> {
-  [$type]: 'binary'
+  type: 'binary'
   state: STATE
 }
 
@@ -41,11 +40,11 @@ export interface $BinaryAttributeNestedState<
 export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttributeState>
   implements $BinaryAttributeNestedState<STATE>
 {
-  [$type]: 'binary'
+  type: 'binary'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'binary'
+    this.type = 'binary'
     this.state = state
   }
 
