@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { AtLeastOnce } from '~/attributes/index.js'
+import type { StringAttribute_ } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -38,45 +38,30 @@ describe('addInternalAttributes', () => {
     test('adds entity attribute', () => {
       const assertEntityAttribute: A.Contains<
         typeof enrichedSchema.attributes.id,
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: false
-          key: false
           savedAs: '__et__'
           enum: ['myEntity']
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertEntityAttribute
 
       expect(enrichedSchema.attributes.id).toMatchObject({
         path: 'id',
         type: 'string',
-        required: 'atLeastOnce',
-        hidden: false,
-        key: false,
-        savedAs: entityAttributeSavedAs,
-        enum: ['myEntity'],
-        defaults: {
-          key: undefined,
-          put: 'myEntity'
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          hidden: false,
+          savedAs: entityAttributeSavedAs,
+          enum: ['myEntity'],
+          putDefault: 'myEntity'
+        }
       })
 
       expect(
-        // @ts-expect-error defaults are not tested for the moment
-        enrichedSchema.attributes.id.defaults.update()
+        // @ts-expect-error defaults are not typed for the moment
+        enrichedSchema.attributes.id.state.updateDefault()
       ).toStrictEqual($get('id', 'myEntity'))
     })
 
@@ -162,41 +147,23 @@ describe('addInternalAttributes', () => {
 
       const assertCreatedAttribute: A.Contains<
         typeof enrichedSchema.attributes.created,
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: false
-          key: false
           savedAs: '_ct'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertCreatedAttribute
 
       expect(enrichedSchema.attributes.created).toMatchObject({
         path: 'created',
         type: 'string',
-        required: 'atLeastOnce',
-        hidden: false,
-        key: false,
-        savedAs: '_ct',
-        enum: undefined,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          savedAs: '_ct',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
 
       const partialCustomSchema = addInternalAttributes({
@@ -215,41 +182,23 @@ describe('addInternalAttributes', () => {
 
       const assertPartialCustomCreatedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.created,
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: false
-          key: false
           savedAs: 'c'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertPartialCustomCreatedAttribute
 
       expect(partialCustomSchema.attributes.created).toMatchObject({
         path: 'created',
         type: 'string',
-        required: 'atLeastOnce',
-        hidden: false,
-        key: false,
-        savedAs: 'c',
-        enum: undefined,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          savedAs: 'c',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
 
       const customSchema = addInternalAttributes({
@@ -270,41 +219,24 @@ describe('addInternalAttributes', () => {
 
       const assertCustomCreatedAttribute: A.Contains<
         (typeof customSchema.attributes)['__created__'],
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: true
-          key: false
           savedAs: 'c'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertCustomCreatedAttribute
 
       expect(customSchema.attributes['__created__']).toMatchObject({
         path: '__created__',
         type: 'string',
-        required: 'atLeastOnce',
-        hidden: true,
-        key: false,
-        savedAs: 'c',
-        enum: undefined,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          hidden: true,
+          savedAs: 'c',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
     })
 
@@ -323,41 +255,23 @@ describe('addInternalAttributes', () => {
 
       const assertModifiedAttribute: A.Contains<
         typeof enrichedSchema.attributes.modified,
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: false
-          key: false
           savedAs: '_md'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertModifiedAttribute
 
       expect(enrichedSchema.attributes.modified).toMatchObject({
         path: 'modified',
         type: 'string',
-        required: 'atLeastOnce',
-        hidden: false,
-        key: false,
-        savedAs: '_md',
-        enum: undefined,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          savedAs: '_md',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
 
       const partialCustomSchema = addInternalAttributes({
@@ -376,40 +290,23 @@ describe('addInternalAttributes', () => {
 
       const assertPartialCustomModifiedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.modified,
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: false
-          key: false
           savedAs: 'm'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertPartialCustomModifiedAttribute
 
       expect(partialCustomSchema.attributes.modified).toMatchObject({
         path: 'modified',
-        savedAs: 'm',
         type: 'string',
-        enum: undefined,
-        hidden: false,
-        key: false,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          savedAs: 'm',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
 
       const customSchema = addInternalAttributes({
@@ -430,40 +327,24 @@ describe('addInternalAttributes', () => {
 
       const assertCustomModifiedAttribute: A.Contains<
         (typeof customSchema.attributes)['__modified__'],
-        {
-          path?: string | undefined
-          type: 'string'
-          required: AtLeastOnce
+        StringAttribute_<{
           hidden: true
-          key: false
           savedAs: 'm'
-          enum: undefined
-          defaults: { key: undefined; put: unknown; update: unknown }
-          links: { key: undefined; put: undefined; update: undefined }
-          validators: { key: undefined; put: undefined; update: undefined }
-          transform: undefined
-        }
+          putDefault: unknown
+          updateDefault: unknown
+        }>
       > = 1
       assertCustomModifiedAttribute
 
       expect(customSchema.attributes['__modified__']).toMatchObject({
         path: '__modified__',
-        savedAs: 'm',
         type: 'string',
-        enum: undefined,
-        hidden: true,
-        key: false,
-        defaults: {
-          key: undefined,
-          put: expect.any(Function),
-          update: expect.any(Function)
-        },
-        links: {
-          key: undefined,
-          put: undefined,
-          update: undefined
-        },
-        transform: undefined
+        state: {
+          savedAs: 'm',
+          hidden: true,
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
       })
     })
 

@@ -1,6 +1,4 @@
 import type { MapAttribute } from '~/attributes/map/index.js'
-import { MAP_DEFAULT_OPTIONS } from '~/attributes/map/options.js'
-import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { MapAttrDTO } from '../types.js'
 import { getAttrDTO } from './attribute.js'
@@ -11,6 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getMapAttrDTO = (attr: MapAttribute): MapAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
+  const { required, hidden, key, savedAs } = attr.state
 
   return {
     type: 'map',
@@ -20,10 +19,10 @@ export const getMapAttrDTO = (attr: MapAttribute): MapAttrDTO => {
         getAttrDTO(attribute)
       ])
     ),
-    ...(attr.required !== MAP_DEFAULT_OPTIONS.required ? { required: attr.required } : {}),
-    ...(attr.hidden !== MAP_DEFAULT_OPTIONS.hidden ? { hidden: attr.hidden } : {}),
-    ...(attr.key !== MAP_DEFAULT_OPTIONS.key ? { key: attr.key } : {}),
-    ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
-    ...(!isEmpty(defaultsDTO) ? { defaults: defaultsDTO } : {})
+    ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
+    ...(hidden !== undefined && hidden ? { hidden } : {}),
+    ...(key !== undefined && key ? { key } : {}),
+    ...(savedAs !== undefined ? { savedAs } : {}),
+    ...defaultsDTO
   }
 }

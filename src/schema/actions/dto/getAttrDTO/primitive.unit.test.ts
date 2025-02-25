@@ -73,7 +73,7 @@ describe('getPrimitiveAttributeDTO', () => {
 
     expect(getPrimitiveAttrDTO(attr)).toStrictEqual({
       type: 'string',
-      defaults: { put: { defaulterId: 'value', value: 'foo' } }
+      putDefault: { defaulterId: 'value', value: 'foo' }
     })
   })
 
@@ -84,7 +84,7 @@ describe('getPrimitiveAttributeDTO', () => {
 
     expect(getPrimitiveAttrDTO(attr)).toStrictEqual({
       type: 'string',
-      defaults: { put: { defaulterId: 'custom' } }
+      putDefault: { defaulterId: 'custom' }
     })
   })
 })

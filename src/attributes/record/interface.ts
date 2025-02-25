@@ -15,11 +15,11 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $keys, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
-import { freezeRecordAttribute } from './freeze.js'
 import type { FreezeRecordAttribute } from './freeze.js'
+import { freezeRecordAttribute } from './freeze.js'
 import type {
   $RecordAttributeElements,
   $RecordAttributeKeys,
@@ -27,7 +27,7 @@ import type {
 } from './types.js'
 
 export interface $RecordAttributeState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > {
@@ -38,7 +38,7 @@ export interface $RecordAttributeState<
 }
 
 export interface $RecordAttributeNestedState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > extends $RecordAttributeState<STATE, $KEYS, $ELEMENTS> {
@@ -51,7 +51,7 @@ export interface $RecordAttributeNestedState<
  * Record attribute interface
  */
 export class $RecordAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
 > implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
@@ -144,28 +144,9 @@ export class $RecordAttribute<
         { mode: 'key' }
       >
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { keyDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -180,28 +161,9 @@ export class $RecordAttribute<
     nextPutDefault: ValueOrGetter<
       ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { putDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { putDefault: nextPutDefault as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -219,28 +181,9 @@ export class $RecordAttribute<
         true
       >
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { updateDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      }),
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -262,46 +205,23 @@ export class $RecordAttribute<
         ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
       >
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $RecordAttribute<Overwrite<STATE, { keyDefault: unknown }>, $KEYS, $ELEMENTS>,
+    $RecordAttribute<Overwrite<STATE, { putDefault: unknown }>, $KEYS, $ELEMENTS>
   > {
-    return new $RecordAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: nextDefault as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      }),
-      this[$keys],
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $RecordAttribute(
+        overwrite(this[$state], { keyDefault: nextDefault as unknown }),
+        this[$keys],
+        this[$elements]
+      ),
+      new $RecordAttribute(
+        overwrite(this[$state], { putDefault: nextDefault as unknown }),
+        this[$keys],
+        this[$elements]
+      )
     )
   }
 
@@ -317,28 +237,9 @@ export class $RecordAttribute<
       FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
       { mode: 'key' }
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { keyLink: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { keyLink: nextKeyLink as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -353,28 +254,9 @@ export class $RecordAttribute<
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { putLink: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { putLink: nextPutLink as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -392,28 +274,9 @@ export class $RecordAttribute<
       FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
       true
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { updateLink: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      }),
+      overwrite(this[$state], { updateLink: nextUpdateLink as unknown }),
       this[$keys],
       this[$elements]
     )
@@ -435,46 +298,23 @@ export class $RecordAttribute<
       >,
       ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $RecordAttribute<Overwrite<STATE, { keyLink: unknown }>, $KEYS, $ELEMENTS>,
+    $RecordAttribute<Overwrite<STATE, { putLink: unknown }>, $KEYS, $ELEMENTS>
   > {
-    return new $RecordAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key,
-            put: nextLink as unknown,
-            update: this[$state].links.update
-          }
-        )
-      }),
-      this[$keys],
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $RecordAttribute(
+        overwrite(this[$state], { keyLink: nextLink as unknown }),
+        this[$keys],
+        this[$elements]
+      ),
+      new $RecordAttribute(
+        overwrite(this[$state], { putLink: nextLink as unknown }),
+        this[$keys],
+        this[$elements]
+      )
     )
   }
 
@@ -491,28 +331,9 @@ export class $RecordAttribute<
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { keyValidator: Validator }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator }),
       this[$keys],
       this[$elements]
     )
@@ -531,28 +352,9 @@ export class $RecordAttribute<
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { putValidator: Validator }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator }),
       this[$keys],
       this[$elements]
     )
@@ -571,28 +373,9 @@ export class $RecordAttribute<
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
-  > {
+  ): $RecordAttribute<Overwrite<STATE, { updateValidator: Validator }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      }),
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator }),
       this[$keys],
       this[$elements]
     )
@@ -618,49 +401,23 @@ export class $RecordAttribute<
       >,
       FreezeRecordAttribute<$RecordAttribute<STATE, $KEYS, $ELEMENTS>>
     >
-  ): $RecordAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >,
-    $KEYS,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $RecordAttribute<Overwrite<STATE, { keyValidator: Validator }>, $KEYS, $ELEMENTS>,
+    $RecordAttribute<Overwrite<STATE, { putValidator: Validator }>, $KEYS, $ELEMENTS>
   > {
-    return new $RecordAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      }),
-      this[$keys],
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $RecordAttribute(
+        overwrite(this[$state], { keyValidator: nextValidator as Validator }),
+        this[$keys],
+        this[$elements]
+      ),
+      new $RecordAttribute(
+        overwrite(this[$state], { putValidator: nextValidator as Validator }),
+        this[$keys],
+        this[$elements]
+      )
     )
   }
 
@@ -672,22 +429,15 @@ export class $RecordAttribute<
 }
 
 export class RecordAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
-> implements SharedAttributeState<STATE>
-{
+> {
   type: 'record'
   path?: string
   keys: KEYS
   elements: ELEMENTS
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({
     path,
@@ -699,36 +449,28 @@ export class RecordAttribute<
     this.path = path
     this.keys = keys
     this.elements = elements
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as unknown as STATE
   }
 }
 
 export class RecordAttribute_<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   KEYS extends RecordAttributeKeys = RecordAttributeKeys,
   ELEMENTS extends Attribute = Attribute
 > extends RecordAttribute<STATE, KEYS, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<SharedAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
   ): RecordAttribute_<
-    ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>,
+    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
     KEYS,
     ELEMENTS
   > {
     return new RecordAttribute_({
       ...({
-        ...this,
-        defaults: { ...this.defaults },
-        links: { ...this.links },
-        validators: { ...this.validators },
+        ...(this.path !== undefined ? { path: this.path } : {}),
+        ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
       keys: this.keys,
       elements: this.elements
     })

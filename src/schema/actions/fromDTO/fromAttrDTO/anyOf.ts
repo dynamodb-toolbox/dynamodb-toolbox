@@ -1,6 +1,5 @@
 import { anyOf } from '~/attributes/anyOf/index.js'
 import type { $AnyOfAttribute, $AnyOfAttributeNestedState } from '~/attributes/anyOf/index.js'
-import { ANY_OF_DEFAULT_OPTIONS } from '~/attributes/anyOf/options.js'
 import type { $AnyOfAttributeElements } from '~/attributes/anyOf/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
@@ -20,23 +19,38 @@ export const fromJSONAnyOfAttr = ({
    */
   let $attr = anyOf(...(elements.map(fromAttrDTO) as $AnyOfAttributeElements[])) as $AnyOfAttribute
 
-  const { required, hidden, key, savedAs, defaults, links } = props
-  defaults
-  links
+  const {
+    required,
+    hidden,
+    key,
+    savedAs,
+    keyDefault,
+    putDefault,
+    updateDefault,
+    keyLink,
+    putLink,
+    updateLink
+  } = props
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
-  if (required !== undefined && required !== ANY_OF_DEFAULT_OPTIONS.required) {
+  if (required !== undefined && required !== 'atLeastOnce') {
     $attr = $attr.required(required) as $AnyOfAttribute
   }
 
-  if (hidden !== undefined && hidden !== ANY_OF_DEFAULT_OPTIONS.hidden) {
+  if (hidden !== undefined && hidden) {
     $attr = $attr.hidden(hidden) as $AnyOfAttribute
   }
 
-  if (key !== undefined && key !== ANY_OF_DEFAULT_OPTIONS.key) {
+  if (key !== undefined && key) {
     $attr = $attr.key(key) as $AnyOfAttribute
   }
 
-  if (savedAs !== undefined && savedAs !== ANY_OF_DEFAULT_OPTIONS.savedAs) {
+  if (savedAs !== undefined) {
     $attr = $attr.savedAs(savedAs) as $AnyOfAttribute
   }
 

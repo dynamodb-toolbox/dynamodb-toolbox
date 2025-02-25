@@ -5,11 +5,13 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { AttributeDTO } from '../types.js'
 
-export const getDefaultsDTO = (attr: Attribute): NonNullable<AttributeDTO['defaults']> => {
-  const defaultsDTO: NonNullable<AttributeDTO['defaults']> = {}
+export const getDefaultsDTO = (
+  attr: Attribute
+): Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {
+  const defaultsDTO: Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
 
-  for (const mode of ['put', 'key', 'update'] as const) {
-    const modeDefault = attr.defaults[mode]
+  for (const mode of ['keyDefault', 'putDefault', 'updateDefault'] as const) {
+    const modeDefault = attr.state[mode]
 
     if (modeDefault === undefined) {
       continue

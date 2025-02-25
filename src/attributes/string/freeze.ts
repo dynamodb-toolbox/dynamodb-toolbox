@@ -3,7 +3,7 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { $StringAttributeState } from './interface.js'
 import type { StringAttribute } from './interface.js'
 import { StringAttribute_ } from './interface.js'
-import type { StringAttributeState } from './types.js'
+import type { StringAttributeStateConstraint } from './types.js'
 
 export type FreezeStringAttribute<
   $STRING_ATTRIBUTE extends $StringAttributeState,
@@ -12,7 +12,7 @@ export type FreezeStringAttribute<
   ? StringAttribute_<$STRING_ATTRIBUTE[$state]>
   : StringAttribute<$STRING_ATTRIBUTE[$state]>
 
-type StringAttributeFreezer = <STATE extends StringAttributeState>(
+type StringAttributeFreezer = <STATE extends StringAttributeStateConstraint>(
   state: STATE,
   path?: string
 ) => FreezeStringAttribute<$StringAttributeState<STATE>, true>
@@ -25,7 +25,7 @@ type StringAttributeFreezer = <STATE extends StringAttributeState>(
  * @return void
  */
 export const freezeStringAttribute: StringAttributeFreezer = (state, path) => {
-  validatePrimitiveAttribute({ type: 'string', ...state }, path)
+  validatePrimitiveAttribute({ type: 'string', state }, path)
 
   return new StringAttribute_({ path, ...state })
 }

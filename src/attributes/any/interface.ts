@@ -16,27 +16,29 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
 import { freezeAnyAttribute } from './freeze.js'
 import type { ResolveAnyAttribute } from './resolve.js'
-import type { AnyAttributeState } from './types.js'
+import type { AnyAttributeStateConstraint } from './types.js'
 
-export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
+export interface $AnyAttributeState<
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
+> {
   [$type]: 'any'
   [$state]: STATE
 }
 
-export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
-  extends $AnyAttributeState<STATE> {
+export interface $AnyAttributeNestedState<
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
+> extends $AnyAttributeState<STATE> {
   freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
 }
 
 /**
  * Any attribute (warm)
  */
-export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
+export class $AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint>
   implements $AnyAttributeNestedState<STATE>
 {
   [$type]: 'any';
@@ -125,27 +127,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $AnyAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
+    return new $AnyAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -155,27 +138,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>>
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $AnyAttribute<Overwrite<STATE, { putDefault: unknown }>> {
+    return new $AnyAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -187,26 +151,9 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
+  ): $AnyAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $AnyAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      })
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -223,27 +170,16 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
         ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
       >
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $AnyAttribute<Overwrite<STATE, { keyDefault: unknown }>>,
+    $AnyAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
-    return this[$state].key ? this.keyDefault(nextDefault) : this.putDefault(nextDefault)
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      this.keyDefault(nextDefault),
+      this.putDefault(nextDefault)
+    )
   }
 
   /**
@@ -255,27 +191,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $AnyAttribute<Overwrite<STATE, { keyLink: unknown }>> {
+    return new $AnyAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -287,27 +204,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $AnyAttribute<Overwrite<STATE, { putLink: unknown }>> {
+    return new $AnyAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -319,27 +217,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      })
-    )
+  ): $AnyAttribute<Overwrite<STATE, { updateLink: unknown }>> {
+    return new $AnyAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -355,42 +234,15 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>,
       ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $AnyAttribute<Overwrite<STATE, { keyLink: unknown }>>,
+    $AnyAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key,
-            put: nextLink as unknown,
-            update: this[$state].links.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $AnyAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
+      new $AnyAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
     )
   }
 
@@ -404,26 +256,9 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; defined: true }>,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $AnyAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $AnyAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -437,26 +272,9 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { defined: true }>,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $AnyAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $AnyAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -470,26 +288,9 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >
-  > {
+  ): $AnyAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $AnyAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      })
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -507,45 +308,15 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       >,
       FreezeAnyAttribute<$AnyAttributeState<STATE>>
     >
-  ): $AnyAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $AnyAttribute<Overwrite<STATE, { keyValidator: Validator }>>,
+    $AnyAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
-    return new $AnyAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $AnyAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
+      new $AnyAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
     )
   }
 
@@ -554,49 +325,29 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   }
 }
 
-export class AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
-  implements SharedAttributeState<STATE>
-{
+export class AnyAttribute<STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint> {
   type: 'any'
   path?: string
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  castAs: STATE['castAs']
-  transform: STATE['transform']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'any'
     this.path = path
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.castAs = state.castAs
-    this.transform = state.transform
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as STATE
   }
 }
 
 export class AnyAttribute_<
-  STATE extends AnyAttributeState = AnyAttributeState
+  STATE extends AnyAttributeStateConstraint = AnyAttributeStateConstraint
 > extends AnyAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<AnyAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<AnyAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyAttribute_<ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>> {
+  ): AnyAttribute_<ConstrainedOverwrite<AnyAttributeStateConstraint, STATE, NEXT_STATE>> {
     return new AnyAttribute_({
-      ...this,
-      defaults: { ...this.defaults },
-      links: { ...this.links },
-      validators: { ...this.validators },
+      ...(this.path !== undefined ? { path: this.path } : {}),
+      ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<AnyAttributeState, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<AnyAttributeStateConstraint, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

@@ -14,8 +14,8 @@ import { setAttrFormatter } from './set.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
-export const isRequired = (attribute: Attribute): boolean =>
-  requiringOptions.has(attribute.required)
+export const isRequired = ({ state }: Attribute): boolean =>
+  requiringOptions.has(state.required ?? 'atLeastOnce')
 
 export function* attrFormatter<
   ATTRIBUTE extends Attribute,
@@ -67,7 +67,7 @@ export function* attrFormatter<
         attributes: undefined
       })
     case 'set':
-      return yield* setAttrFormatter(attribute, rawValue, options)
+      return yield* setAttrFormatter(attribute, rawValue, { ...options, attributes: undefined })
     case 'list':
       return yield* listAttrFormatter(attribute, rawValue, options)
     case 'map':

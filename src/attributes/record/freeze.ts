@@ -4,7 +4,7 @@ import { $state, $type } from '../constants/attributeOptions.js'
 import type { $elements, $keys } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { RecordAttribute } from './interface.js'
 import { RecordAttribute_ } from './interface.js'
@@ -27,7 +27,7 @@ export type FreezeRecordAttribute<
     >
 
 type RecordAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(
@@ -47,7 +47,7 @@ type RecordAttributeFreezer = <
  * @return void
  */
 export const freezeRecordAttribute: RecordAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements
 >(
@@ -58,13 +58,6 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 ) => {
   validateAttributeProperties(state, path)
 
-  const {
-    required: keysRequired,
-    hidden: keysHidden,
-    key: keysKey,
-    savedAs: keysSavedAs
-  } = keys[$state]
-
   if (keys[$type] !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
       message: `Invalid record keys${
@@ -74,8 +67,15 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
+  const {
+    required: keysRequired,
+    hidden: keysHidden,
+    key: keysKey,
+    savedAs: keysSavedAs
+  } = keys[$state]
+
   // Checking $key before $required as $key implies attribute is always $required
-  if (keysKey !== false) {
+  if (keysKey !== undefined && keysKey !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -84,7 +84,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keysRequired !== 'atLeastOnce') {
+  if (keysRequired !== undefined && keysRequired !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -93,7 +93,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (keysHidden !== false) {
+  if (keysHidden !== undefined && keysHidden !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''
@@ -128,7 +128,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
   } = elements[$state]
 
   // Checking $key before $required as $key implies attribute is always $required
-  if (elementsKey !== false) {
+  if (elementsKey !== undefined && elementsKey !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.keyElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -137,7 +137,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elementsRequired !== 'atLeastOnce') {
+  if (elementsRequired !== undefined && elementsRequired !== 'atLeastOnce') {
     throw new DynamoDBToolboxError('schema.recordAttribute.optionalElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -146,7 +146,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
     })
   }
 
-  if (elementsHidden !== false) {
+  if (elementsHidden !== undefined && elementsHidden !== false) {
     throw new DynamoDBToolboxError('schema.recordAttribute.hiddenElements', {
       message: `Invalid record elements${
         path !== undefined ? ` at path '${path}'` : ''

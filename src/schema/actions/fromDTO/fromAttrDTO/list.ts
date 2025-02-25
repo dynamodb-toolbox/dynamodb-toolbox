@@ -11,13 +11,21 @@ type ListAttrDTO = Extract<AttributeDTO, { type: 'list' }>
  * @debt feature "handle defaults, links & validators"
  */
 export const fromListAttrDTO = ({
-  defaults,
-  links,
+  keyDefault,
+  putDefault,
+  updateDefault,
+  keyLink,
+  putLink,
+  updateLink,
   elements,
   ...props
 }: ListAttrDTO): $ListAttributeNestedState => {
-  defaults
-  links
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
   return list(fromAttrDTO(elements) as $ListAttributeElements, props)
 }

@@ -14,10 +14,25 @@ export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
 export const isRequired = (attribute: Attribute, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
-      return attribute.required !== 'never'
+      return attribute.state?.required !== 'never'
     case 'key':
     case 'update':
-      return attribute.required === 'always'
+      return attribute.state?.required === 'always'
+  }
+}
+
+const getValidator = (attribute: Attribute, mode: WriteMode) => {
+  if (attribute.state.key) {
+    return attribute.state.keyValidator
+  }
+
+  switch (mode) {
+    case 'key':
+      return attribute.state.keyValidator
+    case 'put':
+      return attribute.state.putValidator
+    case 'update':
+      return attribute.state.updateValidator
   }
 }
 
@@ -28,7 +43,7 @@ export const applyCustomValidation = (
 ): void => {
   const { mode = 'put', valuePath = [] } = options
 
-  const customValidator = attribute.validators[attribute.key ? 'key' : mode]
+  const customValidator = getValidator(attribute, mode)
   if (customValidator !== undefined) {
     const validationResult = customValidator(inputValue, attribute)
 

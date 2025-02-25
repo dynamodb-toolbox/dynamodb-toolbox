@@ -2,19 +2,20 @@ import type {
   Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   ListAttribute,
   MapAttribute,
+  Never,
   PrimitiveAttribute,
   RecordAttribute,
+  ResolveAnyAttribute,
   ResolvePrimitiveAttribute,
   ResolveStringAttribute,
   ResolvedPrimitiveAttribute,
   SetAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { Extends, If, Optional, Overwrite, SelectKeys } from '~/types/index.js'
+import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
@@ -27,26 +28,31 @@ export type InputValue<
     ? AttrInputValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeProvided<
-  ATTRIBUTE extends Attribute,
-  OPTIONS extends WriteValueOptions = {}
-> = OPTIONS extends { defined: true }
-  ? true
-  : OPTIONS extends { mode: 'update' | 'key' }
-    ? Extends<
-        ATTRIBUTE,
-        { required: Always } & (
-          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-          | { key: false; defaults: { update: undefined }; links: { update: undefined } }
-        )
+type MustBeProvided<ATTRIBUTE extends Attribute, OPTIONS extends WriteValueOptions = {}> = If<
+  Extends<OPTIONS, { defined: true }>,
+  true,
+  If<
+    Extends<OPTIONS, { mode: 'update' | 'key' }>,
+    If<
+      Not<Extends<ATTRIBUTE['state'], { required: Always }>>,
+      false,
+      If<
+        Extends<ATTRIBUTE['state'], { key: true }>,
+        Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
+        Not<Extends<ATTRIBUTE['state'], { updateDefault: unknown } | { updateLink: unknown }>>
       >
-    : Extends<
-        ATTRIBUTE,
-        { required: AtLeastOnce | Always } & (
-          | { key: true; defaults: { key: undefined }; links: { key: undefined } }
-          | { key: false; defaults: { put: undefined }; links: { put: undefined } }
-        )
+    >,
+    If<
+      Extends<ATTRIBUTE['state'], { required: Never }>,
+      false,
+      If<
+        Extends<ATTRIBUTE['state'], { key: true }>,
+        Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
+        Not<Extends<ATTRIBUTE['state'], { putDefault: unknown } | { putLink: unknown }>>
       >
+    >
+  >
+>
 
 type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteValueOptions = {}> = {
   [KEY in keyof SCHEMA['attributes']]: If<
@@ -64,7 +70,7 @@ type SchemaInputValue<
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { key: true }>
+          ? SelectKeys<SCHEMA['attributes'], { state: { key: true } }>
           : keyof SCHEMA['attributes']]: AttrInputValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
@@ -95,7 +101,7 @@ type AnyAttrInputValue<
   :
       | If<MustBeProvided<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | ATTRIBUTE['castAs']
+      | ResolveAnyAttribute<ATTRIBUTE>
 
 type PrimitiveAttrInputValue<
   ATTRIBUTE extends PrimitiveAttribute,
@@ -148,7 +154,7 @@ type MapAttrInputValue<
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { key: true }>
+              ? SelectKeys<ATTRIBUTE['attributes'], { state: { key: true } }>
               : keyof ATTRIBUTE['attributes']]: AttrInputValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>

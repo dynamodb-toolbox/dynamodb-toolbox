@@ -10,13 +10,21 @@ type MapAttrDTO = Extract<AttributeDTO, { type: 'map' }>
  * @debt feature "handle defaults, links & validators"
  */
 export const fromJSONMapAttr = ({
-  defaults,
-  links,
+  keyDefault,
+  putDefault,
+  updateDefault,
+  keyLink,
+  putLink,
+  updateLink,
   attributes,
   ...props
 }: MapAttrDTO): $MapAttributeNestedState => {
-  defaults
-  links
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
   return map(
     Object.fromEntries(

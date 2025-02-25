@@ -40,7 +40,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
 
       const attribute = attributes[attributeName]
 
-      const attributeSavedAs = attribute.savedAs ?? attributeName
+      const attributeSavedAs = attribute.state.savedAs ?? attributeName
       if (this.savedAttributeNames.has(attributeSavedAs)) {
         throw new DynamoDBToolboxError('schema.duplicateSavedAsAttributes', {
           message: `Invalid schema: More than two attributes are saved as '${attributeSavedAs}'`,
@@ -49,11 +49,11 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
       }
       this.savedAttributeNames.add(attributeSavedAs)
 
-      if (attribute.key) {
+      if (attribute.state.key) {
         this.keyAttributeNames.add(attributeName)
       }
 
-      this.requiredAttributeNames[attribute.required].add(attributeName)
+      this.requiredAttributeNames[attribute.state.required ?? 'atLeastOnce'].add(attributeName)
     }
   }
 

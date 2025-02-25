@@ -11,13 +11,21 @@ type SetAttrDTO = Extract<AttributeDTO, { type: 'set' }>
  * @debt feature "handle defaults, links & validators"
  */
 export const fromJSONSetAttr = ({
-  defaults,
-  links,
+  keyDefault,
+  putDefault,
+  updateDefault,
+  keyLink,
+  putLink,
+  updateLink,
   elements,
   ...props
 }: SetAttrDTO): $SetAttributeNestedState => {
-  defaults
-  links
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
   return set(fromAttrDTO(elements) as $SetAttributeElements, props)
 }

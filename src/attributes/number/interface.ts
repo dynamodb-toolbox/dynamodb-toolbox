@@ -9,29 +9,28 @@ import type {
   If,
   NarrowObject,
   Overwrite,
-  Update,
   ValueOrGetter
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeNumberAttribute } from './freeze.js'
 import type { FreezeNumberAttribute } from './freeze.js'
+import { freezeNumberAttribute } from './freeze.js'
 import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
-import type { NumberAttributeState } from './types.js'
+import type { NumberAttributeStateConstraint } from './types.js'
 
-export interface $NumberAttributeState<STATE extends NumberAttributeState = NumberAttributeState> {
+export interface $NumberAttributeState<
+  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
+> {
   [$type]: 'number'
   [$state]: STATE
 }
 
 export interface $NumberAttributeNestedState<
-  STATE extends NumberAttributeState = NumberAttributeState
+  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
 > extends $NumberAttributeState<STATE> {
   freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
 }
@@ -39,8 +38,9 @@ export interface $NumberAttributeNestedState<
 /**
  * Number attribute (warm)
  */
-export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttributeState>
-  implements $NumberAttributeNestedState<STATE>
+export class $NumberAttribute<
+  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
+> implements $NumberAttributeNestedState<STATE>
 {
   [$type]: 'number';
   [$state]: STATE
@@ -107,13 +107,15 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    NEXT_ENUM extends ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>[]
+    const NEXT_ENUM extends ResolveNumberAttribute<
+      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+    >[]
   >(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $NumberAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $NumberAttribute(update(this[$state], 'enum', nextEnum))
+   */ $NumberAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
+    return new $NumberAttribute(overwrite(this[$state], { enum: nextEnum }))
   }
 
   /**
@@ -127,44 +129,19 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     CONSTANT extends ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
   >(
     constant: CONSTANT
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        enum: [CONSTANT]
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NumberAttribute<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    $NumberAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        enum: [constant],
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: constant as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: constant as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NumberAttribute(
+        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+      ),
+      new $NumberAttribute(
+        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+      )
     )
   }
 
@@ -198,27 +175,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $NumberAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
+    return new $NumberAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -228,27 +186,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>>
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $NumberAttribute<Overwrite<STATE, { putDefault: unknown }>> {
+    return new $NumberAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -260,26 +199,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
+  ): $NumberAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NumberAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      })
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -296,42 +218,15 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
         ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
       >
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NumberAttribute<Overwrite<STATE, { keyDefault: unknown }>>,
+    $NumberAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key as unknown,
-            put: nextDefault,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NumberAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
+      new $NumberAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -344,27 +239,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $NumberAttribute<Overwrite<STATE, { keyLink: unknown }>> {
+    return new $NumberAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -376,27 +252,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $NumberAttribute<Overwrite<STATE, { putLink: unknown }>> {
+    return new $NumberAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -408,27 +265,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      })
-    )
+  ): $NumberAttribute<Overwrite<STATE, { updateLink: unknown }>> {
+    return new $NumberAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -444,42 +282,15 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
       ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NumberAttribute<Overwrite<STATE, { keyLink: unknown }>>,
+    $NumberAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key as unknown,
-            put: nextLink,
-            update: this[$state].links.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NumberAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
+      new $NumberAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
     )
   }
 
@@ -496,26 +307,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       >,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $NumberAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NumberAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -529,26 +323,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $NumberAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NumberAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -562,26 +339,9 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >
-  > {
+  ): $NumberAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NumberAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      })
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -602,45 +362,15 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       >,
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >
-  ): $NumberAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NumberAttribute<Overwrite<STATE, { keyValidator: Validator }>>,
+    $NumberAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
-    return new $NumberAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NumberAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
+      new $NumberAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
     )
   }
 
@@ -649,51 +379,31 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   }
 }
 
-export class NumberAttribute<STATE extends NumberAttributeState = NumberAttributeState>
-  implements SharedAttributeState<STATE>
-{
+export class NumberAttribute<
+  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
+> {
   type: 'number'
   path?: string
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  enum: STATE['enum']
-  transform: STATE['transform']
-  big: STATE['big']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'number'
     this.path = path
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.enum = state.enum
-    this.transform = state.transform
-    this.big = state.big
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as STATE
   }
 }
 
 export class NumberAttribute_<
-  STATE extends NumberAttributeState = NumberAttributeState
+  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
 > extends NumberAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<NumberAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<NumberAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NumberAttribute_<ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>> {
+  ): NumberAttribute_<ConstrainedOverwrite<NumberAttributeStateConstraint, STATE, NEXT_STATE>> {
     return new NumberAttribute_({
-      ...this,
-      defaults: { ...this.defaults },
-      links: { ...this.links },
-      validators: { ...this.validators },
+      ...(this.path !== undefined ? { path: this.path } : {}),
+      ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<NumberAttributeStateConstraint, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

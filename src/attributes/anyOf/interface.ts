@@ -15,15 +15,15 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $elements, $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
-import { freezeAnyOfAttribute } from './freeze.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
+import { freezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeElements } from './types.js'
 
 export interface $AnyOfAttributeState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
   [$type]: 'anyOf'
@@ -32,7 +32,7 @@ export interface $AnyOfAttributeState<
 }
 
 export interface $AnyOfAttributeNestedState<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > extends $AnyOfAttributeState<STATE, $ELEMENTS> {
   freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
@@ -42,7 +42,7 @@ export interface $AnyOfAttributeNestedState<
  * AnyOf attribute interface
  */
 export class $AnyOfAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
@@ -116,27 +116,9 @@ export class $AnyOfAttribute<
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }),
       this[$elements]
     )
   }
@@ -150,27 +132,9 @@ export class $AnyOfAttribute<
     nextPutDefault: ValueOrGetter<
       ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      }),
+      overwrite(this[$state], { putDefault: nextPutDefault as unknown }),
       this[$elements]
     )
   }
@@ -184,27 +148,9 @@ export class $AnyOfAttribute<
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, true>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      }),
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown }),
       this[$elements]
     )
   }
@@ -222,44 +168,21 @@ export class $AnyOfAttribute<
         ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
       >
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $AnyOfAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS>,
+    $AnyOfAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS>
   > {
-    return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: nextDefault as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $AnyOfAttribute(
+        overwrite(this[$state], { keyDefault: nextDefault as unknown }),
+        this[$elements]
+      ),
+      new $AnyOfAttribute(
+        overwrite(this[$state], { putDefault: nextDefault as unknown }),
+        this[$elements]
+      )
     )
   }
 
@@ -272,27 +195,9 @@ export class $AnyOfAttribute<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { keyLink: nextKeyLink as unknown }),
       this[$elements]
     )
   }
@@ -306,27 +211,9 @@ export class $AnyOfAttribute<
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      }),
+      overwrite(this[$state], { putLink: nextPutLink as unknown }),
       this[$elements]
     )
   }
@@ -343,27 +230,9 @@ export class $AnyOfAttribute<
       FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
       true
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      }),
+      overwrite(this[$state], { updateLink: nextUpdateLink as unknown }),
       this[$elements]
     )
   }
@@ -381,44 +250,21 @@ export class $AnyOfAttribute<
       ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
       ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $AnyOfAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS>,
+    $AnyOfAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS>
   > {
-    return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key,
-            put: nextLink as unknown,
-            update: this[$state].links.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $AnyOfAttribute(
+        overwrite(this[$state], { keyLink: nextLink as unknown }),
+        this[$elements]
+      ),
+      new $AnyOfAttribute(
+        overwrite(this[$state], { putLink: nextLink as unknown }),
+        this[$elements]
+      )
     )
   }
 
@@ -435,27 +281,9 @@ export class $AnyOfAttribute<
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator }),
       this[$elements]
     )
   }
@@ -470,27 +298,9 @@ export class $AnyOfAttribute<
       ValidValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { putValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      }),
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator }),
       this[$elements]
     )
   }
@@ -505,27 +315,9 @@ export class $AnyOfAttribute<
       AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, true>,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >,
-    $ELEMENTS
-  > {
+  ): $AnyOfAttribute<Overwrite<STATE, { updateValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      }),
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator }),
       this[$elements]
     )
   }
@@ -547,47 +339,21 @@ export class $AnyOfAttribute<
       >,
       FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
     >
-  ): $AnyOfAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >,
-    $ELEMENTS
+  ): If<
+    STATE['key'],
+    $AnyOfAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ELEMENTS>,
+    $AnyOfAttribute<Overwrite<STATE, { putValidator: Validator }>, $ELEMENTS>
   > {
-    return new $AnyOfAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      }),
-      this[$elements]
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $AnyOfAttribute(
+        overwrite(this[$state], { keyValidator: nextValidator as Validator }),
+        this[$elements]
+      ),
+      new $AnyOfAttribute(
+        overwrite(this[$state], { putValidator: nextValidator as Validator }),
+        this[$elements]
+      )
     )
   }
 
@@ -597,50 +363,38 @@ export class $AnyOfAttribute<
 }
 
 export class AnyOfAttribute<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   ELEMENTS extends Attribute[] = Attribute[]
-> implements SharedAttributeState<STATE>
-{
+> {
   type: 'anyOf'
   path?: string
   elements: ELEMENTS
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, elements, ...state }: STATE & { path?: string; elements: ELEMENTS }) {
     this.type = 'anyOf'
     this.path = path
     this.elements = elements
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as unknown as STATE
   }
 }
 
 export class AnyOfAttribute_<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint = SharedAttributeStateConstraint,
   ELEMENTS extends Attribute[] = Attribute[]
 > extends AnyOfAttribute<STATE, ELEMENTS> {
-  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
+  clone<NEXT_STATE extends SharedAttributeStateConstraint = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): AnyOfAttribute_<ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>, ELEMENTS> {
+  ): AnyOfAttribute_<
+    ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>,
+    ELEMENTS
+  > {
     return new AnyOfAttribute_({
       ...({
-        ...this,
-        defaults: { ...this.defaults },
-        links: { ...this.links },
-        validators: { ...this.validators },
+        ...(this.path !== undefined ? { path: this.path } : {}),
+        ...this.state,
         ...nextState
-      } as ConstrainedOverwrite<SharedAttributeState, STATE, NEXT_STATE>),
+      } as ConstrainedOverwrite<SharedAttributeStateConstraint, STATE, NEXT_STATE>),
       elements: this.elements
     })
   }

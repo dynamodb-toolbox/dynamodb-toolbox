@@ -9,31 +9,28 @@ import type {
   If,
   NarrowObject,
   Overwrite,
-  Update,
   ValueOrGetter
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
-import { update } from '~/utils/update.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeBooleanAttribute } from './freeze.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
+import { freezeBooleanAttribute } from './freeze.js'
 import type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
-import type { BooleanAttributeState } from './types.js'
+import type { BooleanAttributeStateConstraint } from './types.js'
 
 export interface $BooleanAttributeState<
-  STATE extends BooleanAttributeState = BooleanAttributeState
+  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
 > {
   [$type]: 'boolean'
   [$state]: STATE
 }
 
 export interface $BooleanAttributeNestedState<
-  STATE extends BooleanAttributeState = BooleanAttributeState
+  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
 > extends $BooleanAttributeState<STATE> {
   freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
 }
@@ -41,8 +38,9 @@ export interface $BooleanAttributeNestedState<
 /**
  * Boolean attribute (warm)
  */
-export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
-  implements $BooleanAttributeNestedState<STATE>
+export class $BooleanAttribute<
+  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
+> implements $BooleanAttributeNestedState<STATE>
 {
   [$type]: 'boolean';
   [$state]: STATE
@@ -109,15 +107,15 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * string().enum('foo', 'bar')
    */
   enum<
-    NEXT_ENUM extends ResolveBooleanAttribute<
+    const NEXT_ENUM extends ResolveBooleanAttribute<
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >[]
   >(
     ...nextEnum: NEXT_ENUM
   ): /**
    * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $BooleanAttribute<Update<STATE, 'enum', NEXT_ENUM>> {
-    return new $BooleanAttribute(update(this[$state], 'enum', nextEnum))
+   */ $BooleanAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { enum: nextEnum }))
   }
 
   /**
@@ -131,44 +129,19 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     CONSTANT extends ResolveBooleanAttribute<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
   >(
     constant: CONSTANT
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        enum: [CONSTANT]
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BooleanAttribute<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    $BooleanAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        enum: [constant],
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: constant as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key,
-            put: constant as unknown,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BooleanAttribute(
+        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+      ),
+      new $BooleanAttribute(
+        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+      )
     )
   }
 
@@ -193,27 +166,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $BooleanAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -223,27 +177,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>>
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $BooleanAttribute<Overwrite<STATE, { putDefault: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -255,26 +190,9 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
+  ): $BooleanAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $BooleanAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      })
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -291,42 +209,15 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
         ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
       >
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BooleanAttribute<Overwrite<STATE, { keyDefault: unknown }>>,
+    $BooleanAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key as unknown,
-            put: nextDefault,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BooleanAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
+      new $BooleanAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -339,27 +230,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $BooleanAttribute<Overwrite<STATE, { keyLink: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -371,27 +243,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $BooleanAttribute<Overwrite<STATE, { putLink: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -403,27 +256,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      })
-    )
+  ): $BooleanAttribute<Overwrite<STATE, { updateLink: unknown }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -439,42 +273,15 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
       ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BooleanAttribute<Overwrite<STATE, { keyLink: unknown }>>,
+    $BooleanAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key as unknown,
-            put: nextLink,
-            update: this[$state].links.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BooleanAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
+      new $BooleanAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
     )
   }
 
@@ -491,26 +298,9 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       >,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $BooleanAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $BooleanAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -524,26 +314,9 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $BooleanAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $BooleanAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -557,26 +330,9 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >
-  > {
+  ): $BooleanAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $BooleanAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      })
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -597,45 +353,15 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       >,
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >
-  ): $BooleanAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $BooleanAttribute<Overwrite<STATE, { keyValidator: Validator }>>,
+    $BooleanAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
-    return new $BooleanAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $BooleanAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
+      new $BooleanAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
     )
   }
 
@@ -644,49 +370,31 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   }
 }
 
-export class BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
-  implements SharedAttributeState<STATE>
-{
+export class BooleanAttribute<
+  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
+> {
   type: 'boolean'
   path?: string
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  enum: STATE['enum']
-  transform: STATE['transform']
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'boolean'
     this.path = path
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.enum = state.enum
-    this.transform = state.transform
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as STATE
   }
 }
 
 export class BooleanAttribute_<
-  STATE extends BooleanAttributeState = BooleanAttributeState
+  STATE extends BooleanAttributeStateConstraint = BooleanAttributeStateConstraint
 > extends BooleanAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<BooleanAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<BooleanAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BooleanAttribute_<ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>> {
+  ): BooleanAttribute_<ConstrainedOverwrite<BooleanAttributeStateConstraint, STATE, NEXT_STATE>> {
     return new BooleanAttribute_({
-      ...this,
-      defaults: { ...this.defaults },
-      links: { ...this.links },
-      validators: { ...this.validators },
+      ...(this.path !== undefined ? { path: this.path } : {}),
+      ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<BooleanAttributeState, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<BooleanAttributeStateConstraint, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

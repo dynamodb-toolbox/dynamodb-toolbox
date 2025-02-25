@@ -17,32 +17,9 @@ describe('anyAttribute', () => {
     assertType
     expect(anyInstance[$type]).toBe('any')
 
-    const assertState: A.Equals<
-      (typeof anyInstance)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        castAs: unknown
-        transform: undefined
-        defaults: { key: undefined; put: undefined; update: undefined }
-        links: { key: undefined; put: undefined; update: undefined }
-        validators: { key: undefined; put: undefined; update: undefined }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof anyInstance)[$state], {}> = 1
     assertState
-    expect(anyInstance[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      hidden: false,
-      key: false,
-      savedAs: undefined,
-      castAs: undefined,
-      transform: undefined,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(anyInstance[$state]).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof anyInstance, $AnyAttributeState> = 1
     assertExtends
@@ -117,14 +94,10 @@ describe('anyAttribute', () => {
   test('returns key any (option)', () => {
     const anyInstance = any({ key: true })
 
-    const assertAny: A.Contains<
-      (typeof anyInstance)[$state],
-      { key: true; required: AtLeastOnce }
-    > = 1
+    const assertAny: A.Contains<(typeof anyInstance)[$state], { key: true }> = 1
     assertAny
 
     expect(anyInstance[$state].key).toBe(true)
-    expect(anyInstance[$state].required).toBe('atLeastOnce')
   })
 
   test('returns key any (method)', () => {
@@ -186,39 +159,25 @@ describe('anyAttribute', () => {
   })
 
   test('returns any with default value (option)', () => {
-    // TOIMPROVE: Add type constraints here
-    const anyA = any({ defaults: { key: 'hello', put: undefined, update: undefined } })
-    const anyB = any({ defaults: { key: undefined, put: 'world', update: undefined } })
+    const anyA = any({ keyDefault: 'hello' })
+    const anyB = any({ putDefault: 'world' })
     const sayHello = () => 'hello'
-    const anyC = any({ defaults: { key: undefined, put: undefined, update: sayHello } })
+    const anyC = any({ updateDefault: sayHello })
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyDefault: unknown }> = 1
     assertAnyA
 
-    expect(anyA[$state].defaults).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+    expect(anyA[$state].keyDefault).toBe('hello')
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putDefault: unknown }> = 1
     assertAnyB
 
-    expect(anyB[$state].defaults).toStrictEqual({ key: undefined, put: 'world', update: undefined })
+    expect(anyB[$state].putDefault).toBe('world')
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateDefault: unknown }> = 1
     assertAnyC
 
-    expect(anyC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: sayHello
-    })
+    expect(anyC[$state].updateDefault).toBe(sayHello)
   })
 
   test('returns any with default value (method)', () => {
@@ -227,91 +186,62 @@ describe('anyAttribute', () => {
     const sayHello = () => 'hello'
     const anyC = any().updateDefault(sayHello)
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyDefault: unknown }> = 1
     assertAnyA
 
-    expect(anyA[$state].defaults).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+    expect(anyA[$state].keyDefault).toBe('hello')
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putDefault: unknown }> = 1
     assertAnyB
 
-    expect(anyB[$state].defaults).toStrictEqual({ key: undefined, put: 'world', update: undefined })
+    expect(anyB[$state].putDefault).toBe('world')
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateDefault: unknown }> = 1
     assertAnyC
 
-    expect(anyC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: sayHello
-    })
+    expect(anyC[$state].updateDefault).toBe(sayHello)
   })
 
   test('returns any with PUT default value if it is not key (default shorthand)', () => {
     const _any = any().default('hello')
 
-    const assertAny: A.Contains<
-      (typeof _any)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAny: A.Contains<(typeof _any)[$state], { putDefault: unknown }> = 1
     assertAny
 
-    expect(_any[$state].defaults).toStrictEqual({ key: undefined, put: 'hello', update: undefined })
+    expect(_any[$state].putDefault).toBe('hello')
   })
 
   test('returns any with KEY default value if it is key (default shorthand)', () => {
     const _any = any().key().default('hello')
 
-    const assertAny: A.Contains<
-      (typeof _any)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAny: A.Contains<(typeof _any)[$state], { keyDefault: unknown }> = 1
     assertAny
 
-    expect(_any[$state].defaults).toStrictEqual({ key: 'hello', put: undefined, update: undefined })
+    expect(_any[$state].keyDefault).toBe('hello')
   })
 
   test('returns any with linked value (option)', () => {
-    // TOIMPROVE: Add type constraints here
     const sayHello = () => 'hello'
     const say42 = () => 42
     const sayTrue = () => true
-    const anyA = any({ links: { key: sayHello, put: undefined, update: undefined } })
-    const anyB = any({ links: { key: undefined, put: say42, update: undefined } })
-    const anyC = any({ links: { key: undefined, put: undefined, update: sayTrue } })
+    const anyA = any({ keyLink: sayHello })
+    const anyB = any({ putLink: say42 })
+    const anyC = any({ updateLink: sayTrue })
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyLink: unknown }> = 1
     assertAnyA
 
-    expect(anyA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(anyA[$state].keyLink).toBe(sayHello)
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putLink: unknown }> = 1
     assertAnyB
 
-    expect(anyB[$state].links).toStrictEqual({ key: undefined, put: say42, update: undefined })
+    expect(anyB[$state].putLink).toBe(say42)
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateLink: unknown }> = 1
     assertAnyC
 
-    expect(anyC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
+    expect(anyC[$state].updateLink).toBe(sayTrue)
   })
 
   test('returns any with linked value (method)', () => {
@@ -323,99 +253,62 @@ describe('anyAttribute', () => {
     const anyB = any().putLink(say42)
     const anyC = any().updateLink(sayTrue)
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyLink: unknown }> = 1
     assertAnyA
 
-    expect(anyA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(anyA[$state].keyLink).toBe(sayHello)
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putLink: unknown }> = 1
     assertAnyB
 
-    expect(anyB[$state].links).toStrictEqual({ key: undefined, put: say42, update: undefined })
+    expect(anyB[$state].putLink).toBe(say42)
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateLink: unknown }> = 1
     assertAnyC
 
-    expect(anyC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayTrue })
+    expect(anyC[$state].updateLink).toBe(sayTrue)
   })
 
   test('returns any with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const _any = any().link(sayHello)
 
-    const assertAny: A.Contains<
-      (typeof _any)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAny: A.Contains<(typeof _any)[$state], { putLink: unknown }> = 1
     assertAny
 
-    expect(_any[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(_any[$state].putLink).toBe(sayHello)
   })
 
   test('returns any with KEY link value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const _any = any().key().link(sayHello)
 
-    const assertAny: A.Contains<
-      (typeof _any)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAny: A.Contains<(typeof _any)[$state], { keyLink: unknown }> = 1
     assertAny
 
-    expect(_any[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(_any[$state].keyLink).toBe(sayHello)
   })
 
   test('returns any with validator (option)', () => {
-    // TOIMPROVE: Add type constraints here
     const pass = () => true
-    const anyA = any({ validators: { key: pass, put: undefined, update: undefined } })
-    const anyB = any({ validators: { key: undefined, put: pass, update: undefined } })
-    const anyC = any({ validators: { key: undefined, put: undefined, update: pass } })
+    const anyA = any({ keyValidator: pass })
+    const anyB = any({ putValidator: pass })
+    const anyC = any({ updateValidator: pass })
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyValidator: Validator }> = 1
     assertAnyA
 
-    expect(anyA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(anyA[$state].keyValidator).toBe(pass)
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putValidator: Validator }> = 1
     assertAnyB
 
-    expect(anyB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(anyB[$state].putValidator).toBe(pass)
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateValidator: Validator }> = 1
     assertAnyC
 
-    expect(anyC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(anyC[$state].updateValidator).toBe(pass)
   })
 
   test('returns any with validator (method)', () => {
@@ -425,41 +318,20 @@ describe('anyAttribute', () => {
     const anyB = any().putValidate(pass)
     const anyC = any().updateValidate(pass)
 
-    const assertAnyA: A.Contains<
-      (typeof anyA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyA: A.Contains<(typeof anyA)[$state], { keyValidator: Validator }> = 1
     assertAnyA
 
-    expect(anyA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(anyA[$state].keyValidator).toBe(pass)
 
-    const assertAnyB: A.Contains<
-      (typeof anyB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertAnyB: A.Contains<(typeof anyB)[$state], { putValidator: Validator }> = 1
     assertAnyB
 
-    expect(anyB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(anyB[$state].putValidator).toBe(pass)
 
-    const assertAnyC: A.Contains<
-      (typeof anyC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertAnyC: A.Contains<(typeof anyC)[$state], { updateValidator: Validator }> = 1
     assertAnyC
 
-    expect(anyC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(anyC[$state].updateValidator).toBe(pass)
 
     const prevAny = any().castAs<string>()
     prevAny.validate((...args) => {
@@ -474,27 +346,16 @@ describe('anyAttribute', () => {
     const pass = () => true
     const _any = any().validate(pass)
 
-    expect(_any[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(_any[$state].putValidator).toBe(pass)
   })
 
   test('returns any with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _any = any().key().validate(pass)
 
-    const assertAny: A.Contains<
-      (typeof _any)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertAny: A.Contains<(typeof _any)[$state], { keyValidator: Validator }> = 1
     assertAny
 
-    expect(_any[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(_any[$state].keyValidator).toBe(pass)
   })
 })

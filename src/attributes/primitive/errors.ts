@@ -2,6 +2,7 @@ import type { ErrorBlueprint } from '~/errors/blueprint.js'
 
 import type { BinaryAttribute } from '../binary/index.js'
 import type { BooleanAttribute } from '../boolean/index.js'
+import type { NullAttribute } from '../null/index.js'
 import type { NumberAttribute } from '../number/index.js'
 import type { StringAttribute } from '../string/index.js'
 import type { PrimitiveAttribute, ResolvedPrimitiveAttribute } from './types.js'
@@ -29,7 +30,13 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: {
     enumValues: NonNullable<
-      (BooleanAttribute | NumberAttribute | StringAttribute | BinaryAttribute)['enum']
+      (
+        | NullAttribute
+        | BooleanAttribute
+        | NumberAttribute
+        | StringAttribute
+        | BinaryAttribute
+      )['state']['enum']
     >
     defaultValue: unknown
   }

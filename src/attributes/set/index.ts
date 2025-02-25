@@ -3,4 +3,3 @@ export type { $SetAttributeState, $SetAttributeNestedState } from './interface.j
 export { $SetAttribute, SetAttribute, SetAttribute_ } from './interface.js'
 export type { FreezeSetAttribute } from './freeze.js'
 export type { SetAttributeElements } from './types.js'
-export type { SetAttributeOptions, SetAttributeDefaultOptions } from './options.js'
