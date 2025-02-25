@@ -1,6 +1,6 @@
 import type { Schema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { OmitKeys } from '~/types/omitKeys.js'
 
 import type { FormattedAttrJSONSchema } from './attribute.js'
 import { getFormattedAttrJSONSchema } from './attribute.js'
@@ -13,7 +13,7 @@ export type FormattedItemJSONSchema<
   {
     type: 'object'
     properties: {
-      [KEY in SelectKeys<SCHEMA['attributes'], { hidden: false }>]: FormattedAttrJSONSchema<
+      [KEY in OmitKeys<SCHEMA['attributes'], { state: { hidden: true } }>]: FormattedAttrJSONSchema<
         SCHEMA['attributes'][KEY]
       >
     }
@@ -24,11 +24,11 @@ export const getFormattedItemJSONSchema = <SCHEMA extends Schema>(
   schema: SCHEMA
 ): FormattedItemJSONSchema<SCHEMA> => {
   const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, attribute]) => !attribute.hidden
+    ([, attr]) => !attr.state.hidden
   )
 
   const requiredProperties = displayedAttrEntries
-    .filter(([, { required }]) => required === 'atLeastOnce' || required === 'always')
+    .filter(([, { state }]) => state.required !== 'never')
     .map(([attributeName]) => attributeName)
 
   return {

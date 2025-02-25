@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 
-export interface BooleanAttributeState extends SharedAttributeState {
-  enum: boolean[] | undefined
-  transform: undefined | unknown
+export interface BooleanAttributeStateConstraint extends SharedAttributeStateConstraint {
+  enum?: boolean[]
+  transform?: unknown
 }

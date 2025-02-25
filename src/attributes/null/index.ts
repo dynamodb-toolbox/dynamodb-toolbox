@@ -3,4 +3,4 @@ export type { $NullAttributeState, $NullAttributeNestedState } from './interface
 export { $NullAttribute, NullAttribute, NullAttribute_ } from './interface.js'
 export type { FreezeNullAttribute } from './freeze.js'
 export type { ResolvedNullAttribute } from './resolve.js'
-export type { NullAttributeOptions, NullAttributeDefaultOptions } from './options.js'
+export type { NullAttributeStateConstraint } from './types.js'

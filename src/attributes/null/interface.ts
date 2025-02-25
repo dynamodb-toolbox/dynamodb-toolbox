@@ -3,6 +3,7 @@
  */
 import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
 import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { Transformer } from '~/transformers/index.js'
 import type {
   ConstrainedOverwrite,
   If,
@@ -15,27 +16,31 @@ import { overwrite } from '~/utils/overwrite.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
-import { freezeNullAttribute } from './freeze.js'
 import type { FreezeNullAttribute } from './freeze.js'
-import type { NullAttributeState } from './types.js'
+import { freezeNullAttribute } from './freeze.js'
+import type { ResolvedNullAttribute } from './resolve.js'
+import type { NullAttributeStateConstraint } from './types.js'
 
-export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
+export interface $NullAttributeState<
+  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
+> {
   [$type]: 'null'
   [$state]: STATE
 }
 
-export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
-  extends $NullAttributeState<STATE> {
+export interface $NullAttributeNestedState<
+  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
+> extends $NullAttributeState<STATE> {
   freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
 }
 
 /**
  * Null attribute (warm)
  */
-export class $NullAttribute<STATE extends NullAttributeState = NullAttributeState>
-  implements $NullAttributeNestedState<STATE>
+export class $NullAttribute<
+  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
+> implements $NullAttributeNestedState<STATE>
 {
   [$type]: 'null';
   [$state]: STATE
@@ -94,6 +99,56 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   }
 
   /**
+   * Provide a finite list of possible values for attribute
+   * (For typing reasons, enums are only available as attribute methods, not as input options)
+   *
+   * @param enum Possible values
+   * @example
+   * string().enum('foo', 'bar')
+   */
+  enum<const NEXT_ENUM extends ResolvedNullAttribute[]>(
+    ...nextEnum: NEXT_ENUM
+  ): /**
+   * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
+   */ $NullAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
+    return new $NullAttribute(overwrite(this[$state], { enum: nextEnum }))
+  }
+
+  /**
+   * Shorthand for `enum(constantValue).default(constantValue)`
+   *
+   * @param constantValue Constant value
+   * @example
+   * string().const('foo')
+   */
+  const<CONSTANT extends ResolvedNullAttribute>(
+    constant: CONSTANT
+  ): If<
+    STATE['key'],
+    $NullAttribute<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    $NullAttribute<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+  > {
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NullAttribute(
+        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+      ),
+      new $NullAttribute(
+        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+      )
+    )
+  }
+
+  /**
+   * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
+   */
+  transform<TRANSFORMER extends Transformer<ResolvedNullAttribute>>(
+    transform: TRANSFORMER
+  ): $NullAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+    return new $NullAttribute(overwrite(this[$state], { transform }))
+  }
+
+  /**
    * Provide a default value for attribute in Primary Key computing
    *
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
@@ -102,27 +157,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextKeyDefault: ValueOrGetter<
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: unknown
-          put: STATE['defaults']['put']
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: nextKeyDefault as unknown,
-          put: this[$state].defaults.put,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $NullAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -132,27 +168,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>>
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: unknown
-          update: STATE['defaults']['update']
-        }
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: nextPutDefault as unknown,
-          update: this[$state].defaults.update
-        }
-      })
-    )
+  ): $NullAttribute<Overwrite<STATE, { putDefault: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -164,26 +181,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextUpdateDefault: ValueOrGetter<
       AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: {
-          key: STATE['defaults']['key']
-          put: STATE['defaults']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
+  ): $NullAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NullAttribute(
-      overwrite(this[$state], {
-        defaults: {
-          key: this[$state].defaults.key,
-          put: this[$state].defaults.put,
-          update: nextUpdateDefault as unknown
-        }
-      })
+      overwrite(this[$state], { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -200,42 +200,15 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
         ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
       >
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        defaults: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['defaults']['put']
-            update: STATE['defaults']['update']
-          },
-          {
-            key: STATE['defaults']['key']
-            put: unknown
-            update: STATE['defaults']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NullAttribute<Overwrite<STATE, { keyDefault: unknown }>>,
+    $NullAttribute<Overwrite<STATE, { putDefault: unknown }>>
   > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        defaults: ifThenElse(
-          this[$state].key,
-          {
-            key: nextDefault as unknown,
-            put: this[$state].defaults.put,
-            update: this[$state].defaults.update
-          },
-          {
-            key: this[$state].defaults.key as unknown,
-            put: nextDefault,
-            update: this[$state].defaults.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NullAttribute(overwrite(this[$state], { keyDefault: nextDefault as unknown })),
+      new $NullAttribute(overwrite(this[$state], { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -248,27 +221,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: unknown
-          put: STATE['links']['put']
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: nextKeyLink as unknown,
-          put: this[$state].links.put,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $NullAttribute<Overwrite<STATE, { keyLink: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -280,27 +234,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
     ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: unknown
-          update: STATE['links']['update']
-        }
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: nextPutLink as unknown,
-          update: this[$state].links.update
-        }
-      })
-    )
+  ): $NullAttribute<Overwrite<STATE, { putLink: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -312,27 +247,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: {
-          key: STATE['links']['key']
-          put: STATE['links']['put']
-          update: unknown
-        }
-      }
-    >
-  > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        links: {
-          key: this[$state].links.key,
-          put: this[$state].links.put,
-          update: nextUpdateLink as unknown
-        }
-      })
-    )
+  ): $NullAttribute<Overwrite<STATE, { updateLink: unknown }>> {
+    return new $NullAttribute(overwrite(this[$state], { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -348,42 +264,15 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>,
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        links: If<
-          STATE['key'],
-          {
-            key: unknown
-            put: STATE['links']['put']
-            update: STATE['links']['update']
-          },
-          {
-            key: STATE['links']['key']
-            put: unknown
-            update: STATE['links']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NullAttribute<Overwrite<STATE, { keyLink: unknown }>>,
+    $NullAttribute<Overwrite<STATE, { putLink: unknown }>>
   > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        links: ifThenElse(
-          this[$state].key,
-          {
-            key: nextLink as unknown,
-            put: this[$state].links.put,
-            update: this[$state].links.update
-          },
-          {
-            key: this[$state].links.key as unknown,
-            put: nextLink,
-            update: this[$state].links.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NullAttribute(overwrite(this[$state], { keyLink: nextLink as unknown })),
+      new $NullAttribute(overwrite(this[$state], { putLink: nextLink as unknown }))
     )
   }
 
@@ -397,26 +286,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; defined: true }>,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: Validator
-          put: STATE['validators']['put']
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $NullAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: nextKeyValidator as Validator,
-          put: this[$state].validators.put,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -430,26 +302,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { defined: true }>,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: Validator
-          update: STATE['validators']['update']
-        }
-      }
-    >
-  > {
+  ): $NullAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: nextPutValidator as Validator,
-          update: this[$state].validators.update
-        }
-      })
+      overwrite(this[$state], { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -463,26 +318,9 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: {
-          key: STATE['validators']['key']
-          put: STATE['validators']['put']
-          update: Validator
-        }
-      }
-    >
-  > {
+  ): $NullAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NullAttribute(
-      overwrite(this[$state], {
-        validators: {
-          key: this[$state].validators.key,
-          put: this[$state].validators.put,
-          update: nextUpdateValidator as Validator
-        }
-      })
+      overwrite(this[$state], { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -500,45 +338,15 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       >,
       FreezeNullAttribute<$NullAttributeState<STATE>>
     >
-  ): $NullAttribute<
-    Overwrite<
-      STATE,
-      {
-        validators: If<
-          STATE['key'],
-          {
-            key: Validator
-            put: STATE['validators']['put']
-            update: STATE['validators']['update']
-          },
-          {
-            key: STATE['validators']['key']
-            put: Validator
-            update: STATE['validators']['update']
-          }
-        >
-      }
-    >
+  ): If<
+    STATE['key'],
+    $NullAttribute<Overwrite<STATE, { keyValidator: Validator }>>,
+    $NullAttribute<Overwrite<STATE, { putValidator: Validator }>>
   > {
-    return new $NullAttribute(
-      overwrite(this[$state], {
-        validators: ifThenElse(
-          /**
-           * @debt type "remove this cast"
-           */
-          this[$state].key as STATE['key'],
-          {
-            key: nextValidator as Validator,
-            put: this[$state].validators.put,
-            update: this[$state].validators.update
-          },
-          {
-            key: this[$state].validators.key,
-            put: nextValidator as Validator,
-            update: this[$state].validators.update
-          }
-        )
-      })
+    return ifThenElse(
+      this[$state].key as STATE['key'],
+      new $NullAttribute(overwrite(this[$state], { keyValidator: nextValidator as Validator })),
+      new $NullAttribute(overwrite(this[$state], { putValidator: nextValidator as Validator }))
     )
   }
 
@@ -547,49 +355,31 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   }
 }
 
-export class NullAttribute<STATE extends NullAttributeState = NullAttributeState>
-  implements SharedAttributeState<STATE>
-{
+export class NullAttribute<
+  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
+> {
   type: 'null'
   path?: string
-  required: STATE['required']
-  hidden: STATE['hidden']
-  key: STATE['key']
-  savedAs: STATE['savedAs']
-  enum: undefined
-  transform: undefined
-  defaults: STATE['defaults']
-  links: STATE['links']
-  validators: STATE['validators']
+  state: STATE
 
   constructor({ path, ...state }: STATE & { path?: string }) {
     this.type = 'null'
     this.path = path
-    this.required = state.required
-    this.hidden = state.hidden
-    this.key = state.key
-    this.savedAs = state.savedAs
-    this.enum = undefined
-    this.transform = undefined
-    this.defaults = state.defaults
-    this.links = state.links
-    this.validators = state.validators
+    this.state = state as STATE
   }
 }
 
 export class NullAttribute_<
-  STATE extends NullAttributeState = NullAttributeState
+  STATE extends NullAttributeStateConstraint = NullAttributeStateConstraint
 > extends NullAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<NullAttributeState> = {}>(
+  clone<NEXT_STATE extends Partial<NullAttributeStateConstraint> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NullAttribute_<ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>> {
+  ): NullAttribute_<ConstrainedOverwrite<NullAttributeStateConstraint, STATE, NEXT_STATE>> {
     return new NullAttribute_({
-      ...this,
-      defaults: { ...this.defaults },
-      links: { ...this.links },
-      validators: { ...this.validators },
+      ...(this.path !== undefined ? { path: this.path } : {}),
+      ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<NullAttributeState, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<NullAttributeStateConstraint, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

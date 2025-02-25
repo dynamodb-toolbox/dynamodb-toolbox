@@ -184,7 +184,8 @@ describe('schema', () => {
       keyStr: keyStr.freeze('keyStr'),
       enumStr: enumStr.freeze('enumStr')
     })
-    expect(pickedSch.attributes.linkedStr.links.put).toBe(undefined)
+    // @ts-expect-error putLink is actually set to undefined
+    expect(pickedSch.attributes.linkedStr.state.putLink).toBeUndefined()
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')
@@ -216,7 +217,8 @@ describe('schema', () => {
       keyStr: keyStr.freeze('keyStr'),
       enumStr: enumStr.freeze('enumStr')
     })
-    expect(omittedSch.attributes.linkedStr.links.put).toBe(undefined)
+    // @ts-expect-error putLink is actually set to undefined
+    expect(omittedSch.attributes.linkedStr.state.putLink).toBeUndefined()
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')

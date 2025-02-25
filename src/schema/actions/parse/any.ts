@@ -34,8 +34,8 @@ export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 
   const transformedValue =
-    attribute.transform !== undefined
-      ? (attribute.transform as Transformer).encode(parsedValue)
+    attribute.state.transform !== undefined
+      ? (attribute.state.transform as Transformer).encode(parsedValue)
       : parsedValue
   return transformedValue
 }

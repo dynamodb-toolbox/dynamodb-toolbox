@@ -1,21 +1,16 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { $SetAttribute } from './interface.js'
-import { SET_DEFAULT_OPTIONS } from './options.js'
-import type { SetAttributeDefaultOptions, SetAttributeOptions } from './options.js'
 import type { $SetAttributeElements } from './types.js'
 
 type SetAttributeTyper = <
   $ELEMENTS extends $SetAttributeElements,
-  OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
+  STATE extends SharedAttributeStateConstraint = {}
 >(
   elements: $ELEMENTS,
-  options?: NarrowObject<OPTIONS>
-) => $SetAttribute<
-  InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>,
-  $ELEMENTS
->
+  state?: NarrowObject<STATE>
+) => $SetAttribute<STATE, $ELEMENTS>
 
 /**
  * Define a new set attribute
@@ -26,25 +21,12 @@ type SetAttributeTyper = <
  * - Not defaulted (defaults: undefined)
  *
  * @param elements Attribute (With constraints)
- * @param options _(optional)_ List Options
+ * @param state _(optional)_ List Options
  */
 export const set: SetAttributeTyper = <
   ELEMENTS extends $SetAttributeElements,
-  OPTIONS extends Partial<SetAttributeOptions> = SetAttributeOptions
+  STATE extends SharedAttributeStateConstraint = {}
 >(
   elements: ELEMENTS,
-  options?: NarrowObject<OPTIONS>
-): $SetAttribute<
-  InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>,
-  ELEMENTS
-> => {
-  const state = {
-    ...SET_DEFAULT_OPTIONS,
-    ...options,
-    defaults: { ...SET_DEFAULT_OPTIONS.defaults, ...options?.defaults },
-    links: { ...SET_DEFAULT_OPTIONS.links, ...options?.links },
-    validators: { ...SET_DEFAULT_OPTIONS.validators, ...options?.validators }
-  } as InferStateFromOptions<SetAttributeOptions, SetAttributeDefaultOptions, OPTIONS>
-
-  return new $SetAttribute(state, elements)
-}
+  state: NarrowObject<STATE> = {} as STATE
+) => new $SetAttribute(state, elements)

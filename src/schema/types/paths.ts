@@ -5,8 +5,7 @@ import type {
   ListAttribute,
   MapAttribute,
   RecordAttribute,
-  ResolveStringAttribute,
-  SetAttribute
+  ResolveStringAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
@@ -18,12 +17,7 @@ export type AppendKey<PATH extends string, KEY extends string> =
   | `${PATH}['${KEY}']`
   | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
 
-type AnyAttrPaths<
-  ATTRIBUTE extends AnyAttribute,
-  ATTRIBUTE_PATH extends string = ''
-> = AnyAttribute extends ATTRIBUTE ? string : `${ATTRIBUTE_PATH}${string}`
-
-type SetAttrPaths<ATTRIBUTE extends SetAttribute> = SetAttribute extends ATTRIBUTE ? string : never
+type AnyAttrPaths<ATTRIBUTE_PATH extends string = ''> = `${ATTRIBUTE_PATH}${string}`
 
 type ListAttrPaths<
   ATTRIBUTE extends ListAttribute,
@@ -79,8 +73,7 @@ type AnyOfAttrPathsRec<
   : RESULTS
 
 export type AttrPaths<ATTRIBUTE extends Attribute, ATTRIBUTE_PATH extends string = ''> =
-  | (ATTRIBUTE extends AnyAttribute ? AnyAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends SetAttribute ? SetAttrPaths<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends AnyAttribute ? AnyAttrPaths<ATTRIBUTE_PATH> : never)
   | (ATTRIBUTE extends ListAttribute ? ListAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
   | (ATTRIBUTE extends MapAttribute ? MapAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
   | (ATTRIBUTE extends RecordAttribute ? RecordAttrPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)

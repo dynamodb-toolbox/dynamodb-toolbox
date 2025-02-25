@@ -11,14 +11,22 @@ type RecordAttrDTO = Extract<AttributeDTO, { type: 'record' }>
  * @debt feature "handle defaults, links & validators"
  */
 export const fromJSONRecordAttr = ({
-  defaults,
-  links,
+  keyDefault,
+  putDefault,
+  updateDefault,
+  keyLink,
+  putLink,
+  updateLink,
   keys,
   elements,
   ...props
 }: RecordAttrDTO): $RecordAttributeNestedState => {
-  defaults
-  links
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
   return record(
     fromAttrDTO(keys) as $RecordAttributeKeys,

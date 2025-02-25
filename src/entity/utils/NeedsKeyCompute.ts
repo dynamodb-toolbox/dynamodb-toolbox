@@ -10,14 +10,18 @@ type NeedsKeyPartCompute<
   KEY_PART_NAME extends string,
   KEY_PART_TYPE extends IndexableKeyType
 > =
+  // TODO: Use TransformedValue instead
   SCHEMA['attributes'] extends Record<
     KEY_PART_NAME,
-    { type: KEY_PART_TYPE; required: Always; key: true; savedAs: undefined }
+    { type: KEY_PART_TYPE; state: { required: Always; key: true; savedAs?: undefined } }
   >
     ? false
     : SelectKeys<
           SCHEMA['attributes'],
-          { type: KEY_PART_TYPE; required: Always; key: true; savedAs: KEY_PART_NAME }
+          {
+            type: KEY_PART_TYPE
+            state: { required: Always; key: true; savedAs: KEY_PART_NAME }
+          }
         > extends never
       ? true
       : false

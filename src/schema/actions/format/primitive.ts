@@ -19,6 +19,7 @@ export function* primitiveAttrFormatter(
   FormatterYield<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>,
   FormatterReturn<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>
 > {
+  const { state } = attribute
   if (!isValidPrimitive(attribute, rawValue)) {
     const { type } = attribute
     const path = formatValuePath(valuePath)
@@ -34,21 +35,21 @@ export function* primitiveAttrFormatter(
 
   let transformedValue = undefined
   if (transform) {
-    const transformer = attribute.transform as Transformer
+    const transformer = state.transform as Transformer | undefined
     transformedValue = transformer !== undefined ? transformer.decode(rawValue) : rawValue
   } else {
     transformedValue = rawValue
   }
 
-  if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(transformedValue)) {
+  if (state.enum !== undefined && !(state.enum as unknown[]).includes(transformedValue)) {
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
+      }. Should be one of: ${state.enum.map(String).join(', ')}.`,
       path,
-      payload: { received: transformedValue, expected: attribute.enum }
+      payload: { received: transformedValue, expected: state.enum }
     })
   }
 

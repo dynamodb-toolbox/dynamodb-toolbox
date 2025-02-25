@@ -1,13 +1,12 @@
 import type {
-  Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   BinaryAttribute,
   BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  Never,
   NullAttribute,
   NumberAttribute,
   RecordAttribute,
@@ -21,7 +20,7 @@ import type {
   StringAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { If, Optional, Overwrite } from '~/types/index.js'
+import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
 import type { ChildPaths, MatchKeys } from './pathUtils.js'
@@ -42,11 +41,9 @@ export type ReadValue<
     ? AttrReadValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
-  required: AtLeastOnce | Always
-}
-  ? true
-  : false
+type MustBeDefined<ATTRIBUTE extends Attribute> = Not<
+  Extends<ATTRIBUTE['state'], { required: Never }>
+>
 
 type OptionalKeys<SCHEMA extends Schema | MapAttribute> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>

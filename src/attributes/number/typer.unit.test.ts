@@ -19,46 +19,9 @@ describe('number', () => {
     assertType
     expect(num[$type]).toBe('number')
 
-    const assertState: A.Equals<
-      (typeof num)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        enum: undefined
-        transform: undefined
-        big: false
-        defaults: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        links: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        validators: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof num)[$state], {}> = 1
     assertState
-    expect(num[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      hidden: false,
-      key: false,
-      savedAs: undefined,
-      enum: undefined,
-      transform: undefined,
-      big: false,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(num[$state]).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof num, $NumberAttributeState> = 1
     assertExtends
@@ -133,11 +96,10 @@ describe('number', () => {
   test('returns key number (option)', () => {
     const num = number({ key: true })
 
-    const assertNum: A.Contains<(typeof num)[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertNum: A.Contains<(typeof num)[$state], { key: true }> = 1
     assertNum
 
     expect(num[$state].key).toBe(true)
-    expect(num[$state].required).toBe('atLeastOnce')
   })
 
   test('returns key number (method)', () => {
@@ -203,70 +165,6 @@ describe('number', () => {
     expect(num[$state].enum).toStrictEqual([1, 2])
   })
 
-  test('returns defaulted number (option)', () => {
-    const invalidNum = number({
-      // TOIMPROVE: add type constraints here
-      defaults: { put: 'foo', update: undefined, key: undefined }
-    })
-
-    const invalidCall = () => invalidNum.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
-    number({
-      defaults: {
-        key: undefined,
-        put: undefined,
-        // TOIMPROVE: add type constraints here
-        update: () => 42
-      }
-    })
-
-    const numA = number({ defaults: { key: 42, put: undefined, update: undefined } })
-    const numB = number({ defaults: { key: undefined, put: 43, update: undefined } })
-    const returnNum = () => 44
-    const numC = number({ defaults: { key: undefined, put: undefined, update: returnNum } })
-
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { defaults: { key: number; put: undefined; update: undefined } }
-    > = 1
-    assertNumA
-
-    expect(numA[$state].defaults).toStrictEqual({
-      key: 42,
-      put: undefined,
-      update: undefined
-    })
-
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { defaults: { key: undefined; put: number; update: undefined } }
-    > = 1
-    assertNumB
-
-    expect(numB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: 43,
-      update: undefined
-    })
-
-    const assertNumC: A.Contains<
-      (typeof numC)[$state],
-      { defaults: { key: undefined; put: undefined; update: () => number } }
-    > = 1
-    assertNumC
-
-    expect(numC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnNum
-    })
-  })
-
   test('returns transformed number (option)', () => {
     const transformer = {
       encode: (input: number | bigint): number => (typeof input === 'number' ? input + 1 : 0),
@@ -313,6 +211,43 @@ describe('number', () => {
     expect(num[$state].big).toBe(true)
   })
 
+  test('returns defaulted number (option)', () => {
+    const invalidNum = number({
+      // TOIMPROVE: add type constraints here
+      putDefault: 'foo'
+    })
+
+    const invalidCall = () => invalidNum.freeze(path)
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    )
+
+    // TOIMPROVE: add type constraints here
+    number({ updateDefault: () => 42 })
+
+    const numA = number({ keyDefault: 42 })
+    const numB = number({ putDefault: 43 })
+    const returnNum = () => 44
+    const numC = number({ updateDefault: returnNum })
+
+    const assertNumA: A.Contains<(typeof numA)[$state], { keyDefault: number }> = 1
+    assertNumA
+
+    expect(numA[$state].keyDefault).toBe(42)
+
+    const assertNumB: A.Contains<(typeof numB)[$state], { putDefault: number }> = 1
+    assertNumB
+
+    expect(numB[$state].putDefault).toBe(43)
+
+    const assertNumC: A.Contains<(typeof numC)[$state], { updateDefault: () => number }> = 1
+    assertNumC
+
+    expect(numC[$state].updateDefault).toBe(returnNum)
+  })
+
   test('returns defaulted number (method)', () => {
     const invalidNumA = number()
       // @ts-expect-error
@@ -349,87 +284,45 @@ describe('number', () => {
     const returnNumber = () => 44
     const numC = number().updateDefault(returnNumber)
 
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertNumA: A.Contains<(typeof numA)[$state], { keyDefault: unknown }> = 1
     assertNumA
 
-    expect(numA[$state].defaults).toStrictEqual({
-      key: 42,
-      put: undefined,
-      update: undefined
-    })
+    expect(numA[$state].keyDefault).toBe(42)
 
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertNumB: A.Contains<(typeof numB)[$state], { putDefault: unknown }> = 1
     assertNumB
 
-    expect(numB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: 43,
-      update: undefined
-    })
+    expect(numB[$state].putDefault).toBe(43)
 
-    const assertNumC: A.Contains<
-      (typeof numC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertNumC: A.Contains<(typeof numC)[$state], { updateDefault: unknown }> = 1
     assertNumC
 
-    expect(numC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnNumber
-    })
+    expect(numC[$state].updateDefault).toBe(returnNumber)
 
     const numBig = number().big().default(BigInt('10000000'))
 
-    const assertNumBig: A.Contains<
-      (typeof numBig)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertNumBig: A.Contains<(typeof numBig)[$state], { putDefault: unknown }> = 1
     assertNumBig
 
-    expect(numBig[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: BigInt('10000000'),
-      update: undefined
-    })
+    expect(numBig[$state].putDefault).toBe(BigInt('10000000'))
   })
 
   test('returns number with PUT default value if it is not key (default shorthand)', () => {
     const num = number().default(42)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { putDefault: unknown }> = 1
     assertNum
 
-    expect(num[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: 42,
-      update: undefined
-    })
+    expect(num[$state].putDefault).toBe(42)
   })
 
   test('returns number with KEY default value if it is key (default shorthand)', () => {
     const num = number().key().default(42)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { keyDefault: unknown }> = 1
     assertNum
 
-    expect(num[$state].defaults).toStrictEqual({
-      key: 42,
-      put: undefined,
-      update: undefined
-    })
+    expect(num[$state].keyDefault).toBe(42)
   })
 
   test('default with enum values', () => {
@@ -452,22 +345,16 @@ describe('number', () => {
     const sayFoo = (): 42 => 42
     const numB = number().enum(42, 43).default(sayFoo)
 
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { defaults: { put: unknown }; enum: [42, 43] }
-    > = 1
+    const assertNumA: A.Contains<(typeof numA)[$state], { putDefault: unknown; enum: [42, 43] }> = 1
     assertNumA
 
-    expect(numA[$state].defaults).toMatchObject({ put: 42 })
+    expect(numA[$state].putDefault).toBe(42)
     expect(numA[$state].enum).toStrictEqual([42, 43])
 
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { defaults: { put: unknown }; enum: [42, 43] }
-    > = 1
+    const assertNumB: A.Contains<(typeof numB)[$state], { putDefault: unknown; enum: [42, 43] }> = 1
     assertNumB
 
-    expect(numB[$state].defaults).toMatchObject({ put: sayFoo })
+    expect(numB[$state].putDefault).toBe(sayFoo)
     expect(numB[$state].enum).toStrictEqual([42, 43])
   })
 
@@ -488,31 +375,20 @@ describe('number', () => {
 
     const assertNonKeyNum: A.Contains<
       (typeof nonKeyNum)[$state],
-      { enum: [42]; defaults: { key: undefined; put: unknown; update: undefined } }
+      { enum: [42]; putDefault: unknown }
     > = 1
     assertNonKeyNum
 
     expect(nonKeyNum[$state].enum).toStrictEqual([42])
-    expect(nonKeyNum[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: 42,
-      update: undefined
-    })
+    expect(nonKeyNum[$state].putDefault).toBe(42)
 
     const keyNum = number().key().const(42)
 
-    const assertKeyNum: A.Contains<
-      (typeof keyNum)[$state],
-      { enum: [42]; defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertKeyNum: A.Contains<(typeof keyNum)[$state], { enum: [42]; keyDefault: unknown }> = 1
     assertKeyNum
 
     expect(keyNum[$state].enum).toStrictEqual([42])
-    expect(keyNum[$state].defaults).toStrictEqual({
-      key: 42,
-      put: undefined,
-      update: undefined
-    })
+    expect(keyNum[$state].keyDefault).toBe(42)
   })
 
   test('returns linked number (method)', () => {
@@ -521,119 +397,63 @@ describe('number', () => {
     const numB = number().putLink(returnNumber)
     const numC = number().updateLink(returnNumber)
 
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertNumA: A.Contains<(typeof numA)[$state], { keyLink: unknown }> = 1
     assertNumA
 
-    expect(numA[$state].links).toStrictEqual({
-      key: returnNumber,
-      put: undefined,
-      update: undefined
-    })
+    expect(numA[$state].keyLink).toBe(returnNumber)
 
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertNumB: A.Contains<(typeof numB)[$state], { putLink: unknown }> = 1
     assertNumB
 
-    expect(numB[$state].links).toStrictEqual({
-      key: undefined,
-      put: returnNumber,
-      update: undefined
-    })
+    expect(numB[$state].putLink).toBe(returnNumber)
 
-    const assertNumC: A.Contains<
-      (typeof numC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertNumC: A.Contains<(typeof numC)[$state], { updateLink: unknown }> = 1
     assertNumC
 
-    expect(numC[$state].links).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnNumber
-    })
+    expect(numC[$state].updateLink).toBe(returnNumber)
   })
 
   test('returns number with PUT linked value if it is not key (link shorthand)', () => {
     const returnNumber = () => 42
     const num = number().link(returnNumber)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { putLink: unknown }> = 1
     assertNum
 
-    expect(num[$state].links).toStrictEqual({
-      key: undefined,
-      put: returnNumber,
-      update: undefined
-    })
+    expect(num[$state].putLink).toBe(returnNumber)
   })
 
   test('returns number with KEY linked value if it is key (link shorthand)', () => {
     const returnNumber = () => 42
     const num = number().key().link(returnNumber)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { keyLink: unknown }> = 1
     assertNum
 
-    expect(num[$state].links).toStrictEqual({
-      key: returnNumber,
-      put: undefined,
-      update: undefined
-    })
+    expect(num[$state].keyLink).toBe(returnNumber)
   })
 
   test('returns number with validator (option)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
-    const numA = number({ validators: { key: pass, put: undefined, update: undefined } })
-    const numB = number({ validators: { key: undefined, put: pass, update: undefined } })
-    const numC = number({ validators: { key: undefined, put: undefined, update: pass } })
+    const numA = number({ keyValidator: pass })
+    const numB = number({ putValidator: pass })
+    const numC = number({ updateValidator: pass })
 
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertNumA: A.Contains<(typeof numA)[$state], { keyValidator: Validator }> = 1
     assertNumA
 
-    expect(numA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(numA[$state].keyValidator).toBe(pass)
 
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertNumB: A.Contains<(typeof numB)[$state], { putValidator: Validator }> = 1
     assertNumB
 
-    expect(numB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(numB[$state].putValidator).toBe(pass)
 
-    const assertNumC: A.Contains<
-      (typeof numC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertNumC: A.Contains<(typeof numC)[$state], { updateValidator: Validator }> = 1
     assertNumC
 
-    expect(numC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(numC[$state].updateValidator).toBe(pass)
   })
 
   test('returns number with validator (method)', () => {
@@ -643,41 +463,20 @@ describe('number', () => {
     const numB = number().putValidate(pass)
     const numC = number().updateValidate(pass)
 
-    const assertNumA: A.Contains<
-      (typeof numA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertNumA: A.Contains<(typeof numA)[$state], { keyValidator: Validator }> = 1
     assertNumA
 
-    expect(numA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(numA[$state].keyValidator).toBe(pass)
 
-    const assertNumB: A.Contains<
-      (typeof numB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertNumB: A.Contains<(typeof numB)[$state], { putValidator: Validator }> = 1
     assertNumB
 
-    expect(numB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(numB[$state].putValidator).toBe(pass)
 
-    const assertNumC: A.Contains<
-      (typeof numC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertNumC: A.Contains<(typeof numC)[$state], { updateValidator: Validator }> = 1
     assertNumC
 
-    expect(numC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(numC[$state].updateValidator).toBe(pass)
 
     const prevNum = number()
     prevNum.validate((...args) => {
@@ -701,33 +500,19 @@ describe('number', () => {
     const pass = () => true
     const num = number().validate(pass)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { putValidator: Validator }> = 1
     assertNum
 
-    expect(num[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(num[$state].putValidator).toBe(pass)
   })
 
   test('returns number with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const num = number().key().validate(pass)
 
-    const assertNum: A.Contains<
-      (typeof num)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertNum: A.Contains<(typeof num)[$state], { keyValidator: Validator }> = 1
     assertNum
 
-    expect(num[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(num[$state].keyValidator).toBe(pass)
   })
 })

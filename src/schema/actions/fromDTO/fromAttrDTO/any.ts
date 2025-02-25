@@ -8,12 +8,20 @@ type AnyAttrDTO = Extract<AttributeDTO, { type: 'any' }>
  * @debt feature "handle defaults, links & validators"
  */
 export const fromJSONAnyAttr = ({
-  defaults,
-  links,
+  keyDefault,
+  putDefault,
+  updateDefault,
+  keyLink,
+  putLink,
+  updateLink,
   ...props
 }: AnyAttrDTO): $AnyAttributeNestedState => {
-  defaults
-  links
+  keyDefault
+  putDefault
+  updateDefault
+  keyLink
+  putLink
+  updateLink
 
   return any(props)
 }

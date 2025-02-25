@@ -65,7 +65,7 @@ describe('getAnyAttrDTO', () => {
 
     expect(getAnyAttrDTO(attr)).toStrictEqual({
       type: 'any',
-      defaults: { put: { defaulterId: 'value', value: 'foo' } }
+      putDefault: { defaulterId: 'value', value: 'foo' }
     })
   })
 
@@ -76,7 +76,7 @@ describe('getAnyAttrDTO', () => {
 
     expect(getAnyAttrDTO(attr)).toStrictEqual({
       type: 'any',
-      defaults: { put: { defaulterId: 'custom' } }
+      putDefault: { defaulterId: 'custom' }
     })
   })
 })

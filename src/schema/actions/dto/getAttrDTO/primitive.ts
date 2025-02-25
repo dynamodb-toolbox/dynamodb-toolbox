@@ -1,5 +1,4 @@
 import type { PrimitiveAttribute } from '~/attributes/index.js'
-import { isEmpty } from '~/utils/isEmpty.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 
 import type { PrimitiveAttrDTO } from '../types.js'
@@ -11,39 +10,42 @@ import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 export const getPrimitiveAttrDTO = (attr: PrimitiveAttribute): PrimitiveAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
 
+  const { state } = attr
+  const { required, hidden, key, savedAs, transform } = state
+
   const attrDTO = {
     type: attr.type,
-    ...(attr.required !== 'atLeastOnce' ? { required: attr.required } : {}),
-    ...(attr.hidden !== false ? { hidden: attr.hidden } : {}),
-    ...(attr.key !== false ? { key: attr.key } : {}),
-    ...(attr.savedAs !== undefined ? { savedAs: attr.savedAs } : {}),
-    ...(attr.transform !== undefined
+    ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
+    ...(hidden !== undefined && hidden !== false ? { hidden } : {}),
+    ...(key !== undefined && key !== false ? { key } : {}),
+    ...(savedAs !== undefined ? { savedAs } : {}),
+    ...(transform !== undefined
       ? {
-          transform: isTransformerWithDTO(attr.transform)
-            ? attr.transform.toJSON()
+          transform: isTransformerWithDTO(transform)
+            ? transform.toJSON()
             : { transformerId: 'custom' }
         }
       : {}),
-    ...(!isEmpty(defaultsDTO) ? { defaults: defaultsDTO } : {})
+    ...defaultsDTO
     // We need to cast as `.enum` is not coupled to `.type`
   } as PrimitiveAttrDTO
 
-  if (attr.enum) {
+  if (state.enum) {
     switch (attr.type) {
       case 'binary': {
         const textDecoder = new TextDecoder('utf8')
-        // @ts-ignore type inference can be improved here (NullAttrDTO has no 'enum' prop)
-        attrDTO.enum = (attr.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
+        // @ts-ignore type inference can be improved here
+        attrDTO.enum = (state.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
         break
       }
       case 'number': {
-        // @ts-ignore type inference can be improved here (NullAttrDTO has no 'enum' prop)
-        attrDTO.enum = attr.enum.map(value => (isBigInt(value) ? value.toString() : value))
+        // @ts-ignore type inference can be improved here
+        attrDTO.enum = state.enum.map(value => (isBigInt(value) ? value.toString() : value))
         break
       }
       default:
-        // @ts-ignore type inference can be improved here (NullAttrDTO has no 'enum' prop)
-        attrDTO.enum = attr.enum
+        // @ts-ignore type inference can be improved here
+        attrDTO.enum = state.enum
     }
   }
 

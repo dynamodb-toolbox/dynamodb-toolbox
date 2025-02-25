@@ -19,44 +19,9 @@ describe('boolean', () => {
     assertType
     expect(bool[$type]).toBe('boolean')
 
-    const assertState: A.Equals<
-      (typeof bool)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        enum: undefined
-        transform: undefined
-        defaults: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        links: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        validators: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof bool)[$state], {}> = 1
     assertState
-    expect(bool[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      hidden: false,
-      key: false,
-      savedAs: undefined,
-      enum: undefined,
-      transform: undefined,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(bool[$state]).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof bool, $BooleanAttributeState> = 1
     assertExtends
@@ -131,11 +96,10 @@ describe('boolean', () => {
   test('returns key boolean (option)', () => {
     const bool = boolean({ key: true })
 
-    const assertBool: A.Contains<(typeof bool)[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { key: true }> = 1
     assertBool
 
     expect(bool[$state].key).toBe(true)
-    expect(bool[$state].required).toBe('atLeastOnce')
   })
 
   test('returns key boolean (method)', () => {
@@ -191,7 +155,7 @@ describe('boolean', () => {
   test('returns defaulted boolean (option)', () => {
     const invalidBool = boolean({
       // TOIMPROVE: add type constraints here
-      defaults: { put: 42, update: undefined, key: undefined }
+      putDefault: 42
     })
 
     const invalidCall = () => invalidBool.freeze(path)
@@ -202,54 +166,29 @@ describe('boolean', () => {
     )
 
     boolean({
-      defaults: {
-        key: undefined,
-        put: undefined,
-        // TOIMPROVE: add type constraints here
-        update: () => 42
-      }
+      // TOIMPROVE: add type constraints here
+      updateDefault: () => 42
     })
 
-    const boolA = boolean({ defaults: { key: true, put: undefined, update: undefined } })
-    const boolB = boolean({ defaults: { key: undefined, put: true, update: undefined } })
+    const boolA = boolean({ keyDefault: true })
+    const boolB = boolean({ putDefault: true })
     const returnTrue = () => true
-    const boolC = boolean({ defaults: { key: undefined, put: undefined, update: returnTrue } })
+    const boolC = boolean({ updateDefault: returnTrue })
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { defaults: { key: boolean; put: undefined; update: undefined } }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { keyDefault: boolean }> = 1
     assertBoolA
 
-    expect(boolA[$state].defaults).toStrictEqual({
-      key: true,
-      put: undefined,
-      update: undefined
-    })
+    expect(boolA[$state].keyDefault).toBe(true)
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { defaults: { key: undefined; put: boolean; update: undefined } }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putDefault: boolean }> = 1
     assertBoolB
 
-    expect(boolB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: true,
-      update: undefined
-    })
+    expect(boolB[$state].putDefault).toBe(true)
 
-    const assertBoolC: A.Contains<
-      (typeof boolC)[$state],
-      { defaults: { key: undefined; put: undefined; update: () => boolean } }
-    > = 1
+    const assertBoolC: A.Contains<(typeof boolC)[$state], { updateDefault: () => boolean }> = 1
     assertBoolC
 
-    expect(boolC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnTrue
-    })
+    expect(boolC[$state].updateDefault).toBe(returnTrue)
   })
 
   test('returns transformed boolean (option)', () => {
@@ -301,73 +240,38 @@ describe('boolean', () => {
     const returnTrue = () => true
     const boolC = boolean().updateDefault(returnTrue)
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { keyDefault: unknown }> = 1
     assertBoolA
 
-    expect(boolA[$state].defaults).toStrictEqual({
-      key: true,
-      put: undefined,
-      update: undefined
-    })
+    expect(boolA[$state].keyDefault).toBe(true)
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putDefault: unknown }> = 1
     assertBoolB
 
-    expect(boolB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: true,
-      update: undefined
-    })
+    expect(boolB[$state].putDefault).toBe(true)
 
-    const assertBoolC: A.Contains<
-      (typeof boolC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertBoolC: A.Contains<(typeof boolC)[$state], { updateDefault: unknown }> = 1
     assertBoolC
 
-    expect(boolC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnTrue
-    })
+    expect(boolC[$state].updateDefault).toBe(returnTrue)
   })
 
   test('returns boolean with PUT default value if it is not key (default shorthand)', () => {
     const bool = boolean().default(true)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { putDefault: unknown }> = 1
     assertBool
 
-    expect(bool[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: true,
-      update: undefined
-    })
+    expect(bool[$state].putDefault).toBe(true)
   })
 
   test('returns boolean with KEY default value if it is key (default shorthand)', () => {
     const bool = boolean().key().default(true)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { keyDefault: unknown }> = 1
     assertBool
 
-    expect(bool[$state].defaults).toStrictEqual({
-      key: true,
-      put: undefined,
-      update: undefined
-    })
+    expect(bool[$state].keyDefault).toBe(true)
   })
 
   test('default with enum values', () => {
@@ -390,22 +294,16 @@ describe('boolean', () => {
     const returnTrue = (): true => true
     const boolB = boolean().enum(true).default(returnTrue)
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { defaults: { put: unknown }; enum: [true] }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { putDefault: unknown; enum: [true] }> = 1
     assertBoolA
 
-    expect(boolA[$state].defaults).toMatchObject({ put: true })
+    expect(boolA[$state].putDefault).toBe(true)
     expect(boolA[$state].enum).toStrictEqual([true])
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { defaults: { put: unknown }; enum: [true] }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putDefault: unknown; enum: [true] }> = 1
     assertBoolB
 
-    expect(boolB[$state].defaults).toMatchObject({ put: returnTrue })
+    expect(boolB[$state].putDefault).toBe(returnTrue)
     expect(boolB[$state].enum).toStrictEqual([true])
   })
 
@@ -426,31 +324,21 @@ describe('boolean', () => {
 
     const assertNonKeyNum: A.Contains<
       (typeof nonKeyNum)[$state],
-      { enum: [true]; defaults: { key: undefined; put: unknown; update: undefined } }
+      { enum: [true]; putDefault: unknown }
     > = 1
     assertNonKeyNum
 
     expect(nonKeyNum[$state].enum).toStrictEqual([true])
-    expect(nonKeyNum[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: true,
-      update: undefined
-    })
+    expect(nonKeyNum[$state].putDefault).toBe(true)
 
     const keyNum = boolean().key().const(true)
 
-    const assertKeyNum: A.Contains<
-      (typeof keyNum)[$state],
-      { enum: [true]; defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertKeyNum: A.Contains<(typeof keyNum)[$state], { enum: [true]; keyDefault: unknown }> =
+      1
     assertKeyNum
 
     expect(keyNum[$state].enum).toStrictEqual([true])
-    expect(keyNum[$state].defaults).toStrictEqual({
-      key: true,
-      put: undefined,
-      update: undefined
-    })
+    expect(keyNum[$state].keyDefault).toBe(true)
   })
 
   test('returns linked boolean (method)', () => {
@@ -459,119 +347,63 @@ describe('boolean', () => {
     const boolB = boolean().putLink(returnTrue)
     const boolC = boolean().updateLink(returnTrue)
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { keyLink: unknown }> = 1
     assertBoolA
 
-    expect(boolA[$state].links).toStrictEqual({
-      key: returnTrue,
-      put: undefined,
-      update: undefined
-    })
+    expect(boolA[$state].keyLink).toBe(returnTrue)
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putLink: unknown }> = 1
     assertBoolB
 
-    expect(boolB[$state].links).toStrictEqual({
-      key: undefined,
-      put: returnTrue,
-      update: undefined
-    })
+    expect(boolB[$state].putLink).toBe(returnTrue)
 
-    const assertBoolC: A.Contains<
-      (typeof boolC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertBoolC: A.Contains<(typeof boolC)[$state], { updateLink: unknown }> = 1
     assertBoolC
 
-    expect(boolC[$state].links).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: returnTrue
-    })
+    expect(boolC[$state].updateLink).toBe(returnTrue)
   })
 
   test('returns boolean with PUT linked value if it is not key (link shorthand)', () => {
     const returnTrue = () => true
     const bool = boolean().link(returnTrue)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { putLink: unknown }> = 1
     assertBool
 
-    expect(bool[$state].links).toStrictEqual({
-      key: undefined,
-      put: returnTrue,
-      update: undefined
-    })
+    expect(bool[$state].putLink).toBe(returnTrue)
   })
 
   test('returns boolean with KEY linked value if it is key (link shorthand)', () => {
     const returnTrue = () => true
     const bool = boolean().key().link(returnTrue)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { keyLink: unknown }> = 1
     assertBool
 
-    expect(bool[$state].links).toStrictEqual({
-      key: returnTrue,
-      put: undefined,
-      update: undefined
-    })
+    expect(bool[$state].keyLink).toBe(returnTrue)
   })
 
   test('returns boolean with validator (option)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
-    const boolA = boolean({ validators: { key: pass, put: undefined, update: undefined } })
-    const boolB = boolean({ validators: { key: undefined, put: pass, update: undefined } })
-    const boolC = boolean({ validators: { key: undefined, put: undefined, update: pass } })
+    const boolA = boolean({ keyValidator: pass })
+    const boolB = boolean({ putValidator: pass })
+    const boolC = boolean({ updateValidator: pass })
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { keyValidator: Validator }> = 1
     assertBoolA
 
-    expect(boolA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(boolA[$state].keyValidator).toBe(pass)
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putValidator: Validator }> = 1
     assertBoolB
 
-    expect(boolB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(boolB[$state].putValidator).toBe(pass)
 
-    const assertBoolC: A.Contains<
-      (typeof boolC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertBoolC: A.Contains<(typeof boolC)[$state], { updateValidator: Validator }> = 1
     assertBoolC
 
-    expect(boolC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(boolC[$state].updateValidator).toBe(pass)
   })
 
   test('returns boolean with validator (method)', () => {
@@ -581,41 +413,20 @@ describe('boolean', () => {
     const boolB = boolean().putValidate(pass)
     const boolC = boolean().updateValidate(pass)
 
-    const assertBoolA: A.Contains<
-      (typeof boolA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertBoolA: A.Contains<(typeof boolA)[$state], { keyValidator: Validator }> = 1
     assertBoolA
 
-    expect(boolA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(boolA[$state].keyValidator).toBe(pass)
 
-    const assertBoolB: A.Contains<
-      (typeof boolB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertBoolB: A.Contains<(typeof boolB)[$state], { putValidator: Validator }> = 1
     assertBoolB
 
-    expect(boolB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(boolB[$state].putValidator).toBe(pass)
 
-    const assertBoolC: A.Contains<
-      (typeof boolC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertBoolC: A.Contains<(typeof boolC)[$state], { updateValidator: Validator }> = 1
     assertBoolC
 
-    expect(boolC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(boolC[$state].updateValidator).toBe(pass)
 
     const prevNum = boolean()
     prevNum.validate((...args) => {
@@ -641,33 +452,19 @@ describe('boolean', () => {
     const pass = () => true
     const bool = boolean().validate(pass)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { putValidator: Validator }> = 1
     assertBool
 
-    expect(bool[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(bool[$state].putValidator).toBe(pass)
   })
 
   test('returns boolean with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const bool = boolean().key().validate(pass)
 
-    const assertBool: A.Contains<
-      (typeof bool)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertBool: A.Contains<(typeof bool)[$state], { keyValidator: Validator }> = 1
     assertBool
 
-    expect(bool[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(bool[$state].keyValidator).toBe(pass)
   })
 })

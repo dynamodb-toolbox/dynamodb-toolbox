@@ -4,7 +4,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
 import type { MapAttribute } from './interface.js'
@@ -36,7 +36,7 @@ export type FreezeMapAttribute<
     >
 
 type MapAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,
@@ -53,7 +53,7 @@ type MapAttributeFreezer = <
  * @return void
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ATTRIBUTES extends $MapAttributeAttributeStates
 >(
   state: STATE,
@@ -78,7 +78,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     const {
       savedAs: attributeSavedAs = attributeName,
       key: attributeKey,
-      required: attributeRequired
+      required: attributeRequired = 'atLeastOnce'
     } = attribute[$state]
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
@@ -91,7 +91,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <
     }
     attributesSavedAs.add(attributeSavedAs)
 
-    if (attributeKey) {
+    if (attributeKey !== undefined && attributeKey) {
       keyAttributeNames.add(attributeName)
     }
 

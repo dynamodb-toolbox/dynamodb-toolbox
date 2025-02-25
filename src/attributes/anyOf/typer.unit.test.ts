@@ -113,40 +113,9 @@ describe('anyOf', () => {
     assertElements
     expect(anyOfAttr[$elements]).toStrictEqual([str])
 
-    const assertState: A.Equals<
-      (typeof anyOfAttr)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        defaults: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        links: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        validators: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof anyOfAttr)[$state], {}> = 1
     assertState
-    expect(anyOfAttr[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      key: false,
-      hidden: false,
-      savedAs: undefined,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(anyOfAttr[$state]).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof anyOfAttr, $AnyOfAttributeState> = 1
     assertExtends
@@ -215,49 +184,28 @@ describe('anyOf', () => {
   test('returns defaulted anyOf (method)', () => {
     const anyOfAttr = anyOf(str).updateDefault('bar')
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { updateDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: 'bar'
-    })
+    expect(anyOfAttr[$state].updateDefault).toBe('bar')
   })
 
   test('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).default('foo')
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { putDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: 'foo',
-      update: undefined
-    })
+    expect(anyOfAttr[$state].putDefault).toBe('foo')
   })
 
   test('returns anyOf with KEY default value if it is key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).key().default('foo')
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { keyDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].defaults).toStrictEqual({
-      key: 'foo',
-      put: undefined,
-      update: undefined
-    })
+    expect(anyOfAttr[$state].keyDefault).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
@@ -265,51 +213,30 @@ describe('anyOf', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).updateLink(sayHello)
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { updateLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].links).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: sayHello
-    })
+    expect(anyOfAttr[$state].updateLink).toBe(sayHello)
   })
 
   test('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).link(sayHello)
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { putLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].links).toStrictEqual({
-      key: undefined,
-      put: sayHello,
-      update: undefined
-    })
+    expect(anyOfAttr[$state].putLink).toBe(sayHello)
   })
 
   test('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).key().link(sayHello)
 
-    const assertAnyOf: A.Contains<
-      (typeof anyOfAttr)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)[$state], { keyLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr[$state].links).toStrictEqual({
-      key: sayHello,
-      put: undefined,
-      update: undefined
-    })
+    expect(anyOfAttr[$state].keyLink).toBe(sayHello)
   })
 
   // TODO: Reimplement options as potential first argument
@@ -320,41 +247,20 @@ describe('anyOf', () => {
     const anyOfB = anyOf(string(), number()).putValidate(pass)
     const anyOfC = anyOf(string(), number()).updateValidate(pass)
 
-    const assertAnyOfA: A.Contains<
-      (typeof anyOfA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyOfA: A.Contains<(typeof anyOfA)[$state], { keyValidator: Validator }> = 1
     assertAnyOfA
 
-    expect(anyOfA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(anyOfA[$state].keyValidator).toBe(pass)
 
-    const assertAnyOfB: A.Contains<
-      (typeof anyOfB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertAnyOfB: A.Contains<(typeof anyOfB)[$state], { putValidator: Validator }> = 1
     assertAnyOfB
 
-    expect(anyOfB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(anyOfB[$state].putValidator).toBe(pass)
 
-    const assertAnyOfC: A.Contains<
-      (typeof anyOfC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertAnyOfC: A.Contains<(typeof anyOfC)[$state], { updateValidator: Validator }> = 1
     assertAnyOfC
 
-    expect(anyOfC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(anyOfC[$state].updateValidator).toBe(pass)
 
     const prevAnyOf = anyOf(string(), number())
     prevAnyOf.validate((...args) => {
@@ -383,34 +289,20 @@ describe('anyOf', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).validate(pass)
 
-    const assertAnyOf: A.Contains<
-      (typeof _anyOf)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof _anyOf)[$state], { putValidator: Validator }> = 1
     assertAnyOf
 
-    expect(_anyOf[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(_anyOf[$state].putValidator).toBe(pass)
   })
 
   test('returns anyOf with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).key().validate(pass)
 
-    const assertAnyOf: A.Contains<
-      (typeof _anyOf)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertAnyOf: A.Contains<(typeof _anyOf)[$state], { keyValidator: Validator }> = 1
     assertAnyOf
 
-    expect(_anyOf[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(_anyOf[$state].keyValidator).toBe(pass)
   })
 
   test('anyOf of anyOfs', () => {

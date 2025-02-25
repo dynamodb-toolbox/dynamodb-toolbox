@@ -1,24 +1,18 @@
 import type { NarrowObject } from '~/types/narrowObject.js'
 
-import type { InferStateFromOptions } from '../shared/inferStateFromOptions.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { $RecordAttribute } from './interface.js'
-import { RECORD_DEFAULT_OPTIONS } from './options.js'
-import type { RecordAttributeDefaultOptions, RecordAttributeOptions } from './options.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 type RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  OPTIONS extends Partial<RecordAttributeOptions> = RecordAttributeOptions
+  STATE extends SharedAttributeStateConstraint = {}
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
-  options?: NarrowObject<OPTIONS>
-) => $RecordAttribute<
-  InferStateFromOptions<RecordAttributeOptions, RecordAttributeDefaultOptions, OPTIONS>,
-  $KEYS,
-  $ELEMENTS
->
+  state?: NarrowObject<STATE>
+) => $RecordAttribute<STATE, $KEYS, $ELEMENTS>
 
 /**
  * Define a new record attribute
@@ -31,37 +25,14 @@ type RecordAttributeTyper = <
  *
  * @param keys Keys (With constraints)
  * @param elements Attribute (With constraints)
- * @param options _(optional)_ Record Options
+ * @param state _(optional)_ Record Options
  */
 export const record: RecordAttributeTyper = <
   $KEYS extends $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements,
-  OPTIONS extends Partial<RecordAttributeOptions> = RecordAttributeOptions
+  STATE extends SharedAttributeStateConstraint = {}
 >(
   keys: $KEYS,
   elements: $ELEMENTS,
-  options?: NarrowObject<OPTIONS>
-): $RecordAttribute<
-  InferStateFromOptions<RecordAttributeOptions, RecordAttributeDefaultOptions, OPTIONS>,
-  $KEYS,
-  $ELEMENTS
-> => {
-  const state = {
-    ...RECORD_DEFAULT_OPTIONS,
-    ...options,
-    defaults: {
-      ...RECORD_DEFAULT_OPTIONS.defaults,
-      ...options?.defaults
-    },
-    links: {
-      ...RECORD_DEFAULT_OPTIONS.links,
-      ...options?.links
-    },
-    validators: {
-      ...RECORD_DEFAULT_OPTIONS.validators,
-      ...options?.validators
-    }
-  } as InferStateFromOptions<RecordAttributeOptions, RecordAttributeDefaultOptions, OPTIONS>
-
-  return new $RecordAttribute(state, keys, elements)
-}
+  state: NarrowObject<STATE> = {} as STATE
+) => new $RecordAttribute(state, keys, elements)

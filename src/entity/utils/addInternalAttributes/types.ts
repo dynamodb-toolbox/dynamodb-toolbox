@@ -1,9 +1,5 @@
 import type { FreezeAttribute } from '~/attributes/freeze.js'
-import type {
-  $AttributeNestedState,
-  $StringAttributeNestedState,
-  AtLeastOnce
-} from '~/attributes/index.js'
+import type { $AttributeNestedState, $StringAttributeNestedState } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
@@ -31,15 +27,11 @@ export type $EntityAttribute<
   ENTITY_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean
 > = $StringAttributeNestedState<{
-  required: AtLeastOnce
   hidden: ENTITY_ATTRIBUTE_HIDDEN
-  key: false
   savedAs: TABLE['entityAttributeSavedAs']
   enum: [ENTITY_NAME]
-  transform: undefined
-  defaults: { key: undefined; put: unknown; update: unknown }
-  links: { key: undefined; put: undefined; update: undefined }
-  validators: { key: undefined; put: undefined; update: undefined }
+  putDefault: unknown
+  updateDefault: unknown
 }>
 
 export type WithEntityAttribute<
@@ -60,15 +52,10 @@ export type $TimestampAttribute<
   SAVED_AS extends string,
   HIDDEN extends boolean
 > = $StringAttributeNestedState<{
-  required: AtLeastOnce
-  key: false
   hidden: HIDDEN
   savedAs: SAVED_AS
-  enum: undefined
-  transform: undefined
-  defaults: { key: undefined; put: unknown; update: unknown }
-  links: { key: undefined; put: undefined; update: undefined }
-  validators: { key: undefined; put: undefined; update: undefined }
+  putDefault: unknown
+  updateDefault: unknown
 }>
 
 export type WithTimestampAttributes<

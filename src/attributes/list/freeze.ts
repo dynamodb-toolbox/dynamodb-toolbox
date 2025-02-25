@@ -4,7 +4,7 @@ import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SharedAttributeStateConstraint } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { ListAttribute } from './interface.js'
 import { ListAttribute_ } from './interface.js'
@@ -19,7 +19,7 @@ export type FreezeListAttribute<
   : ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
 
 type ListAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $ListAttributeElements
 >(
   state: STATE,
@@ -36,7 +36,7 @@ type ListAttributeFreezer = <
  * @return void
  */
 export const freezeListAttribute: ListAttributeFreezer = <
-  STATE extends SharedAttributeState,
+  STATE extends SharedAttributeStateConstraint,
   $ELEMENTS extends $ListAttributeElements
 >(
   state: STATE,
@@ -47,7 +47,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
 
   const { required, hidden, savedAs } = elements[$state]
 
-  if (required !== 'atLeastOnce' && required !== 'always') {
+  if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
     throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
       message: `Invalid list elements${
         path !== undefined ? ` at path '${path}'` : ''
@@ -56,7 +56,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
     })
   }
 
-  if (hidden !== false) {
+  if (hidden !== undefined && hidden !== false) {
     throw new DynamoDBToolboxError('schema.listAttribute.hiddenElements', {
       message: `Invalid list elements${
         path !== undefined ? ` at path '${path}'` : ''

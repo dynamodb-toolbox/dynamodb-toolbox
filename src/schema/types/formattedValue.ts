@@ -1,13 +1,12 @@
 import type {
-  Always,
   AnyAttribute,
   AnyOfAttribute,
-  AtLeastOnce,
   Attribute,
   BinaryAttribute,
   BooleanAttribute,
   ListAttribute,
   MapAttribute,
+  Never,
   NullAttribute,
   NumberAttribute,
   RecordAttribute,
@@ -21,7 +20,7 @@ import type {
   StringAttribute
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
-import type { If, Optional, Overwrite, SelectKeys } from '~/types/index.js'
+import type { Extends, If, Not, OmitKeys, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
 import type { ChildPaths, MatchKeys } from './pathUtils.js'
@@ -42,11 +41,9 @@ export type FormattedValue<
     ? AttrFormattedValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends Attribute> = ATTRIBUTE extends {
-  required: AtLeastOnce | Always
-}
-  ? true
-  : false
+type MustBeDefined<ATTRIBUTE extends Attribute> = Not<
+  Extends<ATTRIBUTE['state'], { required: Never }>
+>
 
 type OptionalKeys<SCHEMA extends Schema | MapAttribute> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
@@ -65,9 +62,9 @@ type SchemaFormattedValue<
     ? never
     : Optional<
         {
-          [KEY in SelectKeys<
+          [KEY in OmitKeys<
             Pick<SCHEMA['attributes'], MATCHING_KEYS>,
-            { hidden: false }
+            { state: { hidden: true } }
           >]: AttrFormattedValue<
             SCHEMA['attributes'][KEY],
             Overwrite<
@@ -89,30 +86,28 @@ type SchemaFormattedValue<
 type AttrFormattedValue<
   ATTRIBUTE extends Attribute,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = Attribute extends ATTRIBUTE
-  ? unknown
-  :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends NullAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullAttribute
-          : never)
-      | (ATTRIBUTE extends BooleanAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanAttribute<ATTRIBUTE>
-          : never)
-      | (ATTRIBUTE extends NumberAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberAttribute<ATTRIBUTE>
-          : never)
-      | (ATTRIBUTE extends StringAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringAttribute<ATTRIBUTE>
-          : never)
-      | (ATTRIBUTE extends BinaryAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinaryAttribute<ATTRIBUTE>
-          : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapAttribute ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+> =
+  | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends NullAttribute
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullAttribute
+      : never)
+  | (ATTRIBUTE extends BooleanAttribute
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanAttribute<ATTRIBUTE>
+      : never)
+  | (ATTRIBUTE extends NumberAttribute
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberAttribute<ATTRIBUTE>
+      : never)
+  | (ATTRIBUTE extends StringAttribute
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringAttribute<ATTRIBUTE>
+      : never)
+  | (ATTRIBUTE extends BinaryAttribute
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinaryAttribute<ATTRIBUTE>
+      : never)
+  | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends MapAttribute ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
 type AnyAttrFormattedValue<ATTRIBUTE extends AnyAttribute> = AnyAttribute extends ATTRIBUTE
   ? unknown
@@ -175,10 +170,10 @@ type MapAttrFormattedValue<
         | Optional<
             {
               // Keep only non-hidden attributes
-              [KEY in SelectKeys<
+              [KEY in OmitKeys<
                 // Pick only filtered keys
                 Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
-                { hidden: false }
+                { state: { hidden: true } }
               >]: AttrFormattedValue<
                 ATTRIBUTE['attributes'][KEY],
                 Overwrite<

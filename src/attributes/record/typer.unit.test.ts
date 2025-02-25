@@ -218,40 +218,9 @@ describe('record', () => {
     assertType
     expect(rec[$type]).toBe('record')
 
-    const assertState: A.Equals<
-      (typeof rec)[$state],
-      {
-        required: AtLeastOnce
-        hidden: false
-        key: false
-        savedAs: undefined
-        defaults: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        links: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-        validators: {
-          key: undefined
-          put: undefined
-          update: undefined
-        }
-      }
-    > = 1
+    const assertState: A.Equals<(typeof rec)[$state], {}> = 1
     assertState
-    expect(rec[$state]).toStrictEqual({
-      required: 'atLeastOnce',
-      key: false,
-      hidden: false,
-      savedAs: undefined,
-      defaults: { key: undefined, put: undefined, update: undefined },
-      links: { key: undefined, put: undefined, update: undefined },
-      validators: { key: undefined, put: undefined, update: undefined }
-    })
+    expect(rec[$state]).toStrictEqual({})
 
     const assertKeys: A.Equals<(typeof rec)[$keys], typeof fooBar> = 1
     assertKeys
@@ -333,11 +302,10 @@ describe('record', () => {
   test('returns key record (option)', () => {
     const rec = record(fooBar, str, { key: true })
 
-    const assertRec: A.Contains<(typeof rec)[$state], { key: true; required: AtLeastOnce }> = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { key: true }> = 1
     assertRec
 
     expect(rec[$state].key).toBe(true)
-    expect(rec[$state].required).toBe('atLeastOnce')
   })
 
   test('returns key record (method)', () => {
@@ -371,281 +339,174 @@ describe('record', () => {
   test('returns defaulted record (option)', () => {
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      defaults: { key: { foo: 'foo' }, put: undefined, update: undefined }
+      keyDefault: { foo: 'foo' }
     })
 
-    const assertRecA: A.Contains<
-      (typeof rcA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRecA: A.Contains<(typeof rcA)[$state], { keyDefault: unknown }> = 1
     assertRecA
 
-    expect(rcA[$state].defaults).toStrictEqual({
-      key: { foo: 'foo' },
-      put: undefined,
-      update: undefined
-    })
+    expect(rcA[$state].keyDefault).toStrictEqual({ foo: 'foo' })
 
     const rcB = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      defaults: { key: undefined, put: { bar: 'bar' }, update: undefined }
+      putDefault: { bar: 'bar' }
     })
 
-    const assertRecB: A.Contains<
-      (typeof rcB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRecB: A.Contains<(typeof rcB)[$state], { putDefault: unknown }> = 1
     assertRecB
 
-    expect(rcB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: { bar: 'bar' },
-      update: undefined
-    })
+    expect(rcB[$state].putDefault).toStrictEqual({ bar: 'bar' })
 
     const rcC = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      defaults: { key: undefined, put: undefined, update: { foo: 'bar' } }
+      updateDefault: { foo: 'bar' }
     })
 
-    const assertRecC: A.Contains<
-      (typeof rcC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertRecC: A.Contains<(typeof rcC)[$state], { updateDefault: unknown }> = 1
     assertRecC
 
-    expect(rcC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: { foo: 'bar' }
-    })
+    expect(rcC[$state].updateDefault).toStrictEqual({ foo: 'bar' })
   })
 
   test('returns defaulted record (method)', () => {
     const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
 
-    const assertRecA: A.Contains<
-      (typeof rcA)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRecA: A.Contains<(typeof rcA)[$state], { keyDefault: unknown }> = 1
     assertRecA
 
-    expect(rcA[$state].defaults).toStrictEqual({
-      key: { foo: 'foo' },
-      put: undefined,
-      update: undefined
-    })
+    expect(rcA[$state].keyDefault).toStrictEqual({ foo: 'foo' })
 
     const rcB = record(fooBar, str).putDefault({ bar: 'bar' })
 
-    const assertRecB: A.Contains<
-      (typeof rcB)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRecB: A.Contains<(typeof rcB)[$state], { putDefault: unknown }> = 1
     assertRecB
 
-    expect(rcB[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: { bar: 'bar' },
-      update: undefined
-    })
+    expect(rcB[$state].putDefault).toStrictEqual({ bar: 'bar' })
 
     const rcC = record(fooBar, str).updateDefault({ foo: 'bar' })
 
-    const assertRecC: A.Contains<
-      (typeof rcC)[$state],
-      { defaults: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertRecC: A.Contains<(typeof rcC)[$state], { updateDefault: unknown }> = 1
     assertRecC
 
-    expect(rcC[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: { foo: 'bar' }
-    })
+    expect(rcC[$state].updateDefault).toStrictEqual({ foo: 'bar' })
   })
 
   test('returns record with PUT default value if it is not key (default shorthand)', () => {
     const rec = record(fooBar, str).default({ foo: 'foo' })
 
-    const assertRec: A.Contains<
-      (typeof rec)[$state],
-      { defaults: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { putDefault: unknown }> = 1
     assertRec
 
-    expect(rec[$state].defaults).toStrictEqual({
-      key: undefined,
-      put: { foo: 'foo' },
-      update: undefined
-    })
+    expect(rec[$state].putDefault).toStrictEqual({ foo: 'foo' })
   })
 
   test('returns record with KEY default value if it is key (default shorthand)', () => {
     const rec = record(fooBar, str).key().default({ foo: 'foo' })
 
-    const assertRec: A.Contains<
-      (typeof rec)[$state],
-      { defaults: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { keyDefault: unknown }> = 1
     assertRec
 
-    expect(rec[$state].defaults).toStrictEqual({
-      key: { foo: 'foo' },
-      put: undefined,
-      update: undefined
-    })
+    expect(rec[$state].keyDefault).toStrictEqual({ foo: 'foo' })
   })
 
   test('returns linked record (option)', () => {
     const sayHello = () => ({ hello: 'world' })
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      links: { key: sayHello, put: undefined, update: undefined }
+      keyLink: sayHello
     })
 
-    const assertRecA: A.Contains<
-      (typeof rcA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRecA: A.Contains<(typeof rcA)[$state], { keyLink: unknown }> = 1
     assertRecA
 
-    expect(rcA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(rcA[$state].keyLink).toBe(sayHello)
 
     const rcB = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      links: { key: undefined, put: sayHello, update: undefined }
+      putLink: sayHello
     })
 
-    const assertRecB: A.Contains<
-      (typeof rcB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRecB: A.Contains<(typeof rcB)[$state], { putLink: unknown }> = 1
     assertRecB
 
-    expect(rcB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(rcB[$state].putLink).toBe(sayHello)
 
     const rcC = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
-      links: { key: undefined, put: undefined, update: sayHello }
+      updateLink: sayHello
     })
 
-    const assertRecC: A.Contains<
-      (typeof rcC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertRecC: A.Contains<(typeof rcC)[$state], { updateLink: unknown }> = 1
     assertRecC
 
-    expect(rcC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+    expect(rcC[$state].updateLink).toBe(sayHello)
   })
 
   test('returns linked record (method)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rcA = record(fooBar, str).key().keyLink(sayHello)
 
-    const assertRecA: A.Contains<
-      (typeof rcA)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRecA: A.Contains<(typeof rcA)[$state], { keyLink: unknown }> = 1
     assertRecA
 
-    expect(rcA[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(rcA[$state].keyLink).toBe(sayHello)
 
     const rcB = record(fooBar, str).putLink(sayHello)
 
-    const assertRecB: A.Contains<
-      (typeof rcB)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRecB: A.Contains<(typeof rcB)[$state], { putLink: unknown }> = 1
     assertRecB
 
-    expect(rcB[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(rcB[$state].putLink).toBe(sayHello)
 
     const rcC = record(fooBar, str).updateLink(sayHello)
 
-    const assertRecC: A.Contains<
-      (typeof rcC)[$state],
-      { links: { key: undefined; put: undefined; update: unknown } }
-    > = 1
+    const assertRecC: A.Contains<(typeof rcC)[$state], { updateLink: unknown }> = 1
     assertRecC
 
-    expect(rcC[$state].links).toStrictEqual({ key: undefined, put: undefined, update: sayHello })
+    expect(rcC[$state].updateLink).toBe(sayHello)
   })
 
   test('returns record with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rec = record(fooBar, str).link(sayHello)
 
-    const assertRec: A.Contains<
-      (typeof rec)[$state],
-      { links: { key: undefined; put: unknown; update: undefined } }
-    > = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { putLink: unknown }> = 1
     assertRec
 
-    expect(rec[$state].links).toStrictEqual({ key: undefined, put: sayHello, update: undefined })
+    expect(rec[$state].putLink).toBe(sayHello)
   })
 
   test('returns record with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => ({ foo: 'hello' })
     const rec = record(fooBar, str).key().link(sayHello)
 
-    const assertRec: A.Contains<
-      (typeof rec)[$state],
-      { links: { key: unknown; put: undefined; update: undefined } }
-    > = 1
+    const assertRec: A.Contains<(typeof rec)[$state], { keyLink: unknown }> = 1
     assertRec
 
-    expect(rec[$state].links).toStrictEqual({ key: sayHello, put: undefined, update: undefined })
+    expect(rec[$state].keyLink).toBe(sayHello)
   })
 
   test('returns record with validator (option)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
-    const recordA = record(string(), number(), {
-      validators: { key: pass, put: undefined, update: undefined }
-    })
-    const recordB = record(string(), number(), {
-      validators: { key: undefined, put: pass, update: undefined }
-    })
-    const recordC = record(string(), number(), {
-      validators: { key: undefined, put: undefined, update: pass }
-    })
+    const recordA = record(string(), number(), { keyValidator: pass })
+    const recordB = record(string(), number(), { putValidator: pass })
+    const recordC = record(string(), number(), { updateValidator: pass })
 
-    const assertRecordA: A.Contains<
-      (typeof recordA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertRecordA: A.Contains<(typeof recordA)[$state], { keyValidator: Validator }> = 1
     assertRecordA
 
-    expect(recordA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(recordA[$state].keyValidator).toBe(pass)
 
-    const assertRecordB: A.Contains<
-      (typeof recordB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertRecordB: A.Contains<(typeof recordB)[$state], { putValidator: Validator }> = 1
     assertRecordB
 
-    expect(recordB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(recordB[$state].putValidator).toBe(pass)
 
-    const assertRecordC: A.Contains<
-      (typeof recordC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertRecordC: A.Contains<(typeof recordC)[$state], { updateValidator: Validator }> = 1
     assertRecordC
 
-    expect(recordC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(recordC[$state].updateValidator).toBe(pass)
   })
 
   test('returns record with validator (method)', () => {
@@ -655,41 +516,20 @@ describe('record', () => {
     const recordB = record(string(), number()).putValidate(pass)
     const recordC = record(string(), number()).updateValidate(pass)
 
-    const assertRecordA: A.Contains<
-      (typeof recordA)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertRecordA: A.Contains<(typeof recordA)[$state], { keyValidator: Validator }> = 1
     assertRecordA
 
-    expect(recordA[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(recordA[$state].keyValidator).toBe(pass)
 
-    const assertRecordB: A.Contains<
-      (typeof recordB)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertRecordB: A.Contains<(typeof recordB)[$state], { putValidator: Validator }> = 1
     assertRecordB
 
-    expect(recordB[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(recordB[$state].putValidator).toBe(pass)
 
-    const assertRecordC: A.Contains<
-      (typeof recordC)[$state],
-      { validators: { key: undefined; put: undefined; update: Validator } }
-    > = 1
+    const assertRecordC: A.Contains<(typeof recordC)[$state], { updateValidator: Validator }> = 1
     assertRecordC
 
-    expect(recordC[$state].validators).toStrictEqual({
-      key: undefined,
-      put: undefined,
-      update: pass
-    })
+    expect(recordC[$state].updateValidator).toBe(pass)
 
     const prevRecord = record(string(), number())
     prevRecord.validate((...args) => {
@@ -718,34 +558,20 @@ describe('record', () => {
     const pass = () => true
     const _record = record(string(), number()).validate(pass)
 
-    const assertRecord: A.Contains<
-      (typeof _record)[$state],
-      { validators: { key: undefined; put: Validator; update: undefined } }
-    > = 1
+    const assertRecord: A.Contains<(typeof _record)[$state], { putValidator: Validator }> = 1
     assertRecord
 
-    expect(_record[$state].validators).toStrictEqual({
-      key: undefined,
-      put: pass,
-      update: undefined
-    })
+    expect(_record[$state].putValidator).toBe(pass)
   })
 
   test('returns record with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _record = record(string(), number()).key().validate(pass)
 
-    const assertRecord: A.Contains<
-      (typeof _record)[$state],
-      { validators: { key: Validator; put: undefined; update: undefined } }
-    > = 1
+    const assertRecord: A.Contains<(typeof _record)[$state], { keyValidator: Validator }> = 1
     assertRecord
 
-    expect(_record[$state].validators).toStrictEqual({
-      key: pass,
-      put: undefined,
-      update: undefined
-    })
+    expect(_record[$state].keyValidator).toBe(pass)
   })
 
   test('record of records', () => {
@@ -760,29 +586,9 @@ describe('record', () => {
           [$type]: 'record'
           [$keys]: typeof fooBar
           [$elements]: typeof str
-          [$state]: {
-            required: AtLeastOnce
-            hidden: false
-            key: false
-            savedAs: undefined
-            defaults: {
-              key: undefined
-              put: undefined
-              update: undefined
-            }
-          }
+          [$state]: {}
         }
-        [$state]: {
-          required: AtLeastOnce
-          hidden: false
-          key: false
-          savedAs: undefined
-          defaults: {
-            key: undefined
-            put: undefined
-            update: undefined
-          }
-        }
+        [$state]: {}
       }
     > = 1
     assertRec

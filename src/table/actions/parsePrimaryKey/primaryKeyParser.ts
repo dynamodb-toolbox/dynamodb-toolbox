@@ -45,7 +45,14 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
 
     const partitionKeyValue = keyInput[partitionKey.name]
 
-    if (!isValidPrimitive({ ...partitionKey, big: true }, partitionKeyValue)) {
+    if (
+      !isValidPrimitive(
+        partitionKey.type === 'number'
+          ? { type: 'number', state: { big: true } }
+          : { type: partitionKey.type, state: {} },
+        partitionKeyValue
+      )
+    ) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid partition key: ${partitionKey.name}`,
         path: partitionKey.name,
@@ -64,7 +71,14 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     }
 
     const sortKeyValue = keyInput[sortKey.name]
-    if (!isValidPrimitive({ ...sortKey, big: true }, sortKeyValue)) {
+    if (
+      !isValidPrimitive(
+        sortKey.type === 'number'
+          ? { type: 'number', state: { big: true } }
+          : { type: sortKey.type, state: {} },
+        sortKeyValue
+      )
+    ) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,
         path: sortKey.name,
