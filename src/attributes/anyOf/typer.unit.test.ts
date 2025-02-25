@@ -3,7 +3,6 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import { $elements } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
@@ -108,9 +107,9 @@ describe('anyOf', () => {
     assertType
     expect(anyOfAttr.type).toBe('anyOf')
 
-    const assertElements: A.Equals<(typeof anyOfAttr)[$elements], [typeof str]> = 1
+    const assertElements: A.Equals<(typeof anyOfAttr)['elements'], [typeof str]> = 1
     assertElements
-    expect(anyOfAttr[$elements]).toStrictEqual([str])
+    expect(anyOfAttr.elements).toStrictEqual([str])
 
     const assertState: A.Equals<(typeof anyOfAttr)['state'], {}> = 1
     assertState
@@ -308,7 +307,7 @@ describe('anyOf', () => {
     const deepAnyOff = anyOf(str)
     const anyOfAttr = anyOf(deepAnyOff)
 
-    const assertAnyOf: A.Equals<(typeof anyOfAttr)[$elements], [typeof deepAnyOff]> = 1
+    const assertAnyOf: A.Equals<(typeof anyOfAttr)['elements'], [typeof deepAnyOff]> = 1
     assertAnyOf
   })
 })
