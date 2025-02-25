@@ -9,7 +9,15 @@ jobs:
     strategy:
       matrix:
         node: [16, 18, 20]
-        typescript: ['~4.9.5', '~5.0.4', '~5.1.6', '~5.2.2', '~5.3.3', '~5.4.2', 'latest']
+        typescript: [
+            # '~4.9.5', Removing 4.9.5 because of "const" enum generic
+            '~5.0.4',
+            '~5.1.6',
+            '~5.2.2',
+            '~5.3.3',
+            '~5.4.2',
+            'latest'
+          ]
     name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
       - name: ♻️ Checkout

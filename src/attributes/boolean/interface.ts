@@ -9,10 +9,12 @@ import type {
   If,
   NarrowObject,
   Overwrite,
-  ValueOrGetter
+  ValueOrGetter,
+  Writable
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
+import { writable } from '~/utils/writable.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
@@ -106,15 +108,11 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends ResolveBooleanAttribute<
+    const NEXT_ENUM extends readonly ResolveBooleanAttribute<
       FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
     >[]
-  >(
-    ...nextEnum: NEXT_ENUM
-  ): /**
-   * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $BooleanAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
-    return new $BooleanAttribute(overwrite(this[$state], { enum: nextEnum }))
+  >(...nextEnum: NEXT_ENUM): $BooleanAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
+    return new $BooleanAttribute(overwrite(this[$state], { enum: writable(nextEnum) }))
   }
 
   /**
@@ -136,10 +134,10 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     return ifThenElse(
       this[$state].key as STATE['key'],
       new $BooleanAttribute(
-        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+        overwrite(this[$state], { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new $BooleanAttribute(
-        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+        overwrite(this[$state], { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
