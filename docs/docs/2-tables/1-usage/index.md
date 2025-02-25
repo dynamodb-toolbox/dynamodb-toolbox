@@ -201,7 +201,7 @@ Secondary indexes are represented as key-value pairs, keys being the index names
 
 - The `type` of the secondary index (`"local"` or `"global"`)
 - For global secondary indexes, the `partitionKey` of the index (similar to the main [`partitionKey`](#partitionkey))
-- The `sortKey` of the index (similar to the main [`sortKey`](#sortkey))
+- If present, the `sortKey` of the index (similar to the main [`sortKey`](#sortkey))
 
 :::note[Examples]
 
@@ -258,7 +258,7 @@ const MyTable = new Table({
 
 :::warning
 
-When whitelisted, the projected attributes of a secondary index MUST include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
+When whitelisted, the projected attributes of a secondary index should include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
 
 :::
 

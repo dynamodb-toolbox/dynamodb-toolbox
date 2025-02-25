@@ -96,28 +96,35 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `attributes` | `Path<Entity>[]` |    -    | To specify a list of attributes to retrieve (improves performances but does not reduce costs).<br/><br/>See the [`PathParser`](../19-parse-paths/index.md#paths) action for more details on how to write attribute paths. |
 | `tableName`  |     `string`     |    -    | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                 |
 
+### Examples
+
 :::note[Examples]
 
 <Tabs>
+<TabItem value="basic" label="Basic">
+
+```ts
+const transac = PokemonEntity.build(GetTransaction).key({
+  pokemonId: 'pikachu1'
+})
+```
+
+</TabItem>
 <TabItem value="attributes" label="Attributes">
 
 ```ts
-const transaction = PokemonEntity.build(GetTransaction)
+const transac = PokemonEntity.build(GetTransaction)
   .key({ pokemonId: 'pikachu1' })
-  .options({
-    attributes: ['type', 'level']
-  })
+  .options({ attributes: ['type', 'level'] })
 ```
 
 </TabItem>
 <TabItem value="multitenant" label="Multitenant">
 
 ```ts
-const transaction = PokemonEntity.build(GetTransaction)
+const transac = PokemonEntity.build(GetTransaction)
   .key({ pokemonId: 'pikachu1' })
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
 ```
 
 </TabItem>
@@ -184,9 +191,28 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 | `capacity`       | `CapacityOption` | `"NONE"` | Determines the level of detail about provisioned or on-demand throughput consumption that is returned in the response.<br/><br/>Possible values are `"NONE"`, `"TOTAL"` and `"INDEXES"`. |
 | `documentClient` | `DocumentClient` |    -     | By default, the `documentClient` attached to the `Table` of the first `GetTransaction` entity is used to execute the operation.<br/><br/>Use this option to override this behavior.      |
 
+### Examples
+
 :::note[Examples]
 
 <Tabs>
+<TabItem value="basic" label="Basic">
+
+```ts
+const pikachuTransac =
+  PokemonEntity.build(GetTransaction).key(...)
+
+const ashTransac =
+  TrainerEntity.build(GetTransaction).key(...)
+
+const { Responses } = await execute(
+  pikachuTransac,
+  ashTransac,
+  ...otherTransacs
+)
+```
+
+</TabItem>
 <TabItem value="capacity" label="Capacity">
 
 ```ts

@@ -105,32 +105,39 @@ Available options:
 | <code>returnValuesOn<wbr/>ConditionFalse</code> | `ReturnValuesOption` | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`. |
 | `tableName`                                     |       `string`       |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).   |
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
+<TabItem value="basic" label="Basic">
+
+```ts
+const transac = PokemonEntity.build(ConditionCheck).key({
+  pokemonId: 'pikachu1'
+})
+```
+
+</TabItem>
 <TabItem value="return-values" label="Return Values">
 
 ```ts
-const transaction = PokemonEntity.build(ConditionCheck)
+const transac = PokemonEntity.build(ConditionCheck)
   .key(...)
   // 👇 Makes sure level is above 50
   .condition({ attr: 'level', gte: 50 })
-  .options({
-    // 👇 Includes the Item in the error if not so
-    returnValuesOnConditionFalse: 'ALL_OLD'
-  })
+  // 👇 Includes the Item in the error if not so
+  .options({ returnValuesOnConditionFalse: 'ALL_OLD' })
 ```
 
 </TabItem>
 <TabItem value="multitenant" label="Multitenant">
 
 ```ts
-const transaction = PokemonEntity.build(ConditionCheck)
+const transac = PokemonEntity.build(ConditionCheck)
   .key(...)
   .condition(...)
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
 ```
 
 </TabItem>

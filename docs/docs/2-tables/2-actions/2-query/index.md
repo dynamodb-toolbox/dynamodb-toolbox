@@ -247,25 +247,44 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </tbody>
 </table>
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="consistent" label="Strongly consistent">
+<TabItem value="basic" label="Basic">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .send()
+```
+
+</TabItem>
+<TabItem value="entity" label="Entity">
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
   .entities(PokemonEntity)
+  .query({ partition: 'ashKetchum' })
+  .send()
+```
+
+</TabItem>
+<TabItem value="consistent" label="Consistent">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .options({ consistent: true })
   .send()
 ```
 
 </TabItem>
-<TabItem value="indexed" label="On index">
+<TabItem value="indexed" label="Index">
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .entities(PokemonEntity)
   .query({
     index: 'byTrainerId',
     partition: 'ashKetchum',
@@ -279,7 +298,6 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .entities(PokemonEntity)
   .query({ partition: 'ashKetchum' })
   .options({ reverse: true })
   .send()
@@ -290,7 +308,6 @@ const { Items } = await PokeTable.build(QueryCommand)
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
-  .entities(PokemonEntity)
   .query({ partition: 'ashKetchum' })
   .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
@@ -426,21 +443,6 @@ const { Count } = await PokeTable.build(QueryCommand)
   .query({ partition: 'ashKetchum' })
   .options({ select: 'COUNT' })
   .send()
-```
-
-</TabItem>
-<TabItem value="aborted" label="Aborted">
-
-```ts
-const abortController = new AbortController()
-const abortSignal = abortController.signal
-
-const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
-  .send({ abortSignal })
-
-// 👇 Aborts the command
-abortController.abort()
 ```
 
 </TabItem>

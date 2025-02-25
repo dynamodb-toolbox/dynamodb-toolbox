@@ -228,16 +228,32 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </tbody>
 </table>
 
+## Examples
+
 :::note[Examples]
 
 <Tabs>
-<TabItem value="consistent" label="Strongly consistent">
+<TabItem value="basic" label="Basic">
+
+```ts
+const { Items } = await PokeTable.build(ScanCommand).send()
+```
+
+</TabItem>
+<TabItem value="single-entity" label="Entity">
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({
-    consistent: true
-  })
+  .entities(PokemonEntity)
+  .send()
+```
+
+</TabItem>
+<TabItem value="consistent" label="Consistent">
+
+```ts
+const { Items } = await PokeTable.build(ScanCommand)
+  .options({ consistent: true })
   .send()
 ```
 
@@ -246,9 +262,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({
-    index: 'my-index'
-  })
+  .options({ index: 'my-index' })
   .send()
 ```
 
@@ -257,9 +271,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
-  .options({
-    tableName: `tenant-${tenantId}-pokemons`
-  })
+  .options({ tableName: `tenant-${tenantId}-pokemons` })
   .send()
 ```
 
@@ -330,9 +342,7 @@ do {
 ```ts
 const { Items } = await PokeTable.build(ScanCommand)
   // Retrieve all items from the table (beware of RAM issues!)
-  .options({
-    maxPages: Infinity
-  })
+  .options({ maxPages: Infinity })
   .send()
 ```
 
@@ -396,9 +406,7 @@ const { Items } = await PokeTable.build(ScanCommand)
 
 ```ts
 const { Count } = await PokeTable.build(ScanCommand)
-  .options({
-    select: 'COUNT'
-  })
+  .options({ select: 'COUNT' })
   .send()
 ```
 
