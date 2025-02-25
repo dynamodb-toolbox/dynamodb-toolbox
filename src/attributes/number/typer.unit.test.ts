@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
@@ -15,9 +14,9 @@ describe('number', () => {
   test('returns default number', () => {
     const num = number()
 
-    const assertType: A.Equals<(typeof num)[$type], 'number'> = 1
+    const assertType: A.Equals<(typeof num)['type'], 'number'> = 1
     assertType
-    expect(num[$type]).toBe('number')
+    expect(num.type).toBe('number')
 
     const assertState: A.Equals<(typeof num)['state'], {}> = 1
     assertState

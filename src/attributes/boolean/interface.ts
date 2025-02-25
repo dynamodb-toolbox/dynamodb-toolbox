@@ -16,7 +16,6 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
@@ -27,7 +26,7 @@ import type { BooleanAttributeState } from './types.js'
 export interface $BooleanAttributeState<
   STATE extends BooleanAttributeState = BooleanAttributeState
 > {
-  [$type]: 'boolean'
+  type: 'boolean'
   state: STATE
 }
 
@@ -43,11 +42,11 @@ export interface $BooleanAttributeNestedState<
 export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttributeState>
   implements $BooleanAttributeNestedState<STATE>
 {
-  [$type]: 'boolean'
+  type: 'boolean'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'boolean'
+    this.type = 'boolean'
     this.state = state
   }
 

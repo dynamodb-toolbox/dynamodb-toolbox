@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { $attributes, $type } from '../constants/attributeOptions.js'
+import { $attributes } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
@@ -15,9 +15,9 @@ describe('map', () => {
   test('returns default map', () => {
     const mapped = map({ str })
 
-    const assertType: A.Equals<(typeof mapped)[$type], 'map'> = 1
+    const assertType: A.Equals<(typeof mapped)['type'], 'map'> = 1
     assertType
-    expect(mapped[$type]).toBe('map')
+    expect(mapped.type).toBe('map')
 
     const assertState: A.Equals<(typeof mapped)['state'], {}> = 1
     assertState
@@ -315,13 +315,13 @@ describe('map', () => {
     const assertMapAttribute: A.Contains<
       typeof mapped,
       {
-        [$type]: 'map'
+        type: 'map'
         [$attributes]: {
           deep: {
-            [$type]: 'map'
+            type: 'map'
             [$attributes]: {
               deepAgain: {
-                [$type]: 'map'
+                type: 'map'
                 [$attributes]: {
                   str: typeof str
                 }

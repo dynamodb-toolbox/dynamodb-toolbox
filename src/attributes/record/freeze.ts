@@ -1,7 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { $elements, $keys } from '../constants/attributeOptions.js'
-import { $type } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -57,7 +56,7 @@ export const freezeRecordAttribute: RecordAttributeFreezer = <
 ) => {
   validateAttributeProperties(state, path)
 
-  if (keys[$type] !== 'string') {
+  if (keys.type !== 'string') {
     throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
       message: `Invalid record keys${
         path !== undefined ? ` at path '${path}'` : ''

@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
@@ -13,9 +12,9 @@ describe('anyAttribute', () => {
   test('returns default any', () => {
     const anyInstance = any()
 
-    const assertType: A.Equals<(typeof anyInstance)[$type], 'any'> = 1
+    const assertType: A.Equals<(typeof anyInstance)['type'], 'any'> = 1
     assertType
-    expect(anyInstance[$type]).toBe('any')
+    expect(anyInstance.type).toBe('any')
 
     const assertState: A.Equals<(typeof anyInstance)['state'], {}> = 1
     assertState
