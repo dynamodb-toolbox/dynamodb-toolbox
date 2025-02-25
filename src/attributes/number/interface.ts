@@ -9,10 +9,12 @@ import type {
   If,
   NarrowObject,
   Overwrite,
-  ValueOrGetter
+  ValueOrGetter,
+  Writable
 } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
+import { writable } from '~/utils/writable.js'
 
 import { $state, $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
@@ -104,15 +106,11 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends ResolveNumberAttribute<
+    const NEXT_ENUM extends readonly ResolveNumberAttribute<
       FreezeNumberAttribute<$NumberAttributeState<STATE>>
     >[]
-  >(
-    ...nextEnum: NEXT_ENUM
-  ): /**
-   * @debt type "Overwrite widens NEXT_ENUM type to its type constraint for some reason"
-   */ $NumberAttribute<Overwrite<STATE, { enum: NEXT_ENUM }>> {
-    return new $NumberAttribute(overwrite(this[$state], { enum: nextEnum }))
+  >(...nextEnum: NEXT_ENUM): $NumberAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
+    return new $NumberAttribute(overwrite(this[$state], { enum: writable(nextEnum) }))
   }
 
   /**
@@ -134,10 +132,10 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     return ifThenElse(
       this[$state].key as STATE['key'],
       new $NumberAttribute(
-        overwrite(this[$state], { enum: [constant] as const, keyDefault: constant as unknown })
+        overwrite(this[$state], { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new $NumberAttribute(
-        overwrite(this[$state], { enum: [constant] as const, putDefault: constant as unknown })
+        overwrite(this[$state], { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
