@@ -15,6 +15,7 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { validateAttributeProperties } from '../shared/validate.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
 import { freezeAnyAttribute } from './freeze.js'
@@ -28,6 +29,8 @@ export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttribu
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
   extends $AnyAttributeState<STATE> {
+  path?: string
+  check: (path?: string) => void
   freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
 }
 
@@ -38,6 +41,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   implements $AnyAttributeNestedState<STATE>
 {
   type: 'any'
+  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -312,6 +316,23 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
 
   freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>, true> {
     return freezeAnyAttribute(this.state, path)
+  }
+
+  get checked(): boolean {
+    return Object.isFrozen(this.state)
+  }
+
+  check(path?: string): void {
+    if (this.checked) {
+      return
+    }
+
+    validateAttributeProperties(this.state, path)
+
+    Object.freeze(this.state)
+    if (path !== undefined) {
+      this.path = path
+    }
   }
 }
 
