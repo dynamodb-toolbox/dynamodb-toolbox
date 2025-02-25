@@ -1,15 +1,13 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $state } from '../constants/attributeOptions.js'
 import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
-import type { MapAttribute } from './interface.js'
+import type { $MapAttributeState, MapAttribute } from './interface.js'
 import { MapAttribute_ } from './interface.js'
-import type { $MapAttributeState } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
 export type FreezeMapAttribute<
@@ -17,7 +15,7 @@ export type FreezeMapAttribute<
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? MapAttribute_<
-      $MAP_ATTRIBUTE[$state],
+      $MAP_ATTRIBUTE['state'],
       {
         [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
           $MAP_ATTRIBUTE[$attributes][KEY],
@@ -26,7 +24,7 @@ export type FreezeMapAttribute<
       }
     >
   : MapAttribute<
-      $MAP_ATTRIBUTE[$state],
+      $MAP_ATTRIBUTE['state'],
       {
         [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
           $MAP_ATTRIBUTE[$attributes][KEY],
@@ -79,7 +77,7 @@ export const freezeMapAttribute: MapAttributeFreezer = <
       savedAs: attributeSavedAs = attributeName,
       key: attributeKey,
       required: attributeRequired = 'atLeastOnce'
-    } = attribute[$state]
+    } = attribute.state
     if (attributesSavedAs.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
         message: `Invalid map attributes${

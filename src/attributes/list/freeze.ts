@@ -1,22 +1,20 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $state } from '../constants/attributeOptions.js'
 import type { $elements } from '../constants/attributeOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { ListAttribute } from './interface.js'
+import type { $ListAttributeState, ListAttribute } from './interface.js'
 import { ListAttribute_ } from './interface.js'
-import type { $ListAttributeState } from './interface.js'
 import type { $ListAttributeElements } from './types.js'
 
 export type FreezeListAttribute<
   $LIST_ATTRIBUTE extends $ListAttributeState,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
-  ? ListAttribute_<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
-  : ListAttribute<$LIST_ATTRIBUTE[$state], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
+  ? ListAttribute_<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
+  : ListAttribute<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE[$elements], false>>
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,
@@ -45,7 +43,7 @@ export const freezeListAttribute: ListAttributeFreezer = <
 ) => {
   validateAttributeProperties(state, path)
 
-  const { required, hidden, savedAs } = elements[$state]
+  const { required, hidden, savedAs } = elements.state
 
   if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
     throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {

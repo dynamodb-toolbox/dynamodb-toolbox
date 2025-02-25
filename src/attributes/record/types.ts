@@ -1,4 +1,3 @@
-import type { $state } from '../constants/attributeOptions.js'
 import type { AtLeastOnce } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { $StringAttributeNestedState, StringAttribute } from '../string/index.js'
@@ -18,11 +17,11 @@ export interface RecordAttributeElementState extends SharedAttributeState {
 }
 
 export type $RecordAttributeKeys = $StringAttributeNestedState & {
-  [$state]: RecordAttributeElementState
+  state: RecordAttributeElementState
 }
 
 export type $RecordAttributeElements = $AttributeNestedState & {
-  [$state]: RecordAttributeElementState
+  state: RecordAttributeElementState
 }
 
 // TODO: Re-introduce constraint?
