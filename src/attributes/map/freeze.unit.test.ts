@@ -2,7 +2,6 @@ import type { MockedFunction } from 'vitest'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $attributes } from '../constants/index.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import { string } from '../string/index.js'
 import { map } from './typer.js'
@@ -36,18 +35,14 @@ describe('map properties freeze', () => {
   })
 
   test('applies freezeAttribute on attributes', () => {
-    mapInstance[$attributes][string1Name].freeze = vi.fn(
-      mapInstance[$attributes][string1Name].freeze
-    )
-    mapInstance[$attributes][string2Name].freeze = vi.fn(
-      mapInstance[$attributes][string2Name].freeze
-    )
+    mapInstance.attributes[string1Name].freeze = vi.fn(mapInstance.attributes[string1Name].freeze)
+    mapInstance.attributes[string2Name].freeze = vi.fn(mapInstance.attributes[string2Name].freeze)
     mapInstance.freeze(pathMock)
 
-    expect(mapInstance[$attributes][string1Name].freeze).toHaveBeenCalledWith(
+    expect(mapInstance.attributes[string1Name].freeze).toHaveBeenCalledWith(
       [pathMock, string1Name].join('.')
     )
-    expect(mapInstance[$attributes][string2Name].freeze).toHaveBeenCalledWith(
+    expect(mapInstance.attributes[string2Name].freeze).toHaveBeenCalledWith(
       [pathMock, string2Name].join('.')
     )
   })
