@@ -16,7 +16,6 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
@@ -25,7 +24,7 @@ import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.
 import type { StringAttributeState } from './types.js'
 
 export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
-  [$type]: 'string'
+  type: 'string'
   state: STATE
 }
 
@@ -41,11 +40,11 @@ export interface $StringAttributeNestedState<
 export class $StringAttribute<STATE extends StringAttributeState = StringAttributeState>
   implements $StringAttributeNestedState<STATE>
 {
-  [$type]: 'string'
+  type: 'string'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'string'
+    this.type = 'string'
     this.state = state
   }
 

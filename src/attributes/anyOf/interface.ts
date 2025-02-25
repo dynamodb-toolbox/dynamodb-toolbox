@@ -13,7 +13,7 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $elements, $type } from '../constants/attributeOptions.js'
+import { $elements } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Attribute } from '../types/index.js'
@@ -26,7 +26,7 @@ export interface $AnyOfAttributeState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
-  [$type]: 'anyOf'
+  type: 'anyOf'
   state: STATE
   [$elements]: $ELEMENTS
 }
@@ -46,12 +46,12 @@ export class $AnyOfAttribute<
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
-  [$type]: 'anyOf'
+  type: 'anyOf'
   state: STATE;
   [$elements]: $ELEMENTS
 
   constructor(state: STATE, elements: $ELEMENTS) {
-    this[$type] = 'anyOf'
+    this.type = 'anyOf'
     this.state = state
     this[$elements] = elements
   }

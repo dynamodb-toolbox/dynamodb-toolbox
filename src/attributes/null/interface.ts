@@ -16,7 +16,6 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import { $type } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
@@ -25,7 +24,7 @@ import type { ResolvedNullAttribute } from './resolve.js'
 import type { NullAttributeState } from './types.js'
 
 export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
-  [$type]: 'null'
+  type: 'null'
   state: STATE
 }
 
@@ -40,11 +39,11 @@ export interface $NullAttributeNestedState<STATE extends NullAttributeState = Nu
 export class $NullAttribute<STATE extends NullAttributeState = NullAttributeState>
   implements $NullAttributeNestedState<STATE>
 {
-  [$type]: 'null'
+  type: 'null'
   state: STATE
 
   constructor(state: STATE) {
-    this[$type] = 'null'
+    this.type = 'null'
     this.state = state
   }
 
