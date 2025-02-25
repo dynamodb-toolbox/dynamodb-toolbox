@@ -1,6 +1,6 @@
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 
-export interface NullAttributeStateConstraint extends SharedAttributeStateConstraint {
+export interface NullAttributeState extends SharedAttributeState {
   enum?: null[]
   transform?: unknown
 }

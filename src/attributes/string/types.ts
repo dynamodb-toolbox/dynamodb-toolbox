@@ -1,6 +1,6 @@
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 
-export interface StringAttributeStateConstraint extends SharedAttributeStateConstraint {
+export interface StringAttributeState extends SharedAttributeState {
   enum?: string[]
   transform?: unknown
 }

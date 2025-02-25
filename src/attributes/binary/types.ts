@@ -1,6 +1,6 @@
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 
-export interface BinaryAttributeStateConstraint extends SharedAttributeStateConstraint {
+export interface BinaryAttributeState extends SharedAttributeState {
   enum?: Uint8Array[]
   transform?: unknown
 }

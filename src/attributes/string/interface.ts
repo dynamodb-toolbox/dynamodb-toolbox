@@ -20,17 +20,15 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
 import { freezeStringAttribute } from './freeze.js'
 import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
-import type { StringAttributeStateConstraint } from './types.js'
+import type { StringAttributeState } from './types.js'
 
-export interface $StringAttributeState<
-  STATE extends StringAttributeStateConstraint = StringAttributeStateConstraint
-> {
+export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
   [$type]: 'string'
   [$state]: STATE
 }
 
 export interface $StringAttributeNestedState<
-  STATE extends StringAttributeStateConstraint = StringAttributeStateConstraint
+  STATE extends StringAttributeState = StringAttributeState
 > extends $StringAttributeState<STATE> {
   freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>, true>
 }
@@ -38,9 +36,8 @@ export interface $StringAttributeNestedState<
 /**
  * String attribute (warm)
  */
-export class $StringAttribute<
-  STATE extends StringAttributeStateConstraint = StringAttributeStateConstraint
-> implements $StringAttributeNestedState<STATE>
+export class $StringAttribute<STATE extends StringAttributeState = StringAttributeState>
+  implements $StringAttributeNestedState<STATE>
 {
   [$type]: 'string';
   [$state]: STATE
@@ -366,9 +363,7 @@ export class $StringAttribute<
   }
 }
 
-export class StringAttribute<
-  STATE extends StringAttributeStateConstraint = StringAttributeStateConstraint
-> {
+export class StringAttribute<STATE extends StringAttributeState = StringAttributeState> {
   type: 'string'
   path?: string
   state: STATE
@@ -381,16 +376,16 @@ export class StringAttribute<
 }
 
 export class StringAttribute_<
-  STATE extends StringAttributeStateConstraint = StringAttributeStateConstraint
+  STATE extends StringAttributeState = StringAttributeState
 > extends StringAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<StringAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<StringAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): StringAttribute_<ConstrainedOverwrite<StringAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): StringAttribute_<ConstrainedOverwrite<StringAttributeState, STATE, NEXT_STATE>> {
     return new StringAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<StringAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<StringAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

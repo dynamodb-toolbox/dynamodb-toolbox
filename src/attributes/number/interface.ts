@@ -20,17 +20,15 @@ import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
 import { freezeNumberAttribute } from './freeze.js'
 import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
-import type { NumberAttributeStateConstraint } from './types.js'
+import type { NumberAttributeState } from './types.js'
 
-export interface $NumberAttributeState<
-  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
-> {
+export interface $NumberAttributeState<STATE extends NumberAttributeState = NumberAttributeState> {
   [$type]: 'number'
   [$state]: STATE
 }
 
 export interface $NumberAttributeNestedState<
-  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
+  STATE extends NumberAttributeState = NumberAttributeState
 > extends $NumberAttributeState<STATE> {
   freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
 }
@@ -38,9 +36,8 @@ export interface $NumberAttributeNestedState<
 /**
  * Number attribute (warm)
  */
-export class $NumberAttribute<
-  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
-> implements $NumberAttributeNestedState<STATE>
+export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttributeState>
+  implements $NumberAttributeNestedState<STATE>
 {
   [$type]: 'number';
   [$state]: STATE
@@ -379,9 +376,7 @@ export class $NumberAttribute<
   }
 }
 
-export class NumberAttribute<
-  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
-> {
+export class NumberAttribute<STATE extends NumberAttributeState = NumberAttributeState> {
   type: 'number'
   path?: string
   state: STATE
@@ -394,16 +389,16 @@ export class NumberAttribute<
 }
 
 export class NumberAttribute_<
-  STATE extends NumberAttributeStateConstraint = NumberAttributeStateConstraint
+  STATE extends NumberAttributeState = NumberAttributeState
 > extends NumberAttribute<STATE> {
-  clone<NEXT_STATE extends Partial<NumberAttributeStateConstraint> = {}>(
+  clone<NEXT_STATE extends Partial<NumberAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NumberAttribute_<ConstrainedOverwrite<NumberAttributeStateConstraint, STATE, NEXT_STATE>> {
+  ): NumberAttribute_<ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>> {
     return new NumberAttribute_({
       ...(this.path !== undefined ? { path: this.path } : {}),
       ...this.state,
       ...nextState
-    } as ConstrainedOverwrite<NumberAttributeStateConstraint, STATE, NEXT_STATE>)
+    } as ConstrainedOverwrite<NumberAttributeState, STATE, NEXT_STATE>)
   }
 
   build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(

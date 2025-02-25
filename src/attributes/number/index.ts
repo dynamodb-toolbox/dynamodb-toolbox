@@ -3,4 +3,4 @@ export type { $NumberAttributeState, $NumberAttributeNestedState } from './inter
 export { $NumberAttribute, NumberAttribute, NumberAttribute_ } from './interface.js'
 export type { FreezeNumberAttribute } from './freeze.js'
 export type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
-export type { NumberAttributeStateConstraint } from './types.js'
+export type { NumberAttributeState } from './types.js'

@@ -1,9 +1,9 @@
 import type { $state } from '../constants/attributeOptions.js'
 import type { AtLeastOnce } from '../constants/index.js'
-import type { SharedAttributeStateConstraint } from '../shared/interface.js'
+import type { SharedAttributeState } from '../shared/interface.js'
 import type { $AttributeNestedState, Attribute } from '../types/index.js'
 
-interface AnyOfAttributeElementStateConstraints extends SharedAttributeStateConstraint {
+interface AnyOfAttributeElementState extends SharedAttributeState {
   required?: AtLeastOnce
   hidden?: false
   savedAs?: undefined
@@ -16,9 +16,9 @@ interface AnyOfAttributeElementStateConstraints extends SharedAttributeStateCons
 }
 
 export type $AnyOfAttributeElements = $AttributeNestedState & {
-  [$state]: AnyOfAttributeElementStateConstraints
+  [$state]: AnyOfAttributeElementState
 }
 
 export type AnyOfAttributeElements = Attribute & {
-  state: AnyOfAttributeElementStateConstraints
+  state: AnyOfAttributeElementState
 }
