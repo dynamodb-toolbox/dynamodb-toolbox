@@ -1,6 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { $attributes } from '../constants/attributeOptions.js'
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
@@ -17,8 +16,8 @@ export type FreezeMapAttribute<
   ? MapAttribute_<
       $MAP_ATTRIBUTE['state'],
       {
-        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY],
+        [KEY in keyof $MAP_ATTRIBUTE['attributes']]: FreezeAttribute<
+          $MAP_ATTRIBUTE['attributes'][KEY],
           false
         >
       }
@@ -26,8 +25,8 @@ export type FreezeMapAttribute<
   : MapAttribute<
       $MAP_ATTRIBUTE['state'],
       {
-        [KEY in keyof $MAP_ATTRIBUTE[$attributes]]: FreezeAttribute<
-          $MAP_ATTRIBUTE[$attributes][KEY],
+        [KEY in keyof $MAP_ATTRIBUTE['attributes']]: FreezeAttribute<
+          $MAP_ATTRIBUTE['attributes'][KEY],
           false
         >
       }

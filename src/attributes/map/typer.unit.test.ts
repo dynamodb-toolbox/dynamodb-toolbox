@@ -1,6 +1,5 @@
 import type { A } from 'ts-toolbelt'
 
-import { $attributes } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
@@ -23,9 +22,9 @@ describe('map', () => {
     assertState
     expect(mapped.state).toStrictEqual({})
 
-    const assertAttr: A.Equals<(typeof mapped)[$attributes], { str: typeof str }> = 1
+    const assertAttr: A.Equals<(typeof mapped)['attributes'], { str: typeof str }> = 1
     assertAttr
-    expect(mapped[$attributes]).toStrictEqual({ str })
+    expect(mapped.attributes).toStrictEqual({ str })
 
     const assertExtends: A.Extends<typeof mapped, $MapAttributeState> = 1
     assertExtends
@@ -316,13 +315,13 @@ describe('map', () => {
       typeof mapped,
       {
         type: 'map'
-        [$attributes]: {
+        attributes: {
           deep: {
             type: 'map'
-            [$attributes]: {
+            attributes: {
               deepAgain: {
                 type: 'map'
-                [$attributes]: {
+                attributes: {
                   str: typeof str
                 }
                 state: {

@@ -13,7 +13,6 @@ import type {
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import { $attributes } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import type { Validator } from '../types/validator.js'
@@ -27,7 +26,7 @@ export interface $MapAttributeState<
 > {
   type: 'map'
   state: STATE
-  [$attributes]: $ATTRIBUTES
+  attributes: $ATTRIBUTES
 }
 
 export interface $MapAttributeNestedState<
@@ -46,13 +45,13 @@ export class $MapAttribute<
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
   type: 'map'
-  state: STATE;
-  [$attributes]: $ATTRIBUTES
+  state: STATE
+  attributes: $ATTRIBUTES
 
   constructor(state: STATE, attributes: $ATTRIBUTES) {
     this.type = 'map'
     this.state = state
-    this[$attributes] = attributes
+    this.attributes = attributes
   }
 
   /**
@@ -66,7 +65,7 @@ export class $MapAttribute<
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): $MapAttribute<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, $ATTRIBUTES> {
-    return new $MapAttribute(overwrite(this.state, { required: nextRequired }), this[$attributes])
+    return new $MapAttribute(overwrite(this.state, { required: nextRequired }), this.attributes)
   }
 
   /**
@@ -82,7 +81,7 @@ export class $MapAttribute<
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
   ): $MapAttribute<Overwrite<STATE, { hidden: NEXT_HIDDEN }>, $ATTRIBUTES> {
-    return new $MapAttribute(overwrite(this.state, { hidden: nextHidden }), this[$attributes])
+    return new $MapAttribute(overwrite(this.state, { hidden: nextHidden }), this.attributes)
   }
 
   /**
@@ -93,7 +92,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { key: NEXT_KEY; required: Always }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { key: nextKey, required: 'always' }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -103,7 +102,7 @@ export class $MapAttribute<
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
   ): $MapAttribute<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, $ATTRIBUTES> {
-    return new $MapAttribute(overwrite(this.state, { savedAs: nextSavedAs }), this[$attributes])
+    return new $MapAttribute(overwrite(this.state, { savedAs: nextSavedAs }), this.attributes)
   }
 
   /**
@@ -118,7 +117,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { keyDefault: nextKeyDefault as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -134,7 +133,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { putDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -150,7 +149,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -176,11 +175,11 @@ export class $MapAttribute<
       this.state.key as STATE['key'],
       new $MapAttribute(
         overwrite(this.state, { keyDefault: nextDefault as unknown }),
-        this[$attributes]
+        this.attributes
       ),
       new $MapAttribute(
         overwrite(this.state, { putDefault: nextDefault as unknown }),
-        this[$attributes]
+        this.attributes
       )
     )
   }
@@ -197,7 +196,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { keyLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -213,7 +212,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { putLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -229,7 +228,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { updateLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -253,8 +252,8 @@ export class $MapAttribute<
   > {
     return ifThenElse(
       this.state.key as STATE['key'],
-      new $MapAttribute(overwrite(this.state, { keyLink: nextLink as unknown }), this[$attributes]),
-      new $MapAttribute(overwrite(this.state, { putLink: nextLink as unknown }), this[$attributes])
+      new $MapAttribute(overwrite(this.state, { keyLink: nextLink as unknown }), this.attributes),
+      new $MapAttribute(overwrite(this.state, { putLink: nextLink as unknown }), this.attributes)
     )
   }
 
@@ -274,7 +273,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { keyValidator: nextKeyValidator as Validator }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -291,7 +290,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { putValidator: Validator }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { putValidator: nextPutValidator as Validator }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -308,7 +307,7 @@ export class $MapAttribute<
   ): $MapAttribute<Overwrite<STATE, { updateValidator: Validator }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { updateValidator: nextUpdateValidator as Validator }),
-      this[$attributes]
+      this.attributes
     )
   }
 
@@ -338,17 +337,17 @@ export class $MapAttribute<
       this.state.key as STATE['key'],
       new $MapAttribute(
         overwrite(this.state, { keyValidator: nextValidator as Validator }),
-        this[$attributes]
+        this.attributes
       ),
       new $MapAttribute(
         overwrite(this.state, { putValidator: nextValidator as Validator }),
-        this[$attributes]
+        this.attributes
       )
     )
   }
 
   freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true> {
-    return freezeMapAttribute(this.state, this[$attributes], path)
+    return freezeMapAttribute(this.state, this.attributes, path)
   }
 }
 

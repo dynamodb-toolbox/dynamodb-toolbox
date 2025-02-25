@@ -2,7 +2,6 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { $keys } from '../constants/attributeOptions.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
@@ -222,9 +221,9 @@ describe('record', () => {
     assertState
     expect(rec.state).toStrictEqual({})
 
-    const assertKeys: A.Equals<(typeof rec)[$keys], typeof fooBar> = 1
+    const assertKeys: A.Equals<(typeof rec)['keys'], typeof fooBar> = 1
     assertKeys
-    expect(rec[$keys]).toBe(fooBar)
+    expect(rec.keys).toBe(fooBar)
 
     const assertElements: A.Equals<(typeof rec)['elements'], typeof str> = 1
     assertElements
@@ -581,10 +580,10 @@ describe('record', () => {
       typeof rec,
       {
         type: 'record'
-        [$keys]: typeof fooBar
+        keys: typeof fooBar
         elements: {
           type: 'record'
-          [$keys]: typeof fooBar
+          keys: typeof fooBar
           elements: typeof str
           state: {}
         }
