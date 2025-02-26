@@ -11,7 +11,6 @@ export class AnyOfSchema<
   ELEMENTS extends AttrSchema[] = AttrSchema[]
 > {
   type: 'anyOf'
-  path?: string
   state: STATE
   elements: ELEMENTS
 
@@ -96,8 +95,5 @@ export class AnyOfSchema<
 
     Object.freeze(this.state)
     Object.freeze(this.elements)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

@@ -10,7 +10,6 @@ export class MapSchema<
   ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
 > {
   type: 'map'
-  path?: string
   attributes: ATTRIBUTES
   state: STATE
 
@@ -95,8 +94,5 @@ export class MapSchema<
     Object.freeze(this.attributes)
     Object.freeze(this.keyAttributeNames)
     Object.freeze(this.requiredAttributeNames)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

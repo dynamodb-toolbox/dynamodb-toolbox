@@ -3,7 +3,6 @@ import type { BinaryAttributeState } from './types.js'
 
 export class BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeState> {
   type: 'binary'
-  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -23,8 +22,5 @@ export class BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeSt
     checkPrimitiveAttribute(this, path)
 
     Object.freeze(this.state)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

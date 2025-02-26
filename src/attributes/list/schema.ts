@@ -10,7 +10,6 @@ export class ListSchema<
   ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'list'
-  path?: string
   elements: ELEMENTS
   state: STATE
 
@@ -73,8 +72,5 @@ export class ListSchema<
 
     Object.freeze(this.state)
     Object.freeze(this.elements)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }
