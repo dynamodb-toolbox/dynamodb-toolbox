@@ -5,7 +5,6 @@ import { prefix } from '~/transformers/prefix.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeStringAttribute } from './freeze.js'
 import type { StringSchema } from './interface.js'
 import { string } from './typer.js'
 
@@ -134,13 +133,6 @@ describe('string', () => {
       'bar'
     )
 
-    const invalidCall = () => invalidStr.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
     const superInvalidCall = () => invalidStr.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -161,13 +153,6 @@ describe('string', () => {
       // TOIMPROVE: add type constraints here
       putDefault: 42
     })
-
-    const invalidCall = () => invalidStr.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
 
     const superInvalidCall = () => invalidStr.check(path)
 
@@ -227,13 +212,6 @@ describe('string', () => {
       // @ts-expect-error
       .putDefault(42)
 
-    const invalidCall = () => invalidStr.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCall = () => invalidStr.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -290,16 +268,6 @@ describe('string', () => {
       'baz'
     )
 
-    const invalidCall = () => invalidStr.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({
-        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
-        path
-      })
-    )
-
     const superInvalidCall = () => invalidStr.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -337,13 +305,6 @@ describe('string', () => {
     const invalidStr = string().const(
       // @ts-expect-error
       42
-    )
-
-    const invalidCall = () => invalidStr.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
     const superInvalidCall = () => invalidStr.check(path)
@@ -465,8 +426,7 @@ describe('string', () => {
 
     const prevString = string()
     prevString.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [string, FreezeStringAttribute<typeof prevString>]> =
-        1
+      const assertArgs: A.Equals<typeof args, [string, typeof prevString]> = 1
       assertArgs
 
       return true
@@ -474,10 +434,7 @@ describe('string', () => {
 
     const prevOptString = string().optional()
     prevOptString.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [string, FreezeStringAttribute<typeof prevOptString>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [string, typeof prevOptString]> = 1
       assertArgs
 
       return true

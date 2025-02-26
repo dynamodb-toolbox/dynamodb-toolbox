@@ -10,7 +10,7 @@ const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
 const mapAttr = map({
   foo: string().savedAs('_f'),
   bar: string().hidden()
-}).freeze('path')
+})
 
 describe('mapAttrFormatter', () => {
   beforeEach(() => {

@@ -2,20 +2,20 @@ import type { MockedFunction } from 'vitest'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { validateAttributeProperties } from '../shared/validate.js'
+import { checkAttributeProperties } from '../shared/check.js'
 import { string } from '../string/index.js'
 import { map } from './typer.js'
 
-vi.mock('../shared/validate', () => ({
-  ...vi.importActual<Record<string, unknown>>('../shared/validate'),
-  validateAttributeProperties: vi.fn()
+vi.mock('../shared/check', () => ({
+  ...vi.importActual<Record<string, unknown>>('../shared/check'),
+  checkAttributeProperties: vi.fn()
 }))
 
-const validateAttributePropertiesMock = validateAttributeProperties as MockedFunction<
-  typeof validateAttributeProperties
+const validateAttributePropertiesMock = checkAttributeProperties as MockedFunction<
+  typeof checkAttributeProperties
 >
 
-describe('map properties freeze', () => {
+describe('map properties check', () => {
   const pathMock = 'some.path'
 
   const stringAttr = string()
@@ -27,28 +27,28 @@ describe('map properties freeze', () => {
     validateAttributePropertiesMock.mockClear()
   })
 
-  test('applies validateAttributeProperties on mapInstance', () => {
-    mapInstance.freeze(pathMock)
+  test('applies checkAttributeProperties on mapInstance', () => {
+    mapInstance.check(pathMock)
 
     // Once + 2 attributes
     expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(3)
   })
 
   test('applies freezeAttribute on attributes', () => {
-    mapInstance.attributes[string1Name].freeze = vi.fn(mapInstance.attributes[string1Name].freeze)
-    mapInstance.attributes[string2Name].freeze = vi.fn(mapInstance.attributes[string2Name].freeze)
-    mapInstance.freeze(pathMock)
+    mapInstance.attributes[string1Name].check = vi.fn(mapInstance.attributes[string1Name].check)
+    mapInstance.attributes[string2Name].check = vi.fn(mapInstance.attributes[string2Name].check)
+    mapInstance.check(pathMock)
 
-    expect(mapInstance.attributes[string1Name].freeze).toHaveBeenCalledWith(
+    expect(mapInstance.attributes[string1Name].check).toHaveBeenCalledWith(
       [pathMock, string1Name].join('.')
     )
-    expect(mapInstance.attributes[string2Name].freeze).toHaveBeenCalledWith(
+    expect(mapInstance.attributes[string2Name].check).toHaveBeenCalledWith(
       [pathMock, string2Name].join('.')
     )
   })
 
   test('throws if map attribute has duplicate savedAs', () => {
-    const invalidCallA = () => map({ a: stringAttr, b: stringAttr.savedAs('a') }).freeze(pathMock)
+    const invalidCallA = () => map({ a: stringAttr, b: stringAttr.savedAs('a') }).check(pathMock)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -56,7 +56,7 @@ describe('map properties freeze', () => {
     )
 
     const invalidCallB = () =>
-      map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }).freeze(pathMock)
+      map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }).check(pathMock)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

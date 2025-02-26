@@ -7,7 +7,7 @@ import { listAttrParser } from './list.js'
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const listAttr = list(string()).freeze('path')
+const listAttr = list(string())
 
 describe('listAttrParser', () => {
   beforeEach(() => {
@@ -52,9 +52,7 @@ describe('listAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const listA = list(string())
-      .validate(input => input.includes('foo'))
-      .freeze()
+    const listA = list(string()).validate(input => input.includes('foo'))
 
     const { value: parsed } = listAttrParser(listA, ['foo', 'bar'], { fill: false }).next()
     expect(parsed).toStrictEqual(['foo', 'bar'])
@@ -70,9 +68,7 @@ describe('listAttrParser', () => {
       })
     )
 
-    const listB = list(string())
-      .validate(input => (input.includes('foo') ? true : 'Oh no...'))
-      .freeze()
+    const listB = list(string()).validate(input => (input.includes('foo') ? true : 'Oh no...'))
 
     const invalidCallB = () =>
       listAttrParser(listB, ['bar'], { fill: false, valuePath: ['root'] }).next()

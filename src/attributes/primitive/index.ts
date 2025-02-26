@@ -4,7 +4,6 @@ export type {
   PrimitiveSchema,
   PrimitiveAttribute,
   PrimitiveAttribute_,
-  FreezePrimitiveAttribute,
   ResolvePrimitiveSchema,
   ResolvedPrimitiveSchema
 } from './types.js'

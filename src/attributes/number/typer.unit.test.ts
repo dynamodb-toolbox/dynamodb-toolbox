@@ -4,7 +4,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeNumberAttribute } from './freeze.js'
 import type { NumberSchema } from './interface.js'
 import { number } from './typer.js'
 
@@ -132,13 +131,6 @@ describe('number', () => {
       42
     )
 
-    const invalidCallA = () => invalidNumA.freeze(path)
-
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
     const superInvalidCallA = () => invalidNumA.check(path)
 
     expect(superInvalidCallA).toThrow(DynamoDBToolboxError)
@@ -150,13 +142,6 @@ describe('number', () => {
       // @ts-expect-error
       BigInt('100000000'),
       42
-    )
-
-    const invalidCallB = () => invalidNumB.freeze(path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
     const superInvalidCallB = () => invalidNumB.check(path)
@@ -226,13 +211,6 @@ describe('number', () => {
       putDefault: 'foo'
     })
 
-    const invalidCall = () => invalidNum.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCall = () => invalidNum.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -269,13 +247,6 @@ describe('number', () => {
       // @ts-expect-error
       .putDefault('foo')
 
-    const invalidCallA = () => invalidNumA.freeze(path)
-
-    expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCallA = () => invalidNumA.check(path)
 
     expect(superInvalidCallA).toThrow(DynamoDBToolboxError)
@@ -290,13 +261,6 @@ describe('number', () => {
     const invalidNumB = number()
       // @ts-expect-error
       .putDefault(BigInt('1000000'))
-
-    const invalidCallB = () => invalidNumB.freeze(path)
-
-    expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
 
     const superInvalidCallB = () => invalidNumB.check(path)
 
@@ -361,16 +325,6 @@ describe('number', () => {
       44
     )
 
-    const invalidCall = () => invalidNum.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({
-        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
-        path
-      })
-    )
-
     const superInvalidCall = () => invalidNum.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -404,13 +358,6 @@ describe('number', () => {
     const invalidNum = number().const(
       // @ts-expect-error
       'foo'
-    )
-
-    const invalidCall = () => invalidNum.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
     const superInvalidCall = () => invalidNum.check(path)
@@ -530,7 +477,7 @@ describe('number', () => {
 
     const prevNum = number()
     prevNum.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [number, FreezeNumberAttribute<typeof prevNum>]> = 1
+      const assertArgs: A.Equals<typeof args, [number, typeof prevNum]> = 1
       assertArgs
 
       return true
@@ -538,8 +485,7 @@ describe('number', () => {
 
     const prevOptNum = number().optional()
     prevOptNum.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [number, FreezeNumberAttribute<typeof prevOptNum>]> =
-        1
+      const assertArgs: A.Equals<typeof args, [number, typeof prevOptNum]> = 1
       assertArgs
 
       return true

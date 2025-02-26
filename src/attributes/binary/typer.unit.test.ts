@@ -4,7 +4,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeBinaryAttribute } from './freeze.js'
 import type { BinarySchema } from './interface.js'
 import { binary } from './typer.js'
 
@@ -132,13 +131,6 @@ describe('binary', () => {
       new Uint8Array([1, 2, 3])
     )
 
-    const invalidCall = () => invalidBin.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
     const superInvalidCall = () => invalidBin.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -159,13 +151,6 @@ describe('binary', () => {
       // TOIMPROVE: add type constraints here
       putDefault: 42
     })
-
-    const invalidCall = () => invalidBin.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
 
     const superInvalidCall = () => invalidBin.check(path)
 
@@ -249,13 +234,6 @@ describe('binary', () => {
       // @ts-expect-error
       .putDefault(42)
 
-    const invalidCall = () => invalidBin.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCall = () => invalidBin.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -313,16 +291,6 @@ describe('binary', () => {
       .enum(new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4]))
       .default(new Uint8Array([3, 4, 5]))
 
-    const invalidCall = () => invalidBin.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({
-        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
-        path
-      })
-    )
-
     const superInvalidCall = () => invalidBin.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -366,13 +334,6 @@ describe('binary', () => {
     const invalidBin = binary().const(
       // @ts-expect-error
       42
-    )
-
-    const invalidCall = () => invalidBin.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
     const superInvalidCall = () => invalidBin.check(path)
@@ -496,8 +457,7 @@ describe('binary', () => {
 
     const prevBin = binary()
     prevBin.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [Uint8Array, FreezeBinaryAttribute<typeof prevBin>]> =
-        1
+      const assertArgs: A.Equals<typeof args, [Uint8Array, typeof prevBin]> = 1
       assertArgs
 
       return true
@@ -505,10 +465,7 @@ describe('binary', () => {
 
     const prevOptBin = binary().optional()
     prevOptBin.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [Uint8Array, FreezeBinaryAttribute<typeof prevOptBin>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [Uint8Array, typeof prevOptBin]> = 1
       assertArgs
 
       return true

@@ -7,7 +7,7 @@ import { setAttrFormatter } from './set.js'
 // @ts-ignore
 const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
 
-const setAttr = set(string()).freeze('path')
+const setAttr = set(string())
 
 describe('setAttrFormatter', () => {
   beforeEach(() => {

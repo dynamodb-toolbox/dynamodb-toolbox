@@ -1,6 +1,9 @@
+import type {
+  $AnyOfAttribute,
+  $AnyOfAttributeNestedState,
+  AnyOfElementSchema
+} from '~/attributes/anyOf/index.js'
 import { anyOf } from '~/attributes/anyOf/index.js'
-import type { $AnyOfAttribute, $AnyOfAttributeNestedState } from '~/attributes/anyOf/index.js'
-import type { $AnyOfAttributeElements } from '~/attributes/anyOf/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
@@ -17,7 +20,7 @@ export const fromJSONAnyOfAttr = ({
   /**
    * @debt types "fix those casts"
    */
-  let $attr = anyOf(...(elements.map(fromAttrDTO) as $AnyOfAttributeElements[])) as $AnyOfAttribute
+  let $attr = anyOf(...(elements.map(fromAttrDTO) as AnyOfElementSchema[])) as $AnyOfAttribute
 
   const {
     required,

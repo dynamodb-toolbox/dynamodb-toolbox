@@ -4,7 +4,6 @@ import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeAnyAttribute } from './freeze.js'
 import type { AnySchema } from './interface.js'
 import { any } from './typer.js'
 
@@ -332,7 +331,7 @@ describe('anyAttribute', () => {
 
     const prevAny = any().castAs<string>()
     prevAny.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [string, FreezeAnyAttribute<typeof prevAny>]> = 1
+      const assertArgs: A.Equals<typeof args, [string, typeof prevAny]> = 1
       assertArgs
 
       return true

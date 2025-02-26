@@ -31,6 +31,7 @@ const EntityA = new Entity({
   }),
   table: TestTable
 })
+
 const incompleteSavedItemA: Omit<SavedItem<typeof EntityA>, '_et'> = {
   _ct: '2021-09-01T00:00:00.000Z',
   _md: '2021-09-01T00:00:00.000Z',

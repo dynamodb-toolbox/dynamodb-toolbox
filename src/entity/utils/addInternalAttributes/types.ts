@@ -1,5 +1,4 @@
-import type { FreezeAttribute } from '~/attributes/freeze.js'
-import type { $AttributeNestedState, $StringAttributeNestedState } from '~/attributes/index.js'
+import type { AttrSchema, StringSchema } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
@@ -11,11 +10,11 @@ import type { IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 export type WithInternalAttribute<
   SCHEMA extends Schema,
   ATTRIBUTE_NAME extends string,
-  $ATTRIBUTE extends $AttributeNestedState
+  ATTRIBUTE_SCHEMA extends AttrSchema
 > = Schema<
   ComputeObject<{
     [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
-      ? FreezeAttribute<$ATTRIBUTE, true>
+      ? ATTRIBUTE_SCHEMA
       : KEY extends keyof SCHEMA['attributes']
         ? SCHEMA['attributes'][KEY]
         : never
@@ -26,7 +25,7 @@ export type $EntityAttribute<
   TABLE extends Table,
   ENTITY_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean
-> = $StringAttributeNestedState<{
+> = StringSchema<{
   hidden: ENTITY_ATTRIBUTE_HIDDEN
   savedAs: TABLE['entityAttributeSavedAs']
   enum: [ENTITY_NAME]
@@ -48,10 +47,7 @@ export type WithEntityAttribute<
       $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN>
     >
 
-export type $TimestampAttribute<
-  SAVED_AS extends string,
-  HIDDEN extends boolean
-> = $StringAttributeNestedState<{
+export type $TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean> = StringSchema<{
   hidden: HIDDEN
   savedAs: SAVED_AS
   putDefault: unknown

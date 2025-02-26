@@ -4,7 +4,6 @@ import type {
   BinaryAttribute,
   BinaryAttribute_,
   BinarySchema,
-  FreezeBinaryAttribute,
   ResolveBinarySchema,
   ResolvedBinarySchema
 } from '../binary/index.js'
@@ -14,14 +13,12 @@ import type {
   BooleanAttribute,
   BooleanAttribute_,
   BooleanSchema,
-  FreezeBooleanAttribute,
   ResolveBooleanSchema,
   ResolvedBooleanAttribute
 } from '../boolean/index.js'
 import type {
   $NullAttribute,
   $NullAttributeNestedState,
-  FreezeNullAttribute,
   NullAttribute,
   NullAttribute_,
   NullSchema,
@@ -30,7 +27,6 @@ import type {
 import type {
   $NumberAttribute,
   $NumberAttributeNestedState,
-  FreezeNumberAttribute,
   NumberAttribute,
   NumberAttribute_,
   NumberSchema,
@@ -40,7 +36,6 @@ import type {
 import type {
   $StringAttribute,
   $StringAttributeNestedState,
-  FreezeStringAttribute,
   ResolveStringSchema,
   ResolvedStringSchema,
   StringAttribute,
@@ -99,13 +94,3 @@ export type ResolvePrimitiveSchema<ATTRIBUTE extends PrimitiveSchema> =
         | (ATTRIBUTE extends NumberSchema ? ResolveNumberSchema<ATTRIBUTE> : never)
         | (ATTRIBUTE extends StringSchema ? ResolveStringSchema<ATTRIBUTE> : never)
         | (ATTRIBUTE extends BinarySchema ? ResolveBinarySchema<ATTRIBUTE> : never)
-
-export type FreezePrimitiveAttribute<
-  ATTRIBUTE extends PrimitiveSchema,
-  EXTENDED extends boolean = false
-> =
-  | (ATTRIBUTE extends NullSchema ? FreezeNullAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends BooleanSchema ? FreezeBooleanAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends NumberSchema ? FreezeNumberAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends StringSchema ? FreezeStringAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends BinarySchema ? FreezeBinaryAttribute<ATTRIBUTE, EXTENDED> : never)

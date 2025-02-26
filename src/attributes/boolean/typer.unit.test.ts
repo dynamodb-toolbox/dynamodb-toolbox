@@ -4,7 +4,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeBooleanAttribute } from './freeze.js'
 import type { BooleanSchema } from './interface.js'
 import { boolean } from './typer.js'
 
@@ -132,13 +131,6 @@ describe('boolean', () => {
       true
     )
 
-    const invalidCall = () => invalidBool.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
-    )
-
     const superInvalidCall = () => invalidBool.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -159,13 +151,6 @@ describe('boolean', () => {
       // TOIMPROVE: add type constraints here
       putDefault: 42
     })
-
-    const invalidCall = () => invalidBool.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
 
     const superInvalidCall = () => invalidBool.check(path)
 
@@ -233,13 +218,6 @@ describe('boolean', () => {
       // @ts-expect-error
       .putDefault('foo')
 
-    const invalidCall = () => invalidBool.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCall = () => invalidBool.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -296,16 +274,6 @@ describe('boolean', () => {
       false
     )
 
-    const invalidCall = () => invalidBool.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({
-        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
-        path
-      })
-    )
-
     const superInvalidCall = () => invalidBool.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -339,13 +307,6 @@ describe('boolean', () => {
     const invalidBool = boolean().const(
       // @ts-expect-error
       'foo'
-    )
-
-    const invalidCall = () => invalidBool.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
     )
 
     const superInvalidCall = () => invalidBool.check(path)
@@ -467,7 +428,7 @@ describe('boolean', () => {
 
     const prevNum = boolean()
     prevNum.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [boolean, FreezeBooleanAttribute<typeof prevNum>]> = 1
+      const assertArgs: A.Equals<typeof args, [boolean, typeof prevNum]> = 1
       assertArgs
 
       return true
@@ -475,10 +436,7 @@ describe('boolean', () => {
 
     const prevOptNum = boolean().optional()
     prevOptNum.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [boolean, FreezeBooleanAttribute<typeof prevOptNum>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [boolean, typeof prevOptNum]> = 1
       assertArgs
 
       return true

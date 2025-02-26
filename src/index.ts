@@ -31,16 +31,7 @@ export type {
   Paths
 } from './schema/index.js'
 export { Parser } from './schema/actions/parse/index.js'
-export type {
-  ParseValueOptions,
-  InferWriteValueOptions,
-  // deprecated
-  ParsedValueOptions,
-  ParsingOptions,
-  FromParsingOptions,
-  ParsedValue,
-  ParserInput
-} from './schema/actions/parse/index.js'
+export type { ParseValueOptions, InferWriteValueOptions } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
 export type { FormatValueOptions, InferReadValueOptions } from './schema/actions/format/index.js'
 export { PathParser } from './schema/actions/parsePaths/index.js'
@@ -187,16 +178,7 @@ export type { EntityPaths } from './entity/actions/parsePaths/index.js'
 export { EntityFormatter } from './entity/actions/format/index.js'
 export type { FormatItemOptions, InferReadItemOptions } from './entity/actions/format/index.js'
 export { EntityParser } from './entity/actions/parse/index.js'
-export type {
-  ParseItemOptions,
-  InferWriteItemOptions,
-  // deprecated
-  EntityParserInput,
-  KeyInput,
-  ParsedItem,
-  ParsedItemOptions,
-  ParsedItemDefaultOptions
-} from './entity/actions/parse/index.js'
+export type { ParseItemOptions, InferWriteItemOptions } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'
