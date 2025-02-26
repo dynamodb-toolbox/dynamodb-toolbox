@@ -12,7 +12,6 @@ export class RecordSchema<
   ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'record'
-  path?: string
   keys: KEYS
   elements: ELEMENTS
   state: STATE
@@ -156,8 +155,5 @@ export class RecordSchema<
     Object.freeze(this.state)
     Object.freeze(this.keys)
     Object.freeze(this.elements)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

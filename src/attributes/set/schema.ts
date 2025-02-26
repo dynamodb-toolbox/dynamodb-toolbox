@@ -10,7 +10,6 @@ export class SetSchema<
   ELEMENTS extends SetElementSchema = SetElementSchema
 > {
   type: 'set'
-  path?: string
   elements: ELEMENTS
   state: STATE
 
@@ -73,8 +72,5 @@ export class SetSchema<
 
     Object.freeze(this.state)
     Object.freeze(this.elements)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

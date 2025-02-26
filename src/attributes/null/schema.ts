@@ -3,7 +3,6 @@ import type { NullAttributeState } from './types.js'
 
 export class NullSchema<STATE extends NullAttributeState = NullAttributeState> {
   type: 'null'
-  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -23,8 +22,5 @@ export class NullSchema<STATE extends NullAttributeState = NullAttributeState> {
     checkPrimitiveAttribute(this, path)
 
     Object.freeze(this.state)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

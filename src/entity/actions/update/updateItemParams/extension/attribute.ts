@@ -1,5 +1,6 @@
 import type { AttrSchema, AttributeBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'
@@ -16,14 +17,15 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
-  const { transform = true } = options
+  const { transform = true, valuePath } = options
 
   if (isRemoval(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const { path, state } = attribute
+        const { state } = attribute
         const { required } = state
+        const path = formatValuePath(valuePath)
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {

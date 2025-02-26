@@ -3,7 +3,6 @@ import type { AnyAttributeState } from './types.js'
 
 export class AnySchema<STATE extends AnyAttributeState = AnyAttributeState> {
   type: 'any'
-  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -23,8 +22,5 @@ export class AnySchema<STATE extends AnyAttributeState = AnyAttributeState> {
     checkAttributeProperties(this.state, path)
 
     Object.freeze(this.state)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

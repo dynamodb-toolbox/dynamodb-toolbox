@@ -63,7 +63,8 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const nextOpts = { ...options, fill: nextFill } as OPTIONS
 
   const { isExtension, extensionParser, basicInput } = parseExtension(attribute, filledValue, {
-    transform
+    transform,
+    valuePath
   })
 
   if (isExtension) {

@@ -3,7 +3,6 @@ import type { NumberAttributeState } from './types.js'
 
 export class NumberSchema<STATE extends NumberAttributeState = NumberAttributeState> {
   type: 'number'
-  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -24,8 +23,5 @@ export class NumberSchema<STATE extends NumberAttributeState = NumberAttributeSt
     // TODO: Validate that big is a boolean
 
     Object.freeze(this.state)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }
