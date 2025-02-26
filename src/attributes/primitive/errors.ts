@@ -1,18 +1,18 @@
 import type { ErrorBlueprint } from '~/errors/blueprint.js'
 
-import type { BinaryAttribute } from '../binary/index.js'
-import type { BooleanAttribute } from '../boolean/index.js'
-import type { NullAttribute } from '../null/index.js'
-import type { NumberAttribute } from '../number/index.js'
-import type { StringAttribute } from '../string/index.js'
-import type { PrimitiveAttribute, ResolvedPrimitiveAttribute } from './types.js'
+import type { BinarySchema } from '../binary/index.js'
+import type { BooleanSchema } from '../boolean/index.js'
+import type { NullSchema } from '../null/index.js'
+import type { NumberSchema } from '../number/index.js'
+import type { StringSchema } from '../string/index.js'
+import type { PrimitiveSchema, ResolvedPrimitiveSchema } from './types.js'
 
 type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{
   code: 'schema.primitiveAttribute.invalidEnumValueType'
   hasPath: true
   payload: {
-    expectedType: PrimitiveAttribute['type']
-    enumValue: ResolvedPrimitiveAttribute
+    expectedType: PrimitiveSchema['type']
+    enumValue: ResolvedPrimitiveSchema
   }
 }>
 
@@ -20,7 +20,7 @@ type InvalidDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
   code: 'schema.primitiveAttribute.invalidDefaultValueType'
   hasPath: true
   payload: {
-    expectedType: PrimitiveAttribute['type']
+    expectedType: PrimitiveSchema['type']
     defaultValue: unknown
   }
 }>
@@ -30,13 +30,7 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: {
     enumValues: NonNullable<
-      (
-        | NullAttribute
-        | BooleanAttribute
-        | NumberAttribute
-        | StringAttribute
-        | BinaryAttribute
-      )['state']['enum']
+      (NullSchema | BooleanSchema | NumberSchema | StringSchema | BinarySchema)['state']['enum']
     >
     defaultValue: unknown
   }

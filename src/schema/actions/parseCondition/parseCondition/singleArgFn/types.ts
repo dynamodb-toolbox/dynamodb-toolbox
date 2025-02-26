@@ -1,7 +1,7 @@
-import type { AnyAttrCondition, NonLogicalCondition, SchemaCondition } from '../../condition.js'
+import type { AnySchemaCondition, NonLogicalCondition, SchemaCondition } from '../../condition.js'
 
 export type SingleArgFnCondition = NonLogicalCondition &
-  Extract<AnyAttrCondition<string, string>, { exists: unknown }>
+  Extract<AnySchemaCondition<string, string>, { exists: unknown }>
 
 type SingleArgFnConditionAsserter = (
   condition: SchemaCondition

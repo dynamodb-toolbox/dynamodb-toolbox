@@ -7,7 +7,7 @@ import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
 import type { MapAttribute, MapSchema } from './interface.js'
 import { MapAttribute_ } from './interface.js'
-import type { $MapAttributeAttributeStates } from './types.js'
+import type { MapAttributesSchemas } from './types.js'
 
 export type FreezeMapAttribute<
   $MAP_ATTRIBUTE extends MapSchema,
@@ -34,7 +34,7 @@ export type FreezeMapAttribute<
 
 type MapAttributeFreezer = <
   STATE extends SharedAttributeState,
-  $ATTRIBUTES extends $MapAttributeAttributeStates
+  $ATTRIBUTES extends MapAttributesSchemas
 >(
   state: STATE,
   attribute: $ATTRIBUTES,
@@ -51,7 +51,7 @@ type MapAttributeFreezer = <
  */
 export const freezeMapAttribute: MapAttributeFreezer = <
   STATE extends SharedAttributeState,
-  $ATTRIBUTES extends $MapAttributeAttributeStates
+  $ATTRIBUTES extends MapAttributesSchemas
 >(
   state: STATE,
   attributes: $ATTRIBUTES,

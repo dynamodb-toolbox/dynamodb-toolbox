@@ -5,7 +5,7 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { $AttributeState } from '../types/index.js'
+import type { AttrSchema } from '../types/index.js'
 import type { AnyOfAttribute, AnyOfSchema } from './interface.js'
 import { AnyOfAttribute_ } from './interface.js'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
@@ -17,7 +17,7 @@ type FreezeElements<
   ? AnyOfAttributeElements[]
   : $ELEMENTS extends [infer $ELEMENTS_HEAD, ...infer $ELEMENTS_TAIL]
     ? $ELEMENTS_TAIL extends $AnyOfAttributeElements[]
-      ? $ELEMENTS_HEAD extends $AttributeState
+      ? $ELEMENTS_HEAD extends AttrSchema
         ? FreezeAttribute<$ELEMENTS_HEAD, false> extends AnyOfAttributeElements
           ? FreezeElements<$ELEMENTS_TAIL, [...RESULTS, FreezeAttribute<$ELEMENTS_HEAD, false>]>
           : FreezeElements<$ELEMENTS_TAIL, RESULTS>

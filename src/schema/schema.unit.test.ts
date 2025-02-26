@@ -31,12 +31,12 @@ describe('schema', () => {
     const assertAttr: A.Equals<
       (typeof sch)['attributes'],
       {
-        reqStr: FreezeAttribute<typeof reqStr>
-        hidBool: FreezeAttribute<typeof hidBool>
-        defNum: FreezeAttribute<typeof defNum>
-        savedAsBin: FreezeAttribute<typeof savedAsBin>
-        keyStr: FreezeAttribute<typeof keyStr>
-        enumStr: FreezeAttribute<typeof enumStr>
+        reqStr: typeof reqStr
+        hidBool: typeof hidBool
+        defNum: typeof defNum
+        savedAsBin: typeof savedAsBin
+        keyStr: typeof keyStr
+        enumStr: typeof enumStr
       }
     > = 1
     assertAttr
@@ -75,9 +75,9 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof sch)['attributes'],
       {
-        optSet: FreezeAttribute<typeof optSet>
-        reqSet: FreezeAttribute<typeof reqSet>
-        hiddenSet: FreezeAttribute<typeof hiddenSet>
+        optSet: typeof optSet
+        reqSet: typeof reqSet
+        hiddenSet: typeof hiddenSet
       }
     > = 1
     assertSch
@@ -108,10 +108,10 @@ describe('schema', () => {
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        optList: FreezeAttribute<typeof optList>
-        deepList: FreezeAttribute<typeof deepList>
-        reqList: FreezeAttribute<typeof reqList>
-        hiddenList: FreezeAttribute<typeof hiddenList>
+        optList: typeof optList
+        deepList: typeof deepList
+        reqList: typeof reqList
+        hiddenList: typeof hiddenList
       }
     > = 1
     assertSch
@@ -140,10 +140,10 @@ describe('schema', () => {
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        flatMap: FreezeAttribute<typeof flatMap>
-        deepMap: FreezeAttribute<typeof deepMap>
-        reqMap: FreezeAttribute<typeof reqMap>
-        hiddenMap: FreezeAttribute<typeof hiddenMap>
+        flatMap: typeof flatMap
+        deepMap: typeof deepMap
+        reqMap: typeof reqMap
+        hiddenMap: typeof hiddenMap
       }
     > = 1
     assertSch

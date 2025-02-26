@@ -18,26 +18,25 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/in
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { Attribute } from '../types/index.js'
+import type { AttrSchema, Attribute } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeListAttribute } from './freeze.js'
 import { freezeListAttribute } from './freeze.js'
-import type { $ListAttributeElements } from './types.js'
 
 export interface ListSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+  ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'list'
+  path?: string
   state: STATE
-  elements: $ELEMENTS
+  elements: ELEMENTS
 }
 
 export interface $ListAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+  $ELEMENTS extends AttrSchema = AttrSchema
 > extends ListSchema<STATE, $ELEMENTS> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeListAttribute<ListSchema<STATE, $ELEMENTS>, true>
 }
@@ -47,7 +46,7 @@ export interface $ListAttributeNestedState<
  */
 export class $ListAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
+  $ELEMENTS extends AttrSchema = AttrSchema
 > implements $ListAttributeNestedState<STATE, $ELEMENTS>
 {
   type: 'list'
@@ -404,6 +403,7 @@ export class $ListAttribute<
       })
     }
 
+    // @ts-ignore TOFIX
     this.elements.check(`${path ?? ''}[n]`)
 
     Object.freeze(this.state)

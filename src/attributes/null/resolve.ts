@@ -1,1 +1,1 @@
-export type ResolvedNullAttribute = null
+export type ResolvedNullSchema = null

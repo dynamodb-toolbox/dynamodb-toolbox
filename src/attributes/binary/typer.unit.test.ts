@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
-import type { BinaryAttribute, BinarySchema } from './interface.js'
+import type { BinarySchema } from './interface.js'
 import { binary } from './typer.js'
 
 const path = 'some.path'
@@ -24,10 +24,6 @@ describe('binary', () => {
 
     const assertExtends: A.Extends<typeof bin, BinarySchema> = 1
     assertExtends
-
-    const frozenBin = bin.freeze(path)
-    const assertFrozenExtends: A.Extends<typeof frozenBin, BinaryAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required binary (option)', () => {

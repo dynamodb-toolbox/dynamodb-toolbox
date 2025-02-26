@@ -5,7 +5,7 @@ import { jsonStringify } from '~/transformers/jsonStringify.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
-import type { AnyAttribute, AnySchema } from './interface.js'
+import type { AnySchema } from './interface.js'
 import { any } from './typer.js'
 
 describe('anyAttribute', () => {
@@ -22,10 +22,6 @@ describe('anyAttribute', () => {
 
     const assertExtends: A.Extends<typeof anyInstance, AnySchema> = 1
     assertExtends
-
-    const frozenAny = anyInstance.freeze('some.path')
-    const assertFrozenExtends: A.Extends<typeof frozenAny, AnyAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required any (option)', () => {

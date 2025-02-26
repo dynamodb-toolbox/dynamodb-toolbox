@@ -1,4 +1,4 @@
-import type { RecordAttribute } from '~/attributes/index.js'
+import type { RecordSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -10,10 +10,10 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: RecordAttribute,
+  attribute: RecordSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<RecordAttribute, OPTIONS>, ParserReturn<RecordAttribute, OPTIONS>> {
+): Generator<ParserYield<RecordSchema, OPTIONS>, ParserReturn<RecordSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
@@ -62,10 +62,10 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<RecordAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<RecordSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<RecordAttribute, OPTIONS>
+      yield linkedValue as ParserYield<RecordSchema, OPTIONS>
     }
   }
 

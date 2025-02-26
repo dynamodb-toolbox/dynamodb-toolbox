@@ -5,10 +5,10 @@ import type { FreezeMapAttribute, MapSchema } from './map/index.js'
 import type { FreezePrimitiveAttribute, PrimitiveSchema } from './primitive/index.js'
 import type { FreezeRecordAttribute, RecordSchema } from './record/index.js'
 import type { FreezeSetAttribute, SetSchema } from './set/index.js'
-import type { $AttributeState } from './types/index.js'
+import type { AttrSchema } from './types/index.js'
 
 export type FreezeAttribute<
-  $ATTRIBUTE extends $AttributeState,
+  $ATTRIBUTE extends AttrSchema,
   EXTENDED extends boolean = false
 > = $ATTRIBUTE extends AnySchema
   ? FreezeAnyAttribute<$ATTRIBUTE, EXTENDED>

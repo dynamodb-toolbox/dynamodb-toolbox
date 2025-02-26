@@ -9,7 +9,7 @@ import type { SetSchema } from '../set/index.js'
 /**
  * Any warm attribute state
  */
-export type $AttributeState =
+export type AttrSchema =
   | AnySchema
   | PrimitiveSchema
   | SetSchema
@@ -21,6 +21,6 @@ export type $AttributeState =
 /**
  * Any warm schema attribute states
  */
-export interface $SchemaAttributeStates {
-  [key: string]: $AttributeState
+export interface SchemaAttributes {
+  [key: string]: AttrSchema
 }

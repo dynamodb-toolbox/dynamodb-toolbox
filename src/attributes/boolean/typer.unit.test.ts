@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
-import type { BooleanAttribute, BooleanSchema } from './interface.js'
+import type { BooleanSchema } from './interface.js'
 import { boolean } from './typer.js'
 
 const path = 'some.path'
@@ -24,10 +24,6 @@ describe('boolean', () => {
 
     const assertExtends: A.Extends<typeof bool, BooleanSchema> = 1
     assertExtends
-
-    const frozenBool = bool.freeze(path)
-    const assertFrozenExtends: A.Extends<typeof frozenBool, BooleanAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required boolean (option)', () => {

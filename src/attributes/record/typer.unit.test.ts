@@ -7,7 +7,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeRecordAttribute } from './freeze.js'
-import type { RecordAttribute, RecordSchema } from './interface.js'
+import type { RecordSchema } from './interface.js'
 import { record } from './typer.js'
 
 describe('record', () => {
@@ -322,10 +322,6 @@ describe('record', () => {
 
     const assertExtends: A.Extends<typeof rec, RecordSchema> = 1
     assertExtends
-
-    const frozenRecord = rec.freeze(path)
-    const assertFrozen: A.Extends<typeof frozenRecord, RecordAttribute> = 1
-    assertFrozen
   })
 
   test('returns required record (option)', () => {

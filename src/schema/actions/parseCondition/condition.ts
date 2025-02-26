@@ -1,33 +1,33 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
-  NullAttribute,
-  NumberAttribute,
-  PrimitiveAttribute,
-  RecordAttribute,
-  ResolveBinaryAttribute,
-  ResolveBooleanAttribute,
-  ResolveNumberAttribute,
-  ResolvePrimitiveAttribute,
-  ResolveStringAttribute,
-  ResolvedBinaryAttribute,
-  ResolvedNumberAttribute,
-  ResolvedStringAttribute,
-  SetAttribute,
-  StringAttribute
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
+  NullSchema,
+  NumberSchema,
+  PrimitiveSchema,
+  RecordSchema,
+  ResolveBinarySchema,
+  ResolveBooleanSchema,
+  ResolveNumberSchema,
+  ResolvePrimitiveSchema,
+  ResolveStringSchema,
+  ResolvedBinarySchema,
+  ResolvedNumberSchema,
+  ResolvedStringSchema,
+  SetSchema,
+  StringSchema
 } from '~/attributes/index.js'
 import type { AppendKey, Paths, Schema, StringToEscape } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
-export type AnyAttrCondition<
+export type AnySchemaCondition<
   ATTRIBUTE_PATH extends string,
   COMPARED_ATTRIBUTE_PATH extends string
-> = AttrCondition<ATTRIBUTE_PATH, Exclude<Attribute, AnyAttribute>, COMPARED_ATTRIBUTE_PATH>
+> = AttrCondition<ATTRIBUTE_PATH, Exclude<AttrSchema, AnySchema>, COMPARED_ATTRIBUTE_PATH>
 
 export type ConditionType = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
 
@@ -37,45 +37,45 @@ export type Attr<ATTRIBUTE_PATH extends string> = { attr: ATTRIBUTE_PATH; size?:
 
 export type AttrCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends Attribute,
+  ATTRIBUTE extends AttrSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
-  | (ATTRIBUTE extends AnyAttribute
-      ? AnyAttrCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends AnySchema
+      ? AnySchemaCondition<`${ATTRIBUTE_PATH}${string}`, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends NullAttribute ? NullAttrCondition<ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends BooleanAttribute
-      ? BooleanAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends NullSchema ? NullSchemaCondition<ATTRIBUTE_PATH> : never)
+  | (ATTRIBUTE extends BooleanSchema
+      ? BooleanSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends NumberAttribute
-      ? NumberAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
-      : never)
-  // Size ok
-  | (ATTRIBUTE extends StringAttribute
-      ? StringAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends NumberSchema
+      ? NumberSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   // Size ok
-  | (ATTRIBUTE extends BinaryAttribute
-      ? BinaryAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends StringSchema
+      ? StringSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   // Size ok
-  | (ATTRIBUTE extends SetAttribute
-      ? SetAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends BinarySchema
+      ? BinarySchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   // Size ok
-  | (ATTRIBUTE extends ListAttribute
-      ? ListAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends SetSchema
+      ? SetSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   // Size ok
-  | (ATTRIBUTE extends MapAttribute
-      ? MapAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends ListSchema
+      ? ListSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
   // Size ok
-  | (ATTRIBUTE extends RecordAttribute
-      ? RecordAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  | (ATTRIBUTE extends MapSchema
+      ? MapSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
-  | (ATTRIBUTE extends AnyOfAttribute
-      ? AnyOfAttrCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+  // Size ok
+  | (ATTRIBUTE extends RecordSchema
+      ? RecordSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
+      : never)
+  | (ATTRIBUTE extends AnyOfSchema
+      ? AnyOfSchemaCondition<ATTRIBUTE_PATH, ATTRIBUTE, COMPARED_ATTRIBUTE_PATH>
       : never)
 
 export type ExistsCondition<ATTRIBUTE_PATH extends string> = {
@@ -100,7 +100,7 @@ export type EqCondition<
 
 type SizeEqCondition<ATTRIBUTE_PATH extends string, COMPARED_ATTRIBUTE_PATH extends string> = {
   size: ATTRIBUTE_PATH
-  eq: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  eq: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type NotEqCondition<
@@ -115,7 +115,7 @@ export type NotEqCondition<
 
 type SizeNotEqCondition<ATTRIBUTE_PATH extends string, COMPARED_ATTRIBUTE_PATH extends string> = {
   size: ATTRIBUTE_PATH
-  ne: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  ne: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type InCondition<
@@ -130,7 +130,7 @@ export type InCondition<
 
 type SizeInCondition<ATTRIBUTE_PATH extends string, COMPARED_ATTRIBUTE_PATH extends string> = {
   size: ATTRIBUTE_PATH
-  in: (ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH })[]
+  in: (ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH })[]
 }
 
 export type ValueCondition<
@@ -162,7 +162,7 @@ type SizeLessThanCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = {
   size: ATTRIBUTE_PATH
-  lt: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  lt: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type LessThanOrEqCondition<
@@ -180,7 +180,7 @@ type SizeLessThanOrEqCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = {
   size: ATTRIBUTE_PATH
-  lte: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  lte: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type GreaterThanCondition<
@@ -198,7 +198,7 @@ type SizeGreaterThanCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = {
   size: ATTRIBUTE_PATH
-  gt: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  gt: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type GreaterThanOrEqCondition<
@@ -216,7 +216,7 @@ type SizeGreaterThanOrEqCondition<
   COMPARED_ATTRIBUTE_PATH extends string
 > = {
   size: ATTRIBUTE_PATH
-  gte: ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+  gte: ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
 }
 
 export type BetweenCondition<
@@ -235,8 +235,8 @@ export type BetweenCondition<
 type SizeBetweenCondition<ATTRIBUTE_PATH extends string, COMPARED_ATTRIBUTE_PATH extends string> = {
   size: ATTRIBUTE_PATH
   between: [
-    ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH },
-    ResolvedNumberAttribute | { attr: COMPARED_ATTRIBUTE_PATH }
+    ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH },
+    ResolvedNumberSchema | { attr: COMPARED_ATTRIBUTE_PATH }
   ]
 }
 
@@ -262,28 +262,28 @@ export type SizeCondition<ATTRIBUTE_PATH extends string, COMPARED_ATTRIBUTE_PATH
   | SizeValueCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
   | SizeRangeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type NullAttrCondition<ATTRIBUTE_PATH extends string> =
+export type NullSchemaCondition<ATTRIBUTE_PATH extends string> =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
 
-export type BooleanAttrCondition<
+export type BooleanSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends BooleanAttribute,
+  ATTRIBUTE extends BooleanSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
-  | ValueCondition<ATTRIBUTE_PATH, ResolveBooleanAttribute<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
+  | ValueCondition<ATTRIBUTE_PATH, ResolveBooleanSchema<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
 
-export type NumberAttrCondition<
+export type NumberSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends NumberAttribute,
+  ATTRIBUTE extends NumberSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
-  | ValueCondition<ATTRIBUTE_PATH, ResolveNumberAttribute<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
-  | RangeCondition<ATTRIBUTE_PATH, ResolvedNumberAttribute, COMPARED_ATTRIBUTE_PATH>
+  | ValueCondition<ATTRIBUTE_PATH, ResolveNumberSchema<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
+  | RangeCondition<ATTRIBUTE_PATH, ResolvedNumberSchema, COMPARED_ATTRIBUTE_PATH>
 
 export type ContainsCondition<
   ATTRIBUTE_PATH extends string,
@@ -305,63 +305,63 @@ export type BeginsWithCondition<
   transform?: boolean
 }
 
-export type StringAttrCondition<
+export type StringSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends StringAttribute,
+  ATTRIBUTE extends StringSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
-  | ValueCondition<ATTRIBUTE_PATH, ResolveStringAttribute<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
-  | RangeCondition<ATTRIBUTE_PATH, ResolvedStringAttribute, COMPARED_ATTRIBUTE_PATH>
-  | BeginsWithCondition<ATTRIBUTE_PATH, ResolvedStringAttribute, COMPARED_ATTRIBUTE_PATH>
-  | ContainsCondition<ATTRIBUTE_PATH, ResolvedStringAttribute, COMPARED_ATTRIBUTE_PATH>
+  | ValueCondition<ATTRIBUTE_PATH, ResolveStringSchema<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
+  | RangeCondition<ATTRIBUTE_PATH, ResolvedStringSchema, COMPARED_ATTRIBUTE_PATH>
+  | BeginsWithCondition<ATTRIBUTE_PATH, ResolvedStringSchema, COMPARED_ATTRIBUTE_PATH>
+  | ContainsCondition<ATTRIBUTE_PATH, ResolvedStringSchema, COMPARED_ATTRIBUTE_PATH>
   // "If the attribute is of type `String`, `size` returns the length of the string"
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type BinaryAttrCondition<
+export type BinarySchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends BinaryAttribute,
+  ATTRIBUTE extends BinarySchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
-  | ValueCondition<ATTRIBUTE_PATH, ResolveBinaryAttribute<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
-  | RangeCondition<ATTRIBUTE_PATH, ResolvedBinaryAttribute, COMPARED_ATTRIBUTE_PATH>
+  | ValueCondition<ATTRIBUTE_PATH, ResolveBinarySchema<ATTRIBUTE>, COMPARED_ATTRIBUTE_PATH>
+  | RangeCondition<ATTRIBUTE_PATH, ResolvedBinarySchema, COMPARED_ATTRIBUTE_PATH>
   // "If the attribute is of type `Binary`, `size` returns the number of bytes in the attribute value"
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type SetAttrCondition<
+export type SetSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends SetAttribute,
+  ATTRIBUTE extends SetSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
   | ContainsCondition<
       ATTRIBUTE_PATH,
-      ResolvePrimitiveAttribute<ATTRIBUTE['elements']>,
+      ResolvePrimitiveSchema<ATTRIBUTE['elements']>,
       COMPARED_ATTRIBUTE_PATH
     >
   // "If the attribute is a `Set` data type, `size` returns the number of elements in the set"
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type ListAttrCondition<
+export type ListSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends ListAttribute,
+  ATTRIBUTE extends ListSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
-  | (ATTRIBUTE['elements'] extends PrimitiveAttribute
+  | (ATTRIBUTE['elements'] extends PrimitiveSchema
       ? ContainsCondition<
           ATTRIBUTE_PATH,
-          ResolvePrimitiveAttribute<ATTRIBUTE['elements']>,
+          ResolvePrimitiveSchema<ATTRIBUTE['elements']>,
           COMPARED_ATTRIBUTE_PATH
         >
       : never)
   // Stops recursion on general case
-  | (ListAttribute extends ATTRIBUTE
+  | (ListSchema extends ATTRIBUTE
       ? never
       : AttrCondition<
           `${ATTRIBUTE_PATH}[${number}]`,
@@ -371,15 +371,15 @@ export type ListAttrCondition<
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type MapAttrCondition<
+export type MapSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends MapAttribute,
+  ATTRIBUTE extends MapSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
   // Stops recursion on general case
-  | (MapAttribute extends ATTRIBUTE
+  | (MapSchema extends ATTRIBUTE
       ? never
       : {
           [KEY in keyof ATTRIBUTE['attributes'] & string]: AttrCondition<
@@ -391,42 +391,42 @@ export type MapAttrCondition<
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type RecordAttrCondition<
+export type RecordSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends RecordAttribute,
+  ATTRIBUTE extends RecordSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
   // Stops recursion on general case
-  | (RecordAttribute extends ATTRIBUTE
+  | (RecordSchema extends ATTRIBUTE
       ? never
       : AttrCondition<
-          AppendKey<ATTRIBUTE_PATH, ResolveStringAttribute<ATTRIBUTE['keys']>>,
+          AppendKey<ATTRIBUTE_PATH, ResolveStringSchema<ATTRIBUTE['keys']>>,
           ATTRIBUTE['elements'],
           COMPARED_ATTRIBUTE_PATH
         >)
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTRIBUTE_PATH, COMPARED_ATTRIBUTE_PATH>
 
-export type AnyOfAttrCondition<
+export type AnyOfSchemaCondition<
   ATTRIBUTE_PATH extends string,
-  ATTRIBUTE extends AnyOfAttribute,
+  ATTRIBUTE extends AnyOfSchema,
   COMPARED_ATTRIBUTE_PATH extends string
 > =
   | ExistsCondition<ATTRIBUTE_PATH>
   | TypeCondition<ATTRIBUTE_PATH>
   // Stops recursion on general case
-  | (AnyOfAttribute extends ATTRIBUTE
+  | (AnyOfSchema extends ATTRIBUTE
       ? never
       : ATTRIBUTE['elements'][number] extends infer ELEMENT
-        ? ELEMENT extends Attribute
+        ? ELEMENT extends AttrSchema
           ? AttrCondition<ATTRIBUTE_PATH, ELEMENT, COMPARED_ATTRIBUTE_PATH>
           : never
         : never)
 
 export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
-  ? AnyAttrCondition<string, string>
+  ? AnySchemaCondition<string, string>
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
     ? ATTRIBUTE_PATH extends string
       ? AttrCondition<

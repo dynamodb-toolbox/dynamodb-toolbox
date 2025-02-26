@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
-import type { NumberAttribute, NumberSchema } from './interface.js'
+import type { NumberSchema } from './interface.js'
 import { number } from './typer.js'
 
 const path = 'some.path'
@@ -24,10 +24,6 @@ describe('number', () => {
 
     const assertExtends: A.Extends<typeof num, NumberSchema> = 1
     assertExtends
-
-    const frozenNum = num.freeze(path)
-    const assertFrozenExtends: A.Extends<typeof frozenNum, NumberAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required number (option)', () => {

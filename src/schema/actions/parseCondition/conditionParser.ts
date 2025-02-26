@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
@@ -16,7 +16,7 @@ import type { SchemaCondition } from './condition.js'
 import { parseCondition } from './parseCondition/index.js'
 import { toCommandOptions } from './toCommandOptions.js'
 
-export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
+export class ConditionParser<SCHEMA extends Schema | AttrSchema = Schema | AttrSchema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
@@ -48,12 +48,12 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
     return this
   }
 
-  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Attribute {
+  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): AttrSchema {
     return appendAttributePath(this, attributePath, options)
   }
 
   appendAttributeValue(
-    attribute: Attribute,
+    attribute: AttrSchema,
     expressionAttributeValue: unknown,
     options: AppendAttributeValueOptions = {}
   ): this {
@@ -62,7 +62,7 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
   }
 
   appendAttributeValueOrPath(
-    attribute: Attribute,
+    attribute: AttrSchema,
     expressionAttributeValueOrPath: unknown,
     options: AppendAttributePathOptions & AppendAttributeValueOptions = {}
   ): this {
@@ -88,7 +88,7 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
     return toCommandOptions(this)
   }
 
-  clone(schema?: Schema | Attribute): ConditionParser {
+  clone(schema?: Schema | AttrSchema): ConditionParser {
     const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

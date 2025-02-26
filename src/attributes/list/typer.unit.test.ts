@@ -6,7 +6,7 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeListAttribute } from './freeze.js'
-import type { ListAttribute, ListSchema } from './interface.js'
+import type { ListSchema } from './interface.js'
 import { list } from './typer.js'
 
 describe('list', () => {
@@ -135,10 +135,6 @@ describe('list', () => {
 
     const assertExtends: A.Extends<typeof lst, ListSchema> = 1
     assertExtends
-
-    const frozenList = lst.freeze(path)
-    const assertFrozen: A.Extends<typeof frozenList, ListAttribute> = 1
-    assertFrozen
   })
 
   test('returns required list (option)', () => {

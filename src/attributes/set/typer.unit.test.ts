@@ -6,7 +6,7 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeSetAttribute } from './freeze.js'
-import type { SetAttribute, SetSchema } from './interface.js'
+import type { SetSchema } from './interface.js'
 import { set } from './typer.js'
 
 describe('set', () => {
@@ -135,10 +135,6 @@ describe('set', () => {
 
     const assertExtends: A.Extends<typeof st, SetSchema> = 1
     assertExtends
-
-    const frozenSet = st.freeze(path)
-    const assertFrozenExtends: A.Extends<typeof frozenSet, SetAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required set (option)', () => {

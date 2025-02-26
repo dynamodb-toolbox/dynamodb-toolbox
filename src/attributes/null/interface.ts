@@ -21,17 +21,17 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
 import { freezeNullAttribute } from './freeze.js'
-import type { ResolvedNullAttribute } from './resolve.js'
+import type { ResolvedNullSchema } from './resolve.js'
 import type { NullAttributeState } from './types.js'
 
 export interface NullSchema<STATE extends NullAttributeState = NullAttributeState> {
   type: 'null'
+  path?: string
   state: STATE
 }
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
   extends NullSchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeNullAttribute<NullSchema<STATE>, true>
 }
@@ -107,7 +107,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @example
    * string().enum('foo', 'bar')
    */
-  enum<const NEXT_ENUM extends readonly ResolvedNullAttribute[]>(
+  enum<const NEXT_ENUM extends readonly ResolvedNullSchema[]>(
     ...nextEnum: NEXT_ENUM
   ): $NullAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $NullAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
@@ -120,7 +120,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolvedNullAttribute>(
+  const<CONSTANT extends ResolvedNullSchema>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -141,7 +141,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   /**
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
    */
-  transform<TRANSFORMER extends Transformer<ResolvedNullAttribute>>(
+  transform<TRANSFORMER extends Transformer<ResolvedNullSchema>>(
     transform: TRANSFORMER
   ): $NullAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $NullAttribute(overwrite(this.state, { transform }))

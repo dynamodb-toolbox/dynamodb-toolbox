@@ -1,21 +1,21 @@
 import type {
   Always,
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
   AttributeValue,
   Item,
-  ListAttribute,
-  MapAttribute,
+  ListSchema,
+  MapSchema,
   Never,
-  NumberAttribute,
   NumberAttributeValue,
-  PrimitiveAttribute,
-  RecordAttribute,
-  ResolveAnyAttribute,
-  ResolvePrimitiveAttribute,
-  SetAttribute,
-  SetAttributeValue
+  NumberSchema,
+  PrimitiveSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolvePrimitiveSchema,
+  SetAttributeValue,
+  SetSchema
 } from '~/attributes/index.js'
 import type {
   $ADD,
@@ -74,7 +74,7 @@ export type UpdateAttributesInputExtension =
       >
     }
 
-type MustBeDefined<ATTRIBUTE extends Attribute, FILLED extends boolean = false> = If<
+type MustBeDefined<ATTRIBUTE extends AttrSchema, FILLED extends boolean = false> = If<
   FILLED,
   Extends<ATTRIBUTE['state'], { required: Always }>,
   If<
@@ -88,7 +88,7 @@ type MustBeDefined<ATTRIBUTE extends Attribute, FILLED extends boolean = false> 
   >
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean = false> = {
+type OptionalKeys<SCHEMA extends Schema | MapSchema, FILLED extends boolean = false> = {
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], FILLED>,
     never,
@@ -96,7 +96,7 @@ type OptionalKeys<SCHEMA extends Schema | MapAttribute, FILLED extends boolean =
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<ATTRIBUTE extends Attribute> = ATTRIBUTE['state'] extends { required: Never }
+type CanBeRemoved<ATTRIBUTE extends AttrSchema> = ATTRIBUTE['state'] extends { required: Never }
   ? true
   : false
 
@@ -129,22 +129,22 @@ export type UpdateAttributesInput<
         ? UpdateAttributesInput<SCHEMA['schema'], FILLED>
         : never
 
-type NumberUpdate<ATTRIBUTE extends NumberAttribute> =
+type NumberUpdate<ATTRIBUTE extends NumberSchema> =
   | number
   | (ATTRIBUTE['state'] extends { big: true } ? bigint : never)
 
 /**
- * User input of an UPDATE command for a given Attribute
+ * User input of an UPDATE command for a given AttrSchema
  *
- * @param Attribute Attribute
+ * @param AttrSchema AttrSchema
  * @param RequireDefaults Boolean
  * @return Any
  */
 export type UpdateAttributeInput<
-  ATTRIBUTE extends Attribute = Attribute,
+  ATTRIBUTE extends AttrSchema = AttrSchema,
   FILLED extends boolean = false,
   SCHEMA_ATTRIBUTE_PATHS extends string = string
-> = Attribute extends ATTRIBUTE
+> = AttrSchema extends ATTRIBUTE
   ? AttributeValue<UpdateAttributesInputExtension> | undefined
   :
       | If<MustBeDefined<ATTRIBUTE, FILLED>, never, undefined>
@@ -158,9 +158,9 @@ export type UpdateAttributeInput<
               | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
           ]
         >
-      | (ATTRIBUTE extends AnyAttribute ? ResolveAnyAttribute<ATTRIBUTE> | unknown : never)
-      | (ATTRIBUTE extends PrimitiveAttribute ? ResolvePrimitiveAttribute<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends NumberAttribute
+      | (ATTRIBUTE extends AnySchema ? ResolveAnySchema<ATTRIBUTE> | unknown : never)
+      | (ATTRIBUTE extends PrimitiveSchema ? ResolvePrimitiveSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends NumberSchema
           ?
               | ADD<NumberUpdate<ATTRIBUTE>>
               | SUM<
@@ -208,13 +208,13 @@ export type UpdateAttributeInput<
                     >
                 >
           : never)
-      | (ATTRIBUTE extends SetAttribute
+      | (ATTRIBUTE extends SetSchema
           ?
               | Set<ValidValue<ATTRIBUTE['elements']>>
               | ADD<Set<ValidValue<ATTRIBUTE['elements']>>>
               | DELETE<Set<ValidValue<ATTRIBUTE['elements']>>>
           : never)
-      | (ATTRIBUTE extends ListAttribute
+      | (ATTRIBUTE extends ListSchema
           ?
               | Basic<ValidValue<ATTRIBUTE['elements']>[]>
               | APPEND<
@@ -241,8 +241,8 @@ export type UpdateAttributeInput<
                   | ValidValue<ATTRIBUTE['elements']>[]
                 >
           : never)
-      | (ATTRIBUTE extends MapAttribute ? Basic<ValidValue<ATTRIBUTE>> : never)
-      | (ATTRIBUTE extends RecordAttribute ? Basic<ValidValue<ATTRIBUTE>> : never)
-      | (ATTRIBUTE extends AnyOfAttribute
+      | (ATTRIBUTE extends MapSchema ? Basic<ValidValue<ATTRIBUTE>> : never)
+      | (ATTRIBUTE extends RecordSchema ? Basic<ValidValue<ATTRIBUTE>> : never)
+      | (ATTRIBUTE extends AnyOfSchema
           ? UpdateAttributeInput<ATTRIBUTE['elements'][number], FILLED, SCHEMA_ATTRIBUTE_PATHS>
           : never)

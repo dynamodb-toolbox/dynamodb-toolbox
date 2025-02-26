@@ -1,4 +1,4 @@
-import type { ListAttribute } from '~/attributes/index.js'
+import type { ListSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isArray } from '~/utils/validation/isArray.js'
@@ -9,12 +9,12 @@ import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection } from './utils.js'
 
 export function* listAttrFormatter(
-  attribute: ListAttribute,
+  attribute: ListSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<ListAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<ListSchema> = {}
 ): Generator<
-  FormatterYield<ListAttribute, FormatAttrValueOptions<ListAttribute>>,
-  FormatterReturn<ListAttribute, FormatAttrValueOptions<ListAttribute>>
+  FormatterYield<ListSchema, FormatAttrValueOptions<ListSchema>>,
+  FormatterReturn<ListSchema, FormatAttrValueOptions<ListSchema>>
 > {
   const { format = true, transform = true } = restOptions
 

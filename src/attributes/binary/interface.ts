@@ -21,18 +21,18 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
 import { freezeBinaryAttribute } from './freeze.js'
-import type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'
+import type { ResolveBinarySchema, ResolvedBinarySchema } from './resolve.js'
 import type { BinaryAttributeState } from './types.js'
 
 export interface BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeState> {
   type: 'binary'
+  path?: string
   state: STATE
 }
 
 export interface $BinaryAttributeNestedState<
   STATE extends BinaryAttributeState = BinaryAttributeState
 > extends BinarySchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeBinaryAttribute<BinarySchema<STATE>, true>
 }
@@ -109,7 +109,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends readonly ResolveBinaryAttribute<
+    const NEXT_ENUM extends readonly ResolveBinarySchema<
       FreezeBinaryAttribute<BinarySchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $BinaryAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
@@ -123,7 +123,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolveBinaryAttribute<FreezeBinaryAttribute<BinarySchema<STATE>>>>(
+  const<CONSTANT extends ResolveBinarySchema<FreezeBinaryAttribute<BinarySchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -146,8 +146,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   transform<
     TRANSFORMER extends Transformer<
-      ResolvedBinaryAttribute,
-      ResolveBinaryAttribute<FreezeBinaryAttribute<BinarySchema<STATE>>>
+      ResolvedBinarySchema,
+      ResolveBinarySchema<FreezeBinaryAttribute<BinarySchema<STATE>>>
     >
   >(transform: TRANSFORMER): $BinaryAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $BinaryAttribute(overwrite(this.state, { transform }))

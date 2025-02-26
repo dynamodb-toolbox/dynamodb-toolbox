@@ -1,10 +1,5 @@
 import type { RequiredOption } from '~/attributes/constants/requiredOptions.js'
-import type { FreezeAttribute } from '~/attributes/freeze.js'
-import type {
-  $SchemaAttributeNestedStates,
-  Attribute,
-  SchemaAttributes
-} from '~/attributes/index.js'
+import type { AttrSchema, SchemaAttributes } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { NarrowObject } from '~/types/index.js'
 
@@ -99,7 +94,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     return new Schema(nextAttributes)
   }
 
-  and<$ADDITIONAL_ATTRIBUTES extends $SchemaAttributeNestedStates = $SchemaAttributeNestedStates>(
+  and<$ADDITIONAL_ATTRIBUTES extends SchemaAttributes = SchemaAttributes>(
     additionalAttr:
       | NarrowObject<$ADDITIONAL_ATTRIBUTES>
       | ((schema: Schema<ATTRIBUTES>) => NarrowObject<$ADDITIONAL_ATTRIBUTES>)
@@ -107,14 +102,14 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     [KEY in
       | keyof ATTRIBUTES
       | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-      ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY], true>
+      ? $ADDITIONAL_ATTRIBUTES[KEY]
       : KEY extends keyof ATTRIBUTES
         ? ATTRIBUTES[KEY]
         : never
   }> {
     const additionalAttributes = (
       typeof additionalAttr === 'function' ? additionalAttr(this) : additionalAttr
-    ) as $SchemaAttributeNestedStates
+    ) as SchemaAttributes
 
     const nextAttributes = { ...this.attributes } as SchemaAttributes
 
@@ -126,7 +121,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
         })
       }
 
-      nextAttributes[attributeName] = additionalAttribute.freeze(attributeName)
+      nextAttributes[attributeName] = additionalAttribute
     }
 
     return new Schema(
@@ -134,7 +129,7 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
         [KEY in
           | keyof ATTRIBUTES
           | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-          ? FreezeAttribute<$ADDITIONAL_ATTRIBUTES[KEY], true>
+          ? $ADDITIONAL_ATTRIBUTES[KEY]
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]
             : never
@@ -149,9 +144,9 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   }
 }
 
-type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
+type SchemaTyper = <$ATTRIBUTES extends SchemaAttributes = {}>(
   attributes: NarrowObject<$ATTRIBUTES>
-) => Schema<{ [KEY in keyof $ATTRIBUTES]: FreezeAttribute<$ATTRIBUTES[KEY]> }>
+) => Schema<$ATTRIBUTES>
 
 /**
  * Defines an Entity schema
@@ -159,14 +154,8 @@ type SchemaTyper = <$ATTRIBUTES extends $SchemaAttributeNestedStates = {}>(
  * @param attributes Dictionary of warm attributes
  * @return Schema
  */
-export const schema: SchemaTyper = <
-  $MAP_ATTRIBUTE_ATTRIBUTES extends $SchemaAttributeNestedStates = {}
->(
-  attributes: NarrowObject<$MAP_ATTRIBUTE_ATTRIBUTES>
-): Schema<{
-  [KEY in keyof $MAP_ATTRIBUTE_ATTRIBUTES]: FreezeAttribute<$MAP_ATTRIBUTE_ATTRIBUTES[KEY]>
-}> => new Schema<{}>({}).and(attributes)
+export const schema: SchemaTyper = attributes => new Schema<{}>({}).and(attributes)
 
-export class SchemaAction<SCHEMA extends Schema | Attribute = Schema | Attribute> {
+export class SchemaAction<SCHEMA extends Schema | AttrSchema = Schema | AttrSchema> {
   constructor(public schema: SCHEMA) {}
 }

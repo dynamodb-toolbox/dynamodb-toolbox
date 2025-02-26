@@ -21,18 +21,18 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBooleanAttribute } from './freeze.js'
 import { freezeBooleanAttribute } from './freeze.js'
-import type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
+import type { ResolveBooleanSchema, ResolvedBooleanSchema } from './resolve.js'
 import type { BooleanAttributeState } from './types.js'
 
 export interface BooleanSchema<STATE extends BooleanAttributeState = BooleanAttributeState> {
   type: 'boolean'
+  path?: string
   state: STATE
 }
 
 export interface $BooleanAttributeNestedState<
   STATE extends BooleanAttributeState = BooleanAttributeState
 > extends BooleanSchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeBooleanAttribute<BooleanSchema<STATE>, true>
 }
@@ -109,7 +109,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends readonly ResolveBooleanAttribute<
+    const NEXT_ENUM extends readonly ResolveBooleanSchema<
       FreezeBooleanAttribute<BooleanSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $BooleanAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
@@ -123,7 +123,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolveBooleanAttribute<FreezeBooleanAttribute<BooleanSchema<STATE>>>>(
+  const<CONSTANT extends ResolveBooleanSchema<FreezeBooleanAttribute<BooleanSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -146,8 +146,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   transform<
     TRANSFORMER extends Transformer<
-      ResolvedBooleanAttribute,
-      ResolveBooleanAttribute<FreezeBooleanAttribute<BooleanSchema<STATE>>>
+      ResolvedBooleanSchema,
+      ResolveBooleanSchema<FreezeBooleanAttribute<BooleanSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $BooleanAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $BooleanAttribute(overwrite(this.state, { transform }))

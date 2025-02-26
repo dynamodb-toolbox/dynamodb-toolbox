@@ -2,7 +2,7 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { BinaryAttribute } from '~/attributes/binary/index.js'
 import type { Never } from '~/attributes/constants/requiredOptions.js'
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { StringAttribute } from '~/attributes/index.js'
 import { NumberAttribute } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -16,18 +16,7 @@ import { pick } from '~/utils/pick.js'
 import { queryOperatorSet } from '../types.js'
 import type { Query } from '../types.js'
 
-const defaultAttribute = {
-  required: 'never' as Never,
-  key: false,
-  hidden: false,
-  savedAs: undefined,
-  enum: undefined,
-  transform: undefined,
-  big: false,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-}
+const defaultAttribute = { required: 'never' as Never }
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
@@ -37,7 +26,7 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute => {
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): AttrSchema => {
   switch (key.type) {
     case 'number':
       return new NumberAttribute({ ...defaultAttribute, path: key.name })

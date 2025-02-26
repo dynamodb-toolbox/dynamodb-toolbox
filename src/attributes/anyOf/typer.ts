@@ -1,7 +1,7 @@
 import { $AnyOfAttribute } from './interface.js'
-import type { $AnyOfAttributeElements } from './types.js'
+import type { AnyOfElementSchema } from './types.js'
 
-type AnyOfAttributeTyper = <ELEMENTS extends $AnyOfAttributeElements[]>(
+type AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
 ) => $AnyOfAttribute<{}, ELEMENTS>
 
@@ -9,6 +9,6 @@ type AnyOfAttributeTyper = <ELEMENTS extends $AnyOfAttributeElements[]>(
  * Define a new anyOf attribute
  * @param elements Attribute[]
  */
-export const anyOf: AnyOfAttributeTyper = <$ELEMENTS extends $AnyOfAttributeElements[]>(
-  ...elements: $ELEMENTS
+export const anyOf: AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
+  ...elements: ELEMENTS
 ) => new $AnyOfAttribute({}, elements)
