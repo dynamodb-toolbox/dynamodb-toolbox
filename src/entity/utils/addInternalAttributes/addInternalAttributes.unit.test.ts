@@ -49,7 +49,6 @@ describe('addInternalAttributes', () => {
       assertEntityAttribute
 
       expect(enrichedSchema.attributes.id).toMatchObject({
-        path: 'id',
         type: 'string',
         state: {
           hidden: false,
@@ -157,7 +156,6 @@ describe('addInternalAttributes', () => {
       assertCreatedAttribute
 
       expect(enrichedSchema.attributes.created).toMatchObject({
-        path: 'created',
         type: 'string',
         state: {
           savedAs: '_ct',
@@ -192,7 +190,6 @@ describe('addInternalAttributes', () => {
       assertPartialCustomCreatedAttribute
 
       expect(partialCustomSchema.attributes.created).toMatchObject({
-        path: 'created',
         type: 'string',
         state: {
           savedAs: 'c',
@@ -229,7 +226,6 @@ describe('addInternalAttributes', () => {
       assertCustomCreatedAttribute
 
       expect(customSchema.attributes['__created__']).toMatchObject({
-        path: '__created__',
         type: 'string',
         state: {
           hidden: true,
@@ -265,7 +261,6 @@ describe('addInternalAttributes', () => {
       assertModifiedAttribute
 
       expect(enrichedSchema.attributes.modified).toMatchObject({
-        path: 'modified',
         type: 'string',
         state: {
           savedAs: '_md',
@@ -300,7 +295,6 @@ describe('addInternalAttributes', () => {
       assertPartialCustomModifiedAttribute
 
       expect(partialCustomSchema.attributes.modified).toMatchObject({
-        path: 'modified',
         type: 'string',
         state: {
           savedAs: 'm',
@@ -337,7 +331,6 @@ describe('addInternalAttributes', () => {
       assertCustomModifiedAttribute
 
       expect(customSchema.attributes['__modified__']).toMatchObject({
-        path: '__modified__',
         type: 'string',
         state: {
           savedAs: 'm',

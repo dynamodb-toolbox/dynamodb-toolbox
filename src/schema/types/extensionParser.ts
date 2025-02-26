@@ -10,7 +10,7 @@ export type $extension = typeof $extension
 export const $contextExtension = Symbol('$contextExtension')
 export type $contextExtension = typeof $contextExtension
 
-export type ExtensionParserOptions = { transform?: boolean }
+export type ExtensionParserOptions = { transform?: boolean; valuePath?: (string | number)[] }
 
 export type ExtensionParser<
   EXTENSION extends Extension = Extension,

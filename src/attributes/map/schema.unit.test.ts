@@ -11,30 +11,31 @@ vi.mock('../shared/check', () => ({
   checkAttributeProperties: vi.fn()
 }))
 
-const validateAttributePropertiesMock = checkAttributeProperties as MockedFunction<
+const checkAttributePropertiesMock = checkAttributeProperties as MockedFunction<
   typeof checkAttributeProperties
 >
 
 describe('map properties check', () => {
   const pathMock = 'some.path'
 
-  const stringAttr = string()
-  const string1Name = 'string1'
-  const string2Name = 'string2'
-  const mapInstance = map({ [string1Name]: stringAttr, [string2Name]: stringAttr })
-
   beforeEach(() => {
-    validateAttributePropertiesMock.mockClear()
+    checkAttributePropertiesMock.mockClear()
   })
 
   test('applies checkAttributeProperties on mapInstance', () => {
-    mapInstance.check(pathMock)
+    map({ string1: string(), string2: string() }).check()
 
     // Once + 2 attributes
-    expect(validateAttributePropertiesMock).toHaveBeenCalledTimes(3)
+    expect(checkAttributePropertiesMock).toHaveBeenCalledTimes(3)
   })
 
-  test('applies freezeAttribute on attributes', () => {
+  test('applies .check on attributes', () => {
+    const string1Attr = string()
+    const string2Attr = string()
+    const string1Name = 'string1'
+    const string2Name = 'string2'
+    const mapInstance = map({ [string1Name]: string1Attr, [string2Name]: string2Attr })
+
     mapInstance.attributes[string1Name].check = vi.fn(mapInstance.attributes[string1Name].check)
     mapInstance.attributes[string2Name].check = vi.fn(mapInstance.attributes[string2Name].check)
     mapInstance.check(pathMock)
@@ -48,7 +49,7 @@ describe('map properties check', () => {
   })
 
   test('throws if map attribute has duplicate savedAs', () => {
-    const invalidCallA = () => map({ a: stringAttr, b: stringAttr.savedAs('a') }).check(pathMock)
+    const invalidCallA = () => map({ a: string(), b: string().savedAs('a') }).check(pathMock)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -56,7 +57,7 @@ describe('map properties check', () => {
     )
 
     const invalidCallB = () =>
-      map({ a: stringAttr.savedAs('c'), b: stringAttr.savedAs('c') }).check(pathMock)
+      map({ a: string().savedAs('c'), b: string().savedAs('c') }).check(pathMock)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

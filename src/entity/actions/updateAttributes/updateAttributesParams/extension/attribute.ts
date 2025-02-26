@@ -1,9 +1,10 @@
 import type { AttrSchema, AttributeBasicValue } from '~/attributes/index.js'
-import { isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
+import { $GET, isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
@@ -16,14 +17,15 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
-  const { transform = true } = options
+  const { transform = true, valuePath = [] } = options
 
   if (isRemoval(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const { path, state } = attribute
+        const { state } = attribute
         const { required } = state
+        const path = formatValuePath(valuePath)
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
@@ -47,7 +49,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     }
   }
 
-  if (isGetting(input)) {
+  if (isGetting(input) && input[$GET] !== undefined) {
     return parseReferenceExtension(attribute, input, options)
   }
 

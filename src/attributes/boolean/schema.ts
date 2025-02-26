@@ -3,7 +3,6 @@ import type { BooleanAttributeState } from './types.js'
 
 export class BooleanSchema<STATE extends BooleanAttributeState = BooleanAttributeState> {
   type: 'boolean'
-  path?: string
   state: STATE
 
   constructor(state: STATE) {
@@ -23,8 +22,5 @@ export class BooleanSchema<STATE extends BooleanAttributeState = BooleanAttribut
     checkPrimitiveAttribute(this, path)
 
     Object.freeze(this.state)
-    if (path !== undefined) {
-      this.path = path
-    }
   }
 }

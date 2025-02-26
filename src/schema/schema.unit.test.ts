@@ -139,7 +139,7 @@ describe('schema', () => {
       }
     > = 1
     assertSch
-    expect(pickedSch.attributes).toStrictEqual({ hidBool, defNum, savedAsBin, keyStr, enumStr })
+    expect(pickedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
     // @ts-expect-error putLink is actually set to undefined
     expect(pickedSch.attributes.linkedStr.state.putLink).toBeUndefined()
 

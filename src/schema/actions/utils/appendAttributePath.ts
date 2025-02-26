@@ -75,10 +75,6 @@ export const appendAttributePath = (
         }
 
         parentAttr = new AnySchema({ required: 'never' })
-        // TODO: Useful to add path here?
-        parentAttr.check(
-          [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
-        )
         break
       }
       case 'binary':
@@ -161,12 +157,5 @@ export const appendAttributePath = (
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
-  if (size) {
-    const sizeAttr = new NumberSchema({ required: 'never' })
-    // TODO: Useful to add path here?
-    sizeAttr.check(parentAttr.path)
-    return sizeAttr
-  }
-
-  return parentAttr
+  return size ? new NumberSchema({ required: 'never' }) : parentAttr
 }

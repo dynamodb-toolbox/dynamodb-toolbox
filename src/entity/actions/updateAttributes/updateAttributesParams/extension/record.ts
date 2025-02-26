@@ -9,15 +9,13 @@ import type { UpdateAttributesInputExtension } from '../../types.js'
 export const parseRecordExtension = (
   attribute: RecordSchema,
   input: unknown,
-  options: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateAttributesInputExtension>> => {
-  const { transform = true } = options
-
   if (isObject(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input, { fill: false, transform })
+        const parser = new Parser(attribute).start(input, { fill: false, transform, valuePath })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
