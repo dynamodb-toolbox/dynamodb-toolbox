@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { ResolveBooleanSchema } from './resolve.js'
-import { boolean } from './typer.js'
+import { boolean } from './schema_.js'
 
 const standardBool = boolean()
 const assertResolveStandard: A.Equals<ResolveBooleanSchema<typeof standardBool>, boolean> = 1

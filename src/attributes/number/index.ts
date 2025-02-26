@@ -1,5 +1,4 @@
-export { number } from './typer.js'
-export type { NumberSchema, $NumberAttributeNestedState } from './interface.js'
-export { $NumberAttribute, NumberAttribute, NumberAttribute_ } from './interface.js'
+export { NumberSchema } from './schema.js'
+export { number, NumberSchema_ } from './schema_.js'
 export type { ResolveNumberSchema, ResolvedNumberSchema } from './resolve.js'
 export type { NumberAttributeState } from './types.js'

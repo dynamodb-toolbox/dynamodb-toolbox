@@ -1,4 +1,4 @@
-import type { NumberSchema } from './interface.js'
+import type { NumberSchema } from './schema.js'
 
 export type ResolveNumberSchema<ATTRIBUTE extends NumberSchema> =
   ATTRIBUTE['state']['enum'] extends (number | bigint)[]

@@ -1,10 +1,10 @@
-import type { AnySchema } from '../any/index.js'
-import type { AnyOfSchema } from '../anyOf/index.js'
-import type { ListSchema } from '../list/index.js'
-import type { MapSchema } from '../map/index.js'
-import type { PrimitiveSchema } from '../primitive/index.js'
-import type { RecordSchema } from '../record/index.js'
-import type { SetSchema } from '../set/index.js'
+import type { AnySchema, AnySchema_ } from '../any/index.js'
+import type { AnyOfSchema, AnyOfSchema_ } from '../anyOf/index.js'
+import type { ListSchema, ListSchema_ } from '../list/index.js'
+import type { MapSchema, MapSchema_ } from '../map/index.js'
+import type { PrimitiveSchema, PrimitiveSchema_ } from '../primitive/index.js'
+import type { RecordSchema, RecordSchema_ } from '../record/index.js'
+import type { SetSchema, SetSchema_ } from '../set/index.js'
 
 /**
  * Any warm attribute state
@@ -17,6 +17,18 @@ export type AttrSchema =
   | MapSchema
   | RecordSchema
   | AnyOfSchema
+
+/**
+ * Any warm attribute state (extended)
+ */
+export type AttrSchema_ =
+  | AnySchema_
+  | PrimitiveSchema_
+  | SetSchema_
+  | ListSchema_
+  | MapSchema_
+  | RecordSchema_
+  | AnyOfSchema_
 
 /**
  * Any warm schema attribute states

@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { ResolveNumberSchema } from './resolve.js'
-import { number } from './typer.js'
+import { number } from './schema_.js'
 
 const standardNumber = number()
 const assertResolveStandard: A.Equals<ResolveNumberSchema<typeof standardNumber>, number> = 1

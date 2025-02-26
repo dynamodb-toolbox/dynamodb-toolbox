@@ -1,6 +1,5 @@
-export { boolean } from './typer.js'
-export type { BooleanSchema, $BooleanAttributeNestedState } from './interface.js'
-export { $BooleanAttribute, BooleanAttribute, BooleanAttribute_ } from './interface.js'
+export { BooleanSchema } from './schema.js'
+export { boolean, BooleanSchema_ } from './schema_.js'
 export type {
   ResolveBooleanSchema,
   ResolvedBooleanSchema as ResolvedBooleanAttribute

@@ -1,6 +1,6 @@
-import type { $RecordAttributeNestedState } from '~/attributes/record/index.js'
+import type { RecordSchema } from '~/attributes/record/index.js'
 import { record } from '~/attributes/record/index.js'
-import type { $RecordAttributeElements, $RecordAttributeKeys } from '~/attributes/record/types.js'
+import type { RecordElementSchema, RecordKeySchema } from '~/attributes/record/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
@@ -20,7 +20,7 @@ export const fromJSONRecordAttr = ({
   keys,
   elements,
   ...props
-}: RecordAttrDTO): $RecordAttributeNestedState => {
+}: RecordAttrDTO): RecordSchema => {
   keyDefault
   putDefault
   updateDefault
@@ -29,8 +29,8 @@ export const fromJSONRecordAttr = ({
   updateLink
 
   return record(
-    fromAttrDTO(keys) as $RecordAttributeKeys,
-    fromAttrDTO(elements) as $RecordAttributeElements,
+    fromAttrDTO(keys) as RecordKeySchema,
+    fromAttrDTO(elements) as RecordElementSchema,
     props
   )
 }
