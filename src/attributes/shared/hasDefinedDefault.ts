@@ -1,7 +1,6 @@
-import { $state } from '../constants/attributeOptions.js'
-import type { $AttributeState } from '../types/index.js'
+import type { AttrSchema } from '../types/index.js'
 
-export const hasDefinedDefault = (attribute: $AttributeState): boolean =>
+export const hasDefinedDefault = (attribute: AttrSchema): boolean =>
   (['keyDefault', 'putDefault', 'updateDefault', 'keyLink', 'putLink', 'updateLink'] as const).some(
-    prop => attribute[$state][prop] !== undefined
+    prop => attribute.state[prop] !== undefined
   )

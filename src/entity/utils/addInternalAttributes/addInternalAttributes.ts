@@ -1,5 +1,4 @@
-import { $state } from '~/attributes/constants/attributeOptions.js'
-import type { $AttributeNestedState } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -13,8 +12,8 @@ import type {
   InternalAttributesAdder,
   WithInternalAttributes
 } from './types.js'
-import { getTimestampOptionValue, isTimestampEnabled } from './utils.js'
 import type { TimestampOptionValue } from './utils.js'
+import { getTimestampOptionValue, isTimestampEnabled } from './utils.js'
 
 export const addInternalAttributes: InternalAttributesAdder = <
   SCHEMA extends Schema,
@@ -38,7 +37,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
-  const internalAttributes: Record<string, $AttributeNestedState> = {}
+  const internalAttributes: Record<string, AttrSchema> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     hidden: entityAttributeHidden,
@@ -90,7 +89,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
       })
     }
 
-    const { savedAs: attributeSavedAs } = attribute[$state]
+    const { savedAs: attributeSavedAs } = attribute.state
     if (attributeSavedAs !== undefined && schema.savedAttributeNames.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
         message: `'${attributeSavedAs}' is a reserved attribute alias (savedAs).`,

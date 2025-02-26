@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -17,7 +17,7 @@ export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueO
 
   const parsers: Record<
     string,
-    Generator<ParserYield<Attribute, OPTIONS>, ParserReturn<Attribute, OPTIONS>>
+    Generator<ParserYield<AttrSchema, OPTIONS>, ParserReturn<AttrSchema, OPTIONS>>
   > = {}
   let restEntries: [string, unknown][] = []
 

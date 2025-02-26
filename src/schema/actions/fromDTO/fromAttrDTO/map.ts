@@ -1,4 +1,4 @@
-import type { $MapAttributeNestedState } from '~/attributes/map/index.js'
+import type { MapSchema } from '~/attributes/map/index.js'
 import { map } from '~/attributes/map/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
@@ -18,7 +18,7 @@ export const fromJSONMapAttr = ({
   updateLink,
   attributes,
   ...props
-}: MapAttrDTO): $MapAttributeNestedState => {
+}: MapAttrDTO): MapSchema => {
   keyDefault
   putDefault
   updateDefault

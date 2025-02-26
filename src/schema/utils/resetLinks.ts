@@ -1,70 +1,70 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  Attribute_,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
-  NullAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  SetAttribute,
-  StringAttribute
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  AttrSchema_,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
+  NullSchema,
+  NumberSchema,
+  RecordSchema,
+  SetSchema,
+  StringSchema
 } from '~/attributes/index.js'
 
-export type ResetLinks<ATTRIBUTE extends Attribute> =
-  | (ATTRIBUTE extends AnyAttribute
-      ? AnyAttribute<{
+export type ResetLinks<ATTRIBUTE extends AttrSchema> =
+  | (ATTRIBUTE extends AnySchema
+      ? AnySchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends NullAttribute
-      ? NullAttribute<{
+  | (ATTRIBUTE extends NullSchema
+      ? NullSchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends BooleanAttribute
-      ? BooleanAttribute<{
+  | (ATTRIBUTE extends BooleanSchema
+      ? BooleanSchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends NumberAttribute
-      ? NumberAttribute<{
+  | (ATTRIBUTE extends NumberSchema
+      ? NumberSchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends StringAttribute
-      ? StringAttribute<{
+  | (ATTRIBUTE extends StringSchema
+      ? StringSchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends BinaryAttribute
-      ? BinaryAttribute<{
+  | (ATTRIBUTE extends BinarySchema
+      ? BinarySchema<{
           [KEY in Exclude<
             keyof ATTRIBUTE['state'],
             'keyLink' | 'putLink' | 'updateLink'
           >]: ATTRIBUTE['state'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends SetAttribute
-      ? SetAttribute<
+  | (ATTRIBUTE extends SetSchema
+      ? SetSchema<
           {
             [KEY in Exclude<
               keyof ATTRIBUTE['state'],
@@ -74,8 +74,8 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
           ATTRIBUTE['elements']
         >
       : never)
-  | (ATTRIBUTE extends ListAttribute
-      ? ListAttribute<
+  | (ATTRIBUTE extends ListSchema
+      ? ListSchema<
           {
             [KEY in Exclude<
               keyof ATTRIBUTE['state'],
@@ -85,8 +85,8 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
           ATTRIBUTE['elements']
         >
       : never)
-  | (ATTRIBUTE extends MapAttribute
-      ? MapAttribute<
+  | (ATTRIBUTE extends MapSchema
+      ? MapSchema<
           {
             [KEY in Exclude<
               keyof ATTRIBUTE['state'],
@@ -96,8 +96,8 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
           ATTRIBUTE['attributes']
         >
       : never)
-  | (ATTRIBUTE extends RecordAttribute
-      ? RecordAttribute<
+  | (ATTRIBUTE extends RecordSchema
+      ? RecordSchema<
           {
             [KEY in Exclude<
               keyof ATTRIBUTE['state'],
@@ -108,8 +108,8 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
           ATTRIBUTE['elements']
         >
       : never)
-  | (ATTRIBUTE extends AnyOfAttribute
-      ? AnyOfAttribute<
+  | (ATTRIBUTE extends AnyOfSchema
+      ? AnyOfSchema<
           {
             [KEY in Exclude<
               keyof ATTRIBUTE['state'],
@@ -120,9 +120,9 @@ export type ResetLinks<ATTRIBUTE extends Attribute> =
         >
       : never)
 
-type LinksResetter = <ATTRIBUTE extends Attribute>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
+type LinksResetter = <ATTRIBUTE extends AttrSchema>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
 
 export const resetLinks: LinksResetter = attribute =>
-  (attribute as Attribute_)
+  (attribute as AttrSchema_)
     // @ts-expect-error Signatures don't match but we don't care
     .clone({ keyLink: undefined, putLink: undefined, updateLink: undefined })

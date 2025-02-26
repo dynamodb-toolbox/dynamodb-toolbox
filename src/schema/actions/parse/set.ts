@@ -1,4 +1,4 @@
-import type { SetAttribute } from '~/attributes/index.js'
+import type { SetSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -10,10 +10,10 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: SetAttribute,
+  attribute: SetSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<SetAttribute, OPTIONS>, ParserReturn<SetAttribute, OPTIONS>> {
+): Generator<ParserYield<SetSchema, OPTIONS>, ParserReturn<SetSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
@@ -39,10 +39,10 @@ export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<SetAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<SetSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<SetAttribute, OPTIONS>
+      yield linkedValue as ParserYield<SetSchema, OPTIONS>
     }
   }
 

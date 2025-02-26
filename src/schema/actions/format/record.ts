@@ -1,4 +1,4 @@
-import type { RecordAttribute } from '~/attributes/index.js'
+import type { RecordSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -9,12 +9,12 @@ import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* recordAttrFormatter(
-  attribute: RecordAttribute,
+  attribute: RecordSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<RecordAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<RecordSchema> = {}
 ): Generator<
-  FormatterYield<RecordAttribute, FormatAttrValueOptions<RecordAttribute>>,
-  FormatterReturn<RecordAttribute, FormatAttrValueOptions<RecordAttribute>>
+  FormatterYield<RecordSchema, FormatAttrValueOptions<RecordSchema>>,
+  FormatterReturn<RecordSchema, FormatAttrValueOptions<RecordSchema>>
 > {
   const { format = true, transform = true } = restOptions
 

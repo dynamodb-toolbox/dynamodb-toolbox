@@ -1,6 +1,6 @@
 import { binary } from '~/attributes/binary/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
-import type { $PrimitiveAttributeNestedState } from '~/attributes/index.js'
+import type { PrimitiveSchema } from '~/attributes/index.js'
 import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
 import { string } from '~/attributes/string/index.js'
@@ -17,7 +17,7 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONPrimitiveAttr = (attr: PrimitiveAttrDTO): $PrimitiveAttributeNestedState => {
+export const fromJSONPrimitiveAttr = (attr: PrimitiveAttrDTO): PrimitiveSchema => {
   const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = attr
   keyDefault
   putDefault

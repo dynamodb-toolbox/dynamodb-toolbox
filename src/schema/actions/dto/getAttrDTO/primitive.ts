@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveSchema } from '~/attributes/index.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 
 import type { PrimitiveAttrDTO } from '../types.js'
@@ -7,7 +7,7 @@ import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getPrimitiveAttrDTO = (attr: PrimitiveAttribute): PrimitiveAttrDTO => {
+export const getPrimitiveAttrDTO = (attr: PrimitiveSchema): PrimitiveAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
 
   const { state } = attr

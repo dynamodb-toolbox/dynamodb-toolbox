@@ -1,9 +1,9 @@
-import type { BinaryAttribute } from './interface.js'
+import type { BinarySchema } from './schema.js'
 
-export type ResolveBinaryAttribute<ATTRIBUTE extends BinaryAttribute> = ATTRIBUTE['state'] extends {
+export type ResolveBinarySchema<ATTRIBUTE extends BinarySchema> = ATTRIBUTE['state'] extends {
   enum: Uint8Array[]
 }
   ? ATTRIBUTE['state']['enum'][number]
   : Uint8Array
 
-export type ResolvedBinaryAttribute = ResolveBinaryAttribute<BinaryAttribute>
+export type ResolvedBinarySchema = ResolveBinarySchema<BinarySchema>

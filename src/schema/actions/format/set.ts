@@ -1,4 +1,4 @@
-import type { SetAttribute } from '~/attributes/index.js'
+import type { SetSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isSet } from '~/utils/validation/isSet.js'
@@ -8,12 +8,12 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
 export function* setAttrFormatter(
-  attribute: SetAttribute,
+  attribute: SetSchema,
   rawValue: unknown,
-  { valuePath = [], ...options }: FormatAttrValueOptions<SetAttribute> = {}
+  { valuePath = [], ...options }: FormatAttrValueOptions<SetSchema> = {}
 ): Generator<
-  FormatterYield<SetAttribute, FormatAttrValueOptions<SetAttribute>>,
-  FormatterReturn<SetAttribute, FormatAttrValueOptions<SetAttribute>>
+  FormatterYield<SetSchema, FormatAttrValueOptions<SetSchema>>,
+  FormatterReturn<SetSchema, FormatAttrValueOptions<SetSchema>>
 > {
   const { format = true, transform = true } = options
 

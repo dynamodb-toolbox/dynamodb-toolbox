@@ -1,6 +1,5 @@
 import type { A } from 'ts-toolbelt'
 
-import type { FreezeAttribute } from '~/attributes/freeze.js'
 import { binary, boolean, list, map, number, set, string } from '~/attributes/index.js'
 
 import { schema } from './schema.js'
@@ -15,14 +14,7 @@ describe('schema', () => {
   const enumStr = string().enum('foo', 'bar')
 
   test('primitives', () => {
-    const sch = schema({
-      reqStr,
-      hidBool,
-      defNum,
-      savedAsBin,
-      keyStr,
-      enumStr
-    })
+    const sch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
 
     const assertType: A.Equals<(typeof sch)['type'], 'schema'> = 1
     assertType
@@ -31,23 +23,17 @@ describe('schema', () => {
     const assertAttr: A.Equals<
       (typeof sch)['attributes'],
       {
-        reqStr: FreezeAttribute<typeof reqStr>
-        hidBool: FreezeAttribute<typeof hidBool>
-        defNum: FreezeAttribute<typeof defNum>
-        savedAsBin: FreezeAttribute<typeof savedAsBin>
-        keyStr: FreezeAttribute<typeof keyStr>
-        enumStr: FreezeAttribute<typeof enumStr>
+        reqStr: typeof reqStr
+        hidBool: typeof hidBool
+        defNum: typeof defNum
+        savedAsBin: typeof savedAsBin
+        keyStr: typeof keyStr
+        enumStr: typeof enumStr
       }
     > = 1
     assertAttr
-    expect(sch.attributes).toStrictEqual({
-      reqStr: reqStr.freeze('reqStr'),
-      hidBool: hidBool.freeze('hidBool'),
-      defNum: defNum.freeze('defNum'),
-      savedAsBin: savedAsBin.freeze('savedAsBin'),
-      keyStr: keyStr.freeze('keyStr'),
-      enumStr: enumStr.freeze('enumStr')
-    })
+
+    expect(sch.attributes).toStrictEqual({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
 
     expect(sch.keyAttributeNames).toStrictEqual(new Set(['keyStr']))
     expect(sch.savedAttributeNames).toStrictEqual(
@@ -66,29 +52,19 @@ describe('schema', () => {
     const reqSet = set(str)
     const hiddenSet = set(str).optional().hidden()
 
-    const sch = schema({
-      optSet,
-      reqSet,
-      hiddenSet
-    })
+    const sch = schema({ optSet, reqSet, hiddenSet })
 
     const assertSch: A.Equals<
       (typeof sch)['attributes'],
       {
-        optSet: FreezeAttribute<typeof optSet>
-        reqSet: FreezeAttribute<typeof reqSet>
-        hiddenSet: FreezeAttribute<typeof hiddenSet>
+        optSet: typeof optSet
+        reqSet: typeof reqSet
+        hiddenSet: typeof hiddenSet
       }
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        optSet: optSet.freeze('optSet'),
-        reqSet: reqSet.freeze('reqSet'),
-        hiddenSet: hiddenSet.freeze('hiddenSet')
-      }
-    })
+    expect(sch.attributes).toStrictEqual({ optSet, reqSet, hiddenSet })
   })
 
   test('list', () => {
@@ -108,22 +84,15 @@ describe('schema', () => {
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        optList: FreezeAttribute<typeof optList>
-        deepList: FreezeAttribute<typeof deepList>
-        reqList: FreezeAttribute<typeof reqList>
-        hiddenList: FreezeAttribute<typeof hiddenList>
+        optList: typeof optList
+        deepList: typeof deepList
+        reqList: typeof reqList
+        hiddenList: typeof hiddenList
       }
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        optList: optList.freeze('optList'),
-        deepList: deepList.freeze('deepList'),
-        reqList: reqList.freeze('reqList'),
-        hiddenList: hiddenList.freeze('hiddenList')
-      }
-    })
+    expect(sch.attributes).toStrictEqual({ optList, deepList, reqList, hiddenList })
   })
 
   test('maps', () => {
@@ -140,22 +109,15 @@ describe('schema', () => {
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        flatMap: FreezeAttribute<typeof flatMap>
-        deepMap: FreezeAttribute<typeof deepMap>
-        reqMap: FreezeAttribute<typeof reqMap>
-        hiddenMap: FreezeAttribute<typeof hiddenMap>
+        flatMap: typeof flatMap
+        deepMap: typeof deepMap
+        reqMap: typeof reqMap
+        hiddenMap: typeof hiddenMap
       }
     > = 1
     assertSch
 
-    expect(sch).toMatchObject({
-      attributes: {
-        flatMap: flatMap.freeze('flatMap'),
-        deepMap: deepMap.freeze('deepMap'),
-        reqMap: reqMap.freeze('reqMap'),
-        hiddenMap: hiddenMap.freeze('hiddenMap')
-      }
-    })
+    expect(sch.attributes).toStrictEqual({ flatMap, deepMap, reqMap, hiddenMap })
   })
 
   test('pick', () => {
@@ -168,22 +130,16 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof pickedSch)['attributes'],
       {
-        hidBool: ResetLinks<FreezeAttribute<typeof hidBool, true>>
-        defNum: ResetLinks<FreezeAttribute<typeof defNum, true>>
-        savedAsBin: ResetLinks<FreezeAttribute<typeof savedAsBin, true>>
-        keyStr: ResetLinks<FreezeAttribute<typeof keyStr, true>>
-        enumStr: ResetLinks<FreezeAttribute<typeof enumStr, true>>
-        linkedStr: ResetLinks<FreezeAttribute<typeof linkedStr, true>>
+        hidBool: ResetLinks<typeof hidBool>
+        defNum: ResetLinks<typeof defNum>
+        savedAsBin: ResetLinks<typeof savedAsBin>
+        keyStr: ResetLinks<typeof keyStr>
+        enumStr: ResetLinks<typeof enumStr>
+        linkedStr: ResetLinks<typeof linkedStr>
       }
     > = 1
     assertSch
-    expect(pickedSch.attributes).toMatchObject({
-      hidBool: hidBool.freeze('hidBool'),
-      defNum: defNum.freeze('defNum'),
-      savedAsBin: savedAsBin.freeze('savedAsBin'),
-      keyStr: keyStr.freeze('keyStr'),
-      enumStr: enumStr.freeze('enumStr')
-    })
+    expect(pickedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
     // @ts-expect-error putLink is actually set to undefined
     expect(pickedSch.attributes.linkedStr.state.putLink).toBeUndefined()
 
@@ -201,22 +157,16 @@ describe('schema', () => {
     const assertSch: A.Equals<
       (typeof omittedSch)['attributes'],
       {
-        hidBool: ResetLinks<FreezeAttribute<typeof hidBool, true>>
-        defNum: ResetLinks<FreezeAttribute<typeof defNum, true>>
-        savedAsBin: ResetLinks<FreezeAttribute<typeof savedAsBin, true>>
-        keyStr: ResetLinks<FreezeAttribute<typeof keyStr, true>>
-        enumStr: ResetLinks<FreezeAttribute<typeof enumStr, true>>
-        linkedStr: ResetLinks<FreezeAttribute<typeof linkedStr, true>>
+        hidBool: ResetLinks<typeof hidBool>
+        defNum: ResetLinks<typeof defNum>
+        savedAsBin: ResetLinks<typeof savedAsBin>
+        keyStr: ResetLinks<typeof keyStr>
+        enumStr: ResetLinks<typeof enumStr>
+        linkedStr: ResetLinks<typeof linkedStr>
       }
     > = 1
     assertSch
-    expect(omittedSch.attributes).toMatchObject({
-      hidBool: hidBool.freeze('hidBool'),
-      defNum: defNum.freeze('defNum'),
-      savedAsBin: savedAsBin.freeze('savedAsBin'),
-      keyStr: keyStr.freeze('keyStr'),
-      enumStr: enumStr.freeze('enumStr')
-    })
+    expect(omittedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
     // @ts-expect-error putLink is actually set to undefined
     expect(omittedSch.attributes.linkedStr.state.putLink).toBeUndefined()
 

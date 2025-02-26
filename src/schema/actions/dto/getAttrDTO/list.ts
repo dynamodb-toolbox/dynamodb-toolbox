@@ -1,4 +1,4 @@
-import type { ListAttribute } from '~/attributes/list/index.js'
+import type { ListSchema } from '~/attributes/list/index.js'
 
 import type { ListAttrDTO } from '../types.js'
 import { getAttrDTO } from './attribute.js'
@@ -7,7 +7,7 @@ import { getDefaultsDTO } from './utils.js'
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getListAttrDTO = (attr: ListAttribute): ListAttrDTO => {
+export const getListAttrDTO = (attr: ListSchema): ListAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
   const { required, hidden, key, savedAs } = attr.state
 

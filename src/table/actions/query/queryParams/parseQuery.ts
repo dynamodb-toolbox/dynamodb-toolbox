@@ -1,10 +1,9 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { BinaryAttribute } from '~/attributes/binary/index.js'
-import type { Never } from '~/attributes/constants/requiredOptions.js'
-import type { Attribute } from '~/attributes/index.js'
-import { StringAttribute } from '~/attributes/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
+import { BinarySchema } from '~/attributes/binary/schema.js'
+import type { AttrSchema } from '~/attributes/index.js'
+import { NumberSchema } from '~/attributes/number/schema.js'
+import { StringSchema } from '~/attributes/string/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
@@ -16,19 +15,6 @@ import { pick } from '~/utils/pick.js'
 import { queryOperatorSet } from '../types.js'
 import type { Query } from '../types.js'
 
-const defaultAttribute = {
-  required: 'never' as Never,
-  key: false,
-  hidden: false,
-  savedAs: undefined,
-  enum: undefined,
-  transform: undefined,
-  big: false,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-}
-
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
   query: QUERY
@@ -37,14 +23,14 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Attribute => {
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): AttrSchema => {
   switch (key.type) {
     case 'number':
-      return new NumberAttribute({ ...defaultAttribute, path: key.name })
+      return new NumberSchema({ required: 'never' })
     case 'string':
-      return new StringAttribute({ ...defaultAttribute, path: key.name })
+      return new StringSchema({ required: 'never' })
     case 'binary':
-      return new BinaryAttribute({ ...defaultAttribute, path: key.name })
+      return new BinarySchema({ required: 'never' })
   }
 }
 

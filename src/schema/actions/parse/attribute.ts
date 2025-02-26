@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { InputValue, Schema, WriteMode } from '~/schema/index.js'
@@ -17,12 +17,12 @@ import { setAttrParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
 export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: Attribute,
+  attribute: AttrSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ParserYield<Attribute, OPTIONS>,
-  ParserReturn<Attribute, OPTIONS>,
+  ParserYield<AttrSchema, OPTIONS>,
+  ParserReturn<AttrSchema, OPTIONS>,
   // TODO: Define & use DefaultedValue here
   InputValue<Schema, InferWriteValueOptions<OPTIONS, true>> | undefined
 > {
@@ -63,7 +63,8 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const nextOpts = { ...options, fill: nextFill } as OPTIONS
 
   const { isExtension, extensionParser, basicInput } = parseExtension(attribute, filledValue, {
-    transform
+    transform,
+    valuePath
   })
 
   if (isExtension) {
@@ -124,7 +125,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 }
 
-const getDefaulter = (attribute: Attribute, mode: WriteMode) => {
+const getDefaulter = (attribute: AttrSchema, mode: WriteMode) => {
   const { state } = attribute
 
   if (state.key) {
@@ -141,7 +142,7 @@ const getDefaulter = (attribute: Attribute, mode: WriteMode) => {
   }
 }
 
-const getLinker = (attribute: Attribute, mode: WriteMode) => {
+const getLinker = (attribute: AttrSchema, mode: WriteMode) => {
   const { state } = attribute
 
   if (state.key) {

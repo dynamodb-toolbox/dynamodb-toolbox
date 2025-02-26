@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { StringAttribute_ } from '~/attributes/index.js'
+import type { StringSchema } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -38,7 +38,7 @@ describe('addInternalAttributes', () => {
     test('adds entity attribute', () => {
       const assertEntityAttribute: A.Contains<
         typeof enrichedSchema.attributes.id,
-        StringAttribute_<{
+        StringSchema<{
           hidden: false
           savedAs: '__et__'
           enum: ['myEntity']
@@ -49,7 +49,6 @@ describe('addInternalAttributes', () => {
       assertEntityAttribute
 
       expect(enrichedSchema.attributes.id).toMatchObject({
-        path: 'id',
         type: 'string',
         state: {
           hidden: false,
@@ -147,7 +146,7 @@ describe('addInternalAttributes', () => {
 
       const assertCreatedAttribute: A.Contains<
         typeof enrichedSchema.attributes.created,
-        StringAttribute_<{
+        StringSchema<{
           hidden: false
           savedAs: '_ct'
           putDefault: unknown
@@ -157,7 +156,6 @@ describe('addInternalAttributes', () => {
       assertCreatedAttribute
 
       expect(enrichedSchema.attributes.created).toMatchObject({
-        path: 'created',
         type: 'string',
         state: {
           savedAs: '_ct',
@@ -182,7 +180,7 @@ describe('addInternalAttributes', () => {
 
       const assertPartialCustomCreatedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.created,
-        StringAttribute_<{
+        StringSchema<{
           hidden: false
           savedAs: 'c'
           putDefault: unknown
@@ -192,7 +190,6 @@ describe('addInternalAttributes', () => {
       assertPartialCustomCreatedAttribute
 
       expect(partialCustomSchema.attributes.created).toMatchObject({
-        path: 'created',
         type: 'string',
         state: {
           savedAs: 'c',
@@ -219,7 +216,7 @@ describe('addInternalAttributes', () => {
 
       const assertCustomCreatedAttribute: A.Contains<
         (typeof customSchema.attributes)['__created__'],
-        StringAttribute_<{
+        StringSchema<{
           hidden: true
           savedAs: 'c'
           putDefault: unknown
@@ -229,7 +226,6 @@ describe('addInternalAttributes', () => {
       assertCustomCreatedAttribute
 
       expect(customSchema.attributes['__created__']).toMatchObject({
-        path: '__created__',
         type: 'string',
         state: {
           hidden: true,
@@ -255,7 +251,7 @@ describe('addInternalAttributes', () => {
 
       const assertModifiedAttribute: A.Contains<
         typeof enrichedSchema.attributes.modified,
-        StringAttribute_<{
+        StringSchema<{
           hidden: false
           savedAs: '_md'
           putDefault: unknown
@@ -265,7 +261,6 @@ describe('addInternalAttributes', () => {
       assertModifiedAttribute
 
       expect(enrichedSchema.attributes.modified).toMatchObject({
-        path: 'modified',
         type: 'string',
         state: {
           savedAs: '_md',
@@ -290,7 +285,7 @@ describe('addInternalAttributes', () => {
 
       const assertPartialCustomModifiedAttribute: A.Contains<
         typeof partialCustomSchema.attributes.modified,
-        StringAttribute_<{
+        StringSchema<{
           hidden: false
           savedAs: 'm'
           putDefault: unknown
@@ -300,7 +295,6 @@ describe('addInternalAttributes', () => {
       assertPartialCustomModifiedAttribute
 
       expect(partialCustomSchema.attributes.modified).toMatchObject({
-        path: 'modified',
         type: 'string',
         state: {
           savedAs: 'm',
@@ -327,7 +321,7 @@ describe('addInternalAttributes', () => {
 
       const assertCustomModifiedAttribute: A.Contains<
         (typeof customSchema.attributes)['__modified__'],
-        StringAttribute_<{
+        StringSchema<{
           hidden: true
           savedAs: 'm'
           putDefault: unknown
@@ -337,7 +331,6 @@ describe('addInternalAttributes', () => {
       assertCustomModifiedAttribute
 
       expect(customSchema.attributes['__modified__']).toMatchObject({
-        path: '__modified__',
         type: 'string',
         state: {
           savedAs: 'm',

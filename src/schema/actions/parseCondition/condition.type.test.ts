@@ -1,36 +1,36 @@
 import type { A } from 'ts-toolbelt'
 
 import type {
-  AnyOfAttribute,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  SetAttribute,
-  StringAttribute
+  AnyOfSchema,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
+  NumberSchema,
+  RecordSchema,
+  SetSchema,
+  StringSchema
 } from '~/attributes/index.js'
 import type { AppendKey, Paths } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {
-  AnyOfAttrCondition,
+  AnyOfSchemaCondition,
   AttrCondition,
-  BinaryAttrCondition,
-  BooleanAttrCondition,
+  BinarySchemaCondition,
+  BooleanSchemaCondition,
   ConditionType,
   ExistsCondition,
-  ListAttrCondition,
-  MapAttrCondition,
+  ListSchemaCondition,
+  MapSchemaCondition,
   NonLogicalCondition,
-  NullAttrCondition,
-  NumberAttrCondition,
-  RecordAttrCondition,
+  NullSchemaCondition,
+  NumberSchemaCondition,
+  RecordSchemaCondition,
   SchemaCondition,
-  SetAttrCondition,
+  SetSchemaCondition,
   SizeCondition,
-  StringAttrCondition,
+  StringSchemaCondition,
   TypeCondition
 } from './condition.js'
 
@@ -43,16 +43,16 @@ const anyCondition: A.Equals<
   ANY_CONDITION,
   | ExistsCondition<`${ANY_ATTR_PATH}${string}`>
   | TypeCondition<`${ANY_ATTR_PATH}${string}`>
-  | NullAttrCondition<`${ANY_ATTR_PATH}${string}`>
-  | BooleanAttrCondition<`${ANY_ATTR_PATH}${string}`, BooleanAttribute, ALL_PATHS>
-  | NumberAttrCondition<`${ANY_ATTR_PATH}${string}`, NumberAttribute, ALL_PATHS>
-  | StringAttrCondition<`${ANY_ATTR_PATH}${string}`, StringAttribute, ALL_PATHS>
-  | BinaryAttrCondition<`${ANY_ATTR_PATH}${string}`, BinaryAttribute, ALL_PATHS>
-  | SetAttrCondition<`${ANY_ATTR_PATH}${string}`, SetAttribute, ALL_PATHS>
-  | ListAttrCondition<`${ANY_ATTR_PATH}${string}`, ListAttribute, ALL_PATHS>
-  | MapAttrCondition<`${ANY_ATTR_PATH}${string}`, MapAttribute, ALL_PATHS>
-  | RecordAttrCondition<`${ANY_ATTR_PATH}${string}`, RecordAttribute, ALL_PATHS>
-  | AnyOfAttrCondition<`${ANY_ATTR_PATH}${string}`, AnyOfAttribute, ALL_PATHS>
+  | NullSchemaCondition<`${ANY_ATTR_PATH}${string}`>
+  | BooleanSchemaCondition<`${ANY_ATTR_PATH}${string}`, BooleanSchema, ALL_PATHS>
+  | NumberSchemaCondition<`${ANY_ATTR_PATH}${string}`, NumberSchema, ALL_PATHS>
+  | StringSchemaCondition<`${ANY_ATTR_PATH}${string}`, StringSchema, ALL_PATHS>
+  | BinarySchemaCondition<`${ANY_ATTR_PATH}${string}`, BinarySchema, ALL_PATHS>
+  | SetSchemaCondition<`${ANY_ATTR_PATH}${string}`, SetSchema, ALL_PATHS>
+  | ListSchemaCondition<`${ANY_ATTR_PATH}${string}`, ListSchema, ALL_PATHS>
+  | MapSchemaCondition<`${ANY_ATTR_PATH}${string}`, MapSchema, ALL_PATHS>
+  | RecordSchemaCondition<`${ANY_ATTR_PATH}${string}`, RecordSchema, ALL_PATHS>
+  | AnyOfSchemaCondition<`${ANY_ATTR_PATH}${string}`, AnyOfSchema, ALL_PATHS>
 > = 1
 anyCondition
 
@@ -207,7 +207,7 @@ const assertStringListCondition: A.Equals<
   | { attr: STRING_LIST_ATTR_PATH; type: ConditionType }
   | { attr: STRING_LIST_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
   // Already tested above
-  | StringAttrCondition<
+  | StringSchemaCondition<
       `${STRING_LIST_ATTR_PATH}[${number}]`,
       ATTRIBUTES['stringList']['elements'],
       ALL_PATHS
@@ -224,7 +224,7 @@ const assertMapListCondition: A.Equals<
   | { attr: MAP_LIST_ATTR_PATH; exists: boolean }
   | { attr: MAP_LIST_ATTR_PATH; type: ConditionType }
   // Already tested below
-  | MapAttrCondition<
+  | MapSchemaCondition<
       `${MAP_LIST_ATTR_PATH}[${number}]`,
       ATTRIBUTES['mapList']['elements'],
       ALL_PATHS
@@ -240,17 +240,17 @@ const assertMapCondition: A.Equals<
   MAP_CONDITION,
   | { attr: MAP_ATTR_PATH; exists: boolean }
   | { attr: MAP_ATTR_PATH; type: ConditionType }
-  | NumberAttrCondition<
+  | NumberSchemaCondition<
       AppendKey<MAP_ATTR_PATH, 'num'>,
       ATTRIBUTES['map']['attributes']['num'],
       ALL_PATHS
     >
-  | ListAttrCondition<
+  | ListSchemaCondition<
       AppendKey<MAP_ATTR_PATH, 'stringList'>,
       ATTRIBUTES['map']['attributes']['stringList'],
       ALL_PATHS
     >
-  | MapAttrCondition<
+  | MapSchemaCondition<
       AppendKey<MAP_ATTR_PATH, 'map'>,
       ATTRIBUTES['map']['attributes']['map'],
       ALL_PATHS

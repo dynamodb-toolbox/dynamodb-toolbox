@@ -1,111 +1,56 @@
 import type {
-  $BinaryAttribute,
-  $BinaryAttributeNestedState,
-  $BinaryAttributeState,
-  BinaryAttribute,
-  BinaryAttribute_,
-  FreezeBinaryAttribute,
-  ResolveBinaryAttribute,
-  ResolvedBinaryAttribute
+  BinarySchema,
+  BinarySchema_,
+  ResolveBinarySchema,
+  ResolvedBinarySchema
 } from '../binary/index.js'
 import type {
-  $BooleanAttribute,
-  $BooleanAttributeNestedState,
-  $BooleanAttributeState,
-  BooleanAttribute,
-  BooleanAttribute_,
-  FreezeBooleanAttribute,
-  ResolveBooleanAttribute,
+  BooleanSchema,
+  BooleanSchema_,
+  ResolveBooleanSchema,
   ResolvedBooleanAttribute
 } from '../boolean/index.js'
+import type { NullSchema, NullSchema_, ResolvedNullSchema } from '../null/index.js'
 import type {
-  $NullAttribute,
-  $NullAttributeNestedState,
-  $NullAttributeState,
-  FreezeNullAttribute,
-  NullAttribute,
-  NullAttribute_,
-  ResolvedNullAttribute
-} from '../null/index.js'
-import type {
-  $NumberAttribute,
-  $NumberAttributeNestedState,
-  $NumberAttributeState,
-  FreezeNumberAttribute,
-  NumberAttribute,
-  NumberAttribute_,
-  ResolveNumberAttribute,
-  ResolvedNumberAttribute
+  NumberSchema,
+  NumberSchema_,
+  ResolveNumberSchema,
+  ResolvedNumberSchema
 } from '../number/index.js'
 import type {
-  $StringAttribute,
-  $StringAttributeNestedState,
-  $StringAttributeState,
-  FreezeStringAttribute,
-  ResolveStringAttribute,
-  ResolvedStringAttribute,
-  StringAttribute,
-  StringAttribute_
+  ResolveStringSchema,
+  ResolvedStringSchema,
+  StringSchema,
+  StringSchema_
 } from '../string/index.js'
 
-export type $PrimitiveAttributeNestedState =
-  | $NullAttributeNestedState
-  | $BooleanAttributeNestedState
-  | $NumberAttributeNestedState
-  | $StringAttributeNestedState
-  | $BinaryAttributeNestedState
+export type PrimitiveSchema =
+  | NullSchema
+  | BooleanSchema
+  | NumberSchema
+  | StringSchema
+  | BinarySchema
 
-export type $PrimitiveAttributeState =
-  | $NullAttributeState
-  | $BooleanAttributeState
-  | $NumberAttributeState
-  | $StringAttributeState
-  | $BinaryAttributeState
+export type PrimitiveSchema_ =
+  | NullSchema_
+  | BooleanSchema_
+  | NumberSchema_
+  | StringSchema_
+  | BinarySchema_
 
-export type $PrimitiveAttribute =
-  | $NullAttribute
-  | $BooleanAttribute
-  | $NumberAttribute
-  | $StringAttribute
-  | $BinaryAttribute
-
-export type PrimitiveAttribute =
-  | NullAttribute
-  | BooleanAttribute
-  | NumberAttribute
-  | StringAttribute
-  | BinaryAttribute
-
-export type PrimitiveAttribute_ =
-  | NullAttribute_
-  | BooleanAttribute_
-  | NumberAttribute_
-  | StringAttribute_
-  | BinaryAttribute_
-
-export type ResolvedPrimitiveAttribute =
-  | ResolvedNullAttribute
+export type ResolvedPrimitiveSchema =
+  | ResolvedNullSchema
   | ResolvedBooleanAttribute
-  | ResolvedNumberAttribute
-  | ResolvedStringAttribute
-  | ResolvedBinaryAttribute
+  | ResolvedNumberSchema
+  | ResolvedStringSchema
+  | ResolvedBinarySchema
 
-export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
-  PrimitiveAttribute extends ATTRIBUTE
-    ? ResolvedPrimitiveAttribute
+export type ResolvePrimitiveSchema<ATTRIBUTE extends PrimitiveSchema> =
+  PrimitiveSchema extends ATTRIBUTE
+    ? ResolvedPrimitiveSchema
     :
-        | (ATTRIBUTE extends NullAttribute ? ResolvedNullAttribute : never)
-        | (ATTRIBUTE extends BooleanAttribute ? ResolveBooleanAttribute<ATTRIBUTE> : never)
-        | (ATTRIBUTE extends NumberAttribute ? ResolveNumberAttribute<ATTRIBUTE> : never)
-        | (ATTRIBUTE extends StringAttribute ? ResolveStringAttribute<ATTRIBUTE> : never)
-        | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
-
-export type FreezePrimitiveAttribute<
-  ATTRIBUTE extends $PrimitiveAttributeState,
-  EXTENDED extends boolean = false
-> =
-  | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $BooleanAttributeState ? FreezeBooleanAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE, EXTENDED> : never)
+        | (ATTRIBUTE extends NullSchema ? ResolvedNullSchema : never)
+        | (ATTRIBUTE extends BooleanSchema ? ResolveBooleanSchema<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends NumberSchema ? ResolveNumberSchema<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends StringSchema ? ResolveStringSchema<ATTRIBUTE> : never)
+        | (ATTRIBUTE extends BinarySchema ? ResolveBinarySchema<ATTRIBUTE> : never)

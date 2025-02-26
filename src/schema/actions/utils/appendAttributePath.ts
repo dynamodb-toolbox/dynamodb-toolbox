@@ -1,6 +1,6 @@
-import { AnyAttribute } from '~/attributes/any/index.js'
-import type { Attribute } from '~/attributes/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
+import { AnySchema } from '~/attributes/any/schema.js'
+import type { AttrSchema } from '~/attributes/index.js'
+import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -9,19 +9,15 @@ import { combineRegExp } from '~/utils/combineRegExp.js'
 export type AppendAttributePathOptions = { size?: boolean }
 
 export interface ExpressionParser {
-  schema: Schema | Attribute
+  schema: Schema | AttrSchema
   expressionAttributePrefix: string
   expressionAttributeNames: string[]
-  clone: (schema?: Schema | Attribute) => ExpressionParser
+  clone: (schema?: Schema | AttrSchema) => ExpressionParser
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
-  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
+  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => AttrSchema
 }
-
-const defaultAnyAttribute = new AnyAttribute({ required: 'never' })
-
-const defaultNumberAttribute = new NumberAttribute({ required: 'never' })
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
   new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
@@ -40,11 +36,11 @@ export const appendAttributePath = (
   parser: ExpressionParser,
   attributePath: string,
   options: AppendAttributePathOptions = {}
-): Attribute => {
+): AttrSchema => {
   const { size = false } = options
 
   const expressionAttrPrefix = parser.expressionAttributePrefix
-  let parentAttr: Schema | Attribute = parser.schema
+  let parentAttr: Schema | AttrSchema = parser.schema
   let expressionPath = ''
   let attrMatches = [...attributePath.matchAll(pathRegex)]
   let attrPathTail: string | undefined
@@ -78,10 +74,7 @@ export const appendAttributePath = (
           }
         }
 
-        parentAttr = new AnyAttribute({
-          ...defaultAnyAttribute,
-          path: [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
-        })
+        parentAttr = new AnySchema({ required: 'never' })
         break
       }
       case 'binary':
@@ -164,7 +157,5 @@ export const appendAttributePath = (
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
-  return size
-    ? new NumberAttribute({ ...defaultNumberAttribute.state, path: parentAttr.path })
-    : parentAttr
+  return size ? new NumberSchema({ required: 'never' }) : parentAttr
 }

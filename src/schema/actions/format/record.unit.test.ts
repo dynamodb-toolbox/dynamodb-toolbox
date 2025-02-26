@@ -11,7 +11,7 @@ const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
 const _record = record(
   string().transform(prefix('_', { delimiter: '' })),
   string().transform(prefix('_', { delimiter: '' }))
-).freeze('path')
+)
 
 describe('recordAttrFormatter', () => {
   beforeEach(() => {

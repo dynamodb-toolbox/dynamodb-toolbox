@@ -1,6 +1,7 @@
-import type { Attribute, AttributeBasicValue, ListAttribute } from '~/attributes/index.js'
+import type { AttrSchema, AttributeBasicValue, ListSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
@@ -21,13 +22,13 @@ import { parseUpdateExtension } from './attribute.js'
 import { parseReferenceExtension } from './reference.js'
 
 function* listElementParser(
-  attribute: ListAttribute,
+  attribute: ListSchema,
   inputValue: unknown,
-  { transform = true }: ExtensionParserOptions
+  { transform = true, valuePath = [] }: ExtensionParserOptions
 ): Generator<
-  ValidValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
-  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
-  | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
+  ValidValue<AttrSchema, { extension: UpdateItemInputExtension }> | undefined,
+  | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
+  | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue
@@ -57,22 +58,25 @@ function* listElementParser(
     mode: 'update',
     fill: false,
     transform,
-    parseExtension: parseUpdateExtension
+    parseExtension: parseUpdateExtension,
+    valuePath
   })
 }
 
 export const parseListExtension = (
-  attribute: ListAttribute,
+  attribute: ListSchema,
   input: unknown,
-  options: ExtensionParserOptions
+  { transform = true, valuePath = [] }: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { transform = true } = options
-
   if (isSetting(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$SET], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$SET], {
+          fill: false,
+          transform,
+          valuePath: [...valuePath, '$SET']
+        })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -90,14 +94,19 @@ export const parseListExtension = (
   if (isObject(input) || isArray(input)) {
     if (isAppending(input) && input[$APPEND] !== undefined) {
       const appendedValue = input[$APPEND]
+      const appendedValuePath = [...valuePath, '$APPEND']
 
       if (isArray(appendedValue)) {
         return {
           isExtension: true,
           *extensionParser() {
-            const parsers = appendedValue.map(element =>
+            const parsers = appendedValue.map((element, index) =>
               // Should be a simple list of valid elements (not extended)
-              new Parser(attribute.elements).start(element, { fill: false, transform })
+              new Parser(attribute.elements).start(element, {
+                fill: false,
+                transform,
+                valuePath: [...appendedValuePath, index]
+              })
             )
 
             const parsedValue = { [$APPEND]: parsers.map(parser => parser.next().value) }
@@ -119,7 +128,8 @@ export const parseListExtension = (
           const parser = new Parser(attribute).start(appendedValue, {
             fill: false,
             transform,
-            parseExtension: parseReferenceExtension
+            parseExtension: parseReferenceExtension,
+            valuePath: appendedValuePath
           })
 
           const parsedValue = { [$APPEND]: parser.next().value }
@@ -137,13 +147,18 @@ export const parseListExtension = (
 
     if (isPrepending(input) && input[$PREPEND] !== undefined) {
       const prependedValue = input[$PREPEND]
+      const prependedValuePath = [...valuePath, '$PREPEND']
 
       if (isArray(prependedValue)) {
         return {
           isExtension: true,
           *extensionParser() {
-            const parsers = prependedValue.map(element =>
-              new Parser(attribute.elements).start(element, { fill: false, transform })
+            const parsers = prependedValue.map((element, index) =>
+              new Parser(attribute.elements).start(element, {
+                fill: false,
+                transform,
+                valuePath: [...prependedValuePath, index]
+              })
             )
 
             const parsedValue = { [$PREPEND]: parsers.map(parser => parser.next().value) }
@@ -165,7 +180,8 @@ export const parseListExtension = (
           const parser = new Parser(attribute).start(prependedValue, {
             fill: false,
             transform,
-            parseExtension: parseReferenceExtension
+            parseExtension: parseReferenceExtension,
+            valuePath: prependedValuePath
           })
 
           const parsedValue = { [$PREPEND]: parser.next().value }
@@ -187,31 +203,28 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
-            | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
-            | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
+            ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>,
+            | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
+            | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
           >
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [
             index,
-            listElementParser(attribute, element, options)
+            listElementParser(attribute, element, { transform, valuePath: [...valuePath, index] })
           ])
         )
 
         for (const inputKey of Object.keys(parsers)) {
           const parsedInputKey = parseFloat(inputKey)
+          const path = formatValuePath(valuePath)
 
           if (!isInteger(parsedInputKey)) {
-            const { path } = attribute
-
             throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
               message: `Index of array attribute ${
                 path !== undefined ? `'${path}' ` : ''
               }is not a valid integer`,
               path,
-              payload: {
-                received: inputKey
-              }
+              payload: { received: inputKey }
             })
           }
 

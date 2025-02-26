@@ -1,6 +1,6 @@
-import type { $ListAttributeNestedState } from '~/attributes/list/index.js'
+import type { ListSchema } from '~/attributes/list/index.js'
 import { list } from '~/attributes/list/index.js'
-import type { $ListAttributeElements } from '~/attributes/list/types.js'
+import type { ListElementSchema } from '~/attributes/list/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
@@ -19,7 +19,7 @@ export const fromListAttrDTO = ({
   updateLink,
   elements,
   ...props
-}: ListAttrDTO): $ListAttributeNestedState => {
+}: ListAttrDTO): ListSchema => {
   keyDefault
   putDefault
   updateDefault
@@ -27,5 +27,5 @@ export const fromListAttrDTO = ({
   putLink
   updateLink
 
-  return list(fromAttrDTO(elements) as $ListAttributeElements, props)
+  return list(fromAttrDTO(elements) as ListElementSchema, props)
 }

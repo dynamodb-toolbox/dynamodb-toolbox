@@ -1,12 +1,12 @@
-import type { BinaryAttribute, PrimitiveAttribute } from '~/attributes/index.js'
+import type { BinarySchema, PrimitiveSchema } from '~/attributes/index.js'
 
-export type FormattedPrimitiveAttrJSONSchema<ATTRIBUTE extends PrimitiveAttribute> =
-  ATTRIBUTE extends BinaryAttribute ? { type: 'string' } : { type: ATTRIBUTE['type'] }
+export type FormattedPrimitiveJSONSchema<ATTRIBUTE extends PrimitiveSchema> =
+  ATTRIBUTE extends BinarySchema ? { type: 'string' } : { type: ATTRIBUTE['type'] }
 
-export const getFormattedPrimitiveAttrJSONSchema = <ATTRIBUTE extends PrimitiveAttribute>(
+export const getFormattedPrimitiveAttrJSONSchema = <ATTRIBUTE extends PrimitiveSchema>(
   attr: ATTRIBUTE
-): FormattedPrimitiveAttrJSONSchema<ATTRIBUTE> => {
-  type Response = FormattedPrimitiveAttrJSONSchema<ATTRIBUTE>
+): FormattedPrimitiveJSONSchema<ATTRIBUTE> => {
+  type Response = FormattedPrimitiveJSONSchema<ATTRIBUTE>
 
   if (attr.type === 'binary') {
     return { type: 'string' } as Response

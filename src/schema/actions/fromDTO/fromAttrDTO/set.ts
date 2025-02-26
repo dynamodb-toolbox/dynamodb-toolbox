@@ -1,6 +1,6 @@
-import type { $SetAttributeNestedState } from '~/attributes/set/index.js'
+import type { SetSchema } from '~/attributes/set/index.js'
 import { set } from '~/attributes/set/index.js'
-import type { $SetAttributeElements } from '~/attributes/set/types.js'
+import type { SetElementSchema } from '~/attributes/set/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAttrDTO } from './attribute.js'
@@ -19,7 +19,7 @@ export const fromJSONSetAttr = ({
   updateLink,
   elements,
   ...props
-}: SetAttrDTO): $SetAttributeNestedState => {
+}: SetAttrDTO): SetSchema => {
   keyDefault
   putDefault
   updateDefault
@@ -27,5 +27,5 @@ export const fromJSONSetAttr = ({
   putLink
   updateLink
 
-  return set(fromAttrDTO(elements) as $SetAttributeElements, props)
+  return set(fromAttrDTO(elements) as SetElementSchema, props)
 }

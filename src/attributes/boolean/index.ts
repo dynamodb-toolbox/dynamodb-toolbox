@@ -1,6 +1,7 @@
-export { boolean } from './typer.js'
-export type { $BooleanAttributeState, $BooleanAttributeNestedState } from './interface.js'
-export { $BooleanAttribute, BooleanAttribute, BooleanAttribute_ } from './interface.js'
-export type { FreezeBooleanAttribute } from './freeze.js'
-export type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
+export { BooleanSchema } from './schema.js'
+export { boolean, BooleanSchema_ } from './schema_.js'
+export type {
+  ResolveBooleanSchema,
+  ResolvedBooleanSchema as ResolvedBooleanAttribute
+} from './resolve.js'
 export type { BooleanAttributeState } from './types.js'

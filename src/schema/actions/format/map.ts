@@ -1,4 +1,4 @@
-import type { MapAttribute } from '~/attributes/index.js'
+import type { MapSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -9,12 +9,12 @@ import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* mapAttrFormatter(
-  mapAttribute: MapAttribute,
+  mapAttribute: MapSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapSchema> = {}
 ): Generator<
-  FormatterYield<MapAttribute, FormatAttrValueOptions<MapAttribute>>,
-  FormatterReturn<MapAttribute, FormatAttrValueOptions<MapAttribute>>
+  FormatterYield<MapSchema, FormatAttrValueOptions<MapSchema>>,
+  FormatterReturn<MapSchema, FormatAttrValueOptions<MapSchema>>
 > {
   const { format = true, transform = true } = restOptions
 

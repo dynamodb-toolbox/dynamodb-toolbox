@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue, RecordAttribute } from '~/attributes/index.js'
+import type { AttrSchema, AttributeBasicValue, RecordSchema } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
@@ -9,13 +9,13 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseUpdateExtension } from './attribute.js'
 
 function* recordElementsParser(
-  attribute: RecordAttribute,
+  attribute: RecordSchema,
   inputValue: unknown,
-  { transform = true }: ExtensionParserOptions = {}
+  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): Generator<
-  ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
-  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
-  | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
+  ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>,
+  | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
+  | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue
@@ -33,22 +33,25 @@ function* recordElementsParser(
     mode: 'update',
     fill: false,
     transform,
-    parseExtension: parseUpdateExtension
+    parseExtension: parseUpdateExtension,
+    valuePath
   })
 }
 
 export const parseRecordExtension = (
-  attribute: RecordAttribute,
+  attribute: RecordSchema,
   input: unknown,
-  options: ExtensionParserOptions = {}
+  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { transform = true } = options
-
   if (isSetting(input) && input[$SET] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$SET], { fill: false, transform })
+        const parser = new Parser(attribute).start(input[$SET], {
+          fill: false,
+          transform,
+          valuePath: [...valuePath, '$SET']
+        })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -71,7 +74,10 @@ export const parseRecordExtension = (
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
             new Parser(attribute.keys).start(inputKey, { fill: false, transform }),
-            recordElementsParser(attribute, inputValue, options)
+            recordElementsParser(attribute, inputValue, {
+              transform,
+              valuePath: [...valuePath, inputKey]
+            })
           ])
 
         const parsedValue = Object.fromEntries(

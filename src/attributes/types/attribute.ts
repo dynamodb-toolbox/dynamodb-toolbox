@@ -1,55 +1,18 @@
-import type { AnyAttribute, AnyAttribute_ } from '../any/index.js'
-import type { AnyOfAttribute, AnyOfAttribute_ } from '../anyOf/index.js'
-import type { ResolvedBinaryAttribute } from '../binary/index.js'
+import type { ResolvedBinarySchema } from '../binary/index.js'
 import type { ResolvedBooleanAttribute } from '../boolean/index.js'
-import type { ListAttribute, ListAttribute_ } from '../list/index.js'
-import type { MapAttribute, MapAttribute_ } from '../map/index.js'
-import type { ResolvedNullAttribute } from '../null/index.js'
-import type { ResolvedNumberAttribute } from '../number/index.js'
-import type { PrimitiveAttribute, PrimitiveAttribute_ } from '../primitive/index.js'
-import type { RecordAttribute, RecordAttribute_ } from '../record/index.js'
-import type { SetAttribute, SetAttribute_ } from '../set/index.js'
-import type { ResolvedStringAttribute } from '../string/index.js'
-
-/**
- * Any attribute
- */
-export type Attribute =
-  | AnyAttribute
-  | PrimitiveAttribute
-  | SetAttribute
-  | ListAttribute
-  | MapAttribute
-  | RecordAttribute
-  | AnyOfAttribute
-
-/**
- * Any attribute (extended)
- */
-export type Attribute_ =
-  | AnyAttribute_
-  | PrimitiveAttribute_
-  | SetAttribute_
-  | ListAttribute_
-  | MapAttribute_
-  | RecordAttribute_
-  | AnyOfAttribute_
-
-/**
- * Any schema attributes
- */
-export interface SchemaAttributes {
-  [key: string]: Attribute
-}
+import type { ResolvedNullSchema } from '../null/index.js'
+import type { ResolvedNumberSchema } from '../number/index.js'
+import type { ResolvedStringSchema } from '../string/index.js'
+import type { AttrSchema } from './attrSchema.js'
 
 export type Extension = {
-  type: Attribute['type'] | '*'
+  type: AttrSchema['type'] | '*'
   value: unknown
 }
 
 export type ExtendedValue<
   EXTENSIONS extends Extension,
-  TYPE extends Attribute['type'] | '*'
+  TYPE extends AttrSchema['type'] | '*'
 > = '*' extends TYPE
   ? EXTENSIONS['value']
   : EXTENSIONS extends infer EXTENSION
@@ -62,7 +25,7 @@ export type ExtendedValue<
       : never
     : never
 
-export type NullAttributeBasicValue = ResolvedNullAttribute
+export type NullAttributeBasicValue = ResolvedNullSchema
 export type NullAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'null'>
   | NullAttributeBasicValue
@@ -72,17 +35,17 @@ export type BooleanAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'boolean'>
   | BooleanAttributeBasicValue
 
-export type NumberAttributeBasicValue = ResolvedNumberAttribute
+export type NumberAttributeBasicValue = ResolvedNumberSchema
 export type NumberAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'number'>
   | NumberAttributeBasicValue
 
-export type StringAttributeBasicValue = ResolvedStringAttribute
+export type StringAttributeBasicValue = ResolvedStringSchema
 export type StringAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'string'>
   | StringAttributeBasicValue
 
-export type BinaryAttributeBasicValue = ResolvedBinaryAttribute
+export type BinaryAttributeBasicValue = ResolvedBinarySchema
 export type BinaryAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'binary'>
   | BinaryAttributeBasicValue

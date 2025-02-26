@@ -7,7 +7,7 @@ import { setAttrParser } from './set.js'
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const setAttr = set(string()).freeze('path')
+const setAttr = set(string())
 
 describe('setAttrParser', () => {
   beforeEach(() => {
@@ -52,9 +52,7 @@ describe('setAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const setA = set(string())
-      .validate(input => input.has('foo'))
-      .freeze()
+    const setA = set(string()).validate(input => input.has('foo'))
 
     const { value: parsedValue } = setAttrParser(setA, new Set(['foo', 'bar']), {
       fill: false
@@ -72,9 +70,7 @@ describe('setAttrParser', () => {
       })
     )
 
-    const setB = set(string())
-      .validate(input => (input.has('foo') ? true : 'Oh no...'))
-      .freeze('root')
+    const setB = set(string()).validate(input => (input.has('foo') ? true : 'Oh no...'))
 
     const invalidCallB = () =>
       setAttrParser(setB, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()

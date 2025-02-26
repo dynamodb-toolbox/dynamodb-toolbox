@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { Transformer } from '~/transformers/index.js'
@@ -10,20 +10,20 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: PrimitiveAttribute,
+  attribute: PrimitiveSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<PrimitiveAttribute, OPTIONS>, ParserReturn<PrimitiveAttribute, OPTIONS>> {
+): Generator<ParserYield<PrimitiveSchema, OPTIONS>, ParserReturn<PrimitiveSchema, OPTIONS>> {
   const { fill = true, transform = true, valuePath = [] } = options
 
   const linkedValue = inputValue
 
   if (fill) {
     const defaultedValue = cloneDeep(inputValue)
-    yield defaultedValue as ParserYield<PrimitiveAttribute, OPTIONS>
+    yield defaultedValue as ParserYield<PrimitiveSchema, OPTIONS>
 
     const linkedValue = defaultedValue
-    yield linkedValue as ParserYield<PrimitiveAttribute, OPTIONS>
+    yield linkedValue as ParserYield<PrimitiveSchema, OPTIONS>
   }
 
   if (!isValidPrimitive(attribute, linkedValue)) {

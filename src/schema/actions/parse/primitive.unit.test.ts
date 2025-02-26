@@ -6,7 +6,7 @@ import { primitiveAttrParser } from './primitive.js'
 
 describe('primitiveAttrParser', () => {
   test('throws an error if input is not a string', () => {
-    const str = string().freeze()
+    const str = string()
     const invalidCall = () => primitiveAttrParser(str, 42, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
@@ -14,7 +14,7 @@ describe('primitiveAttrParser', () => {
   })
 
   test('uses parser if transformer has been provided', () => {
-    const str = string().transform(prefix('TEST')).freeze('path')
+    const str = string().transform(prefix('TEST'))
 
     const parser = primitiveAttrParser(str, 'bar', { fill: false })
 
@@ -27,9 +27,7 @@ describe('primitiveAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const strA = string()
-      .validate(input => input === 'foo')
-      .freeze()
+    const strA = string().validate(input => input === 'foo')
 
     const { value: parsed } = primitiveAttrParser(strA, 'foo', { fill: false }).next()
     expect(parsed).toBe('foo')
@@ -45,9 +43,7 @@ describe('primitiveAttrParser', () => {
       })
     )
 
-    const strB = string()
-      .validate(input => (input === 'foo' ? true : 'Oh no...'))
-      .freeze()
+    const strB = string().validate(input => (input === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
       primitiveAttrParser(strB, 'bar', { fill: false, valuePath: ['root'] }).next()

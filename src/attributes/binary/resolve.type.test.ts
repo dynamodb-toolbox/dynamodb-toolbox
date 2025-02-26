@@ -1,19 +1,19 @@
 import type { A } from 'ts-toolbelt'
 
-import type { ResolveBinaryAttribute } from './resolve.js'
-import { binary } from './typer.js'
+import type { ResolveBinarySchema } from './resolve.js'
+import { binary } from './schema_.js'
 
-const standardBin = binary().freeze()
-const assertResolveStandard: A.Equals<ResolveBinaryAttribute<typeof standardBin>, Uint8Array> = 1
+const standardBin = binary()
+const assertResolveStandard: A.Equals<ResolveBinarySchema<typeof standardBin>, Uint8Array> = 1
 assertResolveStandard
 
 const binA = new Uint8Array([1, 2, 3])
 const binB = new Uint8Array([2, 3, 4])
 
-const enumBin = binary().enum(binA, binB).freeze()
-const assertResolveEnum: A.Equals<ResolveBinaryAttribute<typeof enumBin>, typeof binA> = 1
+const enumBin = binary().enum(binA, binB)
+const assertResolveEnum: A.Equals<ResolveBinarySchema<typeof enumBin>, typeof binA> = 1
 assertResolveEnum
 
-const constBin = binary().const(binA).freeze()
-const assertResolveConst: A.Equals<ResolveBinaryAttribute<typeof constBin>, typeof binA> = 1
+const constBin = binary().const(binA)
+const assertResolveConst: A.Equals<ResolveBinarySchema<typeof constBin>, typeof binA> = 1
 assertResolveConst
