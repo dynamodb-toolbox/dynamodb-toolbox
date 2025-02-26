@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, ListAttribute } from '~/attributes/index.js'
+import type { AttributeBasicValue, ListSchema } from '~/attributes/index.js'
 import {
   $APPEND,
   $PREPEND,
@@ -15,7 +15,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
 export const parseListExtension = (
-  attribute: ListAttribute,
+  attribute: ListSchema,
   input: unknown,
   options: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateAttributesInputExtension>> => {

@@ -21,18 +21,18 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNumberAttribute } from './freeze.js'
 import { freezeNumberAttribute } from './freeze.js'
-import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
+import type { ResolveNumberSchema, ResolvedNumberSchema } from './resolve.js'
 import type { NumberAttributeState } from './types.js'
 
 export interface NumberSchema<STATE extends NumberAttributeState = NumberAttributeState> {
   type: 'number'
+  path?: string
   state: STATE
 }
 
 export interface $NumberAttributeNestedState<
   STATE extends NumberAttributeState = NumberAttributeState
 > extends NumberSchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeNumberAttribute<NumberSchema<STATE>, true>
 }
@@ -109,7 +109,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends readonly ResolveNumberAttribute<
+    const NEXT_ENUM extends readonly ResolveNumberSchema<
       FreezeNumberAttribute<NumberSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $NumberAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
@@ -123,7 +123,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolveNumberAttribute<FreezeNumberAttribute<NumberSchema<STATE>>>>(
+  const<CONSTANT extends ResolveNumberSchema<FreezeNumberAttribute<NumberSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -146,8 +146,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   transform<
     TRANSFORMER extends Transformer<
-      ResolvedNumberAttribute,
-      ResolveNumberAttribute<FreezeNumberAttribute<NumberSchema<STATE>>>
+      ResolvedNumberSchema,
+      ResolveNumberSchema<FreezeNumberAttribute<NumberSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $NumberAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $NumberAttribute(overwrite(this.state, { transform }))

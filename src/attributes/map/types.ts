@@ -1,9 +1,12 @@
-import type { $AttributeNestedState, Attribute } from '../types/index.js'
+import type { AttrSchema, Attribute } from '../types/index.js'
 
-export interface $MapAttributeAttributeStates {
-  [key: string]: $AttributeNestedState
+export interface MapAttributesSchemas {
+  [key: string]: AttrSchema
 }
 
+/**
+ * @deprecated
+ */
 export interface MapAttributeAttributes {
   [key: string]: Attribute
 }

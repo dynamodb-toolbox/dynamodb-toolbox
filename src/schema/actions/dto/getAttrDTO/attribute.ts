@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 
 import type { AttributeDTO } from '../types.js'
 import { getAnyAttrDTO } from './any.js'
@@ -9,7 +9,7 @@ import { getPrimitiveAttrDTO } from './primitive.js'
 import { getRecordAttrDTO } from './record.js'
 import { getSetAttrDTO } from './set.js'
 
-export const getAttrDTO = (attr: Attribute): AttributeDTO => {
+export const getAttrDTO = (attr: AttrSchema): AttributeDTO => {
   /**
    * @debt feature "handle defaults, links & validators"
    */

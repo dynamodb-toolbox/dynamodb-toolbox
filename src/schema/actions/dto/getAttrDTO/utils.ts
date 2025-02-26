@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import type { SerializableTransformer } from '~/transformers/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -6,7 +6,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import type { AttributeDTO } from '../types.js'
 
 export const getDefaultsDTO = (
-  attr: Attribute
+  attr: AttrSchema
 ): Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {
   const defaultsDTO: Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
 

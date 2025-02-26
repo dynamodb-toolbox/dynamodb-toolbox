@@ -6,7 +6,7 @@ import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { ListAttribute, ListSchema } from './interface.js'
 import { ListAttribute_ } from './interface.js'
-import type { $ListAttributeElements } from './types.js'
+import type { ListElementSchema } from './types.js'
 
 export type FreezeListAttribute<
   $LIST_ATTRIBUTE extends ListSchema,
@@ -17,7 +17,7 @@ export type FreezeListAttribute<
 
 type ListAttributeFreezer = <
   STATE extends SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements
+  $ELEMENTS extends ListElementSchema
 >(
   state: STATE,
   $elements: $ELEMENTS,
@@ -34,7 +34,7 @@ type ListAttributeFreezer = <
  */
 export const freezeListAttribute: ListAttributeFreezer = <
   STATE extends SharedAttributeState,
-  $ELEMENTS extends $ListAttributeElements
+  $ELEMENTS extends ListElementSchema
 >(
   state: STATE,
   elements: $ELEMENTS,

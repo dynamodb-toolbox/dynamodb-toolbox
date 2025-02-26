@@ -1,23 +1,23 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
   Never,
-  NullAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  ResolveAnyAttribute,
-  ResolveBinaryAttribute,
-  ResolveBooleanAttribute,
-  ResolveNumberAttribute,
-  ResolveStringAttribute,
-  ResolvedNullAttribute,
-  SetAttribute,
-  StringAttribute
+  NullSchema,
+  NumberSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolveBinarySchema,
+  ResolveBooleanSchema,
+  ResolveNumberSchema,
+  ResolveStringSchema,
+  ResolvedNullSchema,
+  SetSchema,
+  StringSchema
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
@@ -27,25 +27,25 @@ import type { ChildPaths, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 /**
- * Returns the type of formatted values for a given Schema or Attribute (prior to hiding hidden fields)
+ * Returns the type of formatted values for a given Schema or AttrSchema (prior to hiding hidden fields)
  *
- * @param Schema Schema | Attribute
+ * @param Schema Schema | AttrSchema
  * @return Value
  */
 export type ReadValue<
-  SCHEMA extends Schema | Attribute,
+  SCHEMA extends Schema | AttrSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SCHEMA extends Schema
   ? SchemaReadValue<SCHEMA, OPTIONS>
-  : SCHEMA extends Attribute
+  : SCHEMA extends AttrSchema
     ? AttrReadValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends Attribute> = Not<
+type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
   Extends<ATTRIBUTE['state'], { required: Never }>
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapAttribute> = {
+type OptionalKeys<SCHEMA extends Schema | MapSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
 }[keyof SCHEMA['attributes']]
 
@@ -81,42 +81,42 @@ type SchemaReadValue<
       >
 
 type AttrReadValue<
-  ATTRIBUTE extends Attribute,
+  ATTRIBUTE extends AttrSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = Attribute extends ATTRIBUTE
+> = AttrSchema extends ATTRIBUTE
   ? unknown
   :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrReadValue<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends NullAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullAttribute
+      | (ATTRIBUTE extends AnySchema ? AnySchemaReadValue<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends NullSchema
+          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullSchema
           : never)
-      | (ATTRIBUTE extends BooleanAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends BooleanSchema
+          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanSchema<ATTRIBUTE>
           : never)
-      | (ATTRIBUTE extends NumberAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends NumberSchema
+          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberSchema<ATTRIBUTE>
           : never)
-      | (ATTRIBUTE extends StringAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends StringSchema
+          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringSchema<ATTRIBUTE>
           : never)
-      | (ATTRIBUTE extends BinaryAttribute
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinaryAttribute<ATTRIBUTE>
+      | (ATTRIBUTE extends BinarySchema
+          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinarySchema<ATTRIBUTE>
           : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends Schema | MapAttribute ? MapAttrReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends SetSchema ? SetSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListSchema ? ListSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends Schema | MapSchema ? MapSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends RecordSchema ? RecordSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
 
-type AnyAttrReadValue<ATTRIBUTE extends AnyAttribute> = AnyAttribute extends ATTRIBUTE
+type AnySchemaReadValue<ATTRIBUTE extends AnySchema> = AnySchema extends ATTRIBUTE
   ? unknown
-  : ResolveAnyAttribute<ATTRIBUTE>
+  : ResolveAnySchema<ATTRIBUTE>
 
-type SetAttrReadValue<
-  ATTRIBUTE extends SetAttribute,
+type SetSchemaReadValue<
+  ATTRIBUTE extends SetSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = SetAttribute extends ATTRIBUTE
-  ? undefined | Set<AttrReadValue<SetAttribute['elements']>>
+> = SetSchema extends ATTRIBUTE
+  ? undefined | Set<AttrReadValue<SetSchema['elements']>>
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | Set<AttrReadValue<ATTRIBUTE['elements'], Omit<OPTIONS, 'attributes'>>>
@@ -127,10 +127,10 @@ type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
     ? CHILD_ELEMENT_PATHS
     : never
 
-type ListAttrReadValue<
-  ATTRIBUTE extends ListAttribute,
+type ListSchemaReadValue<
+  ATTRIBUTE extends ListSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  READ_ELEMENTS = ListAttribute extends ATTRIBUTE
+  READ_ELEMENTS = ListSchema extends ATTRIBUTE
     ? unknown
     : AttrReadValue<
         ATTRIBUTE['elements'],
@@ -147,19 +147,19 @@ type ListAttrReadValue<
         >
       >
   // Possible in case of anyOf subSchema
-> = ListAttribute extends ATTRIBUTE
+> = ListSchema extends ATTRIBUTE
   ? undefined | unknown[]
   : [READ_ELEMENTS] extends [never]
     ? never
     : If<MustBeDefined<ATTRIBUTE>, never, undefined> | READ_ELEMENTS[]
 
-type MapAttrReadValue<
-  ATTRIBUTE extends MapAttribute,
+type MapSchemaReadValue<
+  ATTRIBUTE extends MapSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
     ? MatchKeys<Extract<keyof ATTRIBUTE['attributes'], string>, OPTIONS['attributes']>
     : Extract<keyof ATTRIBUTE['attributes'], string>
-> = MapAttribute extends ATTRIBUTE
+> = MapSchema extends ATTRIBUTE
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
@@ -209,13 +209,13 @@ type RecordChildPaths<
     : never
 > = undefined extends CHILD_PATHS ? undefined : CHILD_PATHS
 
-type RecordAttrReadValue<
-  ATTRIBUTE extends RecordAttribute,
+type RecordSchemaReadValue<
+  ATTRIBUTE extends RecordSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
-    ? MatchRecordKeys<ResolveStringAttribute<ATTRIBUTE['keys']>, OPTIONS['attributes']>
-    : ResolveStringAttribute<ATTRIBUTE['keys']>
-> = RecordAttribute extends ATTRIBUTE
+    ? MatchRecordKeys<ResolveStringSchema<ATTRIBUTE['keys']>, OPTIONS['attributes']>
+    : ResolveStringSchema<ATTRIBUTE['keys']>
+> = RecordSchema extends ATTRIBUTE
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
@@ -239,22 +239,22 @@ type RecordAttrReadValue<
             >
           }
 
-type AnyOfAttrReadValue<
-  ATTRIBUTE extends AnyOfAttribute,
+type AnyOfSchemaReadValue<
+  ATTRIBUTE extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = AnyOfAttribute extends ATTRIBUTE
+> = AnyOfSchema extends ATTRIBUTE
   ? unknown
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | AnyOfAttrReadValueRec<ATTRIBUTE, OPTIONS>
+  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | MapAnyOfSchemaReadValue<ATTRIBUTE, OPTIONS>
 
-type AnyOfAttrReadValueRec<
-  ATTRIBUTE extends AnyOfAttribute,
+type MapAnyOfSchemaReadValue<
+  ATTRIBUTE extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  ELEMENTS extends Attribute[] = ATTRIBUTE['elements'],
+  ELEMENTS extends AttrSchema[] = ATTRIBUTE['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Attribute
-    ? ELEMENTS_TAIL extends Attribute[]
-      ? AnyOfAttrReadValueRec<
+  ? ELEMENTS_HEAD extends AttrSchema
+    ? ELEMENTS_TAIL extends AttrSchema[]
+      ? MapAnyOfSchemaReadValue<
           ATTRIBUTE,
           OPTIONS,
           ELEMENTS_TAIL,

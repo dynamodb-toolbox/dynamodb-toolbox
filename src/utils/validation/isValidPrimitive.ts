@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute, ResolvedPrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveSchema, ResolvedPrimitiveSchema } from '~/attributes/index.js'
 
 import { isBigInt } from './isBigInt.js'
 import { isBinary } from './isBinary.js'
@@ -7,10 +7,10 @@ import { isNull } from './isNull.js'
 import { isNumber } from './isNumber.js'
 import { isString } from './isString.js'
 
-export const isValidPrimitive = <ATTRIBUTE extends PrimitiveAttribute>(
+export const isValidPrimitive = <ATTRIBUTE extends PrimitiveSchema>(
   attribute: ATTRIBUTE,
   candidate: unknown
-): candidate is ResolvedPrimitiveAttribute => {
+): candidate is ResolvedPrimitiveSchema => {
   switch (attribute.type) {
     case 'null':
       return isNull(candidate)

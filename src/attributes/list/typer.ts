@@ -2,10 +2,10 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { SharedAttributeState } from '../shared/interface.js'
 import { $ListAttribute } from './interface.js'
-import type { $ListAttributeElements } from './types.js'
+import type { ListElementSchema } from './types.js'
 
 type ListAttributeTyper = <
-  $ELEMENTS extends $ListAttributeElements,
+  $ELEMENTS extends ListElementSchema,
   STATE extends SharedAttributeState = {}
 >(
   elements: $ELEMENTS,
@@ -24,7 +24,7 @@ type ListAttributeTyper = <
  * @param state _(optional)_ List Options
  */
 export const list: ListAttributeTyper = <
-  $ELEMENTS extends $ListAttributeElements,
+  $ELEMENTS extends ListElementSchema,
   STATE extends SharedAttributeState = {}
 >(
   elements: $ELEMENTS,

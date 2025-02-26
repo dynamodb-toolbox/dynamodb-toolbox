@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
   FormattedValue,
@@ -14,7 +14,7 @@ import type { FormatValueOptions, InferReadValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 
 export type FormatterYield<
-  SCHEMA extends Schema | Attribute,
+  SCHEMA extends Schema | AttrSchema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { transform: false } | { format: false }
@@ -22,7 +22,7 @@ export type FormatterYield<
   : ReadValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export type FormatterReturn<
-  SCHEMA extends Schema | Attribute,
+  SCHEMA extends Schema | AttrSchema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { format: false }
@@ -30,7 +30,7 @@ export type FormatterReturn<
   : FormattedValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export class Formatter<
-  SCHEMA extends Schema | Attribute = Schema | Attribute
+  SCHEMA extends Schema | AttrSchema = Schema | AttrSchema
 > extends SchemaAction<SCHEMA> {
   start<OPTIONS extends FormatValueOptions<SCHEMA> = {}>(
     inputValue: unknown,

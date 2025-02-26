@@ -1,7 +1,7 @@
 import type {
-  ResolvedBinaryAttribute,
-  ResolvedNumberAttribute,
-  ResolvedStringAttribute
+  ResolvedBinarySchema,
+  ResolvedNumberSchema,
+  ResolvedStringSchema
 } from '~/attributes/index.js'
 import type {
   BeginsWithOperator,
@@ -26,11 +26,11 @@ export const queryOperatorSet = new Set<QueryOperator>([
 ])
 
 type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'number'
-  ? ResolvedNumberAttribute
+  ? ResolvedNumberSchema
   : KEY_TYPE extends 'string'
-    ? ResolvedStringAttribute
+    ? ResolvedStringSchema
     : KEY_TYPE extends 'binary'
-      ? ResolvedBinaryAttribute
+      ? ResolvedBinarySchema
       : never
 
 /**
@@ -39,9 +39,9 @@ type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'numbe
 type QueryRange<
   KEY_TYPE extends IndexableKeyType,
   ATTRIBUTE_VALUE extends
-    | ResolvedNumberAttribute
-    | ResolvedStringAttribute
-    | ResolvedBinaryAttribute = ResolveKeyType<KEY_TYPE>
+    | ResolvedNumberSchema
+    | ResolvedStringSchema
+    | ResolvedBinarySchema = ResolveKeyType<KEY_TYPE>
 > =
   | (RangeOperator extends infer COMPARISON_OPERATOR
       ? COMPARISON_OPERATOR extends RangeOperator

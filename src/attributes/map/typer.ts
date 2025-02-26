@@ -2,10 +2,10 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { SharedAttributeState } from '../shared/interface.js'
 import { $MapAttribute } from './interface.js'
-import type { $MapAttributeAttributeStates } from './types.js'
+import type { MapAttributesSchemas } from './types.js'
 
 type MapAttributeTyper = <
-  ATTRIBUTES extends $MapAttributeAttributeStates,
+  ATTRIBUTES extends MapAttributesSchemas,
   STATE extends SharedAttributeState = {}
 >(
   attributes: NarrowObject<ATTRIBUTES>,
@@ -19,7 +19,7 @@ type MapAttributeTyper = <
  * @param state _(optional)_ Map Options
  */
 export const map: MapAttributeTyper = <
-  ATTRIBUTES extends $MapAttributeAttributeStates,
+  ATTRIBUTES extends MapAttributesSchemas,
   STATE extends SharedAttributeState = {}
 >(
   attributes: NarrowObject<ATTRIBUTES>,

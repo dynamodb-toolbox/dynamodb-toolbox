@@ -5,6 +5,6 @@ export type {
   PrimitiveAttribute,
   PrimitiveAttribute_,
   FreezePrimitiveAttribute,
-  ResolvePrimitiveAttribute,
-  ResolvedPrimitiveAttribute
+  ResolvePrimitiveSchema,
+  ResolvedPrimitiveSchema
 } from './types.js'

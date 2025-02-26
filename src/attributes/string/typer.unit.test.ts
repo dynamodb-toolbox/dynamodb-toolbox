@@ -6,7 +6,7 @@ import { prefix } from '~/transformers/prefix.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
-import type { StringAttribute, StringSchema } from './interface.js'
+import type { StringSchema } from './interface.js'
 import { string } from './typer.js'
 
 const path = 'some.path'
@@ -25,10 +25,6 @@ describe('string', () => {
 
     const assertExtends: A.Extends<typeof str, StringSchema> = 1
     assertExtends
-
-    const frozenStr = str.freeze(path)
-    const assertFrozenExtends: A.Extends<typeof frozenStr, StringAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required string (option)', () => {

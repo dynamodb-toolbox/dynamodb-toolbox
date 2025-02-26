@@ -1,17 +1,17 @@
 import type {
   Always,
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  ListAttribute,
-  MapAttribute,
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  ListSchema,
+  MapSchema,
   Never,
-  PrimitiveAttribute,
-  RecordAttribute,
-  ResolveAnyAttribute,
-  ResolvePrimitiveAttribute,
-  ResolvedPrimitiveAttribute,
-  SetAttribute
+  PrimitiveSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolvePrimitiveSchema,
+  ResolvedPrimitiveSchema,
+  SetSchema
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
@@ -19,15 +19,15 @@ import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type ValidValue<
-  SCHEMA extends Schema | Attribute,
+  SCHEMA extends Schema | AttrSchema,
   OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends Schema
   ? SchemaValidValue<SCHEMA, OPTIONS>
-  : SCHEMA extends Attribute
+  : SCHEMA extends AttrSchema
     ? AttrValidValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends Attribute, OPTIONS extends WriteValueOptions> = If<
+type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptions> = If<
   Extends<OPTIONS, { defined: true }>,
   true,
   If<
@@ -37,7 +37,7 @@ type MustBeDefined<ATTRIBUTE extends Attribute, OPTIONS extends WriteValueOption
   >
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapAttribute, OPTIONS extends WriteValueOptions = {}> = {
+type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueOptions = {}> = {
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
     never,
@@ -49,7 +49,7 @@ type SchemaValidValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions
 > = Schema extends SCHEMA
-  ? { [KEY: string]: AttrValidValue<Attribute, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: AttrValidValue<AttrSchema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
@@ -63,51 +63,48 @@ type SchemaValidValue<
     >
 
 type AttrValidValue<
-  ATTRIBUTE extends Attribute,
+  ATTRIBUTE extends AttrSchema,
   OPTIONS extends WriteValueOptions = {}
-> = Attribute extends ATTRIBUTE
+> = AttrSchema extends ATTRIBUTE
   ? unknown
   :
-      | (ATTRIBUTE extends AnyAttribute ? AnyAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends PrimitiveAttribute ? PrimitiveAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends SetAttribute ? SetAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListAttribute ? ListAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapAttribute ? MapAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordAttribute ? RecordAttrValidValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnySchema ? AnySchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends PrimitiveSchema ? PrimitiveSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends SetSchema ? SetSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends ListSchema ? ListSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends MapSchema ? MapSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends RecordSchema ? RecordSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaValidValue<ATTRIBUTE, OPTIONS> : never)
 
-type AnyAttrValidValue<
-  ATTRIBUTE extends AnyAttribute,
+type AnySchemaValidValue<
+  ATTRIBUTE extends AnySchema,
   OPTIONS extends WriteValueOptions = {}
-> = AnyAttribute extends ATTRIBUTE
+> = AnySchema extends ATTRIBUTE
   ? unknown
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | ResolveAnyAttribute<ATTRIBUTE>
+      | ResolveAnySchema<ATTRIBUTE>
 
-type PrimitiveAttrValidValue<
-  ATTRIBUTE extends PrimitiveAttribute,
+type PrimitiveSchemaValidValue<
+  ATTRIBUTE extends PrimitiveSchema,
   OPTIONS extends WriteValueOptions = {}
-> = PrimitiveAttribute extends ATTRIBUTE
-  ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | ResolvedPrimitiveAttribute
+> = PrimitiveSchema extends ATTRIBUTE
+  ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | ResolvedPrimitiveSchema
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | ResolvePrimitiveAttribute<ATTRIBUTE>
+      | ResolvePrimitiveSchema<ATTRIBUTE>
 
-type SetAttrValidValue<
-  ATTRIBUTE extends SetAttribute,
+type SetSchemaValidValue<
+  ATTRIBUTE extends SetSchema,
   OPTIONS extends WriteValueOptions = {}
-> = SetAttribute extends ATTRIBUTE
+> = SetSchema extends ATTRIBUTE
   ?
       | undefined
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | Set<
-          AttrValidValue<
-            SetAttribute['elements'],
-            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
-          >
+          AttrValidValue<SetSchema['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
         >
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
@@ -116,20 +113,20 @@ type SetAttrValidValue<
           AttrValidValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
         >
 
-type ListAttrValidValue<
-  ATTRIBUTE extends ListAttribute,
+type ListSchemaValidValue<
+  ATTRIBUTE extends ListSchema,
   OPTIONS extends WriteValueOptions = {}
-> = ListAttribute extends ATTRIBUTE
+> = ListSchema extends ATTRIBUTE
   ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | unknown[]
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | AttrValidValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
-type MapAttrValidValue<
-  ATTRIBUTE extends MapAttribute,
+type MapSchemaValidValue<
+  ATTRIBUTE extends MapSchema,
   OPTIONS extends WriteValueOptions = {}
-> = MapAttribute extends ATTRIBUTE
+> = MapSchema extends ATTRIBUTE
   ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | { [KEY: string]: unknown }
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
@@ -146,11 +143,11 @@ type MapAttrValidValue<
           OptionalKeys<ATTRIBUTE, OPTIONS>
         >
 
-type RecordAttrValidValue<
-  ATTRIBUTE extends RecordAttribute,
+type RecordSchemaValidValue<
+  ATTRIBUTE extends RecordSchema,
   OPTIONS extends WriteValueOptions = {},
   KEYS extends string = Extract<AttrValidValue<ATTRIBUTE['keys'], OPTIONS>, string>
-> = RecordAttribute extends ATTRIBUTE
+> = RecordSchema extends ATTRIBUTE
   ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | { [KEY: string]: unknown }
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
@@ -163,24 +160,24 @@ type RecordAttrValidValue<
           >
         }
 
-type AnyOfAttrValidValue<
-  ATTRIBUTE extends AnyOfAttribute,
+type AnyOfSchemaValidValue<
+  ATTRIBUTE extends AnyOfSchema,
   OPTIONS extends WriteValueOptions = {}
-> = AnyOfAttribute extends ATTRIBUTE
+> = AnyOfSchema extends ATTRIBUTE
   ? unknown
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | AnyOfAttrValidValueRec<ATTRIBUTE['elements'], OPTIONS>
+      | MapAnyOfSchemaValidValue<ATTRIBUTE['elements'], OPTIONS>
 
-type AnyOfAttrValidValueRec<
-  ELEMENTS extends Attribute[],
+type MapAnyOfSchemaValidValue<
+  ELEMENTS extends AttrSchema[],
   OPTIONS extends WriteValueOptions = {},
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Attribute
-    ? ELEMENTS_TAIL extends Attribute[]
-      ? AnyOfAttrValidValueRec<
+  ? ELEMENTS_HEAD extends AttrSchema
+    ? ELEMENTS_TAIL extends AttrSchema[]
+      ? MapAnyOfSchemaValidValue<
           ELEMENTS_TAIL,
           OPTIONS,
           RESULTS | AttrValidValue<ELEMENTS_HEAD, OPTIONS>

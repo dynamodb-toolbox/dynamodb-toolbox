@@ -1,4 +1,4 @@
-import type { AnyOfAttribute, Attribute } from '~/attributes/index.js'
+import type { AnyOfSchema, AttrSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 
@@ -7,12 +7,12 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
 export function* anyOfAttrFormatter(
-  attribute: AnyOfAttribute,
+  attribute: AnyOfSchema,
   rawValue: unknown,
-  options: FormatAttrValueOptions<AnyOfAttribute> = {}
+  options: FormatAttrValueOptions<AnyOfSchema> = {}
 ): Generator<
-  FormatterYield<AnyOfAttribute, FormatAttrValueOptions<AnyOfAttribute>>,
-  FormatterReturn<AnyOfAttribute, FormatAttrValueOptions<AnyOfAttribute>>
+  FormatterYield<AnyOfSchema, FormatAttrValueOptions<AnyOfSchema>>,
+  FormatterReturn<AnyOfSchema, FormatAttrValueOptions<AnyOfSchema>>
 > {
   const { format = true, transform = true, valuePath } = options
 
@@ -22,7 +22,7 @@ export function* anyOfAttrFormatter(
 
   for (const element of attribute.elements) {
     try {
-      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<Attribute>)
+      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<AttrSchema>)
       if (transform) {
         _transformedValue = formatter.next().value
       }

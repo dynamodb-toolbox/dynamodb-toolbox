@@ -1,4 +1,4 @@
-import type { Attribute, AttributeBasicValue, ListAttribute } from '~/attributes/index.js'
+import type { AttrSchema, AttributeBasicValue, ListSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
@@ -21,13 +21,13 @@ import { parseUpdateExtension } from './attribute.js'
 import { parseReferenceExtension } from './reference.js'
 
 function* listElementParser(
-  attribute: ListAttribute,
+  attribute: ListSchema,
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions
 ): Generator<
-  ValidValue<Attribute, { extension: UpdateItemInputExtension }> | undefined,
-  | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
-  | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
+  ValidValue<AttrSchema, { extension: UpdateItemInputExtension }> | undefined,
+  | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
+  | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue
@@ -62,7 +62,7 @@ function* listElementParser(
 }
 
 export const parseListExtension = (
-  attribute: ListAttribute,
+  attribute: ListSchema,
   input: unknown,
   options: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -187,9 +187,9 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            ValidValue<Attribute, { extension: UpdateItemInputExtension }>,
-            | ValidValue<Attribute, { extension: UpdateItemInputExtension }>
-            | TransformedValue<Attribute, { extension: UpdateItemInputExtension }>
+            ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>,
+            | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
+            | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
           >
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [

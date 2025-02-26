@@ -1,3 +1,3 @@
-import type { AnyAttribute } from './interface.js'
+import type { AnySchema } from './interface.js'
 
-export type ResolveAnyAttribute<ATTRIBUTE extends AnyAttribute> = ATTRIBUTE['state']['castAs']
+export type ResolveAnySchema<ATTRIBUTE extends AnySchema> = ATTRIBUTE['state']['castAs']

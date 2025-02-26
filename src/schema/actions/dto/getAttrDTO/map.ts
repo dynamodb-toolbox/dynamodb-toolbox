@@ -1,4 +1,4 @@
-import type { MapAttribute } from '~/attributes/map/index.js'
+import type { MapSchema } from '~/attributes/map/index.js'
 
 import type { MapAttrDTO } from '../types.js'
 import { getAttrDTO } from './attribute.js'
@@ -7,7 +7,7 @@ import { getDefaultsDTO } from './utils.js'
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getMapAttrDTO = (attr: MapAttribute): MapAttrDTO => {
+export const getMapAttrDTO = (attr: MapSchema): MapAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
   const { required, hidden, key, savedAs } = attr.state
 

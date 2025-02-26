@@ -1,4 +1,4 @@
-import type { RecordAttribute } from '~/attributes/record/index.js'
+import type { RecordSchema } from '~/attributes/record/index.js'
 
 import type { RecordAttrDTO } from '../types.js'
 import { getAttrDTO } from './attribute.js'
@@ -7,7 +7,7 @@ import { getDefaultsDTO } from './utils.js'
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getRecordAttrDTO = (attr: RecordAttribute): RecordAttrDTO => {
+export const getRecordAttrDTO = (attr: RecordSchema): RecordAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
   const { required, hidden, key, savedAs } = attr.state
 

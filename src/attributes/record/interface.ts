@@ -18,33 +18,29 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/in
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { Attribute } from '../types/index.js'
+import type { StringSchema } from '../string/index.js'
+import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeRecordAttribute } from './freeze.js'
 import { freezeRecordAttribute } from './freeze.js'
-import type {
-  $RecordAttributeElements,
-  $RecordAttributeKeys,
-  RecordAttributeKeys
-} from './types.js'
 
 export interface RecordSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
-  $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
+  KEYS extends StringSchema = StringSchema,
+  ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'record'
+  path?: string
   state: STATE
-  keys: $KEYS
-  elements: $ELEMENTS
+  keys: KEYS
+  elements: ELEMENTS
 }
 
 export interface $RecordAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
-  $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
+  $KEYS extends StringSchema = StringSchema,
+  $ELEMENTS extends AttrSchema = AttrSchema
 > extends RecordSchema<STATE, $KEYS, $ELEMENTS> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>, true>
 }
@@ -54,8 +50,8 @@ export interface $RecordAttributeNestedState<
  */
 export class $RecordAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
-  $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
+  $KEYS extends StringSchema = StringSchema,
+  $ELEMENTS extends AttrSchema = AttrSchema
 > implements $RecordAttributeNestedState<STATE, $KEYS, $ELEMENTS>
 {
   type: 'record'
@@ -539,7 +535,9 @@ export class $RecordAttribute<
       })
     }
 
+    // @ts-ignore TOFIX
     this.keys.check(path && `${path} (KEY)`)
+    // @ts-ignore TOFIX
     this.elements.check(`${path ?? ''}[string]`)
 
     Object.freeze(this.state)
@@ -553,8 +551,8 @@ export class $RecordAttribute<
 
 export class RecordAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  KEYS extends RecordAttributeKeys = RecordAttributeKeys,
-  ELEMENTS extends Attribute = Attribute
+  KEYS extends StringSchema = StringSchema,
+  ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'record'
   path?: string
@@ -578,8 +576,8 @@ export class RecordAttribute<
 
 export class RecordAttribute_<
   STATE extends SharedAttributeState = SharedAttributeState,
-  KEYS extends RecordAttributeKeys = RecordAttributeKeys,
-  ELEMENTS extends Attribute = Attribute
+  KEYS extends StringSchema = StringSchema,
+  ELEMENTS extends AttrSchema = AttrSchema
 > extends RecordAttribute<STATE, KEYS, ELEMENTS> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
