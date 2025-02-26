@@ -6,7 +6,6 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeAnyOfAttribute } from './freeze.js'
 import type { AnyOfSchema } from './interface.js'
 import { anyOf } from './typer.js'
 
@@ -16,13 +15,6 @@ describe('anyOf', () => {
 
   test('rejects missing elements', () => {
     const invalidAnyOf = anyOf()
-
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.missingElements', path })
-    )
 
     const superInvalidCall = () => invalidAnyOf.check(path)
 
@@ -37,13 +29,6 @@ describe('anyOf', () => {
       str,
       // @ts-expect-error
       str.optional()
-    )
-
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.optionalElements', path })
     )
 
     const superInvalidCall = () => invalidAnyOf.check(path)
@@ -61,13 +46,6 @@ describe('anyOf', () => {
       str.hidden()
     )
 
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.hiddenElements', path })
-    )
-
     const superInvalidCall = () => invalidAnyOf.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -81,13 +59,6 @@ describe('anyOf', () => {
       str,
       // @ts-expect-error
       str.savedAs('foo')
-    )
-
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.savedAsElements', path })
     )
 
     const superInvalidCall = () => invalidAnyOf.check(path)
@@ -105,13 +76,6 @@ describe('anyOf', () => {
       str.putDefault('foo')
     )
 
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
-    )
-
     const superInvalidCall = () => invalidAnyOf.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -125,13 +89,6 @@ describe('anyOf', () => {
       str,
       // @ts-expect-error
       str.putLink(() => 'foo')
-    )
-
-    const invalidCall = () => invalidAnyOf.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
     )
 
     const superInvalidCall = () => invalidAnyOf.check(path)
@@ -300,10 +257,7 @@ describe('anyOf', () => {
 
     const prevAnyOf = anyOf(string(), number())
     prevAnyOf.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [string | number, FreezeAnyOfAttribute<typeof prevAnyOf>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [string | number, typeof prevAnyOf]> = 1
       assertArgs
 
       return true
@@ -311,10 +265,7 @@ describe('anyOf', () => {
 
     const prevOptAnyOf = anyOf(string(), number()).optional()
     prevOptAnyOf.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [string | number, FreezeAnyOfAttribute<typeof prevOptAnyOf>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [string | number, typeof prevOptAnyOf]> = 1
       assertArgs
 
       return true

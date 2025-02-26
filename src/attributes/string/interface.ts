@@ -17,10 +17,8 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import { validatePrimitiveAttribute } from '../primitive/freeze.js'
+import { checkPrimitiveAttribute } from '../primitive/check.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeStringAttribute } from './freeze.js'
-import { freezeStringAttribute } from './freeze.js'
 import type { ResolveStringSchema, ResolvedStringSchema } from './resolve.js'
 import type { StringAttributeState } from './types.js'
 
@@ -34,7 +32,6 @@ export interface $StringAttributeNestedState<
   STATE extends StringAttributeState = StringAttributeState
 > extends StringSchema<STATE> {
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeStringAttribute<StringSchema<STATE>, true>
 }
 
 /**
@@ -108,11 +105,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @example
    * string().enum('foo', 'bar')
    */
-  enum<
-    const NEXT_ENUM extends readonly ResolveStringSchema<
-      FreezeStringAttribute<StringSchema<STATE>>
-    >[]
-  >(...nextEnum: NEXT_ENUM): $StringAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
+  enum<const NEXT_ENUM extends readonly ResolveStringSchema<this>[]>(
+    ...nextEnum: NEXT_ENUM
+  ): $StringAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $StringAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
   }
 
@@ -123,7 +118,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolveStringSchema<FreezeStringAttribute<StringSchema<STATE>>>>(
+  const<CONSTANT extends ResolveStringSchema<this>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -144,12 +139,9 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   /**
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
    */
-  transform<
-    TRANSFORMER extends Transformer<
-      ResolvedStringSchema,
-      ResolveStringSchema<FreezeStringAttribute<StringSchema<STATE>>>
-    >
-  >(transform: TRANSFORMER): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+  transform<TRANSFORMER extends Transformer<ResolvedStringSchema, ResolveStringSchema<this>>>(
+    transform: TRANSFORMER
+  ): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $StringAttribute(overwrite(this.state, { transform }))
   }
 
@@ -159,9 +151,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
   keyDefault(
-    nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>
-    >
+    nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
   ): $StringAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
@@ -172,7 +162,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeStringAttribute<StringSchema<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<this>>
   ): $StringAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -183,9 +173,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>
-    >
+    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
   ): $StringAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $StringAttribute(
       overwrite(this.state, { updateDefault: nextUpdateDefault as unknown })
@@ -199,11 +187,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   default(
     nextDefault: ValueOrGetter<
-      If<
-        STATE['key'],
-        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
-      >
+      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
     STATE['key'],
@@ -225,7 +209,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>
+    ) => ValidValue<this, { mode: 'key' }>
   ): $StringAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -236,9 +220,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
   putLink<SCHEMA extends Schema>(
-    nextPutLink: (
-      putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
+    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
   ): $StringAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -251,7 +233,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>
+    ) => AttributeUpdateItemInput<this, true>
   ): $StringAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -264,11 +246,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<
-      STATE['key'],
-      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
-    >
+    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     STATE['key'],
     $StringAttribute<Overwrite<STATE, { keyLink: unknown }>>,
@@ -287,10 +265,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextKeyValidator `(keyAttributeInput) => boolean | string`
    */
   keyValidate(
-    nextKeyValidator: Validator<
-      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key'; defined: true }>,
-      FreezeStringAttribute<StringSchema<STATE>>
-    >
+    nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
   ): $StringAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $StringAttribute(
       overwrite(this.state, { keyValidator: nextKeyValidator as Validator })
@@ -303,10 +278,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextPutValidator `(putAttributeInput) => boolean | string`
    */
   putValidate(
-    nextPutValidator: Validator<
-      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { defined: true }>,
-      FreezeStringAttribute<StringSchema<STATE>>
-    >
+    nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
   ): $StringAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $StringAttribute(
       overwrite(this.state, { putValidator: nextPutValidator as Validator })
@@ -319,10 +291,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>,
-      FreezeStringAttribute<StringSchema<STATE>>
-    >
+    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
   ): $StringAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $StringAttribute(
       overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
@@ -338,10 +307,10 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key'; defined: true }>,
-        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { defined: true }>
+        ValidValue<this, { mode: 'key'; defined: true }>,
+        ValidValue<this, { defined: true }>
       >,
-      FreezeStringAttribute<StringSchema<STATE>>
+      this
     >
   ): If<
     STATE['key'],
@@ -355,10 +324,6 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     )
   }
 
-  freeze(path?: string): FreezeStringAttribute<StringSchema<STATE>, true> {
-    return freezeStringAttribute(this.state, path)
-  }
-
   get checked(): boolean {
     return Object.isFrozen(this.state)
   }
@@ -368,7 +333,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       return
     }
 
-    validatePrimitiveAttribute(this, path)
+    checkPrimitiveAttribute(this, path)
 
     Object.freeze(this.state)
     if (path !== undefined) {

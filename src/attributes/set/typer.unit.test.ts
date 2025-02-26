@@ -5,7 +5,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeSetAttribute } from './freeze.js'
 import type { SetSchema } from './interface.js'
 import { set } from './typer.js'
 
@@ -17,13 +16,6 @@ describe('set', () => {
     const invalidSet = set(
       // @ts-expect-error
       string().optional()
-    )
-
-    const invalidCall = () => invalidSet.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.optionalElements', path })
     )
 
     const superInvalidCall = () => invalidSet.check(path)
@@ -40,13 +32,6 @@ describe('set', () => {
       strElement.hidden()
     )
 
-    const invalidCall = () => invalidSet.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.hiddenElements', path })
-    )
-
     const superInvalidCall = () => invalidSet.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -59,13 +44,6 @@ describe('set', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.savedAs('foo')
-    )
-
-    const invalidCall = () => invalidSet.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.savedAsElements', path })
     )
 
     const superInvalidCall = () => invalidSet.check(path)
@@ -82,13 +60,6 @@ describe('set', () => {
       strElement.default('foo')
     )
 
-    const invalidCall = () => invalidSet.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
-    )
-
     const superInvalidCall = () => invalidSet.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -101,13 +72,6 @@ describe('set', () => {
     const invalidSet = set(
       // @ts-expect-error
       strElement.link(() => 'foo')
-    )
-
-    const invalidCall = () => invalidSet.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
     )
 
     const superInvalidCall = () => invalidSet.check(path)
@@ -418,7 +382,7 @@ describe('set', () => {
 
     const prevSet = set(string())
     prevSet.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [Set<string>, FreezeSetAttribute<typeof prevSet>]> = 1
+      const assertArgs: A.Equals<typeof args, [Set<string>, typeof prevSet]> = 1
       assertArgs
 
       return true
@@ -426,10 +390,7 @@ describe('set', () => {
 
     const prevOptSet = set(string()).optional()
     prevOptSet.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [Set<string>, FreezeSetAttribute<typeof prevOptSet>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [Set<string>, typeof prevOptSet]> = 1
       assertArgs
 
       return true

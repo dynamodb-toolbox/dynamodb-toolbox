@@ -7,7 +7,7 @@ import { recordAttributeParser } from './record.js'
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const recordAttr = record(string(), string()).freeze('path')
+const recordAttr = record(string(), string())
 
 describe('recordAttributeParser', () => {
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('recordAttributeParser', () => {
   })
 
   test('ignores undefined values', () => {
-    const recordA = record(string(), string()).freeze('root')
+    const recordA = record(string(), string())
 
     const { value: parsedValue } = recordAttributeParser(
       recordA,
@@ -72,9 +72,7 @@ describe('recordAttributeParser', () => {
   })
 
   test('applies validation if any', () => {
-    const recordA = record(string(), string())
-      .validate(input => 'foo' in input)
-      .freeze()
+    const recordA = record(string(), string()).validate(input => 'foo' in input)
 
     const { value: parsedValue } = recordAttributeParser(
       recordA,
@@ -94,9 +92,9 @@ describe('recordAttributeParser', () => {
       })
     )
 
-    const recordB = record(string(), string())
-      .validate(input => ('foo' in input ? true : 'Oh no...'))
-      .freeze('root')
+    const recordB = record(string(), string()).validate(input =>
+      'foo' in input ? true : 'Oh no...'
+    )
 
     const invalidCallB = () =>
       recordAttributeParser(recordB, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()

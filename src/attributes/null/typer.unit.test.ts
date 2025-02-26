@@ -4,7 +4,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeNullAttribute } from './freeze.js'
 import type { NullSchema } from './interface.js'
 import { nul } from './typer.js'
 
@@ -131,13 +130,6 @@ describe('null', () => {
       putDefault: 'foo'
     })
 
-    const invalidCall = () => invalidNull.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
-
     const superInvalidCall = () => invalidNull.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -175,13 +167,6 @@ describe('null', () => {
     const invalidNull = nul()
       // @ts-expect-error
       .putDefault('foo')
-
-    const invalidCall = () => invalidNull.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
-    )
 
     const superInvalidCall = () => invalidNull.check(path)
 
@@ -322,7 +307,7 @@ describe('null', () => {
 
     const prevNum = nul()
     prevNum.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [null, FreezeNullAttribute<typeof prevNum>]> = 1
+      const assertArgs: A.Equals<typeof args, [null, typeof prevNum]> = 1
       assertArgs
 
       return true
@@ -330,7 +315,7 @@ describe('null', () => {
 
     const prevOptNum = nul().optional()
     prevOptNum.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [null, FreezeNullAttribute<typeof prevOptNum>]> = 1
+      const assertArgs: A.Equals<typeof args, [null, typeof prevOptNum]> = 1
       assertArgs
 
       return true

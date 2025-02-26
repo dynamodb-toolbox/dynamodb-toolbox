@@ -12,10 +12,7 @@ import type { SharedAttributeState } from './interface.js'
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const validateAttributeProperties = (
-  attribute: SharedAttributeState,
-  path?: string
-): void => {
+export const checkAttributeProperties = (attribute: SharedAttributeState, path?: string): void => {
   const { required, hidden, key, savedAs } = attribute
 
   if (required !== undefined && !requiredOptionsSet.has(required)) {

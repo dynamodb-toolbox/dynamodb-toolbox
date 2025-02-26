@@ -1,4 +1,4 @@
-import type { $AttributeNestedState } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -37,7 +37,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
-  const internalAttributes: Record<string, $AttributeNestedState> = {}
+  const internalAttributes: Record<string, AttrSchema> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     hidden: entityAttributeHidden,

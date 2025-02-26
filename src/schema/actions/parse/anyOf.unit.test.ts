@@ -5,9 +5,7 @@ import { anyOfAttributeParser } from './anyOf.js'
 
 describe('anyOfAttributeParser', () => {
   test('applies validation if any', () => {
-    const anyOfA = anyOf(string(), number())
-      .validate(input => typeof input === 'string')
-      .freeze()
+    const anyOfA = anyOf(string(), number()).validate(input => typeof input === 'string')
 
     const { value: parsed } = anyOfAttributeParser(anyOfA, 'foo', { fill: false }).next()
     expect(parsed).toStrictEqual('foo')
@@ -23,9 +21,9 @@ describe('anyOfAttributeParser', () => {
       })
     )
 
-    const anyOfB = anyOf(string(), number())
-      .validate(input => (typeof input === 'string' ? true : 'Oh no...'))
-      .freeze('root')
+    const anyOfB = anyOf(string(), number()).validate(input =>
+      typeof input === 'string' ? true : 'Oh no...'
+    )
 
     const invalidCallB = () =>
       anyOfAttributeParser(anyOfB, 42, { fill: false, valuePath: ['root'] }).next()

@@ -7,7 +7,7 @@ import { mapAttrParser } from './map.js'
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const mapAttr = map({ foo: string(), bar: string() }).freeze('path')
+const mapAttr = map({ foo: string(), bar: string() })
 
 describe('mapAttributeParser', () => {
   beforeEach(() => {
@@ -52,9 +52,7 @@ describe('mapAttributeParser', () => {
   })
 
   test('applies validation if any', () => {
-    const mapA = map({ str: string() })
-      .validate(input => input.str === 'foo')
-      .freeze()
+    const mapA = map({ str: string() }).validate(input => input.str === 'foo')
 
     const { value: parsedValue } = mapAttrParser(mapA, { str: 'foo' }, { fill: false }).next()
     expect(parsedValue).toStrictEqual({ str: 'foo' })
@@ -70,9 +68,7 @@ describe('mapAttributeParser', () => {
       })
     )
 
-    const mapB = map({ str: string() })
-      .validate(input => (input.str === 'foo' ? true : 'Oh no...'))
-      .freeze()
+    const mapB = map({ str: string() }).validate(input => (input.str === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
       mapAttrParser(mapB, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()

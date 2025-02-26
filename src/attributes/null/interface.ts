@@ -17,10 +17,8 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import { validatePrimitiveAttribute } from '../primitive/freeze.js'
+import { checkPrimitiveAttribute } from '../primitive/check.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeNullAttribute } from './freeze.js'
-import { freezeNullAttribute } from './freeze.js'
 import type { ResolvedNullSchema } from './resolve.js'
 import type { NullAttributeState } from './types.js'
 
@@ -33,7 +31,6 @@ export interface NullSchema<STATE extends NullAttributeState = NullAttributeStat
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
   extends NullSchema<STATE> {
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeNullAttribute<NullSchema<STATE>, true>
 }
 
 /**
@@ -153,9 +150,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
   keyDefault(
-    nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>
-    >
+    nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
   ): $NullAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
@@ -166,7 +161,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<NullSchema<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<this>>
   ): $NullAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -177,9 +172,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>
-    >
+    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
   ): $NullAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NullAttribute(
       overwrite(this.state, { updateDefault: nextUpdateDefault as unknown })
@@ -193,11 +186,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   default(
     nextDefault: ValueOrGetter<
-      If<
-        STATE['key'],
-        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
-      >
+      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
     STATE['key'],
@@ -219,7 +208,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>
+    ) => ValidValue<this, { mode: 'key' }>
   ): $NullAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -230,9 +219,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
   putLink<SCHEMA extends Schema>(
-    nextPutLink: (
-      putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
+    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
   ): $NullAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -245,7 +232,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>
+    ) => AttributeUpdateItemInput<this, true>
   ): $NullAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -258,11 +245,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<
-      STATE['key'],
-      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
-    >
+    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     STATE['key'],
     $NullAttribute<Overwrite<STATE, { keyLink: unknown }>>,
@@ -281,10 +264,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextKeyValidator `(keyAttributeInput) => null | string`
    */
   keyValidate(
-    nextKeyValidator: Validator<
-      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key'; defined: true }>,
-      FreezeNullAttribute<NullSchema<STATE>>
-    >
+    nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
   ): $NullAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NullAttribute(
       overwrite(this.state, { keyValidator: nextKeyValidator as Validator })
@@ -297,10 +277,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextPutValidator `(putAttributeInput) => null | string`
    */
   putValidate(
-    nextPutValidator: Validator<
-      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { defined: true }>,
-      FreezeNullAttribute<NullSchema<STATE>>
-    >
+    nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
   ): $NullAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NullAttribute(
       overwrite(this.state, { putValidator: nextPutValidator as Validator })
@@ -313,10 +290,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextUpdateValidator `(updateAttributeInput) => null | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>,
-      FreezeNullAttribute<NullSchema<STATE>>
-    >
+    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
   ): $NullAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NullAttribute(
       overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
@@ -332,10 +306,10 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key'; defined: true }>,
-        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { defined: true }>
+        ValidValue<this, { mode: 'key'; defined: true }>,
+        ValidValue<this, { defined: true }>
       >,
-      FreezeNullAttribute<NullSchema<STATE>>
+      this
     >
   ): If<
     STATE['key'],
@@ -349,10 +323,6 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     )
   }
 
-  freeze(path?: string): FreezeNullAttribute<NullSchema<STATE>, true> {
-    return freezeNullAttribute(this.state, path)
-  }
-
   get checked(): boolean {
     return Object.isFrozen(this.state)
   }
@@ -362,7 +332,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       return
     }
 
-    validatePrimitiveAttribute(this, path)
+    checkPrimitiveAttribute(this, path)
 
     Object.freeze(this.state)
     if (path !== undefined) {

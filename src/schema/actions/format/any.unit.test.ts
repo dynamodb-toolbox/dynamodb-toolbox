@@ -5,7 +5,7 @@ import { anyAttrFormatter } from './any.js'
 
 describe('anyAttrFormatter', () => {
   test('simply clones the value', () => {
-    const _any = any().freeze()
+    const _any = any()
 
     const raw = { foo: 'bar' }
     const formatter = anyAttrFormatter(_any, raw)
@@ -21,7 +21,7 @@ describe('anyAttrFormatter', () => {
   })
 
   test('does not transform if transform is set to false', () => {
-    const _any = any().freeze()
+    const _any = any()
 
     const raw = { foo: 'bar' }
     const formatter = anyAttrFormatter(_any, raw, { transform: false })
@@ -32,7 +32,7 @@ describe('anyAttrFormatter', () => {
   })
 
   test('uses formatter if transformer has been provided', () => {
-    const _any = any().transform(jsonStringify()).freeze('path')
+    const _any = any().transform(jsonStringify())
 
     const formatted = { foo: 'bar' }
     const formatter = anyAttrFormatter(_any, JSON.stringify(formatted))

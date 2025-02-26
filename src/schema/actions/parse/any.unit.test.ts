@@ -6,13 +6,13 @@ import { anyAttrParser } from './any.js'
 
 describe('anyAttrParser', () => {
   test('accepts any value', () => {
-    const _any = any().freeze('root')
+    const _any = any()
     const { value } = anyAttrParser(_any, 42, { fill: false }).next()
     expect(value).toStrictEqual(42)
   })
 
   test('uses parser if transformer has been provided', () => {
-    const _any = any().transform(jsonStringify()).freeze('path')
+    const _any = any().transform(jsonStringify())
 
     const input = { foo: 'bar' }
     const parser = anyAttrParser(_any, input, { fill: false })
@@ -26,9 +26,7 @@ describe('anyAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const anyA = any()
-      .validate(input => input === 'foo')
-      .freeze()
+    const anyA = any().validate(input => input === 'foo')
 
     const invalidCallA = () =>
       anyAttrParser(anyA, 'bar', { fill: false, valuePath: ['root'] }).next()
@@ -41,9 +39,7 @@ describe('anyAttrParser', () => {
       })
     )
 
-    const anyB = any()
-      .validate(input => (input === 'foo' ? true : 'Oh no...'))
-      .freeze('root')
+    const anyB = any().validate(input => (input === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
       anyAttrParser(anyB, 'bar', { fill: false, valuePath: ['root'] }).next()

@@ -4,7 +4,6 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeMapAttribute } from './freeze.js'
 import type { MapSchema } from './interface.js'
 import { map } from './typer.js'
 
@@ -259,10 +258,7 @@ describe('map', () => {
 
     const prevMap = map({ str: string(), num: number() })
     prevMap.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [{ str: string; num: number }, FreezeMapAttribute<typeof prevMap>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [{ str: string; num: number }, typeof prevMap]> = 1
       assertArgs
 
       return true
@@ -270,10 +266,7 @@ describe('map', () => {
 
     const prevOptMap = map({ str: string(), num: number() }).optional()
     prevOptMap.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [{ str: string; num: number }, FreezeMapAttribute<typeof prevOptMap>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [{ str: string; num: number }, typeof prevOptMap]> = 1
       assertArgs
 
       return true
