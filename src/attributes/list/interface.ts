@@ -24,7 +24,7 @@ import type { FreezeListAttribute } from './freeze.js'
 import { freezeListAttribute } from './freeze.js'
 import type { $ListAttributeElements } from './types.js'
 
-export interface $ListAttributeState<
+export interface ListSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
 > {
@@ -36,10 +36,10 @@ export interface $ListAttributeState<
 export interface $ListAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $ListAttributeElements = $ListAttributeElements
-> extends $ListAttributeState<STATE, $ELEMENTS> {
+> extends ListSchema<STATE, $ELEMENTS> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
+  freeze: (path?: string) => FreezeListAttribute<ListSchema<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -119,7 +119,7 @@ export class $ListAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $ListAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
@@ -134,9 +134,7 @@ export class $ListAttribute<
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>>>
   ): $ListAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
@@ -151,7 +149,7 @@ export class $ListAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
+      AttributeUpdateItemInput<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, true>
     >
   ): $ListAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
@@ -169,8 +167,8 @@ export class $ListAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>>
+        ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>>
       >
     >
   ): If<
@@ -199,7 +197,7 @@ export class $ListAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+    ) => ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $ListAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -215,7 +213,7 @@ export class $ListAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>>
+    ) => ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>>
   ): $ListAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -231,7 +229,7 @@ export class $ListAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, true>
+    ) => AttributeUpdateItemInput<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, true>
   ): $ListAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $ListAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
@@ -249,8 +247,8 @@ export class $ListAttribute<
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      ValidValue<FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeListAttribute<ListSchema<STATE, $ELEMENTS>>>
     >
   ): If<
     STATE['key'],
@@ -353,7 +351,7 @@ export class $ListAttribute<
     )
   }
 
-  freeze(path?: string): FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true> {
+  freeze(path?: string): FreezeListAttribute<ListSchema<STATE, $ELEMENTS>, true> {
     return freezeListAttribute(this.state, this.elements, path)
   }
 

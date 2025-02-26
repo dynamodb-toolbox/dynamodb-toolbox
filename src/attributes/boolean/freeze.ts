@@ -1,10 +1,10 @@
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
-import type { $BooleanAttributeState, BooleanAttribute } from './interface.js'
+import type { BooleanAttribute, BooleanSchema } from './interface.js'
 import { BooleanAttribute_ } from './interface.js'
 import type { BooleanAttributeState } from './types.js'
 
 export type FreezeBooleanAttribute<
-  $BOOLEAN_ATTRIBUTE extends $BooleanAttributeState,
+  $BOOLEAN_ATTRIBUTE extends BooleanSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? BooleanAttribute_<$BOOLEAN_ATTRIBUTE['state']>
@@ -13,7 +13,7 @@ export type FreezeBooleanAttribute<
 type BooleanAttributeFreezer = <STATE extends BooleanAttributeState>(
   state: STATE,
   path?: string
-) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
+) => FreezeBooleanAttribute<BooleanSchema<STATE>, true>
 
 /**
  * Freezes a warm `boolean` attribute

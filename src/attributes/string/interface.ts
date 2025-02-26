@@ -24,17 +24,17 @@ import { freezeStringAttribute } from './freeze.js'
 import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
 import type { StringAttributeState } from './types.js'
 
-export interface $StringAttributeState<STATE extends StringAttributeState = StringAttributeState> {
+export interface StringSchema<STATE extends StringAttributeState = StringAttributeState> {
   type: 'string'
   state: STATE
 }
 
 export interface $StringAttributeNestedState<
   STATE extends StringAttributeState = StringAttributeState
-> extends $StringAttributeState<STATE> {
+> extends StringSchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeStringAttribute<$StringAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeStringAttribute<StringSchema<STATE>, true>
 }
 
 /**
@@ -110,7 +110,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   enum<
     const NEXT_ENUM extends readonly ResolveStringAttribute<
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      FreezeStringAttribute<StringSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $StringAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $StringAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
@@ -123,9 +123,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @example
    * string().const('foo')
    */
-  const<
-    CONSTANT extends ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
-  >(
+  const<CONSTANT extends ResolveStringAttribute<FreezeStringAttribute<StringSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -149,7 +147,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   transform<
     TRANSFORMER extends Transformer<
       ResolvedStringAttribute,
-      ResolveStringAttribute<FreezeStringAttribute<$StringAttributeState<STATE>>>
+      ResolveStringAttribute<FreezeStringAttribute<StringSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $StringAttribute(overwrite(this.state, { transform }))
@@ -162,7 +160,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>
     >
   ): $StringAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
@@ -174,7 +172,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeStringAttribute<StringSchema<STATE>>>>
   ): $StringAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -186,7 +184,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>
     >
   ): $StringAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $StringAttribute(
@@ -203,8 +201,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>
+        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
       >
     >
   ): If<
@@ -227,7 +225,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>
   ): $StringAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -240,7 +238,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>
+    ) => ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
   ): $StringAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -253,7 +251,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>
   ): $StringAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $StringAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -268,8 +266,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>>
+      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeStringAttribute<StringSchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -290,11 +288,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<
-        FreezeStringAttribute<$StringAttributeState<STATE>>,
-        { mode: 'key'; defined: true }
-      >,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeStringAttribute<StringSchema<STATE>>
     >
   ): $StringAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $StringAttribute(
@@ -309,8 +304,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { defined: true }>,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { defined: true }>,
+      FreezeStringAttribute<StringSchema<STATE>>
     >
   ): $StringAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $StringAttribute(
@@ -325,8 +320,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeStringAttribute<$StringAttributeState<STATE>>, true>,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeStringAttribute<StringSchema<STATE>>, true>,
+      FreezeStringAttribute<StringSchema<STATE>>
     >
   ): $StringAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $StringAttribute(
@@ -343,13 +338,10 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeStringAttribute<$StringAttributeState<STATE>>,
-          { mode: 'key'; defined: true }
-        >,
-        ValidValue<FreezeStringAttribute<$StringAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeStringAttribute<StringSchema<STATE>>, { defined: true }>
       >,
-      FreezeStringAttribute<$StringAttributeState<STATE>>
+      FreezeStringAttribute<StringSchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -363,7 +355,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
     )
   }
 
-  freeze(path?: string): FreezeStringAttribute<$StringAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeStringAttribute<StringSchema<STATE>, true> {
     return freezeStringAttribute(this.state, path)
   }
 

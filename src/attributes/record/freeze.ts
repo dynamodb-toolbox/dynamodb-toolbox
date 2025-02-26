@@ -4,12 +4,12 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { $RecordAttributeState, RecordAttribute } from './interface.js'
+import type { RecordAttribute, RecordSchema } from './interface.js'
 import { RecordAttribute_ } from './interface.js'
 import type { $RecordAttributeElements, $RecordAttributeKeys } from './types.js'
 
 export type FreezeRecordAttribute<
-  $RECORD_ATTRIBUTE extends $RecordAttributeState,
+  $RECORD_ATTRIBUTE extends RecordSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? RecordAttribute_<
@@ -32,7 +32,7 @@ type RecordAttributeFreezer = <
   keys: $KEYS,
   elements: $ELEMENTS,
   path?: string
-) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>, true>
+) => FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `record` attribute

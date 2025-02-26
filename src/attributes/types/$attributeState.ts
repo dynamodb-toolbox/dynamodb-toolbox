@@ -1,22 +1,22 @@
-import type { $AnyAttributeState } from '../any/index.js'
-import type { $AnyOfAttributeState } from '../anyOf/index.js'
-import type { $ListAttributeState } from '../list/index.js'
-import type { $MapAttributeState } from '../map/index.js'
-import type { $PrimitiveAttributeState } from '../primitive/index.js'
-import type { $RecordAttributeState } from '../record/index.js'
-import type { $SetAttributeState } from '../set/index.js'
+import type { AnySchema } from '../any/index.js'
+import type { AnyOfSchema } from '../anyOf/index.js'
+import type { ListSchema } from '../list/index.js'
+import type { MapSchema } from '../map/index.js'
+import type { PrimitiveSchema } from '../primitive/index.js'
+import type { RecordSchema } from '../record/index.js'
+import type { SetSchema } from '../set/index.js'
 
 /**
  * Any warm attribute state
  */
 export type $AttributeState =
-  | $AnyAttributeState
-  | $PrimitiveAttributeState
-  | $SetAttributeState
-  | $ListAttributeState
-  | $MapAttributeState
-  | $RecordAttributeState
-  | $AnyOfAttributeState
+  | AnySchema
+  | PrimitiveSchema
+  | SetSchema
+  | ListSchema
+  | MapSchema
+  | RecordSchema
+  | AnyOfSchema
 
 /**
  * Any warm schema attribute states

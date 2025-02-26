@@ -25,7 +25,7 @@ import type { FreezeAnyOfAttribute } from './freeze.js'
 import { freezeAnyOfAttribute } from './freeze.js'
 import type { $AnyOfAttributeElements } from './types.js'
 
-export interface $AnyOfAttributeState<
+export interface AnyOfSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
 > {
@@ -37,10 +37,10 @@ export interface $AnyOfAttributeState<
 export interface $AnyOfAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
-> extends $AnyOfAttributeState<STATE, $ELEMENTS> {
+> extends AnyOfSchema<STATE, $ELEMENTS> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
+  freeze: (path?: string) => FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -120,7 +120,7 @@ export class $AnyOfAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $AnyOfAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
@@ -135,9 +135,7 @@ export class $AnyOfAttribute<
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>>
   ): $AnyOfAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
@@ -152,7 +150,7 @@ export class $AnyOfAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, true>
+      AttributeUpdateItemInput<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, true>
     >
   ): $AnyOfAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
@@ -170,8 +168,8 @@ export class $AnyOfAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+        ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
       >
     >
   ): If<
@@ -200,7 +198,7 @@ export class $AnyOfAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+    ) => ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $AnyOfAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -216,7 +214,7 @@ export class $AnyOfAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+    ) => ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
   ): $AnyOfAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -232,10 +230,7 @@ export class $AnyOfAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<
-      FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>,
-      true
-    >
+    ) => AttributeUpdateItemInput<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, true>
   ): $AnyOfAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
@@ -253,8 +248,8 @@ export class $AnyOfAttribute<
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      ValidValue<FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
     >
   ): If<
     STATE['key'],
@@ -357,7 +352,7 @@ export class $AnyOfAttribute<
     )
   }
 
-  freeze(path?: string): FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true> {
+  freeze(path?: string): FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true> {
     return freezeAnyOfAttribute(this.state, this.elements, path)
   }
 

@@ -24,16 +24,16 @@ import { freezeNullAttribute } from './freeze.js'
 import type { ResolvedNullAttribute } from './resolve.js'
 import type { NullAttributeState } from './types.js'
 
-export interface $NullAttributeState<STATE extends NullAttributeState = NullAttributeState> {
+export interface NullSchema<STATE extends NullAttributeState = NullAttributeState> {
   type: 'null'
   state: STATE
 }
 
 export interface $NullAttributeNestedState<STATE extends NullAttributeState = NullAttributeState>
-  extends $NullAttributeState<STATE> {
+  extends NullSchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeNullAttribute<NullSchema<STATE>, true>
 }
 
 /**
@@ -154,7 +154,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>
     >
   ): $NullAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
@@ -166,7 +166,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeNullAttribute<NullSchema<STATE>>>>
   ): $NullAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -178,7 +178,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>
     >
   ): $NullAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NullAttribute(
@@ -195,8 +195,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
+        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
       >
     >
   ): If<
@@ -219,7 +219,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>
   ): $NullAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -232,7 +232,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
+    ) => ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
   ): $NullAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -245,7 +245,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>
   ): $NullAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $NullAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -260,8 +260,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>>
+      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeNullAttribute<NullSchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -282,8 +282,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; defined: true }>,
-      FreezeNullAttribute<$NullAttributeState<STATE>>
+      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeNullAttribute<NullSchema<STATE>>
     >
   ): $NullAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NullAttribute(
@@ -298,8 +298,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { defined: true }>,
-      FreezeNullAttribute<$NullAttributeState<STATE>>
+      ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { defined: true }>,
+      FreezeNullAttribute<NullSchema<STATE>>
     >
   ): $NullAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NullAttribute(
@@ -314,8 +314,8 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeNullAttribute<$NullAttributeState<STATE>>, true>,
-      FreezeNullAttribute<$NullAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeNullAttribute<NullSchema<STATE>>, true>,
+      FreezeNullAttribute<NullSchema<STATE>>
     >
   ): $NullAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NullAttribute(
@@ -332,10 +332,10 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { mode: 'key'; defined: true }>,
-        ValidValue<FreezeNullAttribute<$NullAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeNullAttribute<NullSchema<STATE>>, { defined: true }>
       >,
-      FreezeNullAttribute<$NullAttributeState<STATE>>
+      FreezeNullAttribute<NullSchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -349,7 +349,7 @@ export class $NullAttribute<STATE extends NullAttributeState = NullAttributeStat
     )
   }
 
-  freeze(path?: string): FreezeNullAttribute<$NullAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeNullAttribute<NullSchema<STATE>, true> {
     return freezeNullAttribute(this.state, path)
   }
 

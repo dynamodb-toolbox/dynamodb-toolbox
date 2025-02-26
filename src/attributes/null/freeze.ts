@@ -1,10 +1,10 @@
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import type { $NullAttributeState, NullAttribute } from './interface.js'
+import type { NullAttribute, NullSchema } from './interface.js'
 import { NullAttribute_ } from './interface.js'
 
 export type FreezeNullAttribute<
-  $NULL_ATTRIBUTE extends $NullAttributeState,
+  $NULL_ATTRIBUTE extends NullSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? NullAttribute_<$NULL_ATTRIBUTE['state']>
@@ -13,7 +13,7 @@ export type FreezeNullAttribute<
 type NullAttributeFreezer = <STATE extends SharedAttributeState>(
   state: STATE,
   path?: string
-) => FreezeNullAttribute<$NullAttributeState<STATE>, true>
+) => FreezeNullAttribute<NullSchema<STATE>, true>
 
 /**
  * Freezes a warm `null` attribute

@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeBinaryAttribute } from './freeze.js'
-import type { $BinaryAttributeState, BinaryAttribute } from './interface.js'
+import type { BinaryAttribute, BinarySchema } from './interface.js'
 import { binary } from './typer.js'
 
 const path = 'some.path'
@@ -22,7 +22,7 @@ describe('binary', () => {
     assertState
     expect(bin.state).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof bin, $BinaryAttributeState> = 1
+    const assertExtends: A.Extends<typeof bin, BinarySchema> = 1
     assertExtends
 
     const frozenBin = bin.freeze(path)

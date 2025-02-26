@@ -6,7 +6,7 @@ import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { $AttributeState } from '../types/index.js'
-import type { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
+import type { AnyOfAttribute, AnyOfSchema } from './interface.js'
 import { AnyOfAttribute_ } from './interface.js'
 import type { $AnyOfAttributeElements, AnyOfAttributeElements } from './types.js'
 
@@ -26,7 +26,7 @@ type FreezeElements<
     : RESULTS
 
 export type FreezeAnyOfAttribute<
-  $ANY_OF_ATTRIBUTE extends $AnyOfAttributeState,
+  $ANY_OF_ATTRIBUTE extends AnyOfSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? AnyOfAttribute_<$ANY_OF_ATTRIBUTE['state'], FreezeElements<$ANY_OF_ATTRIBUTE['elements']>>
@@ -39,7 +39,7 @@ type AnyOfAttributeFreezer = <
   state: STATE,
   elements: $ELEMENTS,
   path?: string
-) => FreezeAnyOfAttribute<$AnyOfAttributeState<STATE, $ELEMENTS>, true>
+) => FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `anyOf` attribute

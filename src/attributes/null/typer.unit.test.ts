@@ -5,7 +5,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeNullAttribute } from './freeze.js'
-import type { $NullAttributeState, NullAttribute } from './interface.js'
+import type { NullAttribute, NullSchema } from './interface.js'
 import { nul } from './typer.js'
 
 const path = 'some.path'
@@ -22,7 +22,7 @@ describe('null', () => {
     assertState
     expect(nil.state).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof nil, $NullAttributeState> = 1
+    const assertExtends: A.Extends<typeof nil, NullSchema> = 1
     assertExtends
 
     const frozenNull = nil.freeze(path)

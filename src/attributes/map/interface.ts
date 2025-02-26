@@ -22,7 +22,7 @@ import type { FreezeMapAttribute } from './freeze.js'
 import { freezeMapAttribute } from './freeze.js'
 import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
 
-export interface $MapAttributeState<
+export interface MapSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
 > {
@@ -34,10 +34,10 @@ export interface $MapAttributeState<
 export interface $MapAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
-> extends $MapAttributeState<STATE, $ATTRIBUTES> {
+> extends MapSchema<STATE, $ATTRIBUTES> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
+  freeze: (path?: string) => FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>, true>
 }
 
 /**
@@ -117,7 +117,7 @@ export class $MapAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
+      ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, { mode: 'key' }>
     >
   ): $MapAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
@@ -132,9 +132,7 @@ export class $MapAttribute<
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>>>
   ): $MapAttribute<Overwrite<STATE, { putDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
@@ -149,7 +147,7 @@ export class $MapAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
+      AttributeUpdateItemInput<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, true>
     >
   ): $MapAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
@@ -167,8 +165,8 @@ export class $MapAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
-        ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+        ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
+        ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>>
       >
     >
   ): If<
@@ -197,7 +195,7 @@ export class $MapAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>
+    ) => ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, { mode: 'key' }>
   ): $MapAttribute<Overwrite<STATE, { keyLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -213,7 +211,7 @@ export class $MapAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+    ) => ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>>
   ): $MapAttribute<Overwrite<STATE, { putLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -229,7 +227,7 @@ export class $MapAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, true>
+    ) => AttributeUpdateItemInput<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, true>
   ): $MapAttribute<Overwrite<STATE, { updateLink: unknown }>, $ATTRIBUTES> {
     return new $MapAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
@@ -247,8 +245,8 @@ export class $MapAttribute<
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
-      ValidValue<FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>>>
+      ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>, { mode: 'key' }>,
+      ValidValue<FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>>>
     >
   ): If<
     STATE['key'],
@@ -351,7 +349,7 @@ export class $MapAttribute<
     )
   }
 
-  freeze(path?: string): FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true> {
+  freeze(path?: string): FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>, true> {
     return freezeMapAttribute(this.state, this.attributes, path)
   }
 

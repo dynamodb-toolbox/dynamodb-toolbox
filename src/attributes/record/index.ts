@@ -1,5 +1,5 @@
 export { record } from './typer.js'
-export type { $RecordAttributeState, $RecordAttributeNestedState } from './interface.js'
+export type { RecordSchema, $RecordAttributeNestedState } from './interface.js'
 export { $RecordAttribute, RecordAttribute, RecordAttribute_ } from './interface.js'
 export type { FreezeRecordAttribute } from './freeze.js'
 export type { RecordAttributeKeys } from './types.js'

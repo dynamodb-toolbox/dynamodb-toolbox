@@ -1,7 +1,7 @@
 export type {
   $PrimitiveAttributeNestedState,
   $PrimitiveAttribute,
-  $PrimitiveAttributeState,
+  PrimitiveSchema,
   PrimitiveAttribute,
   PrimitiveAttribute_,
   FreezePrimitiveAttribute,

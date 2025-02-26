@@ -24,19 +24,17 @@ import { freezeBooleanAttribute } from './freeze.js'
 import type { ResolveBooleanAttribute, ResolvedBooleanAttribute } from './resolve.js'
 import type { BooleanAttributeState } from './types.js'
 
-export interface $BooleanAttributeState<
-  STATE extends BooleanAttributeState = BooleanAttributeState
-> {
+export interface BooleanSchema<STATE extends BooleanAttributeState = BooleanAttributeState> {
   type: 'boolean'
   state: STATE
 }
 
 export interface $BooleanAttributeNestedState<
   STATE extends BooleanAttributeState = BooleanAttributeState
-> extends $BooleanAttributeState<STATE> {
+> extends BooleanSchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeBooleanAttribute<BooleanSchema<STATE>, true>
 }
 
 /**
@@ -112,7 +110,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   enum<
     const NEXT_ENUM extends readonly ResolveBooleanAttribute<
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+      FreezeBooleanAttribute<BooleanSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $BooleanAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $BooleanAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
@@ -125,9 +123,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * @example
    * string().const('foo')
    */
-  const<
-    CONSTANT extends ResolveBooleanAttribute<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
-  >(
+  const<CONSTANT extends ResolveBooleanAttribute<FreezeBooleanAttribute<BooleanSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -151,7 +147,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   transform<
     TRANSFORMER extends Transformer<
       ResolvedBooleanAttribute,
-      ResolveBooleanAttribute<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+      ResolveBooleanAttribute<FreezeBooleanAttribute<BooleanSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $BooleanAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $BooleanAttribute(overwrite(this.state, { transform }))
@@ -164,7 +160,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key' }>
     >
   ): $BooleanAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $BooleanAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
@@ -176,7 +172,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>>>
   ): $BooleanAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $BooleanAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -188,7 +184,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeBooleanAttribute<BooleanSchema<STATE>>, true>
     >
   ): $BooleanAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $BooleanAttribute(
@@ -205,8 +201,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+        ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>>
       >
     >
   ): If<
@@ -229,7 +225,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key' }>
   ): $BooleanAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $BooleanAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -242,7 +238,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+    ) => ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>>
   ): $BooleanAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $BooleanAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -255,7 +251,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeBooleanAttribute<BooleanSchema<STATE>>, true>
   ): $BooleanAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $BooleanAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -270,8 +266,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>>
+      ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -292,11 +288,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<
-        FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-        { mode: 'key'; defined: true }
-      >,
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+      ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeBooleanAttribute<BooleanSchema<STATE>>
     >
   ): $BooleanAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $BooleanAttribute(
@@ -311,8 +304,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>,
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+      ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { defined: true }>,
+      FreezeBooleanAttribute<BooleanSchema<STATE>>
     >
   ): $BooleanAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $BooleanAttribute(
@@ -327,8 +320,8 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, true>,
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeBooleanAttribute<BooleanSchema<STATE>>, true>,
+      FreezeBooleanAttribute<BooleanSchema<STATE>>
     >
   ): $BooleanAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $BooleanAttribute(
@@ -345,13 +338,10 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeBooleanAttribute<$BooleanAttributeState<STATE>>,
-          { mode: 'key'; defined: true }
-        >,
-        ValidValue<FreezeBooleanAttribute<$BooleanAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeBooleanAttribute<BooleanSchema<STATE>>, { defined: true }>
       >,
-      FreezeBooleanAttribute<$BooleanAttributeState<STATE>>
+      FreezeBooleanAttribute<BooleanSchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -365,7 +355,7 @@ export class $BooleanAttribute<STATE extends BooleanAttributeState = BooleanAttr
     )
   }
 
-  freeze(path?: string): FreezeBooleanAttribute<$BooleanAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeBooleanAttribute<BooleanSchema<STATE>, true> {
     return freezeBooleanAttribute(this.state, path)
   }
 

@@ -1,10 +1,10 @@
 import { validatePrimitiveAttribute } from '../primitive/freeze.js'
-import type { $NumberAttributeState, NumberAttribute } from './interface.js'
+import type { NumberAttribute, NumberSchema } from './interface.js'
 import { NumberAttribute_ } from './interface.js'
 import type { NumberAttributeState } from './types.js'
 
 export type FreezeNumberAttribute<
-  $NUMBER_ATTRIBUTE extends $NumberAttributeState,
+  $NUMBER_ATTRIBUTE extends NumberSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? NumberAttribute_<$NUMBER_ATTRIBUTE['state']>
@@ -13,7 +13,7 @@ export type FreezeNumberAttribute<
 type NumberAttributeFreezer = <STATE extends NumberAttributeState>(
   state: STATE,
   path?: string
-) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
+) => FreezeNumberAttribute<NumberSchema<STATE>, true>
 
 /**
  * Freezes a warm `number` attribute

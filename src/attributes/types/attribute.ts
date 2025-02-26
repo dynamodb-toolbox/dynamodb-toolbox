@@ -1,15 +1,31 @@
-import type { AnyAttribute, AnyAttribute_ } from '../any/index.js'
-import type { AnyOfAttribute, AnyOfAttribute_ } from '../anyOf/index.js'
+import type { AnyAttribute, AnyAttribute_, AnySchema } from '../any/index.js'
+import type { AnyOfAttribute, AnyOfAttribute_, AnyOfSchema } from '../anyOf/index.js'
 import type { ResolvedBinaryAttribute } from '../binary/index.js'
 import type { ResolvedBooleanAttribute } from '../boolean/index.js'
-import type { ListAttribute, ListAttribute_ } from '../list/index.js'
-import type { MapAttribute, MapAttribute_ } from '../map/index.js'
+import type { ListAttribute, ListAttribute_, ListSchema } from '../list/index.js'
+import type { MapAttribute, MapAttribute_, MapSchema } from '../map/index.js'
 import type { ResolvedNullAttribute } from '../null/index.js'
 import type { ResolvedNumberAttribute } from '../number/index.js'
-import type { PrimitiveAttribute, PrimitiveAttribute_ } from '../primitive/index.js'
-import type { RecordAttribute, RecordAttribute_ } from '../record/index.js'
-import type { SetAttribute, SetAttribute_ } from '../set/index.js'
+import type {
+  PrimitiveAttribute,
+  PrimitiveAttribute_,
+  PrimitiveSchema
+} from '../primitive/index.js'
+import type { RecordAttribute, RecordAttribute_, RecordSchema } from '../record/index.js'
+import type { SetAttribute, SetAttribute_, SetSchema } from '../set/index.js'
 import type { ResolvedStringAttribute } from '../string/index.js'
+
+/**
+ * Any attribute
+ */
+export type AttrSchema =
+  | AnySchema
+  | PrimitiveSchema
+  | SetSchema
+  | ListSchema
+  | MapSchema
+  | RecordSchema
+  | AnyOfSchema
 
 /**
  * Any attribute
