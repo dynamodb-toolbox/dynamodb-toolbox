@@ -56,20 +56,20 @@ describe('fromDTO - schema', () => {
 
     expect(attributes.boolean).toBeInstanceOf(BooleanSchema)
     const boolean = attributes.boolean as BooleanSchema
-    expect(boolean.state.key).toBe(true)
+    expect(boolean.props.key).toBe(true)
 
     expect(attributes.number).toBeInstanceOf(NumberSchema)
     const number = attributes.number as NumberSchema
-    expect(number.state.enum).toStrictEqual([0, 1, 2])
+    expect(number.props.enum).toStrictEqual([0, 1, 2])
 
     expect(attributes.str).toBeInstanceOf(StringSchema)
     const str = attributes.str as StringSchema
-    expect(str.state.required).toBe('always')
+    expect(str.props.required).toBe('always')
 
     expect(attributes.binary).toBeInstanceOf(BinarySchema)
     const binary = attributes.binary as BinarySchema
-    expect(binary.state.savedAs).toBe('_b')
-    expect(binary.state.enum).toStrictEqual([new Uint8Array([1, 2, 3]), new Uint8Array([4, 5, 6])])
+    expect(binary.props.savedAs).toBe('_b')
+    expect(binary.props.enum).toStrictEqual([new Uint8Array([1, 2, 3]), new Uint8Array([4, 5, 6])])
 
     expect(attributes.set).toBeInstanceOf(SetSchema)
     const set = attributes.set as SetSchema
@@ -87,7 +87,7 @@ describe('fromDTO - schema', () => {
     expect(attributes.record).toBeInstanceOf(RecordSchema)
     const record = attributes.record as RecordSchema
     expect(record.keys.type).toBe('string')
-    expect(record.keys.state.enum).toStrictEqual(['a', 'b', 'c'])
+    expect(record.keys.props.enum).toStrictEqual(['a', 'b', 'c'])
     expect(record.elements.type).toBe('string')
 
     expect(attributes.anyOf).toBeInstanceOf(AnyOfSchema)

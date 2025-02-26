@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getListAttrDTO = (attr: ListSchema): ListAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.state
+  const { required, hidden, key, savedAs } = attr.props
 
   return {
     type: 'list',

@@ -23,8 +23,8 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     return {
       isExtension: true,
       *extensionParser() {
-        const { state } = attribute
-        const { required } = state
+        const { props } = attribute
+        const { required } = props
         const path = formatValuePath(valuePath)
 
         if (required !== 'never') {

@@ -1,7 +1,7 @@
 import type { RequiredOption } from '../constants/requiredOptions.js'
 import type { Validator } from '../types/validator.js'
 
-export interface SharedAttributeState {
+export interface SchemaProps {
   required?: RequiredOption
   hidden?: boolean
   key?: boolean

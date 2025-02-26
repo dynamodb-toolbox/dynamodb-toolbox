@@ -1,3 +1,3 @@
 import type { AnySchema } from './schema.js'
 
-export type ResolveAnySchema<ATTRIBUTE extends AnySchema> = ATTRIBUTE['state']['castAs']
+export type ResolveAnySchema<SCHEMA extends AnySchema> = SCHEMA['props']['castAs']

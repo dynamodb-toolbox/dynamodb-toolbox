@@ -37,16 +37,16 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
     })
   }
 
-  const { state } = attribute
-  if (state.enum !== undefined && !(state.enum as unknown[]).includes(linkedValue)) {
+  const { props } = attribute
+  if (props.enum !== undefined && !(props.enum as unknown[]).includes(linkedValue)) {
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${
         path !== undefined ? ` '${path}'` : ''
-      } should be one of: ${state.enum.map(String).join(', ')}.`,
+      } should be one of: ${props.enum.map(String).join(', ')}.`,
       path,
-      payload: { received: linkedValue, expected: state.enum }
+      payload: { received: linkedValue, expected: props.enum }
     })
   }
 
@@ -60,8 +60,8 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
   }
 
   const transformedValue =
-    state.transform !== undefined
-      ? (state.transform as Transformer).encode(parsedValue)
+    props.transform !== undefined
+      ? (props.transform as Transformer).encode(parsedValue)
       : parsedValue
   return transformedValue
 }

@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 
-export interface NumberAttributeState extends SharedAttributeState {
+export interface NumberSchemaProps extends SchemaProps {
   big?: boolean
   enum?: (number | bigint)[]
   transform?: unknown

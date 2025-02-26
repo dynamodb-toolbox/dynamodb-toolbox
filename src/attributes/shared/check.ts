@@ -3,17 +3,17 @@ import { isBoolean } from '~/utils/validation/isBoolean.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import { requiredOptionsSet } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from './interface.js'
+import type { SchemaProps } from './props.js'
 
 /**
  * Validates an attribute shared properties
  *
- * @param attribute Attribute
+ * @param props Schema Props
  * @param path Path of the instance in the related schema (string)
  * @return void
  */
-export const checkAttributeProperties = (attribute: SharedAttributeState, path?: string): void => {
-  const { required, hidden, key, savedAs } = attribute
+export const checkSchemaProps = (props: SchemaProps, path?: string): void => {
+  const { required, hidden, key, savedAs } = props
 
   if (required !== undefined && !requiredOptionsSet.has(required)) {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {

@@ -13,7 +13,7 @@ export type FormattedItemJSONSchema<
   {
     type: 'object'
     properties: {
-      [KEY in OmitKeys<SCHEMA['attributes'], { state: { hidden: true } }>]: FormattedAttrJSONSchema<
+      [KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: FormattedAttrJSONSchema<
         SCHEMA['attributes'][KEY]
       >
     }
@@ -24,11 +24,11 @@ export const getFormattedItemJSONSchema = <SCHEMA extends Schema>(
   schema: SCHEMA
 ): FormattedItemJSONSchema<SCHEMA> => {
   const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, attr]) => !attr.state.hidden
+    ([, attr]) => !attr.props.hidden
   )
 
   const requiredProperties = displayedAttrEntries
-    .filter(([, { state }]) => state.required !== 'never')
+    .filter(([, { props }]) => props.required !== 'never')
     .map(([attributeName]) => attributeName)
 
   return {

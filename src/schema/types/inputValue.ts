@@ -34,21 +34,21 @@ type MustBeProvided<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOpti
   If<
     Extends<OPTIONS, { mode: 'update' | 'key' }>,
     If<
-      Not<Extends<ATTRIBUTE['state'], { required: Always }>>,
+      Not<Extends<ATTRIBUTE['props'], { required: Always }>>,
       false,
       If<
-        Extends<ATTRIBUTE['state'], { key: true }>,
-        Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
-        Not<Extends<ATTRIBUTE['state'], { updateDefault: unknown } | { updateLink: unknown }>>
+        Extends<ATTRIBUTE['props'], { key: true }>,
+        Not<Extends<ATTRIBUTE['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
+        Not<Extends<ATTRIBUTE['props'], { updateDefault: unknown } | { updateLink: unknown }>>
       >
     >,
     If<
-      Extends<ATTRIBUTE['state'], { required: Never }>,
+      Extends<ATTRIBUTE['props'], { required: Never }>,
       false,
       If<
-        Extends<ATTRIBUTE['state'], { key: true }>,
-        Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
-        Not<Extends<ATTRIBUTE['state'], { putDefault: unknown } | { putLink: unknown }>>
+        Extends<ATTRIBUTE['props'], { key: true }>,
+        Not<Extends<ATTRIBUTE['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
+        Not<Extends<ATTRIBUTE['props'], { putDefault: unknown } | { putLink: unknown }>>
       >
     >
   >
@@ -70,7 +70,7 @@ type SchemaInputValue<
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { state: { key: true } }>
+          ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
           : keyof SCHEMA['attributes']]: AttrInputValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
@@ -151,7 +151,7 @@ type MapSchemaInputValue<
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { state: { key: true } }>
+              ? SelectKeys<ATTRIBUTE['attributes'], { props: { key: true } }>
               : keyof ATTRIBUTE['attributes']]: AttrInputValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>

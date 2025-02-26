@@ -1,17 +1,17 @@
 import { checkPrimitiveAttribute } from '../primitive/check.js'
-import type { BinaryAttributeState } from './types.js'
+import type { BinarySchemaProps } from './types.js'
 
-export class BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeState> {
+export class BinarySchema<PROPS extends BinarySchemaProps = BinarySchemaProps> {
   type: 'binary'
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE) {
+  constructor(props: PROPS) {
     this.type = 'binary'
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -21,6 +21,6 @@ export class BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeSt
 
     checkPrimitiveAttribute(this, path)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
   }
 }

@@ -99,14 +99,14 @@ export type UpdateItemInputExtension =
 
 type MustBeDefined<ATTRIBUTE extends AttrSchema, FILLED extends boolean = false> = If<
   FILLED,
-  Extends<ATTRIBUTE['state'], { required: Always }>,
+  Extends<ATTRIBUTE['props'], { required: Always }>,
   If<
-    Not<Extends<ATTRIBUTE['state'], { required: Always }>>,
+    Not<Extends<ATTRIBUTE['props'], { required: Always }>>,
     false,
     If<
-      Extends<ATTRIBUTE['state'], { key: true }>,
-      Not<Extends<ATTRIBUTE['state'], { keyDefault: unknown } | { keyLink: unknown }>>,
-      Not<Extends<ATTRIBUTE['state'], { updateDefault: unknown } | { updateLink: unknown }>>
+      Extends<ATTRIBUTE['props'], { key: true }>,
+      Not<Extends<ATTRIBUTE['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
+      Not<Extends<ATTRIBUTE['props'], { updateDefault: unknown } | { updateLink: unknown }>>
     >
   >
 >
@@ -119,7 +119,7 @@ type OptionalKeys<SCHEMA extends Schema | MapSchema, FILLED extends boolean = fa
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<ATTRIBUTE extends AttrSchema> = ATTRIBUTE['state'] extends { required: Never }
+type CanBeRemoved<ATTRIBUTE extends AttrSchema> = ATTRIBUTE['props'] extends { required: Never }
   ? true
   : false
 
@@ -166,7 +166,7 @@ export type Reference<
 
 type NumberUpdate<ATTRIBUTE extends NumberSchema> =
   | number
-  | (ATTRIBUTE['state'] extends { big: true } ? bigint : never)
+  | (ATTRIBUTE['props'] extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given AttrSchema

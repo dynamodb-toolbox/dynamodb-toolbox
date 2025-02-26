@@ -1,27 +1,27 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { checkAttributeProperties } from '../shared/check.js'
+import { checkSchemaProps } from '../shared/check.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class AnyOfSchema<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  PROPS extends SchemaProps = SchemaProps,
   ELEMENTS extends AttrSchema[] = AttrSchema[]
 > {
   type: 'anyOf'
-  state: STATE
+  props: PROPS
   elements: ELEMENTS
 
-  constructor(state: STATE, elements: ELEMENTS) {
+  constructor(props: PROPS, elements: ELEMENTS) {
     this.type = 'anyOf'
     this.elements = elements
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -29,7 +29,7 @@ export class AnyOfSchema<
       return
     }
 
-    checkAttributeProperties(this.state, path)
+    checkSchemaProps(this.props, path)
 
     if (!isArray(this.elements)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.invalidElements', {
@@ -50,7 +50,7 @@ export class AnyOfSchema<
     }
 
     for (const element of this.elements) {
-      const { required, hidden, savedAs } = element.state
+      const { required, hidden, savedAs } = element.props
 
       if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
         throw new DynamoDBToolboxError('schema.anyOfAttribute.optionalElements', {
@@ -93,7 +93,7 @@ export class AnyOfSchema<
       element.check(`${path ?? ''}[${index}]`)
     })
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
     Object.freeze(this.elements)
   }
 }

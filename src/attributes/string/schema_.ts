@@ -13,9 +13,9 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/re
 import type { Validator } from '../types/validator.js'
 import type { ResolveStringSchema, ResolvedStringSchema } from './resolve.js'
 import { StringSchema } from './schema.js'
-import type { StringAttributeState } from './types.js'
+import type { StringSchemaProps } from './types.js'
 
-type StringAttributeTyper = <OPTIONS extends Omit<StringAttributeState, 'enum'> = {}>(
+type StringAttributeTyper = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
   options?: NarrowObject<OPTIONS>
 ) => StringSchema_<OPTIONS>
 
@@ -24,9 +24,7 @@ type StringAttributeTyper = <OPTIONS extends Omit<StringAttributeState, 'enum'> 
  *
  * @param options _(optional)_ Attribute Options
  */
-export const string: StringAttributeTyper = <
-  OPTIONS extends Omit<StringAttributeState, 'enum'> = {}
->(
+export const string: StringAttributeTyper = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
   options: NarrowObject<OPTIONS> = {} as OPTIONS
 ) => new StringSchema_(options)
 
@@ -34,8 +32,8 @@ export const string: StringAttributeTyper = <
  * String attribute (warm)
  */
 export class StringSchema_<
-  STATE extends StringAttributeState = StringAttributeState
-> extends StringSchema<STATE> {
+  PROPS extends StringSchemaProps = StringSchemaProps
+> extends StringSchema<PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -46,14 +44,14 @@ export class StringSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): StringSchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new StringSchema_(overwrite(this.state, { required: nextRequired }))
+  ): StringSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new StringSchema_(overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): StringSchema_<Overwrite<STATE, { required: Never }>> {
+  optional(): StringSchema_<Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -62,8 +60,8 @@ export class StringSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): StringSchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new StringSchema_(overwrite(this.state, { hidden: nextHidden }))
+  ): StringSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new StringSchema_(overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -71,8 +69,8 @@ export class StringSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): StringSchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new StringSchema_(overwrite(this.state, { key: nextKey, required: 'always' }))
+  ): StringSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
+    return new StringSchema_(overwrite(this.props, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -80,8 +78,8 @@ export class StringSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): StringSchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new StringSchema_(overwrite(this.state, { savedAs: nextSavedAs }))
+  ): StringSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new StringSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -94,8 +92,8 @@ export class StringSchema_<
    */
   enum<const NEXT_ENUM extends readonly ResolveStringSchema<this>[]>(
     ...nextEnum: NEXT_ENUM
-  ): StringSchema_<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new StringSchema_(overwrite(this.state, { enum: writable(nextEnum) }))
+  ): StringSchema_<Overwrite<PROPS, { enum: Writable<NEXT_ENUM> }>> {
+    return new StringSchema_(overwrite(this.props, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -108,17 +106,17 @@ export class StringSchema_<
   const<CONSTANT extends ResolveStringSchema<this>>(
     constant: CONSTANT
   ): If<
-    STATE['key'],
-    StringSchema_<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
-    StringSchema_<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+    PROPS['key'],
+    StringSchema_<Overwrite<PROPS, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    StringSchema_<Overwrite<PROPS, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new StringSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new StringSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -128,8 +126,8 @@ export class StringSchema_<
    */
   transform<TRANSFORMER extends Transformer<ResolvedStringSchema, ResolveStringSchema<this>>>(
     transform: TRANSFORMER
-  ): StringSchema_<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new StringSchema_(overwrite(this.state, { transform }))
+  ): StringSchema_<Overwrite<PROPS, { transform: TRANSFORMER }>> {
+    return new StringSchema_(overwrite(this.props, { transform }))
   }
 
   /**
@@ -139,8 +137,8 @@ export class StringSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): StringSchema_<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { keyDefault: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -150,8 +148,8 @@ export class StringSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): StringSchema_<Overwrite<STATE, { putDefault: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { putDefault: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -161,8 +159,8 @@ export class StringSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): StringSchema_<Overwrite<STATE, { updateDefault: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }))
   }
 
   /**
@@ -172,17 +170,17 @@ export class StringSchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    StringSchema_<Overwrite<STATE, { keyDefault: unknown }>>,
-    StringSchema_<Overwrite<STATE, { putDefault: unknown }>>
+    PROPS['key'],
+    StringSchema_<Overwrite<PROPS, { keyDefault: unknown }>>,
+    StringSchema_<Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new StringSchema_(overwrite(this.state, { keyDefault: nextDefault as unknown })),
-      new StringSchema_(overwrite(this.state, { putDefault: nextDefault as unknown }))
+      this.props.key as PROPS['key'],
+      new StringSchema_(overwrite(this.props, { keyDefault: nextDefault as unknown })),
+      new StringSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -195,8 +193,8 @@ export class StringSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): StringSchema_<Overwrite<STATE, { keyLink: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { keyLink: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -206,8 +204,8 @@ export class StringSchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): StringSchema_<Overwrite<STATE, { putLink: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { putLink: nextPutLink as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { putLink: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -219,8 +217,8 @@ export class StringSchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): StringSchema_<Overwrite<STATE, { updateLink: unknown }>> {
-    return new StringSchema_(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
+  ): StringSchema_<Overwrite<PROPS, { updateLink: unknown }>> {
+    return new StringSchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -230,17 +228,17 @@ export class StringSchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    StringSchema_<Overwrite<STATE, { keyLink: unknown }>>,
-    StringSchema_<Overwrite<STATE, { putLink: unknown }>>
+    PROPS['key'],
+    StringSchema_<Overwrite<PROPS, { keyLink: unknown }>>,
+    StringSchema_<Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new StringSchema_(overwrite(this.state, { keyLink: nextLink as unknown })),
-      new StringSchema_(overwrite(this.state, { putLink: nextLink as unknown }))
+      this.props.key as PROPS['key'],
+      new StringSchema_(overwrite(this.props, { keyLink: nextLink as unknown })),
+      new StringSchema_(overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -251,8 +249,8 @@ export class StringSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): StringSchema_<Overwrite<STATE, { keyValidator: Validator }>> {
-    return new StringSchema_(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
+  ): StringSchema_<Overwrite<PROPS, { keyValidator: Validator }>> {
+    return new StringSchema_(overwrite(this.props, { keyValidator: nextKeyValidator as Validator }))
   }
 
   /**
@@ -262,8 +260,8 @@ export class StringSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): StringSchema_<Overwrite<STATE, { putValidator: Validator }>> {
-    return new StringSchema_(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
+  ): StringSchema_<Overwrite<PROPS, { putValidator: Validator }>> {
+    return new StringSchema_(overwrite(this.props, { putValidator: nextPutValidator as Validator }))
   }
 
   /**
@@ -273,9 +271,9 @@ export class StringSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): StringSchema_<Overwrite<STATE, { updateValidator: Validator }>> {
+  ): StringSchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new StringSchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -287,33 +285,33 @@ export class StringSchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    StringSchema_<Overwrite<STATE, { keyValidator: Validator }>>,
-    StringSchema_<Overwrite<STATE, { putValidator: Validator }>>
+    PROPS['key'],
+    StringSchema_<Overwrite<PROPS, { keyValidator: Validator }>>,
+    StringSchema_<Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new StringSchema_(overwrite(this.state, { keyValidator: nextValidator as Validator })),
-      new StringSchema_(overwrite(this.state, { putValidator: nextValidator as Validator }))
+      this.props.key as PROPS['key'],
+      new StringSchema_(overwrite(this.props, { keyValidator: nextValidator as Validator })),
+      new StringSchema_(overwrite(this.props, { putValidator: nextValidator as Validator }))
     )
   }
 
-  clone<NEXT_STATE extends Partial<StringAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): StringSchema_<Overwrite<STATE, NEXT_STATE>> {
-    return new StringSchema_(overwrite(this.state, nextState))
+  clone<NEXT_PROPS extends StringSchemaProps = {}>(
+    nextprops: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): StringSchema_<Overwrite<PROPS, NEXT_PROPS>> {
+    return new StringSchema_(overwrite(this.props, nextprops))
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }
