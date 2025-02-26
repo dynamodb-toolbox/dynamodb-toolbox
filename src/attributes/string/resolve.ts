@@ -1,4 +1,4 @@
-import type { StringSchema } from './interface.js'
+import type { StringSchema } from './schema.js'
 
 export type ResolveStringSchema<ATTRIBUTE extends StringSchema> = ATTRIBUTE['state'] extends {
   enum: string[]

@@ -1,5 +1,4 @@
-export { string } from './typer.js'
-export type { StringSchema, $StringAttributeNestedState } from './interface.js'
-export { $StringAttribute, StringAttribute, StringAttribute_ } from './interface.js'
+export { StringSchema } from './schema.js'
+export { string, StringSchema_ } from './schema_.js'
 export type { ResolveStringSchema, ResolvedStringSchema } from './resolve.js'
 export type { StringAttributeState } from './types.js'

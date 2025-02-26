@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { ResolveStringSchema } from './resolve.js'
-import { string } from './typer.js'
+import { string } from './schema_.js'
 
 const standardStr = string()
 const assertResolveStandard: A.Equals<ResolveStringSchema<typeof standardStr>, string> = 1

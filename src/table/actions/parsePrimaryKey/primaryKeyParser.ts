@@ -1,3 +1,6 @@
+import { BinarySchema } from '~/attributes/binary/schema.js'
+import { NumberSchema } from '~/attributes/number/schema.js'
+import { StringSchema } from '~/attributes/string/schema.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
@@ -45,14 +48,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
 
     const partitionKeyValue = keyInput[partitionKey.name]
 
-    if (
-      !isValidPrimitive(
-        partitionKey.type === 'number'
-          ? { type: 'number', state: { big: true } }
-          : { type: partitionKey.type, state: {} },
-        partitionKeyValue
-      )
-    ) {
+    if (!isValidPrimitive(getKeySchema(partitionKey), partitionKeyValue)) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid partition key: ${partitionKey.name}`,
         path: partitionKey.name,
@@ -71,14 +67,7 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     }
 
     const sortKeyValue = keyInput[sortKey.name]
-    if (
-      !isValidPrimitive(
-        sortKey.type === 'number'
-          ? { type: 'number', state: { big: true } }
-          : { type: sortKey.type, state: {} },
-        sortKeyValue
-      )
-    ) {
+    if (!isValidPrimitive(getKeySchema(sortKey), sortKeyValue)) {
       throw new DynamoDBToolboxError('actions.parsePrimaryKey.invalidKeyPart', {
         message: `Invalid sort key: ${sortKey.name}`,
         path: sortKey.name,
@@ -93,5 +82,16 @@ export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<T
     primaryKey[sortKey.name] = sortKeyValue
 
     return primaryKey as PrimaryKey<TABLE>
+  }
+}
+
+const getKeySchema = (key: Key) => {
+  switch (key.type) {
+    case 'number':
+      return new NumberSchema({ big: true })
+    case 'string':
+      return new StringSchema({})
+    case 'binary':
+      return new BinarySchema({})
   }
 }

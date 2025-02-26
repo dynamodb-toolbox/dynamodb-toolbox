@@ -2,7 +2,7 @@ import type {
   AnyOfSchema,
   AnySchema,
   AttrSchema,
-  Attribute_,
+  AttrSchema_,
   BinarySchema,
   BooleanSchema,
   ListSchema,
@@ -123,6 +123,6 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
 type LinksResetter = <ATTRIBUTE extends AttrSchema>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
 
 export const resetLinks: LinksResetter = attribute =>
-  (attribute as Attribute_)
+  (attribute as AttrSchema_)
     // @ts-expect-error Signatures don't match but we don't care
     .clone({ keyLink: undefined, putLink: undefined, updateLink: undefined })

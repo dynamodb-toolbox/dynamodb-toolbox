@@ -1,6 +1,6 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { AnyAttribute } from '~/attributes/any/index.js'
+import { AnySchema } from '~/attributes/any/schema.js'
 import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
@@ -38,17 +38,7 @@ type QueryParamsGetter = <
   options?: OPTIONS
 ) => QueryCommandInput
 
-const defaultAnyAttribute = new AnyAttribute({
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  castAs: undefined,
-  transform: undefined,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-})
+const defaultAnyAttribute = new AnySchema({ required: 'never' })
 
 export const queryParams: QueryParamsGetter = <
   TABLE extends Table,

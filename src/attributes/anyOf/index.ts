@@ -1,4 +1,3 @@
-export { anyOf } from './typer.js'
-export type { AnyOfSchema, $AnyOfAttributeNestedState } from './interface.js'
-export { $AnyOfAttribute, AnyOfAttribute, AnyOfAttribute_ } from './interface.js'
+export { AnyOfSchema } from './schema.js'
+export { anyOf, AnyOfSchema_ } from './schema_.js'
 export type { AnyOfElementSchema } from './types.js'

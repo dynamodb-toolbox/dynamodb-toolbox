@@ -1,6 +1,6 @@
-import { AnyAttribute } from '~/attributes/any/index.js'
+import { AnySchema } from '~/attributes/any/schema.js'
 import type { AttrSchema } from '~/attributes/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
+import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { Schema } from '~/schema/index.js'
@@ -18,10 +18,6 @@ export interface ExpressionParser {
   appendToExpression: (str: string) => void
   appendAttributePath: (path: string, options?: AppendAttributePathOptions) => AttrSchema
 }
-
-const defaultAnyAttribute = new AnyAttribute({ required: 'never' })
-
-const defaultNumberAttribute = new NumberAttribute({ required: 'never' })
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
   new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
@@ -78,10 +74,11 @@ export const appendAttributePath = (
           }
         }
 
-        parentAttr = new AnyAttribute({
-          ...defaultAnyAttribute,
-          path: [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
-        })
+        parentAttr = new AnySchema({ required: 'never' })
+        // TODO: Useful to add path here?
+        parentAttr.check(
+          [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
+        )
         break
       }
       case 'binary':
@@ -164,7 +161,12 @@ export const appendAttributePath = (
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
-  return size
-    ? new NumberAttribute({ ...defaultNumberAttribute.state, path: parentAttr.path })
-    : parentAttr
+  if (size) {
+    const sizeAttr = new NumberSchema({ required: 'never' })
+    // TODO: Useful to add path here?
+    sizeAttr.check(parentAttr.path)
+    return sizeAttr
+  }
+
+  return parentAttr
 }

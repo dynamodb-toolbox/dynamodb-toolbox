@@ -1,5 +1,5 @@
 import { any } from '~/attributes/any/index.js'
-import type { $AnyAttributeNestedState } from '~/attributes/any/index.js'
+import type { AnySchema } from '~/attributes/any/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
 type AnyAttrDTO = Extract<AttributeDTO, { type: 'any' }>
@@ -15,7 +15,7 @@ export const fromJSONAnyAttr = ({
   putLink,
   updateLink,
   ...props
-}: AnyAttrDTO): $AnyAttributeNestedState => {
+}: AnyAttrDTO): AnySchema => {
   keyDefault
   putDefault
   updateDefault

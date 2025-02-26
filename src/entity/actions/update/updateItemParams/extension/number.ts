@@ -1,5 +1,5 @@
-import type { AttributeBasicValue, NumberAttribute } from '~/attributes/index.js'
-import { NumberAttribute_ } from '~/attributes/number/index.js'
+import type { AttributeBasicValue } from '~/attributes/index.js'
+import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
@@ -10,7 +10,7 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
-  attribute: NumberAttribute,
+  attribute: NumberSchema,
   inputValue: unknown,
   { transform = true }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -35,12 +35,20 @@ export const parseNumberExtension = (
 
         const [left, right] = sumElements
         const parsers = [
-          new NumberAttribute_({ path: `${attribute.path}[$SUM][0]`, big: state.big })
-            .build(Parser)
-            .start(left, { fill: false, transform, parseExtension: parseReferenceExtension }),
-          new NumberAttribute_({ path: `${attribute.path}[$SUM][1]`, big: state.big })
-            .build(Parser)
-            .start(right, { fill: false, transform, parseExtension: parseReferenceExtension })
+          new Parser(
+            new NumberSchema({
+              // TODO: Important to have path?
+              path: `${attribute.path}[$SUM][0]`,
+              big: state.big
+            })
+          ).start(left, { fill: false, transform, parseExtension: parseReferenceExtension }),
+          new Parser(
+            new NumberSchema({
+              // TODO: Important to have path?
+              path: `${attribute.path}[$SUM][1]`,
+              big: state.big
+            })
+          ).start(right, { fill: false, transform, parseExtension: parseReferenceExtension })
         ]
 
         const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
@@ -79,12 +87,20 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          new NumberAttribute_({ path: `${attribute.path}[$SUBTRACT][0]`, big: state.big })
-            .build(Parser)
-            .start(left, { fill: false, transform, parseExtension: parseReferenceExtension }),
-          new NumberAttribute_({ path: `${attribute.path}[$SUBTRACT][1]`, big: state.big })
-            .build(Parser)
-            .start(right, { fill: false, transform, parseExtension: parseReferenceExtension })
+          new Parser(
+            new NumberSchema({
+              // TODO: Important to keep path?
+              path: `${attribute.path}[$SUBTRACT][0]`,
+              big: state.big
+            })
+          ).start(left, { fill: false, transform, parseExtension: parseReferenceExtension }),
+          new Parser(
+            new NumberSchema({
+              // TODO: Important to keep path?
+              path: `${attribute.path}[$SUBTRACT][1]`,
+              big: state.big
+            })
+          ).start(right, { fill: false, transform, parseExtension: parseReferenceExtension })
         ]
 
         const parsedValue = { [$SUBTRACT]: parsers.map(parser => parser.next().value) }
@@ -103,9 +119,13 @@ export const parseNumberExtension = (
 
   if (isAddition(inputValue) && inputValue[$ADD] !== undefined) {
     const { state } = attribute
-    const parser = new NumberAttribute_({ path: `${attribute.path}[$ADD]`, big: state.big })
-      .build(Parser)
-      .start(inputValue[$ADD], { fill: false, transform, parseExtension: parseReferenceExtension })
+    const parser = new Parser(
+      new NumberSchema({
+        // TODO: Important to keep path?
+        path: `${attribute.path}[$ADD]`,
+        big: state.big
+      })
+    ).start(inputValue[$ADD], { fill: false, transform, parseExtension: parseReferenceExtension })
 
     return {
       isExtension: true,

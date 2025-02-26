@@ -1,54 +1,28 @@
 import type {
-  $BinaryAttribute,
-  $BinaryAttributeNestedState,
-  BinaryAttribute,
-  BinaryAttribute_,
   BinarySchema,
+  BinarySchema_,
   ResolveBinarySchema,
   ResolvedBinarySchema
 } from '../binary/index.js'
 import type {
-  $BooleanAttribute,
-  $BooleanAttributeNestedState,
-  BooleanAttribute,
-  BooleanAttribute_,
   BooleanSchema,
+  BooleanSchema_,
   ResolveBooleanSchema,
   ResolvedBooleanAttribute
 } from '../boolean/index.js'
+import type { NullSchema, NullSchema_, ResolvedNullSchema } from '../null/index.js'
 import type {
-  $NullAttribute,
-  $NullAttributeNestedState,
-  NullAttribute,
-  NullAttribute_,
-  NullSchema,
-  ResolvedNullSchema
-} from '../null/index.js'
-import type {
-  $NumberAttribute,
-  $NumberAttributeNestedState,
-  NumberAttribute,
-  NumberAttribute_,
   NumberSchema,
+  NumberSchema_,
   ResolveNumberSchema,
   ResolvedNumberSchema
 } from '../number/index.js'
 import type {
-  $StringAttribute,
-  $StringAttributeNestedState,
   ResolveStringSchema,
   ResolvedStringSchema,
-  StringAttribute,
-  StringAttribute_,
-  StringSchema
+  StringSchema,
+  StringSchema_
 } from '../string/index.js'
-
-export type $PrimitiveAttributeNestedState =
-  | $NullAttributeNestedState
-  | $BooleanAttributeNestedState
-  | $NumberAttributeNestedState
-  | $StringAttributeNestedState
-  | $BinaryAttributeNestedState
 
 export type PrimitiveSchema =
   | NullSchema
@@ -57,26 +31,12 @@ export type PrimitiveSchema =
   | StringSchema
   | BinarySchema
 
-export type $PrimitiveAttribute =
-  | $NullAttribute
-  | $BooleanAttribute
-  | $NumberAttribute
-  | $StringAttribute
-  | $BinaryAttribute
-
-export type PrimitiveAttribute =
-  | NullAttribute
-  | BooleanAttribute
-  | NumberAttribute
-  | StringAttribute
-  | BinaryAttribute
-
-export type PrimitiveAttribute_ =
-  | NullAttribute_
-  | BooleanAttribute_
-  | NumberAttribute_
-  | StringAttribute_
-  | BinaryAttribute_
+export type PrimitiveSchema_ =
+  | NullSchema_
+  | BooleanSchema_
+  | NumberSchema_
+  | StringSchema_
+  | BinarySchema_
 
 export type ResolvedPrimitiveSchema =
   | ResolvedNullSchema
