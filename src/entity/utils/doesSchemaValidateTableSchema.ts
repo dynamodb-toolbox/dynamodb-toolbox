@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
@@ -7,7 +7,7 @@ export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boo
   if (key === undefined) return true
 
   const keyAttributeEntry = [...schema.keyAttributeNames.values()]
-    .map(attributeName => [attributeName, schema.attributes[attributeName]] as [string, Attribute])
+    .map(attributeName => [attributeName, schema.attributes[attributeName]] as [string, AttrSchema])
     .find(
       ([attributeName, { state }]) =>
         state.savedAs === key.name || (state.savedAs === undefined && attributeName === key.name)

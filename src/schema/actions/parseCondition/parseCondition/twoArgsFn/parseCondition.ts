@@ -1,4 +1,4 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { AttrSchema } from '~/attributes/index.js'
 import { StringAttribute } from '~/attributes/string/index.js'
 import { string } from '~/attributes/string/index.js'
 
@@ -40,7 +40,7 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   const attribute = conditionParser.appendAttributePath(attributePath)
   conditionParser.appendToExpression(', ')
 
-  let targetAttribute: Attribute
+  let targetAttribute: AttrSchema
   switch (comparisonOperator) {
     case 'type':
       targetAttribute = new StringAttribute({ ...typeAttribute, path: attributePath })

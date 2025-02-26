@@ -1,4 +1,4 @@
-import type { MapAttribute } from '~/attributes/index.js'
+import type { MapSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -10,10 +10,10 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: MapAttribute,
+  attribute: MapSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<MapAttribute, OPTIONS>, ParserReturn<MapAttribute, OPTIONS>> {
+): Generator<ParserYield<MapSchema, OPTIONS>, ParserReturn<MapSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { mode = 'put', fill = true, transform = true } = restOptions
   const parsers: Record<string, Generator<any, any>> = {}
@@ -60,10 +60,10 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<MapAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<MapSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<MapAttribute, OPTIONS>
+      yield linkedValue as ParserYield<MapSchema, OPTIONS>
     }
   }
 

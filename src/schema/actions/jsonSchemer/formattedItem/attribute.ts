@@ -1,39 +1,39 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  ListAttribute,
-  MapAttribute,
-  PrimitiveAttribute,
-  RecordAttribute,
-  SetAttribute
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  ListSchema,
+  MapSchema,
+  PrimitiveSchema,
+  RecordSchema,
+  SetSchema
 } from '~/attributes/index.js'
 
-import type { FormattedAnyOfAttrJSONSchema } from './anyOf.js'
+import type { FormattedAnyOfJSONSchema } from './anyOf.js'
 import { getFormattedAnyOfAttrJSONSchema } from './anyOf.js'
-import type { FormattedListAttrJSONSchema } from './list.js'
+import type { FormattedListJSONSchema } from './list.js'
 import { getFormattedListAttrJSONSchema } from './list.js'
-import type { FormattedMapAttrJSONSchema } from './map.js'
+import type { FormattedMapJSONSchema } from './map.js'
 import { getFormattedMapAttrJSONSchema } from './map.js'
-import type { FormattedPrimitiveAttrJSONSchema } from './primitive.js'
+import type { FormattedPrimitiveJSONSchema } from './primitive.js'
 import { getFormattedPrimitiveAttrJSONSchema } from './primitive.js'
-import type { FormattedRecordAttrJSONSchema } from './record.js'
+import type { FormattedRecordJSONSchema } from './record.js'
 import { getFormattedRecordAttrJSONSchema } from './record.js'
-import type { FormattedSetAttrJSONSchema } from './set.js'
+import type { FormattedSetJSONSchema } from './set.js'
 import { getFormattedSetAttrJSONSchema } from './set.js'
 
-export type FormattedAttrJSONSchema<ATTRIBUTE extends Attribute> = Attribute extends ATTRIBUTE
+export type FormattedAttrJSONSchema<ATTRIBUTE extends AttrSchema> = AttrSchema extends ATTRIBUTE
   ? Record<string, unknown>
   :
-      | (ATTRIBUTE extends AnyAttribute ? {} : never)
-      | (ATTRIBUTE extends PrimitiveAttribute ? FormattedPrimitiveAttrJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends SetAttribute ? FormattedSetAttrJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends ListAttribute ? FormattedListAttrJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends MapAttribute ? FormattedMapAttrJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends RecordAttribute ? FormattedRecordAttrJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends AnyOfAttribute ? FormattedAnyOfAttrJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends AnySchema ? {} : never)
+      | (ATTRIBUTE extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends SetSchema ? FormattedSetJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends ListSchema ? FormattedListJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends MapSchema ? FormattedMapJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends RecordSchema ? FormattedRecordJSONSchema<ATTRIBUTE> : never)
+      | (ATTRIBUTE extends AnyOfSchema ? FormattedAnyOfJSONSchema<ATTRIBUTE> : never)
 
-export const getFormattedAttrJSONSchema = <ATTRIBUTE extends Attribute>(
+export const getFormattedAttrJSONSchema = <ATTRIBUTE extends AttrSchema>(
   attr: ATTRIBUTE
 ): FormattedAttrJSONSchema<ATTRIBUTE> => {
   type Response = FormattedAttrJSONSchema<ATTRIBUTE>

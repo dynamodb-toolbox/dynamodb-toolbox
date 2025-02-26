@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { Transformer } from '~/transformers/index.js'
@@ -8,16 +8,12 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
 export function* primitiveAttrFormatter(
-  attribute: PrimitiveAttribute,
+  attribute: PrimitiveSchema,
   rawValue: unknown,
-  {
-    format = true,
-    transform = true,
-    valuePath = []
-  }: FormatAttrValueOptions<PrimitiveAttribute> = {}
+  { format = true, transform = true, valuePath = [] }: FormatAttrValueOptions<PrimitiveSchema> = {}
 ): Generator<
-  FormatterYield<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>,
-  FormatterReturn<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>
+  FormatterYield<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>,
+  FormatterReturn<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>
 > {
   const { state } = attribute
   if (!isValidPrimitive(attribute, rawValue)) {

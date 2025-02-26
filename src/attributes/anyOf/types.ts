@@ -1,8 +1,8 @@
 import type { AtLeastOnce } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import type { $AttributeNestedState, Attribute } from '../types/index.js'
+import type { $AttributeNestedState, AttrSchema, Attribute } from '../types/index.js'
 
-interface AnyOfAttributeElementState extends SharedAttributeState {
+interface AnyOfElementState extends SharedAttributeState {
   required?: AtLeastOnce
   hidden?: false
   savedAs?: undefined
@@ -14,10 +14,16 @@ interface AnyOfAttributeElementState extends SharedAttributeState {
   updateLink?: undefined
 }
 
+// TODO: Re-introduce constraint in interface (not only in typer)
+export type AnyOfElementSchema = AttrSchema & { state: AnyOfElementState }
+
+/**
+ * @deprecated
+ */
 export type $AnyOfAttributeElements = $AttributeNestedState & {
-  state: AnyOfAttributeElementState
+  state: AnyOfElementState
 }
 
 export type AnyOfAttributeElements = Attribute & {
-  state: AnyOfAttributeElementState
+  state: AnyOfElementState
 }

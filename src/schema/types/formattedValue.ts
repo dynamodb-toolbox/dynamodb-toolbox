@@ -1,23 +1,23 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
+  AnyOfSchema,
+  AnySchema,
+  AttrSchema,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
   Never,
-  NullAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  ResolveAnyAttribute,
-  ResolveBinaryAttribute,
-  ResolveBooleanAttribute,
-  ResolveNumberAttribute,
-  ResolveStringAttribute,
-  ResolvedNullAttribute,
-  SetAttribute,
-  StringAttribute
+  NullSchema,
+  NumberSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolveBinarySchema,
+  ResolveBooleanSchema,
+  ResolveNumberSchema,
+  ResolveStringSchema,
+  ResolvedNullSchema,
+  SetSchema,
+  StringSchema
 } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Extends, If, Not, OmitKeys, Optional, Overwrite } from '~/types/index.js'
@@ -27,25 +27,25 @@ import type { ChildPaths, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 /**
- * Returns the type of formatted values for a given Schema or Attribute
+ * Returns the type of formatted values for a given Schema or AttrSchema
  *
- * @param Schema Schema | Attribute
+ * @param Schema Schema | AttrSchema
  * @return Value
  */
 export type FormattedValue<
-  SCHEMA extends Schema | Attribute,
+  SCHEMA extends Schema | AttrSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SCHEMA extends Schema
   ? SchemaFormattedValue<SCHEMA, OPTIONS>
-  : SCHEMA extends Attribute
+  : SCHEMA extends AttrSchema
     ? AttrFormattedValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends Attribute> = Not<
+type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
   Extends<ATTRIBUTE['state'], { required: Never }>
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapAttribute> = {
+type OptionalKeys<SCHEMA extends Schema | MapSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
 }[keyof SCHEMA['attributes']]
 
@@ -84,40 +84,40 @@ type SchemaFormattedValue<
       >
 
 type AttrFormattedValue<
-  ATTRIBUTE extends Attribute,
+  ATTRIBUTE extends AttrSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
 > =
-  | (ATTRIBUTE extends AnyAttribute ? AnyAttrFormattedValue<ATTRIBUTE> : never)
-  | (ATTRIBUTE extends NullAttribute
-      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullAttribute
+  | (ATTRIBUTE extends AnySchema ? AnySchemaFormattedValue<ATTRIBUTE> : never)
+  | (ATTRIBUTE extends NullSchema
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullSchema
       : never)
-  | (ATTRIBUTE extends BooleanAttribute
-      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanAttribute<ATTRIBUTE>
+  | (ATTRIBUTE extends BooleanSchema
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanSchema<ATTRIBUTE>
       : never)
-  | (ATTRIBUTE extends NumberAttribute
-      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberAttribute<ATTRIBUTE>
+  | (ATTRIBUTE extends NumberSchema
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberSchema<ATTRIBUTE>
       : never)
-  | (ATTRIBUTE extends StringAttribute
-      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringAttribute<ATTRIBUTE>
+  | (ATTRIBUTE extends StringSchema
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringSchema<ATTRIBUTE>
       : never)
-  | (ATTRIBUTE extends BinaryAttribute
-      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinaryAttribute<ATTRIBUTE>
+  | (ATTRIBUTE extends BinarySchema
+      ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinarySchema<ATTRIBUTE>
       : never)
-  | (ATTRIBUTE extends SetAttribute ? SetAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-  | (ATTRIBUTE extends ListAttribute ? ListAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-  | (ATTRIBUTE extends MapAttribute ? MapAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-  | (ATTRIBUTE extends RecordAttribute ? RecordAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
-  | (ATTRIBUTE extends AnyOfAttribute ? AnyOfAttrFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends SetSchema ? SetSchemaFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends ListSchema ? ListSchemaFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends MapSchema ? MapSchemaFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends RecordSchema ? RecordSchemaFormattedValue<ATTRIBUTE, OPTIONS> : never)
+  | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaFormattedValue<ATTRIBUTE, OPTIONS> : never)
 
-type AnyAttrFormattedValue<ATTRIBUTE extends AnyAttribute> = AnyAttribute extends ATTRIBUTE
+type AnySchemaFormattedValue<ATTRIBUTE extends AnySchema> = AnySchema extends ATTRIBUTE
   ? unknown
-  : ResolveAnyAttribute<ATTRIBUTE>
+  : ResolveAnySchema<ATTRIBUTE>
 
-type SetAttrFormattedValue<
-  ATTRIBUTE extends SetAttribute,
+type SetSchemaFormattedValue<
+  ATTRIBUTE extends SetSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = SetAttribute extends ATTRIBUTE
-  ? undefined | Set<AttrFormattedValue<SetAttribute['elements']>>
+> = SetSchema extends ATTRIBUTE
+  ? undefined | Set<AttrFormattedValue<SetSchema['elements']>>
   :
       | If<MustBeDefined<ATTRIBUTE>, never, undefined>
       | Set<AttrFormattedValue<ATTRIBUTE['elements'], Omit<OPTIONS, 'attributes'>>>
@@ -128,10 +128,10 @@ type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
     ? CHILD_ELEMENT_PATHS
     : never
 
-type ListAttrFormattedValue<
-  ATTRIBUTE extends ListAttribute,
+type ListSchemaFormattedValue<
+  ATTRIBUTE extends ListSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  FORMATTED_ELEMENTS = ListAttribute extends ATTRIBUTE
+  FORMATTED_ELEMENTS = ListSchema extends ATTRIBUTE
     ? unknown
     : AttrFormattedValue<
         ATTRIBUTE['elements'],
@@ -148,19 +148,19 @@ type ListAttrFormattedValue<
         >
       >
   // Possible in case of anyOf subSchema
-> = ListAttribute extends ATTRIBUTE
+> = ListSchema extends ATTRIBUTE
   ? undefined | unknown[]
   : [FORMATTED_ELEMENTS] extends [never]
     ? never
     : If<MustBeDefined<ATTRIBUTE>, never, undefined> | FORMATTED_ELEMENTS[]
 
-type MapAttrFormattedValue<
-  ATTRIBUTE extends MapAttribute,
+type MapSchemaFormattedValue<
+  ATTRIBUTE extends MapSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
     ? MatchKeys<Extract<keyof ATTRIBUTE['attributes'], string>, OPTIONS['attributes']>
     : Extract<keyof ATTRIBUTE['attributes'], string>
-> = MapAttribute extends ATTRIBUTE
+> = MapSchema extends ATTRIBUTE
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
@@ -215,13 +215,13 @@ type RecordChildPaths<
     : never
 > = undefined extends CHILD_PATHS ? undefined : CHILD_PATHS
 
-type RecordAttrFormattedValue<
-  ATTRIBUTE extends RecordAttribute,
+type RecordSchemaFormattedValue<
+  ATTRIBUTE extends RecordSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
-    ? MatchRecordKeys<ResolveStringAttribute<ATTRIBUTE['keys']>, OPTIONS['attributes']>
-    : ResolveStringAttribute<ATTRIBUTE['keys']>
-> = RecordAttribute extends ATTRIBUTE
+    ? MatchRecordKeys<ResolveStringSchema<ATTRIBUTE['keys']>, OPTIONS['attributes']>
+    : ResolveStringSchema<ATTRIBUTE['keys']>
+> = RecordSchema extends ATTRIBUTE
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
@@ -245,22 +245,24 @@ type RecordAttrFormattedValue<
             >
           }
 
-type AnyOfAttrFormattedValue<
-  ATTRIBUTE extends AnyOfAttribute,
+type AnyOfSchemaFormattedValue<
+  ATTRIBUTE extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = AnyOfAttribute extends ATTRIBUTE
+> = AnyOfSchema extends ATTRIBUTE
   ? unknown
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | AnyOfAttrFormattedValueRec<ATTRIBUTE, OPTIONS>
+  :
+      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+      | MapAnyOfSchemaFormattedValue<ATTRIBUTE, OPTIONS>
 
-type AnyOfAttrFormattedValueRec<
-  ATTRIBUTE extends AnyOfAttribute,
+type MapAnyOfSchemaFormattedValue<
+  ATTRIBUTE extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  ELEMENTS extends Attribute[] = ATTRIBUTE['elements'],
+  ELEMENTS extends AttrSchema[] = ATTRIBUTE['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Attribute
-    ? ELEMENTS_TAIL extends Attribute[]
-      ? AnyOfAttrFormattedValueRec<
+  ? ELEMENTS_HEAD extends AttrSchema
+    ? ELEMENTS_TAIL extends AttrSchema[]
+      ? MapAnyOfSchemaFormattedValue<
           ATTRIBUTE,
           OPTIONS,
           ELEMENTS_TAIL,

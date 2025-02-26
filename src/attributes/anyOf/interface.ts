@@ -19,26 +19,25 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/in
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { Attribute } from '../types/index.js'
+import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
 import { freezeAnyOfAttribute } from './freeze.js'
-import type { $AnyOfAttributeElements } from './types.js'
 
 export interface AnyOfSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
+  $ELEMENTS extends AttrSchema[] = AttrSchema[]
 > {
   type: 'anyOf'
+  path?: string
   state: STATE
   elements: $ELEMENTS
 }
 
 export interface $AnyOfAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
+  $ELEMENTS extends AttrSchema[] = AttrSchema[]
 > extends AnyOfSchema<STATE, $ELEMENTS> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true>
 }
@@ -48,7 +47,7 @@ export interface $AnyOfAttributeNestedState<
  */
 export class $AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ELEMENTS extends $AnyOfAttributeElements[] = $AnyOfAttributeElements[]
+  $ELEMENTS extends AttrSchema[] = AttrSchema[]
 > implements $AnyOfAttributeNestedState<STATE, $ELEMENTS>
 {
   type: 'anyOf'
@@ -426,6 +425,7 @@ export class $AnyOfAttribute<
     }
 
     this.elements.forEach((element, index) => {
+      // @ts-ignore TOFIX
       element.check(`${path ?? ''}[${index}]`)
     })
 
@@ -439,7 +439,7 @@ export class $AnyOfAttribute<
 
 export class AnyOfAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  ELEMENTS extends Attribute[] = Attribute[]
+  ELEMENTS extends AttrSchema[] = AttrSchema[]
 > {
   type: 'anyOf'
   path?: string
@@ -456,7 +456,7 @@ export class AnyOfAttribute<
 
 export class AnyOfAttribute_<
   STATE extends SharedAttributeState = SharedAttributeState,
-  ELEMENTS extends Attribute[] = Attribute[]
+  ELEMENTS extends AttrSchema[] = AttrSchema[]
 > extends AnyOfAttribute<STATE, ELEMENTS> {
   clone<NEXT_STATE extends SharedAttributeState = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE

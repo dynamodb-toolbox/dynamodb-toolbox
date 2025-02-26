@@ -5,7 +5,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeMapAttribute } from './freeze.js'
-import type { MapAttribute, MapSchema } from './interface.js'
+import type { MapSchema } from './interface.js'
 import { map } from './typer.js'
 
 describe('map', () => {
@@ -28,10 +28,6 @@ describe('map', () => {
 
     const assertExtends: A.Extends<typeof mapped, MapSchema> = 1
     assertExtends
-
-    const frozenMap = mapped.freeze('some.path')
-    const assertFrozenExtends: A.Extends<typeof frozenMap, MapAttribute> = 1
-    assertFrozenExtends
   })
 
   test('returns required map (option)', () => {

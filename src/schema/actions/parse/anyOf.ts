@@ -1,4 +1,4 @@
-import type { AnyOfAttribute } from '~/attributes/index.js'
+import type { AnyOfSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -9,10 +9,10 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* anyOfAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: AnyOfAttribute,
+  attribute: AnyOfSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<AnyOfAttribute, OPTIONS>, ParserReturn<AnyOfAttribute, OPTIONS>> {
+): Generator<ParserYield<AnyOfSchema, OPTIONS>, ParserReturn<AnyOfSchema, OPTIONS>> {
   const { fill = true, transform = true, valuePath = [] } = options
 
   let parser: Generator<any, any> | undefined = undefined

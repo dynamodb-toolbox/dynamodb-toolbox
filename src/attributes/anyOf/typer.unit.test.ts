@@ -7,7 +7,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
-import type { AnyOfAttribute, AnyOfSchema } from './interface.js'
+import type { AnyOfSchema } from './interface.js'
 import { anyOf } from './typer.js'
 
 describe('anyOf', () => {
@@ -159,10 +159,6 @@ describe('anyOf', () => {
 
     const assertExtends: A.Extends<typeof anyOfAttr, AnyOfSchema> = 1
     assertExtends
-
-    const frozenList = anyOfAttr.freeze(path)
-    const assertFrozen: A.Extends<typeof frozenList, AnyOfAttribute> = 1
-    assertFrozen
   })
 
   // TODO: Reimplement options as potential first argument

@@ -1,9 +1,14 @@
 import type { AtLeastOnce } from '../constants/index.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import type { $StringAttributeNestedState, StringAttribute } from '../string/index.js'
-import type { $AttributeNestedState } from '../types/index.js'
+import type {
+  $StringAttributeNestedState,
+  StringAttribute,
+  StringAttributeState,
+  StringSchema
+} from '../string/index.js'
+import type { $AttributeNestedState, AttrSchema } from '../types/index.js'
 
-export interface RecordAttributeElementState extends SharedAttributeState {
+interface RecordKeyAndElementState extends SharedAttributeState {
   required?: AtLeastOnce
   hidden?: false
   key?: false
@@ -16,13 +21,27 @@ export interface RecordAttributeElementState extends SharedAttributeState {
   updateLink?: undefined
 }
 
+// TODO: Re-introduce constraint in interface (not only in typer)
+export type RecordElementSchema = AttrSchema & { state: RecordKeyAndElementState }
+
+// TODO: Re-introduce constraint in interface (not only in typer)
+export type RecordKeySchema = StringSchema<StringAttributeState & RecordKeyAndElementState>
+
+/**
+ * @deprecated
+ */
 export type $RecordAttributeKeys = $StringAttributeNestedState & {
-  state: RecordAttributeElementState
+  state: RecordKeyAndElementState
 }
 
+/**
+ * @deprecated
+ */
 export type $RecordAttributeElements = $AttributeNestedState & {
-  state: RecordAttributeElementState
+  state: RecordKeyAndElementState
 }
 
-// TODO: Re-introduce constraint?
+/**
+ * @deprecated
+ */
 export type RecordAttributeKeys = StringAttribute

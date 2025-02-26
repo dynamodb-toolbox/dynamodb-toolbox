@@ -1,6 +1,9 @@
-import type { BooleanAttribute } from './interface.js'
+import type { BooleanSchema } from './interface.js'
 
-export type ResolveBooleanAttribute<ATTRIBUTE extends BooleanAttribute> =
-  ATTRIBUTE['state'] extends { enum: boolean[] } ? ATTRIBUTE['state']['enum'][number] : boolean
+export type ResolveBooleanSchema<ATTRIBUTE extends BooleanSchema> = ATTRIBUTE['state'] extends {
+  enum: boolean[]
+}
+  ? ATTRIBUTE['state']['enum'][number]
+  : boolean
 
-export type ResolvedBooleanAttribute = ResolveBooleanAttribute<BooleanAttribute>
+export type ResolvedBooleanSchema = ResolveBooleanSchema<BooleanSchema>

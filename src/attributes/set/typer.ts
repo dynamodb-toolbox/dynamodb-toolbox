@@ -2,10 +2,10 @@ import type { NarrowObject } from '~/types/narrowObject.js'
 
 import type { SharedAttributeState } from '../shared/interface.js'
 import { $SetAttribute } from './interface.js'
-import type { $SetAttributeElements } from './types.js'
+import type { SetElementSchema } from './types.js'
 
 type SetAttributeTyper = <
-  $ELEMENTS extends $SetAttributeElements,
+  $ELEMENTS extends SetElementSchema,
   STATE extends SharedAttributeState = {}
 >(
   elements: $ELEMENTS,
@@ -24,7 +24,7 @@ type SetAttributeTyper = <
  * @param state _(optional)_ List Options
  */
 export const set: SetAttributeTyper = <
-  ELEMENTS extends $SetAttributeElements,
+  ELEMENTS extends SetElementSchema,
   STATE extends SharedAttributeState = {}
 >(
   elements: ELEMENTS,

@@ -19,17 +19,17 @@ import { validateAttributeProperties } from '../shared/validate.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
 import { freezeAnyAttribute } from './freeze.js'
-import type { ResolveAnyAttribute } from './resolve.js'
+import type { ResolveAnySchema } from './resolve.js'
 import type { AnyAttributeState } from './types.js'
 
 export interface AnySchema<STATE extends AnyAttributeState = AnyAttributeState> {
   type: 'any'
+  path?: string
   state: STATE
 }
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
   extends AnySchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeAnyAttribute<AnySchema<STATE>, true>
 }
@@ -110,10 +110,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
    */
   transform<
-    TRANSFORMER extends Transformer<
-      unknown,
-      ResolveAnyAttribute<FreezeAnyAttribute<AnySchema<STATE>>>
-    >
+    TRANSFORMER extends Transformer<unknown, ResolveAnySchema<FreezeAnyAttribute<AnySchema<STATE>>>>
   >(transform: TRANSFORMER): $AnyAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $AnyAttribute(overwrite(this.state, { transform }))
   }

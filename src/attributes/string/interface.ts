@@ -21,18 +21,18 @@ import { validatePrimitiveAttribute } from '../primitive/freeze.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
 import { freezeStringAttribute } from './freeze.js'
-import type { ResolveStringAttribute, ResolvedStringAttribute } from './resolve.js'
+import type { ResolveStringSchema, ResolvedStringSchema } from './resolve.js'
 import type { StringAttributeState } from './types.js'
 
 export interface StringSchema<STATE extends StringAttributeState = StringAttributeState> {
   type: 'string'
+  path?: string
   state: STATE
 }
 
 export interface $StringAttributeNestedState<
   STATE extends StringAttributeState = StringAttributeState
 > extends StringSchema<STATE> {
-  path?: string
   check: (path?: string) => void
   freeze: (path?: string) => FreezeStringAttribute<StringSchema<STATE>, true>
 }
@@ -109,7 +109,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * string().enum('foo', 'bar')
    */
   enum<
-    const NEXT_ENUM extends readonly ResolveStringAttribute<
+    const NEXT_ENUM extends readonly ResolveStringSchema<
       FreezeStringAttribute<StringSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $StringAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
@@ -123,7 +123,7 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    * @example
    * string().const('foo')
    */
-  const<CONSTANT extends ResolveStringAttribute<FreezeStringAttribute<StringSchema<STATE>>>>(
+  const<CONSTANT extends ResolveStringSchema<FreezeStringAttribute<StringSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -146,8 +146,8 @@ export class $StringAttribute<STATE extends StringAttributeState = StringAttribu
    */
   transform<
     TRANSFORMER extends Transformer<
-      ResolvedStringAttribute,
-      ResolveStringAttribute<FreezeStringAttribute<StringSchema<STATE>>>
+      ResolvedStringSchema,
+      ResolveStringSchema<FreezeStringAttribute<StringSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $StringAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $StringAttribute(overwrite(this.state, { transform }))

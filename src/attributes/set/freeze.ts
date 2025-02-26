@@ -6,7 +6,7 @@ import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { SetAttribute, SetSchema } from './interface.js'
 import { SetAttribute_ } from './interface.js'
-import type { $SetAttributeElements } from './types.js'
+import type { SetElementSchema } from './types.js'
 
 export type FreezeSetAttribute<
   $SET_ATTRIBUTE extends SetSchema,
@@ -15,10 +15,7 @@ export type FreezeSetAttribute<
   ? SetAttribute_<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE['elements']>>
   : SetAttribute<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE['elements']>>
 
-type SetAttributeFreezer = <
-  STATE extends SharedAttributeState,
-  $ELEMENTS extends $SetAttributeElements
->(
+type SetAttributeFreezer = <STATE extends SharedAttributeState, $ELEMENTS extends SetElementSchema>(
   state: STATE,
   $elements: $ELEMENTS,
   path?: string
@@ -34,7 +31,7 @@ type SetAttributeFreezer = <
  */
 export const freezeSetAttribute: SetAttributeFreezer = <
   STATE extends SharedAttributeState,
-  $ELEMENTS extends $SetAttributeElements
+  $ELEMENTS extends SetElementSchema
 >(
   state: STATE,
   elements: $ELEMENTS,

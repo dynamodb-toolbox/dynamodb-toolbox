@@ -20,24 +20,24 @@ import { validateAttributeProperties } from '../shared/validate.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeMapAttribute } from './freeze.js'
 import { freezeMapAttribute } from './freeze.js'
-import type { $MapAttributeAttributeStates, MapAttributeAttributes } from './types.js'
+import type { MapAttributesSchemas } from './types.js'
 
 export interface MapSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
+  ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
 > {
   type: 'map'
+  path?: string
   state: STATE
-  attributes: $ATTRIBUTES
+  attributes: ATTRIBUTES
 }
 
 export interface $MapAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
-> extends MapSchema<STATE, $ATTRIBUTES> {
-  path?: string
+  ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
+> extends MapSchema<STATE, ATTRIBUTES> {
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>, true>
+  freeze: (path?: string) => FreezeMapAttribute<MapSchema<STATE, ATTRIBUTES>, true>
 }
 
 /**
@@ -45,7 +45,7 @@ export interface $MapAttributeNestedState<
  */
 export class $MapAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  $ATTRIBUTES extends $MapAttributeAttributeStates = $MapAttributeAttributeStates
+  $ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
 > implements $MapAttributeNestedState<STATE, $ATTRIBUTES>
 {
   type: 'map'
@@ -399,6 +399,7 @@ export class $MapAttribute<
     }
 
     for (const [attributeName, attribute] of Object.entries(this.attributes)) {
+      // @ts-ignore TOFIX
       attribute.check([path, attributeName].filter(Boolean).join('.'))
     }
 
@@ -412,7 +413,7 @@ export class $MapAttribute<
 
 export class MapAttribute<
   STATE extends SharedAttributeState = SharedAttributeState,
-  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
+  ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
 > {
   type: 'map'
   path?: string
@@ -454,7 +455,7 @@ export class MapAttribute<
 
 export class MapAttribute_<
   STATE extends SharedAttributeState = SharedAttributeState,
-  ATTRIBUTES extends MapAttributeAttributes = MapAttributeAttributes
+  ATTRIBUTES extends MapAttributesSchemas = MapAttributesSchemas
 > extends MapAttribute<STATE, ATTRIBUTES> {
   clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
     nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
