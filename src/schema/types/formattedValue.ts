@@ -42,7 +42,7 @@ export type FormattedValue<
     : never
 
 type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
-  Extends<ATTRIBUTE['state'], { required: Never }>
+  Extends<ATTRIBUTE['props'], { required: Never }>
 >
 
 type OptionalKeys<SCHEMA extends Schema | MapSchema> = {
@@ -64,7 +64,7 @@ type SchemaFormattedValue<
         {
           [KEY in OmitKeys<
             Pick<SCHEMA['attributes'], MATCHING_KEYS>,
-            { state: { hidden: true } }
+            { props: { hidden: true } }
           >]: AttrFormattedValue<
             SCHEMA['attributes'][KEY],
             Overwrite<
@@ -173,7 +173,7 @@ type MapSchemaFormattedValue<
               [KEY in OmitKeys<
                 // Pick only filtered keys
                 Pick<ATTRIBUTE['attributes'], MATCHING_KEYS>,
-                { state: { hidden: true } }
+                { props: { hidden: true } }
               >]: AttrFormattedValue<
                 ATTRIBUTE['attributes'][KEY],
                 Overwrite<

@@ -50,7 +50,7 @@ describe('addInternalAttributes', () => {
 
       expect(enrichedSchema.attributes.id).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           hidden: false,
           savedAs: entityAttributeSavedAs,
           enum: ['myEntity'],
@@ -60,7 +60,7 @@ describe('addInternalAttributes', () => {
 
       expect(
         // @ts-expect-error defaults are not typed for the moment
-        enrichedSchema.attributes.id.state.updateDefault()
+        enrichedSchema.attributes.id.props.updateDefault()
       ).toStrictEqual($get('id', 'myEntity'))
     })
 
@@ -157,7 +157,7 @@ describe('addInternalAttributes', () => {
 
       expect(enrichedSchema.attributes.created).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           savedAs: '_ct',
           putDefault: expect.any(Function),
           updateDefault: expect.any(Function)
@@ -191,7 +191,7 @@ describe('addInternalAttributes', () => {
 
       expect(partialCustomSchema.attributes.created).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           savedAs: 'c',
           putDefault: expect.any(Function),
           updateDefault: expect.any(Function)
@@ -227,7 +227,7 @@ describe('addInternalAttributes', () => {
 
       expect(customSchema.attributes['__created__']).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           hidden: true,
           savedAs: 'c',
           putDefault: expect.any(Function),
@@ -262,7 +262,7 @@ describe('addInternalAttributes', () => {
 
       expect(enrichedSchema.attributes.modified).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           savedAs: '_md',
           putDefault: expect.any(Function),
           updateDefault: expect.any(Function)
@@ -296,7 +296,7 @@ describe('addInternalAttributes', () => {
 
       expect(partialCustomSchema.attributes.modified).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           savedAs: 'm',
           putDefault: expect.any(Function),
           updateDefault: expect.any(Function)
@@ -332,7 +332,7 @@ describe('addInternalAttributes', () => {
 
       expect(customSchema.attributes['__modified__']).toMatchObject({
         type: 'string',
-        state: {
+        props: {
           savedAs: 'm',
           hidden: true,
           putDefault: expect.any(Function),

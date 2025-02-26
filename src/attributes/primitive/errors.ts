@@ -30,7 +30,7 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   hasPath: true
   payload: {
     enumValues: NonNullable<
-      (NullSchema | BooleanSchema | NumberSchema | StringSchema | BinarySchema)['state']['enum']
+      (NullSchema | BooleanSchema | NumberSchema | StringSchema | BinarySchema)['props']['enum']
     >
     defaultValue: unknown
   }

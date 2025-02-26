@@ -13,27 +13,27 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/re
 import type { Validator } from '../types/validator.js'
 import type { ResolveNumberSchema, ResolvedNumberSchema } from './resolve.js'
 import { NumberSchema } from './schema.js'
-import type { NumberAttributeState } from './types.js'
+import type { NumberSchemaProps } from './types.js'
 
-type NumberAttributeTyper = <STATE extends Omit<NumberAttributeState, 'enum'> = {}>(
-  state?: NarrowObject<STATE>
-) => NumberSchema_<STATE>
+type NumberAttributeTyper = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
+  props?: NarrowObject<PROPS>
+) => NumberSchema_<PROPS>
 
 /**
  * Define a new attribute of number type
  *
- * @param state _(optional)_ Attribute Options
+ * @param props _(optional)_ Attribute Options
  */
-export const number: NumberAttributeTyper = <STATE extends Omit<NumberAttributeState, 'enum'> = {}>(
-  state: NarrowObject<STATE> = {} as STATE
-) => new NumberSchema_(state)
+export const number: NumberAttributeTyper = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
+  props: NarrowObject<PROPS> = {} as PROPS
+) => new NumberSchema_(props)
 
 /**
  * Number attribute (warm)
  */
 export class NumberSchema_<
-  STATE extends NumberAttributeState = NumberAttributeState
-> extends NumberSchema<STATE> {
+  PROPS extends NumberSchemaProps = NumberSchemaProps
+> extends NumberSchema<PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -44,14 +44,14 @@ export class NumberSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): NumberSchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new NumberSchema_(overwrite(this.state, { required: nextRequired }))
+  ): NumberSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new NumberSchema_(overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): NumberSchema_<Overwrite<STATE, { required: Never }>> {
+  optional(): NumberSchema_<Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -60,8 +60,8 @@ export class NumberSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): NumberSchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new NumberSchema_(overwrite(this.state, { hidden: nextHidden }))
+  ): NumberSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new NumberSchema_(overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -69,8 +69,8 @@ export class NumberSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): NumberSchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new NumberSchema_(overwrite(this.state, { key: nextKey, required: 'always' }))
+  ): NumberSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
+    return new NumberSchema_(overwrite(this.props, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -78,8 +78,8 @@ export class NumberSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): NumberSchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new NumberSchema_(overwrite(this.state, { savedAs: nextSavedAs }))
+  ): NumberSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new NumberSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -92,8 +92,8 @@ export class NumberSchema_<
    */
   enum<const NEXT_ENUM extends readonly ResolveNumberSchema<this>[]>(
     ...nextEnum: NEXT_ENUM
-  ): NumberSchema_<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new NumberSchema_(overwrite(this.state, { enum: writable(nextEnum) }))
+  ): NumberSchema_<Overwrite<PROPS, { enum: Writable<NEXT_ENUM> }>> {
+    return new NumberSchema_(overwrite(this.props, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -106,17 +106,17 @@ export class NumberSchema_<
   const<CONSTANT extends ResolveNumberSchema<this>>(
     constant: CONSTANT
   ): If<
-    STATE['key'],
-    NumberSchema_<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
-    NumberSchema_<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+    PROPS['key'],
+    NumberSchema_<Overwrite<PROPS, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    NumberSchema_<Overwrite<PROPS, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new NumberSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new NumberSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -126,8 +126,8 @@ export class NumberSchema_<
    */
   transform<TRANSFORMER extends Transformer<ResolvedNumberSchema, ResolveNumberSchema<this>>>(
     transform: TRANSFORMER
-  ): NumberSchema_<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new NumberSchema_(overwrite(this.state, { transform }))
+  ): NumberSchema_<Overwrite<PROPS, { transform: TRANSFORMER }>> {
+    return new NumberSchema_(overwrite(this.props, { transform }))
   }
 
   /**
@@ -135,8 +135,8 @@ export class NumberSchema_<
    */
   big<NEXT_BIG extends boolean = true>(
     nextBig: NEXT_BIG = true as NEXT_BIG
-  ): NumberSchema_<Overwrite<STATE, { big: NEXT_BIG }>> {
-    return new NumberSchema_(overwrite(this.state, { big: nextBig }))
+  ): NumberSchema_<Overwrite<PROPS, { big: NEXT_BIG }>> {
+    return new NumberSchema_(overwrite(this.props, { big: nextBig }))
   }
 
   /**
@@ -146,8 +146,8 @@ export class NumberSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): NumberSchema_<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { keyDefault: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -157,8 +157,8 @@ export class NumberSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): NumberSchema_<Overwrite<STATE, { putDefault: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { putDefault: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -168,8 +168,8 @@ export class NumberSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): NumberSchema_<Overwrite<STATE, { updateDefault: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }))
   }
 
   /**
@@ -179,17 +179,17 @@ export class NumberSchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    NumberSchema_<Overwrite<STATE, { keyDefault: unknown }>>,
-    NumberSchema_<Overwrite<STATE, { putDefault: unknown }>>
+    PROPS['key'],
+    NumberSchema_<Overwrite<PROPS, { keyDefault: unknown }>>,
+    NumberSchema_<Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NumberSchema_(overwrite(this.state, { keyDefault: nextDefault as unknown })),
-      new NumberSchema_(overwrite(this.state, { putDefault: nextDefault as unknown }))
+      this.props.key as PROPS['key'],
+      new NumberSchema_(overwrite(this.props, { keyDefault: nextDefault as unknown })),
+      new NumberSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -202,8 +202,8 @@ export class NumberSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): NumberSchema_<Overwrite<STATE, { keyLink: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { keyLink: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -213,8 +213,8 @@ export class NumberSchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): NumberSchema_<Overwrite<STATE, { putLink: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { putLink: nextPutLink as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { putLink: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -226,8 +226,8 @@ export class NumberSchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): NumberSchema_<Overwrite<STATE, { updateLink: unknown }>> {
-    return new NumberSchema_(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
+  ): NumberSchema_<Overwrite<PROPS, { updateLink: unknown }>> {
+    return new NumberSchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -237,17 +237,17 @@ export class NumberSchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    NumberSchema_<Overwrite<STATE, { keyLink: unknown }>>,
-    NumberSchema_<Overwrite<STATE, { putLink: unknown }>>
+    PROPS['key'],
+    NumberSchema_<Overwrite<PROPS, { keyLink: unknown }>>,
+    NumberSchema_<Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NumberSchema_(overwrite(this.state, { keyLink: nextLink as unknown })),
-      new NumberSchema_(overwrite(this.state, { putLink: nextLink as unknown }))
+      this.props.key as PROPS['key'],
+      new NumberSchema_(overwrite(this.props, { keyLink: nextLink as unknown })),
+      new NumberSchema_(overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -258,8 +258,8 @@ export class NumberSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): NumberSchema_<Overwrite<STATE, { keyValidator: Validator }>> {
-    return new NumberSchema_(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
+  ): NumberSchema_<Overwrite<PROPS, { keyValidator: Validator }>> {
+    return new NumberSchema_(overwrite(this.props, { keyValidator: nextKeyValidator as Validator }))
   }
 
   /**
@@ -269,8 +269,8 @@ export class NumberSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): NumberSchema_<Overwrite<STATE, { putValidator: Validator }>> {
-    return new NumberSchema_(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
+  ): NumberSchema_<Overwrite<PROPS, { putValidator: Validator }>> {
+    return new NumberSchema_(overwrite(this.props, { putValidator: nextPutValidator as Validator }))
   }
 
   /**
@@ -280,9 +280,9 @@ export class NumberSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): NumberSchema_<Overwrite<STATE, { updateValidator: Validator }>> {
+  ): NumberSchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new NumberSchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -294,33 +294,33 @@ export class NumberSchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    NumberSchema_<Overwrite<STATE, { keyValidator: Validator }>>,
-    NumberSchema_<Overwrite<STATE, { putValidator: Validator }>>
+    PROPS['key'],
+    NumberSchema_<Overwrite<PROPS, { keyValidator: Validator }>>,
+    NumberSchema_<Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NumberSchema_(overwrite(this.state, { keyValidator: nextValidator as Validator })),
-      new NumberSchema_(overwrite(this.state, { putValidator: nextValidator as Validator }))
+      this.props.key as PROPS['key'],
+      new NumberSchema_(overwrite(this.props, { keyValidator: nextValidator as Validator })),
+      new NumberSchema_(overwrite(this.props, { putValidator: nextValidator as Validator }))
     )
   }
 
-  clone<NEXT_STATE extends Partial<NumberAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NumberSchema_<Overwrite<STATE, NEXT_STATE>> {
-    return new NumberSchema_(overwrite(this.state, nextState))
+  clone<NEXT_PROPS extends NumberSchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): NumberSchema_<Overwrite<PROPS, NEXT_PROPS>> {
+    return new NumberSchema_(overwrite(this.props, nextProps))
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }

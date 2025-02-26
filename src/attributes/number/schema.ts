@@ -1,17 +1,17 @@
 import { checkPrimitiveAttribute } from '../primitive/check.js'
-import type { NumberAttributeState } from './types.js'
+import type { NumberSchemaProps } from './types.js'
 
-export class NumberSchema<STATE extends NumberAttributeState = NumberAttributeState> {
+export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
   type: 'number'
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE) {
+  constructor(props: PROPS) {
     this.type = 'number'
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -22,6 +22,6 @@ export class NumberSchema<STATE extends NumberAttributeState = NumberAttributeSt
     checkPrimitiveAttribute(this, path)
     // TODO: Validate that big is a boolean
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
   }
 }

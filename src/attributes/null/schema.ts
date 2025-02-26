@@ -1,17 +1,17 @@
 import { checkPrimitiveAttribute } from '../primitive/check.js'
-import type { NullAttributeState } from './types.js'
+import type { NullSchemaProps } from './types.js'
 
-export class NullSchema<STATE extends NullAttributeState = NullAttributeState> {
+export class NullSchema<PROPS extends NullSchemaProps = NullSchemaProps> {
   type: 'null'
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE) {
+  constructor(props: PROPS) {
     this.type = 'null'
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -21,6 +21,6 @@ export class NullSchema<STATE extends NullAttributeState = NullAttributeState> {
 
     checkPrimitiveAttribute(this, path)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
   }
 }

@@ -64,10 +64,10 @@ export class Parser<SCHEMA extends Schema | AttrSchema> extends SchemaAction<SCH
     let done = false
     let value: ParserReturn<SCHEMA, OPTIONS>
     do {
-      const nextState = parser.next()
-      done = Boolean(nextState.done)
+      const nextProps = parser.next()
+      done = Boolean(nextProps.done)
       // TODO: Not cast
-      value = nextState.value as ParserReturn<SCHEMA, OPTIONS>
+      value = nextProps.value as ParserReturn<SCHEMA, OPTIONS>
     } while (!done)
 
     return value

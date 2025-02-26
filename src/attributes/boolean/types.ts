@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 
-export interface BooleanAttributeState extends SharedAttributeState {
+export interface BooleanSchemaProps extends SchemaProps {
   enum?: boolean[]
   transform?: unknown
 }

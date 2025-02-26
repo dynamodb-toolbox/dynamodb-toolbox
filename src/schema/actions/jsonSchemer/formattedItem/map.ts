@@ -15,7 +15,7 @@ export type FormattedMapJSONSchema<
     properties: {
       [KEY in OmitKeys<
         ATTRIBUTE['attributes'],
-        { state: { hidden: true } }
+        { props: { hidden: true } }
       >]: FormattedAttrJSONSchema<ATTRIBUTE['attributes'][KEY]>
     }
   } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
@@ -25,7 +25,7 @@ export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapSchema>(
   attr: ATTRIBUTE
 ): FormattedMapJSONSchema<ATTRIBUTE> => {
   const displayedAttrEntries = Object.entries(attr.attributes).filter(
-    ([, attr]) => !attr.state.hidden
+    ([, attr]) => !attr.props.hidden
   )
 
   const requiredProperties = displayedAttrEntries.map(([attributeName]) => attributeName)

@@ -14,25 +14,25 @@ export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
 export const isRequired = (attribute: AttrSchema, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
-      return attribute.state?.required !== 'never'
+      return attribute.props?.required !== 'never'
     case 'key':
     case 'update':
-      return attribute.state?.required === 'always'
+      return attribute.props?.required === 'always'
   }
 }
 
 const getValidator = (attribute: AttrSchema, mode: WriteMode) => {
-  if (attribute.state.key) {
-    return attribute.state.keyValidator
+  if (attribute.props.key) {
+    return attribute.props.keyValidator
   }
 
   switch (mode) {
     case 'key':
-      return attribute.state.keyValidator
+      return attribute.props.keyValidator
     case 'put':
-      return attribute.state.putValidator
+      return attribute.props.putValidator
     case 'update':
-      return attribute.state.updateValidator
+      return attribute.props.updateValidator
   }
 }
 

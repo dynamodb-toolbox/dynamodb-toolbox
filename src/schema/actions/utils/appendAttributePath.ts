@@ -103,7 +103,7 @@ export const appendAttributePath = (
         }
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          childAttribute.state.savedAs ?? matchedKey
+          childAttribute.props.savedAs ?? matchedKey
         )
 
         expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`

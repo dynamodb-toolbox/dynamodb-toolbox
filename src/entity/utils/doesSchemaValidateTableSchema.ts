@@ -9,8 +9,8 @@ export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boo
   const keyAttributeEntry = [...schema.keyAttributeNames.values()]
     .map(attributeName => [attributeName, schema.attributes[attributeName]] as [string, AttrSchema])
     .find(
-      ([attributeName, { state }]) =>
-        state.savedAs === key.name || (state.savedAs === undefined && attributeName === key.name)
+      ([attributeName, { props }]) =>
+        props.savedAs === key.name || (props.savedAs === undefined && attributeName === key.name)
     )
 
   if (keyAttributeEntry === undefined) {
@@ -22,8 +22,8 @@ export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boo
   return (
     keyAttribute !== undefined &&
     keyAttribute.type === key.type &&
-    keyAttribute.state.key === true &&
-    (keyAttribute.state.required === 'always' || keyAttribute.state.keyDefault !== undefined)
+    keyAttribute.props.key === true &&
+    (keyAttribute.props.required === 'always' || keyAttribute.props.keyDefault !== undefined)
   )
 }
 

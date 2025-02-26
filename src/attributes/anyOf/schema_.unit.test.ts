@@ -110,9 +110,9 @@ describe('anyOf', () => {
     assertElements
     expect(anyOfAttr.elements).toStrictEqual([str])
 
-    const assertState: A.Equals<(typeof anyOfAttr)['state'], {}> = 1
-    assertState
-    expect(anyOfAttr.state).toStrictEqual({})
+    const assertProps: A.Equals<(typeof anyOfAttr)['props'], {}> = 1
+    assertProps
+    expect(anyOfAttr.props).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof anyOfAttr, AnyOfSchema> = 1
     assertExtends
@@ -126,79 +126,79 @@ describe('anyOf', () => {
     const anyOfOpt = anyOf(str).optional()
 
     const assertAtLeastOnce: A.Contains<
-      (typeof anyOfAtLeastOnce)['state'],
+      (typeof anyOfAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof anyOfAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof anyOfAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof anyOfNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof anyOfNever)['props'], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<(typeof anyOfOpt)['state'], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof anyOfOpt)['props'], { required: Never }> = 1
     assertOpt
 
-    expect(anyOfAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(anyOfAlways.state.required).toBe('always')
-    expect(anyOfNever.state.required).toBe('never')
+    expect(anyOfAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(anyOfAlways.props.required).toBe('always')
+    expect(anyOfNever.props.required).toBe('never')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns hidden anyOf (method)', () => {
     const anyOfAttr = anyOf(str).hidden()
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { hidden: true }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { hidden: true }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.hidden).toBe(true)
+    expect(anyOfAttr.props.hidden).toBe(true)
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns key anyOf (method)', () => {
     const anyOfAttr = anyOf(str).key()
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { key: true; required: Always }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { key: true; required: Always }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.key).toBe(true)
-    expect(anyOfAttr.state.required).toBe('always')
+    expect(anyOfAttr.props.key).toBe(true)
+    expect(anyOfAttr.props.required).toBe('always')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns savedAs anyOf (method)', () => {
     const anyOfAttr = anyOf(str).savedAs('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { savedAs: 'foo' }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { savedAs: 'foo' }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.savedAs).toBe('foo')
+    expect(anyOfAttr.props.savedAs).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns defaulted anyOf (method)', () => {
     const anyOfAttr = anyOf(str).updateDefault('bar')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { updateDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { updateDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.updateDefault).toBe('bar')
+    expect(anyOfAttr.props.updateDefault).toBe('bar')
   })
 
   test('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).default('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { putDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { putDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.putDefault).toBe('foo')
+    expect(anyOfAttr.props.putDefault).toBe('foo')
   })
 
   test('returns anyOf with KEY default value if it is key (default shorthand)', () => {
     const anyOfAttr = anyOf(str).key().default('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { keyDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { keyDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.keyDefault).toBe('foo')
+    expect(anyOfAttr.props.keyDefault).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
@@ -206,30 +206,30 @@ describe('anyOf', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).updateLink(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { updateLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { updateLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.updateLink).toBe(sayHello)
+    expect(anyOfAttr.props.updateLink).toBe(sayHello)
   })
 
   test('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).link(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { putLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { putLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.putLink).toBe(sayHello)
+    expect(anyOfAttr.props.putLink).toBe(sayHello)
   })
 
   test('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const anyOfAttr = anyOf(str).key().link(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['state'], { keyLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { keyLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.state.keyLink).toBe(sayHello)
+    expect(anyOfAttr.props.keyLink).toBe(sayHello)
   })
 
   // TODO: Reimplement options as potential first argument
@@ -240,20 +240,20 @@ describe('anyOf', () => {
     const anyOfB = anyOf(string(), number()).putValidate(pass)
     const anyOfC = anyOf(string(), number()).updateValidate(pass)
 
-    const assertAnyOfA: A.Contains<(typeof anyOfA)['state'], { keyValidator: Validator }> = 1
+    const assertAnyOfA: A.Contains<(typeof anyOfA)['props'], { keyValidator: Validator }> = 1
     assertAnyOfA
 
-    expect(anyOfA.state.keyValidator).toBe(pass)
+    expect(anyOfA.props.keyValidator).toBe(pass)
 
-    const assertAnyOfB: A.Contains<(typeof anyOfB)['state'], { putValidator: Validator }> = 1
+    const assertAnyOfB: A.Contains<(typeof anyOfB)['props'], { putValidator: Validator }> = 1
     assertAnyOfB
 
-    expect(anyOfB.state.putValidator).toBe(pass)
+    expect(anyOfB.props.putValidator).toBe(pass)
 
-    const assertAnyOfC: A.Contains<(typeof anyOfC)['state'], { updateValidator: Validator }> = 1
+    const assertAnyOfC: A.Contains<(typeof anyOfC)['props'], { updateValidator: Validator }> = 1
     assertAnyOfC
 
-    expect(anyOfC.state.updateValidator).toBe(pass)
+    expect(anyOfC.props.updateValidator).toBe(pass)
 
     const prevAnyOf = anyOf(string(), number())
     prevAnyOf.validate((...args) => {
@@ -276,20 +276,20 @@ describe('anyOf', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).validate(pass)
 
-    const assertAnyOf: A.Contains<(typeof _anyOf)['state'], { putValidator: Validator }> = 1
+    const assertAnyOf: A.Contains<(typeof _anyOf)['props'], { putValidator: Validator }> = 1
     assertAnyOf
 
-    expect(_anyOf.state.putValidator).toBe(pass)
+    expect(_anyOf.props.putValidator).toBe(pass)
   })
 
   test('returns anyOf with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _anyOf = anyOf(string(), number()).key().validate(pass)
 
-    const assertAnyOf: A.Contains<(typeof _anyOf)['state'], { keyValidator: Validator }> = 1
+    const assertAnyOf: A.Contains<(typeof _anyOf)['props'], { keyValidator: Validator }> = 1
     assertAnyOf
 
-    expect(_anyOf.state.keyValidator).toBe(pass)
+    expect(_anyOf.props.keyValidator).toBe(pass)
   })
 
   test('anyOf of anyOfs', () => {

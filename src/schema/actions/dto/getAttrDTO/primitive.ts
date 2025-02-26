@@ -10,8 +10,8 @@ import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 export const getPrimitiveAttrDTO = (attr: PrimitiveSchema): PrimitiveAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
 
-  const { state } = attr
-  const { required, hidden, key, savedAs, transform } = state
+  const { props } = attr
+  const { required, hidden, key, savedAs, transform } = props
 
   const attrDTO = {
     type: attr.type,
@@ -30,22 +30,22 @@ export const getPrimitiveAttrDTO = (attr: PrimitiveSchema): PrimitiveAttrDTO => 
     // We need to cast as `.enum` is not coupled to `.type`
   } as PrimitiveAttrDTO
 
-  if (state.enum) {
+  if (props.enum) {
     switch (attr.type) {
       case 'binary': {
         const textDecoder = new TextDecoder('utf8')
         // @ts-ignore type inference can be improved here
-        attrDTO.enum = (state.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
+        attrDTO.enum = (props.enum as Uint8Array[]).map(value => btoa(textDecoder.decode(value)))
         break
       }
       case 'number': {
         // @ts-ignore type inference can be improved here
-        attrDTO.enum = state.enum.map(value => (isBigInt(value) ? value.toString() : value))
+        attrDTO.enum = props.enum.map(value => (isBigInt(value) ? value.toString() : value))
         break
       }
       default:
         // @ts-ignore type inference can be improved here
-        attrDTO.enum = state.enum
+        attrDTO.enum = props.enum
     }
   }
 

@@ -17,9 +17,9 @@ describe('boolean', () => {
     assertType
     expect(bool.type).toBe('boolean')
 
-    const assertState: A.Equals<(typeof bool)['state'], {}> = 1
-    assertState
-    expect(bool.state).toStrictEqual({})
+    const assertProps: A.Equals<(typeof bool)['props'], {}> = 1
+    assertProps
+    expect(bool.props).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof bool, BooleanSchema> = 1
     assertExtends
@@ -31,18 +31,18 @@ describe('boolean', () => {
     const boolNever = boolean({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      (typeof boolAtLeastOnce)['state'],
+      (typeof boolAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof boolAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof boolAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof boolNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof boolNever)['props'], { required: Never }> = 1
     assertNever
 
-    expect(boolAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(boolAlways.state.required).toBe('always')
-    expect(boolNever.state.required).toBe('never')
+    expect(boolAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(boolAlways.props.required).toBe('always')
+    expect(boolNever.props.required).toBe('never')
   })
 
   test('returns required boolean (method)', () => {
@@ -52,76 +52,76 @@ describe('boolean', () => {
     const numOpt = boolean().optional()
 
     const assertAtLeastOnce: A.Contains<
-      (typeof boolAtLeastOnce)['state'],
+      (typeof boolAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof boolAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof boolAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof boolNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof boolNever)['props'], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<(typeof numOpt)['state'], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof numOpt)['props'], { required: Never }> = 1
     assertOpt
 
-    expect(boolAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(boolAlways.state.required).toBe('always')
-    expect(boolNever.state.required).toBe('never')
-    expect(numOpt.state.required).toBe('never')
+    expect(boolAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(boolAlways.props.required).toBe('always')
+    expect(boolNever.props.required).toBe('never')
+    expect(numOpt.props.required).toBe('never')
   })
 
   test('returns hidden boolean (option)', () => {
     const bool = boolean({ hidden: true })
 
-    const assertBool: A.Contains<(typeof bool)['state'], { hidden: true }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { hidden: true }> = 1
     assertBool
 
-    expect(bool.state.hidden).toBe(true)
+    expect(bool.props.hidden).toBe(true)
   })
 
   test('returns hidden boolean (method)', () => {
     const bool = boolean().hidden()
 
-    const assertBool: A.Contains<(typeof bool)['state'], { hidden: true }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { hidden: true }> = 1
     assertBool
 
-    expect(bool.state.hidden).toBe(true)
+    expect(bool.props.hidden).toBe(true)
   })
 
   test('returns key boolean (option)', () => {
     const bool = boolean({ key: true })
 
-    const assertBool: A.Contains<(typeof bool)['state'], { key: true }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { key: true }> = 1
     assertBool
 
-    expect(bool.state.key).toBe(true)
+    expect(bool.props.key).toBe(true)
   })
 
   test('returns key boolean (method)', () => {
     const bool = boolean().key()
 
-    const assertBool: A.Contains<(typeof bool)['state'], { key: true; required: Always }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { key: true; required: Always }> = 1
     assertBool
 
-    expect(bool.state.key).toBe(true)
-    expect(bool.state.required).toBe('always')
+    expect(bool.props.key).toBe(true)
+    expect(bool.props.required).toBe('always')
   })
 
   test('returns savedAs boolean (option)', () => {
     const bool = boolean({ savedAs: 'foo' })
 
-    const assertBool: A.Contains<(typeof bool)['state'], { savedAs: 'foo' }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { savedAs: 'foo' }> = 1
     assertBool
 
-    expect(bool.state.savedAs).toBe('foo')
+    expect(bool.props.savedAs).toBe('foo')
   })
 
   test('returns savedAs boolean (method)', () => {
     const bool = boolean().savedAs('foo')
 
-    const assertBool: A.Contains<(typeof bool)['state'], { savedAs: 'foo' }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { savedAs: 'foo' }> = 1
     assertBool
 
-    expect(bool.state.savedAs).toBe('foo')
+    expect(bool.props.savedAs).toBe('foo')
   })
 
   test('returns boolean with enum values (method)', () => {
@@ -140,10 +140,10 @@ describe('boolean', () => {
 
     const bool = boolean().enum(true)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { enum: [true] }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { enum: [true] }> = 1
     assertBool
 
-    expect(bool.state.enum).toStrictEqual([true])
+    expect(bool.props.enum).toStrictEqual([true])
   })
 
   test('returns defaulted boolean (option)', () => {
@@ -169,20 +169,20 @@ describe('boolean', () => {
     const returnTrue = () => true
     const boolC = boolean({ updateDefault: returnTrue })
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { keyDefault: boolean }> = 1
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { keyDefault: boolean }> = 1
     assertBoolA
 
-    expect(boolA.state.keyDefault).toBe(true)
+    expect(boolA.props.keyDefault).toBe(true)
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putDefault: boolean }> = 1
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putDefault: boolean }> = 1
     assertBoolB
 
-    expect(boolB.state.putDefault).toBe(true)
+    expect(boolB.props.putDefault).toBe(true)
 
-    const assertBoolC: A.Contains<(typeof boolC)['state'], { updateDefault: () => boolean }> = 1
+    const assertBoolC: A.Contains<(typeof boolC)['props'], { updateDefault: () => boolean }> = 1
     assertBoolC
 
-    expect(boolC.state.updateDefault).toBe(returnTrue)
+    expect(boolC.props.updateDefault).toBe(returnTrue)
   })
 
   test('returns transformed boolean (option)', () => {
@@ -193,10 +193,10 @@ describe('boolean', () => {
 
     const bool = boolean({ transform: negate })
 
-    const assertBool: A.Contains<(typeof bool)['state'], { transform: typeof negate }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { transform: typeof negate }> = 1
     assertBool
 
-    expect(bool.state.transform).toBe(negate)
+    expect(bool.props.transform).toBe(negate)
   })
 
   test('returns transformed boolean (method)', () => {
@@ -207,10 +207,10 @@ describe('boolean', () => {
 
     const bool = boolean().transform(negate)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { transform: typeof negate }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { transform: typeof negate }> = 1
     assertBool
 
-    expect(bool.state.transform).toBe(negate)
+    expect(bool.props.transform).toBe(negate)
   })
 
   test('returns defaulted boolean (method)', () => {
@@ -234,38 +234,38 @@ describe('boolean', () => {
     const returnTrue = () => true
     const boolC = boolean().updateDefault(returnTrue)
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { keyDefault: unknown }> = 1
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { keyDefault: unknown }> = 1
     assertBoolA
 
-    expect(boolA.state.keyDefault).toBe(true)
+    expect(boolA.props.keyDefault).toBe(true)
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putDefault: unknown }> = 1
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putDefault: unknown }> = 1
     assertBoolB
 
-    expect(boolB.state.putDefault).toBe(true)
+    expect(boolB.props.putDefault).toBe(true)
 
-    const assertBoolC: A.Contains<(typeof boolC)['state'], { updateDefault: unknown }> = 1
+    const assertBoolC: A.Contains<(typeof boolC)['props'], { updateDefault: unknown }> = 1
     assertBoolC
 
-    expect(boolC.state.updateDefault).toBe(returnTrue)
+    expect(boolC.props.updateDefault).toBe(returnTrue)
   })
 
   test('returns boolean with PUT default value if it is not key (default shorthand)', () => {
     const bool = boolean().default(true)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { putDefault: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { putDefault: unknown }> = 1
     assertBool
 
-    expect(bool.state.putDefault).toBe(true)
+    expect(bool.props.putDefault).toBe(true)
   })
 
   test('returns boolean with KEY default value if it is key (default shorthand)', () => {
     const bool = boolean().key().default(true)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { keyDefault: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { keyDefault: unknown }> = 1
     assertBool
 
-    expect(bool.state.keyDefault).toBe(true)
+    expect(bool.props.keyDefault).toBe(true)
   })
 
   test('default with enum values', () => {
@@ -288,19 +288,19 @@ describe('boolean', () => {
     const returnTrue = (): true => true
     const boolB = boolean().enum(true).default(returnTrue)
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { putDefault: unknown; enum: [true] }> =
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { putDefault: unknown; enum: [true] }> =
       1
     assertBoolA
 
-    expect(boolA.state.putDefault).toBe(true)
-    expect(boolA.state.enum).toStrictEqual([true])
+    expect(boolA.props.putDefault).toBe(true)
+    expect(boolA.props.enum).toStrictEqual([true])
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putDefault: unknown; enum: [true] }> =
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putDefault: unknown; enum: [true] }> =
       1
     assertBoolB
 
-    expect(boolB.state.putDefault).toBe(returnTrue)
-    expect(boolB.state.enum).toStrictEqual([true])
+    expect(boolB.props.putDefault).toBe(returnTrue)
+    expect(boolB.props.enum).toStrictEqual([true])
   })
 
   test('returns boolean with constant value (method)', () => {
@@ -319,24 +319,24 @@ describe('boolean', () => {
     const nonKeyNum = boolean().const(true)
 
     const assertNonKeyNum: A.Contains<
-      (typeof nonKeyNum)['state'],
+      (typeof nonKeyNum)['props'],
       { enum: [true]; putDefault: unknown }
     > = 1
     assertNonKeyNum
 
-    expect(nonKeyNum.state.enum).toStrictEqual([true])
-    expect(nonKeyNum.state.putDefault).toBe(true)
+    expect(nonKeyNum.props.enum).toStrictEqual([true])
+    expect(nonKeyNum.props.putDefault).toBe(true)
 
     const keyNum = boolean().key().const(true)
 
     const assertKeyNum: A.Contains<
-      (typeof keyNum)['state'],
+      (typeof keyNum)['props'],
       { enum: [true]; keyDefault: unknown }
     > = 1
     assertKeyNum
 
-    expect(keyNum.state.enum).toStrictEqual([true])
-    expect(keyNum.state.keyDefault).toBe(true)
+    expect(keyNum.props.enum).toStrictEqual([true])
+    expect(keyNum.props.keyDefault).toBe(true)
   })
 
   test('returns linked boolean (method)', () => {
@@ -345,40 +345,40 @@ describe('boolean', () => {
     const boolB = boolean().putLink(returnTrue)
     const boolC = boolean().updateLink(returnTrue)
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { keyLink: unknown }> = 1
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { keyLink: unknown }> = 1
     assertBoolA
 
-    expect(boolA.state.keyLink).toBe(returnTrue)
+    expect(boolA.props.keyLink).toBe(returnTrue)
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putLink: unknown }> = 1
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putLink: unknown }> = 1
     assertBoolB
 
-    expect(boolB.state.putLink).toBe(returnTrue)
+    expect(boolB.props.putLink).toBe(returnTrue)
 
-    const assertBoolC: A.Contains<(typeof boolC)['state'], { updateLink: unknown }> = 1
+    const assertBoolC: A.Contains<(typeof boolC)['props'], { updateLink: unknown }> = 1
     assertBoolC
 
-    expect(boolC.state.updateLink).toBe(returnTrue)
+    expect(boolC.props.updateLink).toBe(returnTrue)
   })
 
   test('returns boolean with PUT linked value if it is not key (link shorthand)', () => {
     const returnTrue = () => true
     const bool = boolean().link(returnTrue)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { putLink: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { putLink: unknown }> = 1
     assertBool
 
-    expect(bool.state.putLink).toBe(returnTrue)
+    expect(bool.props.putLink).toBe(returnTrue)
   })
 
   test('returns boolean with KEY linked value if it is key (link shorthand)', () => {
     const returnTrue = () => true
     const bool = boolean().key().link(returnTrue)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { keyLink: unknown }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { keyLink: unknown }> = 1
     assertBool
 
-    expect(bool.state.keyLink).toBe(returnTrue)
+    expect(bool.props.keyLink).toBe(returnTrue)
   })
 
   test('returns boolean with validator (option)', () => {
@@ -388,20 +388,20 @@ describe('boolean', () => {
     const boolB = boolean({ putValidator: pass })
     const boolC = boolean({ updateValidator: pass })
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { keyValidator: Validator }> = 1
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { keyValidator: Validator }> = 1
     assertBoolA
 
-    expect(boolA.state.keyValidator).toBe(pass)
+    expect(boolA.props.keyValidator).toBe(pass)
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putValidator: Validator }> = 1
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putValidator: Validator }> = 1
     assertBoolB
 
-    expect(boolB.state.putValidator).toBe(pass)
+    expect(boolB.props.putValidator).toBe(pass)
 
-    const assertBoolC: A.Contains<(typeof boolC)['state'], { updateValidator: Validator }> = 1
+    const assertBoolC: A.Contains<(typeof boolC)['props'], { updateValidator: Validator }> = 1
     assertBoolC
 
-    expect(boolC.state.updateValidator).toBe(pass)
+    expect(boolC.props.updateValidator).toBe(pass)
   })
 
   test('returns boolean with validator (method)', () => {
@@ -411,20 +411,20 @@ describe('boolean', () => {
     const boolB = boolean().putValidate(pass)
     const boolC = boolean().updateValidate(pass)
 
-    const assertBoolA: A.Contains<(typeof boolA)['state'], { keyValidator: Validator }> = 1
+    const assertBoolA: A.Contains<(typeof boolA)['props'], { keyValidator: Validator }> = 1
     assertBoolA
 
-    expect(boolA.state.keyValidator).toBe(pass)
+    expect(boolA.props.keyValidator).toBe(pass)
 
-    const assertBoolB: A.Contains<(typeof boolB)['state'], { putValidator: Validator }> = 1
+    const assertBoolB: A.Contains<(typeof boolB)['props'], { putValidator: Validator }> = 1
     assertBoolB
 
-    expect(boolB.state.putValidator).toBe(pass)
+    expect(boolB.props.putValidator).toBe(pass)
 
-    const assertBoolC: A.Contains<(typeof boolC)['state'], { updateValidator: Validator }> = 1
+    const assertBoolC: A.Contains<(typeof boolC)['props'], { updateValidator: Validator }> = 1
     assertBoolC
 
-    expect(boolC.state.updateValidator).toBe(pass)
+    expect(boolC.props.updateValidator).toBe(pass)
 
     const prevNum = boolean()
     prevNum.validate((...args) => {
@@ -447,19 +447,19 @@ describe('boolean', () => {
     const pass = () => true
     const bool = boolean().validate(pass)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { putValidator: Validator }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { putValidator: Validator }> = 1
     assertBool
 
-    expect(bool.state.putValidator).toBe(pass)
+    expect(bool.props.putValidator).toBe(pass)
   })
 
   test('returns boolean with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const bool = boolean().key().validate(pass)
 
-    const assertBool: A.Contains<(typeof bool)['state'], { keyValidator: Validator }> = 1
+    const assertBool: A.Contains<(typeof bool)['props'], { keyValidator: Validator }> = 1
     assertBool
 
-    expect(bool.state.keyValidator).toBe(pass)
+    expect(bool.props.keyValidator).toBe(pass)
   })
 })

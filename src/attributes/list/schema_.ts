@@ -8,19 +8,16 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import { ListSchema } from './schema.js'
 import type { ListElementSchema } from './types.js'
 
-type ListAttributeTyper = <
-  $ELEMENTS extends ListElementSchema,
-  STATE extends SharedAttributeState = {}
->(
+type ListAttributeTyper = <$ELEMENTS extends ListElementSchema, PROPS extends SchemaProps = {}>(
   elements: $ELEMENTS,
-  state?: NarrowObject<STATE>
-) => ListSchema_<STATE, $ELEMENTS>
+  props?: NarrowObject<PROPS>
+) => ListSchema_<PROPS, $ELEMENTS>
 
 /**
  * Define a new list attribute
@@ -31,23 +28,23 @@ type ListAttributeTyper = <
  * - Not defaulted (defaults: undefined)
  *
  * @param elements Attribute (With constraints)
- * @param state _(optional)_ List Options
+ * @param props _(optional)_ List Options
  */
 export const list: ListAttributeTyper = <
   $ELEMENTS extends ListElementSchema,
-  STATE extends SharedAttributeState = {}
+  PROPS extends SchemaProps = {}
 >(
   elements: $ELEMENTS,
-  state: NarrowObject<STATE> = {} as STATE
-): ListSchema_<STATE, $ELEMENTS> => new ListSchema_(state, elements)
+  props: NarrowObject<PROPS> = {} as PROPS
+): ListSchema_<PROPS, $ELEMENTS> => new ListSchema_(props, elements)
 
 /**
  * List attribute interface
  */
 export class ListSchema_<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  PROPS extends SchemaProps = SchemaProps,
   ELEMENTS extends AttrSchema = AttrSchema
-> extends ListSchema<STATE, ELEMENTS> {
+> extends ListSchema<PROPS, ELEMENTS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -58,14 +55,14 @@ export class ListSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): ListSchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>, ELEMENTS> {
-    return new ListSchema_(overwrite(this.state, { required: nextRequired }), this.elements)
+  ): ListSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>, ELEMENTS> {
+    return new ListSchema_(overwrite(this.props, { required: nextRequired }), this.elements)
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): ListSchema_<Overwrite<STATE, { required: Never }>, ELEMENTS> {
+  optional(): ListSchema_<Overwrite<PROPS, { required: Never }>, ELEMENTS> {
     return this.required('never')
   }
 
@@ -74,8 +71,8 @@ export class ListSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): ListSchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>, ELEMENTS> {
-    return new ListSchema_(overwrite(this.state, { hidden: nextHidden }), this.elements)
+  ): ListSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>, ELEMENTS> {
+    return new ListSchema_(overwrite(this.props, { hidden: nextHidden }), this.elements)
   }
 
   /**
@@ -83,9 +80,9 @@ export class ListSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): ListSchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { key: nextKey, required: 'always' }),
+      overwrite(this.props, { key: nextKey, required: 'always' }),
       this.elements
     )
   }
@@ -95,8 +92,8 @@ export class ListSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): ListSchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>, ELEMENTS> {
-    return new ListSchema_(overwrite(this.state, { savedAs: nextSavedAs }), this.elements)
+  ): ListSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>, ELEMENTS> {
+    return new ListSchema_(overwrite(this.props, { savedAs: nextSavedAs }), this.elements)
   }
 
   /**
@@ -106,9 +103,9 @@ export class ListSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): ListSchema_<Overwrite<STATE, { keyDefault: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { keyDefault: nextKeyDefault as unknown }),
+      overwrite(this.props, { keyDefault: nextKeyDefault as unknown }),
       this.elements
     )
   }
@@ -120,9 +117,9 @@ export class ListSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): ListSchema_<Overwrite<STATE, { putDefault: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { putDefault: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { putDefault: nextPutDefault as unknown }),
+      overwrite(this.props, { putDefault: nextPutDefault as unknown }),
       this.elements
     )
   }
@@ -134,9 +131,9 @@ export class ListSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): ListSchema_<Overwrite<STATE, { updateDefault: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { updateDefault: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }),
+      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }),
       this.elements
     )
   }
@@ -148,17 +145,17 @@ export class ListSchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    ListSchema_<Overwrite<STATE, { keyDefault: unknown }>, ELEMENTS>,
-    ListSchema_<Overwrite<STATE, { putDefault: unknown }>, ELEMENTS>
+    PROPS['key'],
+    ListSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ELEMENTS>,
+    ListSchema_<Overwrite<PROPS, { putDefault: unknown }>, ELEMENTS>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new ListSchema_(overwrite(this.state, { keyDefault: nextDefault as unknown }), this.elements),
-      new ListSchema_(overwrite(this.state, { putDefault: nextDefault as unknown }), this.elements)
+      this.props.key as PROPS['key'],
+      new ListSchema_(overwrite(this.props, { keyDefault: nextDefault as unknown }), this.elements),
+      new ListSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }), this.elements)
     )
   }
 
@@ -171,9 +168,9 @@ export class ListSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): ListSchema_<Overwrite<STATE, { keyLink: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { keyLink: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { keyLink: nextKeyLink as unknown }),
+      overwrite(this.props, { keyLink: nextKeyLink as unknown }),
       this.elements
     )
   }
@@ -185,9 +182,9 @@ export class ListSchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): ListSchema_<Overwrite<STATE, { putLink: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { putLink: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { putLink: nextPutLink as unknown }),
+      overwrite(this.props, { putLink: nextPutLink as unknown }),
       this.elements
     )
   }
@@ -201,9 +198,9 @@ export class ListSchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): ListSchema_<Overwrite<STATE, { updateLink: unknown }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { updateLink: unknown }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
+      overwrite(this.props, { updateLink: nextUpdateLink as unknown }),
       this.elements
     )
   }
@@ -215,17 +212,17 @@ export class ListSchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    ListSchema_<Overwrite<STATE, { keyLink: unknown }>, ELEMENTS>,
-    ListSchema_<Overwrite<STATE, { putLink: unknown }>, ELEMENTS>
+    PROPS['key'],
+    ListSchema_<Overwrite<PROPS, { keyLink: unknown }>, ELEMENTS>,
+    ListSchema_<Overwrite<PROPS, { putLink: unknown }>, ELEMENTS>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new ListSchema_(overwrite(this.state, { keyLink: nextLink as unknown }), this.elements),
-      new ListSchema_(overwrite(this.state, { putLink: nextLink as unknown }), this.elements)
+      this.props.key as PROPS['key'],
+      new ListSchema_(overwrite(this.props, { keyLink: nextLink as unknown }), this.elements),
+      new ListSchema_(overwrite(this.props, { putLink: nextLink as unknown }), this.elements)
     )
   }
 
@@ -236,9 +233,9 @@ export class ListSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): ListSchema_<Overwrite<STATE, { keyValidator: Validator }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { keyValidator: nextKeyValidator as Validator }),
+      overwrite(this.props, { keyValidator: nextKeyValidator as Validator }),
       this.elements
     )
   }
@@ -250,9 +247,9 @@ export class ListSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): ListSchema_<Overwrite<STATE, { putValidator: Validator }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { putValidator: Validator }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { putValidator: nextPutValidator as Validator }),
+      overwrite(this.props, { putValidator: nextPutValidator as Validator }),
       this.elements
     )
   }
@@ -264,9 +261,9 @@ export class ListSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): ListSchema_<Overwrite<STATE, { updateValidator: Validator }>, ELEMENTS> {
+  ): ListSchema_<Overwrite<PROPS, { updateValidator: Validator }>, ELEMENTS> {
     return new ListSchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator }),
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator }),
       this.elements
     )
   }
@@ -279,39 +276,39 @@ export class ListSchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    ListSchema_<Overwrite<STATE, { keyValidator: Validator }>, ELEMENTS>,
-    ListSchema_<Overwrite<STATE, { putValidator: Validator }>, ELEMENTS>
+    PROPS['key'],
+    ListSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ELEMENTS>,
+    ListSchema_<Overwrite<PROPS, { putValidator: Validator }>, ELEMENTS>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new ListSchema_(
-        overwrite(this.state, { keyValidator: nextValidator as Validator }),
+        overwrite(this.props, { keyValidator: nextValidator as Validator }),
         this.elements as ELEMENTS
       ),
       new ListSchema_(
-        overwrite(this.state, { putValidator: nextValidator as Validator }),
+        overwrite(this.props, { putValidator: nextValidator as Validator }),
         this.elements as ELEMENTS
       )
     )
   }
 
-  clone<NEXT_STATE extends Partial<SharedAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): ListSchema_<Overwrite<STATE, NEXT_STATE>, ELEMENTS> {
-    return new ListSchema_(overwrite(this.state, nextState), this.elements)
+  clone<NEXT_PROPS extends SchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): ListSchema_<Overwrite<PROPS, NEXT_PROPS>, ELEMENTS> {
+    return new ListSchema_(overwrite(this.props, nextProps), this.elements)
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }

@@ -1,26 +1,26 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkAttributeProperties } from '../shared/check.js'
+import { checkSchemaProps } from '../shared/check.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class ListSchema<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  PROPS extends SchemaProps = SchemaProps,
   ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'list'
   elements: ELEMENTS
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE, elements: ELEMENTS) {
+  constructor(props: PROPS, elements: ELEMENTS) {
     this.type = 'list'
     this.elements = elements
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -28,9 +28,9 @@ export class ListSchema<
       return
     }
 
-    checkAttributeProperties(this.state, path)
+    checkSchemaProps(this.props, path)
 
-    const { required, hidden, savedAs } = this.elements.state
+    const { required, hidden, savedAs } = this.elements.props
 
     if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
       throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
@@ -70,7 +70,7 @@ export class ListSchema<
 
     this.elements.check(`${path ?? ''}[n]`)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
     Object.freeze(this.elements)
   }
 }

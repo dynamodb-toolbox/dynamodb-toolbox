@@ -15,7 +15,7 @@ export const parseNumberExtension = (
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { state } = attribute
+  const { props } = attribute
 
   if (isSum(inputValue) && inputValue[$SUM] !== undefined) {
     return {
@@ -39,13 +39,13 @@ export const parseNumberExtension = (
         const [left, right] = sumElements
 
         const parsers = [
-          new Parser(new NumberSchema({ big: state.big })).start(left, {
+          new Parser(new NumberSchema({ big: props.big })).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
             valuePath: [...sumValuePath, 0]
           }),
-          new Parser(new NumberSchema({ big: state.big })).start(right, {
+          new Parser(new NumberSchema({ big: props.big })).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
@@ -89,13 +89,13 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          new Parser(new NumberSchema({ big: state.big })).start(left, {
+          new Parser(new NumberSchema({ big: props.big })).start(left, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
             valuePath: [...subtractValuePath, 0]
           }),
-          new Parser(new NumberSchema({ big: state.big })).start(right, {
+          new Parser(new NumberSchema({ big: props.big })).start(right, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
@@ -118,7 +118,7 @@ export const parseNumberExtension = (
   }
 
   if (isAddition(inputValue) && inputValue[$ADD] !== undefined) {
-    const parser = new Parser(new NumberSchema({ big: state.big })).start(inputValue[$ADD], {
+    const parser = new Parser(new NumberSchema({ big: props.big })).start(inputValue[$ADD], {
       fill: false,
       transform,
       parseExtension: parseReferenceExtension,
