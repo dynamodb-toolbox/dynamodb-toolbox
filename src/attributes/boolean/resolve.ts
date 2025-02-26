@@ -1,9 +1,9 @@
 import type { BooleanSchema } from './schema.js'
 
-export type ResolveBooleanSchema<ATTRIBUTE extends BooleanSchema> = ATTRIBUTE['state'] extends {
+export type ResolveBooleanSchema<ATTRIBUTE extends BooleanSchema> = ATTRIBUTE['props'] extends {
   enum: boolean[]
 }
-  ? ATTRIBUTE['state']['enum'][number]
+  ? ATTRIBUTE['props']['enum'][number]
   : boolean
 
 export type ResolvedBooleanSchema = ResolveBooleanSchema<BooleanSchema>

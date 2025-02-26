@@ -9,6 +9,6 @@ export type RequiredProperties<SCHEMA extends Schema | MapSchema> = Schema exten
     : {
         [KEY in OmitKeys<
           SCHEMA['attributes'],
-          { state: { hidden: true } }
-        >]: SCHEMA['attributes'][KEY]['state'] extends { required: Never } ? never : KEY
-      }[OmitKeys<SCHEMA['attributes'], { state: { hidden: true } }>]
+          { props: { hidden: true } }
+        >]: SCHEMA['attributes'][KEY]['props'] extends { required: Never } ? never : KEY
+      }[OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]

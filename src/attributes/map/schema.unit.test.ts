@@ -2,31 +2,29 @@ import type { MockedFunction } from 'vitest'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkAttributeProperties } from '../shared/check.js'
+import { checkSchemaProps } from '../shared/check.js'
 import { string } from '../string/index.js'
 import { map } from './schema_.js'
 
 vi.mock('../shared/check', () => ({
   ...vi.importActual<Record<string, unknown>>('../shared/check'),
-  checkAttributeProperties: vi.fn()
+  checkSchemaProps: vi.fn()
 }))
 
-const checkAttributePropertiesMock = checkAttributeProperties as MockedFunction<
-  typeof checkAttributeProperties
->
+const checkSchemaPropsMock = checkSchemaProps as MockedFunction<typeof checkSchemaProps>
 
 describe('map properties check', () => {
   const pathMock = 'some.path'
 
   beforeEach(() => {
-    checkAttributePropertiesMock.mockClear()
+    checkSchemaPropsMock.mockClear()
   })
 
-  test('applies checkAttributeProperties on mapInstance', () => {
+  test('applies checkSchemaProps on mapInstance', () => {
     map({ string1: string(), string2: string() }).check()
 
     // Once + 2 attributes
-    expect(checkAttributePropertiesMock).toHaveBeenCalledTimes(3)
+    expect(checkSchemaPropsMock).toHaveBeenCalledTimes(3)
   })
 
   test('applies .check on attributes', () => {

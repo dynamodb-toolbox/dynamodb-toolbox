@@ -44,8 +44,8 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptio
   true,
   If<
     Extends<OPTIONS, { mode: 'update' | 'key' }>,
-    Extends<ATTRIBUTE['state'], { required: Always }>,
-    Not<Extends<ATTRIBUTE['state'], { required: Never }>>
+    Extends<ATTRIBUTE['props'], { required: Always }>,
+    Not<Extends<ATTRIBUTE['props'], { required: Never }>>
   >
 >
 
@@ -53,9 +53,9 @@ type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueO
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
     never,
-    SCHEMA['attributes'][KEY] extends { state: { savedAs: string } }
+    SCHEMA['attributes'][KEY] extends { props: { savedAs: string } }
       ? // '& string' needed for old TS versions
-        SCHEMA['attributes'][KEY]['state']['savedAs'] & string
+        SCHEMA['attributes'][KEY]['props']['savedAs'] & string
       : KEY
   >
 }[keyof SCHEMA['attributes']]
@@ -68,11 +68,11 @@ type SchemaTransformedValue<
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { state: { key: true } }>
-          : keyof SCHEMA['attributes'] as SCHEMA['attributes'][KEY]['state'] extends {
+          ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
+          : keyof SCHEMA['attributes'] as SCHEMA['attributes'][KEY]['props'] extends {
           savedAs: string
         }
-          ? SCHEMA['attributes'][KEY]['state']['savedAs']
+          ? SCHEMA['attributes'][KEY]['props']['savedAs']
           : KEY]: AttrTransformedValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
@@ -105,8 +105,8 @@ type AnySchemaTransformedValue<
   :
       | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | (ATTRIBUTE['state'] extends { transform: Transformer }
-          ? Call<TypeModifier<ATTRIBUTE['state']['transform']>, ResolveAnySchema<ATTRIBUTE>>
+      | (ATTRIBUTE['props'] extends { transform: Transformer }
+          ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveAnySchema<ATTRIBUTE>>
           : ResolveAnySchema<ATTRIBUTE>)
 
 type PrimitiveSchemaTransformedValue<
@@ -119,23 +119,23 @@ type PrimitiveSchemaTransformedValue<
       | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
       | (ATTRIBUTE extends NullSchema ? ResolvedNullSchema : never)
       | (ATTRIBUTE extends NumberSchema
-          ? ATTRIBUTE['state'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['state']['transform']>, ResolveNumberSchema<ATTRIBUTE>>
+          ? ATTRIBUTE['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveNumberSchema<ATTRIBUTE>>
             : ResolveNumberSchema<ATTRIBUTE>
           : never)
       | (ATTRIBUTE extends BooleanSchema
-          ? ATTRIBUTE['state'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['state']['transform']>, ResolveBooleanSchema<ATTRIBUTE>>
+          ? ATTRIBUTE['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveBooleanSchema<ATTRIBUTE>>
             : ResolveBooleanSchema<ATTRIBUTE>
           : never)
       | (ATTRIBUTE extends StringSchema
-          ? ATTRIBUTE['state'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['state']['transform']>, ResolveStringSchema<ATTRIBUTE>>
+          ? ATTRIBUTE['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveStringSchema<ATTRIBUTE>>
             : ResolveStringSchema<ATTRIBUTE>
           : never)
       | (ATTRIBUTE extends BinarySchema
-          ? ATTRIBUTE['state'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['state']['transform']>, ResolveBinarySchema<ATTRIBUTE>>
+          ? ATTRIBUTE['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveBinarySchema<ATTRIBUTE>>
             : ResolveBinarySchema<ATTRIBUTE>
           : never)
 
@@ -189,11 +189,11 @@ type MapSchemaTransformedValue<
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { state: { key: true } }>
-              : keyof ATTRIBUTE['attributes'] as ATTRIBUTE['attributes'][KEY]['state'] extends {
+              ? SelectKeys<ATTRIBUTE['attributes'], { props: { key: true } }>
+              : keyof ATTRIBUTE['attributes'] as ATTRIBUTE['attributes'][KEY]['props'] extends {
               savedAs: string
             }
-              ? ATTRIBUTE['attributes'][KEY]['state']['savedAs']
+              ? ATTRIBUTE['attributes'][KEY]['props']['savedAs']
               : KEY]: AttrTransformedValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>

@@ -17,7 +17,7 @@ export const isValidPrimitive = <ATTRIBUTE extends PrimitiveSchema>(
     case 'boolean':
       return isBoolean(candidate)
     case 'number':
-      return isNumber(candidate) || Boolean(attribute.state.big && isBigInt(candidate))
+      return isNumber(candidate) || Boolean(attribute.props.big && isBigInt(candidate))
     case 'string':
       return isString(candidate)
     case 'binary':

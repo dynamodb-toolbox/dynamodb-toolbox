@@ -8,7 +8,7 @@ import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
  */
 export const getAnyAttrDTO = (attr: AnySchema): AnyAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs, transform } = attr.state
+  const { required, hidden, key, savedAs, transform } = attr.props
 
   return {
     type: 'any',

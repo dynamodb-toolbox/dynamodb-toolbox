@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getSetAttrDTO = (attr: SetSchema): SetAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.state
+  const { required, hidden, key, savedAs } = attr.props
 
   return {
     type: attr.type,

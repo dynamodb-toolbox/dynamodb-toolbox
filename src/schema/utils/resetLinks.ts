@@ -18,58 +18,58 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
   | (ATTRIBUTE extends AnySchema
       ? AnySchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends NullSchema
       ? NullSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends BooleanSchema
       ? BooleanSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends NumberSchema
       ? NumberSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends StringSchema
       ? StringSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends BinarySchema
       ? BinarySchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['state'],
+            keyof ATTRIBUTE['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['state'][KEY]
+          >]: ATTRIBUTE['props'][KEY]
         }>
       : never)
   | (ATTRIBUTE extends SetSchema
       ? SetSchema<
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['state'],
+              keyof ATTRIBUTE['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['state'][KEY]
+            >]: ATTRIBUTE['props'][KEY]
           },
           ATTRIBUTE['elements']
         >
@@ -78,9 +78,9 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
       ? ListSchema<
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['state'],
+              keyof ATTRIBUTE['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['state'][KEY]
+            >]: ATTRIBUTE['props'][KEY]
           },
           ATTRIBUTE['elements']
         >
@@ -89,9 +89,9 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
       ? MapSchema<
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['state'],
+              keyof ATTRIBUTE['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['state'][KEY]
+            >]: ATTRIBUTE['props'][KEY]
           },
           ATTRIBUTE['attributes']
         >
@@ -100,9 +100,9 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
       ? RecordSchema<
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['state'],
+              keyof ATTRIBUTE['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['state'][KEY]
+            >]: ATTRIBUTE['props'][KEY]
           },
           ATTRIBUTE['keys'],
           ATTRIBUTE['elements']
@@ -112,9 +112,9 @@ export type ResetLinks<ATTRIBUTE extends AttrSchema> =
       ? AnyOfSchema<
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['state'],
+              keyof ATTRIBUTE['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['state'][KEY]
+            >]: ATTRIBUTE['props'][KEY]
           },
           ATTRIBUTE['elements']
         >

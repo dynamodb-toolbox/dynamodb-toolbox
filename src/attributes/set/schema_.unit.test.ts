@@ -89,9 +89,9 @@ describe('set', () => {
     assertType
     expect(st.type).toBe('set')
 
-    const assertState: A.Equals<(typeof st)['state'], {}> = 1
-    assertState
-    expect(st.state).toStrictEqual({})
+    const assertProps: A.Equals<(typeof st)['props'], {}> = 1
+    assertProps
+    expect(st.props).toStrictEqual({})
 
     const assertElmt: A.Equals<(typeof st)['elements'], typeof strElement> = 1
     assertElmt
@@ -107,18 +107,18 @@ describe('set', () => {
     const stNever = set(strElement, { required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      (typeof stAtLeastOnce)['state'],
+      (typeof stAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof stAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof stAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof stNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof stNever)['props'], { required: Never }> = 1
     assertNever
 
-    expect(stAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(stAlways.state.required).toBe('always')
-    expect(stNever.state.required).toBe('never')
+    expect(stAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(stAlways.props.required).toBe('always')
+    expect(stNever.props.required).toBe('never')
   })
 
   test('returns required set (method)', () => {
@@ -128,131 +128,131 @@ describe('set', () => {
     const stOpt = set(strElement).optional()
 
     const assertAtLeastOnce: A.Contains<
-      (typeof stAtLeastOnce)['state'],
+      (typeof stAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof stAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof stAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof stNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof stNever)['props'], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<(typeof stOpt)['state'], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof stOpt)['props'], { required: Never }> = 1
     assertOpt
 
-    expect(stAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(stAlways.state.required).toBe('always')
-    expect(stNever.state.required).toBe('never')
-    expect(stOpt.state.required).toBe('never')
+    expect(stAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(stAlways.props.required).toBe('always')
+    expect(stNever.props.required).toBe('never')
+    expect(stOpt.props.required).toBe('never')
   })
 
   test('returns hidden set (option)', () => {
     const st = set(strElement, { hidden: true })
 
-    const assertSet: A.Contains<(typeof st)['state'], { hidden: true }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { hidden: true }> = 1
     assertSet
 
-    expect(st.state.hidden).toBe(true)
+    expect(st.props.hidden).toBe(true)
   })
 
   test('returns hidden set (method)', () => {
     const st = set(strElement).hidden()
 
-    const assertSet: A.Contains<(typeof st)['state'], { hidden: true }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { hidden: true }> = 1
     assertSet
 
-    expect(st.state.hidden).toBe(true)
+    expect(st.props.hidden).toBe(true)
   })
 
   test('returns key set (option)', () => {
     const st = set(strElement, { key: true })
 
-    const assertSet: A.Contains<(typeof st)['state'], { key: true }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { key: true }> = 1
     assertSet
 
-    expect(st.state.key).toBe(true)
+    expect(st.props.key).toBe(true)
   })
 
   test('returns key set (method)', () => {
     const st = set(strElement).key()
 
-    const assertSet: A.Contains<(typeof st)['state'], { key: true; required: Always }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { key: true; required: Always }> = 1
     assertSet
 
-    expect(st.state.key).toBe(true)
-    expect(st.state.required).toBe('always')
+    expect(st.props.key).toBe(true)
+    expect(st.props.required).toBe('always')
   })
 
   test('returns savedAs set (option)', () => {
     const st = set(strElement, { savedAs: 'foo' })
 
-    const assertSet: A.Contains<(typeof st)['state'], { savedAs: 'foo' }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { savedAs: 'foo' }> = 1
     assertSet
 
-    expect(st.state.savedAs).toBe('foo')
+    expect(st.props.savedAs).toBe('foo')
   })
 
   test('returns savedAs set (method)', () => {
     const st = set(strElement).savedAs('foo')
 
-    const assertSet: A.Contains<(typeof st)['state'], { savedAs: 'foo' }> = 1
+    const assertSet: A.Contains<(typeof st)['props'], { savedAs: 'foo' }> = 1
     assertSet
 
-    expect(st.state.savedAs).toBe('foo')
+    expect(st.props.savedAs).toBe('foo')
   })
 
   test('returns defaulted set (option)', () => {
     const stA = set(strElement, { keyDefault: new Set(['foo']) })
 
-    const assertSetA: A.Contains<(typeof stA)['state'], { keyDefault: unknown }> = 1
+    const assertSetA: A.Contains<(typeof stA)['props'], { keyDefault: unknown }> = 1
     assertSetA
 
-    expect(stA.state.keyDefault).toStrictEqual(new Set(['foo']))
+    expect(stA.props.keyDefault).toStrictEqual(new Set(['foo']))
 
     const stB = set(strElement, { putDefault: new Set(['bar']) })
 
-    const assertSetB: A.Contains<(typeof stB)['state'], { putDefault: unknown }> = 1
+    const assertSetB: A.Contains<(typeof stB)['props'], { putDefault: unknown }> = 1
     assertSetB
 
-    expect(stB.state.putDefault).toStrictEqual(new Set(['bar']))
+    expect(stB.props.putDefault).toStrictEqual(new Set(['bar']))
 
     const stC = set(strElement, { updateDefault: new Set(['baz']) })
 
-    const assertSetC: A.Contains<(typeof stC)['state'], { updateDefault: unknown }> = 1
+    const assertSetC: A.Contains<(typeof stC)['props'], { updateDefault: unknown }> = 1
     assertSetC
 
-    expect(stC.state.updateDefault).toStrictEqual(new Set(['baz']))
+    expect(stC.props.updateDefault).toStrictEqual(new Set(['baz']))
   })
 
   test('returns defaulted set (method)', () => {
     const stA = set(strElement).keyDefault(new Set(['foo']))
 
-    const assertSetA: A.Contains<(typeof stA)['state'], { keyDefault: unknown }> = 1
+    const assertSetA: A.Contains<(typeof stA)['props'], { keyDefault: unknown }> = 1
     assertSetA
 
-    expect(stA.state.keyDefault).toStrictEqual(new Set(['foo']))
+    expect(stA.props.keyDefault).toStrictEqual(new Set(['foo']))
 
     const stB = set(strElement).putDefault(new Set(['bar']))
 
-    const assertSetB: A.Contains<(typeof stB)['state'], { putDefault: unknown }> = 1
+    const assertSetB: A.Contains<(typeof stB)['props'], { putDefault: unknown }> = 1
     assertSetB
 
-    expect(stB.state.putDefault).toStrictEqual(new Set(['bar']))
+    expect(stB.props.putDefault).toStrictEqual(new Set(['bar']))
 
     const stC = set(strElement).updateDefault(new Set(['baz']))
 
-    const assertSetC: A.Contains<(typeof stC)['state'], { updateDefault: unknown }> = 1
+    const assertSetC: A.Contains<(typeof stC)['props'], { updateDefault: unknown }> = 1
     assertSetC
 
-    expect(stC.state.updateDefault).toStrictEqual(new Set(['baz']))
+    expect(stC.props.updateDefault).toStrictEqual(new Set(['baz']))
   })
 
   test('returns set with PUT default value if it is not key (default shorthand)', () => {
     const st = set(string()).default(new Set(['foo']))
 
-    const assertSt: A.Contains<(typeof st)['state'], { putDefault: unknown }> = 1
+    const assertSt: A.Contains<(typeof st)['props'], { putDefault: unknown }> = 1
     assertSt
 
-    expect(st.state.putDefault).toStrictEqual(new Set(['foo']))
+    expect(st.props.putDefault).toStrictEqual(new Set(['foo']))
   })
 
   test('returns set with KEY default value if it is key (default shorthand)', () => {
@@ -260,10 +260,10 @@ describe('set', () => {
       .key()
       .default(new Set(['foo']))
 
-    const assertSt: A.Contains<(typeof st)['state'], { keyDefault: unknown }> = 1
+    const assertSt: A.Contains<(typeof st)['props'], { keyDefault: unknown }> = 1
     assertSt
 
-    expect(st.state.keyDefault).toStrictEqual(new Set(['foo']))
+    expect(st.props.keyDefault).toStrictEqual(new Set(['foo']))
   })
 
   test('returns linked set (option)', () => {
@@ -271,68 +271,68 @@ describe('set', () => {
 
     const stA = set(strElement, { keyLink: sayHello })
 
-    const assertSetA: A.Contains<(typeof stA)['state'], { keyLink: unknown }> = 1
+    const assertSetA: A.Contains<(typeof stA)['props'], { keyLink: unknown }> = 1
     assertSetA
 
-    expect(stA.state.keyLink).toBe(sayHello)
+    expect(stA.props.keyLink).toBe(sayHello)
 
     const stB = set(strElement, { putLink: sayHello })
 
-    const assertSetB: A.Contains<(typeof stB)['state'], { putLink: unknown }> = 1
+    const assertSetB: A.Contains<(typeof stB)['props'], { putLink: unknown }> = 1
     assertSetB
 
-    expect(stB.state.putLink).toBe(sayHello)
+    expect(stB.props.putLink).toBe(sayHello)
 
     const stC = set(strElement, { updateLink: sayHello })
 
-    const assertSetC: A.Contains<(typeof stC)['state'], { updateLink: unknown }> = 1
+    const assertSetC: A.Contains<(typeof stC)['props'], { updateLink: unknown }> = 1
     assertSetC
 
-    expect(stC.state.updateLink).toBe(sayHello)
+    expect(stC.props.updateLink).toBe(sayHello)
   })
 
   test('returns linked set (method)', () => {
     const sayHello = () => new Set(['hello'])
     const stA = set(strElement).keyLink(sayHello)
 
-    const assertSetA: A.Contains<(typeof stA)['state'], { keyLink: unknown }> = 1
+    const assertSetA: A.Contains<(typeof stA)['props'], { keyLink: unknown }> = 1
     assertSetA
 
-    expect(stA.state.keyLink).toBe(sayHello)
+    expect(stA.props.keyLink).toBe(sayHello)
 
     const stB = set(strElement).putLink(sayHello)
 
-    const assertSetB: A.Contains<(typeof stB)['state'], { putLink: unknown }> = 1
+    const assertSetB: A.Contains<(typeof stB)['props'], { putLink: unknown }> = 1
     assertSetB
 
-    expect(stB.state.putLink).toBe(sayHello)
+    expect(stB.props.putLink).toBe(sayHello)
 
     const stC = set(strElement).updateLink(sayHello)
 
-    const assertSetC: A.Contains<(typeof stC)['state'], { updateLink: unknown }> = 1
+    const assertSetC: A.Contains<(typeof stC)['props'], { updateLink: unknown }> = 1
     assertSetC
 
-    expect(stC.state.updateLink).toBe(sayHello)
+    expect(stC.props.updateLink).toBe(sayHello)
   })
 
   test('returns set with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => new Set(['hello'])
     const st = set(string()).link(sayHello)
 
-    const assertSt: A.Contains<(typeof st)['state'], { putLink: unknown }> = 1
+    const assertSt: A.Contains<(typeof st)['props'], { putLink: unknown }> = 1
     assertSt
 
-    expect(st.state.putLink).toBe(sayHello)
+    expect(st.props.putLink).toBe(sayHello)
   })
 
   test('returns set with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => new Set(['hello'])
     const st = set(string()).key().link(sayHello)
 
-    const assertSt: A.Contains<(typeof st)['state'], { keyLink: unknown }> = 1
+    const assertSt: A.Contains<(typeof st)['props'], { keyLink: unknown }> = 1
     assertSt
 
-    expect(st.state.keyLink).toBe(sayHello)
+    expect(st.props.keyLink).toBe(sayHello)
   })
 
   test('returns set with validator (option)', () => {
@@ -342,20 +342,20 @@ describe('set', () => {
     const setB = set(string(), { putValidator: pass })
     const setC = set(string(), { updateValidator: pass })
 
-    const assertSetA: A.Contains<(typeof setA)['state'], { keyValidator: Validator }> = 1
+    const assertSetA: A.Contains<(typeof setA)['props'], { keyValidator: Validator }> = 1
     assertSetA
 
-    expect(setA.state.keyValidator).toBe(pass)
+    expect(setA.props.keyValidator).toBe(pass)
 
-    const assertSetB: A.Contains<(typeof setB)['state'], { putValidator: Validator }> = 1
+    const assertSetB: A.Contains<(typeof setB)['props'], { putValidator: Validator }> = 1
     assertSetB
 
-    expect(setB.state.putValidator).toBe(pass)
+    expect(setB.props.putValidator).toBe(pass)
 
-    const assertSetC: A.Contains<(typeof setC)['state'], { updateValidator: Validator }> = 1
+    const assertSetC: A.Contains<(typeof setC)['props'], { updateValidator: Validator }> = 1
     assertSetC
 
-    expect(setC.state.updateValidator).toBe(pass)
+    expect(setC.props.updateValidator).toBe(pass)
   })
 
   test('returns set with validator (method)', () => {
@@ -365,20 +365,20 @@ describe('set', () => {
     const setB = set(string()).putValidate(pass)
     const setC = set(string()).updateValidate(pass)
 
-    const assertSetA: A.Contains<(typeof setA)['state'], { keyValidator: Validator }> = 1
+    const assertSetA: A.Contains<(typeof setA)['props'], { keyValidator: Validator }> = 1
     assertSetA
 
-    expect(setA.state.keyValidator).toBe(pass)
+    expect(setA.props.keyValidator).toBe(pass)
 
-    const assertSetB: A.Contains<(typeof setB)['state'], { putValidator: Validator }> = 1
+    const assertSetB: A.Contains<(typeof setB)['props'], { putValidator: Validator }> = 1
     assertSetB
 
-    expect(setB.state.putValidator).toBe(pass)
+    expect(setB.props.putValidator).toBe(pass)
 
-    const assertSetC: A.Contains<(typeof setC)['state'], { updateValidator: Validator }> = 1
+    const assertSetC: A.Contains<(typeof setC)['props'], { updateValidator: Validator }> = 1
     assertSetC
 
-    expect(setC.state.updateValidator).toStrictEqual(pass)
+    expect(setC.props.updateValidator).toStrictEqual(pass)
 
     const prevSet = set(string())
     prevSet.validate((...args) => {
@@ -401,19 +401,19 @@ describe('set', () => {
     const pass = () => true
     const _set = set(string()).validate(pass)
 
-    const assertSet: A.Contains<(typeof _set)['state'], { putValidator: Validator }> = 1
+    const assertSet: A.Contains<(typeof _set)['props'], { putValidator: Validator }> = 1
     assertSet
 
-    expect(_set.state.putValidator).toStrictEqual(pass)
+    expect(_set.props.putValidator).toStrictEqual(pass)
   })
 
   test('returns set with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const _set = set(string()).key().validate(pass)
 
-    const assertSet: A.Contains<(typeof _set)['state'], { keyValidator: Validator }> = 1
+    const assertSet: A.Contains<(typeof _set)['props'], { keyValidator: Validator }> = 1
     assertSet
 
-    expect(_set.state.keyValidator).toStrictEqual(pass)
+    expect(_set.props.keyValidator).toStrictEqual(pass)
   })
 })

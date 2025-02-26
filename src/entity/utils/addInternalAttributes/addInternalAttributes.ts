@@ -89,7 +89,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
       })
     }
 
-    const { savedAs: attributeSavedAs } = attribute.state
+    const { savedAs: attributeSavedAs } = attribute.props
     if (attributeSavedAs !== undefined && schema.savedAttributeNames.has(attributeSavedAs)) {
       throw new DynamoDBToolboxError('entity.reservedAttributeSavedAs', {
         message: `'${attributeSavedAs}' is a reserved attribute alias (savedAs).`,

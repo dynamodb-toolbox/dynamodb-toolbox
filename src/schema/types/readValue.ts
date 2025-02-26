@@ -42,7 +42,7 @@ export type ReadValue<
     : never
 
 type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
-  Extends<ATTRIBUTE['state'], { required: Never }>
+  Extends<ATTRIBUTE['props'], { required: Never }>
 >
 
 type OptionalKeys<SCHEMA extends Schema | MapSchema> = {

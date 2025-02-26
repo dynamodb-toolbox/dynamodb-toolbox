@@ -27,7 +27,7 @@ export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueO
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(schema.attributes)
-      .filter(([, attr]) => mode !== 'key' || attr.state.key)
+      .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], {
           ...options,
@@ -96,7 +96,7 @@ export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueO
     Object.entries(parsers)
       .map(([attrName, attr]) => [
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        schema.attributes[attrName]!.state.savedAs ?? attrName,
+        schema.attributes[attrName]!.props.savedAs ?? attrName,
         attr.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)

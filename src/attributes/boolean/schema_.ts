@@ -13,27 +13,27 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/re
 import type { Validator } from '../types/validator.js'
 import type { ResolveBooleanSchema, ResolvedBooleanSchema } from './resolve.js'
 import { BooleanSchema } from './schema.js'
-import type { BooleanAttributeState } from './types.js'
+import type { BooleanSchemaProps } from './types.js'
 
-type BooleanAttributeTyper = <STATE extends BooleanAttributeState = {}>(
-  state?: NarrowObject<STATE>
-) => BooleanSchema_<STATE>
+type BooleanAttributeTyper = <PROPS extends BooleanSchemaProps = {}>(
+  props?: NarrowObject<PROPS>
+) => BooleanSchema_<PROPS>
 
 /**
  * Define a new attribute of boolean type
  *
- * @param state _(optional)_ Attribute Options
+ * @param props _(optional)_ Attribute Options
  */
-export const boolean: BooleanAttributeTyper = <STATE extends BooleanAttributeState = {}>(
-  state: NarrowObject<STATE> = {} as STATE
-) => new BooleanSchema_(state)
+export const boolean: BooleanAttributeTyper = <PROPS extends BooleanSchemaProps = {}>(
+  props: NarrowObject<PROPS> = {} as PROPS
+) => new BooleanSchema_(props)
 
 /**
  * Boolean attribute (warm)
  */
 export class BooleanSchema_<
-  STATE extends BooleanAttributeState = BooleanAttributeState
-> extends BooleanSchema<STATE> {
+  PROPS extends BooleanSchemaProps = BooleanSchemaProps
+> extends BooleanSchema<PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -44,14 +44,14 @@ export class BooleanSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): BooleanSchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new BooleanSchema_(overwrite(this.state, { required: nextRequired }))
+  ): BooleanSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new BooleanSchema_(overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): BooleanSchema_<Overwrite<STATE, { required: Never }>> {
+  optional(): BooleanSchema_<Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -60,8 +60,8 @@ export class BooleanSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): BooleanSchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new BooleanSchema_(overwrite(this.state, { hidden: nextHidden }))
+  ): BooleanSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new BooleanSchema_(overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -69,8 +69,8 @@ export class BooleanSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): BooleanSchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new BooleanSchema_(overwrite(this.state, { key: nextKey, required: 'always' }))
+  ): BooleanSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
+    return new BooleanSchema_(overwrite(this.props, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -78,8 +78,8 @@ export class BooleanSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): BooleanSchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new BooleanSchema_(overwrite(this.state, { savedAs: nextSavedAs }))
+  ): BooleanSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new BooleanSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -92,8 +92,8 @@ export class BooleanSchema_<
    */
   enum<const NEXT_ENUM extends readonly ResolveBooleanSchema<this>[]>(
     ...nextEnum: NEXT_ENUM
-  ): BooleanSchema_<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new BooleanSchema_(overwrite(this.state, { enum: writable(nextEnum) }))
+  ): BooleanSchema_<Overwrite<PROPS, { enum: Writable<NEXT_ENUM> }>> {
+    return new BooleanSchema_(overwrite(this.props, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -106,17 +106,17 @@ export class BooleanSchema_<
   const<CONSTANT extends ResolveBooleanSchema<this>>(
     constant: CONSTANT
   ): If<
-    STATE['key'],
-    BooleanSchema_<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
-    BooleanSchema_<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+    PROPS['key'],
+    BooleanSchema_<Overwrite<PROPS, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    BooleanSchema_<Overwrite<PROPS, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new BooleanSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new BooleanSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -126,8 +126,8 @@ export class BooleanSchema_<
    */
   transform<TRANSFORMER extends Transformer<ResolvedBooleanSchema, ResolveBooleanSchema<this>>>(
     transform: TRANSFORMER
-  ): BooleanSchema_<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new BooleanSchema_(overwrite(this.state, { transform }))
+  ): BooleanSchema_<Overwrite<PROPS, { transform: TRANSFORMER }>> {
+    return new BooleanSchema_(overwrite(this.props, { transform }))
   }
 
   /**
@@ -137,8 +137,8 @@ export class BooleanSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): BooleanSchema_<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new BooleanSchema_(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
+  ): BooleanSchema_<Overwrite<PROPS, { keyDefault: unknown }>> {
+    return new BooleanSchema_(overwrite(this.props, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -148,8 +148,8 @@ export class BooleanSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): BooleanSchema_<Overwrite<STATE, { putDefault: unknown }>> {
-    return new BooleanSchema_(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
+  ): BooleanSchema_<Overwrite<PROPS, { putDefault: unknown }>> {
+    return new BooleanSchema_(overwrite(this.props, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -159,9 +159,9 @@ export class BooleanSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): BooleanSchema_<Overwrite<STATE, { updateDefault: unknown }>> {
+  ): BooleanSchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
     return new BooleanSchema_(
-      overwrite(this.state, { updateDefault: nextUpdateDefault as unknown })
+      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -172,17 +172,17 @@ export class BooleanSchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    BooleanSchema_<Overwrite<STATE, { keyDefault: unknown }>>,
-    BooleanSchema_<Overwrite<STATE, { putDefault: unknown }>>
+    PROPS['key'],
+    BooleanSchema_<Overwrite<PROPS, { keyDefault: unknown }>>,
+    BooleanSchema_<Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BooleanSchema_(overwrite(this.state, { keyDefault: nextDefault as unknown })),
-      new BooleanSchema_(overwrite(this.state, { putDefault: nextDefault as unknown }))
+      this.props.key as PROPS['key'],
+      new BooleanSchema_(overwrite(this.props, { keyDefault: nextDefault as unknown })),
+      new BooleanSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -195,8 +195,8 @@ export class BooleanSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): BooleanSchema_<Overwrite<STATE, { keyLink: unknown }>> {
-    return new BooleanSchema_(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
+  ): BooleanSchema_<Overwrite<PROPS, { keyLink: unknown }>> {
+    return new BooleanSchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -206,8 +206,8 @@ export class BooleanSchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): BooleanSchema_<Overwrite<STATE, { putLink: unknown }>> {
-    return new BooleanSchema_(overwrite(this.state, { putLink: nextPutLink as unknown }))
+  ): BooleanSchema_<Overwrite<PROPS, { putLink: unknown }>> {
+    return new BooleanSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -219,8 +219,8 @@ export class BooleanSchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): BooleanSchema_<Overwrite<STATE, { updateLink: unknown }>> {
-    return new BooleanSchema_(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
+  ): BooleanSchema_<Overwrite<PROPS, { updateLink: unknown }>> {
+    return new BooleanSchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -230,17 +230,17 @@ export class BooleanSchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    BooleanSchema_<Overwrite<STATE, { keyLink: unknown }>>,
-    BooleanSchema_<Overwrite<STATE, { putLink: unknown }>>
+    PROPS['key'],
+    BooleanSchema_<Overwrite<PROPS, { keyLink: unknown }>>,
+    BooleanSchema_<Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BooleanSchema_(overwrite(this.state, { keyLink: nextLink as unknown })),
-      new BooleanSchema_(overwrite(this.state, { putLink: nextLink as unknown }))
+      this.props.key as PROPS['key'],
+      new BooleanSchema_(overwrite(this.props, { keyLink: nextLink as unknown })),
+      new BooleanSchema_(overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -251,9 +251,9 @@ export class BooleanSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): BooleanSchema_<Overwrite<STATE, { keyValidator: Validator }>> {
+  ): BooleanSchema_<Overwrite<PROPS, { keyValidator: Validator }>> {
     return new BooleanSchema_(
-      overwrite(this.state, { keyValidator: nextKeyValidator as Validator })
+      overwrite(this.props, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -264,9 +264,9 @@ export class BooleanSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): BooleanSchema_<Overwrite<STATE, { putValidator: Validator }>> {
+  ): BooleanSchema_<Overwrite<PROPS, { putValidator: Validator }>> {
     return new BooleanSchema_(
-      overwrite(this.state, { putValidator: nextPutValidator as Validator })
+      overwrite(this.props, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -277,9 +277,9 @@ export class BooleanSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): BooleanSchema_<Overwrite<STATE, { updateValidator: Validator }>> {
+  ): BooleanSchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new BooleanSchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -291,33 +291,33 @@ export class BooleanSchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    BooleanSchema_<Overwrite<STATE, { keyValidator: Validator }>>,
-    BooleanSchema_<Overwrite<STATE, { putValidator: Validator }>>
+    PROPS['key'],
+    BooleanSchema_<Overwrite<PROPS, { keyValidator: Validator }>>,
+    BooleanSchema_<Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BooleanSchema_(overwrite(this.state, { keyValidator: nextValidator as Validator })),
-      new BooleanSchema_(overwrite(this.state, { putValidator: nextValidator as Validator }))
+      this.props.key as PROPS['key'],
+      new BooleanSchema_(overwrite(this.props, { keyValidator: nextValidator as Validator })),
+      new BooleanSchema_(overwrite(this.props, { putValidator: nextValidator as Validator }))
     )
   }
 
-  clone<NEXT_STATE extends Partial<BooleanAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BooleanSchema_<Overwrite<STATE, NEXT_STATE>> {
-    return new BooleanSchema_(overwrite(this.state, nextState))
+  clone<NEXT_PROPS extends BooleanSchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): BooleanSchema_<Overwrite<PROPS, NEXT_PROPS>> {
+    return new BooleanSchema_(overwrite(this.props, nextProps))
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }

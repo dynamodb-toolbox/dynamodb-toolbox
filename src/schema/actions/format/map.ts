@@ -33,8 +33,8 @@ export function* mapAttrFormatter(
 
   const formatters: Record<string, Generator<unknown, unknown>> = {}
   for (const [attributeName, attribute] of Object.entries(mapAttribute.attributes)) {
-    const { state } = attribute
-    const { savedAs } = state
+    const { props } = attribute
+    const { savedAs } = props
 
     const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
@@ -72,7 +72,7 @@ export function* mapAttrFormatter(
       .map(([attrName, formatter]) => [attrName, formatter.next().value] as [string, unknown])
       .filter(
         ([attrName, attrValue]) =>
-          mapAttribute.attributes[attrName]?.state.hidden !== true && attrValue !== undefined
+          mapAttribute.attributes[attrName]?.props.hidden !== true && attrValue !== undefined
       )
   )
 

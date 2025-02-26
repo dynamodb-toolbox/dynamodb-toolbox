@@ -18,9 +18,9 @@ describe('string', () => {
     assertType
     expect(str.type).toBe('string')
 
-    const assertState: A.Equals<(typeof str)['state'], {}> = 1
-    assertState
-    expect(str.state).toStrictEqual({})
+    const assertProps: A.Equals<(typeof str)['props'], {}> = 1
+    assertProps
+    expect(str.props).toStrictEqual({})
 
     const assertExtends: A.Extends<typeof str, StringSchema> = 1
     assertExtends
@@ -32,18 +32,18 @@ describe('string', () => {
     const strNever = string({ required: 'never' })
 
     const assertAtLeastOnce: A.Contains<
-      (typeof strAtLeastOnce)['state'],
+      (typeof strAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof strAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof strAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof strNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof strNever)['props'], { required: Never }> = 1
     assertNever
 
-    expect(strAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(strAlways.state.required).toBe('always')
-    expect(strNever.state.required).toBe('never')
+    expect(strAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(strAlways.props.required).toBe('always')
+    expect(strNever.props.required).toBe('never')
   })
 
   test('returns required string (method)', () => {
@@ -53,76 +53,76 @@ describe('string', () => {
     const strOpt = string().optional()
 
     const assertAtLeastOnce: A.Contains<
-      (typeof strAtLeastOnce)['state'],
+      (typeof strAtLeastOnce)['props'],
       { required: AtLeastOnce }
     > = 1
     assertAtLeastOnce
-    const assertAlways: A.Contains<(typeof strAlways)['state'], { required: Always }> = 1
+    const assertAlways: A.Contains<(typeof strAlways)['props'], { required: Always }> = 1
     assertAlways
-    const assertNever: A.Contains<(typeof strNever)['state'], { required: Never }> = 1
+    const assertNever: A.Contains<(typeof strNever)['props'], { required: Never }> = 1
     assertNever
-    const assertOpt: A.Contains<(typeof strOpt)['state'], { required: Never }> = 1
+    const assertOpt: A.Contains<(typeof strOpt)['props'], { required: Never }> = 1
     assertOpt
 
-    expect(strAtLeastOnce.state.required).toBe('atLeastOnce')
-    expect(strAlways.state.required).toBe('always')
-    expect(strNever.state.required).toBe('never')
-    expect(strOpt.state.required).toBe('never')
+    expect(strAtLeastOnce.props.required).toBe('atLeastOnce')
+    expect(strAlways.props.required).toBe('always')
+    expect(strNever.props.required).toBe('never')
+    expect(strOpt.props.required).toBe('never')
   })
 
   test('returns hidden string (option)', () => {
     const str = string({ hidden: true })
 
-    const assertStr: A.Contains<(typeof str)['state'], { hidden: true }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { hidden: true }> = 1
     assertStr
 
-    expect(str.state.hidden).toBe(true)
+    expect(str.props.hidden).toBe(true)
   })
 
   test('returns hidden string (method)', () => {
     const str = string().hidden()
 
-    const assertStr: A.Contains<(typeof str)['state'], { hidden: true }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { hidden: true }> = 1
     assertStr
 
-    expect(str.state.hidden).toBe(true)
+    expect(str.props.hidden).toBe(true)
   })
 
   test('returns key string (option)', () => {
     const str = string({ key: true })
 
-    const assertStr: A.Contains<(typeof str)['state'], { key: true }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { key: true }> = 1
     assertStr
 
-    expect(str.state.key).toBe(true)
+    expect(str.props.key).toBe(true)
   })
 
   test('returns key string (method)', () => {
     const str = string().key()
 
-    const assertStr: A.Contains<(typeof str)['state'], { key: true; required: Always }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { key: true; required: Always }> = 1
     assertStr
 
-    expect(str.state.key).toBe(true)
-    expect(str.state.required).toBe('always')
+    expect(str.props.key).toBe(true)
+    expect(str.props.required).toBe('always')
   })
 
   test('returns savedAs string (option)', () => {
     const str = string({ savedAs: 'foo' })
 
-    const assertStr: A.Contains<(typeof str)['state'], { savedAs: 'foo' }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { savedAs: 'foo' }> = 1
     assertStr
 
-    expect(str.state.savedAs).toBe('foo')
+    expect(str.props.savedAs).toBe('foo')
   })
 
   test('returns savedAs string (method)', () => {
     const str = string().savedAs('foo')
 
-    const assertStr: A.Contains<(typeof str)['state'], { savedAs: 'foo' }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { savedAs: 'foo' }> = 1
     assertStr
 
-    expect(str.state.savedAs).toBe('foo')
+    expect(str.props.savedAs).toBe('foo')
   })
 
   test('returns string with enum values (method)', () => {
@@ -142,10 +142,10 @@ describe('string', () => {
 
     const str = string().enum('foo', 'bar')
 
-    const assertStr: A.Contains<(typeof str)['state'], { enum: ['foo', 'bar'] }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { enum: ['foo', 'bar'] }> = 1
     assertStr
 
-    expect(str.state.enum).toStrictEqual(['foo', 'bar'])
+    expect(str.props.enum).toStrictEqual(['foo', 'bar'])
   })
 
   test('returns defaulted string (option)', () => {
@@ -171,40 +171,40 @@ describe('string', () => {
     const sayHello = () => 'hello'
     const strC = string({ updateDefault: sayHello })
 
-    const assertStrA: A.Contains<(typeof strA)['state'], { keyDefault: string }> = 1
+    const assertStrA: A.Contains<(typeof strA)['props'], { keyDefault: string }> = 1
     assertStrA
 
-    expect(strA.state.keyDefault).toBe('hello')
+    expect(strA.props.keyDefault).toBe('hello')
 
-    const assertStrB: A.Contains<(typeof strB)['state'], { putDefault: string }> = 1
+    const assertStrB: A.Contains<(typeof strB)['props'], { putDefault: string }> = 1
     assertStrB
 
-    expect(strB.state.putDefault).toBe('world')
+    expect(strB.props.putDefault).toBe('world')
 
-    const assertStrC: A.Contains<(typeof strC)['state'], { updateDefault: () => string }> = 1
+    const assertStrC: A.Contains<(typeof strC)['props'], { updateDefault: () => string }> = 1
     assertStrC
 
-    expect(strC.state.updateDefault).toBe(sayHello)
+    expect(strC.props.updateDefault).toBe(sayHello)
   })
 
   test('returns transformed string (option)', () => {
     const transformer = prefix('test')
     const str = string({ transform: transformer })
 
-    const assertStr: A.Contains<(typeof str)['state'], { transform: typeof transformer }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { transform: typeof transformer }> = 1
     assertStr
 
-    expect(str.state.transform).toBe(transformer)
+    expect(str.props.transform).toBe(transformer)
   })
 
   test('returns transformed string (method)', () => {
     const transformer = prefix('test')
     const str = string().transform(transformer)
 
-    const assertStr: A.Contains<(typeof str)['state'], { transform: typeof transformer }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { transform: typeof transformer }> = 1
     assertStr
 
-    expect(str.state.transform).toBe(transformer)
+    expect(str.props.transform).toBe(transformer)
   })
 
   test('returns defaulted string (method)', () => {
@@ -228,38 +228,38 @@ describe('string', () => {
     const sayHello = () => 'hello'
     const strC = string().updateDefault(sayHello)
 
-    const assertStrA: A.Contains<(typeof strA)['state'], { keyDefault: unknown }> = 1
+    const assertStrA: A.Contains<(typeof strA)['props'], { keyDefault: unknown }> = 1
     assertStrA
 
-    expect(strA.state.keyDefault).toBe('hello')
+    expect(strA.props.keyDefault).toBe('hello')
 
-    const assertStrB: A.Contains<(typeof strB)['state'], { putDefault: unknown }> = 1
+    const assertStrB: A.Contains<(typeof strB)['props'], { putDefault: unknown }> = 1
     assertStrB
 
-    expect(strB.state.putDefault).toBe('world')
+    expect(strB.props.putDefault).toBe('world')
 
-    const assertStrC: A.Contains<(typeof strC)['state'], { updateDefault: unknown }> = 1
+    const assertStrC: A.Contains<(typeof strC)['props'], { updateDefault: unknown }> = 1
     assertStrC
 
-    expect(strC.state.updateDefault).toBe(sayHello)
+    expect(strC.props.updateDefault).toBe(sayHello)
   })
 
   test('returns string with PUT default value if it is not key (default shorthand)', () => {
     const str = string().default('hello')
 
-    const assertStr: A.Contains<(typeof str)['state'], { putDefault: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { putDefault: unknown }> = 1
     assertStr
 
-    expect(str.state.putDefault).toBe('hello')
+    expect(str.props.putDefault).toBe('hello')
   })
 
   test('returns string with KEY default value if it is key (default shorthand)', () => {
     const str = string().key().default('hello')
 
-    const assertStr: A.Contains<(typeof str)['state'], { keyDefault: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { keyDefault: unknown }> = 1
     assertStr
 
-    expect(str.state.keyDefault).toBe('hello')
+    expect(str.props.keyDefault).toBe('hello')
   })
 
   test('default with enum values', () => {
@@ -283,22 +283,22 @@ describe('string', () => {
     const strB = string().enum('foo', 'bar').default(sayFoo)
 
     const assertStrA: A.Contains<
-      (typeof strA)['state'],
+      (typeof strA)['props'],
       { putDefault: unknown; enum: ['foo', 'bar'] }
     > = 1
     assertStrA
 
-    expect(strA.state.putDefault).toBe('foo')
-    expect(strA.state.enum).toStrictEqual(['foo', 'bar'])
+    expect(strA.props.putDefault).toBe('foo')
+    expect(strA.props.enum).toStrictEqual(['foo', 'bar'])
 
     const assertStrB: A.Contains<
-      (typeof strB)['state'],
+      (typeof strB)['props'],
       { putDefault: unknown; enum: ['foo', 'bar'] }
     > = 1
     assertStrB
 
-    expect(strB.state.putDefault).toBe(sayFoo)
-    expect(strB.state.enum).toStrictEqual(['foo', 'bar'])
+    expect(strB.props.putDefault).toBe(sayFoo)
+    expect(strB.props.enum).toStrictEqual(['foo', 'bar'])
   })
 
   test('returns string with constant value (method)', () => {
@@ -317,24 +317,24 @@ describe('string', () => {
     const nonKeyStr = string().const('foo')
 
     const assertNonKeyStr: A.Contains<
-      (typeof nonKeyStr)['state'],
+      (typeof nonKeyStr)['props'],
       { enum: ['foo']; putDefault: unknown }
     > = 1
     assertNonKeyStr
 
-    expect(nonKeyStr.state.enum).toStrictEqual(['foo'])
-    expect(nonKeyStr.state.putDefault).toBe('foo')
+    expect(nonKeyStr.props.enum).toStrictEqual(['foo'])
+    expect(nonKeyStr.props.putDefault).toBe('foo')
 
     const keyStr = string().key().const('foo')
 
     const assertKeyStr: A.Contains<
-      (typeof keyStr)['state'],
+      (typeof keyStr)['props'],
       { enum: ['foo']; keyDefault: unknown }
     > = 1
     assertKeyStr
 
-    expect(keyStr.state.enum).toStrictEqual(['foo'])
-    expect(keyStr.state.keyDefault).toBe('foo')
+    expect(keyStr.props.enum).toStrictEqual(['foo'])
+    expect(keyStr.props.keyDefault).toBe('foo')
   })
 
   test('returns linked string (method)', () => {
@@ -343,40 +343,40 @@ describe('string', () => {
     const strB = string().putLink(sayHello)
     const strC = string().updateLink(sayHello)
 
-    const assertStrA: A.Contains<(typeof strA)['state'], { keyLink: unknown }> = 1
+    const assertStrA: A.Contains<(typeof strA)['props'], { keyLink: unknown }> = 1
     assertStrA
 
-    expect(strA.state.keyLink).toBe(sayHello)
+    expect(strA.props.keyLink).toBe(sayHello)
 
-    const assertStrB: A.Contains<(typeof strB)['state'], { putLink: unknown }> = 1
+    const assertStrB: A.Contains<(typeof strB)['props'], { putLink: unknown }> = 1
     assertStrB
 
-    expect(strB.state.putLink).toBe(sayHello)
+    expect(strB.props.putLink).toBe(sayHello)
 
-    const assertStrC: A.Contains<(typeof strC)['state'], { updateLink: unknown }> = 1
+    const assertStrC: A.Contains<(typeof strC)['props'], { updateLink: unknown }> = 1
     assertStrC
 
-    expect(strC.state.updateLink).toBe(sayHello)
+    expect(strC.props.updateLink).toBe(sayHello)
   })
 
   test('returns string with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const str = string().link(sayHello)
 
-    const assertStr: A.Contains<(typeof str)['state'], { putLink: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { putLink: unknown }> = 1
     assertStr
 
-    expect(str.state.putLink).toBe(sayHello)
+    expect(str.props.putLink).toBe(sayHello)
   })
 
   test('returns string with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
     const str = string().key().link(sayHello)
 
-    const assertStr: A.Contains<(typeof str)['state'], { keyLink: unknown }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { keyLink: unknown }> = 1
     assertStr
 
-    expect(str.state.keyLink).toBe(sayHello)
+    expect(str.props.keyLink).toBe(sayHello)
   })
 
   test('returns string with validator (option)', () => {
@@ -386,20 +386,20 @@ describe('string', () => {
     const strB = string({ putValidator: pass })
     const strC = string({ updateValidator: pass })
 
-    const assertStrA: A.Contains<(typeof strA)['state'], { keyValidator: Validator }> = 1
+    const assertStrA: A.Contains<(typeof strA)['props'], { keyValidator: Validator }> = 1
     assertStrA
 
-    expect(strA.state.keyValidator).toBe(pass)
+    expect(strA.props.keyValidator).toBe(pass)
 
-    const assertStrB: A.Contains<(typeof strB)['state'], { putValidator: Validator }> = 1
+    const assertStrB: A.Contains<(typeof strB)['props'], { putValidator: Validator }> = 1
     assertStrB
 
-    expect(strB.state.putValidator).toBe(pass)
+    expect(strB.props.putValidator).toBe(pass)
 
-    const assertStrC: A.Contains<(typeof strC)['state'], { updateValidator: Validator }> = 1
+    const assertStrC: A.Contains<(typeof strC)['props'], { updateValidator: Validator }> = 1
     assertStrC
 
-    expect(strC.state.updateValidator).toBe(pass)
+    expect(strC.props.updateValidator).toBe(pass)
   })
 
   test('returns string with validator (method)', () => {
@@ -409,20 +409,20 @@ describe('string', () => {
     const strB = string().putValidate(pass)
     const strC = string().updateValidate(pass)
 
-    const assertStrA: A.Contains<(typeof strA)['state'], { keyValidator: Validator }> = 1
+    const assertStrA: A.Contains<(typeof strA)['props'], { keyValidator: Validator }> = 1
     assertStrA
 
-    expect(strA.state.keyValidator).toBe(pass)
+    expect(strA.props.keyValidator).toBe(pass)
 
-    const assertStrB: A.Contains<(typeof strB)['state'], { putValidator: Validator }> = 1
+    const assertStrB: A.Contains<(typeof strB)['props'], { putValidator: Validator }> = 1
     assertStrB
 
-    expect(strB.state.putValidator).toBe(pass)
+    expect(strB.props.putValidator).toBe(pass)
 
-    const assertStrC: A.Contains<(typeof strC)['state'], { updateValidator: Validator }> = 1
+    const assertStrC: A.Contains<(typeof strC)['props'], { updateValidator: Validator }> = 1
     assertStrC
 
-    expect(strC.state.updateValidator).toBe(pass)
+    expect(strC.props.updateValidator).toBe(pass)
 
     const prevString = string()
     prevString.validate((...args) => {
@@ -445,19 +445,19 @@ describe('string', () => {
     const pass = () => true
     const str = string().validate(pass)
 
-    const assertStr: A.Contains<(typeof str)['state'], { putValidator: Validator }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { putValidator: Validator }> = 1
     assertStr
 
-    expect(str.state.putValidator).toBe(pass)
+    expect(str.props.putValidator).toBe(pass)
   })
 
   test('returns string with KEY validator if it is key (validate shorthand)', () => {
     const pass = () => true
     const str = string().key().validate(pass)
 
-    const assertStr: A.Contains<(typeof str)['state'], { keyValidator: Validator }> = 1
+    const assertStr: A.Contains<(typeof str)['props'], { keyValidator: Validator }> = 1
     assertStr
 
-    expect(str.state.keyValidator).toBe(pass)
+    expect(str.props.keyValidator).toBe(pass)
   })
 })

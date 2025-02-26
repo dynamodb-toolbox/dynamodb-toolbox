@@ -21,7 +21,7 @@ interface AttrLinksDTO {
   updateLink?: AttrLinkerDTO
 }
 
-interface AttrStateDTO extends AttrDefaultsDTO, AttrLinksDTO {
+interface SchemaPropsDTO extends AttrDefaultsDTO, AttrLinksDTO {
   required?: RequiredOption
   hidden?: boolean
   key?: boolean
@@ -30,21 +30,21 @@ interface AttrStateDTO extends AttrDefaultsDTO, AttrLinksDTO {
 
 export type AnyAttrTransformerDTO = JSONStringifyDTO | { transformerId: 'custom' }
 
-export interface AnyAttrDTO extends AttrStateDTO {
+export interface AnyAttrDTO extends SchemaPropsDTO {
   type: 'any'
   transform?: AnyAttrTransformerDTO
 }
 
-export interface NullAttrDTO extends AttrStateDTO {
+export interface NullAttrDTO extends SchemaPropsDTO {
   type: 'null'
 }
 
-export interface BooleanAttrDTO extends AttrStateDTO {
+export interface BooleanAttrDTO extends SchemaPropsDTO {
   type: 'boolean'
   enum?: boolean[]
 }
 
-export interface NumberAttrDTO extends AttrStateDTO {
+export interface NumberAttrDTO extends SchemaPropsDTO {
   type: 'number'
   big?: boolean
   enum?: (number | string)[]
@@ -52,13 +52,13 @@ export interface NumberAttrDTO extends AttrStateDTO {
 
 type StringAttrTransformerDTO = PrefixerDTO | { transformerId: 'custom' }
 
-export interface StringAttrDTO extends AttrStateDTO {
+export interface StringAttrDTO extends SchemaPropsDTO {
   type: 'string'
   enum?: string[]
   transform?: StringAttrTransformerDTO
 }
 
-export interface BinaryAttrDTO extends AttrStateDTO {
+export interface BinaryAttrDTO extends SchemaPropsDTO {
   type: 'binary'
   enum?: string[]
 }
@@ -70,7 +70,7 @@ export type PrimitiveAttrDTO =
   | StringAttrDTO
   | BinaryAttrDTO
 
-export interface SetAttrDTO extends AttrStateDTO {
+export interface SetAttrDTO extends SchemaPropsDTO {
   type: 'set'
   elements: (NumberAttrDTO | StringAttrDTO | BinaryAttrDTO) & {
     required?: AtLeastOnce
@@ -85,7 +85,7 @@ export interface SetAttrDTO extends AttrStateDTO {
   }
 }
 
-export interface ListAttrDTO extends AttrStateDTO {
+export interface ListAttrDTO extends SchemaPropsDTO {
   type: 'list'
   elements: AttributeDTO & {
     required?: AtLeastOnce
@@ -100,12 +100,12 @@ export interface ListAttrDTO extends AttrStateDTO {
   }
 }
 
-export interface MapAttrDTO extends AttrStateDTO {
+export interface MapAttrDTO extends SchemaPropsDTO {
   type: 'map'
   attributes: { [name: string]: AttributeDTO }
 }
 
-export interface RecordAttrDTO extends AttrStateDTO {
+export interface RecordAttrDTO extends SchemaPropsDTO {
   type: 'record'
   keys: StringAttrDTO & {
     required?: AtLeastOnce
@@ -133,7 +133,7 @@ export interface RecordAttrDTO extends AttrStateDTO {
   }
 }
 
-export interface AnyOfAttrDTO extends AttrStateDTO {
+export interface AnyOfAttrDTO extends SchemaPropsDTO {
   type: 'anyOf'
   elements: (AttributeDTO & {
     required?: AtLeastOnce

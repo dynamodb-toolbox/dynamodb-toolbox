@@ -126,35 +126,35 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 }
 
 const getDefaulter = (attribute: AttrSchema, mode: WriteMode) => {
-  const { state } = attribute
+  const { props } = attribute
 
-  if (state.key) {
-    return state.keyDefault
+  if (props.key) {
+    return props.keyDefault
   }
 
   switch (mode) {
     case 'key':
-      return state.keyDefault
+      return props.keyDefault
     case 'put':
-      return state.putDefault
+      return props.putDefault
     case 'update':
-      return state.updateDefault
+      return props.updateDefault
   }
 }
 
 const getLinker = (attribute: AttrSchema, mode: WriteMode) => {
-  const { state } = attribute
+  const { props } = attribute
 
-  if (state.key) {
-    return state.keyLink
+  if (props.key) {
+    return props.keyLink
   }
 
   switch (mode) {
     case 'key':
-      return state.keyLink
+      return props.keyLink
     case 'put':
-      return state.putLink
+      return props.putLink
     case 'update':
-      return state.updateLink
+      return props.updateLink
   }
 }
