@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 
-export interface BinaryAttributeState extends SharedAttributeState {
+export interface BinarySchemaProps extends SchemaProps {
   enum?: Uint8Array[]
   transform?: unknown
 }

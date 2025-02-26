@@ -141,7 +141,7 @@ describe('schema', () => {
     assertSch
     expect(pickedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
     // @ts-expect-error putLink is actually set to undefined
-    expect(pickedSch.attributes.linkedStr.state.putLink).toBeUndefined()
+    expect(pickedSch.attributes.linkedStr.props.putLink).toBeUndefined()
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')
@@ -168,7 +168,7 @@ describe('schema', () => {
     assertSch
     expect(omittedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
     // @ts-expect-error putLink is actually set to undefined
-    expect(omittedSch.attributes.linkedStr.state.putLink).toBeUndefined()
+    expect(omittedSch.attributes.linkedStr.props.putLink).toBeUndefined()
 
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')

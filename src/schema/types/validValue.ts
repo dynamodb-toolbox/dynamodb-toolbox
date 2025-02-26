@@ -32,8 +32,8 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptio
   true,
   If<
     Extends<OPTIONS, { mode: 'update' | 'key' }>,
-    Extends<ATTRIBUTE['state'], { required: Always }>,
-    Not<Extends<ATTRIBUTE['state'], { required: Never }>>
+    Extends<ATTRIBUTE['props'], { required: Always }>,
+    Not<Extends<ATTRIBUTE['props'], { required: Never }>>
   >
 >
 
@@ -53,7 +53,7 @@ type SchemaValidValue<
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { state: { key: true } }>
+          ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
           : keyof SCHEMA['attributes']]: AttrValidValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
@@ -134,7 +134,7 @@ type MapSchemaValidValue<
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { state: { key: true } }>
+              ? SelectKeys<ATTRIBUTE['attributes'], { props: { key: true } }>
               : keyof ATTRIBUTE['attributes']]: AttrValidValue<
               ATTRIBUTE['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>

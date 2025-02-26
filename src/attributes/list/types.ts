@@ -1,8 +1,8 @@
 import type { AtLeastOnce } from '../constants/index.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 
-interface ListElementState extends SharedAttributeState {
+interface ListElementProps extends SchemaProps {
   required?: AtLeastOnce
   hidden?: false
   savedAs?: undefined
@@ -15,4 +15,4 @@ interface ListElementState extends SharedAttributeState {
 }
 
 // TODO: Re-introduce constraint in interface (not only in typer)
-export type ListElementSchema = AttrSchema & { state: ListElementState }
+export type ListElementSchema = AttrSchema & { props: ListElementProps }

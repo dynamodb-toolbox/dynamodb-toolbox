@@ -1,17 +1,17 @@
 import { checkPrimitiveAttribute } from '../primitive/check.js'
-import type { StringAttributeState } from './types.js'
+import type { StringSchemaProps } from './types.js'
 
-export class StringSchema<STATE extends StringAttributeState = StringAttributeState> {
+export class StringSchema<PROPS extends StringSchemaProps = StringSchemaProps> {
   type: 'string'
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE) {
+  constructor(props: PROPS) {
     this.type = 'string'
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -21,6 +21,6 @@ export class StringSchema<STATE extends StringAttributeState = StringAttributeSt
 
     checkPrimitiveAttribute(this, path)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
   }
 }

@@ -11,7 +11,7 @@ export const getDefaultsDTO = (
   const defaultsDTO: Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
 
   for (const mode of ['keyDefault', 'putDefault', 'updateDefault'] as const) {
-    const modeDefault = attr.state[mode]
+    const modeDefault = attr.props[mode]
 
     if (modeDefault === undefined) {
       continue

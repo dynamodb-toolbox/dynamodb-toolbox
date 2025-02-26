@@ -14,8 +14,8 @@ import { setAttrFormatter } from './set.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
-export const isRequired = ({ state }: AttrSchema): boolean =>
-  requiringOptions.has(state.required ?? 'atLeastOnce')
+export const isRequired = ({ props }: AttrSchema): boolean =>
+  requiringOptions.has(props.required ?? 'atLeastOnce')
 
 export function* attrFormatter<
   ATTRIBUTE extends AttrSchema,

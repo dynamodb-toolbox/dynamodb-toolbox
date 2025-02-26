@@ -7,7 +7,7 @@ import type { RecordSchema, RecordSchema_ } from '../record/index.js'
 import type { SetSchema, SetSchema_ } from '../set/index.js'
 
 /**
- * Any warm attribute state
+ * Any warm attribute props
  */
 export type AttrSchema =
   | AnySchema
@@ -19,7 +19,7 @@ export type AttrSchema =
   | AnyOfSchema
 
 /**
- * Any warm attribute state (extended)
+ * Any warm attribute props (extended)
  */
 export type AttrSchema_ =
   | AnySchema_
@@ -31,7 +31,7 @@ export type AttrSchema_ =
   | AnyOfSchema_
 
 /**
- * Any warm schema attribute states
+ * Any warm schema attribute
  */
 export interface SchemaAttributes {
   [key: string]: AttrSchema

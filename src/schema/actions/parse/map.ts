@@ -24,7 +24,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
     Object.entries(attribute.attributes)
-      .filter(([, attr]) => mode !== 'key' || attr.state.key)
+      .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], {
           ...restOptions,
@@ -97,7 +97,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     Object.entries(parsers)
       .map(([attrName, attrParser]) => [
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        attribute.attributes[attrName]!.state.savedAs ?? attrName,
+        attribute.attributes[attrName]!.props.savedAs ?? attrName,
         attrParser.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)

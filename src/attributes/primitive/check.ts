@@ -2,14 +2,14 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
-import { checkAttributeProperties } from '../shared/check.js'
+import { checkSchemaProps } from '../shared/check.js'
 import type { PrimitiveSchema } from './types.js'
 
 export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string): void => {
-  checkAttributeProperties(schema.state, path)
+  checkSchemaProps(schema.props, path)
 
-  const { type, state } = schema
-  const { enum: enumValues } = state
+  const { type, props } = schema
+  const { enum: enumValues } = props
 
   enumValues?.forEach(enumValue => {
     if (!isValidPrimitive(schema, enumValue)) {
@@ -23,7 +23,7 @@ export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string):
     }
   })
 
-  for (const defaultValue of [state.keyDefault, state.putDefault, state.updateDefault]) {
+  for (const defaultValue of [props.keyDefault, props.putDefault, props.updateDefault]) {
     if (defaultValue === undefined) {
       continue
     }

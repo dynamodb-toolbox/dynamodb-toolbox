@@ -10,31 +10,31 @@ import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { Validator } from '../types/validator.js'
 import type { ResolvedNullSchema } from './resolve.js'
 import { NullSchema } from './schema.js'
-import type { NullAttributeState } from './types.js'
+import type { NullSchemaProps } from './types.js'
 
-type NullAttributeTyper = <STATE extends Omit<SharedAttributeState, 'enum'> = {}>(
-  state?: NarrowObject<STATE>
-) => NullSchema_<STATE>
+type NullAttributeTyper = <PROPS extends Omit<SchemaProps, 'enum'> = {}>(
+  props?: NarrowObject<PROPS>
+) => NullSchema_<PROPS>
 
 /**
  * Define a new attribute of null type
  *
- * @param state _(optional)_ Attribute Options
+ * @param props _(optional)_ Attribute Options
  */
-export const nul: NullAttributeTyper = <STATE extends SharedAttributeState = {}>(
-  state: NarrowObject<STATE> = {} as STATE
-) => new NullSchema_(state)
+export const nul: NullAttributeTyper = <PROPS extends SchemaProps = {}>(
+  props: NarrowObject<PROPS> = {} as PROPS
+) => new NullSchema_(props)
 
 /**
  * Null attribute (warm)
  */
 export class NullSchema_<
-  STATE extends NullAttributeState = NullAttributeState
-> extends NullSchema<STATE> {
+  PROPS extends NullSchemaProps = NullSchemaProps
+> extends NullSchema<PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -45,14 +45,14 @@ export class NullSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): NullSchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new NullSchema_(overwrite(this.state, { required: nextRequired }))
+  ): NullSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new NullSchema_(overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): NullSchema_<Overwrite<STATE, { required: Never }>> {
+  optional(): NullSchema_<Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -61,8 +61,8 @@ export class NullSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): NullSchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new NullSchema_(overwrite(this.state, { hidden: nextHidden }))
+  ): NullSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new NullSchema_(overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -70,8 +70,8 @@ export class NullSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): NullSchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new NullSchema_(overwrite(this.state, { key: nextKey, required: 'always' }))
+  ): NullSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
+    return new NullSchema_(overwrite(this.props, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -79,8 +79,8 @@ export class NullSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): NullSchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new NullSchema_(overwrite(this.state, { savedAs: nextSavedAs }))
+  ): NullSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new NullSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -93,8 +93,8 @@ export class NullSchema_<
    */
   enum<const NEXT_ENUM extends readonly ResolvedNullSchema[]>(
     ...nextEnum: NEXT_ENUM
-  ): NullSchema_<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new NullSchema_(overwrite(this.state, { enum: writable(nextEnum) }))
+  ): NullSchema_<Overwrite<PROPS, { enum: Writable<NEXT_ENUM> }>> {
+    return new NullSchema_(overwrite(this.props, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -107,17 +107,17 @@ export class NullSchema_<
   const<CONSTANT extends ResolvedNullSchema>(
     constant: CONSTANT
   ): If<
-    STATE['key'],
-    NullSchema_<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
-    NullSchema_<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+    PROPS['key'],
+    NullSchema_<Overwrite<PROPS, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    NullSchema_<Overwrite<PROPS, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new NullSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new NullSchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -127,8 +127,8 @@ export class NullSchema_<
    */
   transform<TRANSFORMER extends Transformer<ResolvedNullSchema>>(
     transform: TRANSFORMER
-  ): NullSchema_<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new NullSchema_(overwrite(this.state, { transform }))
+  ): NullSchema_<Overwrite<PROPS, { transform: TRANSFORMER }>> {
+    return new NullSchema_(overwrite(this.props, { transform }))
   }
 
   /**
@@ -138,8 +138,8 @@ export class NullSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): NullSchema_<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { keyDefault: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -149,8 +149,8 @@ export class NullSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): NullSchema_<Overwrite<STATE, { putDefault: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { putDefault: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -160,8 +160,8 @@ export class NullSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): NullSchema_<Overwrite<STATE, { updateDefault: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }))
   }
 
   /**
@@ -171,17 +171,17 @@ export class NullSchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    NullSchema_<Overwrite<STATE, { keyDefault: unknown }>>,
-    NullSchema_<Overwrite<STATE, { putDefault: unknown }>>
+    PROPS['key'],
+    NullSchema_<Overwrite<PROPS, { keyDefault: unknown }>>,
+    NullSchema_<Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NullSchema_(overwrite(this.state, { keyDefault: nextDefault as unknown })),
-      new NullSchema_(overwrite(this.state, { putDefault: nextDefault as unknown }))
+      this.props.key as PROPS['key'],
+      new NullSchema_(overwrite(this.props, { keyDefault: nextDefault as unknown })),
+      new NullSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -194,8 +194,8 @@ export class NullSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): NullSchema_<Overwrite<STATE, { keyLink: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { keyLink: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -205,8 +205,8 @@ export class NullSchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): NullSchema_<Overwrite<STATE, { putLink: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { putLink: nextPutLink as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { putLink: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -218,8 +218,8 @@ export class NullSchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): NullSchema_<Overwrite<STATE, { updateLink: unknown }>> {
-    return new NullSchema_(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
+  ): NullSchema_<Overwrite<PROPS, { updateLink: unknown }>> {
+    return new NullSchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -229,17 +229,17 @@ export class NullSchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    NullSchema_<Overwrite<STATE, { keyLink: unknown }>>,
-    NullSchema_<Overwrite<STATE, { putLink: unknown }>>
+    PROPS['key'],
+    NullSchema_<Overwrite<PROPS, { keyLink: unknown }>>,
+    NullSchema_<Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NullSchema_(overwrite(this.state, { keyLink: nextLink as unknown })),
-      new NullSchema_(overwrite(this.state, { putLink: nextLink as unknown }))
+      this.props.key as PROPS['key'],
+      new NullSchema_(overwrite(this.props, { keyLink: nextLink as unknown })),
+      new NullSchema_(overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -250,8 +250,8 @@ export class NullSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): NullSchema_<Overwrite<STATE, { keyValidator: Validator }>> {
-    return new NullSchema_(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
+  ): NullSchema_<Overwrite<PROPS, { keyValidator: Validator }>> {
+    return new NullSchema_(overwrite(this.props, { keyValidator: nextKeyValidator as Validator }))
   }
 
   /**
@@ -261,8 +261,8 @@ export class NullSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): NullSchema_<Overwrite<STATE, { putValidator: Validator }>> {
-    return new NullSchema_(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
+  ): NullSchema_<Overwrite<PROPS, { putValidator: Validator }>> {
+    return new NullSchema_(overwrite(this.props, { putValidator: nextPutValidator as Validator }))
   }
 
   /**
@@ -272,9 +272,9 @@ export class NullSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): NullSchema_<Overwrite<STATE, { updateValidator: Validator }>> {
+  ): NullSchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new NullSchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -286,33 +286,33 @@ export class NullSchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    NullSchema_<Overwrite<STATE, { keyValidator: Validator }>>,
-    NullSchema_<Overwrite<STATE, { putValidator: Validator }>>
+    PROPS['key'],
+    NullSchema_<Overwrite<PROPS, { keyValidator: Validator }>>,
+    NullSchema_<Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new NullSchema_(overwrite(this.state, { keyValidator: nextValidator as Validator })),
-      new NullSchema_(overwrite(this.state, { putValidator: nextValidator as Validator }))
+      this.props.key as PROPS['key'],
+      new NullSchema_(overwrite(this.props, { keyValidator: nextValidator as Validator })),
+      new NullSchema_(overwrite(this.props, { putValidator: nextValidator as Validator }))
     )
   }
 
-  clone<NEXT_STATE extends Partial<NullAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): NullSchema_<Overwrite<STATE, NEXT_STATE>> {
-    return new NullSchema_(overwrite(this.state, nextState))
+  clone<NEXT_PROPS extends NullSchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): NullSchema_<Overwrite<PROPS, NEXT_PROPS>> {
+    return new NullSchema_(overwrite(this.props, nextProps))
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }

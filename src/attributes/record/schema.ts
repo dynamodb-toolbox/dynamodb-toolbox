@@ -1,30 +1,30 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkAttributeProperties } from '../shared/check.js'
+import { checkSchemaProps } from '../shared/check.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 import type { StringSchema } from '../string/index.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class RecordSchema<
-  STATE extends SharedAttributeState = SharedAttributeState,
+  PROPS extends SchemaProps = SchemaProps,
   KEYS extends StringSchema = StringSchema,
   ELEMENTS extends AttrSchema = AttrSchema
 > {
   type: 'record'
   keys: KEYS
   elements: ELEMENTS
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE, keys: KEYS, elements: ELEMENTS) {
+  constructor(props: PROPS, keys: KEYS, elements: ELEMENTS) {
     this.type = 'record'
     this.keys = keys
     this.elements = elements
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -32,7 +32,7 @@ export class RecordSchema<
       return
     }
 
-    checkAttributeProperties(this.state, path)
+    checkSchemaProps(this.props, path)
 
     if (this.keys.type !== 'string') {
       throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
@@ -48,7 +48,7 @@ export class RecordSchema<
       hidden: keysHidden,
       key: keysKey,
       savedAs: keysSavedAs
-    } = this.keys.state
+    } = this.keys.props
 
     // Checking $key before $required as $key implies attribute is always $required
     if (keysKey !== undefined && keysKey !== false) {
@@ -101,7 +101,7 @@ export class RecordSchema<
       required: elementsRequired,
       hidden: elementsHidden,
       savedAs: elementsSavedAs
-    } = this.elements.state
+    } = this.elements.props
 
     // Checking $key before $required as $key implies attribute is always $required
     if (elementsKey !== undefined && elementsKey !== false) {
@@ -152,7 +152,7 @@ export class RecordSchema<
     this.keys.check(path && `${path} (KEY)`)
     this.elements.check(`${path ?? ''}[string]`)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
     Object.freeze(this.keys)
     Object.freeze(this.elements)
   }

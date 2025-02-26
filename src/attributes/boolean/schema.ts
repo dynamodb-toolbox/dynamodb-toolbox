@@ -1,17 +1,17 @@
 import { checkPrimitiveAttribute } from '../primitive/check.js'
-import type { BooleanAttributeState } from './types.js'
+import type { BooleanSchemaProps } from './types.js'
 
-export class BooleanSchema<STATE extends BooleanAttributeState = BooleanAttributeState> {
+export class BooleanSchema<PROPS extends BooleanSchemaProps = BooleanSchemaProps> {
   type: 'boolean'
-  state: STATE
+  props: PROPS
 
-  constructor(state: STATE) {
+  constructor(props: PROPS) {
     this.type = 'boolean'
-    this.state = state
+    this.props = props
   }
 
   get checked(): boolean {
-    return Object.isFrozen(this.state)
+    return Object.isFrozen(this.props)
   }
 
   check(path?: string): void {
@@ -21,6 +21,6 @@ export class BooleanSchema<STATE extends BooleanAttributeState = BooleanAttribut
 
     checkPrimitiveAttribute(this, path)
 
-    Object.freeze(this.state)
+    Object.freeze(this.props)
   }
 }

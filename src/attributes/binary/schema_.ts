@@ -13,27 +13,27 @@ import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/re
 import type { Validator } from '../types/validator.js'
 import type { ResolveBinarySchema, ResolvedBinarySchema } from './resolve.js'
 import { BinarySchema } from './schema.js'
-import type { BinaryAttributeState } from './types.js'
+import type { BinarySchemaProps } from './types.js'
 
-type BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeState, 'enum'> = {}>(
-  state?: NarrowObject<STATE>
-) => BinarySchema_<STATE>
+type BinaryAttributeTyper = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
+  props?: NarrowObject<PROPS>
+) => BinarySchema_<PROPS>
 
 /**
  * Define a new attribute of binary type
  *
- * @param state _(optional)_ Attribute Options
+ * @param props _(optional)_ Attribute Options
  */
-export const binary: BinaryAttributeTyper = <STATE extends Omit<BinaryAttributeState, 'enum'> = {}>(
-  state: NarrowObject<STATE> = {} as STATE
-) => new BinarySchema_(state)
+export const binary: BinaryAttributeTyper = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
+  props: NarrowObject<PROPS> = {} as PROPS
+) => new BinarySchema_(props)
 
 /**
  * Number attribute (warm)
  */
 export class BinarySchema_<
-  STATE extends BinaryAttributeState = BinaryAttributeState
-> extends BinarySchema<STATE> {
+  PROPS extends BinarySchemaProps = BinarySchemaProps
+> extends BinarySchema<PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -44,14 +44,14 @@ export class BinarySchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): BinarySchema_<Overwrite<STATE, { required: NEXT_IS_REQUIRED }>> {
-    return new BinarySchema_(overwrite(this.state, { required: nextRequired }))
+  ): BinarySchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new BinarySchema_(overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): BinarySchema_<Overwrite<STATE, { required: Never }>> {
+  optional(): BinarySchema_<Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -60,8 +60,8 @@ export class BinarySchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): BinarySchema_<Overwrite<STATE, { hidden: NEXT_HIDDEN }>> {
-    return new BinarySchema_(overwrite(this.state, { hidden: nextHidden }))
+  ): BinarySchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new BinarySchema_(overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -69,8 +69,8 @@ export class BinarySchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): BinarySchema_<Overwrite<STATE, { key: NEXT_KEY; required: Always }>> {
-    return new BinarySchema_(overwrite(this.state, { key: nextKey, required: 'always' }))
+  ): BinarySchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
+    return new BinarySchema_(overwrite(this.props, { key: nextKey, required: 'always' }))
   }
 
   /**
@@ -78,8 +78,8 @@ export class BinarySchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): BinarySchema_<Overwrite<STATE, { savedAs: NEXT_SAVED_AS }>> {
-    return new BinarySchema_(overwrite(this.state, { savedAs: nextSavedAs }))
+  ): BinarySchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new BinarySchema_(overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -92,8 +92,8 @@ export class BinarySchema_<
    */
   enum<const NEXT_ENUM extends readonly ResolveBinarySchema<this>[]>(
     ...nextEnum: NEXT_ENUM
-  ): BinarySchema_<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
-    return new BinarySchema_(overwrite(this.state, { enum: writable(nextEnum) }))
+  ): BinarySchema_<Overwrite<PROPS, { enum: Writable<NEXT_ENUM> }>> {
+    return new BinarySchema_(overwrite(this.props, { enum: writable(nextEnum) }))
   }
 
   /**
@@ -106,17 +106,17 @@ export class BinarySchema_<
   const<CONSTANT extends ResolveBinarySchema<this>>(
     constant: CONSTANT
   ): If<
-    STATE['key'],
-    BinarySchema_<Overwrite<STATE, { enum: [CONSTANT]; keyDefault: unknown }>>,
-    BinarySchema_<Overwrite<STATE, { enum: [CONSTANT]; putDefault: unknown }>>
+    PROPS['key'],
+    BinarySchema_<Overwrite<PROPS, { enum: [CONSTANT]; keyDefault: unknown }>>,
+    BinarySchema_<Overwrite<PROPS, { enum: [CONSTANT]; putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
+      this.props.key as PROPS['key'],
       new BinarySchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], keyDefault: constant as unknown })
       ),
       new BinarySchema_(
-        overwrite(this.state, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
+        overwrite(this.props, { enum: [constant] as [CONSTANT], putDefault: constant as unknown })
       )
     )
   }
@@ -126,8 +126,8 @@ export class BinarySchema_<
    */
   transform<TRANSFORMER extends Transformer<ResolvedBinarySchema, ResolveBinarySchema<this>>>(
     transform: TRANSFORMER
-  ): BinarySchema_<Overwrite<STATE, { transform: TRANSFORMER }>> {
-    return new BinarySchema_(overwrite(this.state, { transform }))
+  ): BinarySchema_<Overwrite<PROPS, { transform: TRANSFORMER }>> {
+    return new BinarySchema_(overwrite(this.props, { transform }))
   }
 
   /**
@@ -137,8 +137,8 @@ export class BinarySchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): BinarySchema_<Overwrite<STATE, { keyDefault: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { keyDefault: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { keyDefault: nextKeyDefault as unknown }))
   }
 
   /**
@@ -148,8 +148,8 @@ export class BinarySchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): BinarySchema_<Overwrite<STATE, { putDefault: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { putDefault: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { putDefault: nextPutDefault as unknown }))
   }
 
   /**
@@ -159,8 +159,8 @@ export class BinarySchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): BinarySchema_<Overwrite<STATE, { updateDefault: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }))
   }
 
   /**
@@ -170,17 +170,17 @@ export class BinarySchema_<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
-    STATE['key'],
-    BinarySchema_<Overwrite<STATE, { keyDefault: unknown }>>,
-    BinarySchema_<Overwrite<STATE, { putDefault: unknown }>>
+    PROPS['key'],
+    BinarySchema_<Overwrite<PROPS, { keyDefault: unknown }>>,
+    BinarySchema_<Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BinarySchema_(overwrite(this.state, { keyDefault: nextDefault as unknown })),
-      new BinarySchema_(overwrite(this.state, { putDefault: nextDefault as unknown }))
+      this.props.key as PROPS['key'],
+      new BinarySchema_(overwrite(this.props, { keyDefault: nextDefault as unknown })),
+      new BinarySchema_(overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -193,8 +193,8 @@ export class BinarySchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): BinarySchema_<Overwrite<STATE, { keyLink: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { keyLink: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
   }
 
   /**
@@ -204,8 +204,8 @@ export class BinarySchema_<
    */
   putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
-  ): BinarySchema_<Overwrite<STATE, { putLink: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { putLink: nextPutLink as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { putLink: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
 
   /**
@@ -217,8 +217,8 @@ export class BinarySchema_<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<this, true>
-  ): BinarySchema_<Overwrite<STATE, { updateLink: unknown }>> {
-    return new BinarySchema_(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
+  ): BinarySchema_<Overwrite<PROPS, { updateLink: unknown }>> {
+    return new BinarySchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
 
   /**
@@ -228,17 +228,17 @@ export class BinarySchema_<
    */
   link<SCHEMA extends Schema>(
     nextLink: (
-      keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
+      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+    ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
-    STATE['key'],
-    BinarySchema_<Overwrite<STATE, { keyLink: unknown }>>,
-    BinarySchema_<Overwrite<STATE, { putLink: unknown }>>
+    PROPS['key'],
+    BinarySchema_<Overwrite<PROPS, { keyLink: unknown }>>,
+    BinarySchema_<Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BinarySchema_(overwrite(this.state, { keyLink: nextLink as unknown })),
-      new BinarySchema_(overwrite(this.state, { putLink: nextLink as unknown }))
+      this.props.key as PROPS['key'],
+      new BinarySchema_(overwrite(this.props, { keyLink: nextLink as unknown })),
+      new BinarySchema_(overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -249,8 +249,8 @@ export class BinarySchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): BinarySchema_<Overwrite<STATE, { keyValidator: Validator }>> {
-    return new BinarySchema_(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
+  ): BinarySchema_<Overwrite<PROPS, { keyValidator: Validator }>> {
+    return new BinarySchema_(overwrite(this.props, { keyValidator: nextKeyValidator as Validator }))
   }
 
   /**
@@ -260,8 +260,8 @@ export class BinarySchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): BinarySchema_<Overwrite<STATE, { putValidator: Validator }>> {
-    return new BinarySchema_(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
+  ): BinarySchema_<Overwrite<PROPS, { putValidator: Validator }>> {
+    return new BinarySchema_(overwrite(this.props, { putValidator: nextPutValidator as Validator }))
   }
 
   /**
@@ -271,9 +271,9 @@ export class BinarySchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): BinarySchema_<Overwrite<STATE, { updateValidator: Validator }>> {
+  ): BinarySchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new BinarySchema_(
-      overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -285,33 +285,33 @@ export class BinarySchema_<
   validate(
     nextValidator: Validator<
       If<
-        STATE['key'],
+        PROPS['key'],
         ValidValue<this, { mode: 'key'; defined: true }>,
         ValidValue<this, { defined: true }>
       >,
       this
     >
   ): If<
-    STATE['key'],
-    BinarySchema_<Overwrite<STATE, { keyValidator: Validator }>>,
-    BinarySchema_<Overwrite<STATE, { putValidator: Validator }>>
+    PROPS['key'],
+    BinarySchema_<Overwrite<PROPS, { keyValidator: Validator }>>,
+    BinarySchema_<Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
-      this.state.key as STATE['key'],
-      new BinarySchema_(overwrite(this.state, { keyValidator: nextValidator as Validator })),
-      new BinarySchema_(overwrite(this.state, { putValidator: nextValidator as Validator }))
+      this.props.key as PROPS['key'],
+      new BinarySchema_(overwrite(this.props, { keyValidator: nextValidator as Validator })),
+      new BinarySchema_(overwrite(this.props, { putValidator: nextValidator as Validator }))
     )
   }
 
-  clone<NEXT_STATE extends Partial<BinaryAttributeState> = {}>(
-    nextState: NarrowObject<NEXT_STATE> = {} as NEXT_STATE
-  ): BinarySchema_<Overwrite<STATE, NEXT_STATE>> {
-    return new BinarySchema_(overwrite(this.state, nextState))
+  clone<NEXT_PROPS extends BinarySchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  ): BinarySchema_<Overwrite<PROPS, NEXT_PROPS>> {
+    return new BinarySchema_(overwrite(this.props, nextProps))
   }
 
-  build<SCHEMA_ACTION extends SchemaAction<this> = SchemaAction<this>>(
-    schemaAction: new (schema: this) => SCHEMA_ACTION
-  ): SCHEMA_ACTION {
-    return new schemaAction(this)
+  build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
+    Action: new (schema: this) => ACTION
+  ): ACTION {
+    return new Action(this)
   }
 }

@@ -1,6 +1,6 @@
-import type { SharedAttributeState } from '../shared/interface.js'
+import type { SchemaProps } from '../shared/props.js'
 
-export interface NullAttributeState extends SharedAttributeState {
+export interface NullSchemaProps extends SchemaProps {
   enum?: null[]
   transform?: unknown
 }

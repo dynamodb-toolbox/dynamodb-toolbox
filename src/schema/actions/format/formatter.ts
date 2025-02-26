@@ -58,10 +58,10 @@ export class Formatter<
     let done = false
     let value: FormatterReturn<SCHEMA, OPTIONS>
     do {
-      const nextState = formatter.next()
-      done = Boolean(nextState.done)
+      const nextProps = formatter.next()
+      done = Boolean(nextProps.done)
       // TODO: Not cast
-      value = nextState.value as FormatterReturn<SCHEMA, OPTIONS>
+      value = nextProps.value as FormatterReturn<SCHEMA, OPTIONS>
     } while (!done)
 
     return value

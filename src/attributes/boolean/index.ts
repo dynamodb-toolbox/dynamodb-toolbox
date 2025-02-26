@@ -4,4 +4,4 @@ export type {
   ResolveBooleanSchema,
   ResolvedBooleanSchema as ResolvedBooleanAttribute
 } from './resolve.js'
-export type { BooleanAttributeState } from './types.js'
+export type { BooleanSchemaProps } from './types.js'
