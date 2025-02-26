@@ -1,9 +1,9 @@
 import type {
   $BinaryAttribute,
   $BinaryAttributeNestedState,
-  $BinaryAttributeState,
   BinaryAttribute,
   BinaryAttribute_,
+  BinarySchema,
   FreezeBinaryAttribute,
   ResolveBinaryAttribute,
   ResolvedBinaryAttribute
@@ -11,9 +11,9 @@ import type {
 import type {
   $BooleanAttribute,
   $BooleanAttributeNestedState,
-  $BooleanAttributeState,
   BooleanAttribute,
   BooleanAttribute_,
+  BooleanSchema,
   FreezeBooleanAttribute,
   ResolveBooleanAttribute,
   ResolvedBooleanAttribute
@@ -21,31 +21,31 @@ import type {
 import type {
   $NullAttribute,
   $NullAttributeNestedState,
-  $NullAttributeState,
   FreezeNullAttribute,
   NullAttribute,
   NullAttribute_,
+  NullSchema,
   ResolvedNullAttribute
 } from '../null/index.js'
 import type {
   $NumberAttribute,
   $NumberAttributeNestedState,
-  $NumberAttributeState,
   FreezeNumberAttribute,
   NumberAttribute,
   NumberAttribute_,
+  NumberSchema,
   ResolveNumberAttribute,
   ResolvedNumberAttribute
 } from '../number/index.js'
 import type {
   $StringAttribute,
   $StringAttributeNestedState,
-  $StringAttributeState,
   FreezeStringAttribute,
   ResolveStringAttribute,
   ResolvedStringAttribute,
   StringAttribute,
-  StringAttribute_
+  StringAttribute_,
+  StringSchema
 } from '../string/index.js'
 
 export type $PrimitiveAttributeNestedState =
@@ -55,12 +55,12 @@ export type $PrimitiveAttributeNestedState =
   | $StringAttributeNestedState
   | $BinaryAttributeNestedState
 
-export type $PrimitiveAttributeState =
-  | $NullAttributeState
-  | $BooleanAttributeState
-  | $NumberAttributeState
-  | $StringAttributeState
-  | $BinaryAttributeState
+export type PrimitiveSchema =
+  | NullSchema
+  | BooleanSchema
+  | NumberSchema
+  | StringSchema
+  | BinarySchema
 
 export type $PrimitiveAttribute =
   | $NullAttribute
@@ -101,11 +101,11 @@ export type ResolvePrimitiveAttribute<ATTRIBUTE extends PrimitiveAttribute> =
         | (ATTRIBUTE extends BinaryAttribute ? ResolveBinaryAttribute<ATTRIBUTE> : never)
 
 export type FreezePrimitiveAttribute<
-  ATTRIBUTE extends $PrimitiveAttributeState,
+  ATTRIBUTE extends PrimitiveSchema,
   EXTENDED extends boolean = false
 > =
-  | (ATTRIBUTE extends $NullAttributeState ? FreezeNullAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $BooleanAttributeState ? FreezeBooleanAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $NumberAttributeState ? FreezeNumberAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $StringAttributeState ? FreezeStringAttribute<ATTRIBUTE, EXTENDED> : never)
-  | (ATTRIBUTE extends $BinaryAttributeState ? FreezeBinaryAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends NullSchema ? FreezeNullAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends BooleanSchema ? FreezeBooleanAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends NumberSchema ? FreezeNumberAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends StringSchema ? FreezeStringAttribute<ATTRIBUTE, EXTENDED> : never)
+  | (ATTRIBUTE extends BinarySchema ? FreezeBinaryAttribute<ATTRIBUTE, EXTENDED> : never)

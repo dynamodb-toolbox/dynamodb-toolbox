@@ -24,17 +24,17 @@ import { freezeNumberAttribute } from './freeze.js'
 import type { ResolveNumberAttribute, ResolvedNumberAttribute } from './resolve.js'
 import type { NumberAttributeState } from './types.js'
 
-export interface $NumberAttributeState<STATE extends NumberAttributeState = NumberAttributeState> {
+export interface NumberSchema<STATE extends NumberAttributeState = NumberAttributeState> {
   type: 'number'
   state: STATE
 }
 
 export interface $NumberAttributeNestedState<
   STATE extends NumberAttributeState = NumberAttributeState
-> extends $NumberAttributeState<STATE> {
+> extends NumberSchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeNumberAttribute<$NumberAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeNumberAttribute<NumberSchema<STATE>, true>
 }
 
 /**
@@ -110,7 +110,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   enum<
     const NEXT_ENUM extends readonly ResolveNumberAttribute<
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+      FreezeNumberAttribute<NumberSchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $NumberAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $NumberAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
@@ -123,9 +123,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * @example
    * string().const('foo')
    */
-  const<
-    CONSTANT extends ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
-  >(
+  const<CONSTANT extends ResolveNumberAttribute<FreezeNumberAttribute<NumberSchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -149,7 +147,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   transform<
     TRANSFORMER extends Transformer<
       ResolvedNumberAttribute,
-      ResolveNumberAttribute<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+      ResolveNumberAttribute<FreezeNumberAttribute<NumberSchema<STATE>>>
     >
   >(transform: TRANSFORMER): $NumberAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $NumberAttribute(overwrite(this.state, { transform }))
@@ -171,7 +169,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key' }>
     >
   ): $NumberAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $NumberAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
@@ -183,7 +181,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>>>
   ): $NumberAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $NumberAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -195,7 +193,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeNumberAttribute<NumberSchema<STATE>>, true>
     >
   ): $NumberAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $NumberAttribute(
@@ -212,8 +210,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+        ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>>
       >
     >
   ): If<
@@ -236,7 +234,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key' }>
   ): $NumberAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $NumberAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -249,7 +247,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+    ) => ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>>
   ): $NumberAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $NumberAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -262,7 +260,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeNumberAttribute<NumberSchema<STATE>>, true>
   ): $NumberAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $NumberAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -277,8 +275,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>>
+      ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -299,11 +297,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<
-        FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-        { mode: 'key'; defined: true }
-      >,
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+      ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeNumberAttribute<NumberSchema<STATE>>
     >
   ): $NumberAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $NumberAttribute(
@@ -318,8 +313,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>,
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+      ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { defined: true }>,
+      FreezeNumberAttribute<NumberSchema<STATE>>
     >
   ): $NumberAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $NumberAttribute(
@@ -334,8 +329,8 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeNumberAttribute<$NumberAttributeState<STATE>>, true>,
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeNumberAttribute<NumberSchema<STATE>>, true>,
+      FreezeNumberAttribute<NumberSchema<STATE>>
     >
   ): $NumberAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $NumberAttribute(
@@ -352,13 +347,10 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeNumberAttribute<$NumberAttributeState<STATE>>,
-          { mode: 'key'; defined: true }
-        >,
-        ValidValue<FreezeNumberAttribute<$NumberAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeNumberAttribute<NumberSchema<STATE>>, { defined: true }>
       >,
-      FreezeNumberAttribute<$NumberAttributeState<STATE>>
+      FreezeNumberAttribute<NumberSchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -372,7 +364,7 @@ export class $NumberAttribute<STATE extends NumberAttributeState = NumberAttribu
     )
   }
 
-  freeze(path?: string): FreezeNumberAttribute<$NumberAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeNumberAttribute<NumberSchema<STATE>, true> {
     return freezeNumberAttribute(this.state, path)
   }
 

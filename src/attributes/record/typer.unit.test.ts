@@ -7,7 +7,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeRecordAttribute } from './freeze.js'
-import type { $RecordAttributeState, RecordAttribute } from './interface.js'
+import type { RecordAttribute, RecordSchema } from './interface.js'
 import { record } from './typer.js'
 
 describe('record', () => {
@@ -320,7 +320,7 @@ describe('record', () => {
     assertElements
     expect(rec.elements).toBe(str)
 
-    const assertExtends: A.Extends<typeof rec, $RecordAttributeState> = 1
+    const assertExtends: A.Extends<typeof rec, RecordSchema> = 1
     assertExtends
 
     const frozenRecord = rec.freeze(path)

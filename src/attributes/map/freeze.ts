@@ -5,12 +5,12 @@ import type { FreezeAttribute } from '../freeze.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { Attribute } from '../types/attribute.js'
-import type { $MapAttributeState, MapAttribute } from './interface.js'
+import type { MapAttribute, MapSchema } from './interface.js'
 import { MapAttribute_ } from './interface.js'
 import type { $MapAttributeAttributeStates } from './types.js'
 
 export type FreezeMapAttribute<
-  $MAP_ATTRIBUTE extends $MapAttributeState,
+  $MAP_ATTRIBUTE extends MapSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? MapAttribute_<
@@ -39,7 +39,7 @@ type MapAttributeFreezer = <
   state: STATE,
   attribute: $ATTRIBUTES,
   path?: string
-) => FreezeMapAttribute<$MapAttributeState<STATE, $ATTRIBUTES>, true>
+) => FreezeMapAttribute<MapSchema<STATE, $ATTRIBUTES>, true>
 
 /**
  * Freezes a warm `map` attribute

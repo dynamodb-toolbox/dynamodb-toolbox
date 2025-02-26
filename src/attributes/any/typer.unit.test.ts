@@ -5,7 +5,7 @@ import { jsonStringify } from '~/transformers/jsonStringify.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyAttribute } from './freeze.js'
-import type { $AnyAttributeState, AnyAttribute } from './interface.js'
+import type { AnyAttribute, AnySchema } from './interface.js'
 import { any } from './typer.js'
 
 describe('anyAttribute', () => {
@@ -20,7 +20,7 @@ describe('anyAttribute', () => {
     assertState
     expect(anyInstance.state).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof anyInstance, $AnyAttributeState> = 1
+    const assertExtends: A.Extends<typeof anyInstance, AnySchema> = 1
     assertExtends
 
     const frozenAny = anyInstance.freeze('some.path')

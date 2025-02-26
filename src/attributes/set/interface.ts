@@ -23,7 +23,7 @@ import type { FreezeSetAttribute } from './freeze.js'
 import { freezeSetAttribute } from './freeze.js'
 import type { $SetAttributeElements, SetAttributeElements } from './types.js'
 
-export interface $SetAttributeState<
+export interface SetSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
 > {
@@ -35,10 +35,10 @@ export interface $SetAttributeState<
 export interface $SetAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $ELEMENTS extends $SetAttributeElements = $SetAttributeElements
-> extends $SetAttributeState<STATE, $ELEMENTS> {
+> extends SetSchema<STATE, $ELEMENTS> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
+  freeze: (path?: string) => FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -118,7 +118,7 @@ export class $SetAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+      ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $SetAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
@@ -133,9 +133,7 @@ export class $SetAttribute<
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<
-      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
-    >
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>>>
   ): $SetAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
@@ -150,7 +148,7 @@ export class $SetAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
+      AttributeUpdateItemInput<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, true>
     >
   ): $SetAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
@@ -168,8 +166,8 @@ export class $SetAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+        ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>>
       >
     >
   ): If<
@@ -198,7 +196,7 @@ export class $SetAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>
+    ) => ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
   ): $SetAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -214,7 +212,7 @@ export class $SetAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+    ) => ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>>
   ): $SetAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -230,7 +228,7 @@ export class $SetAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, true>
+    ) => AttributeUpdateItemInput<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, true>
   ): $SetAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $SetAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
@@ -248,8 +246,8 @@ export class $SetAttribute<
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      ValidValue<FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>>>
+      ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>>>
     >
   ): If<
     STATE['key'],
@@ -355,7 +353,7 @@ export class $SetAttribute<
     )
   }
 
-  freeze(path?: string): FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true> {
+  freeze(path?: string): FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>, true> {
     return freezeSetAttribute(this.state, this.elements, path)
   }
 

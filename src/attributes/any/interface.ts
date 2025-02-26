@@ -22,16 +22,16 @@ import { freezeAnyAttribute } from './freeze.js'
 import type { ResolveAnyAttribute } from './resolve.js'
 import type { AnyAttributeState } from './types.js'
 
-export interface $AnyAttributeState<STATE extends AnyAttributeState = AnyAttributeState> {
+export interface AnySchema<STATE extends AnyAttributeState = AnyAttributeState> {
   type: 'any'
   state: STATE
 }
 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
-  extends $AnyAttributeState<STATE> {
+  extends AnySchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeAnyAttribute<AnySchema<STATE>, true>
 }
 
 /**
@@ -112,7 +112,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   transform<
     TRANSFORMER extends Transformer<
       unknown,
-      ResolveAnyAttribute<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
+      ResolveAnyAttribute<FreezeAnyAttribute<AnySchema<STATE>>>
     >
   >(transform: TRANSFORMER): $AnyAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $AnyAttribute(overwrite(this.state, { transform }))
@@ -124,9 +124,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
   keyDefault(
-    nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>
-    >
+    nextKeyDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>>
   ): $AnyAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
@@ -137,7 +135,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>>
   ): $AnyAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -149,7 +147,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>
     >
   ): $AnyAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
@@ -164,8 +162,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
+        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
       >
     >
   ): If<
@@ -188,7 +186,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>
   ): $AnyAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -201,7 +199,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
+    ) => ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
   ): $AnyAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -214,7 +212,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>
   ): $AnyAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -229,8 +227,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>>
+      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -251,8 +249,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; defined: true }>,
-      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeAnyAttribute<AnySchema<STATE>>
     >
   ): $AnyAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $AnyAttribute(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
@@ -265,8 +263,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { defined: true }>,
-      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { defined: true }>,
+      FreezeAnyAttribute<AnySchema<STATE>>
     >
   ): $AnyAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $AnyAttribute(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
@@ -279,8 +277,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeAnyAttribute<$AnyAttributeState<STATE>>, true>,
-      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>,
+      FreezeAnyAttribute<AnySchema<STATE>>
     >
   ): $AnyAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $AnyAttribute(
@@ -297,10 +295,10 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { mode: 'key'; defined: true }>,
-        ValidValue<FreezeAnyAttribute<$AnyAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { defined: true }>
       >,
-      FreezeAnyAttribute<$AnyAttributeState<STATE>>
+      FreezeAnyAttribute<AnySchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -314,7 +312,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     )
   }
 
-  freeze(path?: string): FreezeAnyAttribute<$AnyAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeAnyAttribute<AnySchema<STATE>, true> {
     return freezeAnyAttribute(this.state, path)
   }
 

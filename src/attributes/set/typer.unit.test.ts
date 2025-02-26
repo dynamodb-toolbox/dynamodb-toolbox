@@ -6,7 +6,7 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeSetAttribute } from './freeze.js'
-import type { $SetAttributeState, SetAttribute } from './interface.js'
+import type { SetAttribute, SetSchema } from './interface.js'
 import { set } from './typer.js'
 
 describe('set', () => {
@@ -133,7 +133,7 @@ describe('set', () => {
     assertElmt
     expect(st.elements).toBe(strElement)
 
-    const assertExtends: A.Extends<typeof st, $SetAttributeState> = 1
+    const assertExtends: A.Extends<typeof st, SetSchema> = 1
     assertExtends
 
     const frozenSet = st.freeze(path)
