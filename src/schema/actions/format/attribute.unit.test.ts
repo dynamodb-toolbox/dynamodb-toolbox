@@ -6,8 +6,8 @@ import { attrFormatter } from './attribute.js'
 
 const primitiveAttrFormatter = vi.spyOn(primitiveAttrFormatterModule, 'primitiveAttrFormatter')
 
-const strAttr = string().freeze('path')
-const optStrAttr = string().optional().freeze('path')
+const strAttr = string()
+const optStrAttr = string().optional()
 
 describe('attrFormatter', () => {
   beforeEach(() => {

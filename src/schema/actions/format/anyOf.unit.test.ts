@@ -5,7 +5,7 @@ import { anyOfAttrFormatter } from './anyOf.js'
 
 describe('anyOfAttrFormatter', () => {
   test('throws if value is invalid', () => {
-    const anyOfA = anyOf(number(), string()).freeze('root')
+    const anyOfA = anyOf(number(), string())
 
     const invalidCall = () => anyOfAttrFormatter(anyOfA, true).next()
 
@@ -14,7 +14,7 @@ describe('anyOfAttrFormatter', () => {
   })
 
   test('returns value if it is valid', () => {
-    const anyOfA = anyOf(number(), string()).freeze()
+    const anyOfA = anyOf(number(), string())
 
     const formatter = anyOfAttrFormatter(anyOfA, 'foo')
 
@@ -27,7 +27,7 @@ describe('anyOfAttrFormatter', () => {
   })
 
   test('does not transform is transform is false', () => {
-    const anyOfA = anyOf(string(), number()).freeze()
+    const anyOfA = anyOf(string(), number())
 
     const formatter = anyOfAttrFormatter(anyOfA, 'foo', { transform: false })
 

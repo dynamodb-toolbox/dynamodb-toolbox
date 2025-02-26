@@ -16,13 +16,11 @@ import { overwrite } from '~/utils/overwrite.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { checkAttributeProperties } from '../shared/check.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
-import { validateAttributeProperties } from '../shared/validate.js'
 import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeAnyOfAttribute } from './freeze.js'
-import { freezeAnyOfAttribute } from './freeze.js'
 
 export interface AnyOfSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
@@ -39,7 +37,6 @@ export interface $AnyOfAttributeNestedState<
   $ELEMENTS extends AttrSchema[] = AttrSchema[]
 > extends AnyOfSchema<STATE, $ELEMENTS> {
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true>
 }
 
 /**
@@ -118,9 +115,7 @@ export class $AnyOfAttribute<
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
   keyDefault(
-    nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
-    >
+    nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
   ): $AnyOfAttribute<Overwrite<STATE, { keyDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { keyDefault: nextKeyDefault as unknown }),
@@ -134,7 +129,7 @@ export class $AnyOfAttribute<
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<this>>
   ): $AnyOfAttribute<Overwrite<STATE, { putDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { putDefault: nextPutDefault as unknown }),
@@ -148,9 +143,7 @@ export class $AnyOfAttribute<
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, true>
-    >
+    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
   ): $AnyOfAttribute<Overwrite<STATE, { updateDefault: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }),
@@ -165,11 +158,7 @@ export class $AnyOfAttribute<
    */
   default(
     nextDefault: ValueOrGetter<
-      If<
-        STATE['key'],
-        ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
-        ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
-      >
+      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
     STATE['key'],
@@ -197,7 +186,7 @@ export class $AnyOfAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>
+    ) => ValidValue<this, { mode: 'key' }>
   ): $AnyOfAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -211,9 +200,7 @@ export class $AnyOfAttribute<
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
   putLink<SCHEMA extends Schema>(
-    nextPutLink: (
-      putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
+    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
   ): $AnyOfAttribute<Overwrite<STATE, { putLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -229,7 +216,7 @@ export class $AnyOfAttribute<
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, true>
+    ) => AttributeUpdateItemInput<this, true>
   ): $AnyOfAttribute<Overwrite<STATE, { updateLink: unknown }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { updateLink: nextUpdateLink as unknown }),
@@ -245,11 +232,7 @@ export class $AnyOfAttribute<
   link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<
-      STATE['key'],
-      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>, { mode: 'key' }>,
-      ValidValue<FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>>>
-    >
+    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     STATE['key'],
     $AnyOfAttribute<Overwrite<STATE, { keyLink: unknown }>, $ELEMENTS>,
@@ -268,13 +251,7 @@ export class $AnyOfAttribute<
    * @param nextKeyValidator `(keyAttributeInput) => boolean | string`
    */
   keyValidate(
-    nextKeyValidator: Validator<
-      ValidValue<
-        FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-        { mode: 'key'; defined: true }
-      >,
-      FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
-    >
+    nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
   ): $AnyOfAttribute<Overwrite<STATE, { keyValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { keyValidator: nextKeyValidator as Validator }),
@@ -288,10 +265,7 @@ export class $AnyOfAttribute<
    * @param nextPutValidator `(putAttributeInput) => boolean | string`
    */
   putValidate(
-    nextPutValidator: Validator<
-      ValidValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>,
-      FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
-    >
+    nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
   ): $AnyOfAttribute<Overwrite<STATE, { putValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { putValidator: nextPutValidator as Validator }),
@@ -305,10 +279,7 @@ export class $AnyOfAttribute<
    * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, true>,
-      FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
-    >
+    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
   ): $AnyOfAttribute<Overwrite<STATE, { updateValidator: Validator }>, $ELEMENTS> {
     return new $AnyOfAttribute(
       overwrite(this.state, { updateValidator: nextUpdateValidator as Validator }),
@@ -325,13 +296,10 @@ export class $AnyOfAttribute<
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>,
-          { mode: 'key'; defined: true }
-        >,
-        ValidValue<FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>, { defined: true }>
+        ValidValue<this, { mode: 'key'; defined: true }>,
+        ValidValue<this, { defined: true }>
       >,
-      FreezeAnyOfAttribute<$AnyOfAttribute<STATE, $ELEMENTS>>
+      this
     >
   ): If<
     STATE['key'],
@@ -351,10 +319,6 @@ export class $AnyOfAttribute<
     )
   }
 
-  freeze(path?: string): FreezeAnyOfAttribute<AnyOfSchema<STATE, $ELEMENTS>, true> {
-    return freezeAnyOfAttribute(this.state, this.elements, path)
-  }
-
   get checked(): boolean {
     return Object.isFrozen(this.state)
   }
@@ -364,7 +328,7 @@ export class $AnyOfAttribute<
       return
     }
 
-    validateAttributeProperties(this.state, path)
+    checkAttributeProperties(this.state, path)
 
     if (!isArray(this.elements)) {
       throw new DynamoDBToolboxError('schema.anyOfAttribute.invalidElements', {

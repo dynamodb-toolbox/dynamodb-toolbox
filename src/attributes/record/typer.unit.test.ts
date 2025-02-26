@@ -6,7 +6,6 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeRecordAttribute } from './freeze.js'
 import type { RecordSchema } from './interface.js'
 import { record } from './typer.js'
 
@@ -20,13 +19,6 @@ describe('record', () => {
       // @ts-expect-error
       number(),
       str
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.invalidKeys', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -44,13 +36,6 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalKeys', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -64,13 +49,6 @@ describe('record', () => {
       // @ts-expect-error
       str.hidden(),
       str
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenKeys', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -88,13 +66,6 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyKeys', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -108,13 +79,6 @@ describe('record', () => {
       // @ts-expect-error
       str.savedAs('foo'),
       str
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsKeys', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -132,13 +96,6 @@ describe('record', () => {
       str
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -152,13 +109,6 @@ describe('record', () => {
       // @ts-expect-error
       str.putLink(() => 'foo'),
       str
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -176,13 +126,6 @@ describe('record', () => {
       str.optional()
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalElements', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -196,13 +139,6 @@ describe('record', () => {
       str,
       // @ts-expect-error
       str.hidden()
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenElements', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -220,13 +156,6 @@ describe('record', () => {
       str.key()
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyElements', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -240,13 +169,6 @@ describe('record', () => {
       str,
       // @ts-expect-error
       str.savedAs('foo')
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsElements', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -264,13 +186,6 @@ describe('record', () => {
       str.putDefault('foo')
     )
 
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
-    )
-
     const superInvalidCall = () => invalidRecord.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -284,13 +199,6 @@ describe('record', () => {
       str,
       // @ts-expect-error
       str.putLink(() => 'foo')
-    )
-
-    const invalidCall = () => invalidRecord.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
     )
 
     const superInvalidCall = () => invalidRecord.check(path)
@@ -619,10 +527,7 @@ describe('record', () => {
 
     const prevRecord = record(string(), number())
     prevRecord.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [{ [x in string]?: number }, FreezeRecordAttribute<typeof prevRecord>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [{ [x in string]?: number }, typeof prevRecord]> = 1
       assertArgs
 
       return true
@@ -630,10 +535,7 @@ describe('record', () => {
 
     const prevOptMap = record(string(), number()).optional()
     prevOptMap.validate((...args) => {
-      const assertArgs: A.Equals<
-        typeof args,
-        [{ [x in string]?: number }, FreezeRecordAttribute<typeof prevOptMap>]
-      > = 1
+      const assertArgs: A.Equals<typeof args, [{ [x in string]?: number }, typeof prevOptMap]> = 1
       assertArgs
 
       return true

@@ -6,7 +6,7 @@ import { primitiveAttrFormatter } from './primitive.js'
 
 describe('primitiveAttrFormatter', () => {
   test('throws an error if saved value type does not match', () => {
-    const str = string().freeze('path')
+    const str = string()
 
     const invalidCall = () => primitiveAttrFormatter(str, 42).next()
 
@@ -15,7 +15,7 @@ describe('primitiveAttrFormatter', () => {
   })
 
   test('uses formatter if transformer has been provided', () => {
-    const str = string().transform(prefix('TEST')).freeze('path')
+    const str = string().transform(prefix('TEST'))
 
     const formatter = primitiveAttrFormatter(str, 'TEST#bar')
 
@@ -28,7 +28,7 @@ describe('primitiveAttrFormatter', () => {
   })
 
   test('throws if value is not part of enum', () => {
-    const str = string().enum('foo', 'bar').transform(prefix('TEST')).freeze('path')
+    const str = string().enum('foo', 'bar').transform(prefix('TEST'))
 
     const formatter = primitiveAttrFormatter(str, 'TEST#bar')
 
@@ -46,7 +46,7 @@ describe('primitiveAttrFormatter', () => {
   })
 
   test('does not transform if transform is set to false', () => {
-    const str = string().enum('foo', 'bar').transform(prefix('TEST')).freeze('path')
+    const str = string().enum('foo', 'bar').transform(prefix('TEST'))
 
     const invalidCall = () => primitiveAttrFormatter(str, 'TEST#bar', { transform: false }).next()
 

@@ -1,7 +1,7 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
+import { checkAttributeProperties } from './check.js'
 import type { SharedAttributeState } from './interface.js'
-import { validateAttributeProperties } from './validate.js'
 
 describe('shared properties validation', () => {
   const path = 'some/path'
@@ -12,7 +12,7 @@ describe('shared properties validation', () => {
     const invalidRequiredOption = 'invalid'
 
     const invalidCall = () =>
-      validateAttributeProperties(
+      checkAttributeProperties(
         {
           ...validProperties,
           // @ts-expect-error
@@ -26,12 +26,12 @@ describe('shared properties validation', () => {
       expect.objectContaining({ code: 'schema.attribute.invalidProperty', path })
     )
 
-    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() => checkAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, required: 'atLeastOnce' }, path)
+      checkAttributeProperties({ ...validProperties, required: 'atLeastOnce' }, path)
     ).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, required: 'always' }, path)
+      checkAttributeProperties({ ...validProperties, required: 'always' }, path)
     ).not.toThrow()
   })
 
@@ -39,7 +39,7 @@ describe('shared properties validation', () => {
     const invalidKeyOption = 'invalid'
 
     const invalidCall = () =>
-      validateAttributeProperties(
+      checkAttributeProperties(
         {
           ...validProperties,
           // @ts-expect-error
@@ -53,17 +53,15 @@ describe('shared properties validation', () => {
       expect.objectContaining({ code: 'schema.attribute.invalidProperty', path })
     )
 
-    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
-    expect(() =>
-      validateAttributeProperties({ ...validProperties, hidden: true }, path)
-    ).not.toThrow()
+    expect(() => checkAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() => checkAttributeProperties({ ...validProperties, hidden: true }, path)).not.toThrow()
   })
 
   test('throws if key option is invalid', () => {
     const invalidKeyOption = 'invalid'
 
     const invalidCall = () =>
-      validateAttributeProperties(
+      checkAttributeProperties(
         {
           ...validProperties,
           // @ts-expect-error
@@ -77,15 +75,15 @@ describe('shared properties validation', () => {
       expect.objectContaining({ code: 'schema.attribute.invalidProperty', path })
     )
 
-    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
-    expect(() => validateAttributeProperties({ ...validProperties, key: true }, path)).not.toThrow()
+    expect(() => checkAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() => checkAttributeProperties({ ...validProperties, key: true }, path)).not.toThrow()
   })
 
   test('throws if savedAs option is invalid', () => {
     const invalidSavedAsOption = 42
 
     const invalidCall = () =>
-      validateAttributeProperties(
+      checkAttributeProperties(
         {
           ...validProperties,
           // @ts-expect-error
@@ -99,9 +97,9 @@ describe('shared properties validation', () => {
       expect.objectContaining({ code: 'schema.attribute.invalidProperty', path })
     )
 
-    expect(() => validateAttributeProperties(validProperties, path)).not.toThrow()
+    expect(() => checkAttributeProperties(validProperties, path)).not.toThrow()
     expect(() =>
-      validateAttributeProperties({ ...validProperties, savedAs: 'foo' }, path)
+      checkAttributeProperties({ ...validProperties, savedAs: 'foo' }, path)
     ).not.toThrow()
   })
 })

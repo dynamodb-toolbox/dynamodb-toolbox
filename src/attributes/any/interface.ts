@@ -15,10 +15,8 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import { validateAttributeProperties } from '../shared/validate.js'
+import { checkAttributeProperties } from '../shared/check.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeAnyAttribute } from './freeze.js'
-import { freezeAnyAttribute } from './freeze.js'
 import type { ResolveAnySchema } from './resolve.js'
 import type { AnyAttributeState } from './types.js'
 
@@ -31,7 +29,6 @@ export interface AnySchema<STATE extends AnyAttributeState = AnyAttributeState> 
 export interface $AnyAttributeNestedState<STATE extends AnyAttributeState = AnyAttributeState>
   extends AnySchema<STATE> {
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeAnyAttribute<AnySchema<STATE>, true>
 }
 
 /**
@@ -109,9 +106,9 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   /**
    * Transform the attribute value in PUT commands OR Primary Key computing if attribute is tagged as key
    */
-  transform<
-    TRANSFORMER extends Transformer<unknown, ResolveAnySchema<FreezeAnyAttribute<AnySchema<STATE>>>>
-  >(transform: TRANSFORMER): $AnyAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
+  transform<TRANSFORMER extends Transformer<unknown, ResolveAnySchema<this>>>(
+    transform: TRANSFORMER
+  ): $AnyAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $AnyAttribute(overwrite(this.state, { transform }))
   }
 
@@ -121,7 +118,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
    */
   keyDefault(
-    nextKeyDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>>
+    nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
   ): $AnyAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
   }
@@ -132,7 +129,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<this>>
   ): $AnyAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -143,9 +140,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>
-    >
+    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
   ): $AnyAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { updateDefault: nextUpdateDefault as unknown }))
   }
@@ -157,11 +152,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    */
   default(
     nextDefault: ValueOrGetter<
-      If<
-        STATE['key'],
-        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
-      >
+      If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
     >
   ): If<
     STATE['key'],
@@ -170,8 +161,8 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   > {
     return ifThenElse(
       this.state.key as STATE['key'],
-      this.keyDefault(nextDefault),
-      this.putDefault(nextDefault)
+      new $AnyAttribute(overwrite(this.state, { keyDefault: nextDefault as unknown })),
+      new $AnyAttribute(overwrite(this.state, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -183,7 +174,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>
+    ) => ValidValue<this, { mode: 'key' }>
   ): $AnyAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -194,9 +185,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
   putLink<SCHEMA extends Schema>(
-    nextPutLink: (
-      putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
+    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
   ): $AnyAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -209,7 +198,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>
+    ) => AttributeUpdateItemInput<this, true>
   ): $AnyAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $AnyAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -222,11 +211,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
   link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
-    ) => If<
-      STATE['key'],
-      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>>
-    >
+    ) => If<STATE['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     STATE['key'],
     $AnyAttribute<Overwrite<STATE, { keyLink: unknown }>>,
@@ -245,10 +230,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextKeyValidator `(keyAttributeInput) => boolean | string`
    */
   keyValidate(
-    nextKeyValidator: Validator<
-      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key'; defined: true }>,
-      FreezeAnyAttribute<AnySchema<STATE>>
-    >
+    nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
   ): $AnyAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $AnyAttribute(overwrite(this.state, { keyValidator: nextKeyValidator as Validator }))
   }
@@ -259,10 +241,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextPutValidator `(putAttributeInput) => boolean | string`
    */
   putValidate(
-    nextPutValidator: Validator<
-      ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { defined: true }>,
-      FreezeAnyAttribute<AnySchema<STATE>>
-    >
+    nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
   ): $AnyAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $AnyAttribute(overwrite(this.state, { putValidator: nextPutValidator as Validator }))
   }
@@ -273,10 +252,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
    * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeAnyAttribute<AnySchema<STATE>>, true>,
-      FreezeAnyAttribute<AnySchema<STATE>>
-    >
+    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
   ): $AnyAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $AnyAttribute(
       overwrite(this.state, { updateValidator: nextUpdateValidator as Validator })
@@ -292,10 +268,10 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { mode: 'key'; defined: true }>,
-        ValidValue<FreezeAnyAttribute<AnySchema<STATE>>, { defined: true }>
+        ValidValue<this, { mode: 'key'; defined: true }>,
+        ValidValue<this, { defined: true }>
       >,
-      FreezeAnyAttribute<AnySchema<STATE>>
+      this
     >
   ): If<
     STATE['key'],
@@ -309,10 +285,6 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
     )
   }
 
-  freeze(path?: string): FreezeAnyAttribute<AnySchema<STATE>, true> {
-    return freezeAnyAttribute(this.state, path)
-  }
-
   get checked(): boolean {
     return Object.isFrozen(this.state)
   }
@@ -322,7 +294,7 @@ export class $AnyAttribute<STATE extends AnyAttributeState = AnyAttributeState>
       return
     }
 
-    validateAttributeProperties(this.state, path)
+    checkAttributeProperties(this.state, path)
 
     Object.freeze(this.state)
     if (path !== undefined) {

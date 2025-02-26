@@ -12,11 +12,9 @@ const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   type: 'attribute_type'
 }
 
-const stringAttribute = string().freeze()
+const stringAttribute = string()
 
-const typeAttribute = string()
-  .enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
-  .freeze()
+const typeAttribute = string().enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
 
 type TwoArgsFnConditionParser = <CONDITION extends TwoArgsFnCondition>(
   conditionParser: ConditionParser,

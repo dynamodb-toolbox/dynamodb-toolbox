@@ -5,7 +5,6 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { FreezeListAttribute } from './freeze.js'
 import type { ListSchema } from './interface.js'
 import { list } from './typer.js'
 
@@ -17,13 +16,6 @@ describe('list', () => {
     const invalidList = list(
       // @ts-expect-error
       string().optional()
-    )
-
-    const invalidCall = () => invalidList.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.optionalElements', path })
     )
 
     const superInvalidCall = () => invalidList.check(path)
@@ -40,13 +32,6 @@ describe('list', () => {
       strElement.hidden()
     )
 
-    const invalidCall = () => invalidList.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.hiddenElements', path })
-    )
-
     const superInvalidCall = () => invalidList.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -59,13 +44,6 @@ describe('list', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.savedAs('foo')
-    )
-
-    const invalidCall = () => invalidList.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.savedAsElements', path })
     )
 
     const superInvalidCall = () => invalidList.check(path)
@@ -82,13 +60,6 @@ describe('list', () => {
       strElement.putDefault('foo')
     )
 
-    const invalidCall = () => invalidList.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
-    )
-
     const superInvalidCall = () => invalidList.check(path)
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
@@ -101,13 +72,6 @@ describe('list', () => {
     const invalidList = list(
       // @ts-expect-error
       strElement.putLink(() => 'foo')
-    )
-
-    const invalidCall = () => invalidList.freeze(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
     )
 
     const superInvalidCall = () => invalidList.check(path)
@@ -432,7 +396,7 @@ describe('list', () => {
 
     const prevList = list(string())
     prevList.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [string[], FreezeListAttribute<typeof prevList>]> = 1
+      const assertArgs: A.Equals<typeof args, [string[], typeof prevList]> = 1
       assertArgs
 
       return true
@@ -440,8 +404,7 @@ describe('list', () => {
 
     const prevOptList = list(string()).optional()
     prevOptList.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [string[], FreezeListAttribute<typeof prevOptList>]> =
-        1
+      const assertArgs: A.Equals<typeof args, [string[], typeof prevOptList]> = 1
       assertArgs
 
       return true

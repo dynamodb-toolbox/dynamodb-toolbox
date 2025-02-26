@@ -7,7 +7,7 @@ import { listAttrFormatter } from './list.js'
 // @ts-ignore
 const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
 
-const listAttr = list(string()).freeze('path')
+const listAttr = list(string())
 
 describe('listAttrFormatter', () => {
   beforeEach(() => {
