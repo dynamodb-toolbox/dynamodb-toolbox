@@ -4,12 +4,12 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { $ListAttributeState, ListAttribute } from './interface.js'
+import type { ListAttribute, ListSchema } from './interface.js'
 import { ListAttribute_ } from './interface.js'
 import type { $ListAttributeElements } from './types.js'
 
 export type FreezeListAttribute<
-  $LIST_ATTRIBUTE extends $ListAttributeState,
+  $LIST_ATTRIBUTE extends ListSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? ListAttribute_<$LIST_ATTRIBUTE['state'], FreezeAttribute<$LIST_ATTRIBUTE['elements'], false>>
@@ -22,7 +22,7 @@ type ListAttributeFreezer = <
   state: STATE,
   $elements: $ELEMENTS,
   path?: string
-) => FreezeListAttribute<$ListAttributeState<STATE, $ELEMENTS>, true>
+) => FreezeListAttribute<ListSchema<STATE, $ELEMENTS>, true>
 
 /**
  * Freezes a warm `list` attribute

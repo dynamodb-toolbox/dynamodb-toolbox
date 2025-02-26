@@ -28,7 +28,7 @@ import type {
   RecordAttributeKeys
 } from './types.js'
 
-export interface $RecordAttributeState<
+export interface RecordSchema<
   STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
@@ -43,12 +43,10 @@ export interface $RecordAttributeNestedState<
   STATE extends SharedAttributeState = SharedAttributeState,
   $KEYS extends $RecordAttributeKeys = $RecordAttributeKeys,
   $ELEMENTS extends $RecordAttributeElements = $RecordAttributeElements
-> extends $RecordAttributeState<STATE, $KEYS, $ELEMENTS> {
+> extends RecordSchema<STATE, $KEYS, $ELEMENTS> {
   path?: string
   check: (path?: string) => void
-  freeze: (
-    path?: string
-  ) => FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>, true>
+  freeze: (path?: string) => FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>, true>
 }
 
 /**
@@ -144,10 +142,7 @@ export class $RecordAttribute<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<
-        FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key' }
-      >
+      ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>, { mode: 'key' }>
     >
   ): $RecordAttribute<Overwrite<STATE, { keyDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
@@ -164,7 +159,7 @@ export class $RecordAttribute<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<
-      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+      ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>>
     >
   ): $RecordAttribute<Overwrite<STATE, { putDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
@@ -181,10 +176,7 @@ export class $RecordAttribute<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<
-        FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        true
-      >
+      AttributeUpdateItemInput<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>, true>
     >
   ): $RecordAttribute<Overwrite<STATE, { updateDefault: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
@@ -203,11 +195,8 @@ export class $RecordAttribute<
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-          { mode: 'key' }
-        >,
-        ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+        ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>, { mode: 'key' }>,
+        ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>>
       >
     >
   ): If<
@@ -238,10 +227,7 @@ export class $RecordAttribute<
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<
-      FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-      { mode: 'key' }
-    >
+    ) => ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>, { mode: 'key' }>
   ): $RecordAttribute<Overwrite<STATE, { keyLink: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this.state, { keyLink: nextKeyLink as unknown }),
@@ -258,7 +244,7 @@ export class $RecordAttribute<
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+    ) => ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>>
   ): $RecordAttribute<Overwrite<STATE, { putLink: unknown }>, $KEYS, $ELEMENTS> {
     return new $RecordAttribute(
       overwrite(this.state, { putLink: nextPutLink as unknown }),
@@ -276,7 +262,7 @@ export class $RecordAttribute<
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
     ) => AttributeUpdateItemInput<
-      FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
+      FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>,
       true
     >
   ): $RecordAttribute<Overwrite<STATE, { updateLink: unknown }>, $KEYS, $ELEMENTS> {
@@ -297,11 +283,8 @@ export class $RecordAttribute<
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<
-        FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>,
-        { mode: 'key' }
-      >,
-      ValidValue<FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>>>
+      ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>, { mode: 'key' }>,
+      ValidValue<FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>>>
     >
   ): If<
     STATE['key'],
@@ -426,9 +409,7 @@ export class $RecordAttribute<
     )
   }
 
-  freeze(
-    path?: string
-  ): FreezeRecordAttribute<$RecordAttributeState<STATE, $KEYS, $ELEMENTS>, true> {
+  freeze(path?: string): FreezeRecordAttribute<RecordSchema<STATE, $KEYS, $ELEMENTS>, true> {
     return freezeRecordAttribute(this.state, this.keys, this.elements, path)
   }
 

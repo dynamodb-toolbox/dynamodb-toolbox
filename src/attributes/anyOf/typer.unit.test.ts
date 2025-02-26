@@ -7,7 +7,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeAnyOfAttribute } from './freeze.js'
-import type { $AnyOfAttributeState, AnyOfAttribute } from './interface.js'
+import type { AnyOfAttribute, AnyOfSchema } from './interface.js'
 import { anyOf } from './typer.js'
 
 describe('anyOf', () => {
@@ -157,7 +157,7 @@ describe('anyOf', () => {
     assertState
     expect(anyOfAttr.state).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof anyOfAttr, $AnyOfAttributeState> = 1
+    const assertExtends: A.Extends<typeof anyOfAttr, AnyOfSchema> = 1
     assertExtends
 
     const frozenList = anyOfAttr.freeze(path)

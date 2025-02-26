@@ -24,17 +24,17 @@ import { freezeBinaryAttribute } from './freeze.js'
 import type { ResolveBinaryAttribute, ResolvedBinaryAttribute } from './resolve.js'
 import type { BinaryAttributeState } from './types.js'
 
-export interface $BinaryAttributeState<STATE extends BinaryAttributeState = BinaryAttributeState> {
+export interface BinarySchema<STATE extends BinaryAttributeState = BinaryAttributeState> {
   type: 'binary'
   state: STATE
 }
 
 export interface $BinaryAttributeNestedState<
   STATE extends BinaryAttributeState = BinaryAttributeState
-> extends $BinaryAttributeState<STATE> {
+> extends BinarySchema<STATE> {
   path?: string
   check: (path?: string) => void
-  freeze: (path?: string) => FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true>
+  freeze: (path?: string) => FreezeBinaryAttribute<BinarySchema<STATE>, true>
 }
 
 /**
@@ -110,7 +110,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   enum<
     const NEXT_ENUM extends readonly ResolveBinaryAttribute<
-      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+      FreezeBinaryAttribute<BinarySchema<STATE>>
     >[]
   >(...nextEnum: NEXT_ENUM): $BinaryAttribute<Overwrite<STATE, { enum: Writable<NEXT_ENUM> }>> {
     return new $BinaryAttribute(overwrite(this.state, { enum: writable(nextEnum) }))
@@ -123,9 +123,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    * @example
    * string().const('foo')
    */
-  const<
-    CONSTANT extends ResolveBinaryAttribute<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
-  >(
+  const<CONSTANT extends ResolveBinaryAttribute<FreezeBinaryAttribute<BinarySchema<STATE>>>>(
     constant: CONSTANT
   ): If<
     STATE['key'],
@@ -149,7 +147,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   transform<
     TRANSFORMER extends Transformer<
       ResolvedBinaryAttribute,
-      ResolveBinaryAttribute<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
+      ResolveBinaryAttribute<FreezeBinaryAttribute<BinarySchema<STATE>>>
     >
   >(transform: TRANSFORMER): $BinaryAttribute<Overwrite<STATE, { transform: TRANSFORMER }>> {
     return new $BinaryAttribute(overwrite(this.state, { transform }))
@@ -162,7 +160,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<
-      ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>
+      ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key' }>
     >
   ): $BinaryAttribute<Overwrite<STATE, { keyDefault: unknown }>> {
     return new $BinaryAttribute(overwrite(this.state, { keyDefault: nextKeyDefault as unknown }))
@@ -174,7 +172,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    * @param nextPutDefault `putAttributeInput | (() => putAttributeInput)`
    */
   putDefault(
-    nextPutDefault: ValueOrGetter<ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>>
+    nextPutDefault: ValueOrGetter<ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>>>
   ): $BinaryAttribute<Overwrite<STATE, { putDefault: unknown }>> {
     return new $BinaryAttribute(overwrite(this.state, { putDefault: nextPutDefault as unknown }))
   }
@@ -186,7 +184,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<
-      AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>
+      AttributeUpdateItemInput<FreezeBinaryAttribute<BinarySchema<STATE>>, true>
     >
   ): $BinaryAttribute<Overwrite<STATE, { updateDefault: unknown }>> {
     return new $BinaryAttribute(
@@ -203,8 +201,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextDefault: ValueOrGetter<
       If<
         STATE['key'],
-        ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>,
-        ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
+        ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key' }>,
+        ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>>
       >
     >
   ): If<
@@ -227,7 +225,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key' }>
-    ) => ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>
+    ) => ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key' }>
   ): $BinaryAttribute<Overwrite<STATE, { keyLink: unknown }>> {
     return new $BinaryAttribute(overwrite(this.state, { keyLink: nextKeyLink as unknown }))
   }
@@ -240,7 +238,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   putLink<SCHEMA extends Schema>(
     nextPutLink: (
       putItemInput: ValidValue<SCHEMA>
-    ) => ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
+    ) => ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>>
   ): $BinaryAttribute<Overwrite<STATE, { putLink: unknown }>> {
     return new $BinaryAttribute(overwrite(this.state, { putLink: nextPutLink as unknown }))
   }
@@ -253,7 +251,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: UpdateItemInput<SCHEMA, true>
-    ) => AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>
+    ) => AttributeUpdateItemInput<FreezeBinaryAttribute<BinarySchema<STATE>>, true>
   ): $BinaryAttribute<Overwrite<STATE, { updateLink: unknown }>> {
     return new $BinaryAttribute(overwrite(this.state, { updateLink: nextUpdateLink as unknown }))
   }
@@ -268,8 +266,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
       keyOrPutItemInput: If<STATE['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
     ) => If<
       STATE['key'],
-      ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { mode: 'key' }>,
-      ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>>
+      ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key' }>,
+      ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>>
     >
   ): If<
     STATE['key'],
@@ -290,11 +288,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   keyValidate(
     nextKeyValidator: Validator<
-      ValidValue<
-        FreezeBinaryAttribute<$BinaryAttributeState<STATE>>,
-        { mode: 'key'; defined: true }
-      >,
-      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+      ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key'; defined: true }>,
+      FreezeBinaryAttribute<BinarySchema<STATE>>
     >
   ): $BinaryAttribute<Overwrite<STATE, { keyValidator: Validator }>> {
     return new $BinaryAttribute(
@@ -309,8 +304,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   putValidate(
     nextPutValidator: Validator<
-      ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { defined: true }>,
-      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+      ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { defined: true }>,
+      FreezeBinaryAttribute<BinarySchema<STATE>>
     >
   ): $BinaryAttribute<Overwrite<STATE, { putValidator: Validator }>> {
     return new $BinaryAttribute(
@@ -325,8 +320,8 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
    */
   updateValidate(
     nextUpdateValidator: Validator<
-      AttributeUpdateItemInput<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, true>,
-      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+      AttributeUpdateItemInput<FreezeBinaryAttribute<BinarySchema<STATE>>, true>,
+      FreezeBinaryAttribute<BinarySchema<STATE>>
     >
   ): $BinaryAttribute<Overwrite<STATE, { updateValidator: Validator }>> {
     return new $BinaryAttribute(
@@ -343,13 +338,10 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     nextValidator: Validator<
       If<
         STATE['key'],
-        ValidValue<
-          FreezeBinaryAttribute<$BinaryAttributeState<STATE>>,
-          { mode: 'key'; defined: true }
-        >,
-        ValidValue<FreezeBinaryAttribute<$BinaryAttributeState<STATE>>, { defined: true }>
+        ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { mode: 'key'; defined: true }>,
+        ValidValue<FreezeBinaryAttribute<BinarySchema<STATE>>, { defined: true }>
       >,
-      FreezeBinaryAttribute<$BinaryAttributeState<STATE>>
+      FreezeBinaryAttribute<BinarySchema<STATE>>
     >
   ): If<
     STATE['key'],
@@ -363,7 +355,7 @@ export class $BinaryAttribute<STATE extends BinaryAttributeState = BinaryAttribu
     )
   }
 
-  freeze(path?: string): FreezeBinaryAttribute<$BinaryAttributeState<STATE>, true> {
+  freeze(path?: string): FreezeBinaryAttribute<BinarySchema<STATE>, true> {
     return freezeBinaryAttribute(this.state, path)
   }
 

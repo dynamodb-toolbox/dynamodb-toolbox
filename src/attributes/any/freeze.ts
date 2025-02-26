@@ -1,11 +1,11 @@
 import { validateAttributeProperties } from '../shared/validate.js'
 import type { AnyAttribute } from './interface.js'
 import { AnyAttribute_ } from './interface.js'
-import type { $AnyAttributeState } from './interface.js'
+import type { AnySchema } from './interface.js'
 import type { AnyAttributeState } from './types.js'
 
 export type FreezeAnyAttribute<
-  $ANY_ATTRIBUTE extends $AnyAttributeState,
+  $ANY_ATTRIBUTE extends AnySchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? AnyAttribute_<$ANY_ATTRIBUTE['state']>
@@ -14,7 +14,7 @@ export type FreezeAnyAttribute<
 type AnyAttributeFreezer = <STATE extends AnyAttributeState>(
   state: STATE,
   path?: string
-) => FreezeAnyAttribute<$AnyAttributeState<STATE>, true>
+) => FreezeAnyAttribute<AnySchema<STATE>, true>
 
 /**
  * Validates a warm `any` attribute

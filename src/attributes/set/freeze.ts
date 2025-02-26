@@ -4,12 +4,12 @@ import type { FreezeAttribute } from '../freeze.js'
 import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
 import type { SharedAttributeState } from '../shared/interface.js'
 import { validateAttributeProperties } from '../shared/validate.js'
-import type { $SetAttributeState, SetAttribute } from './interface.js'
+import type { SetAttribute, SetSchema } from './interface.js'
 import { SetAttribute_ } from './interface.js'
 import type { $SetAttributeElements } from './types.js'
 
 export type FreezeSetAttribute<
-  $SET_ATTRIBUTE extends $SetAttributeState,
+  $SET_ATTRIBUTE extends SetSchema,
   EXTENDED extends boolean = false
 > = EXTENDED extends true
   ? SetAttribute_<$SET_ATTRIBUTE['state'], FreezeAttribute<$SET_ATTRIBUTE['elements']>>
@@ -22,7 +22,7 @@ type SetAttributeFreezer = <
   state: STATE,
   $elements: $ELEMENTS,
   path?: string
-) => FreezeSetAttribute<$SetAttributeState<STATE, $ELEMENTS>, true>
+) => FreezeSetAttribute<SetSchema<STATE, $ELEMENTS>, true>
 
 /**
  * Validates a set instance

@@ -6,7 +6,7 @@ import { prefix } from '~/transformers/prefix.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeStringAttribute } from './freeze.js'
-import type { $StringAttributeState, StringAttribute } from './interface.js'
+import type { StringAttribute, StringSchema } from './interface.js'
 import { string } from './typer.js'
 
 const path = 'some.path'
@@ -23,7 +23,7 @@ describe('string', () => {
     assertState
     expect(str.state).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof str, $StringAttributeState> = 1
+    const assertExtends: A.Extends<typeof str, StringSchema> = 1
     assertExtends
 
     const frozenStr = str.freeze(path)

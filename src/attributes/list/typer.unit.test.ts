@@ -6,7 +6,7 @@ import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { FreezeListAttribute } from './freeze.js'
-import type { $ListAttributeState, ListAttribute } from './interface.js'
+import type { ListAttribute, ListSchema } from './interface.js'
 import { list } from './typer.js'
 
 describe('list', () => {
@@ -133,7 +133,7 @@ describe('list', () => {
     assertElmts
     expect(lst.elements).toBe(strElement)
 
-    const assertExtends: A.Extends<typeof lst, $ListAttributeState> = 1
+    const assertExtends: A.Extends<typeof lst, ListSchema> = 1
     assertExtends
 
     const frozenList = lst.freeze(path)
