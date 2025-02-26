@@ -1,4 +1,3 @@
-export { set } from './typer.js'
-export type { SetSchema, $SetAttributeNestedState } from './interface.js'
-export { $SetAttribute, SetAttribute, SetAttribute_ } from './interface.js'
-export type { SetAttributeElements } from './types.js'
+export { SetSchema } from './schema.js'
+export { set, SetSchema_ } from './schema_.js'
+export type { SetElementSchema } from './types.js'

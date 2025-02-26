@@ -13,8 +13,8 @@ import type {
   NumberAttributeValue,
   NumberSchema,
   PrimitiveSchema,
-  RecordAttribute,
   RecordAttributeValue,
+  RecordSchema,
   ResolveAnySchema,
   ResolvePrimitiveSchema,
   ResolveStringSchema,
@@ -301,7 +301,7 @@ export type AttributeUpdateItemInput<
                 >
               | SET<ValidValue<ATTRIBUTE, { defined: true }>>
           : never)
-      | (ATTRIBUTE extends RecordAttribute
+      | (ATTRIBUTE extends RecordSchema
           ?
               | Basic<{
                   [KEY in ResolveStringSchema<ATTRIBUTE['keys']>]?:

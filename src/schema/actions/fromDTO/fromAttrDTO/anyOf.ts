@@ -1,8 +1,4 @@
-import type {
-  $AnyOfAttribute,
-  $AnyOfAttributeNestedState,
-  AnyOfElementSchema
-} from '~/attributes/anyOf/index.js'
+import type { AnyOfElementSchema, AnyOfSchema } from '~/attributes/anyOf/index.js'
 import { anyOf } from '~/attributes/anyOf/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
@@ -13,14 +9,11 @@ type AnyOfAttrDTO = Extract<AttributeDTO, { type: 'anyOf' }>
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONAnyOfAttr = ({
-  elements,
-  ...props
-}: AnyOfAttrDTO): $AnyOfAttributeNestedState => {
+export const fromJSONAnyOfAttr = ({ elements, ...props }: AnyOfAttrDTO): AnyOfSchema => {
   /**
    * @debt types "fix those casts"
    */
-  let $attr = anyOf(...(elements.map(fromAttrDTO) as AnyOfElementSchema[])) as $AnyOfAttribute
+  let $attr = anyOf(...(elements.map(fromAttrDTO) as AnyOfElementSchema[]))
 
   const {
     required,
@@ -42,19 +35,19 @@ export const fromJSONAnyOfAttr = ({
   updateLink
 
   if (required !== undefined && required !== 'atLeastOnce') {
-    $attr = $attr.required(required) as $AnyOfAttribute
+    $attr = $attr.required(required)
   }
 
   if (hidden !== undefined && hidden) {
-    $attr = $attr.hidden(hidden) as $AnyOfAttribute
+    $attr = $attr.hidden(hidden)
   }
 
   if (key !== undefined && key) {
-    $attr = $attr.key(key) as $AnyOfAttribute
+    $attr = $attr.key(key)
   }
 
   if (savedAs !== undefined) {
-    $attr = $attr.savedAs(savedAs) as $AnyOfAttribute
+    $attr = $attr.savedAs(savedAs)
   }
 
   return $attr

@@ -4,7 +4,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { checkAttributeProperties } from '../shared/check.js'
 import { string } from '../string/index.js'
-import { map } from './typer.js'
+import { map } from './schema_.js'
 
 vi.mock('../shared/check', () => ({
   ...vi.importActual<Record<string, unknown>>('../shared/check'),

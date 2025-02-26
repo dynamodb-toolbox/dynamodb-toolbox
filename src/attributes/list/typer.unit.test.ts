@@ -5,8 +5,8 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
-import type { ListSchema } from './interface.js'
-import { list } from './typer.js'
+import type { ListSchema } from './schema.js'
+import { list } from './schema_.js'
 
 describe('list', () => {
   const path = 'some.path'

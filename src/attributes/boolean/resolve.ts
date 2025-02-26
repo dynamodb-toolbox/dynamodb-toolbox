@@ -1,4 +1,4 @@
-import type { BooleanSchema } from './interface.js'
+import type { BooleanSchema } from './schema.js'
 
 export type ResolveBooleanSchema<ATTRIBUTE extends BooleanSchema> = ATTRIBUTE['state'] extends {
   enum: boolean[]

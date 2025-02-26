@@ -1,3 +1,2 @@
-export { map } from './typer.js'
-export type { MapSchema, $MapAttributeNestedState } from './interface.js'
-export { $MapAttribute, MapAttribute, MapAttribute_ } from './interface.js'
+export { MapSchema } from './schema.js'
+export { map, MapSchema_ } from './schema_.js'

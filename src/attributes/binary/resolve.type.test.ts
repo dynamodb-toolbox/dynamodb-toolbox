@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import type { ResolveBinarySchema } from './resolve.js'
-import { binary } from './typer.js'
+import { binary } from './schema_.js'
 
 const standardBin = binary()
 const assertResolveStandard: A.Equals<ResolveBinarySchema<typeof standardBin>, Uint8Array> = 1

@@ -1,4 +1,4 @@
-import type { AnyAttribute } from '~/attributes/any/index.js'
+import type { AnySchema } from '~/attributes/any/index.js'
 
 import type { AnyAttrDTO, AnyAttrTransformerDTO } from '../types.js'
 import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
@@ -6,7 +6,7 @@ import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getAnyAttrDTO = (attr: AnyAttribute): AnyAttrDTO => {
+export const getAnyAttrDTO = (attr: AnySchema): AnyAttrDTO => {
   const defaultsDTO = getDefaultsDTO(attr)
   const { required, hidden, key, savedAs, transform } = attr.state
 

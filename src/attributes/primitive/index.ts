@@ -1,9 +1,6 @@
 export type {
-  $PrimitiveAttributeNestedState,
-  $PrimitiveAttribute,
   PrimitiveSchema,
-  PrimitiveAttribute,
-  PrimitiveAttribute_,
+  PrimitiveSchema_,
   ResolvePrimitiveSchema,
   ResolvedPrimitiveSchema
 } from './types.js'
