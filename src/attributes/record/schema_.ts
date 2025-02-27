@@ -8,6 +8,8 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import type { Light } from '../shared/light.js'
+import { light } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
 import type { StringSchema } from '../string/index.js'
 import type { AttrSchema } from '../types/index.js'
@@ -23,7 +25,7 @@ type RecordAttributeTyper = <
   keys: KEYS,
   elements: ELEMENTS,
   props?: NarrowObject<PROPS>
-) => RecordSchema_<PROPS, KEYS, ELEMENTS>
+) => RecordSchema_<PROPS, Light<KEYS>, Light<ELEMENTS>>
 
 /**
  * Define a new record attribute
@@ -46,7 +48,7 @@ export const record: RecordAttributeTyper = <
   keys: KEYS,
   elements: ELEMENTS,
   props: NarrowObject<PROPS> = {} as PROPS
-) => new RecordSchema_(props, keys, elements)
+) => new RecordSchema_(props, light(keys), light(elements))
 
 /**
  * Record attribute interface

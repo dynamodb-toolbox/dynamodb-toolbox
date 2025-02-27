@@ -2,6 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
+import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { MapSchema } from './schema.js'
@@ -21,7 +22,7 @@ describe('map', () => {
     assertProps
     expect(mapped.props).toStrictEqual({})
 
-    const assertAttr: A.Equals<(typeof mapped)['attributes'], { str: typeof str }> = 1
+    const assertAttr: A.Equals<(typeof mapped)['attributes'], { str: Light<typeof str> }> = 1
     assertAttr
     expect(mapped.attributes).toStrictEqual({ str })
 
@@ -311,7 +312,7 @@ describe('map', () => {
               deepAgain: {
                 type: 'map'
                 attributes: {
-                  str: typeof str
+                  str: Light<typeof str>
                 }
                 props: {
                   hidden: true
