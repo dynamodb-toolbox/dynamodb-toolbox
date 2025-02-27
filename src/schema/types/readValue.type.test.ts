@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { testSchema } from './fixtures.test.js'
+import type { bigSchema, testSchema } from './fixtures.test.js'
 import type { ReadValue } from './readValue.js'
 
 type Formatted = ReadValue<typeof testSchema>
@@ -177,3 +177,29 @@ const assertPartial: A.Equals<
   }
 > = 1
 assertPartial
+
+type Big = ReadValue<typeof bigSchema>
+const assertBig: A.Equals<
+  Big,
+  {
+    list: string[][][][][][][][][][][][][][][]
+    map: {
+      map: {
+        map: {
+          map: {
+            map: {
+              map: {
+                map: {
+                  map: {
+                    map: { map: { map: { map: { map: { map: { map: { str: string } } } } } } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+> = 1
+assertBig

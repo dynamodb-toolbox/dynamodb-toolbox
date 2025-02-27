@@ -86,8 +86,7 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttr.keys
-        // TODO: Maybe re-introduce constraints to record key attributes
-        const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false }) as string
+        const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false })
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
         expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`

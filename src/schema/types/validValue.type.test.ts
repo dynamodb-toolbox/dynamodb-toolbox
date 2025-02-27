@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { testSchema } from './fixtures.test.js'
+import type { bigSchema, testSchema } from './fixtures.test.js'
 import type { ValidValue } from './validValue.js'
 
 type Put = ValidValue<typeof testSchema>
@@ -56,3 +56,29 @@ const assertUpdate: A.Equals<
   }
 > = 1
 assertUpdate
+
+type Big = ValidValue<typeof bigSchema>
+const assertBig: A.Equals<
+  Big,
+  {
+    list: string[][][][][][][][][][][][][][][]
+    map: {
+      map: {
+        map: {
+          map: {
+            map: {
+              map: {
+                map: {
+                  map: {
+                    map: { map: { map: { map: { map: { map: { map: { str: string } } } } } } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+> = 1
+assertBig

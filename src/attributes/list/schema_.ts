@@ -8,16 +8,18 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { light } from '../shared/light.js'
+import type { Light } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
 import { ListSchema } from './schema.js'
 import type { ListElementSchema } from './types.js'
 
-type ListAttributeTyper = <$ELEMENTS extends ListElementSchema, PROPS extends SchemaProps = {}>(
-  elements: $ELEMENTS,
+type ListAttributeTyper = <ELEMENTS extends ListElementSchema, PROPS extends SchemaProps = {}>(
+  elements: ELEMENTS,
   props?: NarrowObject<PROPS>
-) => ListSchema_<PROPS, $ELEMENTS>
+) => ListSchema_<PROPS, Light<ELEMENTS>>
 
 /**
  * Define a new list attribute
@@ -31,12 +33,12 @@ type ListAttributeTyper = <$ELEMENTS extends ListElementSchema, PROPS extends Sc
  * @param props _(optional)_ List Options
  */
 export const list: ListAttributeTyper = <
-  $ELEMENTS extends ListElementSchema,
+  ELEMENTS extends ListElementSchema,
   PROPS extends SchemaProps = {}
 >(
-  elements: $ELEMENTS,
+  elements: ELEMENTS,
   props: NarrowObject<PROPS> = {} as PROPS
-): ListSchema_<PROPS, $ELEMENTS> => new ListSchema_(props, elements)
+) => new ListSchema_(props, light(elements))
 
 /**
  * List attribute interface

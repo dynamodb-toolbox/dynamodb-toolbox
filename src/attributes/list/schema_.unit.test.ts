@@ -3,6 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
+import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { ListSchema } from './schema.js'
@@ -93,7 +94,7 @@ describe('list', () => {
     assertProps
     expect(lst.props).toStrictEqual({})
 
-    const assertElmts: A.Equals<(typeof lst)['elements'], typeof strElement> = 1
+    const assertElmts: A.Equals<(typeof lst)['elements'], Light<typeof strElement>> = 1
     assertElmts
     expect(lst.elements).toBe(strElement)
 
@@ -440,7 +441,7 @@ describe('list', () => {
         type: 'list'
         elements: {
           type: 'list'
-          elements: typeof strElement
+          elements: Light<typeof strElement>
           props: {}
         }
         props: {}

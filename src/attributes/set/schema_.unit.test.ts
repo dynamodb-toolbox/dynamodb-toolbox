@@ -3,6 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
+import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { SetSchema } from './schema.js'
@@ -93,7 +94,7 @@ describe('set', () => {
     assertProps
     expect(st.props).toStrictEqual({})
 
-    const assertElmt: A.Equals<(typeof st)['elements'], typeof strElement> = 1
+    const assertElmt: A.Equals<(typeof st)['elements'], Light<typeof strElement>> = 1
     assertElmt
     expect(st.elements).toBe(strElement)
 

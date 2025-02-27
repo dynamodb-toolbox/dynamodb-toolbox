@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { testSchema } from './fixtures.test.js'
+import type { bigSchema, testSchema } from './fixtures.test.js'
 import type { TransformedValue } from './transformedValue.js'
 
 type Put = TransformedValue<typeof testSchema>
@@ -56,3 +56,29 @@ const assertUpdate: A.Equals<
   }
 > = 1
 assertUpdate
+
+type Big = TransformedValue<typeof bigSchema>
+const assertBig: A.Equals<
+  Big,
+  {
+    list: string[][][][][][][][][][][][][][][]
+    map: {
+      map: {
+        map: {
+          map: {
+            map: {
+              map: {
+                map: {
+                  map: {
+                    map: { map: { map: { map: { map: { map: { map: { str: string } } } } } } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+> = 1
+assertBig

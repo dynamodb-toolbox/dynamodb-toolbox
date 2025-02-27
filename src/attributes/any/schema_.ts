@@ -25,7 +25,7 @@ type AnyAttributeTyper = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
  */
 export const any: AnyAttributeTyper = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
-) => new AnySchema_<PROPS>(props)
+) => new AnySchema_(props)
 
 /**
  * Any attribute (warm)
