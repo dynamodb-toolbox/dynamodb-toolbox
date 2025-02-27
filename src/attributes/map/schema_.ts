@@ -8,6 +8,8 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { lightObj } from '../shared/light.js'
+import type { LightObj } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
 import type { Validator } from '../types/validator.js'
 import { MapSchema } from './schema.js'
@@ -16,7 +18,7 @@ import type { MapAttributeSchemas } from './types.js'
 type MapAttributeTyper = <ATTRIBUTES extends MapAttributeSchemas, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props?: NarrowObject<PROPS>
-) => MapSchema_<PROPS, ATTRIBUTES>
+) => MapSchema_<PROPS, LightObj<ATTRIBUTES>>
 
 /**
  * Define a new map attribute
@@ -30,7 +32,7 @@ export const map: MapAttributeTyper = <
 >(
   attributes: NarrowObject<ATTRIBUTES>,
   props: PROPS = {} as PROPS
-): MapSchema_<PROPS, ATTRIBUTES> => new MapSchema_(props, attributes)
+) => new MapSchema_(props, lightObj(attributes))
 
 /**
  * MapAttribute attribute interface

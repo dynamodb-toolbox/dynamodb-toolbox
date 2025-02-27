@@ -94,15 +94,13 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
     return new Schema(nextAttributes)
   }
 
-  and<$ADDITIONAL_ATTRIBUTES extends SchemaAttributes = SchemaAttributes>(
+  and<ADDITIONAL_ATTRIBUTES extends SchemaAttributes = SchemaAttributes>(
     additionalAttr:
-      | NarrowObject<$ADDITIONAL_ATTRIBUTES>
-      | ((schema: Schema<ATTRIBUTES>) => NarrowObject<$ADDITIONAL_ATTRIBUTES>)
+      | NarrowObject<ADDITIONAL_ATTRIBUTES>
+      | ((schema: Schema<ATTRIBUTES>) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
   ): Schema<{
-    [KEY in
-      | keyof ATTRIBUTES
-      | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-      ? $ADDITIONAL_ATTRIBUTES[KEY]
+    [KEY in keyof ATTRIBUTES | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+      ? ADDITIONAL_ATTRIBUTES[KEY]
       : KEY extends keyof ATTRIBUTES
         ? ATTRIBUTES[KEY]
         : never
@@ -128,8 +126,8 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
       nextAttributes as NarrowObject<{
         [KEY in
           | keyof ATTRIBUTES
-          | keyof $ADDITIONAL_ATTRIBUTES]: KEY extends keyof $ADDITIONAL_ATTRIBUTES
-          ? $ADDITIONAL_ATTRIBUTES[KEY]
+          | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+          ? ADDITIONAL_ATTRIBUTES[KEY]
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]
             : never
@@ -144,9 +142,9 @@ export class Schema<ATTRIBUTES extends SchemaAttributes = SchemaAttributes> {
   }
 }
 
-type SchemaTyper = <$ATTRIBUTES extends SchemaAttributes = {}>(
-  attributes: NarrowObject<$ATTRIBUTES>
-) => Schema<$ATTRIBUTES>
+type SchemaTyper = <ATTRIBUTES extends SchemaAttributes = {}>(
+  attributes: NarrowObject<ATTRIBUTES>
+) => Schema<ATTRIBUTES>
 
 /**
  * Defines an Entity schema

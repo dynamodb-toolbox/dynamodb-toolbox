@@ -235,16 +235,4 @@ describe('get', () => {
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
   })
-
-  // TODO Create getBatch method and move tests there
-  // test('formats a batch get response', async () => {
-  //   let { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
-  //   expect(Table.name).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'a', sk: 'b' })
-  // })
-
-  // test('fails if no value is provided to the getBatch method', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
-  // })
 })
