@@ -8,6 +8,8 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import { lightTuple } from '../shared/light.js'
+import type { LightTuple } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 import type { Validator } from '../types/validator.js'
@@ -16,15 +18,14 @@ import type { AnyOfElementSchema } from './types.js'
 
 type AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
-) => AnyOfSchema_<{}, ELEMENTS>
+) => AnyOfSchema_<{}, LightTuple<ELEMENTS>>
 
 /**
  * Define a new anyOf attribute
  * @param elements Attribute[]
  */
-export const anyOf: AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
-  ...elements: ELEMENTS
-) => new AnyOfSchema_({}, elements)
+export const anyOf: AnyOfAttributeTyper = (...elements) =>
+  new AnyOfSchema_({}, lightTuple(...elements))
 
 /**
  * AnyOf attribute interface

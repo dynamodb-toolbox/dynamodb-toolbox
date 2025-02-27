@@ -84,12 +84,11 @@ const TestEntity2 = new Entity({
   name: 'TestEntity2',
   schema: schema({
     email: string().key().savedAs('pk'),
-    test: string().optional(), // TODO: prefix with test---
+    test: string().optional(),
     test_composite: string().optional(),
     test_composite2: string().optional(),
     test_undefined: any()
       .optional()
-      // TODO: use unknown
       .putDefault(() => '')
   }).and(schema => ({
     sort: string()

@@ -1,3 +1,6 @@
+import { DynamoDBToolboxError } from '~/errors/index.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
+
 import { checkPrimitiveAttribute } from '../primitive/check.js'
 import type { NumberSchemaProps } from './types.js'
 
@@ -20,7 +23,21 @@ export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
     }
 
     checkPrimitiveAttribute(this, path)
-    // TODO: Validate that big is a boolean
+
+    const { big } = this.props
+
+    if (big !== undefined && !isBoolean(big)) {
+      throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
+        message: `Invalid option value type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Property: 'big'. Expected: boolean. Received: ${String(big)}.`,
+        path,
+        payload: {
+          propertyName: 'big',
+          received: big
+        }
+      })
+    }
 
     Object.freeze(this.props)
   }

@@ -18,9 +18,7 @@ export type DeletePartitionOptions<
   tableName?: string
 } & (QUERY['index'] extends keyof TABLE['indexes']
   ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
-    ? {
-        // consistent must be false if a global secondary index is queried
-        consistent?: false
-      }
+    ? // consistent must be false if a global secondary index is queried
+      { consistent?: false }
     : { consistent?: boolean }
   : { consistent?: boolean })

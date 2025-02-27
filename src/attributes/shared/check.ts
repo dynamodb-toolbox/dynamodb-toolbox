@@ -39,7 +39,7 @@ export const checkSchemaProps = (props: SchemaProps, path?: string): void => {
       path,
       payload: {
         propertyName: 'hidden',
-        received: required
+        received: hidden
       }
     })
   }
@@ -48,11 +48,11 @@ export const checkSchemaProps = (props: SchemaProps, path?: string): void => {
     throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
       message: `Invalid option value type${
         path !== undefined ? ` at path '${path}'` : ''
-      }. Property: 'key'. Expected: boolean. Received: ${String(hidden)}.`,
+      }. Property: 'key'. Expected: boolean. Received: ${String(key)}.`,
       path,
       payload: {
         propertyName: 'key',
-        received: hidden
+        received: key
       }
     })
   }

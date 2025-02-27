@@ -8,15 +8,17 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import { light } from '../shared/light.js'
+import type { Light } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
 import type { Validator } from '../types/validator.js'
 import { SetSchema } from './schema.js'
 import type { SetElementSchema } from './types.js'
 
-type SetAttributeTyper = <$ELEMENTS extends SetElementSchema, PROPS extends SchemaProps = {}>(
-  elements: $ELEMENTS,
+type SetAttributeTyper = <ELEMENTS extends SetElementSchema, PROPS extends SchemaProps = {}>(
+  elements: ELEMENTS,
   props?: NarrowObject<PROPS>
-) => SetSchema_<PROPS, $ELEMENTS>
+) => SetSchema_<PROPS, Light<ELEMENTS>>
 
 /**
  * Define a new set attribute
@@ -35,7 +37,7 @@ export const set: SetAttributeTyper = <
 >(
   elements: ELEMENTS,
   props: NarrowObject<PROPS> = {} as PROPS
-) => new SetSchema_(props, elements)
+) => new SetSchema_(props, light(elements))
 
 /**
  * Set attribute interface

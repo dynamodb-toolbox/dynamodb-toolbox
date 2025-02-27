@@ -52,8 +52,6 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   switch (comparisonOperator) {
     case 'type':
       targetAttribute = new StringSchema({ enum: conditionType })
-      // TODO: Useful to add attributePath here?
-      targetAttribute.check(attributePath)
       break
     case 'contains':
       switch (attribute.type) {
@@ -64,8 +62,6 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
         case 'string':
           // We accept any string in case of contains
           targetAttribute = new StringSchema({})
-          // TODO: Useful to add attributePath here?
-          targetAttribute.check(attributePath)
           break
         default:
           targetAttribute = attribute

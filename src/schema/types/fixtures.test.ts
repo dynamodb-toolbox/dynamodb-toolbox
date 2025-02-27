@@ -32,3 +32,32 @@ export const testSchema = schema({
 }).and(s => ({
   linkedStr: string().link<typeof s>(({ keyStr }) => keyStr)
 }))
+
+export const bigSchema = schema({
+  list: list(
+    list(list(list(list(list(list(list(list(list(list(list(list(list(list(string()))))))))))))))
+  ),
+  map: map({
+    map: map({
+      map: map({
+        map: map({
+          map: map({
+            map: map({
+              map: map({
+                map: map({
+                  map: map({
+                    map: map({
+                      map: map({
+                        map: map({ map: map({ map: map({ map: map({ str: string() }) }) }) })
+                      })
+                    })
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+    })
+  })
+})

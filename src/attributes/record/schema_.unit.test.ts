@@ -4,6 +4,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
+import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
 import type { Validator } from '../types/validator.js'
 import type { RecordSchema } from './schema.js'
@@ -220,11 +221,11 @@ describe('record', () => {
     assertProps
     expect(rec.props).toStrictEqual({})
 
-    const assertKeys: A.Equals<(typeof rec)['keys'], typeof fooBar> = 1
+    const assertKeys: A.Equals<(typeof rec)['keys'], Light<typeof fooBar>> = 1
     assertKeys
     expect(rec.keys).toBe(fooBar)
 
-    const assertElements: A.Equals<(typeof rec)['elements'], typeof str> = 1
+    const assertElements: A.Equals<(typeof rec)['elements'], Light<typeof str>> = 1
     assertElements
     expect(rec.elements).toBe(str)
 
@@ -569,11 +570,11 @@ describe('record', () => {
       typeof rec,
       {
         type: 'record'
-        keys: typeof fooBar
+        keys: Light<typeof fooBar>
         elements: {
           type: 'record'
-          keys: typeof fooBar
-          elements: typeof str
+          keys: Light<typeof fooBar>
+          elements: Light<typeof str>
           props: {}
         }
         props: {}
