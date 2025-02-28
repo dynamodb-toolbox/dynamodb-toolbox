@@ -1,4 +1,4 @@
-import type { Extension, ItemSchema, Schema, SchemaBasicValue } from '~/attributes/index.js'
+import type { Extension, ItemSchema, Schema, SchemaBasicValue } from '~/schema/index.js'
 
 import type { TransformedValue } from './transformedValue.js'
 import type { ValidValue } from './validValue.js'

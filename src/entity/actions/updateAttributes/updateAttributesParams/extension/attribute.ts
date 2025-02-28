@@ -1,10 +1,10 @@
-import type { Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { $GET, isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'

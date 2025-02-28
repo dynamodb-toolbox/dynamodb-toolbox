@@ -1,5 +1,5 @@
-import type { Schema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { InputValue, TransformedValue, ValidValue, WriteValueOptions } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 

@@ -1,4 +1,4 @@
-import type { ItemSchema } from '~/attributes/item/index.js'
+import type { ItemSchema } from '~/schema/item/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 

@@ -1,5 +1,5 @@
-import type { Schema } from '~/attributes/index.js'
 import type { AppendAttributePathOptions } from '~/schema/actions/utils/appendAttributePath.js'
+import type { Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 import { isString } from '~/utils/validation/isString.js'
 

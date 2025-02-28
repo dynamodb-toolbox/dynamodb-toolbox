@@ -1,5 +1,5 @@
-import { record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { record, string } from '~/schema/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
 import * as attrFormatterModule from './attribute.js'

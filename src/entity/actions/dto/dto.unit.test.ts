@@ -1,8 +1,8 @@
 import type { A } from 'ts-toolbelt'
 
-import { item } from '~/attributes/item/index.js'
-import { string } from '~/attributes/string/index.js'
 import { Entity } from '~/entity/entity.js'
+import { item } from '~/schema/item/index.js'
+import { string } from '~/schema/string/index.js'
 import { Table } from '~/table/table.js'
 
 import { EntityDTO } from './dto.js'

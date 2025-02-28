@@ -1,6 +1,6 @@
-import type { AnyOfElementSchema, AnyOfSchema } from '~/attributes/anyOf/index.js'
-import { anyOf } from '~/attributes/anyOf/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { AnyOfElementSchema, AnyOfSchema } from '~/schema/anyOf/index.js'
+import { anyOf } from '~/schema/anyOf/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 

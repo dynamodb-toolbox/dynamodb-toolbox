@@ -10,7 +10,7 @@ import type {
   RecordSchema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { AppendKey, Paths } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'

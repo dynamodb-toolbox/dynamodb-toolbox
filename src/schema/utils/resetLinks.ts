@@ -12,7 +12,7 @@ import type {
   Schema_,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 
 export type ResetLinks<SCHEMA extends Schema> =
   | (SCHEMA extends AnySchema

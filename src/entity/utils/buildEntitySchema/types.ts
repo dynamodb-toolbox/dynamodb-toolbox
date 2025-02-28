@@ -1,4 +1,4 @@
-import type { ItemSchema, Schema, StringSchema } from '~/attributes/index.js'
+import type { ItemSchema, Schema, StringSchema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { If } from '~/types/if.js'

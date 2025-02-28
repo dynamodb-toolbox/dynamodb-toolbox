@@ -1,4 +1,4 @@
-import type { Always } from '~/attributes/index.js'
+import type { Always } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { IndexableKeyType, Key } from '~/table/types/index.js'
 import type { Or } from '~/types/or.js'

@@ -1,6 +1,6 @@
-import type { Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'

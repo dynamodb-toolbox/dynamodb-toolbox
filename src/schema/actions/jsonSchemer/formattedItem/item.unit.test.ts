@@ -12,7 +12,7 @@ import {
   record,
   set,
   string
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 
 import { JSONSchemer } from '../jsonSchemer.js'
 

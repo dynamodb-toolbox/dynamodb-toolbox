@@ -1,5 +1,5 @@
-import { any } from '~/attributes/any/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { any } from '~/schema/any/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { anySchemaParser } from './any.js'

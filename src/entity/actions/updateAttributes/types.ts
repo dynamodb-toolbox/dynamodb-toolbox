@@ -1,24 +1,4 @@
 import type {
-  Always,
-  AnyOfSchema,
-  AnySchema,
-  ItemBasicValue,
-  ItemSchema,
-  ListSchema,
-  MapSchema,
-  Never,
-  NumberExtendedValue,
-  NumberSchema,
-  PrimitiveSchema,
-  RecordSchema,
-  ResolveAnySchema,
-  ResolvePrimitiveSchema,
-  Schema,
-  SchemaExtendedValue,
-  SetExtendedValue,
-  SetSchema
-} from '~/attributes/index.js'
-import type {
   $ADD,
   $APPEND,
   $DELETE,
@@ -39,6 +19,26 @@ import type {
 } from '~/entity/actions/update/symbols/index.js'
 import type { Reference, ReferenceExtension } from '~/entity/actions/update/types.js'
 import type { Entity } from '~/entity/index.js'
+import type {
+  Always,
+  AnyOfSchema,
+  AnySchema,
+  ItemBasicValue,
+  ItemSchema,
+  ListSchema,
+  MapSchema,
+  Never,
+  NumberExtendedValue,
+  NumberSchema,
+  PrimitiveSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolvePrimitiveSchema,
+  Schema,
+  SchemaExtendedValue,
+  SetExtendedValue,
+  SetSchema
+} from '~/schema/index.js'
 import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 

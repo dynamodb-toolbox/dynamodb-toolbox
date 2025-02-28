@@ -1,5 +1,5 @@
-import { anyOf, item, list, map, number, record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
+import { anyOf, item, list, map, number, record, string } from '~/schema/index.js'
 
 import { PathParser } from './pathParser.js'
 

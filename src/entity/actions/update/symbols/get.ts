@@ -1,4 +1,4 @@
-import type { Schema, SchemaExtendedValue } from '~/attributes/index.js'
+import type { Schema, SchemaExtendedValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import type { Reference } from '../types.js'

@@ -1,4 +1,4 @@
-import type { Schema, SchemaRequiredProp } from '~/attributes/index.js'
+import type { Schema, SchemaRequiredProp } from '~/schema/index.js'
 
 export interface EntityAttributes {
   [KEY: string]: Schema

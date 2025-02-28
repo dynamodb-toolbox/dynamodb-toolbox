@@ -1,4 +1,4 @@
-import type { MapSchema } from '~/attributes/index.js'
+import type { MapSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
