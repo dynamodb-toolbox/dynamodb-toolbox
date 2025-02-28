@@ -1,24 +1,4 @@
 import type {
-  Always,
-  AnyOfSchema,
-  AnySchema,
-  AttrSchema,
-  ItemBasicValue,
-  ItemSchema,
-  ListSchema,
-  MapSchema,
-  Never,
-  NumberExtendedValue,
-  NumberSchema,
-  PrimitiveSchema,
-  RecordSchema,
-  ResolveAnySchema,
-  ResolvePrimitiveSchema,
-  SchemaExtendedValue,
-  SetExtendedValue,
-  SetSchema
-} from '~/attributes/index.js'
-import type {
   $ADD,
   $APPEND,
   $DELETE,
@@ -39,6 +19,26 @@ import type {
 } from '~/entity/actions/update/symbols/index.js'
 import type { Reference, ReferenceExtension } from '~/entity/actions/update/types.js'
 import type { Entity } from '~/entity/index.js'
+import type {
+  Always,
+  AnyOfSchema,
+  AnySchema,
+  ItemBasicValue,
+  ItemSchema,
+  ListSchema,
+  MapSchema,
+  Never,
+  NumberExtendedValue,
+  NumberSchema,
+  PrimitiveSchema,
+  RecordSchema,
+  ResolveAnySchema,
+  ResolvePrimitiveSchema,
+  Schema,
+  SchemaExtendedValue,
+  SetExtendedValue,
+  SetSchema
+} from '~/schema/index.js'
 import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
@@ -75,7 +75,7 @@ export type UpdateAttributesInputExtension =
       >
     }
 
-type MustBeDefined<SCHEMA extends AttrSchema, FILLED extends boolean = false> = If<
+type MustBeDefined<SCHEMA extends Schema, FILLED extends boolean = false> = If<
   FILLED,
   Extends<SCHEMA['props'], { required: Always }>,
   If<
@@ -97,7 +97,7 @@ type OptionalKeys<SCHEMA extends ItemSchema | MapSchema, FILLED extends boolean 
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<SCHEMA extends AttrSchema> = SCHEMA['props'] extends { required: Never }
+type CanBeRemoved<SCHEMA extends Schema> = SCHEMA['props'] extends { required: Never }
   ? true
   : false
 
@@ -128,17 +128,17 @@ type NumberUpdate<SCHEMA extends NumberSchema> =
   | (SCHEMA['props'] extends { big: true } ? bigint : never)
 
 /**
- * User input of an UPDATE command for a given AttrSchema
+ * User input of an UPDATE command for a given Schema
  *
- * @param AttrSchema AttrSchema
+ * @param Schema Schema
  * @param RequireDefaults Boolean
  * @return Any
  */
 export type UpdateAttributeInput<
-  SCHEMA extends AttrSchema = AttrSchema,
+  SCHEMA extends Schema = Schema,
   FILLED extends boolean = false,
   AVAILABLE_PATHS extends string = string
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? SchemaExtendedValue<UpdateAttributesInputExtension> | undefined
   :
       | If<MustBeDefined<SCHEMA, FILLED>, never, undefined>

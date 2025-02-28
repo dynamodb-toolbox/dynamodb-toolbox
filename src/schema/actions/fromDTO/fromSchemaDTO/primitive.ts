@@ -1,10 +1,10 @@
-import { binary } from '~/attributes/binary/index.js'
-import { boolean } from '~/attributes/boolean/index.js'
-import type { PrimitiveSchema } from '~/attributes/index.js'
-import { nul } from '~/attributes/null/index.js'
-import { number } from '~/attributes/number/index.js'
-import { string } from '~/attributes/string/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import { binary } from '~/schema/binary/index.js'
+import { boolean } from '~/schema/boolean/index.js'
+import type { PrimitiveSchema } from '~/schema/index.js'
+import { nul } from '~/schema/null/index.js'
+import { number } from '~/schema/number/index.js'
+import { string } from '~/schema/string/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 type PrimitiveSchemaDTO = Extract<

@@ -1,9 +1,9 @@
-import type { AttrSchema } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
+import type { Schema } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -13,7 +13,7 @@ import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
 import type { ParsedUpdate } from './type.js'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
-  schema: AttrSchema
+  schema: Schema
   verbPrefix: 's' | 'r' | 'a' | 'd'
   expressionAttributePrefix: `${'s' | 'r' | 'a' | 'd'}${string}_`
   expressionAttributeNames: string[]
@@ -21,7 +21,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
   expression: string
   id: string
 
-  constructor(schema: AttrSchema, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
+  constructor(schema: Schema, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
     this.schema = schema
     this.verbPrefix = verbPrefix
     this.expressionAttributePrefix = `${verbPrefix}${id}_`
@@ -35,12 +35,10 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     this.expression = initialStr
   }
 
-  appendAttributePath = (
-    attributePath: string,
-    options: AppendAttributePathOptions = {}
-  ): AttrSchema => appendAttributePath(this, attributePath, options)
+  appendAttributePath = (attributePath: string, options: AppendAttributePathOptions = {}): Schema =>
+    appendAttributePath(this, attributePath, options)
 
-  appendAttributeValue = (_: AttrSchema, attributeValue: unknown): void => {
+  appendAttributeValue = (_: Schema, attributeValue: unknown): void => {
     const expressionAttributeValueIndex = this.expressionAttributeValues.push(attributeValue)
 
     this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
@@ -78,7 +76,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
 
   appendValidAttributeValue = (
     validAttributeValue: TransformedValue<
-      AttrSchema,
+      Schema,
       { mode: 'update'; extension: UpdateItemInputExtension }
     >
   ): void => {
@@ -86,7 +84,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
       // TODO: Fix this cast
       const [expression, fallback] = validAttributeValue[$GET] as [
         string,
-        ValidValue<AttrSchema, { mode: 'update'; extension: ReferenceExtension }> | undefined
+        ValidValue<Schema, { mode: 'update'; extension: ReferenceExtension }> | undefined
       ]
 
       if (fallback === undefined) {
@@ -139,7 +137,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     }
   }
 
-  clone = (schema?: AttrSchema): UpdateExpressionVerbParser => {
+  clone = (schema?: Schema): UpdateExpressionVerbParser => {
     const clonedParser = new UpdateExpressionVerbParser(
       schema ?? this.schema,
       this.verbPrefix,

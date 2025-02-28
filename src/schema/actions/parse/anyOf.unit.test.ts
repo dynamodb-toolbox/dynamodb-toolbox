@@ -1,5 +1,5 @@
-import { anyOf, number, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { anyOf, number, string } from '~/schema/index.js'
 
 import { anyOfSchemaParser } from './anyOf.js'
 

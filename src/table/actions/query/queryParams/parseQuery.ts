@@ -1,13 +1,13 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { BinarySchema } from '~/attributes/binary/schema.js'
-import type { AttrSchema } from '~/attributes/index.js'
-import { ItemSchema } from '~/attributes/item/schema.js'
-import { NumberSchema } from '~/attributes/number/schema.js'
-import { StringSchema } from '~/attributes/string/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
+import { BinarySchema } from '~/schema/binary/schema.js'
+import type { Schema } from '~/schema/index.js'
+import { ItemSchema } from '~/schema/item/schema.js'
+import { NumberSchema } from '~/schema/number/schema.js'
+import { StringSchema } from '~/schema/string/schema.js'
 import type { Table } from '~/table/index.js'
 import type { Index, IndexableKeyType, Key } from '~/table/types/index.js'
 import { pick } from '~/utils/pick.js'
@@ -23,7 +23,7 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): AttrSchema => {
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Schema => {
   switch (key.type) {
     case 'number':
       return new NumberSchema({ required: 'never' })

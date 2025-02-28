@@ -1,8 +1,8 @@
-import { ItemSchema } from '~/attributes/item/schema.js'
 import type { Entity } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { SchemaDTO } from '~/schema/actions/dto/index.js'
 import type { ItemSchemaDTO } from '~/schema/actions/dto/types.js'
+import { ItemSchema } from '~/schema/item/schema.js'
 import type { ITableDTO } from '~/table/actions/dto/index.js'
 import { TableDTO } from '~/table/actions/dto/index.js'
 

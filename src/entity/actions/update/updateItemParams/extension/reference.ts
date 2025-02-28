@@ -1,7 +1,7 @@
-import type { AttrSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -13,7 +13,7 @@ export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
   UpdateItemInputExtension
 > = (
-  schema: AttrSchema,
+  schema: Schema,
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ) => {

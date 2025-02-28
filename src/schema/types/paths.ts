@@ -1,13 +1,13 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   ItemSchema,
   ListSchema,
   MapSchema,
   RecordSchema,
-  ResolveStringSchema
-} from '~/attributes/index.js'
+  ResolveStringSchema,
+  Schema
+} from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 export type CharsToEscape = '[' | ']' | '.'
@@ -18,14 +18,14 @@ export type AppendKey<PATH extends string, KEY extends string> =
   | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
 
 // string is there to simplify type-constraint checks when using Paths
-export type Paths<SCHEMA extends AttrSchema = AttrSchema> = string &
+export type Paths<SCHEMA extends Schema = Schema> = string &
   (SCHEMA extends ItemSchema
     ? ItemSchemaPaths<SCHEMA>
-    : SCHEMA extends AttrSchema
+    : SCHEMA extends Schema
       ? SchemaPaths<SCHEMA>
       : never)
 
-export type SchemaPaths<SCHEMA extends AttrSchema, SCHEMA_PATH extends string = ''> =
+export type SchemaPaths<SCHEMA extends Schema, SCHEMA_PATH extends string = ''> =
   | (SCHEMA extends AnySchema ? AnySchemaPaths<SCHEMA_PATH> : never)
   | (SCHEMA extends ListSchema ? ListSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
   | (SCHEMA extends MapSchema ? MapSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
@@ -82,12 +82,12 @@ type AnyOfSchemaPaths<
 > = AnyOfSchema extends SCHEMA ? string : AnyOfSchemaPathsRec<SCHEMA['elements'], SCHEMA_PATH>
 
 type AnyOfSchemaPathsRec<
-  SCHEMAS extends AttrSchema[],
+  SCHEMAS extends Schema[],
   SCHEMA_PATH extends string = '',
   RESULTS = never
 > = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-  ? SCHEMAS_HEAD extends AttrSchema
-    ? SCHEMAS_TAIL extends AttrSchema[]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
       ? AnyOfSchemaPathsRec<
           SCHEMAS_TAIL,
           SCHEMA_PATH,

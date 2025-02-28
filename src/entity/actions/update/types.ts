@@ -1,8 +1,8 @@
+import type { Entity } from '~/entity/index.js'
 import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   ItemBasicValue,
   ItemSchema,
   ListExtendedValue,
@@ -18,11 +18,11 @@ import type {
   ResolveAnySchema,
   ResolvePrimitiveSchema,
   ResolveStringSchema,
+  Schema,
   SchemaExtendedValue,
   SetExtendedValue,
   SetSchema
-} from '~/attributes/index.js'
-import type { Entity } from '~/entity/index.js'
+} from '~/schema/index.js'
 import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
@@ -98,7 +98,7 @@ export type UpdateItemInputExtension =
       value: Extension<{ [$SET]: RecordExtendedValue }>
     }
 
-type MustBeDefined<SCHEMA extends AttrSchema, FILLED extends boolean = false> = If<
+type MustBeDefined<SCHEMA extends Schema, FILLED extends boolean = false> = If<
   FILLED,
   Extends<SCHEMA['props'], { required: Always }>,
   If<
@@ -120,7 +120,7 @@ type OptionalKeys<SCHEMA extends ItemSchema | MapSchema, FILLED extends boolean 
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<SCHEMA extends AttrSchema> = Extends<SCHEMA['props'], { required: Never }>
+type CanBeRemoved<SCHEMA extends Schema> = Extends<SCHEMA['props'], { required: Never }>
 
 /**
  * User input of an UPDATE command for a given Entity or Schema
@@ -136,7 +136,7 @@ export type UpdateItemInput<
   ? ItemBasicValue<UpdateItemInputExtension>
   : AttributeUpdateItemInput<SCHEMA['schema'], FILLED>
 
-export type Reference<SCHEMA extends AttrSchema, AVAILABLE_PATHS extends string = string> = GET<
+export type Reference<SCHEMA extends Schema, AVAILABLE_PATHS extends string = string> = GET<
   [
     ref: AVAILABLE_PATHS,
     fallback?: ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
@@ -148,17 +148,17 @@ type NumberUpdate<SCHEMA extends NumberSchema> =
   | (SCHEMA['props'] extends { big: true } ? bigint : never)
 
 /**
- * User input of an UPDATE command for a given AttrSchema
+ * User input of an UPDATE command for a given Schema
  *
- * @param AttrSchema AttrSchema
+ * @param Schema Schema
  * @param RequireDefaults Boolean
  * @return Any
  */
 export type AttributeUpdateItemInput<
-  SCHEMA extends AttrSchema = AttrSchema,
+  SCHEMA extends Schema = Schema,
   FILLED extends boolean = false,
   AVAILABLE_PATHS extends string = string
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? SchemaExtendedValue<UpdateItemInputExtension> | undefined
   : SCHEMA extends ItemSchema
     ? Optional<

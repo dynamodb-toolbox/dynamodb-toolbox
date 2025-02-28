@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { SerializableTransformer } from '~/transformers/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -6,7 +6,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import type { ISchemaDTO } from '../types.js'
 
 export const getDefaultsDTO = (
-  schema: AttrSchema
+  schema: Schema
 ): Pick<ISchemaDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {
   const defaultsDTO: Pick<ISchemaDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
 

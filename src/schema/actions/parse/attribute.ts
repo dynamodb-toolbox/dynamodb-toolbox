@@ -1,6 +1,6 @@
-import type { AttrSchema, ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { ItemSchema, Schema } from '~/schema/index.js'
 import type { InputValue, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
@@ -17,12 +17,12 @@ import { setSchemaParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
 export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  schema: AttrSchema,
+  schema: Schema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  ParserYield<AttrSchema, OPTIONS>,
-  ParserReturn<AttrSchema, OPTIONS>,
+  ParserYield<Schema, OPTIONS>,
+  ParserReturn<Schema, OPTIONS>,
   // TODO: Define & use DefaultedValue here
   InputValue<ItemSchema, InferWriteValueOptions<OPTIONS, true>> | undefined
 > {
@@ -125,7 +125,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 }
 
-const getDefaulter = (schema: AttrSchema, mode: WriteMode) => {
+const getDefaulter = (schema: Schema, mode: WriteMode) => {
   const { props } = schema
 
   if (props.key) {
@@ -142,7 +142,7 @@ const getDefaulter = (schema: AttrSchema, mode: WriteMode) => {
   }
 }
 
-const getLinker = (schema: AttrSchema, mode: WriteMode) => {
+const getLinker = (schema: Schema, mode: WriteMode) => {
   const { props } = schema
 
   if (props.key) {

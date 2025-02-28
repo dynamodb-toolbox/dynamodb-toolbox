@@ -2,7 +2,6 @@ import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   ItemSchema,
   ListSchema,
   MapSchema,
@@ -12,22 +11,23 @@ import type {
   ResolveAnySchema,
   ResolvePrimitiveSchema,
   ResolvedPrimitiveSchema,
+  Schema,
   SetSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type ValidValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends ItemSchema
   ? ItemSchemaValidValue<SCHEMA, OPTIONS>
-  : SCHEMA extends AttrSchema
+  : SCHEMA extends Schema
     ? AttrValidValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<SCHEMA extends AttrSchema, OPTIONS extends WriteValueOptions> = If<
+type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions> = If<
   Extends<OPTIONS, { defined: true }>,
   true,
   If<
@@ -63,9 +63,9 @@ type ItemSchemaValidValue<
     >
 
 type AttrValidValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? unknown
   :
       | (SCHEMA extends AnySchema ? AnySchemaValidValue<SCHEMA, OPTIONS> : never)
@@ -166,12 +166,12 @@ type AnyOfSchemaValidValue<
       | MapAnyOfSchemaValidValue<SCHEMA['elements'], OPTIONS>
 
 type MapAnyOfSchemaValidValue<
-  ELEMENTS extends AttrSchema[],
+  ELEMENTS extends Schema[],
   OPTIONS extends WriteValueOptions = {},
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends AttrSchema
-    ? ELEMENTS_TAIL extends AttrSchema[]
+  ? ELEMENTS_HEAD extends Schema
+    ? ELEMENTS_TAIL extends Schema[]
       ? MapAnyOfSchemaValidValue<
           ELEMENTS_TAIL,
           OPTIONS,

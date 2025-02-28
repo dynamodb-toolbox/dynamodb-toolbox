@@ -1,8 +1,6 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
-  AttrSchema_,
   BinarySchema,
   BooleanSchema,
   ListSchema,
@@ -10,11 +8,13 @@ import type {
   NullSchema,
   NumberSchema,
   RecordSchema,
+  Schema,
+  Schema_,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 
-export type ResetLinks<SCHEMA extends AttrSchema> =
+export type ResetLinks<SCHEMA extends Schema> =
   | (SCHEMA extends AnySchema
       ? AnySchema<{
           [KEY in Exclude<
@@ -120,9 +120,9 @@ export type ResetLinks<SCHEMA extends AttrSchema> =
         >
       : never)
 
-type LinksResetter = <SCHEMA extends AttrSchema>(schema: SCHEMA) => ResetLinks<SCHEMA>
+type LinksResetter = <SCHEMA extends Schema>(schema: SCHEMA) => ResetLinks<SCHEMA>
 
 export const resetLinks: LinksResetter = schema =>
-  (schema as AttrSchema_)
+  (schema as Schema_)
     // @ts-expect-error Signatures don't match but we don't care
     .clone({ keyLink: undefined, putLink: undefined, updateLink: undefined })

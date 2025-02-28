@@ -1,7 +1,7 @@
-import type { SetSchema } from '~/attributes/set/index.js'
-import { set } from '~/attributes/set/index.js'
-import type { SetElementSchema } from '~/attributes/set/types.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { SetSchema } from '~/schema/set/index.js'
+import { set } from '~/schema/set/index.js'
+import type { SetElementSchema } from '~/schema/set/types.js'
 
 import { fromSchemaDTO } from './attribute.js'
 

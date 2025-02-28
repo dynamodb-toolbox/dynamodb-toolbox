@@ -1,6 +1,6 @@
-import { any } from '~/attributes/any/index.js'
-import type { AnySchema } from '~/attributes/any/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import { any } from '~/schema/any/index.js'
+import type { AnySchema } from '~/schema/any/index.js'
 
 type AnySchemaDTO = Extract<ISchemaDTO, { type: 'any' }>
 

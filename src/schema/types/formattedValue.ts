@@ -1,7 +1,6 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   BinarySchema,
   BooleanSchema,
   ItemSchema,
@@ -17,9 +16,10 @@ import type {
   ResolveNumberSchema,
   ResolveStringSchema,
   ResolvedNullSchema,
+  Schema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, OmitKeys, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
@@ -27,15 +27,15 @@ import type { ChildPaths, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 export type FormattedValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SCHEMA extends ItemSchema
   ? ItemSchemaFormattedValue<SCHEMA, OPTIONS>
-  : SCHEMA extends AttrSchema
+  : SCHEMA extends Schema
     ? AttrFormattedValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<SCHEMA extends AttrSchema> = Not<Extends<SCHEMA['props'], { required: Never }>>
+type MustBeDefined<SCHEMA extends Schema> = Not<Extends<SCHEMA['props'], { required: Never }>>
 
 type OptionalKeys<SCHEMA extends MapSchema | ItemSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
@@ -75,7 +75,7 @@ type ItemSchemaFormattedValue<
         OPTIONS extends { partial: true } ? string : OptionalKeys<SCHEMA>
       >
 
-type AttrFormattedValue<SCHEMA extends AttrSchema, OPTIONS extends ReadValueOptions<SCHEMA> = {}> =
+type AttrFormattedValue<SCHEMA extends Schema, OPTIONS extends ReadValueOptions<SCHEMA> = {}> =
   | (SCHEMA extends AnySchema ? AnySchemaFormattedValue<SCHEMA> : never)
   | (SCHEMA extends NullSchema
       ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolvedNullSchema
@@ -244,11 +244,11 @@ type AnyOfSchemaFormattedValue<
 type MapAnyOfSchemaFormattedValue<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
-  ELEMENTS extends AttrSchema[] = SCHEMA['elements'],
+  ELEMENTS extends Schema[] = SCHEMA['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends AttrSchema
-    ? ELEMENTS_TAIL extends AttrSchema[]
+  ? ELEMENTS_HEAD extends Schema
+    ? ELEMENTS_TAIL extends Schema[]
       ? MapAnyOfSchemaFormattedValue<
           SCHEMA,
           OPTIONS,

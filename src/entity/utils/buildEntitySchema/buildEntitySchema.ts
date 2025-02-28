@@ -1,8 +1,8 @@
-import type { AttrSchema } from '~/attributes/index.js'
-import { ItemSchema } from '~/attributes/item/schema.js'
-import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Schema } from '~/schema/index.js'
+import { ItemSchema } from '~/schema/item/schema.js'
+import { string } from '~/schema/string/index.js'
 import type { Table } from '~/table/index.js'
 
 import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
@@ -38,7 +38,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
-  const internalAttributes: Record<string, AttrSchema> = {}
+  const internalAttributes: Record<string, Schema> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     hidden: entityAttributeHidden,

@@ -1,5 +1,5 @@
-import type { SchemaBasicValue, SetSchema } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import type { SchemaBasicValue, SetSchema } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
 import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'

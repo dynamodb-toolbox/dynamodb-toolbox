@@ -1,5 +1,5 @@
-import type { ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { ItemSchema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'

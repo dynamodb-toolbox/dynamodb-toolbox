@@ -1,4 +1,4 @@
-import type { AttrSchema, ItemSchema, StringSchema } from '~/attributes/index.js'
+import type { ItemSchema, Schema, StringSchema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { If } from '~/types/if.js'
@@ -10,7 +10,7 @@ import type { IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 export type WithInternalAttribute<
   ATTRIBUTES extends EntityAttributes,
   ATTRIBUTE_NAME extends string,
-  ATTRIBUTE_SCHEMA extends AttrSchema
+  ATTRIBUTE_SCHEMA extends Schema
 > = ComputeObject<{
   [KEY in keyof ATTRIBUTES | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
     ? ATTRIBUTE_SCHEMA

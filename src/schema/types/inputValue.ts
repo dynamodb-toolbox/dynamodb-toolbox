@@ -2,7 +2,6 @@ import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   ItemSchema,
   ListSchema,
   MapSchema,
@@ -13,22 +12,23 @@ import type {
   ResolvePrimitiveSchema,
   ResolveStringSchema,
   ResolvedPrimitiveSchema,
+  Schema,
   SetSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type InputValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends ItemSchema
   ? ItemSchemaInputValue<SCHEMA, OPTIONS>
-  : SCHEMA extends AttrSchema
+  : SCHEMA extends Schema
     ? AttrInputValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeProvided<SCHEMA extends AttrSchema, OPTIONS extends WriteValueOptions = {}> = If<
+type MustBeProvided<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
   Extends<OPTIONS, { defined: true }>,
   true,
   If<
@@ -66,7 +66,7 @@ type ItemSchemaInputValue<
   SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions = {}
 > = ItemSchema extends SCHEMA
-  ? { [KEY: string]: AttrInputValue<AttrSchema, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: AttrInputValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
@@ -80,9 +80,9 @@ type ItemSchemaInputValue<
     >
 
 type AttrInputValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? unknown
   :
       | (SCHEMA extends AnySchema ? AnySchemaInputValue<SCHEMA, OPTIONS> : never)

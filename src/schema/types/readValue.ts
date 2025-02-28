@@ -1,7 +1,6 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   BinarySchema,
   BooleanSchema,
   ItemSchema,
@@ -17,9 +16,10 @@ import type {
   ResolveNumberSchema,
   ResolveStringSchema,
   ResolvedNullSchema,
+  Schema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
@@ -27,21 +27,21 @@ import type { ChildPaths, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 /**
- * Returns the type of formatted values for a given Schema or AttrSchema (prior to hiding hidden fields)
+ * Returns the type of formatted values for a given Schema (prior to hiding hidden fields)
  *
- * @param Schema Schema | AttrSchema
+ * @param Schema Schema
  * @return Value
  */
 export type ReadValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SCHEMA extends ItemSchema
   ? ItemSchemaReadValue<SCHEMA, OPTIONS>
-  : SCHEMA extends AttrSchema
-    ? AttrReadValue<SCHEMA, OPTIONS>
+  : SCHEMA extends Schema
+    ? SchemaReadValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<SCHEMA extends AttrSchema> = Not<Extends<SCHEMA['props'], { required: Never }>>
+type MustBeDefined<SCHEMA extends Schema> = Not<Extends<SCHEMA['props'], { required: Never }>>
 
 type OptionalKeys<SCHEMA extends MapSchema | ItemSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
@@ -60,7 +60,7 @@ type ItemSchemaReadValue<
     ? never
     : Optional<
         {
-          [KEY in MATCHING_KEYS]: AttrReadValue<
+          [KEY in MATCHING_KEYS]: SchemaReadValue<
             SCHEMA['attributes'][KEY],
             Overwrite<
               OPTIONS,
@@ -78,10 +78,10 @@ type ItemSchemaReadValue<
         OPTIONS extends { partial: true } ? string : OptionalKeys<SCHEMA>
       >
 
-type AttrReadValue<
-  SCHEMA extends AttrSchema,
+type SchemaReadValue<
+  SCHEMA extends Schema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? unknown
   :
       | (SCHEMA extends AnySchema ? AnySchemaReadValue<SCHEMA> : never)
@@ -114,10 +114,10 @@ type SetSchemaReadValue<
   SCHEMA extends SetSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SetSchema extends SCHEMA
-  ? undefined | Set<AttrReadValue<SetSchema['elements']>>
+  ? undefined | Set<SchemaReadValue<SetSchema['elements']>>
   :
       | If<MustBeDefined<SCHEMA>, never, undefined>
-      | Set<AttrReadValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
+      | Set<SchemaReadValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
 
 type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
   ? undefined
@@ -130,7 +130,7 @@ type ListSchemaReadValue<
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
   READ_ELEMENTS = ListSchema extends SCHEMA
     ? unknown
-    : AttrReadValue<
+    : SchemaReadValue<
         SCHEMA['elements'],
         Overwrite<
           OPTIONS,
@@ -166,7 +166,7 @@ type MapSchemaReadValue<
         | If<MustBeDefined<SCHEMA>, never, undefined>
         | Optional<
             {
-              [KEY in MATCHING_KEYS]: AttrReadValue<
+              [KEY in MATCHING_KEYS]: SchemaReadValue<
                 SCHEMA['attributes'][KEY],
                 Overwrite<
                   OPTIONS,
@@ -221,7 +221,7 @@ type RecordSchemaReadValue<
     :
         | If<MustBeDefined<SCHEMA>, never, undefined>
         | {
-            [KEY in MATCHING_KEYS]?: AttrReadValue<
+            [KEY in MATCHING_KEYS]?: SchemaReadValue<
               SCHEMA['elements'],
               Overwrite<
                 OPTIONS,
@@ -247,17 +247,17 @@ type AnyOfSchemaReadValue<
 type MapAnyOfSchemaReadValue<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
-  ELEMENTS extends AttrSchema[] = SCHEMA['elements'],
+  ELEMENTS extends Schema[] = SCHEMA['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends AttrSchema
-    ? ELEMENTS_TAIL extends AttrSchema[]
+  ? ELEMENTS_HEAD extends Schema
+    ? ELEMENTS_TAIL extends Schema[]
       ? MapAnyOfSchemaReadValue<
           SCHEMA,
           OPTIONS,
           ELEMENTS_TAIL,
           | RESULTS
-          | AttrReadValue<
+          | SchemaReadValue<
               ELEMENTS_HEAD,
               Overwrite<
                 OPTIONS,

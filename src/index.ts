@@ -1,22 +1,8 @@
-// attributes
-export { attr, attribute } from './attributes/index.js'
-export type { AttrSchema, Validator } from './attributes/index.js'
-export { any, AnySchema, AnySchema_ } from './attributes/any/index.js'
-export { nul, NullSchema, NullSchema_ } from './attributes/null/index.js'
-export { boolean, BooleanSchema, BooleanSchema_ } from './attributes/boolean/index.js'
-export { number, NumberSchema, NumberSchema_ } from './attributes/number/index.js'
-export { string, StringSchema, StringSchema_ } from './attributes/string/index.js'
-export { binary, BinarySchema, BinarySchema_ } from './attributes/binary/index.js'
-export { set, SetSchema, SetSchema_ } from './attributes/set/index.js'
-export { list, ListSchema, ListSchema_ } from './attributes/list/index.js'
-export { map, MapSchema, MapSchema_ } from './attributes/map/index.js'
-export { record, RecordSchema, RecordSchema_ } from './attributes/record/index.js'
-export { anyOf, AnyOfSchema, AnyOfSchema_ } from './attributes/anyOf/index.js'
-export { item, ItemSchema, ItemSchema_ } from './attributes/item/index.js'
-
 // schema
-export { SchemaAction } from './schema/index.js'
+export { SchemaAction, attr, attribute } from './schema/index.js'
 export type {
+  Schema,
+  Validator,
   InputValue,
   ValidValue,
   TransformedValue,
@@ -31,6 +17,18 @@ export type {
   ItemSchemaPaths,
   Paths
 } from './schema/index.js'
+export { any, AnySchema, AnySchema_ } from './schema/any/index.js'
+export { nul, NullSchema, NullSchema_ } from './schema/null/index.js'
+export { boolean, BooleanSchema, BooleanSchema_ } from './schema/boolean/index.js'
+export { number, NumberSchema, NumberSchema_ } from './schema/number/index.js'
+export { string, StringSchema, StringSchema_ } from './schema/string/index.js'
+export { binary, BinarySchema, BinarySchema_ } from './schema/binary/index.js'
+export { set, SetSchema, SetSchema_ } from './schema/set/index.js'
+export { list, ListSchema, ListSchema_ } from './schema/list/index.js'
+export { map, MapSchema, MapSchema_ } from './schema/map/index.js'
+export { record, RecordSchema, RecordSchema_ } from './schema/record/index.js'
+export { anyOf, AnyOfSchema, AnyOfSchema_ } from './schema/anyOf/index.js'
+export { item, ItemSchema, ItemSchema_ } from './schema/item/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type { ParseValueOptions, InferWriteValueOptions } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'

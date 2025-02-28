@@ -1,5 +1,5 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 
-export class SchemaAction<SCHEMA extends AttrSchema = AttrSchema> {
+export class SchemaAction<SCHEMA extends Schema = Schema> {
   constructor(public schema: SCHEMA) {}
 }

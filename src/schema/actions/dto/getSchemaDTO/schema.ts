@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import type { ISchemaDTO } from '../types.js'
 import { getAnySchemaDTO } from './any.js'
@@ -10,7 +10,7 @@ import { getPrimitiveSchemaDTO } from './primitive.js'
 import { getRecordSchemaDTO } from './record.js'
 import { getSetSchemaDTO } from './set.js'
 
-export const getSchemaDTO = (schema: AttrSchema): ISchemaDTO => {
+export const getSchemaDTO = (schema: Schema): ISchemaDTO => {
   /**
    * @debt feature "handle defaults, links & validators"
    */

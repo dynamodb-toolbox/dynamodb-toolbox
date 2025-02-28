@@ -1,4 +1,4 @@
-import type { BinarySchema, PrimitiveSchema } from '~/attributes/index.js'
+import type { BinarySchema, PrimitiveSchema } from '~/schema/index.js'
 
 export type FormattedPrimitiveJSONSchema<SCHEMA extends PrimitiveSchema> =
   SCHEMA extends BinarySchema ? { type: 'string' } : { type: SCHEMA['type'] }
