@@ -52,7 +52,7 @@ export type UpdateItemResponse<
   Omit<UpdateCommandOutput, 'Attributes'>,
   {
     Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
-    ToolboxItem: UpdateItemInput<ENTITY, true>
+    ToolboxItem: UpdateItemInput<ENTITY, { filled: true }>
   }
 >
 
@@ -94,7 +94,7 @@ export class UpdateItemCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, true> } {
+  params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, { filled: true }> } {
     const [item, options] = this[$sentArgs]()
 
     return updateItemParams(this.entity, item, options)

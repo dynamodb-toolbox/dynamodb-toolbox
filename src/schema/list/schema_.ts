@@ -1,7 +1,7 @@
 /**
  * @debt circular "Remove & prevent imports from entity to schema"
  */
-import type { AttributeUpdateItemInput } from '~/entity/actions/update/types.js'
+import type { UpdateValueInput } from '~/entity/actions/update/types.js'
 import type { Paths, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
@@ -137,7 +137,7 @@ export class ListSchema_<
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
+    nextUpdateDefault: ValueOrGetter<UpdateValueInput<this, { filled: true }>>
   ): ListSchema_<ELEMENTS, Overwrite<PROPS, { updateDefault: unknown }>> {
     return new ListSchema_(
       this.elements,
@@ -203,8 +203,8 @@ export class ListSchema_<
    */
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
-      updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
-    ) => AttributeUpdateItemInput<this, true>
+      updateItemInput: UpdateValueInput<SCHEMA, { defined: true; extended: false }, Paths<SCHEMA>>
+    ) => UpdateValueInput<this, { filled: true }>
   ): ListSchema_<ELEMENTS, Overwrite<PROPS, { updateLink: unknown }>> {
     return new ListSchema_(
       this.elements,
@@ -271,7 +271,7 @@ export class ListSchema_<
    * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
+    nextUpdateValidator: Validator<UpdateValueInput<this, { filled: true }>, this>
   ): ListSchema_<ELEMENTS, Overwrite<PROPS, { updateValidator: Validator }>> {
     return new ListSchema_(
       this.elements,

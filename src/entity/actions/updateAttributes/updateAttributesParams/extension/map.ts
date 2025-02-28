@@ -4,7 +4,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   MapSchema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -36,6 +36,6 @@ export const parseMapExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateAttributesInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
   }
 }

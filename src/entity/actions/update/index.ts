@@ -12,5 +12,5 @@ export {
   $prepend
 } from './symbols/index.js'
 export type { UpdateItemOptions } from './options.js'
-export type { UpdateItemInput, AttributeUpdateItemInput } from './types.js'
+export type { UpdateItemInput, UpdateValueInput } from './types.js'
 export { parseUpdateExtension } from './updateItemParams/index.js'

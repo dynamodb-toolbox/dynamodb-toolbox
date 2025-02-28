@@ -1,7 +1,7 @@
 /**
  * @debt circular "Remove & prevent imports from entity to schema"
  */
-import type { AttributeUpdateItemInput } from '~/entity/actions/update/types.js'
+import type { UpdateValueInput } from '~/entity/actions/update/types.js'
 import type { Paths, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, NarrowObject, Overwrite, ValueOrGetter, Writable } from '~/types/index.js'
@@ -173,7 +173,7 @@ export class NumberSchema_<
    * @param nextUpdateDefault `updateAttributeInput | (() => updateAttributeInput)`
    */
   updateDefault(
-    nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
+    nextUpdateDefault: ValueOrGetter<UpdateValueInput<this, { filled: true }>>
   ): NumberSchema_<Overwrite<PROPS, { updateDefault: unknown }>> {
     return new NumberSchema_(overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }))
   }
@@ -230,8 +230,8 @@ export class NumberSchema_<
    */
   updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
-      updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
-    ) => AttributeUpdateItemInput<this, true>
+      updateItemInput: UpdateValueInput<SCHEMA, { defined: true; extended: false }, Paths<SCHEMA>>
+    ) => UpdateValueInput<this, { filled: true }>
   ): NumberSchema_<Overwrite<PROPS, { updateLink: unknown }>> {
     return new NumberSchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
   }
@@ -289,7 +289,7 @@ export class NumberSchema_<
    * @param nextUpdateValidator `(updateAttributeInput) => boolean | string`
    */
   updateValidate(
-    nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
+    nextUpdateValidator: Validator<UpdateValueInput<this, { filled: true }>, this>
   ): NumberSchema_<Overwrite<PROPS, { updateValidator: Validator }>> {
     return new NumberSchema_(
       overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
