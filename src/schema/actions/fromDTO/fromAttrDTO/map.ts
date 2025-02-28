@@ -2,14 +2,14 @@ import type { MapSchema } from '~/attributes/map/index.js'
 import { map } from '~/attributes/map/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
-import { fromAttrDTO } from './attribute.js'
+import { fromSchemaDTO } from './attribute.js'
 
 type MapAttrDTO = Extract<AttributeDTO, { type: 'map' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONMapAttr = ({
+export const fromMapSchemaDTO = ({
   keyDefault,
   putDefault,
   updateDefault,
@@ -30,7 +30,7 @@ export const fromJSONMapAttr = ({
     Object.fromEntries(
       Object.entries(attributes).map(([attributeName, attribute]) => [
         attributeName,
-        fromAttrDTO(attribute)
+        fromSchemaDTO(attribute)
       ])
     ),
     props

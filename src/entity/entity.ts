@@ -1,24 +1,27 @@
+import type { ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
+import type { ValidValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { If } from '~/types/if.js'
 
 import { $interceptor, $sentArgs } from './constants.js'
-import { addInternalAttributes, doesSchemaValidateTableSchema } from './utils/index.js'
 import type {
+  BuildEntitySchema,
+  EntityAttributes,
   NarrowTimestampsOptions,
   NeedsKeyCompute,
+  SchemaOf,
   TimestampsDefaultOptions,
-  TimestampsOptions,
-  WithInternalAttributes
+  TimestampsOptions
 } from './utils/index.js'
+import { buildEntitySchema, doesSchemaValidateTableSchema } from './utils/index.js'
 
 export class Entity<
   NAME extends string = string,
   TABLE extends Table = Table,
-  SCHEMA extends Schema = Schema,
+  ATTRIBUTES extends EntityAttributes = EntityAttributes,
   ENTITY_ATTRIBUTE_NAME extends string = string extends NAME ? string : 'entity',
   TIMESTAMPS_OPTIONS extends TimestampsOptions = string extends NAME
     ? TimestampsOptions
@@ -28,9 +31,9 @@ export class Entity<
   public type: 'entity'
   public name: NAME
   public table: TABLE
-  public constructorSchema: SCHEMA
-  public schema: WithInternalAttributes<
-    SCHEMA,
+  public attributes: ATTRIBUTES
+  public schema: BuildEntitySchema<
+    ATTRIBUTES,
     TABLE,
     ENTITY_ATTRIBUTE_NAME,
     ENTITY_ATTRIBUTE_HIDDEN,
@@ -45,7 +48,9 @@ export class Entity<
   public timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
   public computeKey?: (
-    keyInput: Schema extends SCHEMA ? any : ValidValue<SCHEMA, { mode: 'key' }>
+    keyInput: EntityAttributes extends ATTRIBUTES
+      ? any
+      : ValidValue<ItemSchema<ATTRIBUTES>, { mode: 'key' }>
   ) => PrimaryKey<TABLE>;
 
   [$interceptor]?: (action: EntitySendableAction) => any
@@ -61,13 +66,17 @@ export class Entity<
   }: {
     name: NAME
     table: TABLE
-    schema: SCHEMA
+    schema: SchemaOf<ATTRIBUTES>
     entityAttributeName?: ENTITY_ATTRIBUTE_NAME
     entityAttributeHidden?: ENTITY_ATTRIBUTE_HIDDEN
     timestamps?: NarrowTimestampsOptions<TIMESTAMPS_OPTIONS>
   } & If<
-    NeedsKeyCompute<SCHEMA, TABLE>,
-    { computeKey: (keyInput: ValidValue<SCHEMA, { mode: 'key' }>) => PrimaryKey<TABLE> },
+    NeedsKeyCompute<ATTRIBUTES, TABLE>,
+    {
+      computeKey: (
+        keyInput: ValidValue<ItemSchema<ATTRIBUTES>, { mode: 'key' }>
+      ) => PrimaryKey<TABLE>
+    },
     { computeKey?: undefined }
   >) {
     this.type = 'entity'
@@ -83,15 +92,16 @@ export class Entity<
       })
     }
 
-    this.constructorSchema = schema
-    this.schema = addInternalAttributes({
-      schema,
-      table: this.table,
-      entityAttributeName: this.entityAttributeName,
-      entityAttributeHidden: this.entityAttributeHidden,
+    this.attributes = schema.attributes
+    this.schema = buildEntitySchema({
+      ...this,
+      /**
+       * @debt v2 "Rename name to entityName"
+       */
       entityName: this.name,
-      timestamps: this.timestamps
+      schema
     })
+    this.schema.check()
 
     this.computeKey = computeKey as any
   }

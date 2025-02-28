@@ -1,14 +1,15 @@
 /**
  * @debt circular "Remove & prevent imports from entity to schema"
  */
-import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { AttributeUpdateItemInput } from '~/entity/actions/update/types.js'
+import type { Paths, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
+import type { AttrSchema } from '../types/attrSchema.js'
 import type { Validator } from '../types/validator.js'
 import type { ResolveAnySchema } from './resolve.js'
 import { AnySchema } from './schema.js'
@@ -156,9 +157,9 @@ export class AnySchema_<PROPS extends AnySchemaProps = AnySchemaProps> extends A
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends Schema>(
+  keyLink<SCHEMA extends AttrSchema>(
     nextKeyLink: (
-      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
   ): AnySchema_<Overwrite<PROPS, { keyLink: unknown }>> {
     return new AnySchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }))
@@ -169,8 +170,8 @@ export class AnySchema_<PROPS extends AnySchemaProps = AnySchemaProps> extends A
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends Schema>(
-    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
+  putLink<SCHEMA extends AttrSchema>(
+    nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): AnySchema_<Overwrite<PROPS, { putLink: unknown }>> {
     return new AnySchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
   }
@@ -180,9 +181,9 @@ export class AnySchema_<PROPS extends AnySchemaProps = AnySchemaProps> extends A
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends Schema>(
+  updateLink<SCHEMA extends AttrSchema>(
     nextUpdateLink: (
-      updateItemInput: UpdateItemInput<SCHEMA, true>
+      updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
   ): AnySchema_<Overwrite<PROPS, { updateLink: unknown }>> {
     return new AnySchema_(overwrite(this.props, { updateLink: nextUpdateLink as unknown }))
@@ -193,9 +194,13 @@ export class AnySchema_<PROPS extends AnySchemaProps = AnySchemaProps> extends A
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends Schema>(
+  link<SCHEMA extends AttrSchema>(
     nextLink: (
-      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+      keyOrPutItemInput: If<
+        PROPS['key'],
+        ValidValue<SCHEMA, { mode: 'key'; defined: true }>,
+        ValidValue<SCHEMA, { defined: true }>
+      >
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],

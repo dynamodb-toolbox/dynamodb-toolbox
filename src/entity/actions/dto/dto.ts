@@ -1,9 +1,10 @@
+import { ItemSchema } from '~/attributes/item/schema.js'
 import type { Entity } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
 import { SchemaDTO } from '~/schema/actions/dto/index.js'
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
-import { TableDTO } from '~/table/actions/dto/index.js'
+import type { ItemSchemaDTO } from '~/schema/actions/dto/types.js'
 import type { ITableDTO } from '~/table/actions/dto/index.js'
+import { TableDTO } from '~/table/actions/dto/index.js'
 
 type TimestampOption = boolean | { name?: string; savedAs?: string; hidden?: boolean }
 
@@ -14,7 +15,7 @@ export interface IEntityDTO {
   entityAttributeName?: string
   entityAttributeHidden?: boolean
   timestamps?: TimestampOptions
-  schema: ISchemaDTO
+  schema: ItemSchemaDTO
   table: ITableDTO
 }
 
@@ -33,7 +34,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   constructor(entity: ENTITY) {
     super(entity)
 
-    const constructorShemaDTO = this.entity.constructorSchema.build(SchemaDTO)
+    const constructorShemaDTO = new SchemaDTO(new ItemSchema(this.entity.attributes))
 
     const { partitionKey, sortKey } = this.entity.table
     const partitionKeyAttr = Object.entries(constructorShemaDTO.attributes).find(
@@ -74,7 +75,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   toJSON(): IEntityDTO {
     return {
       entityName: this.entityName,
-      schema: this.schema.toJSON(),
+      schema: this.schema.toJSON() as ItemSchemaDTO,
       entityAttributeName: this.entity.entityAttributeName,
       entityAttributeHidden: this.entity.entityAttributeHidden,
       timestamps: this.entity.timestamps,

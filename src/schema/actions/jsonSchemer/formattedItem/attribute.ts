@@ -2,6 +2,7 @@ import type {
   AnyOfSchema,
   AnySchema,
   AttrSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   PrimitiveSchema,
@@ -10,33 +11,36 @@ import type {
 } from '~/attributes/index.js'
 
 import type { FormattedAnyOfJSONSchema } from './anyOf.js'
-import { getFormattedAnyOfAttrJSONSchema } from './anyOf.js'
+import { getFormattedAnyOfJSONSchema } from './anyOf.js'
+import type { FormattedItemJSONSchema } from './item.js'
+import { getFormattedItemJSONSchema } from './item.js'
 import type { FormattedListJSONSchema } from './list.js'
-import { getFormattedListAttrJSONSchema } from './list.js'
+import { getFormattedListJSONSchema } from './list.js'
 import type { FormattedMapJSONSchema } from './map.js'
 import { getFormattedMapAttrJSONSchema } from './map.js'
 import type { FormattedPrimitiveJSONSchema } from './primitive.js'
-import { getFormattedPrimitiveAttrJSONSchema } from './primitive.js'
+import { getFormattedPrimitiveJSONSchema } from './primitive.js'
 import type { FormattedRecordJSONSchema } from './record.js'
 import { getFormattedRecordAttrJSONSchema } from './record.js'
 import type { FormattedSetJSONSchema } from './set.js'
-import { getFormattedSetAttrJSONSchema } from './set.js'
+import { getFormattedSetJSONSchema } from './set.js'
 
-export type FormattedAttrJSONSchema<ATTRIBUTE extends AttrSchema> = AttrSchema extends ATTRIBUTE
+export type FormattedValueJSONSchema<SCHEMA extends AttrSchema> = AttrSchema extends SCHEMA
   ? Record<string, unknown>
   :
-      | (ATTRIBUTE extends AnySchema ? {} : never)
-      | (ATTRIBUTE extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends SetSchema ? FormattedSetJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends ListSchema ? FormattedListJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends MapSchema ? FormattedMapJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends RecordSchema ? FormattedRecordJSONSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends AnyOfSchema ? FormattedAnyOfJSONSchema<ATTRIBUTE> : never)
+      | (SCHEMA extends AnySchema ? {} : never)
+      | (SCHEMA extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends SetSchema ? FormattedSetJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends ListSchema ? FormattedListJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends MapSchema ? FormattedMapJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends RecordSchema ? FormattedRecordJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
+      | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
-export const getFormattedAttrJSONSchema = <ATTRIBUTE extends AttrSchema>(
-  attr: ATTRIBUTE
-): FormattedAttrJSONSchema<ATTRIBUTE> => {
-  type Response = FormattedAttrJSONSchema<ATTRIBUTE>
+export const getFormattedValueJSONSchema = <VALUE extends AttrSchema>(
+  attr: VALUE
+): FormattedValueJSONSchema<VALUE> => {
+  type Response = FormattedValueJSONSchema<VALUE>
 
   switch (attr.type) {
     case 'any':
@@ -46,16 +50,18 @@ export const getFormattedAttrJSONSchema = <ATTRIBUTE extends AttrSchema>(
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveAttrJSONSchema(attr) as Response
+      return getFormattedPrimitiveJSONSchema(attr) as Response
     case 'set':
-      return getFormattedSetAttrJSONSchema(attr) as Response
+      return getFormattedSetJSONSchema(attr) as Response
     case 'list':
-      return getFormattedListAttrJSONSchema(attr) as Response
+      return getFormattedListJSONSchema(attr) as Response
     case 'map':
       return getFormattedMapAttrJSONSchema(attr) as Response
     case 'record':
       return getFormattedRecordAttrJSONSchema(attr) as Response
     case 'anyOf':
-      return getFormattedAnyOfAttrJSONSchema(attr) as Response
+      return getFormattedAnyOfJSONSchema(attr) as Response
+    case 'item':
+      return getFormattedItemJSONSchema(attr) as Response
   }
 }

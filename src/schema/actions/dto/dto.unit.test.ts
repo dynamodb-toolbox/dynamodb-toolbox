@@ -4,6 +4,7 @@ import { any } from '~/attributes/any/index.js'
 import { anyOf } from '~/attributes/anyOf/index.js'
 import { binary } from '~/attributes/binary/index.js'
 import { boolean } from '~/attributes/boolean/index.js'
+import { item } from '~/attributes/item/index.js'
 import { list } from '~/attributes/list/index.js'
 import { map } from '~/attributes/map/index.js'
 import { nul } from '~/attributes/null/index.js'
@@ -11,14 +12,13 @@ import { number } from '~/attributes/number/index.js'
 import { record } from '~/attributes/record/index.js'
 import { set } from '~/attributes/set/index.js'
 import { string } from '~/attributes/string/index.js'
-import { schema } from '~/schema/index.js'
 
 import { SchemaDTO } from './dto.js'
-import type { ISchemaDTO } from './types.js'
+import type { ItemSchemaDTO } from './types.js'
 
 describe('dto', () => {
   test('correctly builds simple schema DTO', () => {
-    const simpleSchema = schema({
+    const simpleSchema = item({
       any: any(),
       null: nul(),
       bool: boolean(),
@@ -37,12 +37,12 @@ describe('dto', () => {
 
     const dto = simpleSchema.build(SchemaDTO)
 
-    const assertJSON: A.Contains<typeof dto, ISchemaDTO> = 1
+    const assertJSON: A.Contains<typeof dto, ItemSchemaDTO> = 1
     assertJSON
 
     const schemaObj = JSON.parse(JSON.stringify(dto))
     expect(schemaObj).toStrictEqual({
-      type: 'schema',
+      type: 'item',
       attributes: {
         any: { type: 'any' },
         null: { type: 'null' },
@@ -79,7 +79,7 @@ describe('dto', () => {
   })
 
   test('correctly builds rich schema DTO', () => {
-    const richSchema = schema({
+    const richSchema = item({
       any: any().key(),
       null: nul().hidden(),
       bool: boolean().required('always'),
@@ -89,12 +89,12 @@ describe('dto', () => {
 
     const dto = richSchema.build(SchemaDTO)
 
-    const assertJSON: A.Contains<typeof dto, ISchemaDTO> = 1
+    const assertJSON: A.Contains<typeof dto, ItemSchemaDTO> = 1
     assertJSON
 
     const schemaObj = JSON.parse(JSON.stringify(dto))
     expect(schemaObj).toStrictEqual({
-      type: 'schema',
+      type: 'item',
       attributes: {
         any: { type: 'any', required: 'always', key: true },
         null: { type: 'null', hidden: true },

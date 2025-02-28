@@ -1,25 +1,23 @@
-import type { AttrSchema, StringSchema } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { AttrSchema, ItemSchema, StringSchema } from '~/attributes/index.js'
 import type { Table } from '~/table/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { If } from '~/types/if.js'
 
+import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
 import type { TimestampsOptions } from './options.js'
 import type { IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 
 export type WithInternalAttribute<
-  SCHEMA extends Schema,
+  ATTRIBUTES extends EntityAttributes,
   ATTRIBUTE_NAME extends string,
   ATTRIBUTE_SCHEMA extends AttrSchema
-> = Schema<
-  ComputeObject<{
-    [KEY in keyof SCHEMA['attributes'] | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
-      ? ATTRIBUTE_SCHEMA
-      : KEY extends keyof SCHEMA['attributes']
-        ? SCHEMA['attributes'][KEY]
-        : never
-  }>
->
+> = ComputeObject<{
+  [KEY in keyof ATTRIBUTES | ATTRIBUTE_NAME]: KEY extends ATTRIBUTE_NAME
+    ? ATTRIBUTE_SCHEMA
+    : KEY extends keyof ATTRIBUTES
+      ? ATTRIBUTES[KEY]
+      : never
+}>
 
 export type $EntityAttribute<
   TABLE extends Table,
@@ -34,15 +32,15 @@ export type $EntityAttribute<
 }>
 
 export type WithEntityAttribute<
-  SCHEMA extends Schema,
+  ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean,
   ENTITY_NAME extends string
 > = string extends ENTITY_NAME
-  ? SCHEMA
+  ? EntityAttributes
   : WithInternalAttribute<
-      SCHEMA,
+      ATTRIBUTES,
       ENTITY_ATTRIBUTE_NAME,
       $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN>
     >
@@ -55,7 +53,7 @@ export type $TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean>
 }>
 
 export type WithTimestampAttributes<
-  SCHEMA extends Schema,
+  ATTRIBUTES extends EntityAttributes,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   IS_CREATED_ENABLED extends boolean = IsTimestampEnabled<TIMESTAMP_OPTIONS, 'created'>,
@@ -67,14 +65,14 @@ export type WithTimestampAttributes<
   MODIFIED_SAVED_AS extends string = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
   MODIFIED_HIDDEN extends boolean = TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
 > = string extends ENTITY_NAME
-  ? SCHEMA
+  ? EntityAttributes
   : If<
       IS_CREATED_ENABLED,
       If<
         IS_MODIFIED_ENABLED,
         WithInternalAttribute<
           WithInternalAttribute<
-            SCHEMA,
+            ATTRIBUTES,
             CREATED_NAME,
             $TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
           >,
@@ -82,7 +80,7 @@ export type WithTimestampAttributes<
           $TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
         WithInternalAttribute<
-          SCHEMA,
+          ATTRIBUTES,
           CREATED_NAME,
           $TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
         >
@@ -90,59 +88,63 @@ export type WithTimestampAttributes<
       If<
         IS_MODIFIED_ENABLED,
         WithInternalAttribute<
-          SCHEMA,
+          ATTRIBUTES,
           MODIFIED_NAME,
           $TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
-        SCHEMA
+        ATTRIBUTES
       >
     >
 
-export type WithInternalAttributes<
-  SCHEMA extends Schema,
+export type BuildEntitySchema<
+  ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions
 > = string extends ENTITY_NAME
-  ? SCHEMA
+  ? ItemSchema
   : TIMESTAMP_OPTIONS extends false
-    ? WithEntityAttribute<
-        SCHEMA,
-        TABLE,
-        ENTITY_ATTRIBUTE_NAME,
-        ENTITY_ATTRIBUTE_HIDDEN,
-        ENTITY_NAME
-      >
-    : WithTimestampAttributes<
+    ? ItemSchema<
         WithEntityAttribute<
-          SCHEMA,
+          ATTRIBUTES,
           TABLE,
           ENTITY_ATTRIBUTE_NAME,
           ENTITY_ATTRIBUTE_HIDDEN,
           ENTITY_NAME
-        >,
-        ENTITY_NAME,
-        TIMESTAMP_OPTIONS
+        >
+      >
+    : ItemSchema<
+        WithTimestampAttributes<
+          WithEntityAttribute<
+            ATTRIBUTES,
+            TABLE,
+            ENTITY_ATTRIBUTE_NAME,
+            ENTITY_ATTRIBUTE_HIDDEN,
+            ENTITY_NAME
+          >,
+          ENTITY_NAME,
+          TIMESTAMP_OPTIONS
+        >
       >
 
-export type InternalAttributesAdder = <
-  SCHEMA extends Schema,
+export type EntitySchemaBuilder = <
+  ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean,
   ENTITY_NAME extends string,
   TIMESTAMP_OPTIONS extends TimestampsOptions
 >(args: {
-  schema: SCHEMA
+  schema: SchemaOf<ATTRIBUTES>
   table: TABLE
   entityAttributeName: ENTITY_ATTRIBUTE_NAME
   entityAttributeHidden: ENTITY_ATTRIBUTE_HIDDEN
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
-}) => WithInternalAttributes<
-  SCHEMA,
+}) => BuildEntitySchema<
+  ATTRIBUTES,
   TABLE,
   ENTITY_ATTRIBUTE_NAME,
   ENTITY_ATTRIBUTE_HIDDEN,

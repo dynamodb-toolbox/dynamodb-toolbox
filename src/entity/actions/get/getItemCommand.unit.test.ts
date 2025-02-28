@@ -6,7 +6,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { Entity, Table, schema, string } from '~/index.js'
+import { Entity, Table, item, string } from '~/index.js'
 
 import { GetItemCommand } from './getItemCommand.js'
 
@@ -23,7 +23,7 @@ const TestTable = new Table({
 
 const EntityA = new Entity({
   name: 'EntityA',
-  schema: schema({
+  schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk')
   }),

@@ -2,6 +2,7 @@ import {
   AnyOfSchema,
   BinarySchema,
   BooleanSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   NullSchema,
@@ -10,15 +11,15 @@ import {
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
-import { Schema } from '~/schema/index.js'
+import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
 
-import { fromSchemaDTO } from './fromSchemaDTO.js'
+import { fromAttrDTO } from './fromAttrDTO/index.js'
 
 describe('fromDTO - schema', () => {
   test('creates correct schema', () => {
-    const schemaDTO: ISchemaDTO = {
-      type: 'schema',
+    // TODO: Name ISchemaDTO the union of all schemas DTO
+    const schemaDTO: ItemSchemaDTO['attributes'][string] = {
+      type: 'item',
       attributes: {
         null: { type: 'null' },
         boolean: { type: 'boolean', key: true },
@@ -46,11 +47,10 @@ describe('fromDTO - schema', () => {
       }
     }
 
-    const importedSchema = fromSchemaDTO(schemaDTO)
+    const importedSchema = fromAttrDTO(schemaDTO)
 
-    expect(importedSchema).toBeInstanceOf(Schema)
-
-    const { attributes } = importedSchema
+    expect(importedSchema).toBeInstanceOf(ItemSchema)
+    const { attributes } = importedSchema as ItemSchema
 
     expect(attributes.null).toBeInstanceOf(NullSchema)
 

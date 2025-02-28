@@ -7,7 +7,6 @@ import type {
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
 import { SchemaAction } from '~/schema/index.js'
-import type { Schema } from '~/schema/index.js'
 
 import { appendAttributeValue } from './appendAttributeValue.js'
 import type { AppendAttributeValueOptions } from './appendAttributeValue.js'
@@ -16,7 +15,7 @@ import type { SchemaCondition } from './condition.js'
 import { parseCondition } from './parseCondition/index.js'
 import { toCommandOptions } from './toCommandOptions.js'
 
-export class ConditionParser<SCHEMA extends Schema | AttrSchema = Schema | AttrSchema>
+export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
@@ -88,7 +87,7 @@ export class ConditionParser<SCHEMA extends Schema | AttrSchema = Schema | AttrS
     return toCommandOptions(this)
   }
 
-  clone(schema?: Schema | AttrSchema): ConditionParser {
+  clone(schema?: AttrSchema): ConditionParser {
     const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

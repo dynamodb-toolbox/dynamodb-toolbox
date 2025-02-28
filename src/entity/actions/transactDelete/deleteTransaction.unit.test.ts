@@ -1,4 +1,4 @@
-import { DeleteTransaction, DynamoDBToolboxError, Entity, Table, schema, string } from '~/index.js'
+import { DeleteTransaction, DynamoDBToolboxError, Entity, Table, item, string } from '~/index.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -14,7 +14,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()
@@ -24,7 +24,7 @@ const TestEntity = new Entity({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     pk: string().key(),
     sk: string().key(),
     test: string()

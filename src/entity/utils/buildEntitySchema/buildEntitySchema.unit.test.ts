@@ -1,13 +1,13 @@
 import type { A } from 'ts-toolbelt'
 
 import type { StringSchema } from '~/attributes/index.js'
+import { item } from '~/attributes/item/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { schema } from '~/schema/index.js'
 import { Table } from '~/table/index.js'
 
-import { addInternalAttributes } from './addInternalAttributes.js'
+import { buildEntitySchema } from './buildEntitySchema.js'
 
 const entityAttributeSavedAs = '__et__'
 
@@ -20,13 +20,11 @@ const myTable = new Table({
   entityAttributeSavedAs
 })
 
-const mySchema = schema({
-  str: string()
-})
+const mySchema = item({ str: string() })
 
 describe('addInternalAttributes', () => {
   describe('entity attribute', () => {
-    const enrichedSchema = addInternalAttributes({
+    const enrichedSchema = buildEntitySchema({
       schema: mySchema,
       table: myTable,
       entityAttributeName: 'id',
@@ -72,7 +70,7 @@ describe('addInternalAttributes', () => {
 
   describe('timestamp attributes', () => {
     test('does not add created attribute if timestamps are disabled', () => {
-      const noTimestampSchema = addInternalAttributes({
+      const noTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
@@ -90,7 +88,7 @@ describe('addInternalAttributes', () => {
       const assertNoModified: A.Extends<typeof noTimestampSchema.attributes, { modified: any }> = 0
       assertNoModified
 
-      const noCreatedTimestampSchema = addInternalAttributes({
+      const noCreatedTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
@@ -110,7 +108,7 @@ describe('addInternalAttributes', () => {
       > = 0
       assertNoCreated2
 
-      const noModifiedTimestampSchema = addInternalAttributes({
+      const noModifiedTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'id',
@@ -132,7 +130,7 @@ describe('addInternalAttributes', () => {
     })
 
     test('adds created field', () => {
-      const enrichedSchema = addInternalAttributes({
+      const enrichedSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -164,7 +162,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const partialCustomSchema = addInternalAttributes({
+      const partialCustomSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -198,7 +196,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const customSchema = addInternalAttributes({
+      const customSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -237,7 +235,7 @@ describe('addInternalAttributes', () => {
     })
 
     test('adds modified field', () => {
-      const enrichedSchema = addInternalAttributes({
+      const enrichedSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -269,7 +267,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const partialCustomSchema = addInternalAttributes({
+      const partialCustomSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -303,7 +301,7 @@ describe('addInternalAttributes', () => {
         }
       })
 
-      const customSchema = addInternalAttributes({
+      const customSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
         entityAttributeName: 'entity',
@@ -351,12 +349,12 @@ describe('addInternalAttributes', () => {
 
   describe('reserved attribute names', () => {
     test('throws a "reservedAttributeName" error if ', () => {
-      const invalidSchema = schema({
+      const invalidSchema = item({
         entity: string()
       })
 
       const invalidCall = () =>
-        addInternalAttributes({
+        buildEntitySchema({
           schema: invalidSchema,
           table: myTable,
           entityAttributeName: 'entity',
@@ -370,12 +368,12 @@ describe('addInternalAttributes', () => {
     })
 
     test('throws a "reservedAttributeSavedAs" error if ', () => {
-      const invalidSchema = schema({
+      const invalidSchema = item({
         ent: string().savedAs(entityAttributeSavedAs)
       })
 
       const invalidCall = () =>
-        addInternalAttributes({
+        buildEntitySchema({
           schema: invalidSchema,
           table: myTable,
           entityAttributeName: 'entity',

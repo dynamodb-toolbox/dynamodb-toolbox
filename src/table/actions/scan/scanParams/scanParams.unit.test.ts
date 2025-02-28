@@ -5,9 +5,9 @@ import {
   Entity,
   ScanCommand,
   Table,
+  item,
   number,
   prefix,
-  schema,
   string
 } from '~/index.js'
 import type { FormattedItem } from '~/index.js'
@@ -47,7 +47,7 @@ const TestTable = new Table({
 
 const Entity1 = new Entity({
   name: 'entity1',
-  schema: schema({
+  schema: item({
     userPoolId: string().key().savedAs('pk'),
     userId: string().key().savedAs('sk'),
     name: string(),
@@ -58,7 +58,7 @@ const Entity1 = new Entity({
 
 const Entity2 = new Entity({
   name: 'entity2',
-  schema: schema({
+  schema: item({
     productGroupId: string().key().savedAs('pk'),
     productId: string().key().savedAs('sk'),
     launchDate: string(),
@@ -585,7 +585,7 @@ describe('scan', () => {
   test('transforms attributes when applying filters', () => {
     const TestEntity3 = new Entity({
       name: 'entity3',
-      schema: schema({
+      schema: item({
         email: string().key().savedAs('pk'),
         sort: string().key().savedAs('sk'),
         transformedStr: string().transform(prefix('foo'))

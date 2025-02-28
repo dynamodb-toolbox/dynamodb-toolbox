@@ -7,7 +7,7 @@ type AnyAttrDTO = Extract<AttributeDTO, { type: 'any' }>
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONAnyAttr = ({
+export const fromAnySchemaDTO = ({
   keyDefault,
   putDefault,
   updateDefault,

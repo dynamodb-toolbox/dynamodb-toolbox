@@ -1,16 +1,17 @@
 /**
  * @debt circular "Remove & prevent imports from entity to schema"
  */
-import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { AttributeUpdateItemInput } from '~/entity/actions/update/types.js'
+import type { Paths, SchemaAction, ValidValue } from '~/schema/index.js'
 import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import { light } from '../shared/light.js'
 import type { Light } from '../shared/light.js'
+import { light } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
+import type { AttrSchema } from '../types/attrSchema.js'
 import type { Validator } from '../types/validator.js'
 import { SetSchema } from './schema.js'
 import type { SetElementSchema } from './types.js'
@@ -165,9 +166,9 @@ export class SetSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends Schema>(
+  keyLink<SCHEMA extends AttrSchema>(
     nextKeyLink: (
-      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
   ): SetSchema_<Overwrite<PROPS, { keyLink: unknown }>, ELEMENTS> {
     return new SetSchema_(overwrite(this.props, { keyLink: nextKeyLink as unknown }), this.elements)
@@ -178,8 +179,8 @@ export class SetSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends Schema>(
-    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
+  putLink<SCHEMA extends AttrSchema>(
+    nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): SetSchema_<Overwrite<PROPS, { putLink: unknown }>, ELEMENTS> {
     return new SetSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }), this.elements)
   }
@@ -189,9 +190,9 @@ export class SetSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends Schema>(
+  updateLink<SCHEMA extends AttrSchema>(
     nextUpdateLink: (
-      updateItemInput: UpdateItemInput<SCHEMA, true>
+      updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
   ): SetSchema_<Overwrite<PROPS, { updateLink: unknown }>, ELEMENTS> {
     return new SetSchema_(
@@ -205,9 +206,13 @@ export class SetSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends Schema>(
+  link<SCHEMA extends AttrSchema>(
     nextLink: (
-      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+      keyOrPutItemInput: If<
+        PROPS['key'],
+        ValidValue<SCHEMA, { mode: 'key'; defined: true }>,
+        ValidValue<SCHEMA, { defined: true }>
+      >
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],

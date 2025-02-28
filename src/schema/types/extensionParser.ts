@@ -1,5 +1,4 @@
-import type { AttrSchema, AttributeBasicValue, Extension } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { AttrSchema, AttributeBasicValue, Extension, ItemSchema } from '~/attributes/index.js'
 
 import type { TransformedValue } from './transformedValue.js'
 import type { ValidValue } from './validValue.js'
@@ -25,7 +24,7 @@ export type ExtensionParser<
       extensionParser: () => Generator<
         ValidValue<AttrSchema, { extension: EXTENSION }>,
         TransformedValue<AttrSchema, { extension: EXTENSION }>,
-        ValidValue<Schema, { extension: CONTEXT_EXTENSION }> | undefined
+        ValidValue<ItemSchema, { extension: CONTEXT_EXTENSION }> | undefined
       >
       basicInput?: never
     }

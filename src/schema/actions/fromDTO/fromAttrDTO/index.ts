@@ -1,1 +1,1 @@
-export { fromAttrDTO } from './attribute.js'
+export { fromSchemaDTO as fromAttrDTO } from './attribute.js'

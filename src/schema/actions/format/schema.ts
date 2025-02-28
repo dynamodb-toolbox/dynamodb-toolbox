@@ -1,5 +1,5 @@
+import type { ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'
@@ -7,11 +7,11 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* schemaFormatter<OPTIONS extends FormatValueOptions<Schema> = {}>(
-  schema: Schema,
+export function* schemaFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
+  schema: ItemSchema,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS
-): Generator<FormatterYield<Schema, OPTIONS>, FormatterReturn<Schema, OPTIONS>> {
+): Generator<FormatterYield<ItemSchema, OPTIONS>, FormatterReturn<ItemSchema, OPTIONS>> {
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {

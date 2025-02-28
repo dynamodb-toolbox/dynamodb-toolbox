@@ -1,6 +1,5 @@
-import { string } from '~/attributes/index.js'
+import { item, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { schema } from '~/schema/index.js'
 
 import * as attrParserModule from './attribute.js'
 import { schemaParser } from './schema.js'
@@ -8,7 +7,7 @@ import { schemaParser } from './schema.js'
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const sch = schema({ foo: string(), bar: string() })
+const sch = item({ foo: string(), bar: string() })
 
 describe('schemaParser', () => {
   beforeEach(() => {
