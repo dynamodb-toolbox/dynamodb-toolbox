@@ -45,7 +45,9 @@ export class UpdateTransaction<
     return new UpdateTransaction(this.entity, this[$item], nextOptions)
   }
 
-  params(): Require<TransactWriteItem, 'Update'> & { ToolboxItem: UpdateItemInput<ENTITY, true> } {
+  params(): Require<TransactWriteItem, 'Update'> & {
+    ToolboxItem: UpdateItemInput<ENTITY, { filled: true }>
+  } {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'UpdateTransaction incomplete: Missing "item" property'
@@ -84,7 +86,7 @@ export class UpdateTransaction<
       /**
        * @debt type "TODO: Rework extensions & not cast here (use `ParsedItem<ENTITY, { extension: UpdateItemExtension }>`)"
        */
-      ToolboxItem: parsedItem as UpdateItemInput<ENTITY, true>,
+      ToolboxItem: parsedItem as UpdateItemInput<ENTITY, { filled: true }>,
       Update: {
         TableName: options.tableName ?? this.entity.table.getName(),
         Key: key,

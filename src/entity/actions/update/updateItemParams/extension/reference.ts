@@ -5,7 +5,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   Schema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -24,7 +24,7 @@ export const parseReferenceExtension: ExtensionParser<
   if (!isGetting(inputValue) || inputValue[$GET] === undefined) {
     return {
       isExtension: false,
-      basicInput: inputValue as SchemaBasicValue<ReferenceExtension> | undefined
+      unextendedInput: inputValue as SchemaUnextendedValue<ReferenceExtension> | undefined
     }
   }
 

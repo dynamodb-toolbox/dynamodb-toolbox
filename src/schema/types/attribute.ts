@@ -25,73 +25,76 @@ export type ExtendedValue<
       : never
     : never
 
-export type NullBasicValue = ResolvedNullSchema
+export type NullUnextendedValue = ResolvedNullSchema
 export type NullExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'null'>
-  | NullBasicValue
+  | NullUnextendedValue
 
-export type BooleanBasicValue = ResolvedBooleanSchema
+export type BooleanUnextendedValue = ResolvedBooleanSchema
 export type BooleanExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'boolean'>
-  | BooleanBasicValue
+  | BooleanUnextendedValue
 
-export type NumberBasicValue = ResolvedNumberSchema
+export type NumberUnextendedValue = ResolvedNumberSchema
 export type NumberExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'number'>
-  | NumberBasicValue
+  | NumberUnextendedValue
 
-export type StringBasicValue = ResolvedStringSchema
+export type StringUnextendedValue = ResolvedStringSchema
 export type StringExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'string'>
-  | StringBasicValue
+  | StringUnextendedValue
 
-export type BinaryBasicValue = ResolvedBinarySchema
+export type BinaryUnextendedValue = ResolvedBinarySchema
 export type BinaryExtendedAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'binary'>
-  | BinaryBasicValue
+  | BinaryUnextendedValue
 
-export type SetBasicValue<EXTENSION extends Extension = never> = Set<SchemaExtendedValue<EXTENSION>>
+export type SetUnextendedValue<EXTENSION extends Extension = never> = Set<
+  SchemaExtendedValue<EXTENSION>
+>
 export type SetExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'set'>
-  | SetBasicValue<EXTENSION>
+  | SetUnextendedValue<EXTENSION>
 
-export type ListBasicValue<EXTENSION extends Extension = never> = SchemaExtendedValue<EXTENSION>[]
+export type ListUnextendedValue<EXTENSION extends Extension = never> =
+  SchemaExtendedValue<EXTENSION>[]
 export type ListExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'list'>
-  | ListBasicValue<EXTENSION>
+  | ListUnextendedValue<EXTENSION>
 
-export type MapBasicValue<EXTENSION extends Extension = never> = {
+export type MapUnextendedValue<EXTENSION extends Extension = never> = {
   [key: string]: SchemaExtendedValue<EXTENSION>
 }
 export type MapExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'map'>
-  | MapBasicValue<EXTENSION>
+  | MapUnextendedValue<EXTENSION>
 
-export type RecordBasicValue<EXTENSION extends Extension = never> = {
+export type RecordUnextendedValue<EXTENSION extends Extension = never> = {
   [key: string]: SchemaExtendedValue<EXTENSION> | undefined
 }
 export type RecordExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'record'>
-  | RecordBasicValue<EXTENSION>
+  | RecordUnextendedValue<EXTENSION>
 
-export type ItemBasicValue<EXTENSION extends Extension = never> = {
+export type ItemUnextendedValue<EXTENSION extends Extension = never> = {
   [key: string]: SchemaExtendedValue<EXTENSION> | undefined
 }
 export type ItemExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'item'>
-  | ItemBasicValue<EXTENSION>
+  | ItemUnextendedValue<EXTENSION>
 
-export type SchemaBasicValue<EXTENSION extends Extension = never> =
-  | NullBasicValue
-  | BooleanBasicValue
-  | NumberBasicValue
-  | StringBasicValue
-  | BinaryBasicValue
-  | SetBasicValue<EXTENSION>
-  | ListBasicValue<EXTENSION>
-  | MapBasicValue<EXTENSION>
-  | RecordBasicValue<EXTENSION>
-  | ItemBasicValue<EXTENSION>
+export type SchemaUnextendedValue<EXTENSION extends Extension = never> =
+  | NullUnextendedValue
+  | BooleanUnextendedValue
+  | NumberUnextendedValue
+  | StringUnextendedValue
+  | BinaryUnextendedValue
+  | SetUnextendedValue<EXTENSION>
+  | ListUnextendedValue<EXTENSION>
+  | MapUnextendedValue<EXTENSION>
+  | RecordUnextendedValue<EXTENSION>
+  | ItemUnextendedValue<EXTENSION>
 
 export type SchemaExtendedValue<EXTENSION extends Extension = never> =
   | NullExtendedValue<EXTENSION>
@@ -104,5 +107,3 @@ export type SchemaExtendedValue<EXTENSION extends Extension = never> =
   | MapExtendedValue<EXTENSION>
   | RecordExtendedValue<EXTENSION>
   | ItemExtendedValue<EXTENSION>
-
-export type UndefinedAttrExtension = { type: '*'; value: undefined }

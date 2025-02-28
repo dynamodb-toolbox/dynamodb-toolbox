@@ -8,7 +8,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   Schema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
@@ -71,7 +71,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     default:
       return {
         isExtension: false,
-        basicInput: input as SchemaBasicValue<UpdateAttributesInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
       }
   }
 }

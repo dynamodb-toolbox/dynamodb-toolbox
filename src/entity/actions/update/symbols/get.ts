@@ -3,12 +3,12 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { Reference } from '../types.js'
 import { $IS_EXTENSION } from './isExtension.js'
-import type { Extension } from './isExtension.js'
+import type { Extended } from './isExtension.js'
 
 export const $GET = Symbol('$GET')
 export type $GET = typeof $GET
 
-export type GET<VALUE> = Extension<{ [$GET]: VALUE }>
+export type GET<VALUE> = Extended<{ [$GET]: VALUE }>
 
 export const $get = <
   REFERENCE extends string,
