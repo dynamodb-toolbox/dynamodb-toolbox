@@ -1,5 +1,5 @@
 import type { AttrSchema } from '../types/index.js'
 
-export interface MapAttributeSchemas {
+export interface MapAttributes {
   [key: string]: AttrSchema
 }

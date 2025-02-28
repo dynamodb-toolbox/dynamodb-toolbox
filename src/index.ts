@@ -12,9 +12,10 @@ export { list, ListSchema, ListSchema_ } from './attributes/list/index.js'
 export { map, MapSchema, MapSchema_ } from './attributes/map/index.js'
 export { record, RecordSchema, RecordSchema_ } from './attributes/record/index.js'
 export { anyOf, AnyOfSchema, AnyOfSchema_ } from './attributes/anyOf/index.js'
+export { item, ItemSchema, ItemSchema_ } from './attributes/item/index.js'
 
 // schema
-export { schema, Schema, SchemaAction } from './schema/index.js'
+export { SchemaAction } from './schema/index.js'
 export type {
   InputValue,
   ValidValue,
@@ -27,7 +28,7 @@ export type {
   FormattedValue,
   ReadValueOptions,
   AttrPaths,
-  SchemaPaths,
+  ItemSchemaPaths,
   Paths
 } from './schema/index.js'
 export { Parser } from './schema/actions/parse/index.js'
@@ -38,9 +39,9 @@ export { PathParser } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
-export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
+export type { FormattedValueJSONSchema } from './schema/actions/jsonSchemer/index.js'
 export { SchemaDTO } from './schema/actions/dto/index.js'
-export type { ISchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
+export type { ItemSchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables

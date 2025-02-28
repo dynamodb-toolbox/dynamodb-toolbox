@@ -4,6 +4,7 @@ import type {
   AttrSchema,
   BinarySchema,
   BooleanSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   NullSchema,
@@ -21,7 +22,7 @@ import type {
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
-import type { AppendKey, Paths, Schema, StringToEscape } from '~/schema/index.js'
+import type { AppendKey, Paths, StringToEscape } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 export type AnySchemaCondition<
@@ -425,7 +426,7 @@ export type AnyOfSchemaCondition<
           : never
         : never)
 
-export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
+export type NonLogicalCondition<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? AnySchemaCondition<string, string>
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
     ? ATTRIBUTE_PATH extends string
@@ -438,7 +439,7 @@ export type NonLogicalCondition<SCHEMA extends Schema = Schema> = Schema extends
       : never
     : never
 
-export type SchemaCondition<SCHEMA extends Schema = Schema> =
+export type SchemaCondition<SCHEMA extends ItemSchema = ItemSchema> =
   | NonLogicalCondition<SCHEMA>
   | { and: SchemaCondition<SCHEMA>[] }
   | { or: SchemaCondition<SCHEMA>[] }

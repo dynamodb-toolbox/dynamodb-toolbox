@@ -1,5 +1,8 @@
 import type { A } from 'ts-toolbelt'
 
+import { binary, boolean } from '~/attributes/index.js'
+import type { ResetLinks } from '~/schema/utils/resetLinks.js'
+
 import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
 import type { Light } from '../shared/light.js'
@@ -326,5 +329,74 @@ describe('map', () => {
       }
     > = 1
     assertMapAttribute
+  })
+
+  const reqStr = string()
+  const hidBool = boolean().hidden()
+  const defNum = number().putDefault(42)
+  const savedAsBin = binary().savedAs('_b')
+  const keyStr = string().key()
+  const enumStr = string().enum('foo', 'bar')
+
+  test('pick', () => {
+    const prevMap = map({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const linkedStr = string().link<typeof prevMap>(({ reqStr }) => reqStr)
+    const mapped = prevMap.and({ linkedStr })
+
+    const pickedMap = mapped.pick(
+      'hidBool',
+      'defNum',
+      'savedAsBin',
+      'keyStr',
+      'enumStr',
+      'linkedStr'
+    )
+
+    const assertMap: A.Equals<
+      (typeof pickedMap)['attributes'],
+      {
+        hidBool: ResetLinks<typeof hidBool>
+        defNum: ResetLinks<typeof defNum>
+        savedAsBin: ResetLinks<typeof savedAsBin>
+        keyStr: ResetLinks<typeof keyStr>
+        enumStr: ResetLinks<typeof enumStr>
+        linkedStr: ResetLinks<typeof linkedStr>
+      }
+    > = 1
+    assertMap
+
+    expect(pickedMap.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
+    expect(pickedMap.attributes).not.toHaveProperty('reqStr')
+    expect(pickedMap.attributes.linkedStr.props).toMatchObject({ putLink: undefined })
+
+    // doesn't mute original sch
+    expect(mapped.attributes).toHaveProperty('reqStr')
+  })
+
+  test('omit', () => {
+    const prevMap = map({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const linkedStr = string().link<typeof prevMap>(({ reqStr }) => reqStr)
+    const mapped = prevMap.and({ linkedStr })
+
+    const omittedSch = mapped.omit('reqStr')
+
+    const assertSch: A.Equals<
+      (typeof omittedSch)['attributes'],
+      {
+        hidBool: ResetLinks<typeof hidBool>
+        defNum: ResetLinks<typeof defNum>
+        savedAsBin: ResetLinks<typeof savedAsBin>
+        keyStr: ResetLinks<typeof keyStr>
+        enumStr: ResetLinks<typeof enumStr>
+        linkedStr: ResetLinks<typeof linkedStr>
+      }
+    > = 1
+    assertSch
+    expect(omittedSch.attributes).toMatchObject({ hidBool, defNum, savedAsBin, keyStr, enumStr })
+    expect(omittedSch.attributes).not.toHaveProperty('reqStr')
+    expect(omittedSch.attributes.linkedStr.props).toMatchObject({ putLink: undefined })
+
+    // doesn't mute original sch
+    expect(mapped.attributes).toHaveProperty('reqStr')
   })
 })

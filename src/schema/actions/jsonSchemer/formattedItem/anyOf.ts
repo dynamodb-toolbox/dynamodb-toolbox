@@ -1,33 +1,33 @@
 import type { AnyOfSchema, AttrSchema } from '~/attributes/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedAttrJSONSchema } from './attribute.js'
-import { getFormattedAttrJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './attribute.js'
+import { getFormattedValueJSONSchema } from './attribute.js'
 
 export type FormattedAnyOfJSONSchema<ATTRIBUTE extends AnyOfSchema> = ComputeObject<{
-  anyOf: FormattedAnyOfAttrJSONSchemaRec<ATTRIBUTE['elements']>
+  anyOf: MapFormattedValueJSONSchema<ATTRIBUTE['elements']>
 }>
 
-type FormattedAnyOfAttrJSONSchemaRec<
+type MapFormattedValueJSONSchema<
   ATTRIBUTES extends AttrSchema[],
   RESULTS extends unknown[] = []
 > = number extends ATTRIBUTES['length']
-  ? FormattedAttrJSONSchema<ATTRIBUTES[number]>[]
+  ? FormattedValueJSONSchema<ATTRIBUTES[number]>[]
   : ATTRIBUTES extends [infer ATTRIBUTES_HEAD, ...infer ATTRIBUTES_TAIL]
     ? ATTRIBUTES_HEAD extends AttrSchema
       ? ATTRIBUTES_TAIL extends AttrSchema[]
-        ? FormattedAnyOfAttrJSONSchemaRec<
+        ? MapFormattedValueJSONSchema<
             ATTRIBUTES_TAIL,
-            [...RESULTS, FormattedAttrJSONSchema<ATTRIBUTES_HEAD>]
+            [...RESULTS, FormattedValueJSONSchema<ATTRIBUTES_HEAD>]
           >
         : never
       : never
     : RESULTS
 
-export const getFormattedAnyOfAttrJSONSchema = <ATTRIBUTE extends AnyOfSchema>(
+export const getFormattedAnyOfJSONSchema = <ATTRIBUTE extends AnyOfSchema>(
   attr: ATTRIBUTE
 ): FormattedAnyOfJSONSchema<ATTRIBUTE> => ({
   anyOf: attr.elements.map(element =>
-    getFormattedAttrJSONSchema(element)
-  ) as FormattedAnyOfAttrJSONSchemaRec<ATTRIBUTE['elements']>
+    getFormattedValueJSONSchema(element)
+  ) as MapFormattedValueJSONSchema<ATTRIBUTE['elements']>
 })

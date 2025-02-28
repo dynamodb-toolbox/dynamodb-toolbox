@@ -1,33 +1,36 @@
 import type { AttrSchema } from '~/attributes/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
-import { fromJSONAnyAttr } from './any.js'
-import { fromJSONAnyOfAttr } from './anyOf.js'
-import { fromListAttrDTO } from './list.js'
-import { fromJSONMapAttr } from './map.js'
-import { fromJSONPrimitiveAttr } from './primitive.js'
-import { fromJSONRecordAttr } from './record.js'
-import { fromJSONSetAttr } from './set.js'
+import { fromAnySchemaDTO } from './any.js'
+import { fromAnyOfSchemaDTO } from './anyOf.js'
+import { fromItemSchemaDTO } from './item.js'
+import { fromListSchemaDTO } from './list.js'
+import { fromMapSchemaDTO } from './map.js'
+import { fromPrimitiveSchemaDTO } from './primitive.js'
+import { fromRecordSchemaDTO } from './record.js'
+import { fromSetSchemaDTO } from './set.js'
 
-export const fromAttrDTO = (attrDTO: AttributeDTO): AttrSchema => {
-  switch (attrDTO.type) {
+export const fromSchemaDTO = (schemaDTO: AttributeDTO): AttrSchema => {
+  switch (schemaDTO.type) {
     case 'any':
-      return fromJSONAnyAttr(attrDTO)
+      return fromAnySchemaDTO(schemaDTO)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return fromJSONPrimitiveAttr(attrDTO)
+      return fromPrimitiveSchemaDTO(schemaDTO)
     case 'set':
-      return fromJSONSetAttr(attrDTO)
+      return fromSetSchemaDTO(schemaDTO)
     case 'list':
-      return fromListAttrDTO(attrDTO)
+      return fromListSchemaDTO(schemaDTO)
     case 'map':
-      return fromJSONMapAttr(attrDTO)
+      return fromMapSchemaDTO(schemaDTO)
     case 'record':
-      return fromJSONRecordAttr(attrDTO)
+      return fromRecordSchemaDTO(schemaDTO)
     case 'anyOf':
-      return fromJSONAnyOfAttr(attrDTO)
+      return fromAnyOfSchemaDTO(schemaDTO)
+    case 'item':
+      return fromItemSchemaDTO(schemaDTO)
   }
 }

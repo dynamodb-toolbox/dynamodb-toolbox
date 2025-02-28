@@ -3,18 +3,18 @@ import {
   anyOf,
   binary,
   boolean,
+  item,
   list,
   map,
   nul,
   number,
   prefix,
   record,
-  schema,
   set,
   string
 } from '~/index.js'
 
-export const testSchema = schema({
+export const testSchema = item({
   any: any(),
   nul: nul().optional(),
   bool: boolean().required('always'),
@@ -33,7 +33,7 @@ export const testSchema = schema({
   linkedStr: string().link<typeof s>(({ keyStr }) => keyStr)
 }))
 
-export const bigSchema = schema({
+export const bigSchema = item({
   list: list(
     list(list(list(list(list(list(list(list(list(list(list(list(list(list(string()))))))))))))))
   ),

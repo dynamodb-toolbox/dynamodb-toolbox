@@ -5,18 +5,18 @@ import {
   anyOf,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
   record,
-  schema,
   set,
   string
 } from '~/index.js'
 
 import type { Paths } from './paths.js'
 
-export const mySchema = schema({
+export const mySchema = item({
   parentId: string().key().savedAs('pk'),
   childId: string().key().savedAs('sk'),
   any: any(),

@@ -4,6 +4,7 @@ import type {
   AttrSchema,
   BinarySchema,
   BooleanSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   Never,
@@ -19,7 +20,6 @@ import type {
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
@@ -33,10 +33,10 @@ import type { Paths } from './paths.js'
  * @return Value
  */
 export type ReadValue<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
-> = SCHEMA extends Schema
-  ? SchemaReadValue<SCHEMA, OPTIONS>
+> = SCHEMA extends ItemSchema
+  ? ItemSchemaReadValue<SCHEMA, OPTIONS>
   : SCHEMA extends AttrSchema
     ? AttrReadValue<SCHEMA, OPTIONS>
     : never
@@ -45,17 +45,17 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
   Extends<ATTRIBUTE['props'], { required: Never }>
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapSchema> = {
+type OptionalKeys<SCHEMA extends MapSchema | ItemSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
 }[keyof SCHEMA['attributes']]
 
-type SchemaReadValue<
-  SCHEMA extends Schema,
+type ItemSchemaReadValue<
+  SCHEMA extends ItemSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
     ? MatchKeys<Extract<keyof SCHEMA['attributes'], string>, OPTIONS['attributes'], ''>
     : Extract<keyof SCHEMA['attributes'], string>
-> = Schema extends SCHEMA
+> = ItemSchema extends SCHEMA
   ? { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
@@ -104,7 +104,7 @@ type AttrReadValue<
           : never)
       | (ATTRIBUTE extends SetSchema ? SetSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends ListSchema ? ListSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends Schema | MapSchema ? MapSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (ATTRIBUTE extends MapSchema ? MapSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends RecordSchema ? RecordSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
       | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
 

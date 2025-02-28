@@ -4,6 +4,7 @@ import {
   any,
   anyOf,
   boolean,
+  item,
   list,
   map,
   nul,
@@ -12,13 +13,12 @@ import {
   set,
   string
 } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
 
 import { JSONSchemer } from '../jsonSchemer.js'
 
 describe('jsonSchemer - formattedItem', () => {
   test('builds correct json schemas', () => {
-    const mySchema = schema({
+    const mySchema = item({
       hidden: string().hidden(),
       optional: string().optional(),
       any: any(),
@@ -36,7 +36,7 @@ describe('jsonSchemer - formattedItem', () => {
       anyOf: anyOf(nul(), string())
     })
 
-    const JSONSchema = mySchema.build(JSONSchemer).formattedItemSchema()
+    const JSONSchema = mySchema.build(JSONSchemer).formattedValueSchema()
 
     type ExpectedJSONSchema = {
       type: 'object'

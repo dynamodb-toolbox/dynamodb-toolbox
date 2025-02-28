@@ -1,9 +1,13 @@
 import type { AttrSchema } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
 
-export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
+import type { EntityAttributes, SchemaOf } from './entityAttributes.js'
+
+export const doesSchemaValidateTableSchemaKey = (
+  schema: SchemaOf<EntityAttributes>,
+  key?: Key
+): boolean => {
   if (key === undefined) return true
 
   const keyAttributeEntry = [...schema.keyAttributeNames.values()]
@@ -27,7 +31,10 @@ export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boo
   )
 }
 
-export const doesSchemaValidateTableSchema = (schema: Schema, table: Table): boolean => {
+export const doesSchemaValidateTableSchema = (
+  schema: SchemaOf<EntityAttributes>,
+  table: Table
+): boolean => {
   const { partitionKey, sortKey } = table
 
   return (

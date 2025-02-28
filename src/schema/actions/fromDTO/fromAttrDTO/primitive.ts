@@ -17,7 +17,7 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONPrimitiveAttr = (attr: PrimitiveAttrDTO): PrimitiveSchema => {
+export const fromPrimitiveSchemaDTO = (attr: PrimitiveAttrDTO): PrimitiveSchema => {
   const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = attr
   keyDefault
   putDefault

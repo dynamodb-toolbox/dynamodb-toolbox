@@ -1,7 +1,7 @@
 import type { AttrSchema } from '~/attributes/index.js'
-import type { Paths, Schema } from '~/schema/index.js'
+import type { Paths } from '~/schema/index.js'
 
-export interface FormatValueOptions<SCHEMA extends Schema | AttrSchema> {
+export interface FormatValueOptions<SCHEMA extends AttrSchema> {
   format?: boolean
   transform?: boolean
   attributes?: Paths<SCHEMA>[]
@@ -14,7 +14,7 @@ export interface FormatAttrValueOptions<ATTRIBUTE extends AttrSchema>
 }
 
 export interface InferReadValueOptions<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends FormatValueOptions<SCHEMA>
 > {
   attributes: OPTIONS extends { attributes: string[] } ? OPTIONS['attributes'][number] : undefined

@@ -1,10 +1,9 @@
-import { list, map, number } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+import { item, list, map, number } from '~/attributes/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - between', () => {
-  const simpleSchema = schema({
+  const simpleSchema = item({
     num: number(),
     otherNum: number(),
     yetAnotherNum: number()
@@ -56,7 +55,7 @@ describe('parseCondition - between', () => {
   })
 
   test('deep maps (values)', () => {
-    const sch = schema({
+    const sch = item({
       map: map({
         deepA: map({
           deepB: number()
@@ -83,7 +82,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepMapsSchema = schema({
+  const deepMapsSchema = item({
     map: map({
       deepA: map({
         deepB: number()
@@ -143,7 +142,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepMapsAndListsSchema = schema({
+  const deepMapsAndListsSchema = item({
     listA: list(
       map({
         deep: map({
@@ -246,7 +245,7 @@ describe('parseCondition - between', () => {
     })
   })
 
-  const deepListsSchema = schema({
+  const deepListsSchema = item({
     list: list(list(list(number()))),
     listB: list(list(list(number()))),
     listC: list(list(list(number())))

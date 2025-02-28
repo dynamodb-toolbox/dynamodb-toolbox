@@ -1,17 +1,17 @@
 import type { ListSchema } from '~/attributes/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import { getFormattedAttrJSONSchema } from './attribute.js'
-import type { FormattedAttrJSONSchema } from './attribute.js'
+import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './attribute.js'
 
 export type FormattedListJSONSchema<ATTRIBUTE extends ListSchema> = ComputeObject<{
   type: 'array'
-  items: FormattedAttrJSONSchema<ATTRIBUTE['elements']>
+  items: FormattedValueJSONSchema<ATTRIBUTE['elements']>
 }>
 
-export const getFormattedListAttrJSONSchema = <ATTRIBUTE extends ListSchema>(
+export const getFormattedListJSONSchema = <ATTRIBUTE extends ListSchema>(
   attr: ATTRIBUTE
 ): FormattedListJSONSchema<ATTRIBUTE> => ({
   type: 'array',
-  items: getFormattedAttrJSONSchema<ATTRIBUTE['elements']>(attr.elements)
+  items: getFormattedValueJSONSchema<ATTRIBUTE['elements']>(attr.elements)
 })

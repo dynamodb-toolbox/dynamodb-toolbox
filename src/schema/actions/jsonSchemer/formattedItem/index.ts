@@ -1,2 +1,2 @@
-export { getFormattedItemJSONSchema } from './schema.js'
-export type { FormattedItemJSONSchema } from './schema.js'
+export { getFormattedValueJSONSchema } from './attribute.js'
+export type { FormattedValueJSONSchema } from './attribute.js'
