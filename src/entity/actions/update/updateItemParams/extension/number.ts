@@ -1,8 +1,7 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type { ExtensionParser, ExtensionParserOptions, SchemaBasicValue } from '~/schema/index.js'
 import { NumberSchema } from '~/schema/number/schema.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
