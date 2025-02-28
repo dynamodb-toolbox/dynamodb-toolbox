@@ -1,21 +1,24 @@
 /**
  * @debt circular "Remove & prevent imports from entity to schema"
  */
-import type { AttributeUpdateItemInput, UpdateItemInput } from '~/entity/actions/update/types.js'
-import type { Schema, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { AttributeUpdateItemInput } from '~/entity/actions/update/types.js'
+import type { Paths, SchemaAction, ValidValue } from '~/schema/index.js'
+import type { ResetLinks } from '~/schema/utils/resetLinks.js'
+import { resetLinks } from '~/schema/utils/resetLinks.js'
 import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.js'
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
 import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
+import type { Light, LightObj } from '../shared/light.js'
 import { lightObj } from '../shared/light.js'
-import type { LightObj } from '../shared/light.js'
 import type { SchemaProps } from '../shared/props.js'
+import type { AttrSchema } from '../types/attrSchema.js'
 import type { Validator } from '../types/validator.js'
 import { MapSchema } from './schema.js'
-import type { MapAttributeSchemas } from './types.js'
+import type { MapAttributes } from './types.js'
 
-type MapAttributeTyper = <ATTRIBUTES extends MapAttributeSchemas, PROPS extends SchemaProps = {}>(
+type MapAttributeTyper = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props?: NarrowObject<PROPS>
 ) => MapSchema_<PROPS, LightObj<ATTRIBUTES>>
@@ -27,7 +30,7 @@ type MapAttributeTyper = <ATTRIBUTES extends MapAttributeSchemas, PROPS extends 
  * @param props _(optional)_ Map Options
  */
 export const map: MapAttributeTyper = <
-  ATTRIBUTES extends MapAttributeSchemas,
+  ATTRIBUTES extends MapAttributes,
   PROPS extends SchemaProps = {}
 >(
   attributes: NarrowObject<ATTRIBUTES>,
@@ -39,7 +42,7 @@ export const map: MapAttributeTyper = <
  */
 export class MapSchema_<
   PROPS extends SchemaProps = SchemaProps,
-  ATTRIBUTES extends MapAttributeSchemas = MapAttributeSchemas
+  ATTRIBUTES extends MapAttributes = MapAttributes
 > extends MapSchema<PROPS, ATTRIBUTES> {
   /**
    * Tag attribute as required. Possible values are:
@@ -163,9 +166,9 @@ export class MapSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends Schema>(
+  keyLink<SCHEMA extends AttrSchema>(
     nextKeyLink: (
-      keyInput: ValidValue<SCHEMA, { mode: 'key' }>
+      keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
   ): MapSchema_<Overwrite<PROPS, { keyLink: unknown }>, ATTRIBUTES> {
     return new MapSchema_(
@@ -179,8 +182,8 @@ export class MapSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends Schema>(
-    nextPutLink: (putItemInput: ValidValue<SCHEMA>) => ValidValue<this>
+  putLink<SCHEMA extends AttrSchema>(
+    nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): MapSchema_<Overwrite<PROPS, { putLink: unknown }>, ATTRIBUTES> {
     return new MapSchema_(
       overwrite(this.props, { putLink: nextPutLink as unknown }),
@@ -193,9 +196,9 @@ export class MapSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends Schema>(
+  updateLink<SCHEMA extends AttrSchema>(
     nextUpdateLink: (
-      updateItemInput: UpdateItemInput<SCHEMA, true>
+      updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
   ): MapSchema_<Overwrite<PROPS, { updateLink: unknown }>, ATTRIBUTES> {
     return new MapSchema_(
@@ -209,9 +212,13 @@ export class MapSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends Schema>(
+  link<SCHEMA extends AttrSchema>(
     nextLink: (
-      keyOrPutItemInput: If<PROPS['key'], ValidValue<SCHEMA, { mode: 'key' }>, ValidValue<SCHEMA>>
+      keyOrPutItemInput: If<
+        PROPS['key'],
+        ValidValue<SCHEMA, { mode: 'key'; defined: true }>,
+        ValidValue<SCHEMA, { defined: true }>
+      >
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],
@@ -296,6 +303,87 @@ export class MapSchema_<
         overwrite(this.props, { putValidator: nextValidator as Validator }),
         this.attributes
       )
+    )
+  }
+
+  pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): MapSchema_<PROPS, { [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]> }> {
+    const nextAttributes = {} as {
+      [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
+    }
+
+    for (const attributeName of attributeNames) {
+      if (!(attributeName in this.attributes)) {
+        continue
+      }
+
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
+    }
+
+    return new MapSchema_(this.props, nextAttributes)
+  }
+
+  omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
+    ...attributeNames: ATTRIBUTE_NAMES
+  ): MapSchema_<
+    PROPS,
+    { [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]> }
+  > {
+    const nextAttributes = {} as {
+      [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
+    }
+
+    const attributeNamesSet = new Set(attributeNames)
+    for (const _attributeName of Object.keys(this.attributes) as (keyof ATTRIBUTES)[]) {
+      if (attributeNamesSet.has(_attributeName)) {
+        continue
+      }
+
+      const attributeName = _attributeName as Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>
+      nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
+    }
+
+    return new MapSchema_(this.props, nextAttributes)
+  }
+
+  and<ADDITIONAL_ATTRIBUTES extends MapAttributes = MapAttributes>(
+    additionalAttr:
+      | NarrowObject<ADDITIONAL_ATTRIBUTES>
+      | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
+  ): MapSchema_<
+    PROPS,
+    {
+      [KEY in
+        | keyof ATTRIBUTES
+        | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+        ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
+        : KEY extends keyof ATTRIBUTES
+          ? ATTRIBUTES[KEY]
+          : never
+    }
+  > {
+    const additionalAttributes = (
+      typeof additionalAttr === 'function' ? additionalAttr(this) : additionalAttr
+    ) as MapAttributes
+
+    const nextAttributes = { ...this.attributes } as MapAttributes
+
+    for (const [attributeName, additionalAttribute] of Object.entries(additionalAttributes)) {
+      nextAttributes[attributeName] = additionalAttribute
+    }
+
+    return new MapSchema_(
+      this.props,
+      nextAttributes as {
+        [KEY in
+          | keyof ATTRIBUTES
+          | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+          ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
+          : KEY extends keyof ATTRIBUTES
+            ? ATTRIBUTES[KEY]
+            : never
+      }
     )
   }
 

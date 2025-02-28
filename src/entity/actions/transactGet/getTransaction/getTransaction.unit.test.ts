@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { DynamoDBToolboxError, Entity, GetTransaction, Table, schema, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, GetTransaction, Table, item, string } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -16,7 +16,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()
@@ -26,7 +26,7 @@ const TestEntity = new Entity({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     pk: string().key(),
     sk: string().key(),
     test: string()

@@ -3,14 +3,14 @@ import { set } from '~/attributes/set/index.js'
 import type { SetElementSchema } from '~/attributes/set/types.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
-import { fromAttrDTO } from './attribute.js'
+import { fromSchemaDTO } from './attribute.js'
 
 type SetAttrDTO = Extract<AttributeDTO, { type: 'set' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONSetAttr = ({
+export const fromSetSchemaDTO = ({
   keyDefault,
   putDefault,
   updateDefault,
@@ -27,5 +27,5 @@ export const fromJSONSetAttr = ({
   putLink
   updateLink
 
-  return set(fromAttrDTO(elements) as SetElementSchema, props)
+  return set(fromSchemaDTO(elements) as SetElementSchema, props)
 }

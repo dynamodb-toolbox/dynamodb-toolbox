@@ -10,7 +10,7 @@ describe('fromDTO - entity', () => {
     const entityDTO: IEntityDTO = {
       entityName: 'pokemons',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' }
         }
@@ -32,7 +32,7 @@ describe('fromDTO - entity', () => {
     expect(entity).toBeInstanceOf(Entity)
     expect(entity.name).toBe('pokemons')
 
-    expect(entity.constructorSchema).toMatchObject(fromSchemaDTO(entityDTO.schema))
+    expect(entity.attributes).toMatchObject(fromSchemaDTO(entityDTO.schema).attributes)
 
     // We have to do this to avoid reference inequalities
     const receivedTable = JSON.parse(JSON.stringify(entity.table))

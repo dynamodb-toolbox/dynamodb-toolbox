@@ -1,7 +1,7 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { AttrSchema, ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { InputValue, Schema, WriteMode } from '~/schema/index.js'
+import type { InputValue, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
@@ -24,7 +24,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   ParserYield<AttrSchema, OPTIONS>,
   ParserReturn<AttrSchema, OPTIONS>,
   // TODO: Define & use DefaultedValue here
-  InputValue<Schema, InferWriteValueOptions<OPTIONS, true>> | undefined
+  InputValue<ItemSchema, InferWriteValueOptions<OPTIONS, true>> | undefined
 > {
   const {
     mode = 'put',

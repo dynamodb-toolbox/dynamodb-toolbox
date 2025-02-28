@@ -1,11 +1,11 @@
-import { number, schema, string } from '~/index.js'
+import { item, number, string } from '~/index.js'
 
 import { doesSchemaValidateTableSchemaKey } from './doesSchemaValidateTableSchema.js'
 
 describe('doesSchemaValidateTableSchema', () => {
   test('returns false if schema matches key attribute', () => {
     expect(
-      doesSchemaValidateTableSchemaKey(schema({ pk: string().key() }), {
+      doesSchemaValidateTableSchemaKey(item({ pk: string().key() }), {
         name: 'pk',
         type: 'string'
       })
@@ -15,7 +15,7 @@ describe('doesSchemaValidateTableSchema', () => {
   test('returns true if attribute is savedAs correctly', () => {
     expect(
       doesSchemaValidateTableSchemaKey(
-        schema({
+        item({
           partitionKey: string().key().savedAs('pk')
         }),
         { name: 'pk', type: 'string' }
@@ -26,7 +26,7 @@ describe('doesSchemaValidateTableSchema', () => {
   test('returns false if attribute is savedAs incorrectly', () => {
     expect(
       doesSchemaValidateTableSchemaKey(
-        schema({
+        item({
           pk: string().key().savedAs('partitionKey')
         }),
         { name: 'pk', type: 'string' }
@@ -36,7 +36,7 @@ describe('doesSchemaValidateTableSchema', () => {
 
   test('returns false if attribute is not always required', () => {
     expect(
-      doesSchemaValidateTableSchemaKey(schema({ pk: string().key().optional() }), {
+      doesSchemaValidateTableSchemaKey(item({ pk: string().key().optional() }), {
         name: 'pk',
         type: 'string'
       })
@@ -45,7 +45,7 @@ describe('doesSchemaValidateTableSchema', () => {
 
   test('returns true if attribute is not always required but has default', () => {
     expect(
-      doesSchemaValidateTableSchemaKey(schema({ pk: string().key().optional().default('foo') }), {
+      doesSchemaValidateTableSchemaKey(item({ pk: string().key().optional().default('foo') }), {
         name: 'pk',
         type: 'string'
       })
@@ -54,7 +54,7 @@ describe('doesSchemaValidateTableSchema', () => {
 
   test('returns false if types do not match', () => {
     expect(
-      doesSchemaValidateTableSchemaKey(schema({ pk: number().key() }), {
+      doesSchemaValidateTableSchemaKey(item({ pk: number().key() }), {
         name: 'pk',
         type: 'string'
       })

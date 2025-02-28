@@ -1,6 +1,5 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { AttrSchema, ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -8,11 +7,11 @@ import { attrParser } from './attribute.js'
 import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 
-export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueOptions = {}>(
+export function* schemaParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValueOptions = {}>(
   schema: SCHEMA,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<Schema, OPTIONS>, ParserReturn<Schema, OPTIONS>> {
+): Generator<ParserYield<ItemSchema, OPTIONS>, ParserReturn<ItemSchema, OPTIONS>> {
   const { mode = 'put', fill = true, transform = true } = options
 
   const parsers: Record<
@@ -63,10 +62,10 @@ export function* schemaParser<SCHEMA extends Schema, OPTIONS extends ParseValueO
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<Schema, OPTIONS>
+      yield defaultedValue as ParserYield<ItemSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<Schema, OPTIONS>
+      yield linkedValue as ParserYield<ItemSchema, OPTIONS>
     }
   }
 

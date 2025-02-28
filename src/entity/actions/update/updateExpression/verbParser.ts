@@ -4,7 +4,7 @@ import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
-import type { Schema, TransformedValue, ValidValue } from '~/schema/index.js'
+import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -13,7 +13,7 @@ import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
 import type { ParsedUpdate } from './type.js'
 
 export class UpdateExpressionVerbParser implements ExpressionParser {
-  schema: Schema | AttrSchema
+  schema: AttrSchema
   verbPrefix: 's' | 'r' | 'a' | 'd'
   expressionAttributePrefix: `${'s' | 'r' | 'a' | 'd'}${string}_`
   expressionAttributeNames: string[]
@@ -21,7 +21,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
   expression: string
   id: string
 
-  constructor(schema: Schema | AttrSchema, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
+  constructor(schema: AttrSchema, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
     this.schema = schema
     this.verbPrefix = verbPrefix
     this.expressionAttributePrefix = `${verbPrefix}${id}_`
@@ -139,7 +139,7 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     }
   }
 
-  clone = (schema?: Schema | AttrSchema): UpdateExpressionVerbParser => {
+  clone = (schema?: AttrSchema): UpdateExpressionVerbParser => {
     const clonedParser = new UpdateExpressionVerbParser(
       schema ?? this.schema,
       this.verbPrefix,

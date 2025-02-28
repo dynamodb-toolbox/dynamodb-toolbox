@@ -77,6 +77,13 @@ export type RecordAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'record'>
   | RecordAttributeBasicValue<EXTENSION>
 
+export type ItemSchemaBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: AttributeValue<EXTENSION> | undefined
+}
+export type ItemSchemaValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'item'>
+  | ItemSchemaBasicValue<EXTENSION>
+
 /**
  * Any possible resolved attribute type
  */
@@ -90,10 +97,7 @@ export type AttributeValue<EXTENSION extends Extension = never> =
   | ListAttributeValue<EXTENSION>
   | MapAttributeValue<EXTENSION>
   | RecordAttributeValue<EXTENSION>
-
-export type Item<EXTENSION extends Extension = never> = {
-  [key: string]: AttributeValue<EXTENSION>
-}
+  | ItemSchemaValue<EXTENSION>
 
 export type AttributeBasicValue<EXTENSION extends Extension = never> =
   | NullAttributeBasicValue
@@ -105,5 +109,6 @@ export type AttributeBasicValue<EXTENSION extends Extension = never> =
   | ListAttributeBasicValue<EXTENSION>
   | MapAttributeBasicValue<EXTENSION>
   | RecordAttributeBasicValue<EXTENSION>
+  | ItemSchemaBasicValue<EXTENSION>
 
 export type UndefinedAttrExtension = { type: '*'; value: undefined }

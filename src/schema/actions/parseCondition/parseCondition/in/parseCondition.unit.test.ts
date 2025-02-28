@@ -1,10 +1,9 @@
-import { list, map, number } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+import { item, list, map, number } from '~/attributes/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - in', () => {
-  const simpleSchema = schema({
+  const simpleSchema = item({
     num: number(),
     otherNum: number(),
     yetAnotherNum: number()
@@ -52,7 +51,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  const deepSchema = schema({
+  const deepSchema = item({
     map: map({
       deepA: map({
         deepB: number()
@@ -129,7 +128,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  const mapAndList = schema({
+  const mapAndList = item({
     listA: list(
       map({
         deep: map({
@@ -226,7 +225,7 @@ describe('parseCondition - in', () => {
     })
   })
 
-  const listsSchema = schema({
+  const listsSchema = item({
     list: list(list(list(number()))),
     listB: list(list(list(number()))),
     listC: list(list(list(number())))

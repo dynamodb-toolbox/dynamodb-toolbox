@@ -4,7 +4,6 @@ import type {
   FormattedValue,
   ReadValue,
   ReadValueOptions,
-  Schema,
   TransformedValue
 } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
@@ -14,7 +13,7 @@ import type { FormatValueOptions, InferReadValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 
 export type FormatterYield<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { transform: false } | { format: false }
@@ -22,21 +21,19 @@ export type FormatterYield<
   : ReadValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export type FormatterReturn<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { format: false }
   ? ReadValue<SCHEMA, READ_VALUE_OPTIONS>
   : FormattedValue<SCHEMA, READ_VALUE_OPTIONS>
 
-export class Formatter<
-  SCHEMA extends Schema | AttrSchema = Schema | AttrSchema
-> extends SchemaAction<SCHEMA> {
+export class Formatter<SCHEMA extends AttrSchema = AttrSchema> extends SchemaAction<SCHEMA> {
   start<OPTIONS extends FormatValueOptions<SCHEMA> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
   ): Generator<FormatterYield<SCHEMA, OPTIONS>, FormatterReturn<SCHEMA, OPTIONS>> {
-    if (this.schema.type === 'schema') {
+    if (this.schema.type === 'item') {
       return schemaFormatter(this.schema, inputValue, options) as Generator<
         FormatterYield<SCHEMA, OPTIONS>,
         FormatterReturn<SCHEMA, OPTIONS>

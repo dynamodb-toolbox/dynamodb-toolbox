@@ -2,12 +2,12 @@ import type {
   AnyOfSchema,
   AnySchema,
   AttrSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   RecordSchema,
   ResolveStringSchema
 } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 export type CharsToEscape = '[' | ']' | '.'
@@ -18,9 +18,9 @@ export type AppendKey<PATH extends string, KEY extends string> =
   | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
 
 // string is there to simplify type-constraint checks when using Paths
-export type Paths<SCHEMA extends Schema | AttrSchema = Schema | AttrSchema> = string &
-  (SCHEMA extends Schema
-    ? SchemaPaths<SCHEMA>
+export type Paths<SCHEMA extends AttrSchema = AttrSchema> = string &
+  (SCHEMA extends ItemSchema
+    ? ItemSchemaPaths<SCHEMA>
     : SCHEMA extends AttrSchema
       ? AttrPaths<SCHEMA>
       : never)
@@ -32,7 +32,7 @@ export type AttrPaths<ATTRIBUTE extends AttrSchema, ATTRIBUTE_PATH extends strin
   | (ATTRIBUTE extends RecordSchema ? RecordSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
   | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
 
-export type SchemaPaths<SCHEMA extends Schema = Schema> = Schema extends SCHEMA
+export type ItemSchemaPaths<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
     ? ATTRIBUTE_PATH extends string

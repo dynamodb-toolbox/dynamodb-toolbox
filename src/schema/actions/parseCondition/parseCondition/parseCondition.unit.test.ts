@@ -1,6 +1,5 @@
-import { anyOf, list, map, number, record, string } from '~/attributes/index.js'
+import { anyOf, item, list, map, number, record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { schema } from '~/schema/index.js'
 
 import { ConditionParser } from '../conditionParser.js'
 
@@ -10,7 +9,7 @@ import { ConditionParser } from '../conditionParser.js'
 
 describe('parseCondition', () => {
   describe('savedAs attrs', () => {
-    const schemaWithSavedAs = schema({
+    const schemaWithSavedAs = item({
       savedAs: string().savedAs('_s'),
       deep: map({
         savedAs: string().savedAs('_s')
@@ -77,7 +76,7 @@ describe('parseCondition', () => {
   })
 
   describe('anyOf', () => {
-    const schemaWithAnyOf = schema({
+    const schemaWithAnyOf = item({
       anyOf: anyOf(
         number(),
         map({
@@ -127,7 +126,7 @@ describe('parseCondition', () => {
   })
 
   describe('special chars', () => {
-    const schemaWithSpecChars = schema({
+    const schemaWithSpecChars = item({
       record: record(string(), string()),
       map: map({ '[': string() }),
       ']': string()

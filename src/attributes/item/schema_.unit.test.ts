@@ -1,11 +1,12 @@
 import type { A } from 'ts-toolbelt'
 
 import { binary, boolean, list, map, number, set, string } from '~/attributes/index.js'
+import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 
-import { schema } from './schema.js'
-import type { ResetLinks } from './utils/resetLinks.js'
+import type { Light } from '../shared/light.js'
+import { item } from './schema_.js'
 
-describe('schema', () => {
+describe('item', () => {
   const reqStr = string()
   const hidBool = boolean().hidden()
   const defNum = number().putDefault(42)
@@ -14,21 +15,21 @@ describe('schema', () => {
   const enumStr = string().enum('foo', 'bar')
 
   test('primitives', () => {
-    const sch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const sch = item({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
 
-    const assertType: A.Equals<(typeof sch)['type'], 'schema'> = 1
+    const assertType: A.Equals<(typeof sch)['type'], 'item'> = 1
     assertType
-    expect(sch.type).toBe('schema')
+    expect(sch.type).toBe('item')
 
     const assertAttr: A.Equals<
       (typeof sch)['attributes'],
       {
-        reqStr: typeof reqStr
-        hidBool: typeof hidBool
-        defNum: typeof defNum
-        savedAsBin: typeof savedAsBin
-        keyStr: typeof keyStr
-        enumStr: typeof enumStr
+        reqStr: Light<typeof reqStr>
+        hidBool: Light<typeof hidBool>
+        defNum: Light<typeof defNum>
+        savedAsBin: Light<typeof savedAsBin>
+        keyStr: Light<typeof keyStr>
+        enumStr: Light<typeof enumStr>
       }
     > = 1
     assertAttr
@@ -52,14 +53,14 @@ describe('schema', () => {
     const reqSet = set(str)
     const hiddenSet = set(str).optional().hidden()
 
-    const sch = schema({ optSet, reqSet, hiddenSet })
+    const sch = item({ optSet, reqSet, hiddenSet })
 
     const assertSch: A.Equals<
       (typeof sch)['attributes'],
       {
-        optSet: typeof optSet
-        reqSet: typeof reqSet
-        hiddenSet: typeof hiddenSet
+        optSet: Light<typeof optSet>
+        reqSet: Light<typeof reqSet>
+        hiddenSet: Light<typeof hiddenSet>
       }
     > = 1
     assertSch
@@ -74,7 +75,7 @@ describe('schema', () => {
     const reqList = list(str)
     const hiddenList = list(str).optional().hidden()
 
-    const sch = schema({
+    const sch = item({
       optList,
       deepList,
       reqList,
@@ -84,10 +85,10 @@ describe('schema', () => {
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        optList: typeof optList
-        deepList: typeof deepList
-        reqList: typeof reqList
-        hiddenList: typeof hiddenList
+        optList: Light<typeof optList>
+        deepList: Light<typeof deepList>
+        reqList: Light<typeof reqList>
+        hiddenList: Light<typeof hiddenList>
       }
     > = 1
     assertSch
@@ -104,15 +105,15 @@ describe('schema', () => {
     const reqMap = map({ str })
     const hiddenMap = map({ str }).hidden()
 
-    const sch = schema({ flatMap, deepMap, reqMap, hiddenMap })
+    const sch = item({ flatMap, deepMap, reqMap, hiddenMap })
 
     const assertSch: A.Contains<
       (typeof sch)['attributes'],
       {
-        flatMap: typeof flatMap
-        deepMap: typeof deepMap
-        reqMap: typeof reqMap
-        hiddenMap: typeof hiddenMap
+        flatMap: Light<typeof flatMap>
+        deepMap: Light<typeof deepMap>
+        reqMap: Light<typeof reqMap>
+        hiddenMap: Light<typeof hiddenMap>
       }
     > = 1
     assertSch
@@ -121,7 +122,7 @@ describe('schema', () => {
   })
 
   test('pick', () => {
-    const prevSch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const prevSch = item({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
     const linkedStr = string().link<typeof prevSch>(({ reqStr }) => reqStr)
     const sch = prevSch.and({ linkedStr })
 
@@ -148,7 +149,7 @@ describe('schema', () => {
   })
 
   test('omit', () => {
-    const prevSch = schema({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
+    const prevSch = item({ reqStr, hidBool, defNum, savedAsBin, keyStr, enumStr })
     const linkedStr = string().link<typeof prevSch>(({ reqStr }) => reqStr)
     const sch = prevSch.and({ linkedStr })
 

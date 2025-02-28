@@ -1,10 +1,9 @@
-import { boolean, number, string } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+import { boolean, item, number, string } from '~/attributes/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - Logical combination', () => {
-  const mySchema = schema({
+  const mySchema = item({
     num: number(),
     otherNum: number(),
     str: string(),

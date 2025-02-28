@@ -1,3 +1,5 @@
+import type { ComputeObject } from '~/types/computeObject.js'
+
 import type { AnySchema } from '../any/index.js'
 import type { AnyOfSchema } from '../anyOf/index.js'
 import type { BinarySchema } from '../binary/index.js'
@@ -57,9 +59,9 @@ type TupleLightener = <SCHEMAS extends AttrSchema[]>(...schemas: SCHEMAS) => Lig
 export const lightTuple: TupleLightener = <SCHEMAS extends AttrSchema[]>(...schemas: SCHEMAS) =>
   schemas as unknown as LightTuple<SCHEMAS>
 
-export type LightObj<SCHEMAS extends { [KEY in string]: AttrSchema }> = {
+export type LightObj<SCHEMAS extends { [KEY in string]: AttrSchema }> = ComputeObject<{
   [KEY in keyof SCHEMAS]: Light<SCHEMAS[KEY]>
-}
+}>
 
 type ObjLightener = <SCHEMAS extends { [KEY in string]: AttrSchema }>(
   schemas: SCHEMAS

@@ -7,6 +7,7 @@ import type {
   AttrSchema,
   BinarySchema,
   BooleanSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   Never,
@@ -24,17 +25,16 @@ import type {
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Transformer, TypeModifier } from '~/transformers/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type TransformedValue<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends WriteValueOptions = {}
-> = SCHEMA extends Schema
-  ? SchemaTransformedValue<SCHEMA, OPTIONS>
+> = SCHEMA extends ItemSchema
+  ? ItemSchemaTransformedValue<SCHEMA, OPTIONS>
   : SCHEMA extends AttrSchema
     ? AttrTransformedValue<SCHEMA, OPTIONS>
     : never
@@ -49,7 +49,7 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptio
   >
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueOptions = {}> = {
+type OptionalKeys<SCHEMA extends MapSchema | ItemSchema, OPTIONS extends WriteValueOptions = {}> = {
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
     never,
@@ -60,10 +60,10 @@ type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueO
   >
 }[keyof SCHEMA['attributes']]
 
-type SchemaTransformedValue<
-  SCHEMA extends Schema,
+type ItemSchemaTransformedValue<
+  SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions = {}
-> = Schema extends SCHEMA
+> = ItemSchema extends SCHEMA
   ? { [KEY: string]: AttrTransformedValue<AttrSchema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
