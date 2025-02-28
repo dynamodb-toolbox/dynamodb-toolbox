@@ -1,4 +1,4 @@
-export type Validator<INPUT = unknown, ATTRIBUTE = unknown> = (
+export type Validator<INPUT = unknown, SCHEMA = unknown> = (
   input: INPUT,
-  attribute: ATTRIBUTE
+  schema: SCHEMA
 ) => boolean | string

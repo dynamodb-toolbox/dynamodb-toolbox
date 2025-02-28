@@ -6,8 +6,8 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: AnySchema,
+export function* anySchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: AnySchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<AnySchema, OPTIONS>, ParserReturn<AnySchema, OPTIONS>> {
@@ -24,7 +24,7 @@ export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = linkedValue ?? cloneDeep(inputValue)
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {
@@ -34,8 +34,8 @@ export function* anyAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 
   const transformedValue =
-    attribute.props.transform !== undefined
-      ? (attribute.props.transform as Transformer).encode(parsedValue)
+    schema.props.transform !== undefined
+      ? (schema.props.transform as Transformer).encode(parsedValue)
       : parsedValue
   return transformedValue
 }

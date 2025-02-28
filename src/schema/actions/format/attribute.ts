@@ -2,15 +2,15 @@ import type { AttrSchema, RequiredOption } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 
-import { anyAttrFormatter } from './any.js'
-import { anyOfAttrFormatter } from './anyOf.js'
+import { anySchemaFormatter } from './any.js'
+import { anyOfSchemaFormatter } from './anyOf.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
-import { listAttrFormatter } from './list.js'
-import { mapAttrFormatter } from './map.js'
+import { listSchemaFormatter } from './list.js'
+import { mapSchemaFormatter } from './map.js'
 import type { FormatAttrValueOptions } from './options.js'
-import { primitiveAttrFormatter } from './primitive.js'
-import { recordAttrFormatter } from './record.js'
-import { setAttrFormatter } from './set.js'
+import { primitiveSchemaFormatter } from './primitive.js'
+import { recordSchemaFormatter } from './record.js'
+import { setSchemaFormatter } from './set.js'
 
 export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
 
@@ -18,10 +18,10 @@ export const isRequired = ({ props }: AttrSchema): boolean =>
   requiringOptions.has(props.required ?? 'atLeastOnce')
 
 export function* attrFormatter<
-  ATTRIBUTE extends AttrSchema,
-  OPTIONS extends FormatAttrValueOptions<ATTRIBUTE> = {}
+  SCHEMA extends AttrSchema,
+  OPTIONS extends FormatAttrValueOptions<SCHEMA> = {}
 >(
-  attribute: ATTRIBUTE,
+  schema: SCHEMA,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
@@ -31,7 +31,7 @@ export function* attrFormatter<
   const { format = true, transform = true, valuePath } = options
 
   if (rawValue === undefined) {
-    if (isRequired(attribute) && options.partial !== true) {
+    if (isRequired(schema) && options.partial !== true) {
       const path = formatValuePath(valuePath)
 
       throw new DynamoDBToolboxError('formatter.missingAttribute', {
@@ -54,27 +54,27 @@ export function* attrFormatter<
     return undefined
   }
 
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'any':
-      return yield* anyAttrFormatter(attribute, rawValue, options)
+      return yield* anySchemaFormatter(schema, rawValue, options)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveAttrFormatter(attribute, rawValue, {
+      return yield* primitiveSchemaFormatter(schema, rawValue, {
         ...options,
         attributes: undefined
       })
     case 'set':
-      return yield* setAttrFormatter(attribute, rawValue, { ...options, attributes: undefined })
+      return yield* setSchemaFormatter(schema, rawValue, { ...options, attributes: undefined })
     case 'list':
-      return yield* listAttrFormatter(attribute, rawValue, options)
+      return yield* listSchemaFormatter(schema, rawValue, options)
     case 'map':
-      return yield* mapAttrFormatter(attribute, rawValue, options)
+      return yield* mapSchemaFormatter(schema, rawValue, options)
     case 'record':
-      return yield* recordAttrFormatter(attribute, rawValue, options)
+      return yield* recordSchemaFormatter(schema, rawValue, options)
     case 'anyOf':
-      return yield* anyOfAttrFormatter(attribute, rawValue, options)
+      return yield* anyOfSchemaFormatter(schema, rawValue, options)
   }
 }

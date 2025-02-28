@@ -8,8 +8,8 @@ import { Formatter, type FormatterReturn, type FormatterYield } from './formatte
 import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* recordAttrFormatter(
-  attribute: RecordSchema,
+export function* recordSchemaFormatter(
+  schema: RecordSchema,
   rawValue: unknown,
   { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<RecordSchema> = {}
 ): Generator<
@@ -19,7 +19,7 @@ export function* recordAttrFormatter(
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -42,7 +42,7 @@ export function* recordAttrFormatter(
     const elmtValuePath = [...valuePath, key]
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const formattedKey = new Formatter(attribute.keys).format(key, {
+    const formattedKey = new Formatter(schema.keys).format(key, {
       transform,
       valuePath: elmtValuePath
     })!
@@ -58,7 +58,7 @@ export function* recordAttrFormatter(
 
     formatters.push([
       formattedKey,
-      attrFormatter(attribute.elements, element, {
+      attrFormatter(schema.elements, element, {
         attributes: childrenAttributes,
         valuePath: elmtValuePath,
         ...restOptions

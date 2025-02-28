@@ -11,13 +11,13 @@ const isAttributePath = (valueOrPath: unknown): valueOrPath is { attr: string } 
 
 export const appendAttributeValueOrPath = (
   conditionParser: ConditionParser,
-  attribute: AttrSchema,
+  schema: AttrSchema,
   expressionAttributeValueOrPath: unknown,
   options: AppendAttributeValueOptions & AppendAttributePathOptions = {}
 ): void => {
   if (isAttributePath(expressionAttributeValueOrPath)) {
     conditionParser.appendAttributePath(expressionAttributeValueOrPath.attr, options)
   } else {
-    conditionParser.appendAttributeValue(attribute, expressionAttributeValueOrPath, options)
+    conditionParser.appendAttributeValue(schema, expressionAttributeValueOrPath, options)
   }
 }

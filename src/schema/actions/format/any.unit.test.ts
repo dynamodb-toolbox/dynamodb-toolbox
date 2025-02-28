@@ -1,14 +1,14 @@
 import { any } from '~/attributes/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import { anyAttrFormatter } from './any.js'
+import { anySchemaFormatter } from './any.js'
 
-describe('anyAttrFormatter', () => {
+describe('anySchemaFormatter', () => {
   test('simply clones the value', () => {
-    const _any = any()
+    const schema = any()
 
     const raw = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, raw)
+    const formatter = anySchemaFormatter(schema, raw)
 
     const { value: transformedValue } = formatter.next()
 
@@ -24,7 +24,7 @@ describe('anyAttrFormatter', () => {
     const _any = any()
 
     const raw = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, raw, { transform: false })
+    const formatter = anySchemaFormatter(_any, raw, { transform: false })
 
     const { done, value: formattedValue } = formatter.next()
     expect(formattedValue).toStrictEqual(raw)
@@ -35,7 +35,7 @@ describe('anyAttrFormatter', () => {
     const _any = any().transform(jsonStringify())
 
     const formatted = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, JSON.stringify(formatted))
+    const formatter = anySchemaFormatter(_any, JSON.stringify(formatted))
 
     const transformedValue = formatter.next().value
     expect(transformedValue).toStrictEqual(formatted)

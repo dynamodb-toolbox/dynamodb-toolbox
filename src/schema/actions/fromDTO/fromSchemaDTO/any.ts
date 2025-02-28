@@ -1,8 +1,8 @@
 import { any } from '~/attributes/any/index.js'
 import type { AnySchema } from '~/attributes/any/index.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
-type AnyAttrDTO = Extract<AttributeDTO, { type: 'any' }>
+type AnySchemaDTO = Extract<ISchemaDTO, { type: 'any' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
@@ -15,7 +15,7 @@ export const fromAnySchemaDTO = ({
   putLink,
   updateLink,
   ...props
-}: AnyAttrDTO): AnySchema => {
+}: AnySchemaDTO): AnySchema => {
   keyDefault
   putDefault
   updateDefault

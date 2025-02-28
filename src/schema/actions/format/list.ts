@@ -8,8 +8,8 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection } from './utils.js'
 
-export function* listAttrFormatter(
-  attribute: ListSchema,
+export function* listSchemaFormatter(
+  schema: ListSchema,
   rawValue: unknown,
   { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<ListSchema> = {}
 ): Generator<
@@ -19,7 +19,7 @@ export function* listAttrFormatter(
   const { format = true, transform = true } = restOptions
 
   if (!isArray(rawValue)) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -38,7 +38,7 @@ export function* listAttrFormatter(
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
   const formatters = rawValue.map((element, index) =>
-    attrFormatter(attribute.elements, element, {
+    attrFormatter(schema.elements, element, {
       attributes: childrenAttributes,
       valuePath: [...valuePath, index],
       ...restOptions

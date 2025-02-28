@@ -17,7 +17,7 @@ import type { Validator } from '../types/validator.js'
 import { RecordSchema } from './schema.js'
 import type { RecordElementSchema, RecordKeySchema } from './types.js'
 
-type RecordAttributeTyper = <
+type RecordSchemer = <
   KEYS extends RecordKeySchema,
   ELEMENTS extends RecordElementSchema,
   PROPS extends SchemaProps = {}
@@ -40,7 +40,7 @@ type RecordAttributeTyper = <
  * @param elements Attribute (With constraints)
  * @param props _(optional)_ Record Options
  */
-export const record: RecordAttributeTyper = <
+export const record: RecordSchemer = <
   KEYS extends RecordKeySchema,
   ELEMENTS extends RecordElementSchema,
   PROPS extends SchemaProps = {}

@@ -1,10 +1,10 @@
 import type { MapSchema } from '~/attributes/map/index.js'
 import { map } from '~/attributes/map/index.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 
-type MapAttrDTO = Extract<AttributeDTO, { type: 'map' }>
+type MapSchemaDTO = Extract<ISchemaDTO, { type: 'map' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
@@ -18,7 +18,7 @@ export const fromMapSchemaDTO = ({
   updateLink,
   attributes,
   ...props
-}: MapAttrDTO): MapSchema => {
+}: MapSchemaDTO): MapSchema => {
   keyDefault
   putDefault
   updateDefault

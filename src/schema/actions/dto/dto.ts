@@ -1,8 +1,8 @@
 import type { ItemSchema } from '~/attributes/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
-import { getAttrDTO } from './getAttrDTO/index.js'
-import type { AttributeDTO, ItemSchemaDTO } from './types.js'
+import { getSchemaDTO } from './getSchemaDTO/index.js'
+import type { ISchemaDTO, ItemSchemaDTO } from './types.js'
 
 export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   extends SchemaAction<SCHEMA>
@@ -18,12 +18,12 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
     this.attributes = Object.fromEntries(
       Object.entries(this.schema.attributes).map(([attributeName, attribute]) => [
         attributeName,
-        getAttrDTO(attribute)
+        getSchemaDTO(attribute)
       ])
     )
   }
 
-  toJSON(): AttributeDTO {
+  toJSON(): ISchemaDTO {
     return {
       type: this.type,
       attributes: this.attributes

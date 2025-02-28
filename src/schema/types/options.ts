@@ -9,11 +9,11 @@ export interface WriteValueOptions {
   defined?: boolean
 }
 
-export type AttrExtendedWriteValue<
-  ATTRIBUTE extends AttrSchema,
+export type SchemaExtendedWriteValue<
+  SCHEMA extends AttrSchema,
   OPTIONS extends WriteValueOptions = {}
 > = OPTIONS extends { extension: Extension }
-  ? ExtendedValue<OPTIONS['extension'], ATTRIBUTE['type']>
+  ? ExtendedValue<OPTIONS['extension'], SCHEMA['type']>
   : never
 
 export type ReadValueOptions<SCHEMA extends AttrSchema> = {

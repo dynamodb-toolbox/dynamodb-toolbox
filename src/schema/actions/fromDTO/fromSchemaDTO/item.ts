@@ -1,10 +1,10 @@
 import type { ItemSchema } from '~/attributes/item/index.js'
 import { item } from '~/attributes/item/index.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 
-type ItemAttrDTO = Extract<AttributeDTO, { type: 'item' }>
+type ItemSchemaDTO = Extract<ISchemaDTO, { type: 'item' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
@@ -17,7 +17,7 @@ export const fromItemSchemaDTO = ({
   putLink,
   updateLink,
   attributes
-}: ItemAttrDTO): ItemSchema => {
+}: ItemSchemaDTO): ItemSchema => {
   keyDefault
   putDefault
   updateDefault

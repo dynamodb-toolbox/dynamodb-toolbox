@@ -26,7 +26,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.invalidKeys', path })
+      expect.objectContaining({ code: 'schema.record.invalidKeys', path })
     )
   })
 
@@ -41,7 +41,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalKeys', path })
+      expect.objectContaining({ code: 'schema.record.optionalKeys', path })
     )
   })
 
@@ -56,7 +56,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenKeys', path })
+      expect.objectContaining({ code: 'schema.record.hiddenKeys', path })
     )
   })
 
@@ -71,7 +71,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyKeys', path })
+      expect.objectContaining({ code: 'schema.record.keyKeys', path })
     )
   })
 
@@ -86,7 +86,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsKeys', path })
+      expect.objectContaining({ code: 'schema.record.savedAsKeys', path })
     )
   })
 
@@ -101,7 +101,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+      expect.objectContaining({ code: 'schema.record.defaultedKeys', path })
     )
   })
 
@@ -116,7 +116,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+      expect.objectContaining({ code: 'schema.record.defaultedKeys', path })
     )
   })
 
@@ -131,7 +131,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalElements', path })
+      expect.objectContaining({ code: 'schema.record.optionalElements', path })
     )
   })
 
@@ -146,7 +146,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenElements', path })
+      expect.objectContaining({ code: 'schema.record.hiddenElements', path })
     )
   })
 
@@ -161,7 +161,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyElements', path })
+      expect.objectContaining({ code: 'schema.record.keyElements', path })
     )
   })
 
@@ -176,7 +176,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsElements', path })
+      expect.objectContaining({ code: 'schema.record.savedAsElements', path })
     )
   })
 
@@ -191,7 +191,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.record.defaultedElements', path })
     )
   })
 
@@ -206,7 +206,7 @@ describe('record', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.record.defaultedElements', path })
     )
   })
 

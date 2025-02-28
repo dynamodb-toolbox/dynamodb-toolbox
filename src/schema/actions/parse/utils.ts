@@ -1,4 +1,4 @@
-import type { AttrSchema, AttributeBasicValue } from '~/attributes/index.js'
+import type { AttrSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ExtensionParser, WriteMode } from '~/schema/index.js'
@@ -8,44 +8,44 @@ import type { ParseAttrValueOptions } from './options.js'
 
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,
-  basicInput: input as AttributeBasicValue<never> | undefined
+  basicInput: input as SchemaBasicValue<never> | undefined
 })
 
-export const isRequired = (attribute: AttrSchema, mode: WriteMode): boolean => {
+export const isRequired = (schema: AttrSchema, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
-      return attribute.props?.required !== 'never'
+      return schema.props?.required !== 'never'
     case 'key':
     case 'update':
-      return attribute.props?.required === 'always'
+      return schema.props?.required === 'always'
   }
 }
 
-const getValidator = (attribute: AttrSchema, mode: WriteMode) => {
-  if (attribute.props.key) {
-    return attribute.props.keyValidator
+const getValidator = (schema: AttrSchema, mode: WriteMode) => {
+  if (schema.props.key) {
+    return schema.props.keyValidator
   }
 
   switch (mode) {
     case 'key':
-      return attribute.props.keyValidator
+      return schema.props.keyValidator
     case 'put':
-      return attribute.props.putValidator
+      return schema.props.putValidator
     case 'update':
-      return attribute.props.updateValidator
+      return schema.props.updateValidator
   }
 }
 
 export const applyCustomValidation = (
-  attribute: AttrSchema,
+  schema: AttrSchema,
   inputValue: unknown,
   options: ParseAttrValueOptions = {}
 ): void => {
   const { mode = 'put', valuePath = [] } = options
 
-  const customValidator = getValidator(attribute, mode)
+  const customValidator = getValidator(schema, mode)
   if (customValidator !== undefined) {
-    const validationResult = customValidator(inputValue, attribute)
+    const validationResult = customValidator(inputValue, schema)
 
     if (validationResult !== true) {
       const path = formatValuePath(valuePath)

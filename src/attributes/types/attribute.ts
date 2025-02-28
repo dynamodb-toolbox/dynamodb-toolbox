@@ -1,5 +1,5 @@
 import type { ResolvedBinarySchema } from '../binary/index.js'
-import type { ResolvedBooleanAttribute } from '../boolean/index.js'
+import type { ResolvedBooleanSchema } from '../boolean/index.js'
 import type { ResolvedNullSchema } from '../null/index.js'
 import type { ResolvedNumberSchema } from '../number/index.js'
 import type { ResolvedStringSchema } from '../string/index.js'
@@ -25,90 +25,84 @@ export type ExtendedValue<
       : never
     : never
 
-export type NullAttributeBasicValue = ResolvedNullSchema
-export type NullAttributeValue<EXTENSION extends Extension = never> =
+export type NullBasicValue = ResolvedNullSchema
+export type NullExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'null'>
-  | NullAttributeBasicValue
+  | NullBasicValue
 
-export type BooleanAttributeBasicValue = ResolvedBooleanAttribute
-export type BooleanAttributeValue<EXTENSION extends Extension = never> =
+export type BooleanBasicValue = ResolvedBooleanSchema
+export type BooleanExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'boolean'>
-  | BooleanAttributeBasicValue
+  | BooleanBasicValue
 
-export type NumberAttributeBasicValue = ResolvedNumberSchema
-export type NumberAttributeValue<EXTENSION extends Extension = never> =
+export type NumberBasicValue = ResolvedNumberSchema
+export type NumberExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'number'>
-  | NumberAttributeBasicValue
+  | NumberBasicValue
 
-export type StringAttributeBasicValue = ResolvedStringSchema
-export type StringAttributeValue<EXTENSION extends Extension = never> =
+export type StringBasicValue = ResolvedStringSchema
+export type StringExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'string'>
-  | StringAttributeBasicValue
+  | StringBasicValue
 
-export type BinaryAttributeBasicValue = ResolvedBinarySchema
-export type BinaryAttributeValue<EXTENSION extends Extension = never> =
+export type BinaryBasicValue = ResolvedBinarySchema
+export type BinaryExtendedAttributeValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'binary'>
-  | BinaryAttributeBasicValue
+  | BinaryBasicValue
 
-export type SetAttributeBasicValue<EXTENSION extends Extension = never> = Set<
-  AttributeValue<EXTENSION>
->
-export type SetAttributeValue<EXTENSION extends Extension = never> =
+export type SetBasicValue<EXTENSION extends Extension = never> = Set<SchemaExtendedValue<EXTENSION>>
+export type SetExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'set'>
-  | SetAttributeBasicValue<EXTENSION>
+  | SetBasicValue<EXTENSION>
 
-export type ListAttributeBasicValue<EXTENSION extends Extension = never> =
-  AttributeValue<EXTENSION>[]
-export type ListAttributeValue<EXTENSION extends Extension = never> =
+export type ListBasicValue<EXTENSION extends Extension = never> = SchemaExtendedValue<EXTENSION>[]
+export type ListExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'list'>
-  | ListAttributeBasicValue<EXTENSION>
+  | ListBasicValue<EXTENSION>
 
-export type MapAttributeBasicValue<EXTENSION extends Extension = never> = {
-  [key: string]: AttributeValue<EXTENSION>
+export type MapBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: SchemaExtendedValue<EXTENSION>
 }
-export type MapAttributeValue<EXTENSION extends Extension = never> =
+export type MapExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'map'>
-  | MapAttributeBasicValue<EXTENSION>
+  | MapBasicValue<EXTENSION>
 
-export type RecordAttributeBasicValue<EXTENSION extends Extension = never> = {
-  [key: string]: AttributeValue<EXTENSION> | undefined
+export type RecordBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: SchemaExtendedValue<EXTENSION> | undefined
 }
-export type RecordAttributeValue<EXTENSION extends Extension = never> =
+export type RecordExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'record'>
-  | RecordAttributeBasicValue<EXTENSION>
+  | RecordBasicValue<EXTENSION>
 
-export type ItemSchemaBasicValue<EXTENSION extends Extension = never> = {
-  [key: string]: AttributeValue<EXTENSION> | undefined
+export type ItemBasicValue<EXTENSION extends Extension = never> = {
+  [key: string]: SchemaExtendedValue<EXTENSION> | undefined
 }
-export type ItemSchemaValue<EXTENSION extends Extension = never> =
+export type ItemExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'item'>
-  | ItemSchemaBasicValue<EXTENSION>
+  | ItemBasicValue<EXTENSION>
 
-/**
- * Any possible resolved attribute type
- */
-export type AttributeValue<EXTENSION extends Extension = never> =
-  | NullAttributeValue<EXTENSION>
-  | BooleanAttributeValue<EXTENSION>
-  | NumberAttributeValue<EXTENSION>
-  | StringAttributeValue<EXTENSION>
-  | BinaryAttributeValue<EXTENSION>
-  | SetAttributeValue<EXTENSION>
-  | ListAttributeValue<EXTENSION>
-  | MapAttributeValue<EXTENSION>
-  | RecordAttributeValue<EXTENSION>
-  | ItemSchemaValue<EXTENSION>
+export type SchemaBasicValue<EXTENSION extends Extension = never> =
+  | NullBasicValue
+  | BooleanBasicValue
+  | NumberBasicValue
+  | StringBasicValue
+  | BinaryBasicValue
+  | SetBasicValue<EXTENSION>
+  | ListBasicValue<EXTENSION>
+  | MapBasicValue<EXTENSION>
+  | RecordBasicValue<EXTENSION>
+  | ItemBasicValue<EXTENSION>
 
-export type AttributeBasicValue<EXTENSION extends Extension = never> =
-  | NullAttributeBasicValue
-  | BooleanAttributeBasicValue
-  | NumberAttributeBasicValue
-  | StringAttributeBasicValue
-  | BinaryAttributeBasicValue
-  | SetAttributeBasicValue<EXTENSION>
-  | ListAttributeBasicValue<EXTENSION>
-  | MapAttributeBasicValue<EXTENSION>
-  | RecordAttributeBasicValue<EXTENSION>
-  | ItemSchemaBasicValue<EXTENSION>
+export type SchemaExtendedValue<EXTENSION extends Extension = never> =
+  | NullExtendedValue<EXTENSION>
+  | BooleanExtendedValue<EXTENSION>
+  | NumberExtendedValue<EXTENSION>
+  | StringExtendedValue<EXTENSION>
+  | BinaryExtendedAttributeValue<EXTENSION>
+  | SetExtendedValue<EXTENSION>
+  | ListExtendedValue<EXTENSION>
+  | MapExtendedValue<EXTENSION>
+  | RecordExtendedValue<EXTENSION>
+  | ItemExtendedValue<EXTENSION>
 
 export type UndefinedAttrExtension = { type: '*'; value: undefined }

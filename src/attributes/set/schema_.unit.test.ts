@@ -23,7 +23,7 @@ describe('set', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.optionalElements', path })
+      expect.objectContaining({ code: 'schema.set.optionalElements', path })
     )
   })
 
@@ -37,7 +37,7 @@ describe('set', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.hiddenElements', path })
+      expect.objectContaining({ code: 'schema.set.hiddenElements', path })
     )
   })
 
@@ -51,7 +51,7 @@ describe('set', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.savedAsElements', path })
+      expect.objectContaining({ code: 'schema.set.savedAsElements', path })
     )
   })
 
@@ -65,7 +65,7 @@ describe('set', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.set.defaultedElements', path })
     )
   })
 
@@ -79,7 +79,7 @@ describe('set', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.setAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.set.defaultedElements', path })
     )
   })
 

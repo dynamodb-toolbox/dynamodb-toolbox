@@ -6,8 +6,8 @@ import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* anyOfAttrFormatter(
-  attribute: AnyOfSchema,
+export function* anyOfSchemaFormatter(
+  schema: AnyOfSchema,
   rawValue: unknown,
   options: FormatAttrValueOptions<AnyOfSchema> = {}
 ): Generator<
@@ -20,7 +20,7 @@ export function* anyOfAttrFormatter(
   let _transformedValue = undefined
   let _formattedValue = undefined
 
-  for (const element of attribute.elements) {
+  for (const element of schema.elements) {
     try {
       formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<AttrSchema>)
       if (transform) {
