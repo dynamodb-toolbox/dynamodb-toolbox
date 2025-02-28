@@ -1,8 +1,12 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { Schema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  Schema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -20,7 +24,7 @@ export const parseReferenceExtension: ExtensionParser<
   if (!isGetting(inputValue) || inputValue[$GET] === undefined) {
     return {
       isExtension: false,
-      basicInput: inputValue as SchemaBasicValue<ReferenceExtension> | undefined
+      unextendedInput: inputValue as SchemaUnextendedValue<ReferenceExtension> | undefined
     }
   }
 

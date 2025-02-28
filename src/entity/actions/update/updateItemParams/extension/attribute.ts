@@ -1,7 +1,11 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { Schema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  Schema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
@@ -67,7 +71,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     default:
       return {
         isExtension: false,
-        basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
       }
   }
 }

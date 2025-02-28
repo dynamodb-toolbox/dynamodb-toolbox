@@ -1,6 +1,7 @@
 import type {
   AnyOfSchema,
   AnySchema,
+  AppendKey,
   BinarySchema,
   BooleanSchema,
   ItemSchema,
@@ -8,6 +9,7 @@ import type {
   MapSchema,
   NullSchema,
   NumberSchema,
+  Paths,
   PrimitiveSchema,
   RecordSchema,
   ResolveBinarySchema,
@@ -20,9 +22,9 @@ import type {
   ResolvedStringSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  StringToEscape
 } from '~/schema/index.js'
-import type { AppendKey, Paths, StringToEscape } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 export type AnySchemaCondition<ATTR_PATH extends string, ALL_PATHS extends string> = AttrCondition<

@@ -1,14 +1,13 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { Schema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, WriteMode } from '~/schema/index.js'
+import type { ExtensionParser, Schema, SchemaUnextendedValue, WriteMode } from '~/schema/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { ParseAttrValueOptions } from './options.js'
 
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,
-  basicInput: input as SchemaBasicValue<never> | undefined
+  unextendedInput: input as SchemaUnextendedValue<never> | undefined
 })
 
 export const isRequired = (schema: Schema, mode: WriteMode): boolean => {

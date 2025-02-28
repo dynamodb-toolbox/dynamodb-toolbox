@@ -1,5 +1,4 @@
-import type { Schema } from '~/schema/index.js'
-import type { Paths } from '~/schema/index.js'
+import type { Paths, Schema } from '~/schema/index.js'
 
 export interface FormatValueOptions<SCHEMA extends Schema> {
   format?: boolean

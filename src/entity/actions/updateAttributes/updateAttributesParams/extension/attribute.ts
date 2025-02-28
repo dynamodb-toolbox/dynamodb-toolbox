@@ -4,8 +4,12 @@ import { parseReferenceExtension } from '~/entity/actions/update/updateItemParam
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { Schema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  Schema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 import { parseListExtension } from './list.js'
@@ -67,7 +71,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     default:
       return {
         isExtension: false,
-        basicInput: input as SchemaBasicValue<UpdateAttributesInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
       }
   }
 }

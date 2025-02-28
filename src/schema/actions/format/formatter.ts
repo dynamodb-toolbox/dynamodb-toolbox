@@ -1,9 +1,9 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
 import type {
   FormattedValue,
   ReadValue,
   ReadValueOptions,
+  Schema,
   TransformedValue
 } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'

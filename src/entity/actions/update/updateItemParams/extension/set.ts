@@ -1,6 +1,10 @@
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { SchemaBasicValue, SetSchema } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  SchemaUnextendedValue,
+  SetSchema
+} from '~/schema/index.js'
 
 import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
@@ -58,6 +62,6 @@ export const parseSetExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
   }
 }

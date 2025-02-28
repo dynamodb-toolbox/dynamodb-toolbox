@@ -15,7 +15,7 @@ type UpdateItemParamsGetter = <ENTITY extends Entity, OPTIONS extends UpdateItem
   entity: ENTITY,
   input: UpdateItemInput<ENTITY>,
   updateItemOptions?: OPTIONS
-) => UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, true> }
+) => UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, { filled: true }> }
 
 export const updateItemParams: UpdateItemParamsGetter = <
   ENTITY extends Entity,
@@ -57,7 +57,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
     /**
      * @debt type "TODO: Rework extensions & not cast here (use `ParsedItem<ENTITY, { extension: UpdateItemExtension }>`)"
      */
-    ToolboxItem: parsedItem as UpdateItemInput<ENTITY, true>,
+    ToolboxItem: parsedItem as UpdateItemInput<ENTITY, { filled: true }>,
     Key: key,
     ...update,
     ...awsOptions,

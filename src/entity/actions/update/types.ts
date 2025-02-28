@@ -3,8 +3,8 @@ import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  ItemBasicValue,
   ItemSchema,
+  ItemUnextendedValue,
   ListExtendedValue,
   ListSchema,
   MapExtendedValue,
@@ -12,6 +12,7 @@ import type {
   Never,
   NumberExtendedValue,
   NumberSchema,
+  Paths,
   PrimitiveSchema,
   RecordExtendedValue,
   RecordSchema,
@@ -21,10 +22,10 @@ import type {
   Schema,
   SchemaExtendedValue,
   SetExtendedValue,
-  SetSchema
+  SetSchema,
+  ValidValue
 } from '~/schema/index.js'
-import type { Paths, ValidValue } from '~/schema/index.js'
-import type { Extends, If, Not, Optional } from '~/types/index.js'
+import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type {
   $ADD,
@@ -38,36 +39,36 @@ import type {
   $SUM,
   ADD,
   APPEND,
-  Basic,
   DELETE,
-  Extension,
+  Extended,
   GET,
   PREPEND,
   REMOVE,
   SET,
   SUBTRACT,
-  SUM
+  SUM,
+  Unextended
 } from './symbols/index.js'
 
 export type ReferenceExtension = {
   type: '*'
-  value: Extension<{ [$GET]: [ref: string, fallback?: SchemaExtendedValue<ReferenceExtension>] }>
+  value: Extended<{ [$GET]: [ref: string, fallback?: SchemaExtendedValue<ReferenceExtension>] }>
 }
 
 export type UpdateItemInputExtension =
   | ReferenceExtension
-  | { type: '*'; value: Extension<{ [$REMOVE]: true }> }
+  | { type: '*'; value: Extended<{ [$REMOVE]: true }> }
   | {
       type: 'number'
       value:
-        | Extension<{ [$ADD]: number }>
-        | Extension<{
+        | Extended<{ [$ADD]: number }>
+        | Extended<{
             [$SUM]: [
               NumberExtendedValue<ReferenceExtension>,
               NumberExtendedValue<ReferenceExtension>
             ]
           }>
-        | Extension<{
+        | Extended<{
             [$SUBTRACT]: [
               NumberExtendedValue<ReferenceExtension>,
               NumberExtendedValue<ReferenceExtension>
@@ -76,14 +77,16 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'set'
-      value: Extension<{ [$ADD]: SetExtendedValue } | { [$DELETE]: SetExtendedValue }>
+      value: Extended<{ [$ADD]: SetExtendedValue } | { [$DELETE]: SetExtendedValue }>
     }
   | {
       type: 'list'
       value:
-        | Basic<{ [INDEX in number]: SchemaExtendedValue<UpdateItemInputExtension> | undefined }>
-        | Extension<{ [$SET]: ListExtendedValue }>
-        | Extension<
+        | Unextended<{
+            [INDEX in number]: SchemaExtendedValue<UpdateItemInputExtension> | undefined
+          }>
+        | Extended<{ [$SET]: ListExtendedValue }>
+        | Extended<
             | { [$APPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
             | { [$PREPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
             // TODO: CONCAT to join two unrelated lists
@@ -91,36 +94,12 @@ export type UpdateItemInputExtension =
     }
   | {
       type: 'map'
-      value: Extension<{ [$SET]: MapExtendedValue }>
+      value: Extended<{ [$SET]: MapExtendedValue }>
     }
   | {
       type: 'record'
-      value: Extension<{ [$SET]: RecordExtendedValue }>
+      value: Extended<{ [$SET]: RecordExtendedValue }>
     }
-
-type MustBeDefined<SCHEMA extends Schema, FILLED extends boolean = false> = If<
-  FILLED,
-  Extends<SCHEMA['props'], { required: Always }>,
-  If<
-    Not<Extends<SCHEMA['props'], { required: Always }>>,
-    false,
-    If<
-      Extends<SCHEMA['props'], { key: true }>,
-      Not<Extends<SCHEMA['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
-      Not<Extends<SCHEMA['props'], { updateDefault: unknown } | { updateLink: unknown }>>
-    >
-  >
->
-
-type OptionalKeys<SCHEMA extends ItemSchema | MapSchema, FILLED extends boolean = false> = {
-  [KEY in keyof SCHEMA['attributes']]: If<
-    MustBeDefined<SCHEMA['attributes'][KEY], FILLED>,
-    never,
-    KEY
-  >
-}[keyof SCHEMA['attributes']]
-
-type CanBeRemoved<SCHEMA extends Schema> = Extends<SCHEMA['props'], { required: Never }>
 
 /**
  * User input of an UPDATE command for a given Entity or Schema
@@ -131,10 +110,51 @@ type CanBeRemoved<SCHEMA extends Schema> = Extends<SCHEMA['props'], { required: 
  */
 export type UpdateItemInput<
   SCHEMA extends Entity = Entity,
-  FILLED extends boolean = false
+  OPTIONS extends UpdateInputOptions = {}
 > = Entity extends SCHEMA
-  ? ItemBasicValue<UpdateItemInputExtension>
-  : AttributeUpdateItemInput<SCHEMA['schema'], FILLED>
+  ? ItemUnextendedValue<UpdateItemInputExtension>
+  : UpdateValueInput<SCHEMA['schema'], OPTIONS>
+
+interface UpdateInputOptions {
+  filled?: boolean
+  defined?: boolean
+  extended?: boolean
+}
+
+type MustBeDefined<SCHEMA extends Schema, OPTIONS extends UpdateInputOptions = {}> = If<
+  Extends<OPTIONS, { defined: true }>,
+  true,
+  If<
+    Extends<OPTIONS, { filled: true }>,
+    Extends<SCHEMA['props'], { required: Always }>,
+    If<
+      Not<Extends<SCHEMA['props'], { required: Always }>>,
+      false,
+      If<
+        Extends<SCHEMA['props'], { key: true }>,
+        Not<Extends<SCHEMA['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
+        Not<Extends<SCHEMA['props'], { updateDefault: unknown } | { updateLink: unknown }>>
+      >
+    >
+  >
+>
+
+type IsExtended<OPTIONS extends UpdateInputOptions = {}> = Not<
+  Extends<OPTIONS, { extended: false }>
+>
+
+type OptionalKeys<
+  SCHEMA extends ItemSchema | MapSchema,
+  OPTIONS extends UpdateInputOptions = {}
+> = {
+  [KEY in keyof SCHEMA['attributes']]: If<
+    MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
+    never,
+    KEY
+  >
+}[keyof SCHEMA['attributes']]
+
+type CanBeRemoved<SCHEMA extends Schema> = Extends<SCHEMA['props'], { required: Never }>
 
 export type Reference<SCHEMA extends Schema, AVAILABLE_PATHS extends string = string> = GET<
   [
@@ -154,37 +174,43 @@ type NumberUpdate<SCHEMA extends NumberSchema> =
  * @param RequireDefaults Boolean
  * @return Any
  */
-export type AttributeUpdateItemInput<
+export type UpdateValueInput<
   SCHEMA extends Schema = Schema,
-  FILLED extends boolean = false,
+  OPTIONS extends UpdateInputOptions = {},
   AVAILABLE_PATHS extends string = string
 > = Schema extends SCHEMA
   ? SchemaExtendedValue<UpdateItemInputExtension> | undefined
   : SCHEMA extends ItemSchema
     ? Optional<
         {
-          [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
+          [KEY in keyof SCHEMA['attributes']]: UpdateValueInput<
             SCHEMA['attributes'][KEY],
-            FILLED,
+            Overwrite<OPTIONS, { defined: false; extended: true }>,
             Paths<SCHEMA>
           >
         },
-        OptionalKeys<SCHEMA, FILLED>
+        OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
       >
     :
-        | If<MustBeDefined<SCHEMA, FILLED>, never, undefined>
-        | If<CanBeRemoved<SCHEMA>, REMOVE, never>
-        // Not using Reference<...> for improved type display
-        | GET<
-            [
-              ref: AVAILABLE_PATHS,
-              fallback?: ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
-            ]
+        | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+        | If<
+            IsExtended<OPTIONS>,
+            | If<CanBeRemoved<SCHEMA>, REMOVE, never>
+            // Not using Reference<...> for improved type display
+            | GET<
+                [
+                  ref: AVAILABLE_PATHS,
+                  fallback?:
+                    | ValidValue<SCHEMA, { defined: true }>
+                    | Reference<SCHEMA, AVAILABLE_PATHS>
+                ]
+              >
           >
         | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> | unknown : never)
         | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
         | (SCHEMA extends NumberSchema
-            ?
+            ? If<
+                IsExtended<OPTIONS>,
                 | ADD<NumberUpdate<SCHEMA>>
                 | SUM<
                     // Not using Reference<...> for improved type display
@@ -222,70 +248,85 @@ export type AttributeUpdateItemInput<
                         ]
                       >
                   >
+              >
             : never)
         | (SCHEMA extends SetSchema
             ?
-                | Set<ValidValue<SCHEMA['elements']>>
-                | ADD<Set<ValidValue<SCHEMA['elements']>>>
-                | DELETE<Set<ValidValue<SCHEMA['elements']>>>
+                | Unextended<Set<ValidValue<SCHEMA['elements']>>>
+                | If<
+                    IsExtended<OPTIONS>,
+                    | ADD<Set<ValidValue<SCHEMA['elements']>>>
+                    | DELETE<Set<ValidValue<SCHEMA['elements']>>>
+                  >
             : never)
         | (SCHEMA extends ListSchema
             ?
-                | Basic<{
+                | Unextended<{
                     [INDEX in number]?:
-                      | AttributeUpdateItemInput<SCHEMA['elements'], FILLED, AVAILABLE_PATHS>
+                      | UpdateValueInput<
+                          SCHEMA['elements'],
+                          Overwrite<OPTIONS, { defined: false; extended: true }>,
+                          AVAILABLE_PATHS
+                        >
                       | REMOVE
                   }>
-                | SET<ValidValue<SCHEMA['elements']>[]>
-                | APPEND<
-                    // Not using Reference<...> for improved type display
-                    | GET<
-                        [
-                          ref: AVAILABLE_PATHS,
-                          fallback?:
-                            | ValidValue<SCHEMA['elements']>[]
-                            | Reference<SCHEMA, AVAILABLE_PATHS>
-                        ]
+                | If<
+                    IsExtended<OPTIONS>,
+                    | SET<ValidValue<SCHEMA['elements']>[]>
+                    | APPEND<
+                        // Not using Reference<...> for improved type display
+                        | GET<
+                            [
+                              ref: AVAILABLE_PATHS,
+                              fallback?:
+                                | ValidValue<SCHEMA['elements']>[]
+                                | Reference<SCHEMA, AVAILABLE_PATHS>
+                            ]
+                          >
+                        | ValidValue<SCHEMA['elements']>[]
                       >
-                    | ValidValue<SCHEMA['elements']>[]
-                  >
-                | PREPEND<
-                    | GET<
-                        [
-                          ref: AVAILABLE_PATHS,
-                          fallback?:
-                            | ValidValue<SCHEMA['elements']>[]
-                            | Reference<SCHEMA, AVAILABLE_PATHS>
-                        ]
+                    | PREPEND<
+                        | GET<
+                            [
+                              ref: AVAILABLE_PATHS,
+                              fallback?:
+                                | ValidValue<SCHEMA['elements']>[]
+                                | Reference<SCHEMA, AVAILABLE_PATHS>
+                            ]
+                          >
+                        | ValidValue<SCHEMA['elements']>[]
                       >
-                    | ValidValue<SCHEMA['elements']>[]
                   >
             : never)
         | (SCHEMA extends MapSchema
             ?
-                | Basic<
+                | Unextended<
                     Optional<
                       {
-                        [KEY in keyof SCHEMA['attributes']]: AttributeUpdateItemInput<
+                        [KEY in keyof SCHEMA['attributes']]: UpdateValueInput<
                           SCHEMA['attributes'][KEY],
-                          FILLED,
+                          Overwrite<OPTIONS, { defined: false; extended: true }>,
                           AVAILABLE_PATHS
                         >
                       },
-                      OptionalKeys<SCHEMA, FILLED>
+                      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
                     >
                   >
-                | SET<ValidValue<SCHEMA, { defined: true }>>
+                | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
             : never)
         | (SCHEMA extends RecordSchema
             ?
-                | Basic<{
+                | Unextended<{
                     [KEY in ResolveStringSchema<SCHEMA['keys']>]?:
-                      | AttributeUpdateItemInput<SCHEMA['elements'], FILLED, AVAILABLE_PATHS>
+                      | UpdateValueInput<
+                          SCHEMA['elements'],
+                          Overwrite<OPTIONS, { defined: false; extended: true }>,
+                          AVAILABLE_PATHS
+                        >
                       | REMOVE
                   }>
-                | SET<ValidValue<SCHEMA, { defined: true }>>
+                | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
             : never)
         | (SCHEMA extends AnyOfSchema
-            ? AttributeUpdateItemInput<SCHEMA['elements'][number], FILLED, AVAILABLE_PATHS>
+            ? UpdateValueInput<SCHEMA['elements'][number], OPTIONS, AVAILABLE_PATHS>
             : never)
