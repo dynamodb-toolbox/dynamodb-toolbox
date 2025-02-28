@@ -1,7 +1,6 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   BinarySchema,
   BooleanSchema,
   ItemSchema,
@@ -19,6 +18,7 @@ import type {
   ResolvedBinarySchema,
   ResolvedNumberSchema,
   ResolvedStringSchema,
+  Schema,
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
@@ -27,7 +27,7 @@ import type { Extends, If } from '~/types/index.js'
 
 export type AnySchemaCondition<ATTR_PATH extends string, ALL_PATHS extends string> = AttrCondition<
   ATTR_PATH,
-  Exclude<AttrSchema, AnySchema>,
+  Exclude<Schema, AnySchema>,
   ALL_PATHS
 >
 
@@ -35,7 +35,7 @@ export type ConditionType = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NUL
 
 export type AttrCondition<
   ATTR_PATH extends string,
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   ALL_PATHS extends string
 > =
   | (SCHEMA extends AnySchema ? AnySchemaCondition<`${ATTR_PATH}${string}`, ALL_PATHS> : never)
@@ -328,7 +328,7 @@ export type AnyOfSchemaCondition<
   | (AnyOfSchema extends SCHEMA
       ? never
       : SCHEMA['elements'][number] extends infer ELEMENT
-        ? ELEMENT extends AttrSchema
+        ? ELEMENT extends Schema
           ? AttrCondition<ATTR_PATH, ELEMENT, ALL_PATHS>
           : never
         : never)

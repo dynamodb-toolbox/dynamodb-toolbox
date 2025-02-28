@@ -7,13 +7,18 @@ import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.j
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { Light } from '../shared/light.js'
-import { light } from '../shared/light.js'
-import type { SchemaProps } from '../shared/props.js'
 import type { StringSchema } from '../string/index.js'
-import type { AttrSchema } from '../types/attrSchema.js'
-import type { Validator } from '../types/validator.js'
+import type {
+  Always,
+  AtLeastOnce,
+  Never,
+  Schema,
+  SchemaProps,
+  SchemaRequiredProp,
+  Validator
+} from '../types/index.js'
+import type { Light } from '../utils/light.js'
+import { light } from '../utils/light.js'
 import { RecordSchema } from './schema.js'
 import type { RecordElementSchema, RecordKeySchema } from './types.js'
 
@@ -38,7 +43,7 @@ type RecordSchemer = <
  *
  * @param keys Keys (With constraints)
  * @param elements Attribute (With constraints)
- * @param props _(optional)_ Record Options
+ * @param props _(optional)_ Record Props
  */
 export const record: RecordSchemer = <
   KEYS extends RecordKeySchema,
@@ -55,7 +60,7 @@ export const record: RecordSchemer = <
  */
 export class RecordSchema_<
   KEYS extends StringSchema = StringSchema,
-  ELEMENTS extends AttrSchema = AttrSchema,
+  ELEMENTS extends Schema = Schema,
   PROPS extends SchemaProps = SchemaProps
 > extends RecordSchema<KEYS, ELEMENTS, PROPS> {
   /**
@@ -64,9 +69,9 @@ export class RecordSchema_<
    * - `'never'`: Optional in PUTs and UPDATEs
    * - `'always'`: Required in PUTs and UPDATEs
    *
-   * @param nextRequired RequiredOption
+   * @param nextRequired SchemaRequiredProp
    */
-  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+  required<NEXT_IS_REQUIRED extends SchemaRequiredProp = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
     return new RecordSchema_(
@@ -201,7 +206,7 @@ export class RecordSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends AttrSchema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
@@ -218,7 +223,7 @@ export class RecordSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends AttrSchema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putLink: unknown }>> {
     return new RecordSchema_(
@@ -233,7 +238,7 @@ export class RecordSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends AttrSchema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
@@ -250,7 +255,7 @@ export class RecordSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends AttrSchema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         PROPS['key'],

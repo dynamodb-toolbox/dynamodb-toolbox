@@ -1,4 +1,4 @@
-import { checkSchemaProps } from '../shared/check.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { AnySchemaProps } from './types.js'
 
 export class AnySchema<PROPS extends AnySchemaProps = AnySchemaProps> {

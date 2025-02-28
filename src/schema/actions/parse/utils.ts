@@ -1,4 +1,4 @@
-import type { AttrSchema, SchemaBasicValue } from '~/attributes/index.js'
+import type { Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ExtensionParser, WriteMode } from '~/schema/index.js'
@@ -11,7 +11,7 @@ export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   basicInput: input as SchemaBasicValue<never> | undefined
 })
 
-export const isRequired = (schema: AttrSchema, mode: WriteMode): boolean => {
+export const isRequired = (schema: Schema, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
       return schema.props?.required !== 'never'
@@ -21,7 +21,7 @@ export const isRequired = (schema: AttrSchema, mode: WriteMode): boolean => {
   }
 }
 
-const getValidator = (schema: AttrSchema, mode: WriteMode) => {
+const getValidator = (schema: Schema, mode: WriteMode) => {
   if (schema.props.key) {
     return schema.props.keyValidator
   }
@@ -37,7 +37,7 @@ const getValidator = (schema: AttrSchema, mode: WriteMode) => {
 }
 
 export const applyCustomValidation = (
-  schema: AttrSchema,
+  schema: Schema,
   inputValue: unknown,
   options: ParseAttrValueOptions = {}
 ): void => {

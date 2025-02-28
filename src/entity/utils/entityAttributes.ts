@@ -1,8 +1,7 @@
-import type { RequiredOption } from '~/attributes/constants/requiredOptions.js'
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema, SchemaRequiredProp } from '~/attributes/index.js'
 
 export interface EntityAttributes {
-  [KEY: string]: AttrSchema
+  [KEY: string]: Schema
 }
 
 export interface SchemaOf<ATTRIBUTES extends EntityAttributes> {
@@ -10,5 +9,5 @@ export interface SchemaOf<ATTRIBUTES extends EntityAttributes> {
 
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
-  requiredAttributeNames: Record<RequiredOption, Set<string>>
+  requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>
 }

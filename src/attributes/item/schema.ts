@@ -1,8 +1,7 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { RequiredOption } from '../constants/index.js'
-import { checkSchemaProps } from '../shared/check.js'
-import type { SchemaProps } from '../shared/props.js'
+import type { SchemaProps, SchemaRequiredProp } from '../types/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { ItemAttributes } from './types.js'
 
 export class ItemSchema<ATTRIBUTES extends ItemAttributes = ItemAttributes> {
@@ -12,7 +11,7 @@ export class ItemSchema<ATTRIBUTES extends ItemAttributes = ItemAttributes> {
 
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
-  requiredAttributeNames: Record<RequiredOption, Set<string>>
+  requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>
 
   constructor(attributes: ATTRIBUTES) {
     this.type = 'item'
@@ -51,7 +50,7 @@ export class ItemSchema<ATTRIBUTES extends ItemAttributes = ItemAttributes> {
 
     const attributesSavedAs = new Set<string>()
     const keyAttributeNames = new Set<string>()
-    const requiredAttributeNames: Record<RequiredOption, Set<string>> = {
+    const requiredAttributeNames: Record<SchemaRequiredProp, Set<string>> = {
       always: new Set(),
       atLeastOnce: new Set(),
       never: new Set()

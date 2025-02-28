@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { InputValue, TransformedValue, ValidValue, WriteValueOptions } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
@@ -8,7 +8,7 @@ import type { InferWriteValueOptions, ParseValueOptions } from './options.js'
 import { schemaParser } from './schema.js'
 
 type ParserInput<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends ParseValueOptions = {},
   WRITE_VALUE_OPTIONS extends WriteValueOptions = InferWriteValueOptions<OPTIONS>
 > = OPTIONS extends { fill: false }
@@ -16,7 +16,7 @@ type ParserInput<
   : InputValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
 export type ParserYield<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends ParseValueOptions = {},
   WRITE_VALUE_OPTIONS extends WriteValueOptions = InferWriteValueOptions<OPTIONS>
 > =
@@ -24,14 +24,14 @@ export type ParserYield<
   | ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
 export type ParserReturn<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends ParseValueOptions = {},
   WRITE_VALUE_OPTIONS extends WriteValueOptions = InferWriteValueOptions<OPTIONS>
 > = OPTIONS extends { transform: false }
   ? ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
   : TransformedValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
-export class Parser<SCHEMA extends AttrSchema> extends SchemaAction<SCHEMA> {
+export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
   start<OPTIONS extends ParseValueOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS

@@ -1,6 +1,6 @@
 // attributes
 export { attr, attribute } from './attributes/index.js'
-export type { AttrSchema, Validator } from './attributes/index.js'
+export type { Schema, Validator } from './attributes/index.js'
 export { any, AnySchema, AnySchema_ } from './attributes/any/index.js'
 export { nul, NullSchema, NullSchema_ } from './attributes/null/index.js'
 export { boolean, BooleanSchema, BooleanSchema_ } from './attributes/boolean/index.js'

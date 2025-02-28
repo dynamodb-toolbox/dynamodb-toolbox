@@ -2,11 +2,10 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
-import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
+import type { Light } from '../utils/light.js'
 import type { RecordSchema } from './schema.js'
 import { record } from './schema_.js'
 
@@ -229,7 +228,7 @@ describe('record', () => {
     assertExtends
   })
 
-  test('returns required record (option)', () => {
+  test('returns required record (prop)', () => {
     const recAtLeastOnce = record(fooBar, str, { required: 'atLeastOnce' })
     const recAlways = record(fooBar, str, { required: 'always' })
     const recNever = record(fooBar, str, { required: 'never' })
@@ -272,7 +271,7 @@ describe('record', () => {
     expect(recNever.props.required).toBe('never')
   })
 
-  test('returns hidden record (option)', () => {
+  test('returns hidden record (prop)', () => {
     const rec = record(fooBar, str, { hidden: true })
 
     const assertRec: A.Contains<(typeof rec)['props'], { hidden: true }> = 1
@@ -290,7 +289,7 @@ describe('record', () => {
     expect(rec.props.hidden).toBe(true)
   })
 
-  test('returns key record (option)', () => {
+  test('returns key record (prop)', () => {
     const rec = record(fooBar, str, { key: true })
 
     const assertRec: A.Contains<(typeof rec)['props'], { key: true }> = 1
@@ -309,7 +308,7 @@ describe('record', () => {
     expect(rec.props.required).toBe('always')
   })
 
-  test('returns savedAs record (option)', () => {
+  test('returns savedAs record (prop)', () => {
     const rec = record(fooBar, str, { savedAs: 'foo' })
 
     const assertRec: A.Contains<(typeof rec)['props'], { savedAs: 'foo' }> = 1
@@ -327,7 +326,7 @@ describe('record', () => {
     expect(rec.props.savedAs).toBe('foo')
   })
 
-  test('returns defaulted record (option)', () => {
+  test('returns defaulted record (prop)', () => {
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
       keyDefault: { foo: 'foo' }
@@ -400,7 +399,7 @@ describe('record', () => {
     expect(rec.props.keyDefault).toStrictEqual({ foo: 'foo' })
   })
 
-  test('returns linked record (option)', () => {
+  test('returns linked record (prop)', () => {
     const sayHello = () => ({ hello: 'world' })
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
@@ -477,7 +476,7 @@ describe('record', () => {
     expect(rec.props.keyLink).toBe(sayHello)
   })
 
-  test('returns record with validator (option)', () => {
+  test('returns record with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const recordA = record(string(), number(), { keyValidator: pass })

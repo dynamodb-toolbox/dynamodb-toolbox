@@ -7,10 +7,7 @@ import type { PrimitiveSchema, PrimitiveSchema_ } from '../primitive/index.js'
 import type { RecordSchema, RecordSchema_ } from '../record/index.js'
 import type { SetSchema, SetSchema_ } from '../set/index.js'
 
-/**
- * Any warm attribute props
- */
-export type AttrSchema =
+export type Schema =
   | AnySchema
   | PrimitiveSchema
   | SetSchema
@@ -20,10 +17,7 @@ export type AttrSchema =
   | AnyOfSchema
   | ItemSchema
 
-/**
- * Any warm attribute props (extended)
- */
-export type AttrSchema_ =
+export type Schema_ =
   | AnySchema_
   | PrimitiveSchema_
   | SetSchema_

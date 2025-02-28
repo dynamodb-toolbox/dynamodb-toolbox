@@ -7,12 +7,17 @@ import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.j
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { LightTuple } from '../shared/light.js'
-import { lightTuple } from '../shared/light.js'
-import type { SchemaProps } from '../shared/props.js'
-import type { AttrSchema } from '../types/attrSchema.js'
-import type { Validator } from '../types/validator.js'
+import type {
+  Always,
+  AtLeastOnce,
+  Never,
+  Schema,
+  SchemaProps,
+  SchemaRequiredProp,
+  Validator
+} from '../types/index.js'
+import type { LightTuple } from '../utils/light.js'
+import { lightTuple } from '../utils/light.js'
 import { AnyOfSchema } from './schema.js'
 import type { AnyOfElementSchema } from './types.js'
 
@@ -30,7 +35,7 @@ export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_(lightTuple(
  * AnyOf attribute interface
  */
 export class AnyOfSchema_<
-  ELEMENTS extends AttrSchema[] = AttrSchema[],
+  ELEMENTS extends Schema[] = Schema[],
   PROPS extends SchemaProps = SchemaProps
 > extends AnyOfSchema<ELEMENTS, PROPS> {
   /**
@@ -39,9 +44,9 @@ export class AnyOfSchema_<
    * - `'never'`: Optional in PUTs and UPDATEs
    * - `'always'`: Required in PUTs and UPDATEs
    *
-   * @param nextRequired RequiredOption
+   * @param nextRequired SchemaRequiredProp
    */
-  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+  required<NEXT_IS_REQUIRED extends SchemaRequiredProp = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
     return new AnyOfSchema_(this.elements, overwrite(this.props, { required: nextRequired }))
@@ -155,7 +160,7 @@ export class AnyOfSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends AttrSchema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
@@ -171,7 +176,7 @@ export class AnyOfSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends AttrSchema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putLink: unknown }>> {
     return new AnyOfSchema_(
@@ -185,7 +190,7 @@ export class AnyOfSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends AttrSchema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
@@ -201,7 +206,7 @@ export class AnyOfSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends AttrSchema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         PROPS['key'],

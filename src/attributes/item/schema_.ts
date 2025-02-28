@@ -3,8 +3,8 @@ import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 import { resetLinks } from '~/schema/utils/resetLinks.js'
 import type { NarrowObject } from '~/types/index.js'
 
-import type { Light, LightObj } from '../shared/light.js'
-import { lightObj } from '../shared/light.js'
+import type { Light, LightObj } from '../utils/light.js'
+import { lightObj } from '../utils/light.js'
 import { ItemSchema } from './schema.js'
 import type { ItemAttributes } from './types.js'
 

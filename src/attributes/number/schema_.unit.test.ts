@@ -2,8 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { NumberSchema } from './schema.js'
 import { number } from './schema_.js'
 
@@ -25,7 +24,7 @@ describe('number', () => {
     assertExtends
   })
 
-  test('returns required number (option)', () => {
+  test('returns required number (prop)', () => {
     const numAtLeastOnce = number({ required: 'atLeastOnce' })
     const numAlways = number({ required: 'always' })
     const numNever = number({ required: 'never' })
@@ -69,7 +68,7 @@ describe('number', () => {
     expect(numOpt.props.required).toBe('never')
   })
 
-  test('returns hidden number (option)', () => {
+  test('returns hidden number (prop)', () => {
     const num = number({ hidden: true })
 
     const assertNum: A.Contains<(typeof num)['props'], { hidden: true }> = 1
@@ -87,7 +86,7 @@ describe('number', () => {
     expect(num.props.hidden).toBe(true)
   })
 
-  test('returns key number (option)', () => {
+  test('returns key number (prop)', () => {
     const num = number({ key: true })
 
     const assertNum: A.Contains<(typeof num)['props'], { key: true }> = 1
@@ -106,7 +105,7 @@ describe('number', () => {
     expect(num.props.required).toBe('always')
   })
 
-  test('returns savedAs number (option)', () => {
+  test('returns savedAs number (prop)', () => {
     const num = number({ savedAs: 'foo' })
 
     const assertNum: A.Contains<(typeof num)['props'], { savedAs: 'foo' }> = 1
@@ -159,7 +158,7 @@ describe('number', () => {
     expect(num.props.enum).toStrictEqual([1, 2])
   })
 
-  test('returns transformed number (option)', () => {
+  test('returns transformed number (prop)', () => {
     const transformer = {
       encode: (input: number | bigint): number => (typeof input === 'number' ? input + 1 : 0),
       decode: (raw: number): number => raw - 1
@@ -187,7 +186,7 @@ describe('number', () => {
     expect(num.props.transform).toBe(transformer)
   })
 
-  test('returns big number (option)', () => {
+  test('returns big number (prop)', () => {
     const num = number({ big: true })
 
     const assertNum: A.Contains<(typeof num)['props'], { big: true }> = 1
@@ -205,7 +204,7 @@ describe('number', () => {
     expect(num.props.big).toBe(true)
   })
 
-  test('returns defaulted number (option)', () => {
+  test('returns defaulted number (prop)', () => {
     const invalidNum = number({
       // TOIMPROVE: add type constraints here
       putDefault: 'foo'
@@ -430,7 +429,7 @@ describe('number', () => {
     expect(num.props.keyLink).toBe(returnNumber)
   })
 
-  test('returns number with validator (option)', () => {
+  test('returns number with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const numA = number({ keyValidator: pass })

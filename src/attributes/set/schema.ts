@@ -1,8 +1,8 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkSchemaProps } from '../shared/check.js'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SchemaProps } from '../shared/props.js'
+import type { SchemaProps } from '../types/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
+import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 import type { SetElementSchema } from './types.js'
 
 export class SetSchema<
@@ -54,7 +54,7 @@ export class SetSchema<
       throw new DynamoDBToolboxError('schema.set.savedAsElements', {
         message: `Invalid set elements${
           path !== undefined ? ` at path '${path}'` : ''
-        }: Set elements cannot be renamed (have savedAs option).`,
+        }: Set elements cannot be renamed (have savedAs prop).`,
         path
       })
     }

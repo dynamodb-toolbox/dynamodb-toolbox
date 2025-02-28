@@ -1,14 +1,13 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkSchemaProps } from '../shared/check.js'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SchemaProps } from '../shared/props.js'
 import type { StringSchema } from '../string/index.js'
-import type { AttrSchema } from '../types/index.js'
+import type { Schema, SchemaProps } from '../types/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
+import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 
 export class RecordSchema<
   KEYS extends StringSchema = StringSchema,
-  ELEMENTS extends AttrSchema = AttrSchema,
+  ELEMENTS extends Schema = Schema,
   PROPS extends SchemaProps = SchemaProps
 > {
   type: 'record'
@@ -82,7 +81,7 @@ export class RecordSchema<
       throw new DynamoDBToolboxError('schema.record.savedAsKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
-        }: Record keys cannot be renamed (have savedAs option).`,
+        }: Record keys cannot be renamed (have savedAs prop).`,
         path
       })
     }
@@ -135,7 +134,7 @@ export class RecordSchema<
       throw new DynamoDBToolboxError('schema.record.savedAsElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
-        }: Record elements cannot be renamed (have savedAs option).`,
+        }: Record elements cannot be renamed (have savedAs prop).`,
         path
       })
     }

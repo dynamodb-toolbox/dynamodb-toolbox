@@ -2,8 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { requiredOptionsSet } from '../constants/requiredOptions.js'
-import type { SchemaProps } from './props.js'
+import type { SchemaProps, SchemaRequiredProp } from '../types/index.js'
+
+export const schemaRequiredPropSet = new Set<SchemaRequiredProp>(['never', 'atLeastOnce', 'always'])
 
 /**
  * Validates an attribute shared properties
@@ -15,56 +16,56 @@ import type { SchemaProps } from './props.js'
 export const checkSchemaProps = (props: SchemaProps, path?: string): void => {
   const { required, hidden, key, savedAs } = props
 
-  if (required !== undefined && !requiredOptionsSet.has(required)) {
-    throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
-      message: `Invalid option value type${
+  if (required !== undefined && !schemaRequiredPropSet.has(required)) {
+    throw new DynamoDBToolboxError('schema.invalidProp', {
+      message: `Invalid prop type${
         path !== undefined ? ` at path '${path}'` : ''
-      }. Property: 'required'. Expected: ${[...requiredOptionsSet].join(', ')}. Received: ${String(
+      }. Property: 'required'. Expected: ${[...schemaRequiredPropSet].join(', ')}. Received: ${String(
         required
       )}.`,
       path,
       payload: {
-        propertyName: 'required',
-        expected: [...requiredOptionsSet].join(', '),
+        propName: 'required',
+        expected: [...schemaRequiredPropSet].join(', '),
         received: required
       }
     })
   }
 
   if (hidden !== undefined && !isBoolean(hidden)) {
-    throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
-      message: `Invalid option value type${
+    throw new DynamoDBToolboxError('schema.invalidProp', {
+      message: `Invalid prop type${
         path !== undefined ? ` at path '${path}'` : ''
       }. Property: 'hidden'. Expected: boolean. Received: ${String(hidden)}.`,
       path,
       payload: {
-        propertyName: 'hidden',
+        propName: 'hidden',
         received: hidden
       }
     })
   }
 
   if (key !== undefined && !isBoolean(key)) {
-    throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
-      message: `Invalid option value type${
+    throw new DynamoDBToolboxError('schema.invalidProp', {
+      message: `Invalid prop type${
         path !== undefined ? ` at path '${path}'` : ''
       }. Property: 'key'. Expected: boolean. Received: ${String(key)}.`,
       path,
       payload: {
-        propertyName: 'key',
+        propName: 'key',
         received: key
       }
     })
   }
 
   if (savedAs !== undefined && !isString(savedAs)) {
-    throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
-      message: `Invalid option value type${
+    throw new DynamoDBToolboxError('schema.invalidProp', {
+      message: `Invalid prop type${
         path !== undefined ? ` at path '${path}'` : ''
       }. Property: 'savedAs'. Expected: string. Received: ${String(savedAs)}.`,
       path,
       payload: {
-        propertyName: 'savedAs',
+        propName: 'savedAs',
         received: savedAs
       }
     })

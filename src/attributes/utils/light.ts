@@ -11,11 +11,11 @@ import type { NumberSchema } from '../number/index.js'
 import type { RecordSchema } from '../record/index.js'
 import type { SetSchema } from '../set/index.js'
 import type { StringSchema } from '../string/index.js'
-import type { AttrSchema } from '../types/attrSchema.js'
+import type { Schema } from '../types/index.js'
 
 // Required to support big schemas: We "strip" schema methods when calling a typer to avoid type computes (.required, .hidden etc.)
 // NOTE: We don't need to be recursive as every typer lightens its output
-export type Light<SCHEMA extends AttrSchema> = SCHEMA extends AnySchema
+export type Light<SCHEMA extends Schema> = SCHEMA extends AnySchema
   ? AnySchema<SCHEMA['props']>
   : SCHEMA extends NullSchema
     ? NullSchema<SCHEMA['props']>
@@ -39,34 +39,31 @@ export type Light<SCHEMA extends AttrSchema> = SCHEMA extends AnySchema
                       ? AnyOfSchema<SCHEMA['elements'], SCHEMA['props']>
                       : never
 
-type Lightener = <SCHEMA extends AttrSchema>(schema: SCHEMA) => Light<SCHEMA>
+type Lightener = <SCHEMA extends Schema>(schema: SCHEMA) => Light<SCHEMA>
 
-export const light: Lightener = <SCHEMA extends AttrSchema>(schema: SCHEMA) =>
+export const light: Lightener = <SCHEMA extends Schema>(schema: SCHEMA) =>
   schema as unknown as Light<SCHEMA>
 
-export type LightTuple<
-  SCHEMAS extends AttrSchema[],
-  RESULTS extends AttrSchema[] = []
-> = SCHEMAS extends [
-  infer SCHEMAS_HEAD extends AttrSchema,
-  ...infer SCHEMAS_TAIL extends AttrSchema[]
+export type LightTuple<SCHEMAS extends Schema[], RESULTS extends Schema[] = []> = SCHEMAS extends [
+  infer SCHEMAS_HEAD extends Schema,
+  ...infer SCHEMAS_TAIL extends Schema[]
 ]
   ? LightTuple<SCHEMAS_TAIL, [...RESULTS, Light<SCHEMAS_HEAD>]>
   : RESULTS
 
-type TupleLightener = <SCHEMAS extends AttrSchema[]>(...schemas: SCHEMAS) => LightTuple<SCHEMAS>
+type TupleLightener = <SCHEMAS extends Schema[]>(...schemas: SCHEMAS) => LightTuple<SCHEMAS>
 
-export const lightTuple: TupleLightener = <SCHEMAS extends AttrSchema[]>(...schemas: SCHEMAS) =>
+export const lightTuple: TupleLightener = <SCHEMAS extends Schema[]>(...schemas: SCHEMAS) =>
   schemas as unknown as LightTuple<SCHEMAS>
 
-export type LightObj<SCHEMAS extends { [KEY in string]: AttrSchema }> = ComputeObject<{
+export type LightObj<SCHEMAS extends { [KEY in string]: Schema }> = ComputeObject<{
   [KEY in keyof SCHEMAS]: Light<SCHEMAS[KEY]>
 }>
 
-type ObjLightener = <SCHEMAS extends { [KEY in string]: AttrSchema }>(
+type ObjLightener = <SCHEMAS extends { [KEY in string]: Schema }>(
   schemas: SCHEMAS
 ) => LightObj<SCHEMAS>
 
-export const lightObj: ObjLightener = <SCHEMAS extends { [KEY in string]: AttrSchema }>(
+export const lightObj: ObjLightener = <SCHEMAS extends { [KEY in string]: Schema }>(
   schemas: SCHEMAS
 ) => schemas as unknown as LightObj<SCHEMAS>

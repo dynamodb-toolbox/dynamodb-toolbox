@@ -9,9 +9,14 @@ import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 import { writable } from '~/utils/writable.js'
 
-import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/requiredOptions.js'
-import type { AttrSchema } from '../types/attrSchema.js'
-import type { Validator } from '../types/validator.js'
+import type {
+  Always,
+  AtLeastOnce,
+  Never,
+  Schema,
+  SchemaRequiredProp,
+  Validator
+} from '../types/index.js'
 import type { ResolveBooleanSchema, ResolvedBooleanSchema } from './resolve.js'
 import { BooleanSchema } from './schema.js'
 import type { BooleanSchemaProps } from './types.js'
@@ -21,9 +26,9 @@ type BooleanSchemer = <PROPS extends BooleanSchemaProps = {}>(
 ) => BooleanSchema_<PROPS>
 
 /**
- * Define a new attribute of boolean type
+ * Define a new schema of boolean type
  *
- * @param props _(optional)_ Attribute Options
+ * @param props _(optional)_ Schema Props
  */
 export const boolean: BooleanSchemer = <PROPS extends BooleanSchemaProps = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
@@ -41,9 +46,9 @@ export class BooleanSchema_<
    * - `'never'`: Optional in PUTs and UPDATEs
    * - `'always'`: Required in PUTs and UPDATEs
    *
-   * @param nextRequired RequiredOption
+   * @param nextRequired SchemaRequiredProp
    */
-  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+  required<NEXT_IS_REQUIRED extends SchemaRequiredProp = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): BooleanSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
     return new BooleanSchema_(overwrite(this.props, { required: nextRequired }))
@@ -85,7 +90,7 @@ export class BooleanSchema_<
 
   /**
    * Provide a finite list of possible values for attribute
-   * (For typing reasons, enums are only available as attribute methods, not as input options)
+   * (For typing reasons, enums are only available as attribute methods, not as input props)
    *
    * @param enum Possible values
    * @example
@@ -192,7 +197,7 @@ export class BooleanSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends AttrSchema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
@@ -205,7 +210,7 @@ export class BooleanSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends AttrSchema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): BooleanSchema_<Overwrite<PROPS, { putLink: unknown }>> {
     return new BooleanSchema_(overwrite(this.props, { putLink: nextPutLink as unknown }))
@@ -216,7 +221,7 @@ export class BooleanSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends AttrSchema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
@@ -229,7 +234,7 @@ export class BooleanSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends AttrSchema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         PROPS['key'],
