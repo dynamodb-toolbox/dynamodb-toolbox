@@ -33,7 +33,7 @@ export class ListSchema<
     const { required, hidden, savedAs } = this.elements.props
 
     if (required !== undefined && required !== 'atLeastOnce' && required !== 'always') {
-      throw new DynamoDBToolboxError('schema.listAttribute.optionalElements', {
+      throw new DynamoDBToolboxError('schema.list.optionalElements', {
         message: `Invalid list elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: List elements must be required.`,
@@ -42,7 +42,7 @@ export class ListSchema<
     }
 
     if (hidden !== undefined && hidden !== false) {
-      throw new DynamoDBToolboxError('schema.listAttribute.hiddenElements', {
+      throw new DynamoDBToolboxError('schema.list.hiddenElements', {
         message: `Invalid list elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: List elements cannot be hidden.`,
@@ -51,7 +51,7 @@ export class ListSchema<
     }
 
     if (savedAs !== undefined) {
-      throw new DynamoDBToolboxError('schema.listAttribute.savedAsElements', {
+      throw new DynamoDBToolboxError('schema.list.savedAsElements', {
         message: `Invalid list elements at path ${
           path !== undefined ? ` at path '${path}'` : ''
         }: List elements cannot be renamed (have savedAs option).`,
@@ -60,7 +60,7 @@ export class ListSchema<
     }
 
     if (hasDefinedDefault(this.elements)) {
-      throw new DynamoDBToolboxError('schema.listAttribute.defaultedElements', {
+      throw new DynamoDBToolboxError('schema.list.defaultedElements', {
         message: `Invalid list elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: List elements cannot have default or linked values.`,

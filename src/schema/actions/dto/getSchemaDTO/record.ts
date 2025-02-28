@@ -1,20 +1,20 @@
 import type { RecordSchema } from '~/attributes/record/index.js'
 
-import type { RecordAttrDTO } from '../types.js'
-import { getAttrDTO } from './attribute.js'
+import type { RecordSchemaDTO } from '../types.js'
+import { getSchemaDTO } from './schema.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getRecordAttrDTO = (attr: RecordSchema): RecordAttrDTO => {
-  const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.props
+export const getRecordSchemaDTO = (schema: RecordSchema): RecordSchemaDTO => {
+  const defaultsDTO = getDefaultsDTO(schema)
+  const { required, hidden, key, savedAs } = schema.props
 
   return {
     type: 'record',
-    keys: getAttrDTO(attr.keys) as RecordAttrDTO['keys'],
-    elements: getAttrDTO(attr.elements) as RecordAttrDTO['elements'],
+    keys: getSchemaDTO(schema.keys) as RecordSchemaDTO['keys'],
+    elements: getSchemaDTO(schema.elements) as RecordSchemaDTO['elements'],
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),

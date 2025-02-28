@@ -18,7 +18,7 @@ import type { Validator } from '../types/validator.js'
 import { MapSchema } from './schema.js'
 import type { MapAttributes } from './types.js'
 
-type MapAttributeTyper = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
+type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props?: NarrowObject<PROPS>
 ) => MapSchema_<PROPS, LightObj<ATTRIBUTES>>
@@ -29,23 +29,20 @@ type MapAttributeTyper = <ATTRIBUTES extends MapAttributes, PROPS extends Schema
  * @param attributes Dictionary of attributes
  * @param props _(optional)_ Map Options
  */
-export const map: MapAttributeTyper = <
-  ATTRIBUTES extends MapAttributes,
-  PROPS extends SchemaProps = {}
->(
+export const map: MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props: PROPS = {} as PROPS
 ) => new MapSchema_(props, lightObj(attributes))
 
 /**
- * MapAttribute attribute interface
+ * Map schema
  */
 export class MapSchema_<
   PROPS extends SchemaProps = SchemaProps,
   ATTRIBUTES extends MapAttributes = MapAttributes
 > extends MapSchema<PROPS, ATTRIBUTES> {
   /**
-   * Tag attribute as required. Possible values are:
+   * Tag schema values as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
    * - `'never'`: Optional in PUTs and UPDATEs
    * - `'always'`: Required in PUTs and UPDATEs
@@ -66,7 +63,7 @@ export class MapSchema_<
   }
 
   /**
-   * Hide attribute after fetch commands and formatting
+   * Hide schema values after fetch commands and formatting
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
@@ -75,7 +72,7 @@ export class MapSchema_<
   }
 
   /**
-   * Tag attribute as a primary key attribute or linked to a primary attribute
+   * Tag schema values as a primary key attribute or linked to a primary key attribute
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
@@ -87,7 +84,7 @@ export class MapSchema_<
   }
 
   /**
-   * Rename attribute before save commands
+   * Rename schema values before save commands
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
@@ -96,9 +93,9 @@ export class MapSchema_<
   }
 
   /**
-   * Provide a default value for attribute in Primary Key computing
+   * Provide a default value during Primary Key computing
    *
-   * @param nextKeyDefault `keyAttributeInput | (() => keyAttributeInput)`
+   * @param nextKeyDefault `keyInput | (() => keyInput)`
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>

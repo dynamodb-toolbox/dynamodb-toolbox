@@ -68,7 +68,7 @@ export class MapSchema<
       } = attribute.props
 
       if (attributesSavedAs.has(attributeSavedAs)) {
-        throw new DynamoDBToolboxError('schema.mapAttribute.duplicateSavedAs', {
+        throw new DynamoDBToolboxError('schema.map.duplicateSavedAs', {
           message: `Invalid map attributes${
             path !== undefined ? ` at path '${path}'` : ''
           }: More than two attributes are saved as '${attributeSavedAs}'.`,

@@ -1,7 +1,7 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 
-import { checkPrimitiveAttribute } from '../primitive/check.js'
+import { checkPrimitiveSchema } from '../primitive/check.js'
 import type { NumberSchemaProps } from './types.js'
 
 export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
@@ -22,7 +22,7 @@ export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
       return
     }
 
-    checkPrimitiveAttribute(this, path)
+    checkPrimitiveSchema(this, path)
 
     const { big } = this.props
 

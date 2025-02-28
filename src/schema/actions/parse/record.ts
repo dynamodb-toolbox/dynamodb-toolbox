@@ -9,8 +9,8 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: RecordSchema,
+export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: RecordSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<RecordSchema, OPTIONS>, ParserReturn<RecordSchema, OPTIONS>> {
@@ -30,8 +30,8 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
 
       const nextValuePath = [...valuePath, key]
       parsers.push([
-        attrParser(attribute.keys, key, { ...restOptions, valuePath: nextValuePath }),
-        attrParser(attribute.elements, element, {
+        attrParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
+        attrParser(schema.elements, element, {
           ...restOptions,
           defined: false,
           valuePath: nextValuePath
@@ -70,7 +70,7 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
   }
 
   if (!isInputValueObject) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -86,7 +86,7 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
       .filter(([, element]) => element !== undefined)
   )
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {

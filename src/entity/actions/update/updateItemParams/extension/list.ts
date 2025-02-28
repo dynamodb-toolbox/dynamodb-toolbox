@@ -1,4 +1,4 @@
-import type { AttrSchema, AttributeBasicValue, ListSchema } from '~/attributes/index.js'
+import type { AttrSchema, ListSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
@@ -22,7 +22,7 @@ import { parseUpdateExtension } from './attribute.js'
 import { parseReferenceExtension } from './reference.js'
 
 function* listElementParser(
-  attribute: ListSchema,
+  schema: ListSchema,
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions
 ): Generator<
@@ -54,7 +54,7 @@ function* listElementParser(
     return transformedValue
   }
 
-  return yield* new Parser(attribute.elements).start(inputValue, {
+  return yield* new Parser(schema.elements).start(inputValue, {
     mode: 'update',
     fill: false,
     transform,
@@ -64,7 +64,7 @@ function* listElementParser(
 }
 
 export const parseListExtension = (
-  attribute: ListSchema,
+  schema: ListSchema,
   input: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -72,7 +72,7 @@ export const parseListExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$SET], {
+        const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
           valuePath: [...valuePath, '$SET']
@@ -102,7 +102,7 @@ export const parseListExtension = (
           *extensionParser() {
             const parsers = appendedValue.map((element, index) =>
               // Should be a simple list of valid elements (not extended)
-              new Parser(attribute.elements).start(element, {
+              new Parser(schema.elements).start(element, {
                 fill: false,
                 transform,
                 valuePath: [...appendedValuePath, index]
@@ -125,7 +125,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = new Parser(attribute).start(appendedValue, {
+          const parser = new Parser(schema).start(appendedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
@@ -154,7 +154,7 @@ export const parseListExtension = (
           isExtension: true,
           *extensionParser() {
             const parsers = prependedValue.map((element, index) =>
-              new Parser(attribute.elements).start(element, {
+              new Parser(schema.elements).start(element, {
                 fill: false,
                 transform,
                 valuePath: [...prependedValuePath, index]
@@ -177,7 +177,7 @@ export const parseListExtension = (
       return {
         isExtension: true,
         *extensionParser() {
-          const parser = new Parser(attribute).start(prependedValue, {
+          const parser = new Parser(schema).start(prependedValue, {
             fill: false,
             transform,
             parseExtension: parseReferenceExtension,
@@ -210,7 +210,7 @@ export const parseListExtension = (
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [
             index,
-            listElementParser(attribute, element, { transform, valuePath: [...valuePath, index] })
+            listElementParser(schema, element, { transform, valuePath: [...valuePath, index] })
           ])
         )
 
@@ -254,6 +254,6 @@ export const parseListExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
   }
 }

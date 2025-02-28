@@ -8,7 +8,7 @@ import { lightObj } from '../shared/light.js'
 import { ItemSchema } from './schema.js'
 import type { ItemAttributes } from './types.js'
 
-type ItemSchemaTyper = <ATTRIBUTES extends ItemAttributes>(
+type ItemSchemer = <ATTRIBUTES extends ItemAttributes>(
   attributes: NarrowObject<ATTRIBUTES>
 ) => ItemSchema_<LightObj<ATTRIBUTES>>
 
@@ -17,7 +17,7 @@ type ItemSchemaTyper = <ATTRIBUTES extends ItemAttributes>(
  *
  * @param attributes Dictionary of attributes
  */
-export const item: ItemSchemaTyper = <ATTRIBUTES extends ItemAttributes>(
+export const item: ItemSchemer = <ATTRIBUTES extends ItemAttributes>(
   attributes: NarrowObject<ATTRIBUTES>
 ) => new ItemSchema_(lightObj(attributes))
 

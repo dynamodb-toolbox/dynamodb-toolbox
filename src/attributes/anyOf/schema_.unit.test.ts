@@ -21,7 +21,7 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.missingElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.missingElements', path })
     )
   })
 
@@ -36,7 +36,7 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.optionalElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.optionalElements', path })
     )
   })
 
@@ -51,7 +51,7 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.hiddenElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.hiddenElements', path })
     )
   })
 
@@ -66,7 +66,7 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.savedAsElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.savedAsElements', path })
     )
   })
 
@@ -81,7 +81,7 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.defaultedElements', path })
     )
   })
 
@@ -96,26 +96,26 @@ describe('anyOf', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.anyOfAttribute.defaultedElements', path })
+      expect.objectContaining({ code: 'schema.anyOf.defaultedElements', path })
     )
   })
 
   test('returns default anyOf', () => {
-    const anyOfAttr = anyOf(str)
+    const anyOfSchema = anyOf(str)
 
-    const assertType: A.Equals<(typeof anyOfAttr)['type'], 'anyOf'> = 1
+    const assertType: A.Equals<(typeof anyOfSchema)['type'], 'anyOf'> = 1
     assertType
-    expect(anyOfAttr.type).toBe('anyOf')
+    expect(anyOfSchema.type).toBe('anyOf')
 
-    const assertElements: A.Equals<(typeof anyOfAttr)['elements'], [Light<typeof str>]> = 1
+    const assertElements: A.Equals<(typeof anyOfSchema)['elements'], [Light<typeof str>]> = 1
     assertElements
-    expect(anyOfAttr.elements).toStrictEqual([str])
+    expect(anyOfSchema.elements).toStrictEqual([str])
 
-    const assertProps: A.Equals<(typeof anyOfAttr)['props'], {}> = 1
+    const assertProps: A.Equals<(typeof anyOfSchema)['props'], {}> = 1
     assertProps
-    expect(anyOfAttr.props).toStrictEqual({})
+    expect(anyOfSchema.props).toStrictEqual({})
 
-    const assertExtends: A.Extends<typeof anyOfAttr, AnyOfSchema> = 1
+    const assertExtends: A.Extends<typeof anyOfSchema, AnyOfSchema> = 1
     assertExtends
   })
 
@@ -145,92 +145,93 @@ describe('anyOf', () => {
 
   // TODO: Reimplement options as potential first argument
   test('returns hidden anyOf (method)', () => {
-    const anyOfAttr = anyOf(str).hidden()
+    const anyOfSchema = anyOf(str).hidden()
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { hidden: true }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { hidden: true }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.hidden).toBe(true)
+    expect(anyOfSchema.props.hidden).toBe(true)
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns key anyOf (method)', () => {
-    const anyOfAttr = anyOf(str).key()
+    const anyOfSchema = anyOf(str).key()
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { key: true; required: Always }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { key: true; required: Always }> =
+      1
     assertAnyOf
 
-    expect(anyOfAttr.props.key).toBe(true)
-    expect(anyOfAttr.props.required).toBe('always')
+    expect(anyOfSchema.props.key).toBe(true)
+    expect(anyOfSchema.props.required).toBe('always')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns savedAs anyOf (method)', () => {
-    const anyOfAttr = anyOf(str).savedAs('foo')
+    const anyOfSchema = anyOf(str).savedAs('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { savedAs: 'foo' }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { savedAs: 'foo' }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.savedAs).toBe('foo')
+    expect(anyOfSchema.props.savedAs).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns defaulted anyOf (method)', () => {
-    const anyOfAttr = anyOf(str).updateDefault('bar')
+    const anyOfSchema = anyOf(str).updateDefault('bar')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { updateDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { updateDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.updateDefault).toBe('bar')
+    expect(anyOfSchema.props.updateDefault).toBe('bar')
   })
 
   test('returns anyOf with PUT default value if it is not key (default shorthand)', () => {
-    const anyOfAttr = anyOf(str).default('foo')
+    const anyOfSchema = anyOf(str).default('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { putDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { putDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.putDefault).toBe('foo')
+    expect(anyOfSchema.props.putDefault).toBe('foo')
   })
 
   test('returns anyOf with KEY default value if it is key (default shorthand)', () => {
-    const anyOfAttr = anyOf(str).key().default('foo')
+    const anyOfSchema = anyOf(str).key().default('foo')
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { keyDefault: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { keyDefault: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.keyDefault).toBe('foo')
+    expect(anyOfSchema.props.keyDefault).toBe('foo')
   })
 
   // TODO: Reimplement options as potential first argument
   test('returns linked anyOf (method)', () => {
     const sayHello = () => 'hello'
-    const anyOfAttr = anyOf(str).updateLink(sayHello)
+    const anyOfSchema = anyOf(str).updateLink(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { updateLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { updateLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.updateLink).toBe(sayHello)
+    expect(anyOfSchema.props.updateLink).toBe(sayHello)
   })
 
   test('returns anyOf with PUT linked value if it is not key (link shorthand)', () => {
     const sayHello = () => 'hello'
-    const anyOfAttr = anyOf(str).link(sayHello)
+    const anyOfSchema = anyOf(str).link(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { putLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { putLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.putLink).toBe(sayHello)
+    expect(anyOfSchema.props.putLink).toBe(sayHello)
   })
 
   test('returns anyOf with KEY linked value if it is key (link shorthand)', () => {
     const sayHello = () => 'hello'
-    const anyOfAttr = anyOf(str).key().link(sayHello)
+    const anyOfSchema = anyOf(str).key().link(sayHello)
 
-    const assertAnyOf: A.Contains<(typeof anyOfAttr)['props'], { keyLink: unknown }> = 1
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { keyLink: unknown }> = 1
     assertAnyOf
 
-    expect(anyOfAttr.props.keyLink).toBe(sayHello)
+    expect(anyOfSchema.props.keyLink).toBe(sayHello)
   })
 
   // TODO: Reimplement options as potential first argument
@@ -295,9 +296,9 @@ describe('anyOf', () => {
 
   test('anyOf of anyOfs', () => {
     const deepAnyOff = anyOf(str)
-    const anyOfAttr = anyOf(deepAnyOff)
+    const anyOfSchema = anyOf(deepAnyOff)
 
-    const assertAnyOf: A.Equals<(typeof anyOfAttr)['elements'], [Light<typeof deepAnyOff>]> = 1
+    const assertAnyOf: A.Equals<(typeof anyOfSchema)['elements'], [Light<typeof deepAnyOff>]> = 1
     assertAnyOf
   })
 })

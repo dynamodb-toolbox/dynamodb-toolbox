@@ -4,11 +4,11 @@ import type { PrimitiveSchema } from '~/attributes/index.js'
 import { nul } from '~/attributes/null/index.js'
 import { number } from '~/attributes/number/index.js'
 import { string } from '~/attributes/string/index.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
-type PrimitiveAttrDTO = Extract<
-  AttributeDTO,
+type PrimitiveSchemaDTO = Extract<
+  ISchemaDTO,
   { type: 'null' | 'boolean' | 'number' | 'string' | 'binary' }
 >
 
@@ -17,8 +17,8 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromPrimitiveSchemaDTO = (attr: PrimitiveAttrDTO): PrimitiveSchema => {
-  const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = attr
+export const fromPrimitiveSchemaDTO = (schema: PrimitiveSchemaDTO): PrimitiveSchema => {
+  const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = schema
   keyDefault
   putDefault
   updateDefault

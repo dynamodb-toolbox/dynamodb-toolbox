@@ -1,4 +1,4 @@
-import { checkPrimitiveAttribute } from '../primitive/check.js'
+import { checkPrimitiveSchema } from '../primitive/check.js'
 import type { BooleanSchemaProps } from './types.js'
 
 export class BooleanSchema<PROPS extends BooleanSchemaProps = BooleanSchemaProps> {
@@ -19,7 +19,7 @@ export class BooleanSchema<PROPS extends BooleanSchemaProps = BooleanSchemaProps
       return
     }
 
-    checkPrimitiveAttribute(this, path)
+    checkPrimitiveSchema(this, path)
 
     Object.freeze(this.props)
   }

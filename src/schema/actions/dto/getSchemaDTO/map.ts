@@ -1,22 +1,22 @@
 import type { MapSchema } from '~/attributes/map/index.js'
 
-import type { MapAttrDTO } from '../types.js'
-import { getAttrDTO } from './attribute.js'
+import type { MapSchemaDTO } from '../types.js'
+import { getSchemaDTO } from './schema.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getMapAttrDTO = (attr: MapSchema): MapAttrDTO => {
-  const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.props
+export const getMapSchemaDTO = (schema: MapSchema): MapSchemaDTO => {
+  const defaultsDTO = getDefaultsDTO(schema)
+  const { required, hidden, key, savedAs } = schema.props
 
   return {
     type: 'map',
     attributes: Object.fromEntries(
-      Object.entries(attr.attributes).map(([attributeName, attribute]) => [
+      Object.entries(schema.attributes).map(([attributeName, attribute]) => [
         attributeName,
-        getAttrDTO(attribute)
+        getSchemaDTO(attribute)
       ])
     ),
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),

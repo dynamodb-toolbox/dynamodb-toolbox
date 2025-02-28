@@ -3,15 +3,15 @@ import type { SerializableTransformer } from '~/transformers/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import type { AttributeDTO } from '../types.js'
+import type { ISchemaDTO } from '../types.js'
 
 export const getDefaultsDTO = (
-  attr: AttrSchema
-): Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {
-  const defaultsDTO: Pick<AttributeDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
+  schema: AttrSchema
+): Pick<ISchemaDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {
+  const defaultsDTO: Pick<ISchemaDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> = {}
 
   for (const mode of ['keyDefault', 'putDefault', 'updateDefault'] as const) {
-    const modeDefault = attr.props[mode]
+    const modeDefault = schema.props[mode]
 
     if (modeDefault === undefined) {
       continue

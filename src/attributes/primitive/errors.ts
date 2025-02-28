@@ -8,7 +8,7 @@ import type { StringSchema } from '../string/index.js'
 import type { PrimitiveSchema, ResolvedPrimitiveSchema } from './types.js'
 
 type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.primitiveAttribute.invalidEnumValueType'
+  code: 'schema.primitive.invalidEnumValueType'
   hasPath: true
   payload: {
     expectedType: PrimitiveSchema['type']
@@ -17,7 +17,7 @@ type InvalidEnumValueTypeErrorBlueprint = ErrorBlueprint<{
 }>
 
 type InvalidDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.primitiveAttribute.invalidDefaultValueType'
+  code: 'schema.primitive.invalidDefaultValueType'
   hasPath: true
   payload: {
     expectedType: PrimitiveSchema['type']
@@ -26,7 +26,7 @@ type InvalidDefaultValueTypeErrorBlueprint = ErrorBlueprint<{
 }>
 
 type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.primitiveAttribute.invalidDefaultValueRange'
+  code: 'schema.primitive.invalidDefaultValueRange'
   hasPath: true
   payload: {
     enumValues: NonNullable<
@@ -36,7 +36,7 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type PrimitiveAttributeErrorBlueprints =
+export type PrimitiveSchemaErrorBlueprint =
   | InvalidEnumValueTypeErrorBlueprint
   | InvalidDefaultValueTypeErrorBlueprint
   | InvalidDefaultValueRangeErrorBlueprint

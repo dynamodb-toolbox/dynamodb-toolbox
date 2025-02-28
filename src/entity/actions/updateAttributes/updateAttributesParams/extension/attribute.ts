@@ -1,4 +1,4 @@
-import type { AttrSchema, AttributeBasicValue } from '~/attributes/index.js'
+import type { AttrSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { $GET, isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
@@ -13,7 +13,7 @@ import { parseMapExtension } from './map.js'
 import { parseRecordExtension } from './record.js'
 
 export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInputExtension> = (
-  attribute: AttrSchema,
+  schema: AttrSchema,
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
@@ -23,7 +23,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     return {
       isExtension: true,
       *extensionParser() {
-        const { props } = attribute
+        const { props } = schema
         const { required } = props
         const path = formatValuePath(valuePath)
 
@@ -50,24 +50,24 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
   }
 
   if (isGetting(input) && input[$GET] !== undefined) {
-    return parseReferenceExtension(attribute, input, options)
+    return parseReferenceExtension(schema, input, options)
   }
 
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'number':
-      return parseNumberExtension(attribute, input, options)
+      return parseNumberExtension(schema, input, options)
     case 'set':
-      return parseSetExtension(attribute, input, options)
+      return parseSetExtension(schema, input, options)
     case 'list':
-      return parseListExtension(attribute, input, options)
+      return parseListExtension(schema, input, options)
     case 'map':
-      return parseMapExtension(attribute, input, options)
+      return parseMapExtension(schema, input, options)
     case 'record':
-      return parseRecordExtension(attribute, input, options)
+      return parseRecordExtension(schema, input, options)
     default:
       return {
         isExtension: false,
-        basicInput: input as AttributeBasicValue<UpdateAttributesInputExtension> | undefined
+        basicInput: input as SchemaBasicValue<UpdateAttributesInputExtension> | undefined
       }
   }
 }

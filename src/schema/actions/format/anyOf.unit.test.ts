@@ -1,13 +1,13 @@
 import { anyOf, number, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { anyOfAttrFormatter } from './anyOf.js'
+import { anyOfSchemaFormatter } from './anyOf.js'
 
-describe('anyOfAttrFormatter', () => {
+describe('anyOfSchemaFormatter', () => {
   test('throws if value is invalid', () => {
-    const anyOfA = anyOf(number(), string())
+    const schema = anyOf(number(), string())
 
-    const invalidCall = () => anyOfAttrFormatter(anyOfA, true).next()
+    const invalidCall = () => anyOfSchemaFormatter(schema, true).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidAttribute' }))
@@ -16,7 +16,7 @@ describe('anyOfAttrFormatter', () => {
   test('returns value if it is valid', () => {
     const anyOfA = anyOf(number(), string())
 
-    const formatter = anyOfAttrFormatter(anyOfA, 'foo')
+    const formatter = anyOfSchemaFormatter(anyOfA, 'foo')
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toBe('foo')
@@ -29,7 +29,7 @@ describe('anyOfAttrFormatter', () => {
   test('does not transform is transform is false', () => {
     const anyOfA = anyOf(string(), number())
 
-    const formatter = anyOfAttrFormatter(anyOfA, 'foo', { transform: false })
+    const formatter = anyOfSchemaFormatter(anyOfA, 'foo', { transform: false })
 
     const { done, value: formattedValue } = formatter.next()
     expect(formattedValue).toBe('foo')

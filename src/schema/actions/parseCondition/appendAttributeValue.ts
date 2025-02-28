@@ -7,13 +7,13 @@ export type AppendAttributeValueOptions = { transform?: boolean }
 
 export const appendAttributeValue = (
   conditionParser: ConditionParser,
-  attribute: AttrSchema,
+  schema: AttrSchema,
   expressionAttributeValue: unknown,
   options: AppendAttributeValueOptions = {}
 ): void => {
   const { transform = false } = options
 
-  const parsed = new Parser(attribute).parse(expressionAttributeValue, {
+  const parsed = new Parser(schema).parse(expressionAttributeValue, {
     fill: false,
     transform
   })

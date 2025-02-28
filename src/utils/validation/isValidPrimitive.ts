@@ -7,17 +7,17 @@ import { isNull } from './isNull.js'
 import { isNumber } from './isNumber.js'
 import { isString } from './isString.js'
 
-export const isValidPrimitive = <ATTRIBUTE extends PrimitiveSchema>(
-  attribute: ATTRIBUTE,
+export const isValidPrimitive = <SCHEMA extends PrimitiveSchema>(
+  schema: SCHEMA,
   candidate: unknown
 ): candidate is ResolvedPrimitiveSchema => {
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'null':
       return isNull(candidate)
     case 'boolean':
       return isBoolean(candidate)
     case 'number':
-      return isNumber(candidate) || Boolean(attribute.props.big && isBigInt(candidate))
+      return isNumber(candidate) || Boolean(schema.props.big && isBigInt(candidate))
     case 'string':
       return isString(candidate)
     case 'binary':

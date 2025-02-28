@@ -1,11 +1,11 @@
 import type { SetSchema } from '~/attributes/set/index.js'
 import { set } from '~/attributes/set/index.js'
 import type { SetElementSchema } from '~/attributes/set/types.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 
-type SetAttrDTO = Extract<AttributeDTO, { type: 'set' }>
+type SetSchemaDTO = Extract<ISchemaDTO, { type: 'set' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
@@ -19,7 +19,7 @@ export const fromSetSchemaDTO = ({
   updateLink,
   elements,
   ...props
-}: SetAttrDTO): SetSchema => {
+}: SetSchemaDTO): SetSchema => {
   keyDefault
   putDefault
   updateDefault

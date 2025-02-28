@@ -1,6 +1,6 @@
 import type { AttrSchema } from '../types/index.js'
 
-export const hasDefinedDefault = (attribute: AttrSchema): boolean =>
+export const hasDefinedDefault = (schema: AttrSchema): boolean =>
   (['keyDefault', 'putDefault', 'updateDefault', 'keyLink', 'putLink', 'updateLink'] as const).some(
-    prop => attribute.props[prop] !== undefined
+    prop => schema.props[prop] !== undefined
   )

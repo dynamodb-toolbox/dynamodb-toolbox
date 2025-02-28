@@ -52,20 +52,20 @@ export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
   }
 
   appendAttributeValue(
-    attribute: AttrSchema,
+    schema: AttrSchema,
     expressionAttributeValue: unknown,
     options: AppendAttributeValueOptions = {}
   ): this {
-    appendAttributeValue(this, attribute, expressionAttributeValue, options)
+    appendAttributeValue(this, schema, expressionAttributeValue, options)
     return this
   }
 
   appendAttributeValueOrPath(
-    attribute: AttrSchema,
+    schema: AttrSchema,
     expressionAttributeValueOrPath: unknown,
     options: AppendAttributePathOptions & AppendAttributeValueOptions = {}
   ): this {
-    appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath, options)
+    appendAttributeValueOrPath(this, schema, expressionAttributeValueOrPath, options)
     return this
   }
 

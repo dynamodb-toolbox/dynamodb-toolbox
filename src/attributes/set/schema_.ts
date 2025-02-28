@@ -16,7 +16,7 @@ import type { Validator } from '../types/validator.js'
 import { SetSchema } from './schema.js'
 import type { SetElementSchema } from './types.js'
 
-type SetAttributeTyper = <ELEMENTS extends SetElementSchema, PROPS extends SchemaProps = {}>(
+type SetSchemer = <ELEMENTS extends SetElementSchema, PROPS extends SchemaProps = {}>(
   elements: ELEMENTS,
   props?: NarrowObject<PROPS>
 ) => SetSchema_<PROPS, Light<ELEMENTS>>
@@ -32,10 +32,7 @@ type SetAttributeTyper = <ELEMENTS extends SetElementSchema, PROPS extends Schem
  * @param elements Attribute (With constraints)
  * @param props _(optional)_ List Options
  */
-export const set: SetAttributeTyper = <
-  ELEMENTS extends SetElementSchema,
-  PROPS extends SchemaProps = {}
->(
+export const set: SetSchemer = <ELEMENTS extends SetElementSchema, PROPS extends SchemaProps = {}>(
   elements: ELEMENTS,
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new SetSchema_(props, light(elements))

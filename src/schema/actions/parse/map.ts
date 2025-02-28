@@ -9,8 +9,8 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: MapSchema,
+export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: MapSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<MapSchema, OPTIONS>, ParserReturn<MapSchema, OPTIONS>> {
@@ -23,7 +23,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   if (isInputValueObject) {
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
-    Object.entries(attribute.attributes)
+    Object.entries(schema.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], {
@@ -68,7 +68,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 
   if (!isInputValueObject) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -84,7 +84,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       .filter(([, attrValue]) => attrValue !== undefined)
   )
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {
@@ -97,7 +97,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     Object.entries(parsers)
       .map(([attrName, attrParser]) => [
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        attribute.attributes[attrName]!.props.savedAs ?? attrName,
+        schema.attributes[attrName]!.props.savedAs ?? attrName,
         attrParser.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)
