@@ -1,20 +1,20 @@
 import type { PrimitiveSchema } from '~/attributes/index.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 
-import type { PrimitiveAttrDTO } from '../types.js'
+import type { PrimitiveSchemaDTO } from '../types.js'
 import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getPrimitiveAttrDTO = (attr: PrimitiveSchema): PrimitiveAttrDTO => {
-  const defaultsDTO = getDefaultsDTO(attr)
+export const getPrimitiveSchemaDTO = (schema: PrimitiveSchema): PrimitiveSchemaDTO => {
+  const defaultsDTO = getDefaultsDTO(schema)
 
-  const { props } = attr
+  const { props } = schema
   const { required, hidden, key, savedAs, transform } = props
 
   const attrDTO = {
-    type: attr.type,
+    type: schema.type,
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden !== false ? { hidden } : {}),
     ...(key !== undefined && key !== false ? { key } : {}),
@@ -28,10 +28,10 @@ export const getPrimitiveAttrDTO = (attr: PrimitiveSchema): PrimitiveAttrDTO => 
       : {}),
     ...defaultsDTO
     // We need to cast as `.enum` is not coupled to `.type`
-  } as PrimitiveAttrDTO
+  } as PrimitiveSchemaDTO
 
   if (props.enum) {
-    switch (attr.type) {
+    switch (schema.type) {
       case 'binary': {
         const textDecoder = new TextDecoder('utf8')
         // @ts-ignore type inference can be improved here

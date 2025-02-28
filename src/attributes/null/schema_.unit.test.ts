@@ -130,11 +130,11 @@ describe('null', () => {
       putDefault: 'foo'
     })
 
-    const superInvalidCall = () => invalidNull.check(path)
+    const invalidCall = () => invalidNull.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     nul({
@@ -168,11 +168,11 @@ describe('null', () => {
       // @ts-expect-error
       .putDefault('foo')
 
-    const superInvalidCall = () => invalidNull.check(path)
+    const invalidCall = () => invalidNull.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     nul()

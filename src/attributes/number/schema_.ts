@@ -16,7 +16,7 @@ import type { ResolveNumberSchema, ResolvedNumberSchema } from './resolve.js'
 import { NumberSchema } from './schema.js'
 import type { NumberSchemaProps } from './types.js'
 
-type NumberAttributeTyper = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
+type NumberSchemer = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
   props?: NarrowObject<PROPS>
 ) => NumberSchema_<PROPS>
 
@@ -25,7 +25,7 @@ type NumberAttributeTyper = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>
  *
  * @param props _(optional)_ Attribute Options
  */
-export const number: NumberAttributeTyper = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
+export const number: NumberSchemer = <PROPS extends Omit<NumberSchemaProps, 'enum'> = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new NumberSchema_(props)
 

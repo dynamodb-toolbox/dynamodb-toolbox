@@ -17,7 +17,7 @@ import type { ResolvedNullSchema } from './resolve.js'
 import { NullSchema } from './schema.js'
 import type { NullSchemaProps } from './types.js'
 
-type NullAttributeTyper = <PROPS extends Omit<SchemaProps, 'enum'> = {}>(
+type NullSchemer = <PROPS extends Omit<SchemaProps, 'enum'> = {}>(
   props?: NarrowObject<PROPS>
 ) => NullSchema_<PROPS>
 
@@ -26,7 +26,7 @@ type NullAttributeTyper = <PROPS extends Omit<SchemaProps, 'enum'> = {}>(
  *
  * @param props _(optional)_ Attribute Options
  */
-export const nul: NullAttributeTyper = <PROPS extends SchemaProps = {}>(
+export const nul: NullSchemer = <PROPS extends SchemaProps = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new NullSchema_(props)
 

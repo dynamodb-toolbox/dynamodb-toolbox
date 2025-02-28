@@ -22,11 +22,11 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.invalidKeys', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.invalidKeys', path })
     )
   })
 
@@ -37,11 +37,11 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalKeys', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.optionalKeys', path })
     )
   })
 
@@ -52,12 +52,10 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenKeys', path })
-    )
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'schema.record.hiddenKeys', path }))
   })
 
   test('rejects key keys', () => {
@@ -67,12 +65,10 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyKeys', path })
-    )
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'schema.record.keyKeys', path }))
   })
 
   test('rejects keys with savedAs values', () => {
@@ -82,11 +78,11 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsKeys', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.savedAsKeys', path })
     )
   })
 
@@ -97,11 +93,11 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.defaultedKeys', path })
     )
   })
 
@@ -112,11 +108,11 @@ describe('record', () => {
       str
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedKeys', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.defaultedKeys', path })
     )
   })
 
@@ -127,11 +123,11 @@ describe('record', () => {
       str.optional()
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.optionalElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.optionalElements', path })
     )
   })
 
@@ -142,11 +138,11 @@ describe('record', () => {
       str.hidden()
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.hiddenElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.hiddenElements', path })
     )
   })
 
@@ -157,11 +153,11 @@ describe('record', () => {
       str.key()
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.keyElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.keyElements', path })
     )
   })
 
@@ -172,11 +168,11 @@ describe('record', () => {
       str.savedAs('foo')
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.savedAsElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.savedAsElements', path })
     )
   })
 
@@ -187,11 +183,11 @@ describe('record', () => {
       str.putDefault('foo')
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.defaultedElements', path })
     )
   })
 
@@ -202,11 +198,11 @@ describe('record', () => {
       str.putLink(() => 'foo')
     )
 
-    const superInvalidCall = () => invalidRecord.check(path)
+    const invalidCall = () => invalidRecord.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.recordAttribute.defaultedElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.record.defaultedElements', path })
     )
   })
 

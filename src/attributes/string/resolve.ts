@@ -1,9 +1,9 @@
 import type { StringSchema } from './schema.js'
 
-export type ResolveStringSchema<ATTRIBUTE extends StringSchema> = ATTRIBUTE['props'] extends {
+export type ResolveStringSchema<SCHEMA extends StringSchema> = SCHEMA['props'] extends {
   enum: string[]
 }
-  ? ATTRIBUTE['props']['enum'][number]
+  ? SCHEMA['props']['enum'][number]
   : string
 
 export type ResolvedStringSchema = ResolveStringSchema<StringSchema>

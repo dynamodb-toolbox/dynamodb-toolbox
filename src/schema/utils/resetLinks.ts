@@ -14,115 +14,115 @@ import type {
   StringSchema
 } from '~/attributes/index.js'
 
-export type ResetLinks<ATTRIBUTE extends AttrSchema> =
-  | (ATTRIBUTE extends AnySchema
+export type ResetLinks<SCHEMA extends AttrSchema> =
+  | (SCHEMA extends AnySchema
       ? AnySchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends NullSchema
+  | (SCHEMA extends NullSchema
       ? NullSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends BooleanSchema
+  | (SCHEMA extends BooleanSchema
       ? BooleanSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends NumberSchema
+  | (SCHEMA extends NumberSchema
       ? NumberSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends StringSchema
+  | (SCHEMA extends StringSchema
       ? StringSchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends BinarySchema
+  | (SCHEMA extends BinarySchema
       ? BinarySchema<{
           [KEY in Exclude<
-            keyof ATTRIBUTE['props'],
+            keyof SCHEMA['props'],
             'keyLink' | 'putLink' | 'updateLink'
-          >]: ATTRIBUTE['props'][KEY]
+          >]: SCHEMA['props'][KEY]
         }>
       : never)
-  | (ATTRIBUTE extends SetSchema
+  | (SCHEMA extends SetSchema
       ? SetSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['props'],
+              keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['props'][KEY]
-          },
-          ATTRIBUTE['elements']
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends ListSchema
+  | (SCHEMA extends ListSchema
       ? ListSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['props'],
+              keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['props'][KEY]
-          },
-          ATTRIBUTE['elements']
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends MapSchema
+  | (SCHEMA extends MapSchema
       ? MapSchema<
+          SCHEMA['attributes'],
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['props'],
+              keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['props'][KEY]
-          },
-          ATTRIBUTE['attributes']
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends RecordSchema
+  | (SCHEMA extends RecordSchema
       ? RecordSchema<
+          SCHEMA['keys'],
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['props'],
+              keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['props'][KEY]
-          },
-          ATTRIBUTE['keys'],
-          ATTRIBUTE['elements']
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends AnyOfSchema
+  | (SCHEMA extends AnyOfSchema
       ? AnyOfSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
-              keyof ATTRIBUTE['props'],
+              keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
-            >]: ATTRIBUTE['props'][KEY]
-          },
-          ATTRIBUTE['elements']
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
 
-type LinksResetter = <ATTRIBUTE extends AttrSchema>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
+type LinksResetter = <SCHEMA extends AttrSchema>(schema: SCHEMA) => ResetLinks<SCHEMA>
 
-export const resetLinks: LinksResetter = attribute =>
-  (attribute as AttrSchema_)
+export const resetLinks: LinksResetter = schema =>
+  (schema as AttrSchema_)
     // @ts-expect-error Signatures don't match but we don't care
     .clone({ keyLink: undefined, putLink: undefined, updateLink: undefined })

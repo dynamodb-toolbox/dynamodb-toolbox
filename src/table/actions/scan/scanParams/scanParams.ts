@@ -34,7 +34,7 @@ type ScanParamsGetter = <
   options?: OPTIONS
 ) => ScanCommandInput
 
-const defaultAnyAttribute = new AnySchema({ required: 'never' })
+const defaultAnySchema = new AnySchema({ required: 'never' })
 
 export const scanParams: ScanParamsGetter = <
   TABLE extends Table,
@@ -154,7 +154,7 @@ export const scanParams: ScanParamsGetter = <
       ExpressionAttributeNames: filterExpressionAttributeNames,
       ExpressionAttributeValues: filterExpressionAttributeValues,
       ConditionExpression: filterExpression
-    } = new ConditionParser(defaultAnyAttribute).parse(filter).toCommandOptions()
+    } = new ConditionParser(defaultAnySchema).parse(filter).toCommandOptions()
 
     Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
     Object.assign(expressionAttributeValues, filterExpressionAttributeValues)

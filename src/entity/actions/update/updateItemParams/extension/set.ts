@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, SetSchema } from '~/attributes/index.js'
+import type { SchemaBasicValue, SetSchema } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
@@ -6,7 +6,7 @@ import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
 
 export const parseSetExtension = (
-  attribute: SetSchema,
+  schema: SetSchema,
   input: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -14,7 +14,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$ADD], {
+        const parser = new Parser(schema).start(input[$ADD], {
           fill: false,
           transform,
           valuePath: [...valuePath, '$ADD']
@@ -37,7 +37,7 @@ export const parseSetExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$DELETE], {
+        const parser = new Parser(schema).start(input[$DELETE], {
           fill: false,
           transform,
           valuePath: [...valuePath, '$DELETE']
@@ -58,6 +58,6 @@ export const parseSetExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
   }
 }

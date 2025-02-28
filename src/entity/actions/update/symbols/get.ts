@@ -1,4 +1,4 @@
-import type { AttrSchema, AttributeValue } from '~/attributes/index.js'
+import type { AttrSchema, SchemaExtendedValue } from '~/attributes/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import type { Reference } from '../types.js'
@@ -12,7 +12,7 @@ export type GET<VALUE> = Extension<{ [$GET]: VALUE }>
 
 export const $get = <
   REFERENCE extends string,
-  FALLBACK extends undefined | AttributeValue | Reference<AttrSchema, string> = undefined
+  FALLBACK extends undefined | SchemaExtendedValue | Reference<AttrSchema, string> = undefined
 >(
   reference: REFERENCE,
   fallback?: FALLBACK

@@ -7,16 +7,16 @@ import type { StringSchema } from '../string/index.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class RecordSchema<
-  PROPS extends SchemaProps = SchemaProps,
   KEYS extends StringSchema = StringSchema,
-  ELEMENTS extends AttrSchema = AttrSchema
+  ELEMENTS extends AttrSchema = AttrSchema,
+  PROPS extends SchemaProps = SchemaProps
 > {
   type: 'record'
   keys: KEYS
   elements: ELEMENTS
   props: PROPS
 
-  constructor(props: PROPS, keys: KEYS, elements: ELEMENTS) {
+  constructor(keys: KEYS, elements: ELEMENTS, props: PROPS) {
     this.type = 'record'
     this.keys = keys
     this.elements = elements
@@ -35,7 +35,7 @@ export class RecordSchema<
     checkSchemaProps(this.props, path)
 
     if (this.keys.type !== 'string') {
-      throw new DynamoDBToolboxError('schema.recordAttribute.invalidKeys', {
+      throw new DynamoDBToolboxError('schema.record.invalidKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys must be a string.`,
@@ -52,7 +52,7 @@ export class RecordSchema<
 
     // Checking $key before $required as $key implies attribute is always $required
     if (keysKey !== undefined && keysKey !== false) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.keyKeys', {
+      throw new DynamoDBToolboxError('schema.record.keyKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys cannot be part of primary key.`,
@@ -61,7 +61,7 @@ export class RecordSchema<
     }
 
     if (keysRequired !== undefined && keysRequired !== 'atLeastOnce') {
-      throw new DynamoDBToolboxError('schema.recordAttribute.optionalKeys', {
+      throw new DynamoDBToolboxError('schema.record.optionalKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys must be required.`,
@@ -70,7 +70,7 @@ export class RecordSchema<
     }
 
     if (keysHidden !== undefined && keysHidden !== false) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.hiddenKeys', {
+      throw new DynamoDBToolboxError('schema.record.hiddenKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys cannot be hidden.`,
@@ -79,7 +79,7 @@ export class RecordSchema<
     }
 
     if (keysSavedAs !== undefined) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.savedAsKeys', {
+      throw new DynamoDBToolboxError('schema.record.savedAsKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys cannot be renamed (have savedAs option).`,
@@ -88,7 +88,7 @@ export class RecordSchema<
     }
 
     if (hasDefinedDefault(this.keys)) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.defaultedKeys', {
+      throw new DynamoDBToolboxError('schema.record.defaultedKeys', {
         message: `Invalid record keys${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record keys cannot have default or linked values.`,
@@ -105,7 +105,7 @@ export class RecordSchema<
 
     // Checking $key before $required as $key implies attribute is always $required
     if (elementsKey !== undefined && elementsKey !== false) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.keyElements', {
+      throw new DynamoDBToolboxError('schema.record.keyElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record elements cannot be part of primary key.`,
@@ -114,7 +114,7 @@ export class RecordSchema<
     }
 
     if (elementsRequired !== undefined && elementsRequired !== 'atLeastOnce') {
-      throw new DynamoDBToolboxError('schema.recordAttribute.optionalElements', {
+      throw new DynamoDBToolboxError('schema.record.optionalElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record elements must be required.`,
@@ -123,7 +123,7 @@ export class RecordSchema<
     }
 
     if (elementsHidden !== undefined && elementsHidden !== false) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.hiddenElements', {
+      throw new DynamoDBToolboxError('schema.record.hiddenElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record elements cannot be hidden.`,
@@ -132,7 +132,7 @@ export class RecordSchema<
     }
 
     if (elementsSavedAs !== undefined) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.savedAsElements', {
+      throw new DynamoDBToolboxError('schema.record.savedAsElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Record elements cannot be renamed (have savedAs option).`,
@@ -141,7 +141,7 @@ export class RecordSchema<
     }
 
     if (hasDefinedDefault(this.elements)) {
-      throw new DynamoDBToolboxError('schema.recordAttribute.defaultedElements', {
+      throw new DynamoDBToolboxError('schema.record.defaultedElements', {
         message: `Invalid record elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Records elements cannot have default or linked values.`,

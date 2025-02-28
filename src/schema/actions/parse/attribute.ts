@@ -5,19 +5,19 @@ import type { InputValue, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 
-import { anyAttrParser } from './any.js'
-import { anyOfAttributeParser } from './anyOf.js'
-import { listAttrParser } from './list.js'
-import { mapAttrParser } from './map.js'
+import { anySchemaParser } from './any.js'
+import { anyOfSchemaParser } from './anyOf.js'
+import { listSchemaParser } from './list.js'
+import { mapSchemaParser } from './map.js'
 import type { InferWriteValueOptions, ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
-import { primitiveAttrParser } from './primitive.js'
-import { recordAttributeParser } from './record.js'
-import { setAttrParser } from './set.js'
+import { primitiveSchemaParser } from './primitive.js'
+import { recordSchemaParser } from './record.js'
+import { setSchemaParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
 export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: AttrSchema,
+  schema: AttrSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
@@ -44,14 +44,14 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   if (nextFill && filledValue === undefined) {
     let defaultedValue = undefined
 
-    const modeDefault = getDefaulter(attribute, mode)
+    const modeDefault = getDefaulter(schema, mode)
     defaultedValue = isFunction(modeDefault) ? modeDefault() : (cloneDeep(modeDefault) as any)
 
     const itemInput = yield defaultedValue
 
     let linkedValue = defaultedValue
     if (linkedValue === undefined && itemInput !== undefined) {
-      const modeLink = getLinker(attribute, mode)
+      const modeLink = getLinker(schema, mode)
       linkedValue = (isFunction(modeLink) ? modeLink(itemInput) : linkedValue) as any
     }
     yield linkedValue
@@ -62,7 +62,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const nextOpts = { ...options, fill: nextFill } as OPTIONS
 
-  const { isExtension, extensionParser, basicInput } = parseExtension(attribute, filledValue, {
+  const { isExtension, extensionParser, basicInput } = parseExtension(schema, filledValue, {
     transform,
     valuePath
   })
@@ -84,7 +84,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     const path = formatValuePath(valuePath)
 
     // We don't need to fill
-    if (isRequired(attribute, mode) || defined) {
+    if (isRequired(schema, mode) || defined) {
       throw new DynamoDBToolboxError('parsing.attributeRequired', {
         message: `Attribute${path !== undefined ? ` '${path}'` : ''} is required.`,
         path
@@ -103,30 +103,30 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     return transformedValue
   }
 
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'any':
-      return yield* anyAttrParser(attribute, basicInput, nextOpts)
+      return yield* anySchemaParser(schema, basicInput, nextOpts)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveAttrParser(attribute, basicInput, nextOpts)
+      return yield* primitiveSchemaParser(schema, basicInput, nextOpts)
     case 'set':
-      return yield* setAttrParser(attribute, basicInput, nextOpts)
+      return yield* setSchemaParser(schema, basicInput, nextOpts)
     case 'list':
-      return yield* listAttrParser(attribute, basicInput, nextOpts)
+      return yield* listSchemaParser(schema, basicInput, nextOpts)
     case 'map':
-      return yield* mapAttrParser(attribute, basicInput, nextOpts)
+      return yield* mapSchemaParser(schema, basicInput, nextOpts)
     case 'record':
-      return yield* recordAttributeParser(attribute, basicInput, nextOpts)
+      return yield* recordSchemaParser(schema, basicInput, nextOpts)
     case 'anyOf':
-      return yield* anyOfAttributeParser(attribute, basicInput, nextOpts)
+      return yield* anyOfSchemaParser(schema, basicInput, nextOpts)
   }
 }
 
-const getDefaulter = (attribute: AttrSchema, mode: WriteMode) => {
-  const { props } = attribute
+const getDefaulter = (schema: AttrSchema, mode: WriteMode) => {
+  const { props } = schema
 
   if (props.key) {
     return props.keyDefault
@@ -142,8 +142,8 @@ const getDefaulter = (attribute: AttrSchema, mode: WriteMode) => {
   }
 }
 
-const getLinker = (attribute: AttrSchema, mode: WriteMode) => {
-  const { props } = attribute
+const getLinker = (schema: AttrSchema, mode: WriteMode) => {
+  const { props } = schema
 
   if (props.key) {
     return props.keyLink

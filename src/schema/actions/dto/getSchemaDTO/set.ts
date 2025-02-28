@@ -1,19 +1,19 @@
 import type { SetSchema } from '~/attributes/set/index.js'
 
-import type { SetAttrDTO } from '../types.js'
-import { getAttrDTO } from './attribute.js'
+import type { SetSchemaDTO } from '../types.js'
+import { getSchemaDTO } from './schema.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getSetAttrDTO = (attr: SetSchema): SetAttrDTO => {
-  const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.props
+export const getSetSchemaDTO = (schema: SetSchema): SetSchemaDTO => {
+  const defaultsDTO = getDefaultsDTO(schema)
+  const { required, hidden, key, savedAs } = schema.props
 
   return {
-    type: attr.type,
-    elements: getAttrDTO(attr.elements) as SetAttrDTO['elements'],
+    type: schema.type,
+    elements: getSchemaDTO(schema.elements) as SetSchemaDTO['elements'],
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),

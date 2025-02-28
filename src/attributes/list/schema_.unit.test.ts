@@ -19,11 +19,11 @@ describe('list', () => {
       string().optional()
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.optionalElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.list.optionalElements', path })
     )
   })
 
@@ -33,11 +33,11 @@ describe('list', () => {
       strElement.hidden()
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.hiddenElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.list.hiddenElements', path })
     )
   })
 
@@ -47,11 +47,11 @@ describe('list', () => {
       strElement.savedAs('foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.savedAsElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.list.savedAsElements', path })
     )
   })
 
@@ -61,11 +61,11 @@ describe('list', () => {
       strElement.putDefault('foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.list.defaultedElements', path })
     )
   })
 
@@ -75,11 +75,11 @@ describe('list', () => {
       strElement.putLink(() => 'foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.listAttribute.defaultedElements', path })
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'schema.list.defaultedElements', path })
     )
   })
 
@@ -256,21 +256,21 @@ describe('list', () => {
   })
 
   test('returns list with PUT default value if it is not key (default shorthand)', () => {
-    const listAttr = list(strElement).default(['foo'])
+    const listSchema = list(strElement).default(['foo'])
 
-    const assertList: A.Contains<(typeof listAttr)['props'], { putDefault: unknown }> = 1
+    const assertList: A.Contains<(typeof listSchema)['props'], { putDefault: unknown }> = 1
     assertList
 
-    expect(listAttr.props.putDefault).toStrictEqual(['foo'])
+    expect(listSchema.props.putDefault).toStrictEqual(['foo'])
   })
 
   test('returns list with KEY default value if it is key (default shorthand)', () => {
-    const listAttr = list(strElement).key().default(['bar'])
+    const listSchema = list(strElement).key().default(['bar'])
 
-    const assertList: A.Contains<(typeof listAttr)['props'], { keyDefault: unknown }> = 1
+    const assertList: A.Contains<(typeof listSchema)['props'], { keyDefault: unknown }> = 1
     assertList
 
-    expect(listAttr.props.keyDefault).toStrictEqual(['bar'])
+    expect(listSchema.props.keyDefault).toStrictEqual(['bar'])
   })
 
   test('returns linked list (option)', () => {
@@ -332,22 +332,22 @@ describe('list', () => {
 
   test('returns list with PUT default value if it is not key (default shorthand)', () => {
     const sayHello = () => ['hello']
-    const listAttr = list(strElement).link(sayHello)
+    const listSchema = list(strElement).link(sayHello)
 
-    const assertList: A.Contains<(typeof listAttr)['props'], { putLink: unknown }> = 1
+    const assertList: A.Contains<(typeof listSchema)['props'], { putLink: unknown }> = 1
     assertList
 
-    expect(listAttr.props.putLink).toBe(sayHello)
+    expect(listSchema.props.putLink).toBe(sayHello)
   })
 
   test('returns list with KEY default value if it is key (default shorthand)', () => {
     const sayHello = () => ['hello']
-    const listAttr = list(strElement).key().link(sayHello)
+    const listSchema = list(strElement).key().link(sayHello)
 
-    const assertList: A.Contains<(typeof listAttr)['props'], { keyLink: unknown }> = 1
+    const assertList: A.Contains<(typeof listSchema)['props'], { keyLink: unknown }> = 1
     assertList
 
-    expect(listAttr.props.keyLink).toBe(sayHello)
+    expect(listSchema.props.keyLink).toBe(sayHello)
   })
 
   test('returns list with validator (option)', () => {

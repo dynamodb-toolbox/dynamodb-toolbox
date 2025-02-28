@@ -1,4 +1,4 @@
-import type { AttributeBasicValue } from '~/attributes/index.js'
+import type { SchemaBasicValue } from '~/attributes/index.js'
 import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
@@ -11,11 +11,11 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
-  attribute: NumberSchema,
+  schema: NumberSchema,
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
-  const { props } = attribute
+  const { props } = schema
 
   if (isSum(inputValue) && inputValue[$SUM] !== undefined) {
     return {
@@ -144,6 +144,6 @@ export const parseNumberExtension = (
 
   return {
     isExtension: false,
-    basicInput: inputValue as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    basicInput: inputValue as SchemaBasicValue<UpdateItemInputExtension> | undefined
   }
 }

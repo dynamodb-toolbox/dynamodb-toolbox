@@ -13,7 +13,7 @@ import {
 } from '~/attributes/index.js'
 import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
 
-import { fromAttrDTO } from './fromAttrDTO/index.js'
+import { fromSchemaDTO } from './fromSchemaDTO/index.js'
 
 describe('fromDTO - schema', () => {
   test('creates correct schema', () => {
@@ -47,7 +47,7 @@ describe('fromDTO - schema', () => {
       }
     }
 
-    const importedSchema = fromAttrDTO(schemaDTO)
+    const importedSchema = fromSchemaDTO(schemaDTO)
 
     expect(importedSchema).toBeInstanceOf(ItemSchema)
     const { attributes } = importedSchema as ItemSchema

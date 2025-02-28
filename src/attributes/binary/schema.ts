@@ -1,4 +1,4 @@
-import { checkPrimitiveAttribute } from '../primitive/check.js'
+import { checkPrimitiveSchema } from '../primitive/check.js'
 import type { BinarySchemaProps } from './types.js'
 
 export class BinarySchema<PROPS extends BinarySchemaProps = BinarySchemaProps> {
@@ -19,7 +19,7 @@ export class BinarySchema<PROPS extends BinarySchemaProps = BinarySchemaProps> {
       return
     }
 
-    checkPrimitiveAttribute(this, path)
+    checkPrimitiveSchema(this, path)
 
     Object.freeze(this.props)
   }

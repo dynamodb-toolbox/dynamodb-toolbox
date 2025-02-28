@@ -8,8 +8,8 @@ export interface FormatValueOptions<SCHEMA extends AttrSchema> {
   partial?: boolean
 }
 
-export interface FormatAttrValueOptions<ATTRIBUTE extends AttrSchema>
-  extends FormatValueOptions<ATTRIBUTE> {
+export interface FormatAttrValueOptions<SCHEMA extends AttrSchema>
+  extends FormatValueOptions<SCHEMA> {
   valuePath?: (string | number)[]
 }
 

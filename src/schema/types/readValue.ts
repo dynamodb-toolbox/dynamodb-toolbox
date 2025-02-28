@@ -41,9 +41,7 @@ export type ReadValue<
     ? AttrReadValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends AttrSchema> = Not<
-  Extends<ATTRIBUTE['props'], { required: Never }>
->
+type MustBeDefined<SCHEMA extends AttrSchema> = Not<Extends<SCHEMA['props'], { required: Never }>>
 
 type OptionalKeys<SCHEMA extends MapSchema | ItemSchema> = {
   [KEY in keyof SCHEMA['attributes']]: If<MustBeDefined<SCHEMA['attributes'][KEY]>, never, KEY>
@@ -81,45 +79,45 @@ type ItemSchemaReadValue<
       >
 
 type AttrReadValue<
-  ATTRIBUTE extends AttrSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = AttrSchema extends ATTRIBUTE
+  SCHEMA extends AttrSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {}
+> = AttrSchema extends SCHEMA
   ? unknown
   :
-      | (ATTRIBUTE extends AnySchema ? AnySchemaReadValue<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends NullSchema
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolvedNullSchema
+      | (SCHEMA extends AnySchema ? AnySchemaReadValue<SCHEMA> : never)
+      | (SCHEMA extends NullSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolvedNullSchema
           : never)
-      | (ATTRIBUTE extends BooleanSchema
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBooleanSchema<ATTRIBUTE>
+      | (SCHEMA extends BooleanSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBooleanSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends NumberSchema
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveNumberSchema<ATTRIBUTE>
+      | (SCHEMA extends NumberSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveNumberSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends StringSchema
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveStringSchema<ATTRIBUTE>
+      | (SCHEMA extends StringSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveStringSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends BinarySchema
-          ? If<MustBeDefined<ATTRIBUTE>, never, undefined> | ResolveBinarySchema<ATTRIBUTE>
+      | (SCHEMA extends BinarySchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBinarySchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends SetSchema ? SetSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListSchema ? ListSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapSchema ? MapSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordSchema ? RecordSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaReadValue<ATTRIBUTE, OPTIONS> : never)
+      | (SCHEMA extends SetSchema ? SetSchemaReadValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends ListSchema ? ListSchemaReadValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends MapSchema ? MapSchemaReadValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends RecordSchema ? RecordSchemaReadValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends AnyOfSchema ? AnyOfSchemaReadValue<SCHEMA, OPTIONS> : never)
 
-type AnySchemaReadValue<ATTRIBUTE extends AnySchema> = AnySchema extends ATTRIBUTE
+type AnySchemaReadValue<SCHEMA extends AnySchema> = AnySchema extends SCHEMA
   ? unknown
-  : ResolveAnySchema<ATTRIBUTE>
+  : ResolveAnySchema<SCHEMA>
 
 type SetSchemaReadValue<
-  ATTRIBUTE extends SetSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = SetSchema extends ATTRIBUTE
+  SCHEMA extends SetSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {}
+> = SetSchema extends SCHEMA
   ? undefined | Set<AttrReadValue<SetSchema['elements']>>
   :
-      | If<MustBeDefined<ATTRIBUTE>, never, undefined>
-      | Set<AttrReadValue<ATTRIBUTE['elements'], Omit<OPTIONS, 'attributes'>>>
+      | If<MustBeDefined<SCHEMA>, never, undefined>
+      | Set<AttrReadValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
 
 type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
   ? undefined
@@ -128,62 +126,62 @@ type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
     : never
 
 type ListSchemaReadValue<
-  ATTRIBUTE extends ListSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  READ_ELEMENTS = ListSchema extends ATTRIBUTE
+  SCHEMA extends ListSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  READ_ELEMENTS = ListSchema extends SCHEMA
     ? unknown
     : AttrReadValue<
-        ATTRIBUTE['elements'],
+        SCHEMA['elements'],
         Overwrite<
           OPTIONS,
           {
             attributes: OPTIONS extends { attributes: string }
               ? Extract<
                   ChildElementPaths<OPTIONS['attributes']>,
-                  Paths<ATTRIBUTE['elements']> | undefined
+                  Paths<SCHEMA['elements']> | undefined
                 >
               : undefined
           }
         >
       >
   // Possible in case of anyOf subSchema
-> = ListSchema extends ATTRIBUTE
+> = ListSchema extends SCHEMA
   ? undefined | unknown[]
   : [READ_ELEMENTS] extends [never]
     ? never
-    : If<MustBeDefined<ATTRIBUTE>, never, undefined> | READ_ELEMENTS[]
+    : If<MustBeDefined<SCHEMA>, never, undefined> | READ_ELEMENTS[]
 
 type MapSchemaReadValue<
-  ATTRIBUTE extends MapSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
+  SCHEMA extends MapSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
-    ? MatchKeys<Extract<keyof ATTRIBUTE['attributes'], string>, OPTIONS['attributes']>
-    : Extract<keyof ATTRIBUTE['attributes'], string>
-> = MapSchema extends ATTRIBUTE
+    ? MatchKeys<Extract<keyof SCHEMA['attributes'], string>, OPTIONS['attributes']>
+    : Extract<keyof SCHEMA['attributes'], string>
+> = MapSchema extends SCHEMA
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
     ? never
     :
-        | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+        | If<MustBeDefined<SCHEMA>, never, undefined>
         | Optional<
             {
               [KEY in MATCHING_KEYS]: AttrReadValue<
-                ATTRIBUTE['attributes'][KEY],
+                SCHEMA['attributes'][KEY],
                 Overwrite<
                   OPTIONS,
                   {
                     attributes: OPTIONS extends { attributes: string }
                       ? Extract<
                           ChildPaths<KEY, OPTIONS['attributes']>,
-                          Paths<ATTRIBUTE['attributes'][KEY]> | undefined
+                          Paths<SCHEMA['attributes'][KEY]> | undefined
                         >
                       : undefined
                   }
                 >
               >
             },
-            OPTIONS extends { partial: true } ? string : OptionalKeys<ATTRIBUTE>
+            OPTIONS extends { partial: true } ? string : OptionalKeys<SCHEMA>
           >
 
 // NOTE: Works for now but can probably be improved (PATHS can be used to whitelist keys when KEYS is string)
@@ -210,28 +208,28 @@ type RecordChildPaths<
 > = undefined extends CHILD_PATHS ? undefined : CHILD_PATHS
 
 type RecordSchemaReadValue<
-  ATTRIBUTE extends RecordSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
+  SCHEMA extends RecordSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
   MATCHING_KEYS extends string = OPTIONS extends { attributes: string }
-    ? MatchRecordKeys<ResolveStringSchema<ATTRIBUTE['keys']>, OPTIONS['attributes']>
-    : ResolveStringSchema<ATTRIBUTE['keys']>
-> = RecordSchema extends ATTRIBUTE
+    ? MatchRecordKeys<ResolveStringSchema<SCHEMA['keys']>, OPTIONS['attributes']>
+    : ResolveStringSchema<SCHEMA['keys']>
+> = RecordSchema extends SCHEMA
   ? undefined | { [KEY: string]: unknown }
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
     ? never
     :
-        | If<MustBeDefined<ATTRIBUTE>, never, undefined>
+        | If<MustBeDefined<SCHEMA>, never, undefined>
         | {
             [KEY in MATCHING_KEYS]?: AttrReadValue<
-              ATTRIBUTE['elements'],
+              SCHEMA['elements'],
               Overwrite<
                 OPTIONS,
                 {
                   attributes: OPTIONS extends { attributes: string }
                     ? Extract<
                         RecordChildPaths<MATCHING_KEYS, OPTIONS['attributes']>,
-                        Paths<ATTRIBUTE['elements']> | undefined
+                        Paths<SCHEMA['elements']> | undefined
                       >
                     : undefined
                 }
@@ -240,22 +238,22 @@ type RecordSchemaReadValue<
           }
 
 type AnyOfSchemaReadValue<
-  ATTRIBUTE extends AnyOfSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {}
-> = AnyOfSchema extends ATTRIBUTE
+  SCHEMA extends AnyOfSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {}
+> = AnyOfSchema extends SCHEMA
   ? unknown
-  : If<MustBeDefined<ATTRIBUTE>, never, undefined> | MapAnyOfSchemaReadValue<ATTRIBUTE, OPTIONS>
+  : If<MustBeDefined<SCHEMA>, never, undefined> | MapAnyOfSchemaReadValue<SCHEMA, OPTIONS>
 
 type MapAnyOfSchemaReadValue<
-  ATTRIBUTE extends AnyOfSchema,
-  OPTIONS extends ReadValueOptions<ATTRIBUTE> = {},
-  ELEMENTS extends AttrSchema[] = ATTRIBUTE['elements'],
+  SCHEMA extends AnyOfSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  ELEMENTS extends AttrSchema[] = SCHEMA['elements'],
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends AttrSchema
     ? ELEMENTS_TAIL extends AttrSchema[]
       ? MapAnyOfSchemaReadValue<
-          ATTRIBUTE,
+          SCHEMA,
           OPTIONS,
           ELEMENTS_TAIL,
           | RESULTS

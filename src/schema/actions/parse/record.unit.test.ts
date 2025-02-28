@@ -2,21 +2,20 @@ import { record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import * as attrParserModule from './attribute.js'
-import { recordAttributeParser } from './record.js'
+import { recordSchemaParser } from './record.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const recordAttr = record(string(), string())
+const schema = record(string(), string())
 
-describe('recordAttributeParser', () => {
+describe('recordSchemaParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
 
   test('throws an error if input is not a record', () => {
-    const invalidCall = () =>
-      recordAttributeParser(recordAttr, ['foo', 'bar'], { fill: false }).next()
+    const invalidCall = () => recordSchemaParser(schema, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -24,26 +23,26 @@ describe('recordAttributeParser', () => {
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
-    const parser = recordAttributeParser(recordAttr, { foo: 'foo1', bar: 'bar1' }, options)
+    const parser = recordSchemaParser(schema, { foo: 'foo1', bar: 'bar1' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
     expect(attrParser).toHaveBeenCalledTimes(4)
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'foo', {
+    expect(attrParser).toHaveBeenCalledWith(schema.keys, 'foo', {
       ...options,
       valuePath: ['root', 'foo']
     })
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.keys, 'bar', {
+    expect(attrParser).toHaveBeenCalledWith(schema.keys, 'bar', {
       ...options,
       valuePath: ['root', 'bar']
     })
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'foo1', {
+    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'foo1', {
       ...options,
       valuePath: ['root', 'foo'],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(recordAttr.elements, 'bar1', {
+    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'bar1', {
       ...options,
       valuePath: ['root', 'bar'],
       defined: false
@@ -63,7 +62,7 @@ describe('recordAttributeParser', () => {
   test('ignores undefined values', () => {
     const recordA = record(string(), string())
 
-    const { value: parsedValue } = recordAttributeParser(
+    const { value: parsedValue } = recordSchemaParser(
       recordA,
       { foo: 'bar', baz: undefined },
       { fill: false }
@@ -74,7 +73,7 @@ describe('recordAttributeParser', () => {
   test('applies validation if any', () => {
     const recordA = record(string(), string()).validate(input => 'foo' in input)
 
-    const { value: parsedValue } = recordAttributeParser(
+    const { value: parsedValue } = recordSchemaParser(
       recordA,
       { foo: 'bar' },
       { fill: false }
@@ -82,7 +81,7 @@ describe('recordAttributeParser', () => {
     expect(parsedValue).toStrictEqual({ foo: 'bar' })
 
     const invalidCallA = () =>
-      recordAttributeParser(recordA, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
+      recordSchemaParser(recordA, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -97,7 +96,7 @@ describe('recordAttributeParser', () => {
     )
 
     const invalidCallB = () =>
-      recordAttributeParser(recordB, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
+      recordSchemaParser(recordB, { bar: 'foo' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

@@ -27,7 +27,7 @@ export type {
   ReadValue,
   FormattedValue,
   ReadValueOptions,
-  AttrPaths,
+  SchemaPaths,
   ItemSchemaPaths,
   Paths
 } from './schema/index.js'
@@ -41,7 +41,7 @@ export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
 export type { FormattedValueJSONSchema } from './schema/actions/jsonSchemer/index.js'
 export { SchemaDTO } from './schema/actions/dto/index.js'
-export type { ItemSchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
+export type { ItemSchemaDTO, ISchemaDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables

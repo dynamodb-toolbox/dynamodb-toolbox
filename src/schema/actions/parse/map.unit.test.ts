@@ -2,20 +2,20 @@ import { map, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import * as attrParserModule from './attribute.js'
-import { mapAttrParser } from './map.js'
+import { mapSchemaParser } from './map.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const mapAttr = map({ foo: string(), bar: string() })
+const mapSchema = map({ foo: string(), bar: string() })
 
-describe('mapAttributeParser', () => {
+describe('mapSchemaParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
 
   test('throws an error if input is not a map', () => {
-    const invalidCall = () => mapAttrParser(mapAttr, ['foo', 'bar'], { fill: false }).next()
+    const invalidCall = () => mapSchemaParser(mapSchema, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -23,18 +23,18 @@ describe('mapAttributeParser', () => {
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
-    const parser = mapAttrParser(mapAttr, { foo: 'foo', bar: 'bar' }, options)
+    const parser = mapSchemaParser(mapSchema, { foo: 'foo', bar: 'bar' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.foo, 'foo', {
+    expect(attrParser).toHaveBeenCalledWith(mapSchema.attributes.foo, 'foo', {
       ...options,
       valuePath: ['root', 'foo'],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(mapAttr.attributes.bar, 'bar', {
+    expect(attrParser).toHaveBeenCalledWith(mapSchema.attributes.bar, 'bar', {
       ...options,
       valuePath: ['root', 'bar'],
       defined: false
@@ -54,11 +54,11 @@ describe('mapAttributeParser', () => {
   test('applies validation if any', () => {
     const mapA = map({ str: string() }).validate(input => input.str === 'foo')
 
-    const { value: parsedValue } = mapAttrParser(mapA, { str: 'foo' }, { fill: false }).next()
+    const { value: parsedValue } = mapSchemaParser(mapA, { str: 'foo' }, { fill: false }).next()
     expect(parsedValue).toStrictEqual({ str: 'foo' })
 
     const invalidCallA = () =>
-      mapAttrParser(mapA, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
+      mapSchemaParser(mapA, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -71,7 +71,7 @@ describe('mapAttributeParser', () => {
     const mapB = map({ str: string() }).validate(input => (input.str === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
-      mapAttrParser(mapB, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
+      mapSchemaParser(mapB, { str: 'bar' }, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

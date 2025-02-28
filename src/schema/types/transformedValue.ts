@@ -28,7 +28,7 @@ import type {
 import type { Transformer, TypeModifier } from '~/transformers/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
-import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
+import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type TransformedValue<
   SCHEMA extends AttrSchema,
@@ -39,13 +39,13 @@ export type TransformedValue<
     ? AttrTransformedValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptions = {}> = If<
+type MustBeDefined<SCHEMA extends AttrSchema, OPTIONS extends WriteValueOptions = {}> = If<
   Extends<OPTIONS, { defined: true }>,
   true,
   If<
     Extends<OPTIONS, { mode: 'update' | 'key' }>,
-    Extends<ATTRIBUTE['props'], { required: Always }>,
-    Not<Extends<ATTRIBUTE['props'], { required: Never }>>
+    Extends<SCHEMA['props'], { required: Always }>,
+    Not<Extends<SCHEMA['props'], { required: Never }>>
   >
 >
 
@@ -78,74 +78,72 @@ type ItemSchemaTransformedValue<
           Overwrite<OPTIONS, { defined: false }>
         >
       },
-      OptionalKeys<SCHEMA, OPTIONS>
+      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
 type AttrTransformedValue<
-  ATTRIBUTE extends AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends WriteValueOptions = {}
-> = AttrSchema extends ATTRIBUTE
+> = AttrSchema extends SCHEMA
   ? unknown
   :
-      | (ATTRIBUTE extends AnySchema ? AnySchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends PrimitiveSchema
-          ? PrimitiveSchemaTransformedValue<ATTRIBUTE, OPTIONS>
-          : never)
-      | (ATTRIBUTE extends SetSchema ? SetSchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends ListSchema ? ListSchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends MapSchema ? MapSchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends RecordSchema ? RecordSchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
-      | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaTransformedValue<ATTRIBUTE, OPTIONS> : never)
+      | (SCHEMA extends AnySchema ? AnySchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends SetSchema ? SetSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends ListSchema ? ListSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends MapSchema ? MapSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends RecordSchema ? RecordSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends AnyOfSchema ? AnyOfSchemaTransformedValue<SCHEMA, OPTIONS> : never)
 
 type AnySchemaTransformedValue<
-  ATTRIBUTE extends AnySchema,
+  SCHEMA extends AnySchema,
   OPTIONS extends WriteValueOptions = {}
-> = AnySchema extends ATTRIBUTE
+> = AnySchema extends SCHEMA
   ? unknown
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | (ATTRIBUTE['props'] extends { transform: Transformer }
-          ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveAnySchema<ATTRIBUTE>>
-          : ResolveAnySchema<ATTRIBUTE>)
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | (SCHEMA['props'] extends { transform: Transformer }
+          ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveAnySchema<SCHEMA>>
+          : ResolveAnySchema<SCHEMA>)
 
 type PrimitiveSchemaTransformedValue<
-  ATTRIBUTE extends PrimitiveSchema,
+  SCHEMA extends PrimitiveSchema,
   OPTIONS extends WriteValueOptions = {}
-> = PrimitiveSchema extends ATTRIBUTE
-  ? undefined | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS> | ResolvedPrimitiveSchema
+> = PrimitiveSchema extends SCHEMA
+  ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | ResolvedPrimitiveSchema
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | (ATTRIBUTE extends NullSchema ? ResolvedNullSchema : never)
-      | (ATTRIBUTE extends NumberSchema
-          ? ATTRIBUTE['props'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveNumberSchema<ATTRIBUTE>>
-            : ResolveNumberSchema<ATTRIBUTE>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | (SCHEMA extends NullSchema ? ResolvedNullSchema : never)
+      | (SCHEMA extends NumberSchema
+          ? SCHEMA['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveNumberSchema<SCHEMA>>
+            : ResolveNumberSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends BooleanSchema
-          ? ATTRIBUTE['props'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveBooleanSchema<ATTRIBUTE>>
-            : ResolveBooleanSchema<ATTRIBUTE>
+      | (SCHEMA extends BooleanSchema
+          ? SCHEMA['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveBooleanSchema<SCHEMA>>
+            : ResolveBooleanSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends StringSchema
-          ? ATTRIBUTE['props'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveStringSchema<ATTRIBUTE>>
-            : ResolveStringSchema<ATTRIBUTE>
+      | (SCHEMA extends StringSchema
+          ? SCHEMA['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveStringSchema<SCHEMA>>
+            : ResolveStringSchema<SCHEMA>
           : never)
-      | (ATTRIBUTE extends BinarySchema
-          ? ATTRIBUTE['props'] extends { transform: Transformer }
-            ? Call<TypeModifier<ATTRIBUTE['props']['transform']>, ResolveBinarySchema<ATTRIBUTE>>
-            : ResolveBinarySchema<ATTRIBUTE>
+      | (SCHEMA extends BinarySchema
+          ? SCHEMA['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveBinarySchema<SCHEMA>>
+            : ResolveBinarySchema<SCHEMA>
           : never)
 
 type SetSchemaTransformedValue<
-  ATTRIBUTE extends SetSchema,
+  SCHEMA extends SetSchema,
   OPTIONS extends WriteValueOptions = {}
-> = SetSchema extends ATTRIBUTE
+> = SetSchema extends SCHEMA
   ?
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
           AttrTransformedValue<
             SetSchema['elements'],
@@ -153,84 +151,84 @@ type SetSchemaTransformedValue<
           >
         >
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
           AttrTransformedValue<
-            ATTRIBUTE['elements'],
+            SCHEMA['elements'],
             Overwrite<OPTIONS, { mode: 'put'; defined: false }>
           >
         >
 
 type ListSchemaTransformedValue<
-  ATTRIBUTE extends ListSchema,
+  SCHEMA extends ListSchema,
   OPTIONS extends WriteValueOptions = {}
-> = ListSchema extends ATTRIBUTE
+> = ListSchema extends SCHEMA
   ?
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | unknown[]
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | AttrTransformedValue<ATTRIBUTE['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | AttrTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type MapSchemaTransformedValue<
-  ATTRIBUTE extends MapSchema,
+  SCHEMA extends MapSchema,
   OPTIONS extends WriteValueOptions = {}
-> = MapSchema extends ATTRIBUTE
+> = MapSchema extends SCHEMA
   ?
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | { [KEY: string]: unknown }
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Optional<
           {
             [KEY in OPTIONS extends { mode: 'key' }
-              ? SelectKeys<ATTRIBUTE['attributes'], { props: { key: true } }>
-              : keyof ATTRIBUTE['attributes'] as ATTRIBUTE['attributes'][KEY]['props'] extends {
+              ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
+              : keyof SCHEMA['attributes'] as SCHEMA['attributes'][KEY]['props'] extends {
               savedAs: string
             }
-              ? ATTRIBUTE['attributes'][KEY]['props']['savedAs']
+              ? SCHEMA['attributes'][KEY]['props']['savedAs']
               : KEY]: AttrTransformedValue<
-              ATTRIBUTE['attributes'][KEY],
+              SCHEMA['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >
           },
-          OptionalKeys<ATTRIBUTE, OPTIONS>
+          OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
         >
 
 type RecordSchemaTransformedValue<
-  ATTRIBUTE extends RecordSchema,
+  SCHEMA extends RecordSchema,
   OPTIONS extends WriteValueOptions = {},
-  KEYS extends string = Extract<AttrTransformedValue<ATTRIBUTE['keys'], OPTIONS>, string>
-> = RecordSchema extends ATTRIBUTE
+  KEYS extends string = Extract<AttrTransformedValue<SCHEMA['keys'], OPTIONS>, string>
+> = RecordSchema extends SCHEMA
   ?
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | { [KEY: string]: unknown }
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       // We cannot use Record type as it messes up map resolution down the line
       | {
           [KEY in KEYS]?: AttrTransformedValue<
-            ATTRIBUTE['elements'],
+            SCHEMA['elements'],
             Overwrite<OPTIONS, { defined: false }>
           >
         }
 
 type AnyOfSchemaTransformedValue<
-  ATTRIBUTE extends AnyOfSchema,
+  SCHEMA extends AnyOfSchema,
   OPTIONS extends WriteValueOptions = {}
-> = AnyOfSchema extends ATTRIBUTE
+> = AnyOfSchema extends SCHEMA
   ? unknown
   :
-      | If<MustBeDefined<ATTRIBUTE, OPTIONS>, never, undefined>
-      | AttrExtendedWriteValue<ATTRIBUTE, OPTIONS>
-      | MapAnyOfSchemaTransformedValue<ATTRIBUTE['elements'], OPTIONS>
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | MapAnyOfSchemaTransformedValue<SCHEMA['elements'], OPTIONS>
 
 type MapAnyOfSchemaTransformedValue<
   ELEMENTS extends AttrSchema[],

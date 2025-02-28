@@ -28,15 +28,15 @@ export type Light<SCHEMA extends AttrSchema> = SCHEMA extends AnySchema
           : SCHEMA extends BinarySchema
             ? BinarySchema<SCHEMA['props']>
             : SCHEMA extends SetSchema
-              ? SetSchema<SCHEMA['props'], SCHEMA['elements']>
+              ? SetSchema<SCHEMA['elements'], SCHEMA['props']>
               : SCHEMA extends ListSchema
-                ? ListSchema<SCHEMA['props'], SCHEMA['elements']>
+                ? ListSchema<SCHEMA['elements'], SCHEMA['props']>
                 : SCHEMA extends MapSchema
-                  ? MapSchema<SCHEMA['props'], SCHEMA['attributes']>
+                  ? MapSchema<SCHEMA['attributes'], SCHEMA['props']>
                   : SCHEMA extends RecordSchema
-                    ? RecordSchema<SCHEMA['props'], SCHEMA['keys'], SCHEMA['elements']>
+                    ? RecordSchema<SCHEMA['keys'], SCHEMA['elements'], SCHEMA['props']>
                     : SCHEMA extends AnyOfSchema
-                      ? AnyOfSchema<SCHEMA['props'], SCHEMA['elements']>
+                      ? AnyOfSchema<SCHEMA['elements'], SCHEMA['props']>
                       : never
 
 type Lightener = <SCHEMA extends AttrSchema>(schema: SCHEMA) => Light<SCHEMA>

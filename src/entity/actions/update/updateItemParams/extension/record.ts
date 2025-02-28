@@ -1,4 +1,4 @@
-import type { AttrSchema, AttributeBasicValue, RecordSchema } from '~/attributes/index.js'
+import type { AttrSchema, RecordSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
@@ -9,7 +9,7 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseUpdateExtension } from './attribute.js'
 
 function* recordElementsParser(
-  attribute: RecordSchema,
+  schema: RecordSchema,
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): Generator<
@@ -29,7 +29,7 @@ function* recordElementsParser(
     return transformedValue
   }
 
-  return yield* new Parser(attribute.elements).start(inputValue, {
+  return yield* new Parser(schema.elements).start(inputValue, {
     mode: 'update',
     fill: false,
     transform,
@@ -39,7 +39,7 @@ function* recordElementsParser(
 }
 
 export const parseRecordExtension = (
-  attribute: RecordSchema,
+  schema: RecordSchema,
   input: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -47,7 +47,7 @@ export const parseRecordExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$SET], {
+        const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
           valuePath: [...valuePath, '$SET']
@@ -73,8 +73,8 @@ export const parseRecordExtension = (
         const parsers = Object.entries(input)
           .filter(([, inputValue]) => inputValue !== undefined)
           .map(([inputKey, inputValue]) => [
-            new Parser(attribute.keys).start(inputKey, { fill: false, transform }),
-            recordElementsParser(attribute, inputValue, {
+            new Parser(schema.keys).start(inputKey, { fill: false, transform }),
+            recordElementsParser(schema, inputValue, {
               transform,
               valuePath: [...valuePath, inputKey]
             })
@@ -113,6 +113,6 @@ export const parseRecordExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
   }
 }

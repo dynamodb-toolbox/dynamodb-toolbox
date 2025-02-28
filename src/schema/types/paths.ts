@@ -22,81 +22,76 @@ export type Paths<SCHEMA extends AttrSchema = AttrSchema> = string &
   (SCHEMA extends ItemSchema
     ? ItemSchemaPaths<SCHEMA>
     : SCHEMA extends AttrSchema
-      ? AttrPaths<SCHEMA>
+      ? SchemaPaths<SCHEMA>
       : never)
 
-export type AttrPaths<ATTRIBUTE extends AttrSchema, ATTRIBUTE_PATH extends string = ''> =
-  | (ATTRIBUTE extends AnySchema ? AnySchemaPaths<ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends ListSchema ? ListSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends MapSchema ? MapSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends RecordSchema ? RecordSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
-  | (ATTRIBUTE extends AnyOfSchema ? AnyOfSchemaPaths<ATTRIBUTE, ATTRIBUTE_PATH> : never)
+export type SchemaPaths<SCHEMA extends AttrSchema, SCHEMA_PATH extends string = ''> =
+  | (SCHEMA extends AnySchema ? AnySchemaPaths<SCHEMA_PATH> : never)
+  | (SCHEMA extends ListSchema ? ListSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
+  | (SCHEMA extends MapSchema ? MapSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
+  | (SCHEMA extends RecordSchema ? RecordSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
+  | (SCHEMA extends AnyOfSchema ? AnyOfSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
 
 export type ItemSchemaPaths<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? string
-  : keyof SCHEMA['attributes'] extends infer ATTRIBUTE_PATH
-    ? ATTRIBUTE_PATH extends string
+  : keyof SCHEMA['attributes'] extends infer SCHEMA_PATH
+    ? SCHEMA_PATH extends string
       ?
-          | `['${ATTRIBUTE_PATH}']`
-          | If<Extends<ATTRIBUTE_PATH, StringToEscape>, never, ATTRIBUTE_PATH>
-          | AttrPaths<
-              SCHEMA['attributes'][ATTRIBUTE_PATH],
-              | `['${ATTRIBUTE_PATH}']`
-              | If<Extends<ATTRIBUTE_PATH, StringToEscape>, never, ATTRIBUTE_PATH>
+          | `['${SCHEMA_PATH}']`
+          | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
+          | SchemaPaths<
+              SCHEMA['attributes'][SCHEMA_PATH],
+              `['${SCHEMA_PATH}']` | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
             >
       : never
     : never
 
-type AnySchemaPaths<ATTRIBUTE_PATH extends string = ''> = `${ATTRIBUTE_PATH}${string}`
+type AnySchemaPaths<SCHEMA_PATH extends string = ''> = `${SCHEMA_PATH}${string}`
 
 type ListSchemaPaths<
-  ATTRIBUTE extends ListSchema,
-  ATTRIBUTE_PATH extends string = ''
-> = ListSchema extends ATTRIBUTE
+  SCHEMA extends ListSchema,
+  SCHEMA_PATH extends string = ''
+> = ListSchema extends SCHEMA
   ? string
-  :
-      | `${ATTRIBUTE_PATH}[${number}]`
-      | AttrPaths<ATTRIBUTE['elements'], `${ATTRIBUTE_PATH}[${number}]`>
+  : `${SCHEMA_PATH}[${number}]` | SchemaPaths<SCHEMA['elements'], `${SCHEMA_PATH}[${number}]`>
 
 type MapSchemaPaths<
-  ATTRIBUTE extends MapSchema,
-  ATTRIBUTE_PATH extends string = ''
-> = MapSchema extends ATTRIBUTE
+  SCHEMA extends MapSchema,
+  SCHEMA_PATH extends string = ''
+> = MapSchema extends SCHEMA
   ? string
   : {
-      [KEY in keyof ATTRIBUTE['attributes'] & string]:
-        | AppendKey<ATTRIBUTE_PATH, KEY>
-        | AttrPaths<ATTRIBUTE['attributes'][KEY], AppendKey<ATTRIBUTE_PATH, KEY>>
-    }[keyof ATTRIBUTE['attributes'] & string]
+      [KEY in keyof SCHEMA['attributes'] & string]:
+        | AppendKey<SCHEMA_PATH, KEY>
+        | SchemaPaths<SCHEMA['attributes'][KEY], AppendKey<SCHEMA_PATH, KEY>>
+    }[keyof SCHEMA['attributes'] & string]
 
 type RecordSchemaPaths<
-  ATTRIBUTE extends RecordSchema,
-  ATTRIBUTE_PATH extends string = '',
-  RESOLVED_KEYS extends string = ResolveStringSchema<ATTRIBUTE['keys']>
-> = RecordSchema extends ATTRIBUTE
+  SCHEMA extends RecordSchema,
+  SCHEMA_PATH extends string = '',
+  RESOLVED_KEYS extends string = ResolveStringSchema<SCHEMA['keys']>
+> = RecordSchema extends SCHEMA
   ? string
   :
-      | AppendKey<ATTRIBUTE_PATH, RESOLVED_KEYS>
-      | AttrPaths<ATTRIBUTE['elements'], AppendKey<ATTRIBUTE_PATH, RESOLVED_KEYS>>
+      | AppendKey<SCHEMA_PATH, RESOLVED_KEYS>
+      | SchemaPaths<SCHEMA['elements'], AppendKey<SCHEMA_PATH, RESOLVED_KEYS>>
 
 type AnyOfSchemaPaths<
-  ATTRIBUTE extends AnyOfSchema,
-  ATTRIBUTE_PATH extends string = ''
-> = AnyOfSchema extends ATTRIBUTE
-  ? string
-  : AnyOfSchemaPathsRec<ATTRIBUTE['elements'], ATTRIBUTE_PATH>
+  SCHEMA extends AnyOfSchema,
+  SCHEMA_PATH extends string = ''
+> = AnyOfSchema extends SCHEMA ? string : AnyOfSchemaPathsRec<SCHEMA['elements'], SCHEMA_PATH>
 
 type AnyOfSchemaPathsRec<
-  ATTRIBUTES extends AttrSchema[],
-  ATTRIBUTE_PATH extends string = '',
+  SCHEMAS extends AttrSchema[],
+  SCHEMA_PATH extends string = '',
   RESULTS = never
-> = ATTRIBUTES extends [infer ATTRIBUTES_HEAD, ...infer ATTRIBUTES_TAIL]
-  ? ATTRIBUTES_HEAD extends AttrSchema
-    ? ATTRIBUTES_TAIL extends AttrSchema[]
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends AttrSchema
+    ? SCHEMAS_TAIL extends AttrSchema[]
       ? AnyOfSchemaPathsRec<
-          ATTRIBUTES_TAIL,
-          ATTRIBUTE_PATH,
-          RESULTS | AttrPaths<ATTRIBUTES_HEAD, ATTRIBUTE_PATH>
+          SCHEMAS_TAIL,
+          SCHEMA_PATH,
+          RESULTS | SchemaPaths<SCHEMAS_HEAD, SCHEMA_PATH>
         >
       : never
     : never
