@@ -6,14 +6,14 @@ import type { SchemaProps } from '../shared/props.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class ListSchema<
-  PROPS extends SchemaProps = SchemaProps,
-  ELEMENTS extends AttrSchema = AttrSchema
+  ELEMENTS extends AttrSchema = AttrSchema,
+  PROPS extends SchemaProps = SchemaProps
 > {
   type: 'list'
   elements: ELEMENTS
   props: PROPS
 
-  constructor(props: PROPS, elements: ELEMENTS) {
+  constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'list'
     this.elements = elements
     this.props = props

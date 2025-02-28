@@ -65,58 +65,58 @@ export type ResetLinks<SCHEMA extends AttrSchema> =
       : never)
   | (SCHEMA extends SetSchema
       ? SetSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
               keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
             >]: SCHEMA['props'][KEY]
-          },
-          SCHEMA['elements']
+          }
         >
       : never)
   | (SCHEMA extends ListSchema
       ? ListSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
               keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
             >]: SCHEMA['props'][KEY]
-          },
-          SCHEMA['elements']
+          }
         >
       : never)
   | (SCHEMA extends MapSchema
       ? MapSchema<
+          SCHEMA['attributes'],
           {
             [KEY in Exclude<
               keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
             >]: SCHEMA['props'][KEY]
-          },
-          SCHEMA['attributes']
+          }
         >
       : never)
   | (SCHEMA extends RecordSchema
       ? RecordSchema<
+          SCHEMA['keys'],
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
               keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
             >]: SCHEMA['props'][KEY]
-          },
-          SCHEMA['keys'],
-          SCHEMA['elements']
+          }
         >
       : never)
   | (SCHEMA extends AnyOfSchema
       ? AnyOfSchema<
+          SCHEMA['elements'],
           {
             [KEY in Exclude<
               keyof SCHEMA['props'],
               'keyLink' | 'putLink' | 'updateLink'
             >]: SCHEMA['props'][KEY]
-          },
-          SCHEMA['elements']
+          }
         >
       : never)
 

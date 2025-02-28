@@ -18,21 +18,21 @@ import type { AnyOfElementSchema } from './types.js'
 
 type AnyOfSchemer = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
-) => AnyOfSchema_<{}, LightTuple<ELEMENTS>>
+) => AnyOfSchema_<LightTuple<ELEMENTS>, {}>
 
 /**
  * Define a new anyOf attribute
  * @param elements Attribute[]
  */
-export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_({}, lightTuple(...elements))
+export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_(lightTuple(...elements), {})
 
 /**
  * AnyOf attribute interface
  */
 export class AnyOfSchema_<
-  PROPS extends SchemaProps = SchemaProps,
-  ELEMENTS extends AttrSchema[] = AttrSchema[]
-> extends AnyOfSchema<PROPS, ELEMENTS> {
+  ELEMENTS extends AttrSchema[] = AttrSchema[],
+  PROPS extends SchemaProps = SchemaProps
+> extends AnyOfSchema<ELEMENTS, PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -43,14 +43,14 @@ export class AnyOfSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): AnyOfSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>, ELEMENTS> {
-    return new AnyOfSchema_(overwrite(this.props, { required: nextRequired }), this.elements)
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new AnyOfSchema_(this.elements, overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): AnyOfSchema_<Overwrite<PROPS, { required: Never }>, ELEMENTS> {
+  optional(): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -59,8 +59,8 @@ export class AnyOfSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): AnyOfSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>, ELEMENTS> {
-    return new AnyOfSchema_(overwrite(this.props, { hidden: nextHidden }), this.elements)
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new AnyOfSchema_(this.elements, overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -68,10 +68,10 @@ export class AnyOfSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): AnyOfSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { key: nextKey, required: 'always' }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { key: nextKey, required: 'always' })
     )
   }
 
@@ -80,8 +80,8 @@ export class AnyOfSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): AnyOfSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>, ELEMENTS> {
-    return new AnyOfSchema_(overwrite(this.props, { savedAs: nextSavedAs }), this.elements)
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new AnyOfSchema_(this.elements, overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -91,10 +91,10 @@ export class AnyOfSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): AnyOfSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyDefault: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { keyDefault: nextKeyDefault as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyDefault: nextKeyDefault as unknown })
     )
   }
 
@@ -105,10 +105,10 @@ export class AnyOfSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): AnyOfSchema_<Overwrite<PROPS, { putDefault: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putDefault: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { putDefault: nextPutDefault as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { putDefault: nextPutDefault as unknown })
     )
   }
 
@@ -119,10 +119,10 @@ export class AnyOfSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): AnyOfSchema_<Overwrite<PROPS, { updateDefault: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { updateDefault: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -137,16 +137,16 @@ export class AnyOfSchema_<
     >
   ): If<
     PROPS['key'],
-    AnyOfSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ELEMENTS>,
-    AnyOfSchema_<Overwrite<PROPS, { putDefault: unknown }>, ELEMENTS>
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyDefault: unknown }>>,
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new AnyOfSchema_(
-        overwrite(this.props, { keyDefault: nextDefault as unknown }),
-        this.elements
+        this.elements,
+        overwrite(this.props, { keyDefault: nextDefault as unknown })
       ),
-      new AnyOfSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }), this.elements)
+      new AnyOfSchema_(this.elements, overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -159,10 +159,10 @@ export class AnyOfSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): AnyOfSchema_<Overwrite<PROPS, { keyLink: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyLink: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { keyLink: nextKeyLink as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyLink: nextKeyLink as unknown })
     )
   }
 
@@ -173,10 +173,10 @@ export class AnyOfSchema_<
    */
   putLink<SCHEMA extends AttrSchema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
-  ): AnyOfSchema_<Overwrite<PROPS, { putLink: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putLink: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { putLink: nextPutLink as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { putLink: nextPutLink as unknown })
     )
   }
 
@@ -189,10 +189,10 @@ export class AnyOfSchema_<
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
-  ): AnyOfSchema_<Overwrite<PROPS, { updateLink: unknown }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { updateLink: unknown }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { updateLink: nextUpdateLink as unknown }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateLink: nextUpdateLink as unknown })
     )
   }
 
@@ -211,13 +211,13 @@ export class AnyOfSchema_<
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],
-    AnyOfSchema_<Overwrite<PROPS, { keyLink: unknown }>, ELEMENTS>,
-    AnyOfSchema_<Overwrite<PROPS, { putLink: unknown }>, ELEMENTS>
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyLink: unknown }>>,
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
-      new AnyOfSchema_(overwrite(this.props, { keyLink: nextLink as unknown }), this.elements),
-      new AnyOfSchema_(overwrite(this.props, { putLink: nextLink as unknown }), this.elements)
+      new AnyOfSchema_(this.elements, overwrite(this.props, { keyLink: nextLink as unknown })),
+      new AnyOfSchema_(this.elements, overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -228,10 +228,10 @@ export class AnyOfSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): AnyOfSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyValidator: Validator }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { keyValidator: nextKeyValidator as Validator }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -242,10 +242,10 @@ export class AnyOfSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): AnyOfSchema_<Overwrite<PROPS, { putValidator: Validator }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putValidator: Validator }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { putValidator: nextPutValidator as Validator }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -256,10 +256,10 @@ export class AnyOfSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): AnyOfSchema_<Overwrite<PROPS, { updateValidator: Validator }>, ELEMENTS> {
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { updateValidator: Validator }>> {
     return new AnyOfSchema_(
-      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator }),
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -279,26 +279,26 @@ export class AnyOfSchema_<
     >
   ): If<
     PROPS['key'],
-    AnyOfSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ELEMENTS>,
-    AnyOfSchema_<Overwrite<PROPS, { putValidator: Validator }>, ELEMENTS>
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { keyValidator: Validator }>>,
+    AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new AnyOfSchema_(
-        overwrite(this.props, { keyValidator: nextValidator as Validator }),
-        this.elements
+        this.elements,
+        overwrite(this.props, { keyValidator: nextValidator as Validator })
       ),
       new AnyOfSchema_(
-        overwrite(this.props, { putValidator: nextValidator as Validator }),
-        this.elements
+        this.elements,
+        overwrite(this.props, { putValidator: nextValidator as Validator })
       )
     )
   }
 
   clone<NEXT_PROPS extends SchemaProps = {}>(
     nextprops: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
-  ): AnyOfSchema_<Overwrite<PROPS, NEXT_PROPS>, ELEMENTS> {
-    return new AnyOfSchema_(overwrite(this.props, nextprops), this.elements)
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, NEXT_PROPS>> {
+    return new AnyOfSchema_(this.elements, overwrite(this.props, nextprops))
   }
 
   build<ACTION extends SchemaAction<this> = SchemaAction<this>>(

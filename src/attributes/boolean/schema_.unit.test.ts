@@ -131,10 +131,10 @@ describe('boolean', () => {
       true
     )
 
-    const superInvalidCall = () => invalidBool.check(path)
+    const invalidCall = () => invalidBool.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 
@@ -152,10 +152,10 @@ describe('boolean', () => {
       putDefault: 42
     })
 
-    const superInvalidCall = () => invalidBool.check(path)
+    const invalidCall = () => invalidBool.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
@@ -218,10 +218,10 @@ describe('boolean', () => {
       // @ts-expect-error
       .putDefault('foo')
 
-    const superInvalidCall = () => invalidBool.check(path)
+    const invalidCall = () => invalidBool.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
@@ -274,10 +274,10 @@ describe('boolean', () => {
       false
     )
 
-    const superInvalidCall = () => invalidBool.check(path)
+    const invalidCall = () => invalidBool.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({
         code: 'schema.primitive.invalidDefaultValueRange',
         path
@@ -309,10 +309,10 @@ describe('boolean', () => {
       'foo'
     )
 
-    const superInvalidCall = () => invalidBool.check(path)
+    const invalidCall = () => invalidBool.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 

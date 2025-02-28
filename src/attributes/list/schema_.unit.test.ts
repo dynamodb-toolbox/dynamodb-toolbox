@@ -19,10 +19,10 @@ describe('list', () => {
       string().optional()
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.list.optionalElements', path })
     )
   })
@@ -33,10 +33,10 @@ describe('list', () => {
       strElement.hidden()
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.list.hiddenElements', path })
     )
   })
@@ -47,10 +47,10 @@ describe('list', () => {
       strElement.savedAs('foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.list.savedAsElements', path })
     )
   })
@@ -61,10 +61,10 @@ describe('list', () => {
       strElement.putDefault('foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.list.defaultedElements', path })
     )
   })
@@ -75,10 +75,10 @@ describe('list', () => {
       strElement.putLink(() => 'foo')
     )
 
-    const superInvalidCall = () => invalidList.check(path)
+    const invalidCall = () => invalidList.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.list.defaultedElements', path })
     )
   })
