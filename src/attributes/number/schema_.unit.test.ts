@@ -131,10 +131,10 @@ describe('number', () => {
       42
     )
 
-    const superInvalidCallA = () => invalidNumA.check(path)
+    const invalidCallA = () => invalidNumA.check(path)
 
-    expect(superInvalidCallA).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCallA).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 
@@ -144,10 +144,10 @@ describe('number', () => {
       42
     )
 
-    const superInvalidCallB = () => invalidNumB.check(path)
+    const invalidCallB = () => invalidNumB.check(path)
 
-    expect(superInvalidCallB).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCallB).toThrow(
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 
@@ -211,10 +211,10 @@ describe('number', () => {
       putDefault: 'foo'
     })
 
-    const superInvalidCall = () => invalidNum.check(path)
+    const invalidCall = () => invalidNum.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
@@ -247,10 +247,10 @@ describe('number', () => {
       // @ts-expect-error
       .putDefault('foo')
 
-    const superInvalidCallA = () => invalidNumA.check(path)
+    const invalidCallA = () => invalidNumA.check(path)
 
-    expect(superInvalidCallA).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCallA).toThrow(
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
@@ -262,10 +262,10 @@ describe('number', () => {
       // @ts-expect-error
       .putDefault(BigInt('1000000'))
 
-    const superInvalidCallB = () => invalidNumB.check(path)
+    const invalidCallB = () => invalidNumB.check(path)
 
-    expect(superInvalidCallB).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCallB).toThrow(
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
@@ -325,10 +325,10 @@ describe('number', () => {
       44
     )
 
-    const superInvalidCall = () => invalidNum.check(path)
+    const invalidCall = () => invalidNum.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({
         code: 'schema.primitive.invalidDefaultValueRange',
         path
@@ -360,10 +360,10 @@ describe('number', () => {
       'foo'
     )
 
-    const superInvalidCall = () => invalidNum.check(path)
+    const invalidCall = () => invalidNum.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 

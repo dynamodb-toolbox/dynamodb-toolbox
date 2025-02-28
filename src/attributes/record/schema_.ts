@@ -25,7 +25,7 @@ type RecordSchemer = <
   keys: KEYS,
   elements: ELEMENTS,
   props?: NarrowObject<PROPS>
-) => RecordSchema_<PROPS, Light<KEYS>, Light<ELEMENTS>>
+) => RecordSchema_<Light<KEYS>, Light<ELEMENTS>, PROPS>
 
 /**
  * Define a new record attribute
@@ -48,16 +48,16 @@ export const record: RecordSchemer = <
   keys: KEYS,
   elements: ELEMENTS,
   props: NarrowObject<PROPS> = {} as PROPS
-) => new RecordSchema_(props, light(keys), light(elements))
+) => new RecordSchema_(light(keys), light(elements), props)
 
 /**
  * Record attribute interface
  */
 export class RecordSchema_<
-  PROPS extends SchemaProps = SchemaProps,
   KEYS extends StringSchema = StringSchema,
-  ELEMENTS extends AttrSchema = AttrSchema
-> extends RecordSchema<PROPS, KEYS, ELEMENTS> {
+  ELEMENTS extends AttrSchema = AttrSchema,
+  PROPS extends SchemaProps = SchemaProps
+> extends RecordSchema<KEYS, ELEMENTS, PROPS> {
   /**
    * Tag attribute as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -68,18 +68,18 @@ export class RecordSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): RecordSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
     return new RecordSchema_(
-      overwrite(this.props, { required: nextRequired }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { required: nextRequired })
     )
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): RecordSchema_<Overwrite<PROPS, { required: Never }>, KEYS, ELEMENTS> {
+  optional(): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -88,11 +88,11 @@ export class RecordSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): RecordSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
     return new RecordSchema_(
-      overwrite(this.props, { hidden: nextHidden }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { hidden: nextHidden })
     )
   }
 
@@ -101,11 +101,11 @@ export class RecordSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): RecordSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
     return new RecordSchema_(
-      overwrite(this.props, { key: nextKey, required: 'always' }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { key: nextKey, required: 'always' })
     )
   }
 
@@ -114,11 +114,11 @@ export class RecordSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): RecordSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new RecordSchema_(
-      overwrite(this.props, { savedAs: nextSavedAs }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { savedAs: nextSavedAs })
     )
   }
 
@@ -129,11 +129,11 @@ export class RecordSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): RecordSchema_<Overwrite<PROPS, { keyDefault: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyDefault: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { keyDefault: nextKeyDefault as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyDefault: nextKeyDefault as unknown })
     )
   }
 
@@ -144,11 +144,11 @@ export class RecordSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): RecordSchema_<Overwrite<PROPS, { putDefault: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putDefault: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { putDefault: nextPutDefault as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { putDefault: nextPutDefault as unknown })
     )
   }
 
@@ -159,11 +159,11 @@ export class RecordSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): RecordSchema_<Overwrite<PROPS, { updateDefault: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { updateDefault: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -178,20 +178,20 @@ export class RecordSchema_<
     >
   ): If<
     PROPS['key'],
-    RecordSchema_<Overwrite<PROPS, { keyDefault: unknown }>, KEYS, ELEMENTS>,
-    RecordSchema_<Overwrite<PROPS, { putDefault: unknown }>, KEYS, ELEMENTS>
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyDefault: unknown }>>,
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new RecordSchema_(
-        overwrite(this.props, { keyDefault: nextDefault as unknown }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { keyDefault: nextDefault as unknown })
       ),
       new RecordSchema_(
-        overwrite(this.props, { putDefault: nextDefault as unknown }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { putDefault: nextDefault as unknown })
       )
     )
   }
@@ -205,11 +205,11 @@ export class RecordSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): RecordSchema_<Overwrite<PROPS, { keyLink: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyLink: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { keyLink: nextKeyLink as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyLink: nextKeyLink as unknown })
     )
   }
 
@@ -220,11 +220,11 @@ export class RecordSchema_<
    */
   putLink<SCHEMA extends AttrSchema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
-  ): RecordSchema_<Overwrite<PROPS, { putLink: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putLink: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { putLink: nextPutLink as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { putLink: nextPutLink as unknown })
     )
   }
 
@@ -237,11 +237,11 @@ export class RecordSchema_<
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
-  ): RecordSchema_<Overwrite<PROPS, { updateLink: unknown }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { updateLink: unknown }>> {
     return new RecordSchema_(
-      overwrite(this.props, { updateLink: nextUpdateLink as unknown }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateLink: nextUpdateLink as unknown })
     )
   }
 
@@ -260,20 +260,20 @@ export class RecordSchema_<
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],
-    RecordSchema_<Overwrite<PROPS, { keyLink: unknown }>, KEYS, ELEMENTS>,
-    RecordSchema_<Overwrite<PROPS, { putLink: unknown }>, KEYS, ELEMENTS>
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyLink: unknown }>>,
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new RecordSchema_(
-        overwrite(this.props, { keyLink: nextLink as unknown }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { keyLink: nextLink as unknown })
       ),
       new RecordSchema_(
-        overwrite(this.props, { putLink: nextLink as unknown }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { putLink: nextLink as unknown })
       )
     )
   }
@@ -285,11 +285,11 @@ export class RecordSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): RecordSchema_<Overwrite<PROPS, { keyValidator: Validator }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyValidator: Validator }>> {
     return new RecordSchema_(
-      overwrite(this.props, { keyValidator: nextKeyValidator as Validator }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -300,11 +300,11 @@ export class RecordSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): RecordSchema_<Overwrite<PROPS, { putValidator: Validator }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putValidator: Validator }>> {
     return new RecordSchema_(
-      overwrite(this.props, { putValidator: nextPutValidator as Validator }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -315,11 +315,11 @@ export class RecordSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): RecordSchema_<Overwrite<PROPS, { updateValidator: Validator }>, KEYS, ELEMENTS> {
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { updateValidator: Validator }>> {
     return new RecordSchema_(
-      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator }),
       this.keys,
-      this.elements
+      this.elements,
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -339,28 +339,28 @@ export class RecordSchema_<
     >
   ): If<
     PROPS['key'],
-    RecordSchema_<Overwrite<PROPS, { keyValidator: Validator }>, KEYS, ELEMENTS>,
-    RecordSchema_<Overwrite<PROPS, { putValidator: Validator }>, KEYS, ELEMENTS>
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { keyValidator: Validator }>>,
+    RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new RecordSchema_(
-        overwrite(this.props, { keyValidator: nextValidator as Validator }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { keyValidator: nextValidator as Validator })
       ),
       new RecordSchema_(
-        overwrite(this.props, { putValidator: nextValidator as Validator }),
         this.keys,
-        this.elements
+        this.elements,
+        overwrite(this.props, { putValidator: nextValidator as Validator })
       )
     )
   }
 
   clone<NEXT_PROPS extends SchemaProps = {}>(
     nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
-  ): RecordSchema_<Overwrite<PROPS, NEXT_PROPS>, KEYS, ELEMENTS> {
-    return new RecordSchema_(overwrite(this.props, nextProps), this.keys, this.elements)
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, NEXT_PROPS>> {
+    return new RecordSchema_(this.keys, this.elements, overwrite(this.props, nextProps))
   }
 
   build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
