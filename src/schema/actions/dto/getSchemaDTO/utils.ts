@@ -1,4 +1,4 @@
-import type { Schema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { SerializableTransformer } from '~/transformers/index.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 import { isObject } from '~/utils/validation/isObject.js'

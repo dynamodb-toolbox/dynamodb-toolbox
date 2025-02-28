@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import { binary, boolean } from '~/attributes/index.js'
+import { binary, boolean } from '~/schema/index.js'
 import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 
 import { number } from '../number/index.js'

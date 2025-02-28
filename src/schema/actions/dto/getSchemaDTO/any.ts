@@ -1,4 +1,4 @@
-import type { AnySchema } from '~/attributes/any/index.js'
+import type { AnySchema } from '~/schema/any/index.js'
 
 import type { AnySchemaDTO, AnyTransformerDTO } from '../types.js'
 import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'

@@ -1,3 +1,4 @@
+import type { Entity } from '~/entity/index.js'
 import type {
   Always,
   AnyOfSchema,
@@ -21,8 +22,7 @@ import type {
   SchemaExtendedValue,
   SetExtendedValue,
   SetSchema
-} from '~/attributes/index.js'
-import type { Entity } from '~/entity/index.js'
+} from '~/schema/index.js'
 import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 

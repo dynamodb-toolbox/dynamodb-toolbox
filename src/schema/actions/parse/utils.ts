@@ -1,6 +1,6 @@
-import type { Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, WriteMode } from '~/schema/index.js'
 import { isString } from '~/utils/validation/isString.js'
 

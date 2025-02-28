@@ -1,4 +1,4 @@
-import type { Schema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
 

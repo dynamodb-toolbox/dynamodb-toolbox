@@ -1,4 +1,4 @@
-import type { RecordSchema } from '~/attributes/record/index.js'
+import type { RecordSchema } from '~/schema/record/index.js'
 
 import type { RecordSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'

@@ -1,4 +1,4 @@
-import type { AtLeastOnce, SchemaRequiredProp } from '~/attributes/index.js'
+import type { AtLeastOnce, SchemaRequiredProp } from '~/schema/index.js'
 import type { JSONStringifyDTO } from '~/transformers/jsonStringify.js'
 import type { PrefixerDTO } from '~/transformers/prefix.js'
 

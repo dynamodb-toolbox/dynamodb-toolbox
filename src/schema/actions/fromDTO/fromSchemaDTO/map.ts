@@ -1,6 +1,6 @@
-import type { MapSchema } from '~/attributes/map/index.js'
-import { map } from '~/attributes/map/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { MapSchema } from '~/schema/map/index.js'
+import { map } from '~/schema/map/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 

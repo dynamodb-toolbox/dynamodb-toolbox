@@ -21,7 +21,7 @@ import type {
   Schema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { AppendKey, Paths, StringToEscape } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 

@@ -8,7 +8,7 @@ import type {
   RecordSchema,
   Schema,
   SetSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 
 import type { FormattedAnyOfJSONSchema } from './anyOf.js'
 import { getFormattedAnyOfJSONSchema } from './anyOf.js'

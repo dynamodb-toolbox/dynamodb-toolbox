@@ -1,6 +1,6 @@
-import { item } from '~/attributes/item/index.js'
-import type { ItemSchema } from '~/attributes/item/index.js'
 import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
+import { item } from '~/schema/item/index.js'
+import type { ItemSchema } from '~/schema/item/index.js'
 
 import { fromSchemaDTO as _fromSchemaDTO } from './fromSchemaDTO/index.js'
 

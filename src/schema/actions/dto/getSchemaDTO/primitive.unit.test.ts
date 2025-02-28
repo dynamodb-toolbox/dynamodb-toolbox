@@ -1,4 +1,4 @@
-import { binary, string } from '~/attributes/index.js'
+import { binary, string } from '~/schema/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
 import { getPrimitiveSchemaDTO } from './primitive.js'

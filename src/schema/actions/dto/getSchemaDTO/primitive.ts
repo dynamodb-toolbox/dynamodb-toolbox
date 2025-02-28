@@ -1,4 +1,4 @@
-import type { PrimitiveSchema } from '~/attributes/index.js'
+import type { PrimitiveSchema } from '~/schema/index.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 
 import type { PrimitiveSchemaDTO } from '../types.js'

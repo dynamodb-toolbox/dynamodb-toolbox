@@ -1,6 +1,6 @@
-import type { MapSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { MapSchema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'

@@ -1,6 +1,6 @@
-import type { Schema, SchemaRequiredProp } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { Schema, SchemaRequiredProp } from '~/schema/index.js'
 
 import { anySchemaFormatter } from './any.js'
 import { anyOfSchemaFormatter } from './anyOf.js'

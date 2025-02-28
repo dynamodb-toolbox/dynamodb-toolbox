@@ -1,7 +1,7 @@
-import type { RecordSchema } from '~/attributes/record/index.js'
-import { record } from '~/attributes/record/index.js'
-import type { RecordElementSchema, RecordKeySchema } from '~/attributes/record/types.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { RecordSchema } from '~/schema/record/index.js'
+import { record } from '~/schema/record/index.js'
+import type { RecordElementSchema, RecordKeySchema } from '~/schema/record/types.js'
 
 import { fromSchemaDTO } from './attribute.js'
 

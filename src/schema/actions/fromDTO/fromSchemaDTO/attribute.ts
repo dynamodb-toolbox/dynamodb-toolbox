@@ -1,5 +1,5 @@
-import type { Schema } from '~/attributes/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import { fromAnySchemaDTO } from './any.js'
 import { fromAnyOfSchemaDTO } from './anyOf.js'

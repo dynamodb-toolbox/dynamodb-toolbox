@@ -1,4 +1,4 @@
-import type { ListSchema } from '~/attributes/index.js'
+import type { ListSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
 import { getFormattedValueJSONSchema } from './attribute.js'

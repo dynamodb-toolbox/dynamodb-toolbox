@@ -1,4 +1,4 @@
-import type { SetSchema } from '~/attributes/set/index.js'
+import type { SetSchema } from '~/schema/set/index.js'
 
 import type { SetSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'

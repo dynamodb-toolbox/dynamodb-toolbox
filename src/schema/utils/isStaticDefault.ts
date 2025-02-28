@@ -1,4 +1,4 @@
-import type { SchemaExtendedValue } from '~/attributes/index.js'
+import type { SchemaExtendedValue } from '~/schema/index.js'
 
 import { isDynamicDefault } from './isDynamicDefault.js'
 

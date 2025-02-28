@@ -1,4 +1,4 @@
-import type { Schema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
 import { getFormattedValueJSONSchema } from './formattedItem/index.js'

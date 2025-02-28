@@ -1,11 +1,11 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Schema } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
+import type { Schema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
 import { appendAttributeValue } from './appendAttributeValue.js'

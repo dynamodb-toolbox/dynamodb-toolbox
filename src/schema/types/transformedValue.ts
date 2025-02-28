@@ -24,7 +24,7 @@ import type {
   Schema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Transformer, TypeModifier } from '~/transformers/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 

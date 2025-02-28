@@ -1,4 +1,4 @@
-import type { ItemSchema } from '~/attributes/item/index.js'
+import type { ItemSchema } from '~/schema/item/index.js'
 
 import type { ItemSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'

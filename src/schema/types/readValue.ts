@@ -19,7 +19,7 @@ import type {
   Schema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'

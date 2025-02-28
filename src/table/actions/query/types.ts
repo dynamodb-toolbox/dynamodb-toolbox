@@ -1,14 +1,14 @@
 import type {
-  ResolvedBinarySchema,
-  ResolvedNumberSchema,
-  ResolvedStringSchema
-} from '~/attributes/index.js'
-import type {
   BeginsWithOperator,
   BetweenOperator,
   EqualityOperator,
   RangeOperator
 } from '~/schema/actions/parseCondition/index.js'
+import type {
+  ResolvedBinarySchema,
+  ResolvedNumberSchema,
+  ResolvedStringSchema
+} from '~/schema/index.js'
 import type { IndexNames, IndexSchema } from '~/table/actions/indexes.js'
 import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'

@@ -1,3 +1,4 @@
+import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
 import {
   AnyOfSchema,
   BinarySchema,
@@ -10,8 +11,7 @@ import {
   RecordSchema,
   SetSchema,
   StringSchema
-} from '~/attributes/index.js'
-import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
+} from '~/schema/index.js'
 
 import { fromSchemaDTO } from './fromSchemaDTO/index.js'
 

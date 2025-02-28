@@ -1,4 +1,4 @@
-import { any } from '~/attributes/index.js'
+import { any } from '~/schema/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { anySchemaFormatter } from './any.js'

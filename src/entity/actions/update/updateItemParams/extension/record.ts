@@ -1,5 +1,5 @@
-import type { RecordSchema, Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import type { RecordSchema, Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'

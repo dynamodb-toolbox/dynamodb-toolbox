@@ -1,8 +1,8 @@
-import { AnySchema } from '~/attributes/any/schema.js'
-import type { Schema } from '~/attributes/index.js'
-import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import { AnySchema } from '~/schema/any/schema.js'
+import type { Schema } from '~/schema/index.js'
+import { NumberSchema } from '~/schema/number/schema.js'
 import { combineRegExp } from '~/utils/combineRegExp.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
