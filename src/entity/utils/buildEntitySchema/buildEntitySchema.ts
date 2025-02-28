@@ -1,5 +1,5 @@
 import type { AttrSchema } from '~/attributes/index.js'
-import { ItemSchema } from '~/attributes/item/index.js'
+import { ItemSchema } from '~/attributes/item/schema.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
