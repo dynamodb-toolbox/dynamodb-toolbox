@@ -1,14 +1,10 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkSchemaProps } from '../shared/check.js'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SchemaProps } from '../shared/props.js'
-import type { AttrSchema } from '../types/index.js'
+import type { Schema, SchemaProps } from '../types/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
+import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 
-export class ListSchema<
-  ELEMENTS extends AttrSchema = AttrSchema,
-  PROPS extends SchemaProps = SchemaProps
-> {
+export class ListSchema<ELEMENTS extends Schema = Schema, PROPS extends SchemaProps = SchemaProps> {
   type: 'list'
   elements: ELEMENTS
   props: PROPS
@@ -54,7 +50,7 @@ export class ListSchema<
       throw new DynamoDBToolboxError('schema.list.savedAsElements', {
         message: `Invalid list elements at path ${
           path !== undefined ? ` at path '${path}'` : ''
-        }: List elements cannot be renamed (have savedAs option).`,
+        }: List elements cannot be renamed (have savedAs prop).`,
         path
       })
     }

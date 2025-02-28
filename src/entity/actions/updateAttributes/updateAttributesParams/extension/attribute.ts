@@ -1,4 +1,4 @@
-import type { AttrSchema, SchemaBasicValue } from '~/attributes/index.js'
+import type { Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { $GET, isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
@@ -13,7 +13,7 @@ import { parseMapExtension } from './map.js'
 import { parseRecordExtension } from './record.js'
 
 export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInputExtension> = (
-  schema: AttrSchema,
+  schema: Schema,
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {

@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
@@ -15,7 +15,7 @@ import type { SchemaCondition } from './condition.js'
 import { parseCondition } from './parseCondition/index.js'
 import { toCommandOptions } from './toCommandOptions.js'
 
-export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
+export class ConditionParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
@@ -47,12 +47,12 @@ export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
     return this
   }
 
-  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): AttrSchema {
+  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Schema {
     return appendAttributePath(this, attributePath, options)
   }
 
   appendAttributeValue(
-    schema: AttrSchema,
+    schema: Schema,
     expressionAttributeValue: unknown,
     options: AppendAttributeValueOptions = {}
   ): this {
@@ -61,7 +61,7 @@ export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
   }
 
   appendAttributeValueOrPath(
-    schema: AttrSchema,
+    schema: Schema,
     expressionAttributeValueOrPath: unknown,
     options: AppendAttributePathOptions & AppendAttributeValueOptions = {}
   ): this {
@@ -87,7 +87,7 @@ export class ConditionParser<SCHEMA extends AttrSchema = AttrSchema>
     return toCommandOptions(this)
   }
 
-  clone(schema?: AttrSchema): ConditionParser {
+  clone(schema?: Schema): ConditionParser {
     const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

@@ -1,4 +1,4 @@
-import type { AttrSchema, RequiredOption } from '~/attributes/index.js'
+import type { Schema, SchemaRequiredProp } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 
@@ -12,21 +12,21 @@ import { primitiveSchemaFormatter } from './primitive.js'
 import { recordSchemaFormatter } from './record.js'
 import { setSchemaFormatter } from './set.js'
 
-export const requiringOptions = new Set<RequiredOption>(['always', 'atLeastOnce'])
+export const requiringOptions = new Set<SchemaRequiredProp>(['always', 'atLeastOnce'])
 
-export const isRequired = ({ props }: AttrSchema): boolean =>
+export const isRequired = ({ props }: Schema): boolean =>
   requiringOptions.has(props.required ?? 'atLeastOnce')
 
 export function* attrFormatter<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends FormatAttrValueOptions<SCHEMA> = {}
 >(
   schema: SCHEMA,
   rawValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<
-  FormatterYield<AttrSchema, FormatAttrValueOptions<AttrSchema>>,
-  FormatterReturn<AttrSchema, FormatAttrValueOptions<AttrSchema>>
+  FormatterYield<Schema, FormatAttrValueOptions<Schema>>,
+  FormatterReturn<Schema, FormatAttrValueOptions<Schema>>
 > {
   const { format = true, transform = true, valuePath } = options
 

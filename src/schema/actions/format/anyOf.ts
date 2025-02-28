@@ -1,4 +1,4 @@
-import type { AnyOfSchema, AttrSchema } from '~/attributes/index.js'
+import type { AnyOfSchema, Schema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 
@@ -22,7 +22,7 @@ export function* anyOfSchemaFormatter(
 
   for (const element of schema.elements) {
     try {
-      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<AttrSchema>)
+      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<Schema>)
       if (transform) {
         _transformedValue = formatter.next().value
       }

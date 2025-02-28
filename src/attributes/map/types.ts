@@ -1,5 +1,5 @@
-import type { AttrSchema } from '../types/index.js'
+import type { Schema } from '../types/index.js'
 
 export interface MapAttributes {
-  [key: string]: AttrSchema
+  [key: string]: Schema
 }

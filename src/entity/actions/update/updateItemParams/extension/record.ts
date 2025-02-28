@@ -1,4 +1,4 @@
-import type { AttrSchema, RecordSchema, SchemaBasicValue } from '~/attributes/index.js'
+import type { RecordSchema, Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
@@ -13,9 +13,9 @@ function* recordElementsParser(
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): Generator<
-  ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>,
-  | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
-  | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
+  ValidValue<Schema, { extension: UpdateItemInputExtension }>,
+  | ValidValue<Schema, { extension: UpdateItemInputExtension }>
+  | TransformedValue<Schema, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue

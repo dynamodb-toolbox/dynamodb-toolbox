@@ -3,11 +3,10 @@ import type { A } from 'ts-toolbelt'
 import { binary, boolean } from '~/attributes/index.js'
 import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
-import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
+import type { Light } from '../utils/light.js'
 import type { MapSchema } from './schema.js'
 import { map } from './schema_.js'
 
@@ -33,7 +32,7 @@ describe('map', () => {
     assertExtends
   })
 
-  test('returns required map (option)', () => {
+  test('returns required map (props)', () => {
     const mappedAtLeastOnce = map({ str }, { required: 'atLeastOnce' })
     const mappedAlways = map({ str }, { required: 'always' })
     const mappedNever = map({ str }, { required: 'never' })
@@ -79,7 +78,7 @@ describe('map', () => {
     expect(mappedOpt.props.required).toBe('never')
   })
 
-  test('returns hidden map (option)', () => {
+  test('returns hidden map (props)', () => {
     const mapped = map({ str }, { hidden: true })
 
     const assertMapSchema: A.Contains<(typeof mapped)['props'], { hidden: true }> = 1
@@ -97,7 +96,7 @@ describe('map', () => {
     expect(mapped.props.hidden).toBe(true)
   })
 
-  test('returns key map (option)', () => {
+  test('returns key map (props)', () => {
     const mapped = map({ str }, { key: true })
 
     const assertMapSchema: A.Contains<(typeof mapped)['props'], { key: true }> = 1
@@ -116,7 +115,7 @@ describe('map', () => {
     expect(mapped.props.required).toBe('always')
   })
 
-  test('returns savedAs map (option)', () => {
+  test('returns savedAs map (props)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 
     const assertMapSchema: A.Contains<(typeof mapped)['props'], { savedAs: 'foo' }> = 1
@@ -134,7 +133,7 @@ describe('map', () => {
     expect(mapped.props.savedAs).toBe('foo')
   })
 
-  test('returns defaulted map (option)', () => {
+  test('returns defaulted map (props)', () => {
     const mapA = map(
       { str },
       // TOIMPROVE: Try to add type constraints here
@@ -206,7 +205,7 @@ describe('map', () => {
     expect(mapSchema.props.keyDefault).toStrictEqual({ str: 'bar' })
   })
 
-  test('returns map with validator (option)', () => {
+  test('returns map with validator (props)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const mapA = map({ str: string(), num: number() }, { keyValidator: pass })

@@ -11,8 +11,6 @@ import { record } from './record/index.js'
 import { set } from './set/index.js'
 import { string } from './string/index.js'
 
-export type { Validator } from './types/index.js'
-
 export * from './any/index.js'
 export * from './primitive/index.js'
 export * from './null/index.js'
@@ -26,8 +24,6 @@ export * from './map/index.js'
 export * from './record/index.js'
 export * from './anyOf/index.js'
 export * from './item/index.js'
-
-export * from './constants/index.js'
 export * from './types/index.js'
 
 export const attribute: {

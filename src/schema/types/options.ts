@@ -1,4 +1,4 @@
-import type { AttrSchema, ExtendedValue, Extension } from '~/attributes/index.js'
+import type { ExtendedValue, Extension, Schema } from '~/attributes/index.js'
 import type { Paths } from '~/schema/index.js'
 
 export type WriteMode = 'key' | 'put' | 'update'
@@ -10,13 +10,13 @@ export interface WriteValueOptions {
 }
 
 export type SchemaExtendedWriteValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = OPTIONS extends { extension: Extension }
   ? ExtendedValue<OPTIONS['extension'], SCHEMA['type']>
   : never
 
-export type ReadValueOptions<SCHEMA extends AttrSchema> = {
+export type ReadValueOptions<SCHEMA extends Schema> = {
   attributes?: Paths<SCHEMA>
   partial?: boolean
 }

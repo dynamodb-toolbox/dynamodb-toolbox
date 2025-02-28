@@ -2,8 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { BooleanSchema } from './schema.js'
 import { boolean } from './schema_.js'
 
@@ -25,7 +24,7 @@ describe('boolean', () => {
     assertExtends
   })
 
-  test('returns required boolean (option)', () => {
+  test('returns required boolean (prop)', () => {
     const boolAtLeastOnce = boolean({ required: 'atLeastOnce' })
     const boolAlways = boolean({ required: 'always' })
     const boolNever = boolean({ required: 'never' })
@@ -69,7 +68,7 @@ describe('boolean', () => {
     expect(numOpt.props.required).toBe('never')
   })
 
-  test('returns hidden boolean (option)', () => {
+  test('returns hidden boolean (prop)', () => {
     const bool = boolean({ hidden: true })
 
     const assertBool: A.Contains<(typeof bool)['props'], { hidden: true }> = 1
@@ -87,7 +86,7 @@ describe('boolean', () => {
     expect(bool.props.hidden).toBe(true)
   })
 
-  test('returns key boolean (option)', () => {
+  test('returns key boolean (prop)', () => {
     const bool = boolean({ key: true })
 
     const assertBool: A.Contains<(typeof bool)['props'], { key: true }> = 1
@@ -106,7 +105,7 @@ describe('boolean', () => {
     expect(bool.props.required).toBe('always')
   })
 
-  test('returns savedAs boolean (option)', () => {
+  test('returns savedAs boolean (prop)', () => {
     const bool = boolean({ savedAs: 'foo' })
 
     const assertBool: A.Contains<(typeof bool)['props'], { savedAs: 'foo' }> = 1
@@ -146,7 +145,7 @@ describe('boolean', () => {
     expect(bool.props.enum).toStrictEqual([true])
   })
 
-  test('returns defaulted boolean (option)', () => {
+  test('returns defaulted boolean (prop)', () => {
     const invalidBool = boolean({
       // TOIMPROVE: add type constraints here
       putDefault: 42
@@ -185,7 +184,7 @@ describe('boolean', () => {
     expect(boolC.props.updateDefault).toBe(returnTrue)
   })
 
-  test('returns transformed boolean (option)', () => {
+  test('returns transformed boolean (prop)', () => {
     const negate = {
       encode: (input: boolean) => !input,
       decode: (saved: boolean) => !saved
@@ -381,7 +380,7 @@ describe('boolean', () => {
     expect(bool.props.keyLink).toBe(returnTrue)
   })
 
-  test('returns boolean with validator (option)', () => {
+  test('returns boolean with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const boolA = boolean({ keyValidator: pass })

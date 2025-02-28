@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
 import { fromAnySchemaDTO } from './any.js'
@@ -10,7 +10,7 @@ import { fromPrimitiveSchemaDTO } from './primitive.js'
 import { fromRecordSchemaDTO } from './record.js'
 import { fromSetSchemaDTO } from './set.js'
 
-export const fromSchemaDTO = (schemaDTO: ISchemaDTO): AttrSchema => {
+export const fromSchemaDTO = (schemaDTO: ISchemaDTO): Schema => {
   switch (schemaDTO.type) {
     case 'any':
       return fromAnySchemaDTO(schemaDTO)

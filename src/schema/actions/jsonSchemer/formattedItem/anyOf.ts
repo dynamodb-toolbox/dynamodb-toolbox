@@ -1,4 +1,4 @@
-import type { AnyOfSchema, AttrSchema } from '~/attributes/index.js'
+import type { AnyOfSchema, Schema } from '~/attributes/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
 import type { FormattedValueJSONSchema } from './attribute.js'
@@ -9,13 +9,13 @@ export type FormattedAnyOfJSONSchema<SCHEMA extends AnyOfSchema> = ComputeObject
 }>
 
 type MapFormattedValueJSONSchema<
-  SCHEMAS extends AttrSchema[],
+  SCHEMAS extends Schema[],
   RESULTS extends unknown[] = []
 > = number extends SCHEMAS['length']
   ? FormattedValueJSONSchema<SCHEMAS[number]>[]
   : SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-    ? SCHEMAS_HEAD extends AttrSchema
-      ? SCHEMAS_TAIL extends AttrSchema[]
+    ? SCHEMAS_HEAD extends Schema
+      ? SCHEMAS_TAIL extends Schema[]
         ? MapFormattedValueJSONSchema<
             SCHEMAS_TAIL,
             [...RESULTS, FormattedValueJSONSchema<SCHEMAS_HEAD>]

@@ -1,4 +1,4 @@
-import type { SchemaProps } from '../shared/props.js'
+import type { SchemaProps } from '../types/index.js'
 
 export interface StringSchemaProps extends SchemaProps {
   enum?: string[]

@@ -1,13 +1,12 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { checkSchemaProps } from '../shared/check.js'
-import { hasDefinedDefault } from '../shared/hasDefinedDefault.js'
-import type { SchemaProps } from '../shared/props.js'
-import type { AttrSchema } from '../types/index.js'
+import type { Schema, SchemaProps } from '../types/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
+import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 
 export class AnyOfSchema<
-  ELEMENTS extends AttrSchema[] = AttrSchema[],
+  ELEMENTS extends Schema[] = Schema[],
   PROPS extends SchemaProps = SchemaProps
 > {
   type: 'anyOf'
@@ -74,7 +73,7 @@ export class AnyOfSchema<
         throw new DynamoDBToolboxError('schema.anyOf.savedAsElements', {
           message: `Invalid anyOf elements${
             path !== undefined ? ` at path '${path}'` : ''
-          }: AnyOf elements cannot be renamed (have savedAs option).`,
+          }: AnyOf elements cannot be renamed (have savedAs prop).`,
           path
         })
       }

@@ -1,5 +1,5 @@
 import { AnySchema } from '~/attributes/any/schema.js'
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
@@ -8,14 +8,14 @@ import { combineRegExp } from '~/utils/combineRegExp.js'
 export type AppendAttributePathOptions = { size?: boolean }
 
 export interface ExpressionParser {
-  schema: AttrSchema
+  schema: Schema
   expressionAttributePrefix: string
   expressionAttributeNames: string[]
-  clone: (schema?: AttrSchema) => ExpressionParser
+  clone: (schema?: Schema) => ExpressionParser
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
-  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => AttrSchema
+  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Schema
 }
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
@@ -35,11 +35,11 @@ export const appendAttributePath = (
   parser: ExpressionParser,
   attributePath: string,
   options: AppendAttributePathOptions = {}
-): AttrSchema => {
+): Schema => {
   const { size = false } = options
 
   const expressionAttrPrefix = parser.expressionAttributePrefix
-  let parentAttr: AttrSchema = parser.schema
+  let parentAttr: Schema = parser.schema
   let expressionPath = ''
   let attrMatches = [...attributePath.matchAll(pathRegex)]
   let attrPathTail: string | undefined
