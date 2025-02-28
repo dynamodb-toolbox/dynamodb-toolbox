@@ -1,5 +1,5 @@
-import type { Schema } from '~/attributes/index.js'
-import { StringSchema } from '~/attributes/string/schema.js'
+import type { Schema } from '~/schema/index.js'
+import { StringSchema } from '~/schema/string/schema.js'
 import { writable } from '~/utils/writable.js'
 
 import type { ConditionType } from '../../condition.js'

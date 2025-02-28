@@ -1,4 +1,4 @@
-import type { AnySchema } from '~/attributes/any/index.js'
+import type { AnySchema } from '~/schema/any/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 

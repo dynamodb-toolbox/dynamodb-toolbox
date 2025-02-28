@@ -14,7 +14,7 @@ import type {
   ResolvedPrimitiveSchema,
   Schema,
   SetSchema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'

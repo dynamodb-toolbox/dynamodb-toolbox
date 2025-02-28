@@ -1,7 +1,7 @@
-import type { ListSchema } from '~/attributes/list/index.js'
-import { list } from '~/attributes/list/index.js'
-import type { ListElementSchema } from '~/attributes/list/types.js'
 import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { ListSchema } from '~/schema/list/index.js'
+import { list } from '~/schema/list/index.js'
+import type { ListElementSchema } from '~/schema/list/types.js'
 
 import { fromSchemaDTO } from './attribute.js'
 

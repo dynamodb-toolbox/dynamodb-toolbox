@@ -1,5 +1,5 @@
-import { list, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { list, string } from '~/schema/index.js'
 
 import * as attrParserModule from './attribute.js'
 import { listSchemaParser } from './list.js'

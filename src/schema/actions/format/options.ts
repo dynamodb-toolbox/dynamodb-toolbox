@@ -1,4 +1,4 @@
-import type { Schema } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { Paths } from '~/schema/index.js'
 
 export interface FormatValueOptions<SCHEMA extends Schema> {

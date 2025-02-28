@@ -1,7 +1,7 @@
-import type { ListSchema, Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { ListSchema, Schema, SchemaBasicValue } from '~/schema/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 import type { TransformedValue, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'

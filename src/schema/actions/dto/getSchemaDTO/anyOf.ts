@@ -1,4 +1,4 @@
-import type { AnyOfSchema } from '~/attributes/anyOf/index.js'
+import type { AnyOfSchema } from '~/schema/anyOf/index.js'
 
 import type { AnyOfSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'

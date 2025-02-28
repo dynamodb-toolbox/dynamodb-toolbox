@@ -1,4 +1,4 @@
-import type { MapSchema } from '~/attributes/map/index.js'
+import type { MapSchema } from '~/schema/map/index.js'
 
 import type { MapSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'

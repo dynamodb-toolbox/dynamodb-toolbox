@@ -1,4 +1,4 @@
-import type { PrimitiveSchema, ResolvedPrimitiveSchema } from '~/attributes/index.js'
+import type { PrimitiveSchema, ResolvedPrimitiveSchema } from '~/schema/index.js'
 
 import { isBigInt } from './isBigInt.js'
 import { isBinary } from './isBinary.js'

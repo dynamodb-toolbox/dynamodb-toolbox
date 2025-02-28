@@ -1,10 +1,10 @@
 import type { A } from 'ts-toolbelt'
 
-import type { StringSchema } from '~/attributes/index.js'
-import { item } from '~/attributes/item/index.js'
-import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { StringSchema } from '~/schema/index.js'
+import { item } from '~/schema/item/index.js'
+import { string } from '~/schema/string/index.js'
 import { Table } from '~/table/index.js'
 
 import { buildEntitySchema } from './buildEntitySchema.js'

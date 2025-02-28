@@ -1,4 +1,4 @@
-import { item, number } from '~/attributes/index.js'
+import { item, number } from '~/schema/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 

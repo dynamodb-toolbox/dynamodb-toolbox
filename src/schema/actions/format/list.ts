@@ -1,6 +1,6 @@
-import type { ListSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { ListSchema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { attrFormatter } from './attribute.js'

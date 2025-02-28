@@ -1,4 +1,4 @@
-import type { AnyOfSchema, Schema } from '~/attributes/index.js'
+import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
 import type { FormattedValueJSONSchema } from './attribute.js'

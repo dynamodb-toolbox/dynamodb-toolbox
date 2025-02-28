@@ -1,5 +1,5 @@
-import { map, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { map, string } from '~/schema/index.js'
 
 import * as attrParserModule from './attribute.js'
 import { mapSchemaParser } from './map.js'

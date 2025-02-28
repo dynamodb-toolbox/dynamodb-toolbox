@@ -7,7 +7,7 @@ import type {
   RecordSchema,
   ResolveStringSchema,
   Schema
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
 export type CharsToEscape = '[' | ']' | '.'

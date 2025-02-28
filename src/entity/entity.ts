@@ -1,5 +1,5 @@
-import type { ItemSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { ItemSchema } from '~/schema/index.js'
 import type { ValidValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Table } from '~/table/index.js'

@@ -11,7 +11,7 @@ import {
   record,
   set,
   string
-} from '~/attributes/index.js'
+} from '~/schema/index.js'
 
 export const mySchema = item({
   any: any(),

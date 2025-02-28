@@ -1,6 +1,6 @@
-import type { PrimitiveSchema } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { PrimitiveSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
