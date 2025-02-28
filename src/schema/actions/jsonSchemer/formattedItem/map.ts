@@ -7,24 +7,24 @@ import { getFormattedValueJSONSchema } from './attribute.js'
 import type { RequiredProperties } from './shared.js'
 
 export type FormattedMapJSONSchema<
-  ATTRIBUTE extends MapSchema,
-  REQUIRED_PROPERTIES extends string = RequiredProperties<ATTRIBUTE>
+  SCHEMA extends MapSchema,
+  REQUIRED_PROPERTIES extends string = RequiredProperties<SCHEMA>
 > = ComputeObject<
   {
     type: 'object'
     properties: {
       [KEY in OmitKeys<
-        ATTRIBUTE['attributes'],
+        SCHEMA['attributes'],
         { props: { hidden: true } }
-      >]: FormattedValueJSONSchema<ATTRIBUTE['attributes'][KEY]>
+      >]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
     }
   } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
 >
 
-export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapSchema>(
-  attr: ATTRIBUTE
-): FormattedMapJSONSchema<ATTRIBUTE> => {
-  const displayedAttrEntries = Object.entries(attr.attributes).filter(
+export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
+  schema: SCHEMA
+): FormattedMapJSONSchema<SCHEMA> => {
+  const displayedAttrEntries = Object.entries(schema.attributes).filter(
     ([, attr]) => !attr.props.hidden
   )
 
@@ -39,5 +39,5 @@ export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapSchema>(
       ])
     ),
     ...(requiredProperties.length > 0 ? { required: requiredProperties } : {})
-  } as FormattedMapJSONSchema<ATTRIBUTE>
+  } as FormattedMapJSONSchema<SCHEMA>
 }

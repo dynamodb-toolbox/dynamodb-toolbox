@@ -16,7 +16,7 @@ import type { ResolveStringSchema, ResolvedStringSchema } from './resolve.js'
 import { StringSchema } from './schema.js'
 import type { StringSchemaProps } from './types.js'
 
-type StringAttributeTyper = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
+type StringSchemer = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
   options?: NarrowObject<OPTIONS>
 ) => StringSchema_<OPTIONS>
 
@@ -25,7 +25,7 @@ type StringAttributeTyper = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {
  *
  * @param options _(optional)_ Attribute Options
  */
-export const string: StringAttributeTyper = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
+export const string: StringSchemer = <OPTIONS extends Omit<StringSchemaProps, 'enum'> = {}>(
   options: NarrowObject<OPTIONS> = {} as OPTIONS
 ) => new StringSchema_(options)
 

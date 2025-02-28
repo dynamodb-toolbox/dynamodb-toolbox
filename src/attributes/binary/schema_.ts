@@ -16,7 +16,7 @@ import type { ResolveBinarySchema, ResolvedBinarySchema } from './resolve.js'
 import { BinarySchema } from './schema.js'
 import type { BinarySchemaProps } from './types.js'
 
-type BinaryAttributeTyper = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
+type BinarySchemer = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
   props?: NarrowObject<PROPS>
 ) => BinarySchema_<PROPS>
 
@@ -25,7 +25,7 @@ type BinaryAttributeTyper = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>
  *
  * @param props _(optional)_ Attribute Options
  */
-export const binary: BinaryAttributeTyper = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
+export const binary: BinarySchemer = <PROPS extends Omit<BinarySchemaProps, 'enum'> = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new BinarySchema_(props)
 

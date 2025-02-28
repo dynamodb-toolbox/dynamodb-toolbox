@@ -134,7 +134,7 @@ describe('null', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     nul({
@@ -172,7 +172,7 @@ describe('null', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     nul()

@@ -38,7 +38,7 @@ type QueryParamsGetter = <
   options?: OPTIONS
 ) => QueryCommandInput
 
-const defaultAnyAttribute = new AnySchema({ required: 'never' })
+const defaultAnySchema = new AnySchema({ required: 'never' })
 
 export const queryParams: QueryParamsGetter = <
   TABLE extends Table,
@@ -150,7 +150,7 @@ export const queryParams: QueryParamsGetter = <
       ExpressionAttributeNames: filterExpressionAttributeNames,
       ExpressionAttributeValues: filterExpressionAttributeValues,
       ConditionExpression: filterExpression
-    } = new ConditionParser(defaultAnyAttribute).setId('1').parse(filter).toCommandOptions()
+    } = new ConditionParser(defaultAnySchema).setId('1').parse(filter).toCommandOptions()
 
     Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
     Object.assign(expressionAttributeValues, filterExpressionAttributeValues)

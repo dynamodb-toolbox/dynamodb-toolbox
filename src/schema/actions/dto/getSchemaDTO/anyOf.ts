@@ -1,19 +1,19 @@
 import type { AnyOfSchema } from '~/attributes/anyOf/index.js'
 
-import type { AnyOfAttrDTO } from '../types.js'
-import { getAttrDTO } from './attribute.js'
+import type { AnyOfSchemaDTO } from '../types.js'
+import { getSchemaDTO } from './schema.js'
 import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
  */
-export const getAnyOfAttrDTO = (attr: AnyOfSchema): AnyOfAttrDTO => {
-  const defaultsDTO = getDefaultsDTO(attr)
-  const { required, hidden, key, savedAs } = attr.props
+export const getAnyOfSchemaDTO = (schema: AnyOfSchema): AnyOfSchemaDTO => {
+  const defaultsDTO = getDefaultsDTO(schema)
+  const { required, hidden, key, savedAs } = schema.props
 
   return {
     type: 'anyOf',
-    elements: attr.elements.map(getAttrDTO) as AnyOfAttrDTO['elements'],
+    elements: schema.elements.map(getSchemaDTO) as AnyOfSchemaDTO['elements'],
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),

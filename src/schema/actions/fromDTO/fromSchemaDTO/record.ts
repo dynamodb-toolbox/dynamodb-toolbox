@@ -1,11 +1,11 @@
 import type { RecordSchema } from '~/attributes/record/index.js'
 import { record } from '~/attributes/record/index.js'
 import type { RecordElementSchema, RecordKeySchema } from '~/attributes/record/types.js'
-import type { AttributeDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
 
 import { fromSchemaDTO } from './attribute.js'
 
-type RecordAttrDTO = Extract<AttributeDTO, { type: 'record' }>
+type RecordSchemaDTO = Extract<ISchemaDTO, { type: 'record' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
@@ -20,7 +20,7 @@ export const fromRecordSchemaDTO = ({
   keys,
   elements,
   ...props
-}: RecordAttrDTO): RecordSchema => {
+}: RecordSchemaDTO): RecordSchema => {
   keyDefault
   putDefault
   updateDefault

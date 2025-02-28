@@ -16,7 +16,7 @@ import type { Validator } from '../types/validator.js'
 import { AnyOfSchema } from './schema.js'
 import type { AnyOfElementSchema } from './types.js'
 
-type AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
+type AnyOfSchemer = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
 ) => AnyOfSchema_<{}, LightTuple<ELEMENTS>>
 
@@ -24,8 +24,7 @@ type AnyOfAttributeTyper = <ELEMENTS extends AnyOfElementSchema[]>(
  * Define a new anyOf attribute
  * @param elements Attribute[]
  */
-export const anyOf: AnyOfAttributeTyper = (...elements) =>
-  new AnyOfSchema_({}, lightTuple(...elements))
+export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_({}, lightTuple(...elements))
 
 /**
  * AnyOf attribute interface

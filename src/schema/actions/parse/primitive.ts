@@ -9,8 +9,8 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: PrimitiveSchema,
+export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: PrimitiveSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<PrimitiveSchema, OPTIONS>, ParserReturn<PrimitiveSchema, OPTIONS>> {
@@ -26,8 +26,8 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
     yield linkedValue as ParserYield<PrimitiveSchema, OPTIONS>
   }
 
-  if (!isValidPrimitive(attribute, linkedValue)) {
-    const { type } = attribute
+  if (!isValidPrimitive(schema, linkedValue)) {
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -37,7 +37,7 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
     })
   }
 
-  const { props } = attribute
+  const { props } = schema
   if (props.enum !== undefined && !(props.enum as unknown[]).includes(linkedValue)) {
     const path = formatValuePath(valuePath)
 
@@ -51,7 +51,7 @@ export function* primitiveAttrParser<OPTIONS extends ParseAttrValueOptions = {}>
   }
 
   const parsedValue = linkedValue
-  applyCustomValidation(attribute, parsedValue, options)
+  applyCustomValidation(schema, parsedValue, options)
 
   if (transform) {
     yield parsedValue

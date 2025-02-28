@@ -5,7 +5,7 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 import { checkSchemaProps } from '../shared/check.js'
 import type { PrimitiveSchema } from './types.js'
 
-export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string): void => {
+export const checkPrimitiveSchema = (schema: PrimitiveSchema, path?: string): void => {
   checkSchemaProps(schema.props, path)
 
   const { type, props } = schema
@@ -13,7 +13,7 @@ export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string):
 
   enumValues?.forEach(enumValue => {
     if (!isValidPrimitive(schema, enumValue)) {
-      throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidEnumValueType', {
+      throw new DynamoDBToolboxError('schema.primitive.invalidEnumValueType', {
         message: `Invalid enum value type${
           path !== undefined ? ` at path '${path}'` : ''
         }. Expected: ${type}. Received: ${String(enumValue)}.`,
@@ -30,7 +30,7 @@ export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string):
 
     if (isStaticDefault(defaultValue)) {
       if (!isValidPrimitive(schema, defaultValue)) {
-        throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueType', {
+        throw new DynamoDBToolboxError('schema.primitive.invalidDefaultValueType', {
           message: `Invalid default value type${
             path !== undefined ? ` at path '${path}'` : ''
           }: Expected: ${type}. Received: ${String(defaultValue)}.`,
@@ -40,7 +40,7 @@ export const checkPrimitiveAttribute = (schema: PrimitiveSchema, path?: string):
       }
 
       if (enumValues !== undefined && !enumValues.some(enumValue => enumValue === defaultValue)) {
-        throw new DynamoDBToolboxError('schema.primitiveAttribute.invalidDefaultValueRange', {
+        throw new DynamoDBToolboxError('schema.primitive.invalidDefaultValueRange', {
           message: `Invalid default value${
             path !== undefined ? ` at path '${path}'` : ''
           }: Expected one of: ${enumValues.join(', ')}. Received: ${String(defaultValue)}.`,

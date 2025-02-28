@@ -16,7 +16,7 @@ import type { Validator } from '../types/validator.js'
 import { ListSchema } from './schema.js'
 import type { ListElementSchema } from './types.js'
 
-type ListAttributeTyper = <ELEMENTS extends ListElementSchema, PROPS extends SchemaProps = {}>(
+type ListSchemer = <ELEMENTS extends ListElementSchema, PROPS extends SchemaProps = {}>(
   elements: ELEMENTS,
   props?: NarrowObject<PROPS>
 ) => ListSchema_<PROPS, Light<ELEMENTS>>
@@ -32,7 +32,7 @@ type ListAttributeTyper = <ELEMENTS extends ListElementSchema, PROPS extends Sch
  * @param elements Attribute (With constraints)
  * @param props _(optional)_ List Options
  */
-export const list: ListAttributeTyper = <
+export const list: ListSchemer = <
   ELEMENTS extends ListElementSchema,
   PROPS extends SchemaProps = {}
 >(

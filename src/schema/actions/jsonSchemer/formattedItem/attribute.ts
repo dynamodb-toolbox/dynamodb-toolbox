@@ -17,11 +17,11 @@ import { getFormattedItemJSONSchema } from './item.js'
 import type { FormattedListJSONSchema } from './list.js'
 import { getFormattedListJSONSchema } from './list.js'
 import type { FormattedMapJSONSchema } from './map.js'
-import { getFormattedMapAttrJSONSchema } from './map.js'
+import { getFormattedMapJSONSchema } from './map.js'
 import type { FormattedPrimitiveJSONSchema } from './primitive.js'
 import { getFormattedPrimitiveJSONSchema } from './primitive.js'
 import type { FormattedRecordJSONSchema } from './record.js'
-import { getFormattedRecordAttrJSONSchema } from './record.js'
+import { getFormattedRecordJSONSchema } from './record.js'
 import type { FormattedSetJSONSchema } from './set.js'
 import { getFormattedSetJSONSchema } from './set.js'
 
@@ -38,11 +38,11 @@ export type FormattedValueJSONSchema<SCHEMA extends AttrSchema> = AttrSchema ext
       | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
 export const getFormattedValueJSONSchema = <VALUE extends AttrSchema>(
-  attr: VALUE
+  schema: VALUE
 ): FormattedValueJSONSchema<VALUE> => {
   type Response = FormattedValueJSONSchema<VALUE>
 
-  switch (attr.type) {
+  switch (schema.type) {
     case 'any':
       return {} as Response
     case 'null':
@@ -50,18 +50,18 @@ export const getFormattedValueJSONSchema = <VALUE extends AttrSchema>(
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveJSONSchema(attr) as Response
+      return getFormattedPrimitiveJSONSchema(schema) as Response
     case 'set':
-      return getFormattedSetJSONSchema(attr) as Response
+      return getFormattedSetJSONSchema(schema) as Response
     case 'list':
-      return getFormattedListJSONSchema(attr) as Response
+      return getFormattedListJSONSchema(schema) as Response
     case 'map':
-      return getFormattedMapAttrJSONSchema(attr) as Response
+      return getFormattedMapJSONSchema(schema) as Response
     case 'record':
-      return getFormattedRecordAttrJSONSchema(attr) as Response
+      return getFormattedRecordJSONSchema(schema) as Response
     case 'anyOf':
-      return getFormattedAnyOfJSONSchema(attr) as Response
+      return getFormattedAnyOfJSONSchema(schema) as Response
     case 'item':
-      return getFormattedItemJSONSchema(attr) as Response
+      return getFormattedItemJSONSchema(schema) as Response
   }
 }

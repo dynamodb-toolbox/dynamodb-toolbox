@@ -4,16 +4,16 @@ import type { ComputeObject } from '~/types/computeObject.js'
 import type { FormattedValueJSONSchema } from './attribute.js'
 import { getFormattedValueJSONSchema } from './attribute.js'
 
-export type FormattedRecordJSONSchema<ATTRIBUTE extends RecordSchema> = ComputeObject<{
+export type FormattedRecordJSONSchema<SCHEMA extends RecordSchema> = ComputeObject<{
   type: 'object'
-  propertyNames: FormattedValueJSONSchema<ATTRIBUTE['keys']>
-  additionalProperties: FormattedValueJSONSchema<ATTRIBUTE['elements']>
+  propertyNames: FormattedValueJSONSchema<SCHEMA['keys']>
+  additionalProperties: FormattedValueJSONSchema<SCHEMA['elements']>
 }>
 
-export const getFormattedRecordAttrJSONSchema = <ATTRIBUTE extends RecordSchema>(
-  attr: ATTRIBUTE
-): FormattedRecordJSONSchema<ATTRIBUTE> => ({
+export const getFormattedRecordJSONSchema = <SCHEMA extends RecordSchema>(
+  schema: SCHEMA
+): FormattedRecordJSONSchema<SCHEMA> => ({
   type: 'object',
-  propertyNames: getFormattedValueJSONSchema<ATTRIBUTE['keys']>(attr.keys),
-  additionalProperties: getFormattedValueJSONSchema<ATTRIBUTE['elements']>(attr.elements)
+  propertyNames: getFormattedValueJSONSchema<SCHEMA['keys']>(schema.keys),
+  additionalProperties: getFormattedValueJSONSchema<SCHEMA['elements']>(schema.elements)
 })

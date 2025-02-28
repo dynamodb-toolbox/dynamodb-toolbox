@@ -33,7 +33,7 @@ export class SetSchema<
     const { required, hidden, savedAs } = this.elements.props
 
     if (required !== undefined && required !== 'atLeastOnce') {
-      throw new DynamoDBToolboxError('schema.setAttribute.optionalElements', {
+      throw new DynamoDBToolboxError('schema.set.optionalElements', {
         message: `Invalid set elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Set elements must be required.`,
@@ -42,7 +42,7 @@ export class SetSchema<
     }
 
     if (hidden !== undefined && hidden !== false) {
-      throw new DynamoDBToolboxError('schema.setAttribute.hiddenElements', {
+      throw new DynamoDBToolboxError('schema.set.hiddenElements', {
         message: `Invalid set elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Set elements cannot be hidden.`,
@@ -51,7 +51,7 @@ export class SetSchema<
     }
 
     if (savedAs !== undefined) {
-      throw new DynamoDBToolboxError('schema.setAttribute.savedAsElements', {
+      throw new DynamoDBToolboxError('schema.set.savedAsElements', {
         message: `Invalid set elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Set elements cannot be renamed (have savedAs option).`,
@@ -60,7 +60,7 @@ export class SetSchema<
     }
 
     if (hasDefinedDefault(this.elements)) {
-      throw new DynamoDBToolboxError('schema.setAttribute.defaultedElements', {
+      throw new DynamoDBToolboxError('schema.set.defaultedElements', {
         message: `Invalid set elements${
           path !== undefined ? ` at path '${path}'` : ''
         }: Set elements cannot have default or linked values.`,

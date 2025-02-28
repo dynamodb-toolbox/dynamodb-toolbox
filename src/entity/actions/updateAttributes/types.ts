@@ -3,19 +3,19 @@ import type {
   AnyOfSchema,
   AnySchema,
   AttrSchema,
-  AttributeValue,
+  ItemBasicValue,
   ItemSchema,
-  ItemSchemaBasicValue,
   ListSchema,
   MapSchema,
   Never,
-  NumberAttributeValue,
+  NumberExtendedValue,
   NumberSchema,
   PrimitiveSchema,
   RecordSchema,
   ResolveAnySchema,
   ResolvePrimitiveSchema,
-  SetAttributeValue,
+  SchemaExtendedValue,
+  SetExtendedValue,
   SetSchema
 } from '~/attributes/index.js'
 import type {
@@ -51,40 +51,40 @@ export type UpdateAttributesInputExtension =
         | Extension<{ [$ADD]: number }>
         | Extension<{
             [$SUM]: [
-              NumberAttributeValue<ReferenceExtension>,
-              NumberAttributeValue<ReferenceExtension>
+              NumberExtendedValue<ReferenceExtension>,
+              NumberExtendedValue<ReferenceExtension>
             ]
           }>
         | Extension<{
             [$SUBTRACT]: [
-              NumberAttributeValue<ReferenceExtension>,
-              NumberAttributeValue<ReferenceExtension>
+              NumberExtendedValue<ReferenceExtension>,
+              NumberExtendedValue<ReferenceExtension>
             ]
           }>
     }
   | {
       type: 'set'
-      value: Extension<{ [$ADD]: SetAttributeValue } | { [$DELETE]: SetAttributeValue }>
+      value: Extension<{ [$ADD]: SetExtendedValue } | { [$DELETE]: SetExtendedValue }>
     }
   | {
       type: 'list'
       value: Extension<
-        | { [$APPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
-        | { [$PREPEND]: AttributeValue<ReferenceExtension> | AttributeValue[] }
+        | { [$APPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
+        | { [$PREPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
         // TODO: CONCAT to join two unrelated lists
       >
     }
 
-type MustBeDefined<ATTRIBUTE extends AttrSchema, FILLED extends boolean = false> = If<
+type MustBeDefined<SCHEMA extends AttrSchema, FILLED extends boolean = false> = If<
   FILLED,
-  Extends<ATTRIBUTE['props'], { required: Always }>,
+  Extends<SCHEMA['props'], { required: Always }>,
   If<
-    Not<Extends<ATTRIBUTE['props'], { required: Always }>>,
+    Not<Extends<SCHEMA['props'], { required: Always }>>,
     false,
     If<
-      Extends<ATTRIBUTE['props'], { key: true }>,
-      Not<Extends<ATTRIBUTE['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
-      Not<Extends<ATTRIBUTE['props'], { updateDefault: unknown } | { updateLink: unknown }>>
+      Extends<SCHEMA['props'], { key: true }>,
+      Not<Extends<SCHEMA['props'], { keyDefault: unknown } | { keyLink: unknown }>>,
+      Not<Extends<SCHEMA['props'], { updateDefault: unknown } | { updateLink: unknown }>>
     >
   >
 >
@@ -97,24 +97,17 @@ type OptionalKeys<SCHEMA extends ItemSchema | MapSchema, FILLED extends boolean 
   >
 }[keyof SCHEMA['attributes']]
 
-type CanBeRemoved<ATTRIBUTE extends AttrSchema> = ATTRIBUTE['props'] extends { required: Never }
+type CanBeRemoved<SCHEMA extends AttrSchema> = SCHEMA['props'] extends { required: Never }
   ? true
   : false
 
-/**
- * User input of an UPDATE_ATTRIBUTES command for a given Entity or Schema
- *
- * @param Schema Entity | Schema
- * @param RequireDefaults Boolean
- * @return Object
- */
 export type UpdateAttributesInput<
   SCHEMA extends Entity | ItemSchema = Entity,
   FILLED extends boolean = false
 > = Entity extends SCHEMA
-  ? ItemSchemaBasicValue<UpdateAttributesInputExtension>
+  ? ItemBasicValue<UpdateAttributesInputExtension>
   : ItemSchema extends SCHEMA
-    ? ItemSchemaBasicValue<UpdateAttributesInputExtension>
+    ? ItemBasicValue<UpdateAttributesInputExtension>
     : SCHEMA extends ItemSchema
       ? Optional<
           {
@@ -130,9 +123,9 @@ export type UpdateAttributesInput<
         ? UpdateAttributesInput<SCHEMA['schema'], FILLED>
         : never
 
-type NumberUpdate<ATTRIBUTE extends NumberSchema> =
+type NumberUpdate<SCHEMA extends NumberSchema> =
   | number
-  | (ATTRIBUTE['props'] extends { big: true } ? bigint : never)
+  | (SCHEMA['props'] extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given AttrSchema
@@ -142,108 +135,98 @@ type NumberUpdate<ATTRIBUTE extends NumberSchema> =
  * @return Any
  */
 export type UpdateAttributeInput<
-  ATTRIBUTE extends AttrSchema = AttrSchema,
+  SCHEMA extends AttrSchema = AttrSchema,
   FILLED extends boolean = false,
-  SCHEMA_ATTRIBUTE_PATHS extends string = string
-> = AttrSchema extends ATTRIBUTE
-  ? AttributeValue<UpdateAttributesInputExtension> | undefined
+  AVAILABLE_PATHS extends string = string
+> = AttrSchema extends SCHEMA
+  ? SchemaExtendedValue<UpdateAttributesInputExtension> | undefined
   :
-      | If<MustBeDefined<ATTRIBUTE, FILLED>, never, undefined>
-      | If<CanBeRemoved<ATTRIBUTE>, REMOVE, never>
+      | If<MustBeDefined<SCHEMA, FILLED>, never, undefined>
+      | If<CanBeRemoved<SCHEMA>, REMOVE, never>
       // Not using Reference<...> for improved type display
       | GET<
           [
-            ref: SCHEMA_ATTRIBUTE_PATHS,
-            fallback?:
-              | ValidValue<ATTRIBUTE, { defined: true }>
-              | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+            ref: AVAILABLE_PATHS,
+            fallback?: ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
           ]
         >
-      | (ATTRIBUTE extends AnySchema ? ResolveAnySchema<ATTRIBUTE> | unknown : never)
-      | (ATTRIBUTE extends PrimitiveSchema ? ResolvePrimitiveSchema<ATTRIBUTE> : never)
-      | (ATTRIBUTE extends NumberSchema
+      | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> | unknown : never)
+      | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
+      | (SCHEMA extends NumberSchema
           ?
-              | ADD<NumberUpdate<ATTRIBUTE>>
+              | ADD<NumberUpdate<SCHEMA>>
               | SUM<
                   // Not using Reference<...> for improved type display
-                  | NumberUpdate<ATTRIBUTE>
+                  | NumberUpdate<SCHEMA>
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | NumberUpdate<ATTRIBUTE>
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >,
                   // Not using Reference<...> for improved type display
-                  | NumberUpdate<ATTRIBUTE>
+                  | NumberUpdate<SCHEMA>
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | NumberUpdate<ATTRIBUTE>
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >
                 >
               | SUBTRACT<
                   // Not using Reference<...> for improved type display
-                  | NumberUpdate<ATTRIBUTE>
+                  | NumberUpdate<SCHEMA>
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | NumberUpdate<ATTRIBUTE>
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >,
                   // Not using Reference<...> for improved type display
-                  | NumberUpdate<ATTRIBUTE>
+                  | NumberUpdate<SCHEMA>
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
-                        fallback?:
-                          | NumberUpdate<ATTRIBUTE>
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >
                 >
           : never)
-      | (ATTRIBUTE extends SetSchema
+      | (SCHEMA extends SetSchema
           ?
-              | Set<ValidValue<ATTRIBUTE['elements']>>
-              | ADD<Set<ValidValue<ATTRIBUTE['elements']>>>
-              | DELETE<Set<ValidValue<ATTRIBUTE['elements']>>>
+              | Set<ValidValue<SCHEMA['elements']>>
+              | ADD<Set<ValidValue<SCHEMA['elements']>>>
+              | DELETE<Set<ValidValue<SCHEMA['elements']>>>
           : never)
-      | (ATTRIBUTE extends ListSchema
+      | (SCHEMA extends ListSchema
           ?
-              | Basic<ValidValue<ATTRIBUTE['elements']>[]>
+              | Basic<ValidValue<SCHEMA['elements']>[]>
               | APPEND<
                   // Not using Reference<...> for improved type display
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
+                        ref: AVAILABLE_PATHS,
                         fallback?:
-                          | ValidValue<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          | ValidValue<SCHEMA['elements']>[]
+                          | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >
-                  | ValidValue<ATTRIBUTE['elements']>[]
+                  | ValidValue<SCHEMA['elements']>[]
                 >
               | PREPEND<
                   | GET<
                       [
-                        ref: SCHEMA_ATTRIBUTE_PATHS,
+                        ref: AVAILABLE_PATHS,
                         fallback?:
-                          | ValidValue<ATTRIBUTE['elements']>[]
-                          | Reference<ATTRIBUTE, SCHEMA_ATTRIBUTE_PATHS>
+                          | ValidValue<SCHEMA['elements']>[]
+                          | Reference<SCHEMA, AVAILABLE_PATHS>
                       ]
                     >
-                  | ValidValue<ATTRIBUTE['elements']>[]
+                  | ValidValue<SCHEMA['elements']>[]
                 >
           : never)
-      | (ATTRIBUTE extends MapSchema ? Basic<ValidValue<ATTRIBUTE>> : never)
-      | (ATTRIBUTE extends RecordSchema ? Basic<ValidValue<ATTRIBUTE>> : never)
-      | (ATTRIBUTE extends AnyOfSchema
-          ? UpdateAttributeInput<ATTRIBUTE['elements'][number], FILLED, SCHEMA_ATTRIBUTE_PATHS>
+      | (SCHEMA extends MapSchema ? Basic<ValidValue<SCHEMA>> : never)
+      | (SCHEMA extends RecordSchema ? Basic<ValidValue<SCHEMA>> : never)
+      | (SCHEMA extends AnyOfSchema
+          ? UpdateAttributeInput<SCHEMA['elements'][number], FILLED, AVAILABLE_PATHS>
           : never)

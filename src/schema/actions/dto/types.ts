@@ -4,75 +4,75 @@ import type { JSONStringifyDTO } from '~/transformers/jsonStringify.js'
 import type { PrefixerDTO } from '~/transformers/prefix.js'
 
 // TODO: Infer from actual list of defaulters
-type AttrDefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
+type DefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
 
-interface AttrDefaultsDTO {
-  keyDefault?: AttrDefaulterDTO
-  putDefault?: AttrDefaulterDTO
-  updateDefault?: AttrDefaulterDTO
+interface SchemaDefaultsDTO {
+  keyDefault?: DefaulterDTO
+  putDefault?: DefaulterDTO
+  updateDefault?: DefaulterDTO
 }
 
 // TODO: Infer from actual list of linkers
-type AttrLinkerDTO = { linkerId: 'custom' }
+type LinkerDTO = { linkerId: 'custom' }
 
-interface AttrLinksDTO {
-  keyLink?: AttrLinkerDTO
-  putLink?: AttrLinkerDTO
-  updateLink?: AttrLinkerDTO
+interface SchemaLinksDTO {
+  keyLink?: LinkerDTO
+  putLink?: LinkerDTO
+  updateLink?: LinkerDTO
 }
 
-interface SchemaPropsDTO extends AttrDefaultsDTO, AttrLinksDTO {
+interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
   required?: RequiredOption
   hidden?: boolean
   key?: boolean
   savedAs?: string
 }
 
-export type AnyAttrTransformerDTO = JSONStringifyDTO | { transformerId: 'custom' }
+export type AnyTransformerDTO = JSONStringifyDTO | { transformerId: 'custom' }
 
-export interface AnyAttrDTO extends SchemaPropsDTO {
+export interface AnySchemaDTO extends SchemaPropsDTO {
   type: 'any'
-  transform?: AnyAttrTransformerDTO
+  transform?: AnyTransformerDTO
 }
 
-export interface NullAttrDTO extends SchemaPropsDTO {
+export interface NullSchemaDTO extends SchemaPropsDTO {
   type: 'null'
 }
 
-export interface BooleanAttrDTO extends SchemaPropsDTO {
+export interface BooleanSchemaDTO extends SchemaPropsDTO {
   type: 'boolean'
   enum?: boolean[]
 }
 
-export interface NumberAttrDTO extends SchemaPropsDTO {
+export interface NumberSchemaDTO extends SchemaPropsDTO {
   type: 'number'
   big?: boolean
   enum?: (number | string)[]
 }
 
-type StringAttrTransformerDTO = PrefixerDTO | { transformerId: 'custom' }
+type StringTransformerDTO = PrefixerDTO | { transformerId: 'custom' }
 
-export interface StringAttrDTO extends SchemaPropsDTO {
+export interface StringSchemaDTO extends SchemaPropsDTO {
   type: 'string'
   enum?: string[]
-  transform?: StringAttrTransformerDTO
+  transform?: StringTransformerDTO
 }
 
-export interface BinaryAttrDTO extends SchemaPropsDTO {
+export interface BinarySchemaDTO extends SchemaPropsDTO {
   type: 'binary'
   enum?: string[]
 }
 
-export type PrimitiveAttrDTO =
-  | NullAttrDTO
-  | BooleanAttrDTO
-  | NumberAttrDTO
-  | StringAttrDTO
-  | BinaryAttrDTO
+export type PrimitiveSchemaDTO =
+  | NullSchemaDTO
+  | BooleanSchemaDTO
+  | NumberSchemaDTO
+  | StringSchemaDTO
+  | BinarySchemaDTO
 
-export interface SetAttrDTO extends SchemaPropsDTO {
+export interface SetSchemaDTO extends SchemaPropsDTO {
   type: 'set'
-  elements: (NumberAttrDTO | StringAttrDTO | BinaryAttrDTO) & {
+  elements: (NumberSchemaDTO | StringSchemaDTO | BinarySchemaDTO) & {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
@@ -85,9 +85,9 @@ export interface SetAttrDTO extends SchemaPropsDTO {
   }
 }
 
-export interface ListAttrDTO extends SchemaPropsDTO {
+export interface ListSchemaDTO extends SchemaPropsDTO {
   type: 'list'
-  elements: AttributeDTO & {
+  elements: ISchemaDTO & {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
@@ -100,14 +100,14 @@ export interface ListAttrDTO extends SchemaPropsDTO {
   }
 }
 
-export interface MapAttrDTO extends SchemaPropsDTO {
+export interface MapSchemaDTO extends SchemaPropsDTO {
   type: 'map'
-  attributes: { [name: string]: AttributeDTO }
+  attributes: { [name: string]: ISchemaDTO }
 }
 
-export interface RecordAttrDTO extends SchemaPropsDTO {
+export interface RecordSchemaDTO extends SchemaPropsDTO {
   type: 'record'
-  keys: StringAttrDTO & {
+  keys: StringSchemaDTO & {
     required?: AtLeastOnce
     hidden?: false
     key?: false
@@ -119,7 +119,7 @@ export interface RecordAttrDTO extends SchemaPropsDTO {
     putLink?: undefined
     updateLink?: undefined
   }
-  elements: AttributeDTO & {
+  elements: ISchemaDTO & {
     required?: AtLeastOnce
     hidden?: false
     key?: false
@@ -133,9 +133,9 @@ export interface RecordAttrDTO extends SchemaPropsDTO {
   }
 }
 
-export interface AnyOfAttrDTO extends SchemaPropsDTO {
+export interface AnyOfSchemaDTO extends SchemaPropsDTO {
   type: 'anyOf'
-  elements: (AttributeDTO & {
+  elements: (ISchemaDTO & {
     required?: AtLeastOnce
     hidden?: false
     savedAs?: undefined
@@ -148,21 +148,21 @@ export interface AnyOfAttrDTO extends SchemaPropsDTO {
   })[]
 }
 
-export type AttributeDTO =
-  | AnyAttrDTO
-  | NullAttrDTO
-  | BooleanAttrDTO
-  | NumberAttrDTO
-  | StringAttrDTO
-  | BinaryAttrDTO
-  | SetAttrDTO
-  | ListAttrDTO
-  | MapAttrDTO
-  | RecordAttrDTO
-  | AnyOfAttrDTO
-  | ItemSchemaDTO
-
 export interface ItemSchemaDTO extends SchemaPropsDTO {
   type: 'item'
-  attributes: { [name: string]: AttributeDTO }
+  attributes: { [name: string]: ISchemaDTO }
 }
+
+export type ISchemaDTO =
+  | AnySchemaDTO
+  | NullSchemaDTO
+  | BooleanSchemaDTO
+  | NumberSchemaDTO
+  | StringSchemaDTO
+  | BinarySchemaDTO
+  | SetSchemaDTO
+  | ListSchemaDTO
+  | MapSchemaDTO
+  | RecordSchemaDTO
+  | AnyOfSchemaDTO
+  | ItemSchemaDTO

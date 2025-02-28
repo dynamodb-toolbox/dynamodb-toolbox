@@ -10,4 +10,4 @@ type InvalidPropertyErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
-export type SharedAttributeErrorBlueprints = InvalidPropertyErrorBlueprint
+export type SharedSchemaErrorBlueprint = InvalidPropertyErrorBlueprint

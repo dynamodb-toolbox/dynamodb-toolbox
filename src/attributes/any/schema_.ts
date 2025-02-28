@@ -15,7 +15,7 @@ import type { ResolveAnySchema } from './resolve.js'
 import { AnySchema } from './schema.js'
 import type { AnySchemaProps } from './types.js'
 
-type AnyAttributeTyper = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
+type AnySchemer = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
   props?: NarrowObject<PROPS>
 ) => AnySchema_<PROPS>
 
@@ -24,7 +24,7 @@ type AnyAttributeTyper = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
  *
  * @param props _(optional)_ Attribute Props
  */
-export const any: AnyAttributeTyper = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
+export const any: AnySchemer = <PROPS extends Omit<AnySchemaProps, 'castAs'> = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new AnySchema_(props)
 

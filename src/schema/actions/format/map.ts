@@ -8,8 +8,8 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* mapAttrFormatter(
-  mapAttribute: MapSchema,
+export function* mapSchemaFormatter(
+  schema: MapSchema,
   rawValue: unknown,
   { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapSchema> = {}
 ): Generator<
@@ -19,7 +19,7 @@ export function* mapAttrFormatter(
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { type } = mapAttribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -32,7 +32,7 @@ export function* mapAttrFormatter(
   }
 
   const formatters: Record<string, Generator<unknown, unknown>> = {}
-  for (const [attributeName, attribute] of Object.entries(mapAttribute.attributes)) {
+  for (const [attributeName, attribute] of Object.entries(schema.attributes)) {
     const { props } = attribute
     const { savedAs } = props
 
@@ -72,7 +72,7 @@ export function* mapAttrFormatter(
       .map(([attrName, formatter]) => [attrName, formatter.next().value] as [string, unknown])
       .filter(
         ([attrName, attrValue]) =>
-          mapAttribute.attributes[attrName]?.props.hidden !== true && attrValue !== undefined
+          schema.attributes[attrName]?.props.hidden !== true && attrValue !== undefined
       )
   )
 

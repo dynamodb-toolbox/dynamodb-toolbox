@@ -1,4 +1,4 @@
-import type { AttributeBasicValue, MapSchema } from '~/attributes/index.js'
+import type { MapSchema, SchemaBasicValue } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
 
@@ -6,7 +6,7 @@ import { $SET, isSetting } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
 
 export const parseMapExtension = (
-  attribute: MapSchema,
+  schema: MapSchema,
   input: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
@@ -14,7 +14,7 @@ export const parseMapExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input[$SET], {
+        const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
           valuePath: [...valuePath, '$SET']
@@ -35,6 +35,6 @@ export const parseMapExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
   }
 }

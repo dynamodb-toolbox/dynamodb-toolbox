@@ -5,8 +5,8 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* anyAttrFormatter(
-  attribute: AnySchema,
+export function* anySchemaFormatter(
+  schema: AnySchema,
   rawValue: unknown,
   options: FormatAttrValueOptions<AnySchema> = {}
 ): Generator<
@@ -17,7 +17,7 @@ export function* anyAttrFormatter(
 
   let transformedValue = undefined
   if (transform) {
-    const transformer = attribute.props.transform as Transformer
+    const transformer = schema.props.transform as Transformer
     transformedValue =
       transformer !== undefined ? transformer.decode(rawValue) : cloneDeep(rawValue)
 

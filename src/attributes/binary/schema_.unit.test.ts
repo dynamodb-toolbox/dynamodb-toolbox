@@ -135,7 +135,7 @@ describe('binary', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 
     const bin = binary().enum(new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4]))
@@ -156,7 +156,7 @@ describe('binary', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     binary({
@@ -238,7 +238,7 @@ describe('binary', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidDefaultValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidDefaultValueType', path })
     )
 
     binary()
@@ -296,7 +296,7 @@ describe('binary', () => {
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
       expect.objectContaining({
-        code: 'schema.primitiveAttribute.invalidDefaultValueRange',
+        code: 'schema.primitive.invalidDefaultValueRange',
         path
       })
     )
@@ -340,7 +340,7 @@ describe('binary', () => {
 
     expect(superInvalidCall).toThrow(DynamoDBToolboxError)
     expect(superInvalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.primitiveAttribute.invalidEnumValueType', path })
+      expect.objectContaining({ code: 'schema.primitive.invalidEnumValueType', path })
     )
 
     const nonKeyStr = binary().const(new Uint8Array([1, 2, 3]))

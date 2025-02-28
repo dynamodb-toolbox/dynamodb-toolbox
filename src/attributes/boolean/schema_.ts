@@ -16,7 +16,7 @@ import type { ResolveBooleanSchema, ResolvedBooleanSchema } from './resolve.js'
 import { BooleanSchema } from './schema.js'
 import type { BooleanSchemaProps } from './types.js'
 
-type BooleanAttributeTyper = <PROPS extends BooleanSchemaProps = {}>(
+type BooleanSchemer = <PROPS extends BooleanSchemaProps = {}>(
   props?: NarrowObject<PROPS>
 ) => BooleanSchema_<PROPS>
 
@@ -25,7 +25,7 @@ type BooleanAttributeTyper = <PROPS extends BooleanSchemaProps = {}>(
  *
  * @param props _(optional)_ Attribute Options
  */
-export const boolean: BooleanAttributeTyper = <PROPS extends BooleanSchemaProps = {}>(
+export const boolean: BooleanSchemer = <PROPS extends BooleanSchemaProps = {}>(
   props: NarrowObject<PROPS> = {} as PROPS
 ) => new BooleanSchema_(props)
 

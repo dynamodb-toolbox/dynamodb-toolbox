@@ -51,7 +51,7 @@ describe('map properties check', () => {
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
-      expect.objectContaining({ code: 'schema.mapAttribute.duplicateSavedAs', path: pathMock })
+      expect.objectContaining({ code: 'schema.map.duplicateSavedAs', path: pathMock })
     )
 
     const invalidCallB = () =>
@@ -59,7 +59,7 @@ describe('map properties check', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(
-      expect.objectContaining({ code: 'schema.mapAttribute.duplicateSavedAs', path: pathMock })
+      expect.objectContaining({ code: 'schema.map.duplicateSavedAs', path: pathMock })
     )
   })
 })

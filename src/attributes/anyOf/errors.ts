@@ -1,42 +1,42 @@
 import type { ErrorBlueprint } from '~/errors/blueprint.js'
 
 type InvalidElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.invalidElements'
+  code: 'schema.anyOf.invalidElements'
   hasPath: true
   payload: undefined
 }>
 
 type MissingElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.missingElements'
+  code: 'schema.anyOf.missingElements'
   hasPath: true
   payload: undefined
 }>
 
 type OptionalElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.optionalElements'
+  code: 'schema.anyOf.optionalElements'
   hasPath: true
   payload: undefined
 }>
 
 type HiddenElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.hiddenElements'
+  code: 'schema.anyOf.hiddenElements'
   hasPath: true
   payload: undefined
 }>
 
 type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.savedAsElements'
+  code: 'schema.anyOf.savedAsElements'
   hasPath: true
   payload: undefined
 }>
 
 type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.anyOfAttribute.defaultedElements'
+  code: 'schema.anyOf.defaultedElements'
   hasPath: true
   payload: undefined
 }>
 
-export type AnyOfAttributeErrorBlueprints =
+export type AnyOfSchemaErrorBlueprint =
   | InvalidElementsErrorBlueprint
   | MissingElementsErrorBlueprint
   | OptionalElementsErrorBlueprint

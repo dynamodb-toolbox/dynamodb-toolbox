@@ -2,20 +2,20 @@ import { set, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import * as attrParserModule from './attribute.js'
-import { setAttrParser } from './set.js'
+import { setSchemaParser } from './set.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
-const setAttr = set(string())
+const schema = set(string())
 
-describe('setAttrParser', () => {
+describe('setSchemaParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
 
   test('throws an error if input is not a set', () => {
-    const invalidCall = () => setAttrParser(setAttr, { foo: 'bar' }, { fill: false }).next()
+    const invalidCall = () => setSchemaParser(schema, { foo: 'bar' }, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
@@ -23,18 +23,18 @@ describe('setAttrParser', () => {
 
   test('applies attrParser on input elements otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
-    const parser = setAttrParser(setAttr, new Set(['foo', 'bar']), options)
+    const parser = setSchemaParser(schema, new Set(['foo', 'bar']), options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'foo', {
+    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'foo', {
       ...options,
       valuePath: ['root', 0],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(setAttr.elements, 'bar', {
+    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'bar', {
       ...options,
       valuePath: ['root', 1],
       defined: false
@@ -54,13 +54,13 @@ describe('setAttrParser', () => {
   test('applies validation if any', () => {
     const setA = set(string()).validate(input => input.has('foo'))
 
-    const { value: parsedValue } = setAttrParser(setA, new Set(['foo', 'bar']), {
+    const { value: parsedValue } = setSchemaParser(setA, new Set(['foo', 'bar']), {
       fill: false
     }).next()
     expect(parsedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     const invalidCallA = () =>
-      setAttrParser(setA, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
+      setSchemaParser(setA, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -73,7 +73,7 @@ describe('setAttrParser', () => {
     const setB = set(string()).validate(input => (input.has('foo') ? true : 'Oh no...'))
 
     const invalidCallB = () =>
-      setAttrParser(setB, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
+      setSchemaParser(setB, new Set(['bar']), { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

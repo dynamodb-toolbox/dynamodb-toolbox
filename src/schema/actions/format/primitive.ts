@@ -7,17 +7,17 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* primitiveAttrFormatter(
-  attribute: PrimitiveSchema,
+export function* primitiveSchemaFormatter(
+  schema: PrimitiveSchema,
   rawValue: unknown,
   { format = true, transform = true, valuePath = [] }: FormatAttrValueOptions<PrimitiveSchema> = {}
 ): Generator<
   FormatterYield<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>,
   FormatterReturn<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>
 > {
-  const { props } = attribute
-  if (!isValidPrimitive(attribute, rawValue)) {
-    const { type } = attribute
+  const { props } = schema
+  if (!isValidPrimitive(schema, rawValue)) {
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
