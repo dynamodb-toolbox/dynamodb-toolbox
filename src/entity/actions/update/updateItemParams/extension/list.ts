@@ -1,4 +1,4 @@
-import type { AttrSchema, ListSchema, SchemaBasicValue } from '~/attributes/index.js'
+import type { ListSchema, Schema, SchemaBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
@@ -26,9 +26,9 @@ function* listElementParser(
   inputValue: unknown,
   { transform = true, valuePath = [] }: ExtensionParserOptions
 ): Generator<
-  ValidValue<AttrSchema, { extension: UpdateItemInputExtension }> | undefined,
-  | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
-  | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
+  ValidValue<Schema, { extension: UpdateItemInputExtension }> | undefined,
+  | ValidValue<Schema, { extension: UpdateItemInputExtension }>
+  | TransformedValue<Schema, { extension: UpdateItemInputExtension }>
 > {
   if (isRemoval(inputValue)) {
     const parsedValue = inputValue
@@ -203,9 +203,9 @@ export const parseListExtension = (
         let maxUpdatedIndex = 0
         const parsers: {
           [KEY in number]: Generator<
-            ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>,
-            | ValidValue<AttrSchema, { extension: UpdateItemInputExtension }>
-            | TransformedValue<AttrSchema, { extension: UpdateItemInputExtension }>
+            ValidValue<Schema, { extension: UpdateItemInputExtension }>,
+            | ValidValue<Schema, { extension: UpdateItemInputExtension }>
+            | TransformedValue<Schema, { extension: UpdateItemInputExtension }>
           >
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [

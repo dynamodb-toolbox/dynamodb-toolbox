@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { ItemSchema } from '~/attributes/item/schema.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
@@ -38,7 +38,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
-  const internalAttributes: Record<string, AttrSchema> = {}
+  const internalAttributes: Record<string, Schema> = {}
 
   const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
     hidden: entityAttributeHidden,

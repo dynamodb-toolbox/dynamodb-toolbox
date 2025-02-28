@@ -1,12 +1,12 @@
 import type {
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   ItemSchema,
   ListSchema,
   MapSchema,
   PrimitiveSchema,
   RecordSchema,
+  Schema,
   SetSchema
 } from '~/attributes/index.js'
 
@@ -25,7 +25,7 @@ import { getFormattedRecordJSONSchema } from './record.js'
 import type { FormattedSetJSONSchema } from './set.js'
 import { getFormattedSetJSONSchema } from './set.js'
 
-export type FormattedValueJSONSchema<SCHEMA extends AttrSchema> = AttrSchema extends SCHEMA
+export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCHEMA
   ? Record<string, unknown>
   :
       | (SCHEMA extends AnySchema ? {} : never)
@@ -37,7 +37,7 @@ export type FormattedValueJSONSchema<SCHEMA extends AttrSchema> = AttrSchema ext
       | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
       | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
-export const getFormattedValueJSONSchema = <VALUE extends AttrSchema>(
+export const getFormattedValueJSONSchema = <VALUE extends Schema>(
   schema: VALUE
 ): FormattedValueJSONSchema<VALUE> => {
   type Response = FormattedValueJSONSchema<VALUE>

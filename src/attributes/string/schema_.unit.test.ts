@@ -3,8 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { StringSchema } from './schema.js'
 import { string } from './schema_.js'
 
@@ -26,7 +25,7 @@ describe('string', () => {
     assertExtends
   })
 
-  test('returns required string (option)', () => {
+  test('returns required string (prop)', () => {
     const strAtLeastOnce = string({ required: 'atLeastOnce' })
     const strAlways = string({ required: 'always' })
     const strNever = string({ required: 'never' })
@@ -70,7 +69,7 @@ describe('string', () => {
     expect(strOpt.props.required).toBe('never')
   })
 
-  test('returns hidden string (option)', () => {
+  test('returns hidden string (prop)', () => {
     const str = string({ hidden: true })
 
     const assertStr: A.Contains<(typeof str)['props'], { hidden: true }> = 1
@@ -88,7 +87,7 @@ describe('string', () => {
     expect(str.props.hidden).toBe(true)
   })
 
-  test('returns key string (option)', () => {
+  test('returns key string (prop)', () => {
     const str = string({ key: true })
 
     const assertStr: A.Contains<(typeof str)['props'], { key: true }> = 1
@@ -107,7 +106,7 @@ describe('string', () => {
     expect(str.props.required).toBe('always')
   })
 
-  test('returns savedAs string (option)', () => {
+  test('returns savedAs string (prop)', () => {
     const str = string({ savedAs: 'foo' })
 
     const assertStr: A.Contains<(typeof str)['props'], { savedAs: 'foo' }> = 1
@@ -148,7 +147,7 @@ describe('string', () => {
     expect(str.props.enum).toStrictEqual(['foo', 'bar'])
   })
 
-  test('returns defaulted string (option)', () => {
+  test('returns defaulted string (prop)', () => {
     const invalidStr = string({
       // TOIMPROVE: add type constraints here
       putDefault: 42
@@ -187,7 +186,7 @@ describe('string', () => {
     expect(strC.props.updateDefault).toBe(sayHello)
   })
 
-  test('returns transformed string (option)', () => {
+  test('returns transformed string (prop)', () => {
     const transformer = prefix('test')
     const str = string({ transform: transformer })
 
@@ -379,7 +378,7 @@ describe('string', () => {
     expect(str.props.keyLink).toBe(sayHello)
   })
 
-  test('returns string with validator (option)', () => {
+  test('returns string with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const strA = string({ keyValidator: pass })

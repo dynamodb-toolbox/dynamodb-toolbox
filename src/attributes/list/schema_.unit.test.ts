@@ -2,10 +2,9 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
+import type { Light } from '../utils/light.js'
 import type { ListSchema } from './schema.js'
 import { list } from './schema_.js'
 
@@ -102,7 +101,7 @@ describe('list', () => {
     assertExtends
   })
 
-  test('returns required list (option)', () => {
+  test('returns required list (prop)', () => {
     const lstAtLeastOnce = list(strElement, { required: 'atLeastOnce' })
     const lstAlways = list(strElement, { required: 'always' })
     const lstNever = list(strElement, { required: 'never' })
@@ -145,7 +144,7 @@ describe('list', () => {
     expect(lstNever.props.required).toBe('never')
   })
 
-  test('returns hidden list (option)', () => {
+  test('returns hidden list (prop)', () => {
     const lst = list(strElement, { hidden: true })
 
     const assertList: A.Contains<(typeof lst)['props'], { hidden: true }> = 1
@@ -163,7 +162,7 @@ describe('list', () => {
     expect(lst.props.hidden).toBe(true)
   })
 
-  test('returns key list (option)', () => {
+  test('returns key list (prop)', () => {
     const lst = list(strElement, { key: true })
 
     const assertList: A.Contains<(typeof lst)['props'], { key: true }> = 1
@@ -182,7 +181,7 @@ describe('list', () => {
     expect(lst.props.required).toBe('always')
   })
 
-  test('returns savedAs list (option)', () => {
+  test('returns savedAs list (prop)', () => {
     const lst = list(strElement, { savedAs: 'foo' })
 
     const assertList: A.Contains<(typeof lst)['props'], { savedAs: 'foo' }> = 1
@@ -200,7 +199,7 @@ describe('list', () => {
     expect(lst.props.savedAs).toBe('foo')
   })
 
-  test('returns defaulted list (option)', () => {
+  test('returns defaulted list (prop)', () => {
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
       keyDefault: ['foo']
@@ -273,7 +272,7 @@ describe('list', () => {
     expect(listSchema.props.keyDefault).toStrictEqual(['bar'])
   })
 
-  test('returns linked list (option)', () => {
+  test('returns linked list (prop)', () => {
     const sayHello = () => ['hello']
     const lstA = list(strElement, {
       // TOIMPROVE: Add type constraints here
@@ -350,7 +349,7 @@ describe('list', () => {
     expect(listSchema.props.keyLink).toBe(sayHello)
   })
 
-  test('returns list with validator (option)', () => {
+  test('returns list with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const listA = list(string(), { keyValidator: pass })

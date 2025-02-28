@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
@@ -6,7 +6,7 @@ import type {
 } from '~/schema/actions/utils/appendAttributePath.js'
 import { SchemaAction } from '~/schema/index.js'
 
-export class PathParser<SCHEMA extends AttrSchema = AttrSchema>
+export class PathParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
@@ -35,7 +35,7 @@ export class PathParser<SCHEMA extends AttrSchema = AttrSchema>
     return this
   }
 
-  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): AttrSchema {
+  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Schema {
     return appendAttributePath(this, attributePath, options)
   }
 
@@ -80,7 +80,7 @@ export class PathParser<SCHEMA extends AttrSchema = AttrSchema>
     }
   }
 
-  clone(schema?: AttrSchema): PathParser {
+  clone(schema?: Schema): PathParser {
     const clonedParser = new PathParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

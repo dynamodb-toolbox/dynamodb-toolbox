@@ -2,11 +2,10 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
 import { number } from '../number/index.js'
-import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
+import type { Light } from '../utils/light.js'
 import type { AnyOfSchema } from './schema.js'
 import { anyOf } from './schema_.js'
 
@@ -119,7 +118,7 @@ describe('anyOf', () => {
     assertExtends
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns required anyOf (method)', () => {
     const anyOfAtLeastOnce = anyOf(str).required()
     const anyOfAlways = anyOf(str).required('always')
@@ -143,7 +142,7 @@ describe('anyOf', () => {
     expect(anyOfNever.props.required).toBe('never')
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns hidden anyOf (method)', () => {
     const anyOfSchema = anyOf(str).hidden()
 
@@ -153,7 +152,7 @@ describe('anyOf', () => {
     expect(anyOfSchema.props.hidden).toBe(true)
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns key anyOf (method)', () => {
     const anyOfSchema = anyOf(str).key()
 
@@ -165,7 +164,7 @@ describe('anyOf', () => {
     expect(anyOfSchema.props.required).toBe('always')
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns savedAs anyOf (method)', () => {
     const anyOfSchema = anyOf(str).savedAs('foo')
 
@@ -175,7 +174,7 @@ describe('anyOf', () => {
     expect(anyOfSchema.props.savedAs).toBe('foo')
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns defaulted anyOf (method)', () => {
     const anyOfSchema = anyOf(str).updateDefault('bar')
 
@@ -203,7 +202,7 @@ describe('anyOf', () => {
     expect(anyOfSchema.props.keyDefault).toBe('foo')
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns linked anyOf (method)', () => {
     const sayHello = () => 'hello'
     const anyOfSchema = anyOf(str).updateLink(sayHello)
@@ -234,7 +233,7 @@ describe('anyOf', () => {
     expect(anyOfSchema.props.keyLink).toBe(sayHello)
   })
 
-  // TODO: Reimplement options as potential first argument
+  // TODO: Reimplement props as potential first argument
   test('returns anyOf with validator (method)', () => {
     const pass = () => true
 

@@ -2,8 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { BinarySchema } from './schema.js'
 import { binary } from './schema_.js'
 
@@ -25,7 +24,7 @@ describe('binary', () => {
     assertExtends
   })
 
-  test('returns required binary (option)', () => {
+  test('returns required binary (prop)', () => {
     const binAtLeastOnce = binary({ required: 'atLeastOnce' })
     const binAlways = binary({ required: 'always' })
     const binNever = binary({ required: 'never' })
@@ -69,7 +68,7 @@ describe('binary', () => {
     expect(binOpt.props.required).toBe('never')
   })
 
-  test('returns hidden binary (option)', () => {
+  test('returns hidden binary (prop)', () => {
     const bin = binary({ hidden: true })
 
     const assertBin: A.Contains<(typeof bin)['props'], { hidden: true }> = 1
@@ -87,7 +86,7 @@ describe('binary', () => {
     expect(bin.props.hidden).toBe(true)
   })
 
-  test('returns key binary (option)', () => {
+  test('returns key binary (prop)', () => {
     const bin = binary({ key: true })
 
     const assertBin: A.Contains<(typeof bin)['props'], { key: true }> = 1
@@ -106,7 +105,7 @@ describe('binary', () => {
     expect(bin.props.required).toBe('always')
   })
 
-  test('returns savedAs binary (option)', () => {
+  test('returns savedAs binary (prop)', () => {
     const bin = binary({ savedAs: 'foo' })
 
     const assertBin: A.Contains<(typeof bin)['props'], { savedAs: 'foo' }> = 1
@@ -146,7 +145,7 @@ describe('binary', () => {
     expect(bin.props.enum).toStrictEqual([new Uint8Array([1, 2, 3]), new Uint8Array([2, 3, 4])])
   })
 
-  test('returns defaulted binary (option)', () => {
+  test('returns defaulted binary (prop)', () => {
     const invalidBin = binary({
       // TOIMPROVE: add type constraints here
       putDefault: 42
@@ -185,7 +184,7 @@ describe('binary', () => {
     expect(binC.props.updateDefault).toBe(returnBin)
   })
 
-  test('returns transformed binary (option)', () => {
+  test('returns transformed binary (prop)', () => {
     const PREFIX = new Uint8Array([1, 2, 3])
 
     const prefix = {
@@ -410,7 +409,7 @@ describe('binary', () => {
     expect(bin.props.keyLink).toBe(returnBin)
   })
 
-  test('returns binary with validator (option)', () => {
+  test('returns binary with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const binA = binary({ keyValidator: pass })

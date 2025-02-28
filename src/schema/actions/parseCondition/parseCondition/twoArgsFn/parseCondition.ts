@@ -1,4 +1,4 @@
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { StringSchema } from '~/attributes/string/schema.js'
 import { writable } from '~/utils/writable.js'
 
@@ -48,7 +48,7 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   const attribute = conditionParser.appendAttributePath(attributePath)
   conditionParser.appendToExpression(', ')
 
-  let targetAttribute: AttrSchema
+  let targetAttribute: Schema
   switch (comparisonOperator) {
     case 'type':
       targetAttribute = new StringSchema({ enum: conditionType })

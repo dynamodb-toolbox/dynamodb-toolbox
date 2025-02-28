@@ -2,12 +2,12 @@ import type { MockedFunction } from 'vitest'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import { checkSchemaProps } from '../shared/check.js'
 import { string } from '../string/index.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { map } from './schema_.js'
 
-vi.mock('../shared/check', () => ({
-  ...vi.importActual<Record<string, unknown>>('../shared/check'),
+vi.mock('../utils/checkSchemaProps', () => ({
+  ...vi.importActual<Record<string, unknown>>('../utils/checkSchemaProps'),
   checkSchemaProps: vi.fn()
 }))
 

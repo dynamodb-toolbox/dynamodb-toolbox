@@ -1,7 +1,7 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { BinarySchema } from '~/attributes/binary/schema.js'
-import type { AttrSchema } from '~/attributes/index.js'
+import type { Schema } from '~/attributes/index.js'
 import { ItemSchema } from '~/attributes/item/schema.js'
 import { NumberSchema } from '~/attributes/number/schema.js'
 import { StringSchema } from '~/attributes/string/schema.js'
@@ -23,7 +23,7 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): AttrSchema => {
+const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Schema => {
   switch (key.type) {
     case 'number':
       return new NumberSchema({ required: 'never' })

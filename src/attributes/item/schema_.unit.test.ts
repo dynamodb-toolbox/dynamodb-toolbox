@@ -3,7 +3,7 @@ import type { A } from 'ts-toolbelt'
 import { binary, boolean, list, map, number, set, string } from '~/attributes/index.js'
 import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 
-import type { Light } from '../shared/light.js'
+import type { Light } from '../utils/light.js'
 import { item } from './schema_.js'
 
 describe('item', () => {

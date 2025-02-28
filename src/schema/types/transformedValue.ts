@@ -4,7 +4,6 @@ import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  AttrSchema,
   BinarySchema,
   BooleanSchema,
   ItemSchema,
@@ -22,6 +21,7 @@ import type {
   ResolveStringSchema,
   ResolvedNullSchema,
   ResolvedPrimitiveSchema,
+  Schema,
   SetSchema,
   StringSchema
 } from '~/attributes/index.js'
@@ -31,15 +31,15 @@ import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type TransformedValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = SCHEMA extends ItemSchema
   ? ItemSchemaTransformedValue<SCHEMA, OPTIONS>
-  : SCHEMA extends AttrSchema
+  : SCHEMA extends Schema
     ? AttrTransformedValue<SCHEMA, OPTIONS>
     : never
 
-type MustBeDefined<SCHEMA extends AttrSchema, OPTIONS extends WriteValueOptions = {}> = If<
+type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
   Extends<OPTIONS, { defined: true }>,
   true,
   If<
@@ -64,7 +64,7 @@ type ItemSchemaTransformedValue<
   SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions = {}
 > = ItemSchema extends SCHEMA
-  ? { [KEY: string]: AttrTransformedValue<AttrSchema, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: AttrTransformedValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
@@ -82,9 +82,9 @@ type ItemSchemaTransformedValue<
     >
 
 type AttrTransformedValue<
-  SCHEMA extends AttrSchema,
+  SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
-> = AttrSchema extends SCHEMA
+> = Schema extends SCHEMA
   ? unknown
   :
       | (SCHEMA extends AnySchema ? AnySchemaTransformedValue<SCHEMA, OPTIONS> : never)
@@ -231,12 +231,12 @@ type AnyOfSchemaTransformedValue<
       | MapAnyOfSchemaTransformedValue<SCHEMA['elements'], OPTIONS>
 
 type MapAnyOfSchemaTransformedValue<
-  ELEMENTS extends AttrSchema[],
+  ELEMENTS extends Schema[],
   OPTIONS extends WriteValueOptions = {},
   RESULTS = never
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends AttrSchema
-    ? ELEMENTS_TAIL extends AttrSchema[]
+  ? ELEMENTS_HEAD extends Schema
+    ? ELEMENTS_TAIL extends Schema[]
       ? MapAnyOfSchemaTransformedValue<
           ELEMENTS_TAIL,
           OPTIONS,

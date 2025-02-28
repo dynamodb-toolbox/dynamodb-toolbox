@@ -2,10 +2,9 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Light } from '../shared/light.js'
 import { string } from '../string/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
+import type { Light } from '../utils/light.js'
 import type { SetSchema } from './schema.js'
 import { set } from './schema_.js'
 
@@ -102,7 +101,7 @@ describe('set', () => {
     assertExtends
   })
 
-  test('returns required set (option)', () => {
+  test('returns required set (prop)', () => {
     const stAtLeastOnce = set(strElement, { required: 'atLeastOnce' })
     const stAlways = set(strElement, { required: 'always' })
     const stNever = set(strElement, { required: 'never' })
@@ -146,7 +145,7 @@ describe('set', () => {
     expect(stOpt.props.required).toBe('never')
   })
 
-  test('returns hidden set (option)', () => {
+  test('returns hidden set (prop)', () => {
     const st = set(strElement, { hidden: true })
 
     const assertSet: A.Contains<(typeof st)['props'], { hidden: true }> = 1
@@ -164,7 +163,7 @@ describe('set', () => {
     expect(st.props.hidden).toBe(true)
   })
 
-  test('returns key set (option)', () => {
+  test('returns key set (prop)', () => {
     const st = set(strElement, { key: true })
 
     const assertSet: A.Contains<(typeof st)['props'], { key: true }> = 1
@@ -183,7 +182,7 @@ describe('set', () => {
     expect(st.props.required).toBe('always')
   })
 
-  test('returns savedAs set (option)', () => {
+  test('returns savedAs set (prop)', () => {
     const st = set(strElement, { savedAs: 'foo' })
 
     const assertSet: A.Contains<(typeof st)['props'], { savedAs: 'foo' }> = 1
@@ -201,7 +200,7 @@ describe('set', () => {
     expect(st.props.savedAs).toBe('foo')
   })
 
-  test('returns defaulted set (option)', () => {
+  test('returns defaulted set (prop)', () => {
     const stA = set(strElement, { keyDefault: new Set(['foo']) })
 
     const assertSetA: A.Contains<(typeof stA)['props'], { keyDefault: unknown }> = 1
@@ -267,7 +266,7 @@ describe('set', () => {
     expect(st.props.keyDefault).toStrictEqual(new Set(['foo']))
   })
 
-  test('returns linked set (option)', () => {
+  test('returns linked set (prop)', () => {
     const sayHello = () => new Set(['hello'])
 
     const stA = set(strElement, { keyLink: sayHello })
@@ -336,7 +335,7 @@ describe('set', () => {
     expect(st.props.keyLink).toBe(sayHello)
   })
 
-  test('returns set with validator (option)', () => {
+  test('returns set with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const setA = set(string(), { keyValidator: pass })

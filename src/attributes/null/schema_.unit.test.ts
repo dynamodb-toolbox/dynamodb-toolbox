@@ -2,8 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { NullSchema } from './schema.js'
 import { nul } from './schema_.js'
 
@@ -25,7 +24,7 @@ describe('null', () => {
     assertExtends
   })
 
-  test('returns required null (option)', () => {
+  test('returns required null (prop)', () => {
     const nullAtLeastOnce = nul({ required: 'atLeastOnce' })
     const nullAlways = nul({ required: 'always' })
     const nullNever = nul({ required: 'never' })
@@ -69,7 +68,7 @@ describe('null', () => {
     expect(numOpt.props.required).toBe('never')
   })
 
-  test('returns hidden null (option)', () => {
+  test('returns hidden null (prop)', () => {
     const nil = nul({ hidden: true })
 
     const assertNull: A.Contains<(typeof nil)['props'], { hidden: true }> = 1
@@ -87,7 +86,7 @@ describe('null', () => {
     expect(nil.props.hidden).toBe(true)
   })
 
-  test('returns key null (option)', () => {
+  test('returns key null (prop)', () => {
     const nil = nul({ key: true })
 
     const assertNull: A.Contains<(typeof nil)['props'], { key: true }> = 1
@@ -106,7 +105,7 @@ describe('null', () => {
     expect(nil.props.required).toBe('always')
   })
 
-  test('returns savedAs null (option)', () => {
+  test('returns savedAs null (prop)', () => {
     const nil = nul({ savedAs: 'foo' })
 
     const assertNull: A.Contains<(typeof nil)['props'], { savedAs: 'foo' }> = 1
@@ -124,7 +123,7 @@ describe('null', () => {
     expect(nil.props.savedAs).toBe('foo')
   })
 
-  test('returns defaulted null (option)', () => {
+  test('returns defaulted null (prop)', () => {
     const invalidNull = nul({
       // TOIMPROVE: add type constraints here
       putDefault: 'foo'
@@ -260,7 +259,7 @@ describe('null', () => {
     expect(nil.props.keyLink).toBe(returnNull)
   })
 
-  test('returns null with validator (option)', () => {
+  test('returns null with validator (prop)', () => {
     // TOIMPROVE: Add type constraints here
     const pass = () => true
     const nullA = nul({ keyValidator: pass })

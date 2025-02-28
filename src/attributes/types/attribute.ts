@@ -3,16 +3,16 @@ import type { ResolvedBooleanSchema } from '../boolean/index.js'
 import type { ResolvedNullSchema } from '../null/index.js'
 import type { ResolvedNumberSchema } from '../number/index.js'
 import type { ResolvedStringSchema } from '../string/index.js'
-import type { AttrSchema } from './attrSchema.js'
+import type { Schema } from './schema.js'
 
 export type Extension = {
-  type: AttrSchema['type'] | '*'
+  type: Schema['type'] | '*'
   value: unknown
 }
 
 export type ExtendedValue<
   EXTENSIONS extends Extension,
-  TYPE extends AttrSchema['type'] | '*'
+  TYPE extends Schema['type'] | '*'
 > = '*' extends TYPE
   ? EXTENSIONS['value']
   : EXTENSIONS extends infer EXTENSION

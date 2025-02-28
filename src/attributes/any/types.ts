@@ -1,4 +1,4 @@
-import type { SchemaProps } from '../shared/props.js'
+import type { SchemaProps } from '../types/index.js'
 
 export interface AnySchemaProps extends SchemaProps {
   castAs?: unknown

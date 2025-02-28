@@ -27,13 +27,13 @@ export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
     const { big } = this.props
 
     if (big !== undefined && !isBoolean(big)) {
-      throw new DynamoDBToolboxError('schema.attribute.invalidProperty', {
-        message: `Invalid option value type${
+      throw new DynamoDBToolboxError('schema.invalidProp', {
+        message: `Invalid property type${
           path !== undefined ? ` at path '${path}'` : ''
         }. Property: 'big'. Expected: boolean. Received: ${String(big)}.`,
         path,
         payload: {
-          propertyName: 'big',
+          propName: 'big',
           received: big
         }
       })

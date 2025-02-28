@@ -9,12 +9,17 @@ import type { If, NarrowObject, Overwrite, ValueOrGetter } from '~/types/index.j
 import { ifThenElse } from '~/utils/ifThenElse.js'
 import { overwrite } from '~/utils/overwrite.js'
 
-import type { Always, AtLeastOnce, Never, RequiredOption } from '../constants/index.js'
-import type { Light, LightObj } from '../shared/light.js'
-import { lightObj } from '../shared/light.js'
-import type { SchemaProps } from '../shared/props.js'
-import type { AttrSchema } from '../types/attrSchema.js'
-import type { Validator } from '../types/validator.js'
+import type {
+  Always,
+  AtLeastOnce,
+  Never,
+  Schema,
+  SchemaProps,
+  SchemaRequiredProp,
+  Validator
+} from '../types/index.js'
+import type { Light, LightObj } from '../utils/light.js'
+import { lightObj } from '../utils/light.js'
 import { MapSchema } from './schema.js'
 import type { MapAttributes } from './types.js'
 
@@ -27,7 +32,7 @@ type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps =
  * Define a new map attribute
  *
  * @param attributes Dictionary of attributes
- * @param props _(optional)_ Map Options
+ * @param props _(optional)_ Map Props
  */
 export const map: MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
@@ -47,9 +52,9 @@ export class MapSchema_<
    * - `'never'`: Optional in PUTs and UPDATEs
    * - `'always'`: Required in PUTs and UPDATEs
    *
-   * @param nextRequired RequiredOption
+   * @param nextRequired SchemaRequiredProp
    */
-  required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
+  required<NEXT_IS_REQUIRED extends SchemaRequiredProp = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
   ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
     return new MapSchema_(this.attributes, overwrite(this.props, { required: nextRequired }))
@@ -163,7 +168,7 @@ export class MapSchema_<
    *
    * @param nextKeyLink `keyAttributeInput | ((keyInput) => keyAttributeInput)`
    */
-  keyLink<SCHEMA extends AttrSchema>(
+  keyLink<SCHEMA extends Schema>(
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
@@ -179,7 +184,7 @@ export class MapSchema_<
    *
    * @param nextPutLink `putAttributeInput | ((putItemInput) => putAttributeInput)`
    */
-  putLink<SCHEMA extends AttrSchema>(
+  putLink<SCHEMA extends Schema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
   ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putLink: unknown }>> {
     return new MapSchema_(
@@ -193,7 +198,7 @@ export class MapSchema_<
    *
    * @param nextUpdateLink `unknown | ((updateItemInput) => updateAttributeInput)`
    */
-  updateLink<SCHEMA extends AttrSchema>(
+  updateLink<SCHEMA extends Schema>(
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
@@ -209,7 +214,7 @@ export class MapSchema_<
    *
    * @param nextLink `key/putAttributeInput | (() => key/putAttributeInput)`
    */
-  link<SCHEMA extends AttrSchema>(
+  link<SCHEMA extends Schema>(
     nextLink: (
       keyOrPutItemInput: If<
         PROPS['key'],

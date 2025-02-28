@@ -2,8 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import type { Always, AtLeastOnce, Never } from '../constants/index.js'
-import type { Validator } from '../types/validator.js'
+import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { AnySchema } from './schema.js'
 import { any } from './schema_.js'
 
@@ -23,7 +22,7 @@ describe('any', () => {
     assertExtends
   })
 
-  test('returns required any (option)', () => {
+  test('returns required any (prop)', () => {
     const anyAtLeastOnce = any({ required: 'atLeastOnce' })
     const anyAlways = any({ required: 'always' })
     const anyNever = any({ required: 'never' })
@@ -67,7 +66,7 @@ describe('any', () => {
     expect(anyOpt.props.required).toBe('never')
   })
 
-  test('returns hidden any (option)', () => {
+  test('returns hidden any (prop)', () => {
     const anyInstance = any({ hidden: true })
 
     const assertAny: A.Contains<(typeof anyInstance)['props'], { hidden: true }> = 1
@@ -85,7 +84,7 @@ describe('any', () => {
     expect(anyInstance.props.hidden).toBe(true)
   })
 
-  test('returns key any (option)', () => {
+  test('returns key any (prop)', () => {
     const anyInstance = any({ key: true })
 
     const assertAny: A.Contains<(typeof anyInstance)['props'], { key: true }> = 1
@@ -104,7 +103,7 @@ describe('any', () => {
     expect(anyInstance.props.required).toBe('always')
   })
 
-  test('returns savedAs any (option)', () => {
+  test('returns savedAs any (prop)', () => {
     const anyInstance = any({ savedAs: 'foo' })
 
     const assertAny: A.Contains<(typeof anyInstance)['props'], { savedAs: 'foo' }> = 1
@@ -132,7 +131,7 @@ describe('any', () => {
     expect(anyInstance.props.castAs).toBeUndefined()
   })
 
-  test('returns transformed any (option)', () => {
+  test('returns transformed any (prop)', () => {
     const transformer = jsonStringify()
     const anyInstance = any({ transform: transformer })
 
@@ -154,7 +153,7 @@ describe('any', () => {
     expect(anyInstance.props.transform).toBe(transformer)
   })
 
-  test('returns any with default value (option)', () => {
+  test('returns any with default value (prop)', () => {
     const anyA = any({ keyDefault: 'hello' })
     const anyB = any({ putDefault: 'world' })
     const sayHello = () => 'hello'
@@ -216,7 +215,7 @@ describe('any', () => {
     expect(_any.props.keyDefault).toBe('hello')
   })
 
-  test('returns any with linked value (option)', () => {
+  test('returns any with linked value (prop)', () => {
     const sayHello = () => 'hello'
     const say42 = () => 42
     const sayTrue = () => true
@@ -285,7 +284,7 @@ describe('any', () => {
     expect(_any.props.keyLink).toBe(sayHello)
   })
 
-  test('returns any with validator (option)', () => {
+  test('returns any with validator (prop)', () => {
     const pass = () => true
     const anyA = any({ keyValidator: pass })
     const anyB = any({ putValidator: pass })

@@ -2,7 +2,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isStaticDefault } from '~/schema/utils/isStaticDefault.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
-import { checkSchemaProps } from '../shared/check.js'
+import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { PrimitiveSchema } from './types.js'
 
 export const checkPrimitiveSchema = (schema: PrimitiveSchema, path?: string): void => {

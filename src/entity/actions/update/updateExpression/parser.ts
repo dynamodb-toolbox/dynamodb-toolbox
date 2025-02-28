@@ -1,6 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { AttrSchema, SchemaExtendedValue } from '~/attributes/index.js'
+import type { Schema, SchemaExtendedValue } from '~/attributes/index.js'
 import type { ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -28,13 +28,13 @@ import type { ParsedUpdate } from './type.js'
 import { UpdateExpressionVerbParser } from './verbParser.js'
 
 export class UpdateExpressionParser {
-  schema: AttrSchema
+  schema: Schema
   set: UpdateExpressionVerbParser
   remove: UpdateExpressionVerbParser
   add: UpdateExpressionVerbParser
   delete: UpdateExpressionVerbParser
 
-  constructor(schema: AttrSchema) {
+  constructor(schema: Schema) {
     this.schema = schema
     this.set = new UpdateExpressionVerbParser(schema, 's')
     this.remove = new UpdateExpressionVerbParser(schema, 'r')
@@ -43,7 +43,7 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    parsedValue: ValidValue<AttrSchema, { mode: 'update'; extension: UpdateItemInputExtension }>,
+    parsedValue: ValidValue<Schema, { mode: 'update'; extension: UpdateItemInputExtension }>,
     currentPath: (string | number)[] = []
   ): void => {
     if (parsedValue === undefined) {
