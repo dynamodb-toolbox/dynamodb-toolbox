@@ -3,16 +3,15 @@ import type { AttrSchema } from '~/attributes/index.js'
 import { NumberSchema } from '~/attributes/number/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { Schema } from '~/schema/index.js'
 import { combineRegExp } from '~/utils/combineRegExp.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
 export interface ExpressionParser {
-  schema: Schema | AttrSchema
+  schema: AttrSchema
   expressionAttributePrefix: string
   expressionAttributeNames: string[]
-  clone: (schema?: Schema | AttrSchema) => ExpressionParser
+  clone: (schema?: AttrSchema) => ExpressionParser
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
@@ -40,7 +39,7 @@ export const appendAttributePath = (
   const { size = false } = options
 
   const expressionAttrPrefix = parser.expressionAttributePrefix
-  let parentAttr: Schema | AttrSchema = parser.schema
+  let parentAttr: AttrSchema = parser.schema
   let expressionPath = ''
   let attrMatches = [...attributePath.matchAll(pathRegex)]
   let attrPathTail: string | undefined
@@ -94,7 +93,7 @@ export const appendAttributePath = (
         parentAttr = parentAttr.elements
         break
       }
-      case 'schema':
+      case 'item':
       case 'map': {
         const childAttribute = parentAttr.attributes[matchedKey]
         if (!childAttribute) {
@@ -150,7 +149,7 @@ export const appendAttributePath = (
     root = false
   }
 
-  if (parentAttr.type === 'schema' || (attrPathTail !== undefined && attrPathTail.length > 0)) {
+  if (root || (attrPathTail !== undefined && attrPathTail.length > 0)) {
     throw getInvalidExpressionAttributePathError(attributePath)
   }
 

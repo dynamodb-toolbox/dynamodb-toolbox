@@ -2,12 +2,12 @@ import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { BinarySchema } from '~/attributes/binary/schema.js'
 import type { AttrSchema } from '~/attributes/index.js'
+import { ItemSchema } from '~/attributes/item/schema.js'
 import { NumberSchema } from '~/attributes/number/schema.js'
 import { StringSchema } from '~/attributes/string/schema.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
-import { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Index, IndexableKeyType, Key } from '~/table/types/index.js'
 import { pick } from '~/utils/pick.js'
@@ -67,14 +67,16 @@ export const parseQuery: QueryParser = (table, query) => {
     })
   }
 
-  const indexSchema: Schema = new Schema<{}>({})
-  indexSchema.attributes[partitionKey.name] = getIndexKeySchema(partitionKey)
+  const indexSchema = new ItemSchema({
+    [partitionKey.name]: getIndexKeySchema(partitionKey),
+    ...(sortKey !== undefined && range !== undefined
+      ? { [sortKey.name]: getIndexKeySchema(sortKey) }
+      : {})
+  })
 
   let condition = { attr: partitionKey.name, eq: partition } as SchemaCondition
 
   if (sortKey !== undefined && range !== undefined) {
-    indexSchema.attributes[sortKey.name] = getIndexKeySchema(sortKey)
-
     const sortKeyCondition = {
       attr: sortKey.name,
       ...pick(range, ...queryOperatorSet)

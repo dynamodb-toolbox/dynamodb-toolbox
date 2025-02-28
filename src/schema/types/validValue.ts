@@ -3,6 +3,7 @@ import type {
   AnyOfSchema,
   AnySchema,
   AttrSchema,
+  ItemSchema,
   ListSchema,
   MapSchema,
   Never,
@@ -13,16 +14,15 @@ import type {
   ResolvedPrimitiveSchema,
   SetSchema
 } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { AttrExtendedWriteValue, WriteValueOptions } from './options.js'
 
 export type ValidValue<
-  SCHEMA extends Schema | AttrSchema,
+  SCHEMA extends AttrSchema,
   OPTIONS extends WriteValueOptions = {}
-> = SCHEMA extends Schema
-  ? SchemaValidValue<SCHEMA, OPTIONS>
+> = SCHEMA extends ItemSchema
+  ? ItemSchemaValidValue<SCHEMA, OPTIONS>
   : SCHEMA extends AttrSchema
     ? AttrValidValue<SCHEMA, OPTIONS>
     : never
@@ -37,7 +37,7 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema, OPTIONS extends WriteValueOptio
   >
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueOptions = {}> = {
+type OptionalKeys<SCHEMA extends MapSchema | ItemSchema, OPTIONS extends WriteValueOptions = {}> = {
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], OPTIONS>,
     never,
@@ -45,11 +45,11 @@ type OptionalKeys<SCHEMA extends Schema | MapSchema, OPTIONS extends WriteValueO
   >
 }[keyof SCHEMA['attributes']]
 
-type SchemaValidValue<
-  SCHEMA extends Schema,
+type ItemSchemaValidValue<
+  SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions
-> = Schema extends SCHEMA
-  ? { [KEY: string]: AttrValidValue<AttrSchema, Overwrite<OPTIONS, { defined: false }>> }
+> = ItemSchema extends SCHEMA
+  ? { [KEY: string]: unknown }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }

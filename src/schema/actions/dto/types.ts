@@ -160,8 +160,9 @@ export type AttributeDTO =
   | MapAttrDTO
   | RecordAttrDTO
   | AnyOfAttrDTO
+  | ItemSchemaDTO
 
-export interface ISchemaDTO {
-  type: 'schema'
+export interface ItemSchemaDTO extends SchemaPropsDTO {
+  type: 'item'
   attributes: { [name: string]: AttributeDTO }
 }

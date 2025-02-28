@@ -1,8 +1,8 @@
 import type { A } from 'ts-toolbelt'
 
+import { item } from '~/attributes/item/index.js'
 import { string } from '~/attributes/string/index.js'
 import { Entity } from '~/entity/entity.js'
-import { schema } from '~/schema/index.js'
 import { Table } from '~/table/table.js'
 
 import { EntityDTO } from './dto.js'
@@ -16,7 +16,7 @@ describe('DTO', () => {
   test('correctly builds simple schema DTO', () => {
     const simpleEntity = new Entity({
       name: 'simple',
-      schema: schema({
+      schema: item({
         pk: string().key(),
         attr: string()
       }),
@@ -32,7 +32,7 @@ describe('DTO', () => {
     expect(entityObj).toStrictEqual({
       entityName: 'simple',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' },
           attr: { type: 'string' }
@@ -51,7 +51,7 @@ describe('DTO', () => {
   test('correctly builds rich schema DTO', () => {
     const richEntity = new Entity({
       name: 'rich',
-      schema: schema({
+      schema: item({
         pk: string().key(),
         attr: string()
       }),
@@ -73,7 +73,7 @@ describe('DTO', () => {
     expect(entityObj).toStrictEqual({
       entityName: 'rich',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' },
           attr: { type: 'string' }
@@ -100,7 +100,7 @@ describe('DTO', () => {
 
     const entity = new Entity({
       name: 'entity',
-      schema: schema({ key: string().key(), attr: string() }),
+      schema: item({ key: string().key(), attr: string() }),
       computeKey: ({ key }) => ({ pk: key, sk: key }),
       table: sortedTable
     })
@@ -121,7 +121,7 @@ describe('DTO', () => {
   test('does not append PK/SK if they are savedAs in the schema', () => {
     const entity = new Entity({
       name: 'entity',
-      schema: schema({ key: string().key().savedAs('pk'), attr: string() }),
+      schema: item({ key: string().key().savedAs('pk'), attr: string() }),
       table
     })
 

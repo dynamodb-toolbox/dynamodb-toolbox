@@ -4,7 +4,8 @@ import type {
   AnySchema,
   AttrSchema,
   AttributeValue,
-  Item,
+  ItemSchema,
+  ItemSchemaBasicValue,
   ListSchema,
   MapSchema,
   Never,
@@ -38,7 +39,7 @@ import type {
 } from '~/entity/actions/update/symbols/index.js'
 import type { Reference, ReferenceExtension } from '~/entity/actions/update/types.js'
 import type { Entity } from '~/entity/index.js'
-import type { Paths, Schema, ValidValue } from '~/schema/index.js'
+import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
 export type UpdateAttributesInputExtension =
@@ -88,7 +89,7 @@ type MustBeDefined<ATTRIBUTE extends AttrSchema, FILLED extends boolean = false>
   >
 >
 
-type OptionalKeys<SCHEMA extends Schema | MapSchema, FILLED extends boolean = false> = {
+type OptionalKeys<SCHEMA extends ItemSchema | MapSchema, FILLED extends boolean = false> = {
   [KEY in keyof SCHEMA['attributes']]: If<
     MustBeDefined<SCHEMA['attributes'][KEY], FILLED>,
     never,
@@ -108,13 +109,13 @@ type CanBeRemoved<ATTRIBUTE extends AttrSchema> = ATTRIBUTE['props'] extends { r
  * @return Object
  */
 export type UpdateAttributesInput<
-  SCHEMA extends Entity | Schema = Entity,
+  SCHEMA extends Entity | ItemSchema = Entity,
   FILLED extends boolean = false
 > = Entity extends SCHEMA
-  ? Item<UpdateAttributesInputExtension>
-  : Schema extends SCHEMA
-    ? Item<UpdateAttributesInputExtension>
-    : SCHEMA extends Schema
+  ? ItemSchemaBasicValue<UpdateAttributesInputExtension>
+  : ItemSchema extends SCHEMA
+    ? ItemSchemaBasicValue<UpdateAttributesInputExtension>
+    : SCHEMA extends ItemSchema
       ? Optional<
           {
             [KEY in keyof SCHEMA['attributes']]: UpdateAttributeInput<

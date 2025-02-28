@@ -1,8 +1,7 @@
-import type { MapSchema, Never } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { ItemSchema, MapSchema, Never } from '~/attributes/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
-export type RequiredProperties<SCHEMA extends Schema | MapSchema> = Schema extends SCHEMA
+export type RequiredProperties<SCHEMA extends MapSchema | ItemSchema> = ItemSchema extends SCHEMA
   ? string
   : MapSchema extends SCHEMA
     ? string

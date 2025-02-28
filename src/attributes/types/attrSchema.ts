@@ -1,5 +1,6 @@
 import type { AnySchema, AnySchema_ } from '../any/index.js'
 import type { AnyOfSchema, AnyOfSchema_ } from '../anyOf/index.js'
+import type { ItemSchema, ItemSchema_ } from '../item/index.js'
 import type { ListSchema, ListSchema_ } from '../list/index.js'
 import type { MapSchema, MapSchema_ } from '../map/index.js'
 import type { PrimitiveSchema, PrimitiveSchema_ } from '../primitive/index.js'
@@ -17,6 +18,7 @@ export type AttrSchema =
   | MapSchema
   | RecordSchema
   | AnyOfSchema
+  | ItemSchema
 
 /**
  * Any warm attribute props (extended)
@@ -29,10 +31,4 @@ export type AttrSchema_ =
   | MapSchema_
   | RecordSchema_
   | AnyOfSchema_
-
-/**
- * Any warm schema attribute
- */
-export interface SchemaAttributes {
-  [key: string]: AttrSchema
-}
+  | ItemSchema_

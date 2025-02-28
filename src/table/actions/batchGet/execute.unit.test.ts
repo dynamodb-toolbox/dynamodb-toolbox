@@ -11,8 +11,8 @@ import {
   DynamoDBToolboxError,
   Entity,
   Table,
+  item,
   number,
-  schema,
   string
 } from '~/index.js'
 import type { FormattedItem, KeyInputItem, SavedItem } from '~/index.js'
@@ -34,7 +34,7 @@ const TestTable1 = new Table({
 
 const EntityA = new Entity({
   name: 'EntityA',
-  schema: schema({
+  schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -63,7 +63,7 @@ const formattedItemA: FormattedItem<typeof EntityA> = {
 
 const EntityB = new Entity({
   name: 'EntityB',
-  schema: schema({
+  schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -99,7 +99,7 @@ const TestTable2 = new Table({
 
 const EntityC = new Entity({
   name: 'EntityC',
-  schema: schema({
+  schema: item({
     pkC: string().key().savedAs('pk'),
     skC: string().key().savedAs('sk')
   }),

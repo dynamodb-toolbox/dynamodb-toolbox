@@ -1,13 +1,13 @@
+import type { AttrSchema } from '~/attributes/index.js'
 import { SchemaAction } from '~/schema/index.js'
-import type { Schema } from '~/schema/index.js'
 
-import { getFormattedItemJSONSchema } from './formattedItem/index.js'
-import type { FormattedItemJSONSchema } from './formattedItem/index.js'
+import { getFormattedValueJSONSchema } from './formattedItem/index.js'
+import type { FormattedValueJSONSchema } from './formattedItem/index.js'
 
-export class JSONSchemer<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
+export class JSONSchemer<SCHEMA extends AttrSchema = AttrSchema> extends SchemaAction<SCHEMA> {
   static actionName = 'jsonSchemer' as const
 
-  formattedItemSchema(): FormattedItemJSONSchema<SCHEMA> {
-    return getFormattedItemJSONSchema(this.schema)
+  formattedValueSchema(): FormattedValueJSONSchema<SCHEMA> {
+    return getFormattedValueJSONSchema(this.schema)
   }
 }

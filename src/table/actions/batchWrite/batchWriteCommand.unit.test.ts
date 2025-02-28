@@ -6,8 +6,8 @@ import {
   DynamoDBToolboxError,
   Entity,
   Table,
+  item,
   number,
-  schema,
   string
 } from '~/index.js'
 import { $entities } from '~/table/index.js'
@@ -28,7 +28,7 @@ const TestTable = new Table({
 
 const EntityA = new Entity({
   name: 'EntityA',
-  schema: schema({
+  schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -39,7 +39,7 @@ const EntityA = new Entity({
 
 const EntityB = new Entity({
   name: 'EntityB',
-  schema: schema({
+  schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
     commonAttribute: string(),

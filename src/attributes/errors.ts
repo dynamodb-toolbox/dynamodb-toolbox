@@ -1,4 +1,5 @@
 import type { AnyOfAttributeErrorBlueprints } from './anyOf/errors.js'
+import type { ItemSchemaErrorBlueprints } from './item/errors.js'
 import type { ListAttributeErrorBlueprints } from './list/errors.js'
 import type { MapAttributeErrorBlueprints } from './map/errors.js'
 import type { PrimitiveAttributeErrorBlueprints } from './primitive/errors.js'
@@ -14,3 +15,4 @@ export type AttributeErrorBlueprints =
   | RecordAttributeErrorBlueprints
   | AnyOfAttributeErrorBlueprints
   | SharedAttributeErrorBlueprints
+  | ItemSchemaErrorBlueprints

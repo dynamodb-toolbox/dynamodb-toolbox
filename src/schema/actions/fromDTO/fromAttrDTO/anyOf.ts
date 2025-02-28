@@ -2,18 +2,18 @@ import type { AnyOfElementSchema, AnyOfSchema } from '~/attributes/anyOf/index.j
 import { anyOf } from '~/attributes/anyOf/index.js'
 import type { AttributeDTO } from '~/schema/actions/dto/index.js'
 
-import { fromAttrDTO } from './attribute.js'
+import { fromSchemaDTO } from './attribute.js'
 
 type AnyOfAttrDTO = Extract<AttributeDTO, { type: 'anyOf' }>
 
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromJSONAnyOfAttr = ({ elements, ...props }: AnyOfAttrDTO): AnyOfSchema => {
+export const fromAnyOfSchemaDTO = ({ elements, ...props }: AnyOfAttrDTO): AnyOfSchema => {
   /**
    * @debt types "fix those casts"
    */
-  let $attr = anyOf(...(elements.map(fromAttrDTO) as AnyOfElementSchema[]))
+  let $attr = anyOf(...(elements.map(fromSchemaDTO) as AnyOfElementSchema[]))
 
   const {
     required,

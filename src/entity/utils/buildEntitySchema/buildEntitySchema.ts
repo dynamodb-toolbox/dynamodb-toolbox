@@ -1,22 +1,23 @@
 import type { AttrSchema } from '~/attributes/index.js'
+import { ItemSchema } from '~/attributes/item/index.js'
 import { string } from '~/attributes/string/index.js'
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 
+import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
 import type { TimestampsOptions } from './options.js'
 import type {
   $EntityAttribute,
   $TimestampAttribute,
-  InternalAttributesAdder,
-  WithInternalAttributes
+  BuildEntitySchema,
+  EntitySchemaBuilder
 } from './types.js'
 import type { TimestampOptionValue } from './utils.js'
 import { getTimestampOptionValue, isTimestampEnabled } from './utils.js'
 
-export const addInternalAttributes: InternalAttributesAdder = <
-  SCHEMA extends Schema,
+export const buildEntitySchema: EntitySchemaBuilder = <
+  ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
   ENTITY_ATTRIBUTE_NAME extends string,
   ENTITY_ATTRIBUTE_HIDDEN extends boolean,
@@ -30,7 +31,7 @@ export const addInternalAttributes: InternalAttributesAdder = <
   entityName,
   timestamps
 }: {
-  schema: SCHEMA
+  schema: SchemaOf<ATTRIBUTES>
   table: TABLE
   entityAttributeName: ENTITY_ATTRIBUTE_NAME
   entityAttributeHidden: ENTITY_ATTRIBUTE_HIDDEN
@@ -98,8 +99,8 @@ export const addInternalAttributes: InternalAttributesAdder = <
     }
   }
 
-  return schema.and(internalAttributes) as WithInternalAttributes<
-    SCHEMA,
+  return new ItemSchema({ ...schema.attributes, ...internalAttributes }) as BuildEntitySchema<
+    ATTRIBUTES,
     TABLE,
     ENTITY_ATTRIBUTE_NAME,
     ENTITY_ATTRIBUTE_HIDDEN,

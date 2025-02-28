@@ -2,6 +2,7 @@ import { any } from './any/index.js'
 import { anyOf } from './anyOf/index.js'
 import { binary } from './binary/index.js'
 import { boolean } from './boolean/index.js'
+import { item } from './item/index.js'
 import { list } from './list/index.js'
 import { map } from './map/index.js'
 import { nul } from './null/index.js'
@@ -24,6 +25,7 @@ export * from './list/index.js'
 export * from './map/index.js'
 export * from './record/index.js'
 export * from './anyOf/index.js'
+export * from './item/index.js'
 
 export * from './constants/index.js'
 export * from './types/index.js'
@@ -40,6 +42,7 @@ export const attribute: {
   map: typeof map
   record: typeof record
   anyOf: typeof anyOf
+  item: typeof item
 } = {
   any,
   nul,
@@ -51,6 +54,7 @@ export const attribute: {
   list,
   map,
   record,
-  anyOf
+  anyOf,
+  item
 }
 export const attr = attribute
