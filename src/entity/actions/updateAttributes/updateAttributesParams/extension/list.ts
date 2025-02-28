@@ -7,8 +7,12 @@ import {
 } from '~/entity/actions/update/symbols/index.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { ListSchema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  ListSchema,
+  SchemaBasicValue
+} from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
 

@@ -1,6 +1,10 @@
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { SchemaBasicValue, SetSchema } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  SchemaBasicValue,
+  SetSchema
+} from '~/schema/index.js'
 
 import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'

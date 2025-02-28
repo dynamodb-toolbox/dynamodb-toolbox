@@ -1,5 +1,4 @@
-import type { ExtendedValue, Extension, Schema } from '~/schema/index.js'
-import type { Paths } from '~/schema/index.js'
+import type { ExtendedValue, Extension, Paths, Schema } from '~/schema/index.js'
 
 export type WriteMode = 'key' | 'put' | 'update'
 
