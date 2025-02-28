@@ -6,14 +6,14 @@ import type { SchemaProps } from '../shared/props.js'
 import type { SetElementSchema } from './types.js'
 
 export class SetSchema<
-  PROPS extends SchemaProps = SchemaProps,
-  ELEMENTS extends SetElementSchema = SetElementSchema
+  ELEMENTS extends SetElementSchema = SetElementSchema,
+  PROPS extends SchemaProps = SchemaProps
 > {
   type: 'set'
   elements: ELEMENTS
   props: PROPS
 
-  constructor(props: PROPS, elements: ELEMENTS) {
+  constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'set'
     this.elements = elements
     this.props = props

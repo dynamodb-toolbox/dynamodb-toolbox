@@ -6,8 +6,8 @@ import type { SchemaProps } from '../shared/props.js'
 import type { MapAttributes } from './types.js'
 
 export class MapSchema<
-  PROPS extends SchemaProps = SchemaProps,
-  ATTRIBUTES extends MapAttributes = MapAttributes
+  ATTRIBUTES extends MapAttributes = MapAttributes,
+  PROPS extends SchemaProps = SchemaProps
 > {
   type: 'map'
   attributes: ATTRIBUTES
@@ -17,7 +17,7 @@ export class MapSchema<
   savedAttributeNames: Set<string>
   requiredAttributeNames: Record<RequiredOption, Set<string>>
 
-  constructor(props: PROPS, attributes: ATTRIBUTES) {
+  constructor(attributes: ATTRIBUTES, props: PROPS) {
     this.type = 'map'
     this.attributes = attributes
     this.props = props

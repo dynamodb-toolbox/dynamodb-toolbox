@@ -7,16 +7,16 @@ import type { StringSchema } from '../string/index.js'
 import type { AttrSchema } from '../types/index.js'
 
 export class RecordSchema<
-  PROPS extends SchemaProps = SchemaProps,
   KEYS extends StringSchema = StringSchema,
-  ELEMENTS extends AttrSchema = AttrSchema
+  ELEMENTS extends AttrSchema = AttrSchema,
+  PROPS extends SchemaProps = SchemaProps
 > {
   type: 'record'
   keys: KEYS
   elements: ELEMENTS
   props: PROPS
 
-  constructor(props: PROPS, keys: KEYS, elements: ELEMENTS) {
+  constructor(keys: KEYS, elements: ELEMENTS, props: PROPS) {
     this.type = 'record'
     this.keys = keys
     this.elements = elements

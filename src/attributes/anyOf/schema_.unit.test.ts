@@ -17,10 +17,10 @@ describe('anyOf', () => {
   test('rejects missing elements', () => {
     const invalidAnyOf = anyOf()
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.missingElements', path })
     )
   })
@@ -32,10 +32,10 @@ describe('anyOf', () => {
       str.optional()
     )
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.optionalElements', path })
     )
   })
@@ -47,10 +47,10 @@ describe('anyOf', () => {
       str.hidden()
     )
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.hiddenElements', path })
     )
   })
@@ -62,10 +62,10 @@ describe('anyOf', () => {
       str.savedAs('foo')
     )
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.savedAsElements', path })
     )
   })
@@ -77,10 +77,10 @@ describe('anyOf', () => {
       str.putDefault('foo')
     )
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.defaultedElements', path })
     )
   })
@@ -92,10 +92,10 @@ describe('anyOf', () => {
       str.putLink(() => 'foo')
     )
 
-    const superInvalidCall = () => invalidAnyOf.check(path)
+    const invalidCall = () => invalidAnyOf.check(path)
 
-    expect(superInvalidCall).toThrow(DynamoDBToolboxError)
-    expect(superInvalidCall).toThrow(
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.defaultedElements', path })
     )
   })

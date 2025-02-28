@@ -21,7 +21,7 @@ import type { MapAttributes } from './types.js'
 type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props?: NarrowObject<PROPS>
-) => MapSchema_<PROPS, LightObj<ATTRIBUTES>>
+) => MapSchema_<LightObj<ATTRIBUTES>, PROPS>
 
 /**
  * Define a new map attribute
@@ -32,15 +32,15 @@ type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps =
 export const map: MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props: PROPS = {} as PROPS
-) => new MapSchema_(props, lightObj(attributes))
+) => new MapSchema_(lightObj(attributes), props)
 
 /**
  * Map schema
  */
 export class MapSchema_<
-  PROPS extends SchemaProps = SchemaProps,
-  ATTRIBUTES extends MapAttributes = MapAttributes
-> extends MapSchema<PROPS, ATTRIBUTES> {
+  ATTRIBUTES extends MapAttributes = MapAttributes,
+  PROPS extends SchemaProps = SchemaProps
+> extends MapSchema<ATTRIBUTES, PROPS> {
   /**
    * Tag schema values as required. Possible values are:
    * - `'atLeastOnce'` _(default)_: Required in PUTs, optional in UPDATEs
@@ -51,14 +51,14 @@ export class MapSchema_<
    */
   required<NEXT_IS_REQUIRED extends RequiredOption = AtLeastOnce>(
     nextRequired: NEXT_IS_REQUIRED = 'atLeastOnce' as NEXT_IS_REQUIRED
-  ): MapSchema_<Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>, ATTRIBUTES> {
-    return new MapSchema_(overwrite(this.props, { required: nextRequired }), this.attributes)
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { required: NEXT_IS_REQUIRED }>> {
+    return new MapSchema_(this.attributes, overwrite(this.props, { required: nextRequired }))
   }
 
   /**
    * Shorthand for `required('never')`
    */
-  optional(): MapSchema_<Overwrite<PROPS, { required: Never }>, ATTRIBUTES> {
+  optional(): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { required: Never }>> {
     return this.required('never')
   }
 
@@ -67,8 +67,8 @@ export class MapSchema_<
    */
   hidden<NEXT_HIDDEN extends boolean = true>(
     nextHidden: NEXT_HIDDEN = true as NEXT_HIDDEN
-  ): MapSchema_<Overwrite<PROPS, { hidden: NEXT_HIDDEN }>, ATTRIBUTES> {
-    return new MapSchema_(overwrite(this.props, { hidden: nextHidden }), this.attributes)
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { hidden: NEXT_HIDDEN }>> {
+    return new MapSchema_(this.attributes, overwrite(this.props, { hidden: nextHidden }))
   }
 
   /**
@@ -76,10 +76,10 @@ export class MapSchema_<
    */
   key<NEXT_KEY extends boolean = true>(
     nextKey: NEXT_KEY = true as NEXT_KEY
-  ): MapSchema_<Overwrite<PROPS, { key: NEXT_KEY; required: Always }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { key: NEXT_KEY; required: Always }>> {
     return new MapSchema_(
-      overwrite(this.props, { key: nextKey, required: 'always' }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { key: nextKey, required: 'always' })
     )
   }
 
@@ -88,8 +88,8 @@ export class MapSchema_<
    */
   savedAs<NEXT_SAVED_AS extends string | undefined>(
     nextSavedAs: NEXT_SAVED_AS
-  ): MapSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>, ATTRIBUTES> {
-    return new MapSchema_(overwrite(this.props, { savedAs: nextSavedAs }), this.attributes)
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
+    return new MapSchema_(this.attributes, overwrite(this.props, { savedAs: nextSavedAs }))
   }
 
   /**
@@ -99,10 +99,10 @@ export class MapSchema_<
    */
   keyDefault(
     nextKeyDefault: ValueOrGetter<ValidValue<this, { mode: 'key' }>>
-  ): MapSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyDefault: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { keyDefault: nextKeyDefault as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { keyDefault: nextKeyDefault as unknown })
     )
   }
 
@@ -113,10 +113,10 @@ export class MapSchema_<
    */
   putDefault(
     nextPutDefault: ValueOrGetter<ValidValue<this>>
-  ): MapSchema_<Overwrite<PROPS, { putDefault: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putDefault: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { putDefault: nextPutDefault as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { putDefault: nextPutDefault as unknown })
     )
   }
 
@@ -127,10 +127,10 @@ export class MapSchema_<
    */
   updateDefault(
     nextUpdateDefault: ValueOrGetter<AttributeUpdateItemInput<this, true>>
-  ): MapSchema_<Overwrite<PROPS, { updateDefault: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { updateDefault: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { updateDefault: nextUpdateDefault as unknown })
     )
   }
 
@@ -145,16 +145,16 @@ export class MapSchema_<
     >
   ): If<
     PROPS['key'],
-    MapSchema_<Overwrite<PROPS, { keyDefault: unknown }>, ATTRIBUTES>,
-    MapSchema_<Overwrite<PROPS, { putDefault: unknown }>, ATTRIBUTES>
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyDefault: unknown }>>,
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putDefault: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new MapSchema_(
-        overwrite(this.props, { keyDefault: nextDefault as unknown }),
-        this.attributes
+        this.attributes,
+        overwrite(this.props, { keyDefault: nextDefault as unknown })
       ),
-      new MapSchema_(overwrite(this.props, { putDefault: nextDefault as unknown }), this.attributes)
+      new MapSchema_(this.attributes, overwrite(this.props, { putDefault: nextDefault as unknown }))
     )
   }
 
@@ -167,10 +167,10 @@ export class MapSchema_<
     nextKeyLink: (
       keyInput: ValidValue<SCHEMA, { mode: 'key'; defined: true }>
     ) => ValidValue<this, { mode: 'key' }>
-  ): MapSchema_<Overwrite<PROPS, { keyLink: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyLink: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { keyLink: nextKeyLink as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { keyLink: nextKeyLink as unknown })
     )
   }
 
@@ -181,10 +181,10 @@ export class MapSchema_<
    */
   putLink<SCHEMA extends AttrSchema>(
     nextPutLink: (putItemInput: ValidValue<SCHEMA, { defined: true }>) => ValidValue<this>
-  ): MapSchema_<Overwrite<PROPS, { putLink: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putLink: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { putLink: nextPutLink as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { putLink: nextPutLink as unknown })
     )
   }
 
@@ -197,10 +197,10 @@ export class MapSchema_<
     nextUpdateLink: (
       updateItemInput: AttributeUpdateItemInput<SCHEMA, true, Paths<SCHEMA>>
     ) => AttributeUpdateItemInput<this, true>
-  ): MapSchema_<Overwrite<PROPS, { updateLink: unknown }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { updateLink: unknown }>> {
     return new MapSchema_(
-      overwrite(this.props, { updateLink: nextUpdateLink as unknown }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { updateLink: nextUpdateLink as unknown })
     )
   }
 
@@ -219,13 +219,13 @@ export class MapSchema_<
     ) => If<PROPS['key'], ValidValue<this, { mode: 'key' }>, ValidValue<this>>
   ): If<
     PROPS['key'],
-    MapSchema_<Overwrite<PROPS, { keyLink: unknown }>, ATTRIBUTES>,
-    MapSchema_<Overwrite<PROPS, { putLink: unknown }>, ATTRIBUTES>
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyLink: unknown }>>,
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putLink: unknown }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
-      new MapSchema_(overwrite(this.props, { keyLink: nextLink as unknown }), this.attributes),
-      new MapSchema_(overwrite(this.props, { putLink: nextLink as unknown }), this.attributes)
+      new MapSchema_(this.attributes, overwrite(this.props, { keyLink: nextLink as unknown })),
+      new MapSchema_(this.attributes, overwrite(this.props, { putLink: nextLink as unknown }))
     )
   }
 
@@ -236,10 +236,10 @@ export class MapSchema_<
    */
   keyValidate(
     nextKeyValidator: Validator<ValidValue<this, { mode: 'key'; defined: true }>, this>
-  ): MapSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyValidator: Validator }>> {
     return new MapSchema_(
-      overwrite(this.props, { keyValidator: nextKeyValidator as Validator }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { keyValidator: nextKeyValidator as Validator })
     )
   }
 
@@ -250,10 +250,10 @@ export class MapSchema_<
    */
   putValidate(
     nextPutValidator: Validator<ValidValue<this, { defined: true }>, this>
-  ): MapSchema_<Overwrite<PROPS, { putValidator: Validator }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putValidator: Validator }>> {
     return new MapSchema_(
-      overwrite(this.props, { putValidator: nextPutValidator as Validator }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { putValidator: nextPutValidator as Validator })
     )
   }
 
@@ -264,10 +264,10 @@ export class MapSchema_<
    */
   updateValidate(
     nextUpdateValidator: Validator<AttributeUpdateItemInput<this, true>, this>
-  ): MapSchema_<Overwrite<PROPS, { updateValidator: Validator }>, ATTRIBUTES> {
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { updateValidator: Validator }>> {
     return new MapSchema_(
-      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator }),
-      this.attributes
+      this.attributes,
+      overwrite(this.props, { updateValidator: nextUpdateValidator as Validator })
     )
   }
 
@@ -287,25 +287,25 @@ export class MapSchema_<
     >
   ): If<
     PROPS['key'],
-    MapSchema_<Overwrite<PROPS, { keyValidator: Validator }>, ATTRIBUTES>,
-    MapSchema_<Overwrite<PROPS, { putValidator: Validator }>, ATTRIBUTES>
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { keyValidator: Validator }>>,
+    MapSchema_<ATTRIBUTES, Overwrite<PROPS, { putValidator: Validator }>>
   > {
     return ifThenElse(
       this.props.key as PROPS['key'],
       new MapSchema_(
-        overwrite(this.props, { keyValidator: nextValidator as Validator }),
-        this.attributes
+        this.attributes,
+        overwrite(this.props, { keyValidator: nextValidator as Validator })
       ),
       new MapSchema_(
-        overwrite(this.props, { putValidator: nextValidator as Validator }),
-        this.attributes
+        this.attributes,
+        overwrite(this.props, { putValidator: nextValidator as Validator })
       )
     )
   }
 
   pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
-  ): MapSchema_<PROPS, { [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]> }> {
+  ): MapSchema_<{ [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]> }, PROPS> {
     const nextAttributes = {} as {
       [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]>
     }
@@ -318,14 +318,14 @@ export class MapSchema_<
       nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
     }
 
-    return new MapSchema_(this.props, nextAttributes)
+    return new MapSchema_(nextAttributes, this.props)
   }
 
   omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
   ): MapSchema_<
-    PROPS,
-    { [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]> }
+    { [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]> },
+    PROPS
   > {
     const nextAttributes = {} as {
       [KEY in Exclude<keyof ATTRIBUTES, ATTRIBUTE_NAMES[number]>]: ResetLinks<ATTRIBUTES[KEY]>
@@ -341,7 +341,7 @@ export class MapSchema_<
       nextAttributes[attributeName] = resetLinks(this.attributes[attributeName])
     }
 
-    return new MapSchema_(this.props, nextAttributes)
+    return new MapSchema_(nextAttributes, this.props)
   }
 
   and<ADDITIONAL_ATTRIBUTES extends MapAttributes = MapAttributes>(
@@ -349,7 +349,6 @@ export class MapSchema_<
       | NarrowObject<ADDITIONAL_ATTRIBUTES>
       | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
   ): MapSchema_<
-    PROPS,
     {
       [KEY in
         | keyof ATTRIBUTES
@@ -358,7 +357,8 @@ export class MapSchema_<
         : KEY extends keyof ATTRIBUTES
           ? ATTRIBUTES[KEY]
           : never
-    }
+    },
+    PROPS
   > {
     const additionalAttributes = (
       typeof additionalAttr === 'function' ? additionalAttr(this) : additionalAttr
@@ -371,7 +371,6 @@ export class MapSchema_<
     }
 
     return new MapSchema_(
-      this.props,
       nextAttributes as {
         [KEY in
           | keyof ATTRIBUTES
@@ -380,14 +379,15 @@ export class MapSchema_<
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]
             : never
-      }
+      },
+      this.props
     )
   }
 
   clone<NEXT_PROPS extends SchemaProps = {}>(
     nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
-  ): MapSchema_<Overwrite<PROPS, NEXT_PROPS>, ATTRIBUTES> {
-    return new MapSchema_(overwrite(this.props, nextProps), this.attributes)
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, NEXT_PROPS>> {
+    return new MapSchema_(this.attributes, overwrite(this.props, nextProps))
   }
 
   build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
