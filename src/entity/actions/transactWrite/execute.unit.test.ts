@@ -136,7 +136,7 @@ describe('execute', () => {
         undefined,
         ValidItem<typeof TestEntity2>,
         undefined,
-        UpdateItemInput<typeof TestEntity, true>
+        UpdateItemInput<typeof TestEntity, { filled: true }>
       ]
     > = 1
     assertToolboxItems
@@ -192,7 +192,7 @@ describe('execute', () => {
         | undefined
         | ValidItem<typeof TestEntity>
         | ValidItem<typeof TestEntity2>
-        | UpdateItemInput<typeof TestEntity, true>
+        | UpdateItemInput<typeof TestEntity, { filled: true }>
       )[]
     > = 1
     assertToolboxItems
@@ -246,7 +246,7 @@ describe('execute', () => {
       typeof toolboxItems,
       [
         ValidItem<typeof TestEntity>,
-        UpdateItemInput<typeof TestEntity, true>,
+        UpdateItemInput<typeof TestEntity, { filled: true }>,
         ...ValidItem<typeof TestEntity2>[]
       ]
     > = 1

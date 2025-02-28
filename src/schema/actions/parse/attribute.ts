@@ -61,7 +61,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const nextOpts = { ...options, fill: nextFill } as OPTIONS
 
-  const { isExtension, extensionParser, basicInput } = parseExtension(schema, filledValue, {
+  const { isExtension, extensionParser, unextendedInput } = parseExtension(schema, filledValue, {
     transform,
     valuePath
   })
@@ -79,7 +79,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     return yield* extensionParser()
   }
 
-  if (basicInput === undefined) {
+  if (unextendedInput === undefined) {
     const path = formatValuePath(valuePath)
 
     // We don't need to fill
@@ -90,7 +90,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       })
     }
 
-    const parsedValue = basicInput
+    const parsedValue = unextendedInput
 
     if (transform) {
       yield parsedValue
@@ -104,23 +104,23 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   switch (schema.type) {
     case 'any':
-      return yield* anySchemaParser(schema, basicInput, nextOpts)
+      return yield* anySchemaParser(schema, unextendedInput, nextOpts)
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return yield* primitiveSchemaParser(schema, basicInput, nextOpts)
+      return yield* primitiveSchemaParser(schema, unextendedInput, nextOpts)
     case 'set':
-      return yield* setSchemaParser(schema, basicInput, nextOpts)
+      return yield* setSchemaParser(schema, unextendedInput, nextOpts)
     case 'list':
-      return yield* listSchemaParser(schema, basicInput, nextOpts)
+      return yield* listSchemaParser(schema, unextendedInput, nextOpts)
     case 'map':
-      return yield* mapSchemaParser(schema, basicInput, nextOpts)
+      return yield* mapSchemaParser(schema, unextendedInput, nextOpts)
     case 'record':
-      return yield* recordSchemaParser(schema, basicInput, nextOpts)
+      return yield* recordSchemaParser(schema, unextendedInput, nextOpts)
     case 'anyOf':
-      return yield* anyOfSchemaParser(schema, basicInput, nextOpts)
+      return yield* anyOfSchemaParser(schema, unextendedInput, nextOpts)
   }
 }
 

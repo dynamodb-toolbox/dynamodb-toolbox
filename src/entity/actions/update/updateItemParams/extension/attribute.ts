@@ -4,7 +4,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   Schema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'
@@ -71,7 +71,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
     default:
       return {
         isExtension: false,
-        basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
       }
   }
 }

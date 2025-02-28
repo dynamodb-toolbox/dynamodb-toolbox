@@ -8,14 +8,14 @@ import type {
   $SUM,
   ADD,
   APPEND,
-  Basic,
   DELETE,
-  Extension,
+  Extended,
   GET,
   PREPEND,
   REMOVE,
   SUBTRACT,
-  SUM
+  SUM,
+  Unextended
 } from '~/entity/actions/update/symbols/index.js'
 import type { Reference, ReferenceExtension } from '~/entity/actions/update/types.js'
 import type { Entity } from '~/entity/index.js'
@@ -23,8 +23,8 @@ import type {
   Always,
   AnyOfSchema,
   AnySchema,
-  ItemBasicValue,
   ItemSchema,
+  ItemUnextendedValue,
   ListSchema,
   MapSchema,
   Never,
@@ -44,18 +44,18 @@ import type { Extends, If, Not, Optional } from '~/types/index.js'
 
 export type UpdateAttributesInputExtension =
   | ReferenceExtension
-  | { type: '*'; value: Extension<{ [$REMOVE]: true }> }
+  | { type: '*'; value: Extended<{ [$REMOVE]: true }> }
   | {
       type: 'number'
       value:
-        | Extension<{ [$ADD]: number }>
-        | Extension<{
+        | Extended<{ [$ADD]: number }>
+        | Extended<{
             [$SUM]: [
               NumberExtendedValue<ReferenceExtension>,
               NumberExtendedValue<ReferenceExtension>
             ]
           }>
-        | Extension<{
+        | Extended<{
             [$SUBTRACT]: [
               NumberExtendedValue<ReferenceExtension>,
               NumberExtendedValue<ReferenceExtension>
@@ -64,11 +64,11 @@ export type UpdateAttributesInputExtension =
     }
   | {
       type: 'set'
-      value: Extension<{ [$ADD]: SetExtendedValue } | { [$DELETE]: SetExtendedValue }>
+      value: Extended<{ [$ADD]: SetExtendedValue } | { [$DELETE]: SetExtendedValue }>
     }
   | {
       type: 'list'
-      value: Extension<
+      value: Extended<
         | { [$APPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
         | { [$PREPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
         // TODO: CONCAT to join two unrelated lists
@@ -105,9 +105,9 @@ export type UpdateAttributesInput<
   SCHEMA extends Entity | ItemSchema = Entity,
   FILLED extends boolean = false
 > = Entity extends SCHEMA
-  ? ItemBasicValue<UpdateAttributesInputExtension>
+  ? ItemUnextendedValue<UpdateAttributesInputExtension>
   : ItemSchema extends SCHEMA
-    ? ItemBasicValue<UpdateAttributesInputExtension>
+    ? ItemUnextendedValue<UpdateAttributesInputExtension>
     : SCHEMA extends ItemSchema
       ? Optional<
           {
@@ -200,7 +200,7 @@ export type UpdateAttributeInput<
           : never)
       | (SCHEMA extends ListSchema
           ?
-              | Basic<ValidValue<SCHEMA['elements']>[]>
+              | Unextended<ValidValue<SCHEMA['elements']>[]>
               | APPEND<
                   // Not using Reference<...> for improved type display
                   | GET<
@@ -225,8 +225,8 @@ export type UpdateAttributeInput<
                   | ValidValue<SCHEMA['elements']>[]
                 >
           : never)
-      | (SCHEMA extends MapSchema ? Basic<ValidValue<SCHEMA>> : never)
-      | (SCHEMA extends RecordSchema ? Basic<ValidValue<SCHEMA>> : never)
+      | (SCHEMA extends MapSchema ? Unextended<ValidValue<SCHEMA>> : never)
+      | (SCHEMA extends RecordSchema ? Unextended<ValidValue<SCHEMA>> : never)
       | (SCHEMA extends AnyOfSchema
           ? UpdateAttributeInput<SCHEMA['elements'][number], FILLED, AVAILABLE_PATHS>
           : never)

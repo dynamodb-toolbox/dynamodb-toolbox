@@ -1,4 +1,4 @@
-import type { Extension, ItemSchema, Schema, SchemaBasicValue } from '~/schema/index.js'
+import type { Extension, ItemSchema, Schema, SchemaUnextendedValue } from '~/schema/index.js'
 
 import type { TransformedValue } from './transformedValue.js'
 import type { ValidValue } from './validValue.js'
@@ -26,10 +26,10 @@ export type ExtensionParser<
         TransformedValue<Schema, { extension: EXTENSION }>,
         ValidValue<ItemSchema, { extension: CONTEXT_EXTENSION }> | undefined
       >
-      basicInput?: never
+      unextendedInput?: never
     }
   | {
       isExtension: false
       extensionParser?: never
-      basicInput: SchemaBasicValue<EXTENSION> | undefined
+      unextendedInput: SchemaUnextendedValue<EXTENSION> | undefined
     })

@@ -11,7 +11,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   ListSchema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -154,6 +154,6 @@ export const parseListExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateAttributesInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
   }
 }

@@ -1,12 +1,12 @@
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { $IS_EXTENSION } from './isExtension.js'
-import type { Extension } from './isExtension.js'
+import type { Extended } from './isExtension.js'
 
 export const $PREPEND = Symbol('$PREPEND')
 export type $PREPEND = typeof $PREPEND
 
-export type PREPEND<VALUE> = Extension<{ [$PREPEND]: VALUE }>
+export type PREPEND<VALUE> = Extended<{ [$PREPEND]: VALUE }>
 
 export const $prepend = <VALUE>(value: VALUE): PREPEND<VALUE> => ({
   [$IS_EXTENSION]: true,

@@ -4,7 +4,7 @@ import type {
   ExtensionParserOptions,
   RecordSchema,
   Schema,
-  SchemaBasicValue,
+  SchemaUnextendedValue,
   TransformedValue,
   ValidValue
 } from '~/schema/index.js'
@@ -119,6 +119,6 @@ export const parseRecordExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
   }
 }

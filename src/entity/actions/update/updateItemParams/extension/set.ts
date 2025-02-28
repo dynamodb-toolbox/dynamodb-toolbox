@@ -2,7 +2,7 @@ import { Parser } from '~/schema/actions/parse/index.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
-  SchemaBasicValue,
+  SchemaUnextendedValue,
   SetSchema
 } from '~/schema/index.js'
 
@@ -62,6 +62,6 @@ export const parseSetExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
   }
 }

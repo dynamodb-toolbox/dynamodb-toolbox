@@ -3,7 +3,7 @@ import type {
   ExtensionParser,
   ExtensionParserOptions,
   MapSchema,
-  SchemaBasicValue
+  SchemaUnextendedValue
 } from '~/schema/index.js'
 
 import { $SET, isSetting } from '../../symbols/index.js'
@@ -39,6 +39,6 @@ export const parseMapExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as SchemaBasicValue<UpdateItemInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
   }
 }
