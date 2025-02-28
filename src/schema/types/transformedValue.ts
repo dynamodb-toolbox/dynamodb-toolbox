@@ -78,7 +78,7 @@ type ItemSchemaTransformedValue<
           Overwrite<OPTIONS, { defined: false }>
         >
       },
-      OptionalKeys<SCHEMA, OPTIONS>
+      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
 type AttrTransformedValue<
@@ -199,7 +199,7 @@ type MapSchemaTransformedValue<
               Overwrite<OPTIONS, { defined: false }>
             >
           },
-          OptionalKeys<ATTRIBUTE, OPTIONS>
+          OptionalKeys<ATTRIBUTE, Overwrite<OPTIONS, { defined: false }>>
         >
 
 type RecordSchemaTransformedValue<

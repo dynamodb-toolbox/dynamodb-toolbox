@@ -76,7 +76,7 @@ type ItemSchemaInputValue<
           Overwrite<OPTIONS, { defined: false }>
         >
       },
-      OptionalKeys<SCHEMA, OPTIONS>
+      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
 type AttrInputValue<
@@ -157,7 +157,7 @@ type MapSchemaInputValue<
               Overwrite<OPTIONS, { defined: false }>
             >
           },
-          OptionalKeys<ATTRIBUTE, OPTIONS>
+          OptionalKeys<ATTRIBUTE, Overwrite<OPTIONS, { defined: false }>>
         >
 
 type RecordSchemaInputValue<

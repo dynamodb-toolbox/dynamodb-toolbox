@@ -59,7 +59,7 @@ type ItemSchemaValidValue<
           Overwrite<OPTIONS, { defined: false }>
         >
       },
-      OptionalKeys<SCHEMA, OPTIONS>
+      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
 type AttrValidValue<
@@ -140,7 +140,7 @@ type MapSchemaValidValue<
               Overwrite<OPTIONS, { defined: false }>
             >
           },
-          OptionalKeys<ATTRIBUTE, OPTIONS>
+          OptionalKeys<ATTRIBUTE, Overwrite<OPTIONS, { defined: false }>>
         >
 
 type RecordSchemaValidValue<
