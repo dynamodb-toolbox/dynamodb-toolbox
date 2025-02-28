@@ -2,16 +2,17 @@ import type { A } from 'ts-toolbelt'
 
 import type {
   AnyOfSchema,
+  AppendKey,
   BinarySchema,
   BooleanSchema,
   ListSchema,
   MapSchema,
   NumberSchema,
+  Paths,
   RecordSchema,
   SetSchema,
   StringSchema
 } from '~/schema/index.js'
-import type { AppendKey, Paths } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
 import type {

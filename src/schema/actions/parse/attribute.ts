@@ -1,7 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { ItemSchema, Schema } from '~/schema/index.js'
-import type { InputValue, WriteMode } from '~/schema/index.js'
+import type { InputValue, ItemSchema, Schema, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
 

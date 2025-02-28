@@ -1,7 +1,11 @@
 import { $SET } from '~/entity/actions/update/symbols/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { RecordSchema, SchemaBasicValue } from '~/schema/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  RecordSchema,
+  SchemaBasicValue
+} from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'

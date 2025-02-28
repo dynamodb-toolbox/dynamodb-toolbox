@@ -12,6 +12,7 @@ import type {
   Never,
   NumberExtendedValue,
   NumberSchema,
+  Paths,
   PrimitiveSchema,
   RecordExtendedValue,
   RecordSchema,
@@ -21,9 +22,9 @@ import type {
   Schema,
   SchemaExtendedValue,
   SetExtendedValue,
-  SetSchema
+  SetSchema,
+  ValidValue
 } from '~/schema/index.js'
-import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
 import type {
