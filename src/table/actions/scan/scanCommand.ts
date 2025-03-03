@@ -9,6 +9,7 @@ import type { FormattedItem } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { getEntityAttrOptionValue, isEntityAttrEnabled } from '~/entity/utils/index.js'
 import type { EntityAttrObjectOptions, EntityAttrOptionValue } from '~/entity/utils/index.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $sentArgs } from '~/table/constants.js'
 import { interceptable } from '~/table/decorator.js'
@@ -148,7 +149,13 @@ export class ScanCommand<
     let responseMetadata: ScanCommandOutput['$metadata'] | undefined = undefined
 
     // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1, showEntityAttr = false } = this[$options]
+    const {
+      attributes,
+      maxPages = 1,
+      showEntityAttr = false,
+      noEntityMatchBehavior = 'THROW'
+    } = this[$options]
+
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -177,8 +184,11 @@ export class ScanCommand<
         }
 
         const itemEntityName = item[entityAttrSavedAs] as unknown
+        const itemEntityFormatter = formattersByName[String(itemEntityName)]
 
-        if (!isString(itemEntityName)) {
+        if (!isString(itemEntityName) || itemEntityFormatter === undefined) {
+          let hasEntityMatch: boolean = false
+
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
           // (NOTE: Can only happen if `entityAttrFilter` is false)
           for (const [entityName, formatter] of Object.entries(formattersByName)) {
@@ -193,23 +203,27 @@ export class ScanCommand<
                 ...formattedItem,
                 ...(addEntityAttr ? { [entityAttrName]: entityName } : {})
               })
+
+              hasEntityMatch = true
               break
             } catch {
               continue
             }
           }
-          // NOTE: Maybe we should throw here? (No formatter worked)
+
+          if (!hasEntityMatch && noEntityMatchBehavior === 'THROW') {
+            throw new DynamoDBToolboxError('scanCommand.noEntityMatched', {
+              message: 'Unable to match item of unidentified entity to the ScanCommand entities',
+              payload: { item }
+            })
+          }
+
           continue
         }
 
-        const formatter = formattersByName[itemEntityName]
-        if (formatter === undefined) {
-          continue
-        }
+        const formattedItem = itemEntityFormatter.format(item, { attributes })
 
-        const formattedItem = formatter.format(item, { attributes })
-
-        const { entityAttribute, entityName } = formatter.entity
+        const { entityAttribute, entityName } = itemEntityFormatter.entity
         const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
         const addEntityAttr = showEntityAttr && isEntityAttrEnabled(entityAttribute)
 

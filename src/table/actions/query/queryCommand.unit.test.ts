@@ -6,7 +6,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { Entity, Table, item, number, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
 
 import { $entity } from './constants.js'
 import { QueryCommand } from './queryCommand.js'
@@ -138,7 +138,25 @@ describe('queryCommand', () => {
     ])
   })
 
-  test('still tries all formatters if entityAttribute misses (omit invalid items)', async () => {
+  test('tries all formatters if entityAttribute misses and throws on invalid items if noEntityMatchBehavior is "THROW" (default)', async () => {
+    documentClientMock.on(_QueryCommand).resolves({
+      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
+    })
+
+    const invalidCall = async () =>
+      await TestTable.build(QueryCommand)
+        .entities(EntityA, EntityB)
+        .query({ partition: 'a' })
+        .options({ entityAttrFilter: false })
+        .send()
+
+    expect(invalidCall).rejects.toThrow(DynamoDBToolboxError)
+    expect(invalidCall).rejects.toThrow(
+      expect.objectContaining({ code: 'queryCommand.noEntityMatched' })
+    )
+  })
+
+  test('tries all formatters if entityAttribute misses and omit invalid items if noEntityMatchBehavior is "DISCARD"', async () => {
     documentClientMock.on(_QueryCommand).resolves({
       Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
     })
@@ -146,29 +164,12 @@ describe('queryCommand', () => {
     const { Items } = await TestTable.build(QueryCommand)
       .entities(EntityA, EntityB)
       .query({ partition: 'a' })
-      .options({ entityAttrFilter: false })
+      .options({ entityAttrFilter: false, noEntityMatchBehavior: 'DISCARD' })
       .send()
 
     expect(Items).toStrictEqual([
       { [$entity]: EntityA.entityName, ...formattedItemA },
       { [$entity]: EntityB.entityName, ...formattedItemB }
-    ])
-  })
-
-  test('still appends entityAttribute if showEntityAttr is true', async () => {
-    documentClientMock.on(_QueryCommand).resolves({
-      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
-    })
-
-    const { Items } = await TestTable.build(QueryCommand)
-      .entities(EntityA, EntityB)
-      .query({ partition: 'a' })
-      .options({ entityAttrFilter: false, showEntityAttr: true })
-      .send()
-
-    expect(Items).toStrictEqual([
-      { [$entity]: EntityA.entityName, entity: EntityA.entityName, ...formattedItemA },
-      { [$entity]: EntityB.entityName, entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 })

@@ -6,4 +6,4 @@ type InvalidSegmentOptionErrorBlueprint = ErrorBlueprint<{
   payload: { segment?: unknown; totalSegments?: unknown }
 }>
 
-export type ScanCommandErrorBlueprints = InvalidSegmentOptionErrorBlueprint
+export type ScanCommandParamsErrorBlueprints = InvalidSegmentOptionErrorBlueprint
