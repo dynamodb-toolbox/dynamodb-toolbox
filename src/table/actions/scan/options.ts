@@ -18,7 +18,7 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
   filter?: Entity[] extends ENTITIES ? Condition : never
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+    : { [ENTITY in ENTITIES[number] as ENTITY['entityName']]?: Condition<ENTITY> }
   entityAttrFilter?: boolean
   showEntityAttr?: boolean
   tableName?: string

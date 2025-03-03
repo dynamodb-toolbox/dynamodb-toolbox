@@ -56,6 +56,18 @@ const Entity2 = new Entity({
   table: TestTable
 })
 
+const EntityWithoutEntAttr = new Entity({
+  name: 'entity3',
+  schema: item({
+    categoryId: string().key().savedAs('pk'),
+    productId: string().key().savedAs('sk'),
+    launchDate: string(),
+    price: number()
+  }),
+  table: TestTable,
+  entityAttribute: false
+})
+
 describe('query', () => {
   test('gets the tableName', async () => {
     const command = TestTable.build(QueryCommand).query({ partition: 'foo' })
@@ -764,7 +776,67 @@ describe('query', () => {
     )
   })
 
-  test('applies any filter if no entity has been provided', () => {
+  test('throws on invalid entityAttrFilter option', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        // @ts-expect-error
+        .options({ entityAttrFilter: 'true' })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .entities(Entity1, EntityWithoutEntAttr)
+        .options({ entityAttrFilter: true })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .entities(Entity1, Entity2)
+        .options({
+          filters: {
+            entity1: { attr: 'age', gte: 40 },
+            entity2: { attr: 'price', gte: 100 }
+          },
+          entityAttrFilter: false
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+  })
+
+  test('throws on extra options', () => {
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .options({
+          // @ts-expect-error
+          extra: true
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
+  })
+
+  // --- FILTERS ---
+
+  test('applies blind filter if no entity has been provided', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .options({ filter: { attr: 'foo', eq: 'bar' } })
@@ -776,10 +848,10 @@ describe('query', () => {
     expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': 'bar' })
   })
 
-  test('ignores filter if entities have been provided', () => {
+  test('ignores blind filter if entities have been provided', () => {
     const command = TestTable.build(QueryCommand)
-      .query({ partition: 'foo' })
       .entities(Entity1)
+      .query({ partition: 'foo' })
       .options({
         // @ts-expect-error
         filter: { attr: 'foo', eq: 'bar' }
@@ -790,56 +862,7 @@ describe('query', () => {
     expect(Object.values(ExpressionAttributeValues)).not.toContain('bar')
   })
 
-  test('applies entity _et filter', () => {
-    const command = TestTable.build(QueryCommand).query({ partition: 'foo' }).entities(Entity1)
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      command.params()
-
-    expect(FilterExpression).toBe('#c1_1 = :c1_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': TestTable.entityAttributeSavedAs })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': Entity1.name })
-
-    const assertReturnedItems: A.Equals<
-      Awaited<ReturnType<typeof command.send>>['Items'],
-      FormattedItem<typeof Entity1>[] | undefined
-    > = 1
-    assertReturnedItems
-  })
-
-  test('does not apply entity _et filter if entityAttrFilter is false', () => {
-    const command = TestTable.build(QueryCommand)
-      .query({ partition: 'foo' })
-      .entities(Entity1)
-      .options({ entityAttrFilter: false })
-
-    const { FilterExpression } = command.params()
-
-    expect(FilterExpression).toBe(undefined)
-  })
-
-  test('applies entity _et AND additional filter (even if entityAttrFilter is false)', () => {
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestTable.build(QueryCommand)
-        .query({ partition: 'foo' })
-        .entities(Entity1)
-        .options({
-          filters: { entity1: { attr: 'age', gte: 40 } },
-          entityAttrFilter: false
-        })
-        .params()
-
-    expect(FilterExpression).toBe('(#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#c1_1': TestTable.entityAttributeSavedAs,
-      '#c1_2': 'age'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':c1_1': Entity1.name,
-      ':c1_2': 40
-    })
-  })
-
-  test('applies two entity filters', () => {
+  test('applies entity name filter if possible', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
       .entities(Entity1, Entity2)
@@ -852,18 +875,68 @@ describe('query', () => {
       '#c2_1': TestTable.entityAttributeSavedAs
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c1_1': Entity1.name,
-      ':c2_1': Entity2.name
+      ':c1_1': Entity1.entityName,
+      ':c2_1': Entity2.entityName
     })
-
-    const assertReturnedItems: A.Equals<
-      Awaited<ReturnType<typeof command.send>>['Items'],
-      (FormattedItem<typeof Entity1> | FormattedItem<typeof Entity2>)[] | undefined
-    > = 1
-    assertReturnedItems
   })
 
-  test('applies two entity filters AND additional filters', () => {
+  test('does not apply entity name filter if not possible', () => {
+    const command = TestTable.build(QueryCommand)
+      .entities(EntityWithoutEntAttr)
+      .query({ partition: 'foo' })
+    const { FilterExpression } = command.params()
+
+    expect(FilterExpression).toBeUndefined()
+  })
+
+  test('does not apply entity name filter if entityAttrFilter is false', () => {
+    const command = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .entities(Entity1)
+      .options({ entityAttrFilter: false })
+
+    const { FilterExpression } = command.params()
+
+    expect(FilterExpression).toBe(undefined)
+  })
+
+  test('applies the filter if a single entity without entityAttr is provided', () => {
+    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestTable.build(QueryCommand)
+        .entities(EntityWithoutEntAttr)
+        .query({ partition: 'foo' })
+        .options({
+          filters: {
+            entity3: { attr: 'price', gte: 100 }
+          },
+          entityAttrFilter: false
+        })
+        .params()
+
+    expect(FilterExpression).toBe('#c1_1 >= :c1_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': 'price' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': 100 })
+  })
+
+  test('applies the filter if a single entity is provided and entityAttrFilter is false', () => {
+    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestTable.build(QueryCommand)
+        .entities(Entity1)
+        .query({ partition: 'foo' })
+        .options({
+          filters: {
+            entity1: { attr: 'age', gte: 40 }
+          },
+          entityAttrFilter: false
+        })
+        .params()
+
+    expect(FilterExpression).toBe('#c1_1 >= :c1_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': 'age' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': 40 })
+  })
+
+  test('applies two entity filters AND additional filters if possible', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestTable.build(QueryCommand)
         .query({ partition: 'foo' })
@@ -886,9 +959,9 @@ describe('query', () => {
       '#c2_2': 'price'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c1_1': Entity1.name,
+      ':c1_1': Entity1.entityName,
       ':c1_2': 40,
-      ':c2_1': Entity2.name,
+      ':c2_1': Entity2.entityName,
       ':c2_2': 100
     })
   })
@@ -932,6 +1005,8 @@ describe('query', () => {
     expect(ExpressionAttributeValues2).toMatchObject({ ':c1_2': 'foo#bar' })
   })
 
+  // --- PROJECTION ---
+
   test('applies entity projection expression', () => {
     const command = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
@@ -946,11 +1021,11 @@ describe('query', () => {
     > = 1
     assertReturnedItems
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #_et')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': '_et',
-      '#p_2': 'age',
-      '#p_3': 'name'
+      '#p_1': 'age',
+      '#p_2': 'name',
+      '#_et': '_et'
     })
   })
 
@@ -974,25 +1049,11 @@ describe('query', () => {
     > = 1
     assertReturnedItems
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #_et')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': '_et',
-      '#p_2': '_ct',
-      '#p_3': '_md'
+      '#p_1': '_ct',
+      '#p_2': '_md',
+      '#_et': '_et'
     })
-  })
-
-  test('throws on extra options', () => {
-    const invalidCall = () =>
-      TestTable.build(QueryCommand)
-        .query({ partition: 'foo' })
-        .options({
-          // @ts-expect-error
-          extra: true
-        })
-        .params()
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 })

@@ -1,7 +1,7 @@
 import { $interceptor } from './constants.js'
 import type { TableSendableAction } from './table.js'
 
-export const sender = () => {
+export const interceptable = () => {
   return (_: any, __: string, descriptor: PropertyDescriptor) => {
     const originalValue = descriptor.value
 

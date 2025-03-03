@@ -6,7 +6,6 @@ export interface EntityAttributes {
 
 export interface SchemaOf<ATTRIBUTES extends EntityAttributes> {
   attributes: ATTRIBUTES
-
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>

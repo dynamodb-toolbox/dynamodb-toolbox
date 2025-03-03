@@ -128,8 +128,8 @@ describe('scanCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+      { entity: EntityA.entityName, ...formattedItemA },
+      { entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 
@@ -157,8 +157,8 @@ describe('scanCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+      { entity: EntityA.entityName, ...formattedItemA },
+      { entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 })

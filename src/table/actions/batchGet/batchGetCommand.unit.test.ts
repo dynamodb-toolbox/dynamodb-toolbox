@@ -158,7 +158,7 @@ describe('BatchGetCommand', () => {
     })
   })
 
-  test('appends entityAttribute, pk and sk to projection expression', () => {
+  test('appends pk, sk and entityAttribute to projection expression', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
       .options({ attributes: ['commonAttribute'] })
@@ -166,12 +166,12 @@ describe('BatchGetCommand', () => {
 
     expect(completeInput).toMatchObject({
       [TestTable.getName()]: {
-        ProjectionExpression: '#p_1, #p_2, #_pk, #_sk',
+        ProjectionExpression: '#p_1, #_pk, #_sk, #_et',
         ExpressionAttributeNames: {
-          '#p_1': '_et',
-          '#p_2': 'commonAttribute',
+          '#p_1': 'commonAttribute',
           '#_pk': TestTable.partitionKey.name,
-          '#_sk': TestTable.sortKey?.name
+          '#_sk': TestTable.sortKey?.name,
+          '#_et': TestTable.entityAttributeSavedAs
         }
       }
     })

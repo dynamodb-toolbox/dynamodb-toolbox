@@ -2,7 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { StringSchema } from '~/schema/index.js'
+import { StringSchema } from '~/schema/index.js'
 import { item } from '~/schema/item/index.js'
 import { string } from '~/schema/string/index.js'
 import { Table } from '~/table/index.js'
@@ -22,13 +22,55 @@ const myTable = new Table({
 
 const mySchema = item({ str: string() })
 
-describe('addInternalAttributes', () => {
-  describe('entity attribute', () => {
+describe('buildEntitySchema', () => {
+  describe('adds default entity attribute', () => {
     const enrichedSchema = buildEntitySchema({
       schema: mySchema,
       table: myTable,
-      entityAttributeName: 'id',
-      entityAttributeHidden: false,
+      entityAttribute: true,
+      entityName: 'myEntity',
+      timestamps: true
+    })
+
+    test('adds entity attribute', () => {
+      const assertEntityAttribute: A.Contains<
+        typeof enrichedSchema.attributes.entity,
+        StringSchema<{
+          savedAs: '__et__'
+          enum: ['myEntity']
+          putDefault: unknown
+          updateDefault: unknown
+        }>
+      > = 1
+      assertEntityAttribute
+
+      expect(enrichedSchema.attributes.entity).toBeInstanceOf(StringSchema)
+      expect(enrichedSchema.attributes.entity).toMatchObject({
+        type: 'string',
+        props: {
+          savedAs: entityAttributeSavedAs,
+          enum: ['myEntity'],
+          putDefault: 'myEntity'
+        }
+      })
+
+      expect(
+        // @ts-expect-error defaults are not typed for the moment
+        enrichedSchema.attributes.entity.props.updateDefault()
+      ).toStrictEqual($get('entity', 'myEntity'))
+    })
+
+    test('does not mute original schema', () => {
+      // @ts-expect-error
+      expect(mySchema.attributes.id).toBeUndefined()
+    })
+  })
+
+  describe('adds customized entity attribute', () => {
+    const enrichedSchema = buildEntitySchema({
+      schema: mySchema,
+      table: myTable,
+      entityAttribute: { name: 'id' as const, hidden: false },
       entityName: 'myEntity',
       timestamps: true
     })
@@ -46,6 +88,7 @@ describe('addInternalAttributes', () => {
       > = 1
       assertEntityAttribute
 
+      expect(enrichedSchema.attributes.id).toBeInstanceOf(StringSchema)
       expect(enrichedSchema.attributes.id).toMatchObject({
         type: 'string',
         props: {
@@ -68,13 +111,80 @@ describe('addInternalAttributes', () => {
     })
   })
 
+  test('does not add entity attribute', () => {
+    const enrichedSchema = buildEntitySchema({
+      schema: mySchema,
+      table: myTable,
+      entityAttribute: false,
+      entityName: 'myEntity',
+      timestamps: true
+    })
+
+    const assertEntityAttribute: A.Contains<typeof enrichedSchema.attributes, { entity: unknown }> =
+      0
+    assertEntityAttribute
+
+    expect(enrichedSchema.attributes).not.toHaveProperty('entity')
+  })
+
   describe('timestamp attributes', () => {
+    test('adds default timestamps', () => {
+      const enrichedSchema = buildEntitySchema({
+        schema: mySchema,
+        table: myTable,
+        entityAttribute: true,
+        entityName: 'myEntity',
+        timestamps: true
+      })
+
+      const assertCreatedAttribute: A.Contains<
+        typeof enrichedSchema.attributes.created,
+        StringSchema<{
+          hidden: false
+          savedAs: '_ct'
+          putDefault: unknown
+          updateDefault: unknown
+        }>
+      > = 1
+      assertCreatedAttribute
+
+      expect(enrichedSchema.attributes.created).toBeInstanceOf(StringSchema)
+      expect(enrichedSchema.attributes.created).toMatchObject({
+        type: 'string',
+        props: {
+          savedAs: '_ct',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
+      })
+
+      const assertModifiedAttribute: A.Contains<
+        typeof enrichedSchema.attributes.modified,
+        StringSchema<{
+          hidden: false
+          savedAs: '_md'
+          putDefault: unknown
+          updateDefault: unknown
+        }>
+      > = 1
+      assertModifiedAttribute
+
+      expect(enrichedSchema.attributes.modified).toBeInstanceOf(StringSchema)
+      expect(enrichedSchema.attributes.modified).toMatchObject({
+        type: 'string',
+        props: {
+          savedAs: '_md',
+          putDefault: expect.any(Function),
+          updateDefault: expect.any(Function)
+        }
+      })
+    })
+
     test('does not add created attribute if timestamps are disabled', () => {
       const noTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'id',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: false
       })
@@ -91,8 +201,7 @@ describe('addInternalAttributes', () => {
       const noCreatedTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'id',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -111,8 +220,7 @@ describe('addInternalAttributes', () => {
       const noModifiedTimestampSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'id',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: true,
@@ -133,8 +241,7 @@ describe('addInternalAttributes', () => {
       const enrichedSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: true,
@@ -165,8 +272,7 @@ describe('addInternalAttributes', () => {
       const partialCustomSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: {
@@ -199,8 +305,7 @@ describe('addInternalAttributes', () => {
       const customSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: {
@@ -238,8 +343,7 @@ describe('addInternalAttributes', () => {
       const enrichedSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -270,8 +374,7 @@ describe('addInternalAttributes', () => {
       const partialCustomSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -304,8 +407,7 @@ describe('addInternalAttributes', () => {
       const customSchema = buildEntitySchema({
         schema: mySchema,
         table: myTable,
-        entityAttributeName: 'entity',
-        entityAttributeHidden: true,
+        entityAttribute: true,
         entityName: 'myEntity',
         timestamps: {
           created: false,
@@ -348,7 +450,7 @@ describe('addInternalAttributes', () => {
   })
 
   describe('reserved attribute names', () => {
-    test('throws a "reservedAttributeName" error if ', () => {
+    test('throws a "reservedAttributeName" error if entity attribute is enabled', () => {
       const invalidSchema = item({
         entity: string()
       })
@@ -357,8 +459,7 @@ describe('addInternalAttributes', () => {
         buildEntitySchema({
           schema: invalidSchema,
           table: myTable,
-          entityAttributeName: 'entity',
-          entityAttributeHidden: true,
+          entityAttribute: true,
           entityName: 'myEntity',
           timestamps: true
         })
@@ -367,7 +468,7 @@ describe('addInternalAttributes', () => {
       expect(invalidCall).toThrow(expect.objectContaining({ code: 'entity.reservedAttributeName' }))
     })
 
-    test('throws a "reservedAttributeSavedAs" error if ', () => {
+    test('throws a "reservedAttributeSavedAs" error if if entity attribute is enabled and savedAs existing prop', () => {
       const invalidSchema = item({
         ent: string().savedAs(entityAttributeSavedAs)
       })
@@ -376,8 +477,7 @@ describe('addInternalAttributes', () => {
         buildEntitySchema({
           schema: invalidSchema,
           table: myTable,
-          entityAttributeName: 'entity',
-          entityAttributeHidden: true,
+          entityAttribute: true,
           entityName: 'myEntity',
           timestamps: true
         })

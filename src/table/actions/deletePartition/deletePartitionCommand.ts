@@ -12,7 +12,7 @@ import { BatchWriteCommand, execute } from '~/table/actions/batchWrite/index.js'
 import { $entity, QueryCommand } from '~/table/actions/query/index.js'
 import type { Query } from '~/table/actions/query/index.js'
 import { $sentArgs } from '~/table/constants.js'
-import { sender } from '~/table/decorator.js'
+import { interceptable } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
@@ -123,11 +123,11 @@ export class DeletePartitionCommand<
     return this.queryCommand().params()
   }
 
-  @sender()
+  @interceptable()
   async send(documentClientOptions?: DocumentClientOptions): Promise<DeletePartitionResponse> {
     const entitiesByName: Record<string, Entity> = {}
     this[$entities].forEach(entity => {
-      entitiesByName[entity.name] = entity
+      entitiesByName[entity.entityName] = entity
     })
 
     const { capacity, tableName } = this[$options]

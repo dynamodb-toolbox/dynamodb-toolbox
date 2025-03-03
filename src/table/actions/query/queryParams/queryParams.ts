@@ -1,10 +1,11 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
-import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
-import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
+import { EntityConditionParser } from '~/entity/actions/parseCondition/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
+import { getEntityAttrOptionValue, isEntityAttrEnabled } from '~/entity/utils/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseCapacityOption } from '~/options/capacity.js'
 import { parseConsistentOption } from '~/options/consistent.js'
@@ -64,7 +65,7 @@ export const queryParams: QueryParamsGetter = <
     filters: _filters,
     attributes: _attributes,
     tableName,
-    entityAttrFilter = true,
+    entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)),
     showEntityAttr,
     ...extraOptions
   } = options
@@ -125,7 +126,7 @@ export const queryParams: QueryParamsGetter = <
   }
 
   // entityAttrFilter is a meta-option, validated but not used here
-  parseEntityAttrFilterOption(entityAttrFilter)
+  parseEntityAttrFilterOption(entityAttrFilter, entities, filters)
 
   if (showEntityAttr !== undefined) {
     // showEntityAttr is a meta-option, validated but not used here
@@ -167,31 +168,34 @@ export const queryParams: QueryParamsGetter = <
        * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
        */
       if (projectionExpression === undefined && attributes !== undefined) {
-        const { entityAttributeName } = entity
-
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = entity
-          .build(EntityPathParser)
-          .parse(
-            // entityAttributeName is required at all times for formatting
-            attributes.includes(entityAttributeName)
-              ? attributes
-              : [entityAttributeName, ...attributes]
-          )
-          .toCommandOptions()
+        } = entity.build(EntityPathParser).parse(attributes).toCommandOptions()
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression
+
+        const { entityAttributeSavedAs } = table
+
+        // We prefer including the entityAttrSavedAs for faster formatting
+        if (!Object.values(expressionAttributeNames).includes(entityAttributeSavedAs)) {
+          projectionExpression += `, #_et`
+          expressionAttributeNames['#_et'] = entityAttributeSavedAs
+        }
       }
 
-      const entityFilter = filters[entity.name]
-      if (entityFilter === undefined && !entityAttrFilter) {
+      const entityOptionsFilter = filters[entity.entityName]
+      const entityNameFilter = entityAttrFilter
+        ? // NOTE: We validated that all entities have entityAttr enabled
+          { attr: getEntityAttrOptionValue(entity.entityAttribute, 'name'), eq: entity.entityName }
+        : undefined
+
+      if (entityOptionsFilter === undefined && entityNameFilter === undefined) {
         continue
       }
 
-      const entityNameFilter = { attr: entity.entityAttributeName, eq: entity.name }
+      const entityFilters = [entityNameFilter, entityOptionsFilter].filter(Boolean) as Condition[]
 
       const {
         ExpressionAttributeNames: filterExpressionAttributeNames,
@@ -201,9 +205,7 @@ export const queryParams: QueryParamsGetter = <
         .build(EntityConditionParser)
         // Need to add +1 to take KeyConditionExpression into account
         .setId((index + 1).toString())
-        .parse(
-          entityFilter !== undefined ? { and: [entityNameFilter, entityFilter] } : entityNameFilter
-        )
+        .parse({ and: entityFilters })
         .toCommandOptions()
 
       Object.assign(expressionAttributeNames, filterExpressionAttributeNames)

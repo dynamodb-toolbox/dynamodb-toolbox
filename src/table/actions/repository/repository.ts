@@ -128,11 +128,11 @@ export class TableRepository<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request.entity.name)) {
+      if (entityNames.has(request.entity.entityName)) {
         continue
       }
       entities.push(request.entity)
-      entityNames.add(request.entity.name)
+      entityNames.add(request.entity.entityName)
     }
 
     return new BatchGetCommand<TABLE, REQUEST_ENTITIES, REQUESTS, OPTIONS>(
@@ -182,11 +182,11 @@ export class TableRepository<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request.entity.name)) {
+      if (entityNames.has(request.entity.entityName)) {
         continue
       }
       entities.push(request.entity)
-      entityNames.add(request.entity.name)
+      entityNames.add(request.entity.entityName)
     }
 
     return new BatchWriteCommand<TABLE, REQUEST_ENTITIES, REQUESTS>(

@@ -20,7 +20,7 @@ export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> im
 
   constructor(table: TABLE) {
     super(table)
-    this.tableName = this.table.name !== undefined ? this.table.getName() : undefined
+    this.tableName = this.table.tableName !== undefined ? this.table.getName() : undefined
     this.partitionKey = this.table.partitionKey
     this.sortKey = this.table.sortKey
     this.indexes = this.table.indexes

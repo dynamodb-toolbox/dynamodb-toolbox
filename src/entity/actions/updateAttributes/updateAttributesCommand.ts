@@ -4,7 +4,7 @@ import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynam
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { ReturnedAttributes } from '~/entity/actions/update/updateItemCommand.js'
 import { $sentArgs } from '~/entity/constants.js'
-import { sender } from '~/entity/decorator.js'
+import { interceptable } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import { EntityAction } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -75,7 +75,7 @@ export class UpdateAttributesCommand<
     return updateAttributesParams(this.entity, item, options)
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<UpdateAttributesResponse<ENTITY, OPTIONS>> {

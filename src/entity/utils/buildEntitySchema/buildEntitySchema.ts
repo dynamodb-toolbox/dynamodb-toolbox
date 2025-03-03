@@ -2,11 +2,11 @@ import { $get } from '~/entity/actions/update/symbols/get.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Schema } from '~/schema/index.js'
 import { ItemSchema } from '~/schema/item/schema.js'
-import { string } from '~/schema/string/index.js'
+import { StringSchema } from '~/schema/string/schema.js'
 import type { Table } from '~/table/index.js'
 
 import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
-import type { TimestampsOptions } from './options.js'
+import type { EntityAttrOptions, TimestampsOptions } from './options.js'
 import type {
   $EntityAttribute,
   $TimestampAttribute,
@@ -14,41 +14,46 @@ import type {
   EntitySchemaBuilder
 } from './types.js'
 import type { TimestampOptionValue } from './utils.js'
-import { getTimestampOptionValue, isTimestampEnabled } from './utils.js'
+import {
+  getEntityAttrOptionValue,
+  getTimestampOptionValue,
+  isEntityAttrEnabled,
+  isTimestampEnabled
+} from './utils.js'
 
 export const buildEntitySchema: EntitySchemaBuilder = <
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
-  ENTITY_ATTRIBUTE_NAME extends string,
-  ENTITY_ATTRIBUTE_HIDDEN extends boolean,
   ENTITY_NAME extends string,
+  ENTITY_ATTR_OPTIONS extends EntityAttrOptions,
   TIMESTAMP_OPTIONS extends TimestampsOptions
 >({
   schema,
   table,
-  entityAttributeName,
-  entityAttributeHidden,
   entityName,
+  entityAttribute,
   timestamps
 }: {
   schema: SchemaOf<ATTRIBUTES>
   table: TABLE
-  entityAttributeName: ENTITY_ATTRIBUTE_NAME
-  entityAttributeHidden: ENTITY_ATTRIBUTE_HIDDEN
+  entityAttribute: ENTITY_ATTR_OPTIONS
   entityName: ENTITY_NAME
   timestamps: TIMESTAMP_OPTIONS
 }) => {
   const internalAttributes: Record<string, Schema> = {}
 
-  const entityAttribute: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTRIBUTE_HIDDEN> = string({
-    hidden: entityAttributeHidden,
-    enum: [entityName] as [ENTITY_NAME],
-    putDefault: entityName,
-    updateDefault: () => $get(entityAttributeName, entityName),
-    savedAs: table.entityAttributeSavedAs
-  })
+  if (isEntityAttrEnabled(entityAttribute)) {
+    const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
+    const entityAttr: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS> = new StringSchema({
+      hidden: getEntityAttrOptionValue(entityAttribute, 'hidden'),
+      enum: [entityName] as [ENTITY_NAME],
+      putDefault: entityName,
+      updateDefault: () => $get(entityAttrName, entityName),
+      savedAs: table.entityAttributeSavedAs
+    })
 
-  internalAttributes[entityAttributeName] = entityAttribute
+    internalAttributes[entityAttrName] = entityAttr
+  }
 
   if (isTimestampEnabled(timestamps, 'created')) {
     const createdName = getTimestampOptionValue(timestamps, 'created', 'name')
@@ -56,7 +61,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
     const createdAttribute: $TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
-    > = string({
+    > = new StringSchema({
       hidden: getTimestampOptionValue(timestamps, 'created', 'hidden'),
       savedAs: getTimestampOptionValue(timestamps, 'created', 'savedAs'),
       putDefault: () => new Date().toISOString(),
@@ -72,7 +77,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
     const modifiedAttribute: $TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
-    > = string({
+    > = new StringSchema({
       hidden: getTimestampOptionValue(timestamps, 'modified', 'hidden'),
       savedAs: getTimestampOptionValue(timestamps, 'modified', 'savedAs'),
       putDefault: () => new Date().toISOString(),
@@ -102,9 +107,8 @@ export const buildEntitySchema: EntitySchemaBuilder = <
   return new ItemSchema({ ...schema.attributes, ...internalAttributes }) as BuildEntitySchema<
     ATTRIBUTES,
     TABLE,
-    ENTITY_ATTRIBUTE_NAME,
-    ENTITY_ATTRIBUTE_HIDDEN,
     ENTITY_NAME,
+    ENTITY_ATTR_OPTIONS,
     TIMESTAMP_OPTIONS
   >
 }

@@ -13,7 +13,7 @@ const table = new Table({
 })
 
 describe('DTO', () => {
-  test('correctly builds simple schema DTO', () => {
+  test('correctly builds simple entity DTO', () => {
     const simpleEntity = new Entity({
       name: 'simple',
       schema: item({
@@ -38,8 +38,7 @@ describe('DTO', () => {
           attr: { type: 'string' }
         }
       },
-      entityAttributeName: 'entity',
-      entityAttributeHidden: true,
+      entityAttribute: true,
       timestamps: true,
       table: {
         entityAttributeSavedAs: '_et',
@@ -48,15 +47,50 @@ describe('DTO', () => {
     })
   })
 
-  test('correctly builds rich schema DTO', () => {
+  test('correctly builds customized entity DTO', () => {
+    const simpleEntity = new Entity({
+      name: 'simple',
+      schema: item({
+        pk: string().key(),
+        attr: string()
+      }),
+      table,
+      entityAttribute: false,
+      timestamps: false
+    })
+
+    const dto = simpleEntity.build(EntityDTO)
+
+    const assertJSON: A.Contains<typeof dto, IEntityDTO> = 1
+    assertJSON
+
+    const entityObj = JSON.parse(JSON.stringify(dto))
+    expect(entityObj).toStrictEqual({
+      entityName: 'simple',
+      schema: {
+        type: 'item',
+        attributes: {
+          pk: { type: 'string', key: true, required: 'always' },
+          attr: { type: 'string' }
+        }
+      },
+      entityAttribute: false,
+      timestamps: false,
+      table: {
+        entityAttributeSavedAs: '_et',
+        partitionKey: { name: 'pk', type: 'string' }
+      }
+    })
+  })
+
+  test('correctly builds highly customized entity DTO', () => {
     const richEntity = new Entity({
       name: 'rich',
       schema: item({
         pk: string().key(),
         attr: string()
       }),
-      entityAttributeName: '__ent__',
-      entityAttributeHidden: false,
+      entityAttribute: { name: '__ent__', hidden: false },
       timestamps: {
         created: { hidden: false, name: 'createdAt' },
         modified: false
@@ -79,8 +113,7 @@ describe('DTO', () => {
           attr: { type: 'string' }
         }
       },
-      entityAttributeName: '__ent__',
-      entityAttributeHidden: false,
+      entityAttribute: { name: '__ent__', hidden: false },
       timestamps: {
         created: { hidden: false, name: 'createdAt' },
         modified: false
