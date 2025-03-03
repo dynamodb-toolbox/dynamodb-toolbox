@@ -15,7 +15,7 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import { $options, $requests } from './constants.js'
 
-export type BatchGetRequestProps = Pick<BatchGetRequest, 'entity' | 'params'>
+export type IBatchGetRequest = Pick<BatchGetRequest, 'entity' | 'params'>
 
 export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   consistent?: boolean
@@ -26,15 +26,15 @@ export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
 } & ({ attributes?: undefined } | { attributes: EntityPathsIntersection<ENTITIES>[] })
 
 export type RequestEntities<
-  REQUESTS extends BatchGetRequestProps[],
+  REQUESTS extends IBatchGetRequest[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
-  ? ListOf<REQUESTS[number]> extends BatchGetRequestProps[]
+  ? ListOf<REQUESTS[number]> extends IBatchGetRequest[]
     ? RequestEntities<ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-    ? REQUESTS_HEAD extends BatchGetRequestProps
-      ? REQUESTS_TAIL extends BatchGetRequestProps[]
+    ? REQUESTS_HEAD extends IBatchGetRequest
+      ? REQUESTS_TAIL extends IBatchGetRequest[]
         ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
           : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
@@ -45,7 +45,7 @@ export type RequestEntities<
 export class BatchGetCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
-  REQUESTS extends BatchGetRequestProps[] = BatchGetRequestProps[],
+  REQUESTS extends IBatchGetRequest[] = IBatchGetRequest[],
   OPTIONS extends BatchGetCommandOptions<ENTITIES> = BatchGetCommandOptions<ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'batchGet' as const;
@@ -64,7 +64,7 @@ export class BatchGetCommand<
     this[$options] = options
   }
 
-  requests<NEXT_REQUESTS extends BatchGetRequestProps[]>(
+  requests<NEXT_REQUESTS extends IBatchGetRequest[]>(
     ...requests: NEXT_REQUESTS
   ): BatchGetCommand<
     TABLE,
