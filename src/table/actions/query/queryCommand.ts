@@ -6,6 +6,8 @@ import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { EntityPaths } from '~/entity/actions/parsePaths/index.js'
 import type { Entity, FormattedItem } from '~/entity/index.js'
+import { getEntityAttrOptionValue, isEntityAttrEnabled } from '~/entity/utils/index.js'
+import type { EntityAttrObjectOptions, EntityAttrOptionValue } from '~/entity/utils/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $sentArgs } from '~/table/constants.js'
@@ -32,7 +34,10 @@ type ReturnedItems<
       ? FormattedItem
       : ENTITIES[number] extends infer ENTITY
         ? ENTITY extends Entity
-          ? OPTIONS['showEntityAttr'] extends true
+          ? [ENTITY, OPTIONS] extends [
+              { entityAttribute: true | EntityAttrObjectOptions },
+              { showEntityAttr: true }
+            ]
             ? Merge<
                 FormattedItem<
                   ENTITY,
@@ -42,7 +47,12 @@ type ReturnedItems<
                       : undefined
                   }
                 >,
-                { [KEY in ENTITY['entityAttributeName']]: ENTITY['name'] }
+                {
+                  [KEY in EntityAttrOptionValue<
+                    ENTITY['entityAttribute'],
+                    'name'
+                  >]: ENTITY['entityName']
+                }
               >
             : FormattedItem<
                 ENTITY,
@@ -170,7 +180,7 @@ export class QueryCommand<
 
     const formattersByName: Record<string, EntityFormatter> = {}
     this[$entities].forEach(entity => {
-      formattersByName[entity.name] = entity.build(EntityFormatter)
+      formattersByName[entity.entityName] = entity.build(EntityFormatter)
     })
 
     const formattedItems: FormattedItem[] = []
@@ -217,9 +227,14 @@ export class QueryCommand<
           for (const [entityName, formatter] of Object.entries(formattersByName)) {
             try {
               const formattedItem = formatter.format(item, { attributes })
+
+              const { entityAttribute } = formatter.entity
+              const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
+              const addEntityAttr = showEntityAttr && isEntityAttrEnabled(entityAttribute)
+
               formattedItems.push({
                 ...formattedItem,
-                ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: entityName } : {}),
+                ...(addEntityAttr ? { [entityAttrName]: entityName } : {}),
                 // $entity symbol is useful for the DeletePartition command
                 [$entity]: entityName
               })
@@ -238,9 +253,14 @@ export class QueryCommand<
         }
 
         const formattedItem = formatter.format(item, { attributes })
+
+        const { entityAttribute, entityName } = formatter.entity
+        const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
+        const addEntityAttr = showEntityAttr && isEntityAttrEnabled(entityAttribute)
+
         formattedItems.push({
           ...formattedItem,
-          ...(showEntityAttr ? { [formatter.entity.entityAttributeName]: itemEntityName } : {}),
+          ...(addEntityAttr ? { [entityAttrName]: entityName } : {}),
           // $entity symbol is useful for the DeletePartition command
           [$entity]: itemEntityName
         })

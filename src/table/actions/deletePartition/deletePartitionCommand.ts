@@ -127,7 +127,7 @@ export class DeletePartitionCommand<
   async send(documentClientOptions?: DocumentClientOptions): Promise<DeletePartitionResponse> {
     const entitiesByName: Record<string, Entity> = {}
     this[$entities].forEach(entity => {
-      entitiesByName[entity.name] = entity
+      entitiesByName[entity.entityName] = entity
     })
 
     const { capacity, tableName } = this[$options]

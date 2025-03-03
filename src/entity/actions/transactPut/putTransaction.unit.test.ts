@@ -116,7 +116,7 @@ describe('put transaction', () => {
     } = TestEntity.build(PutTransaction).item({ email: 'test-pk', sort: 'test-sk' }).params()
 
     expect(Item).toStrictEqual({
-      _et: TestEntity.name,
+      _et: TestEntity.entityName,
       _ct: expect.any(String),
       _md: expect.any(String),
       pk: 'test-pk',
@@ -126,7 +126,7 @@ describe('put transaction', () => {
     })
 
     expect(ToolboxItem).toMatchObject({
-      entity: TestEntity.name,
+      entity: TestEntity.entityName,
       created: expect.any(String),
       modified: expect.any(String),
       email: 'test-pk',

@@ -14,7 +14,7 @@ export type DeletePartitionOptions<
   entityAttrFilter?: boolean
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+    : { [ENTITY in ENTITIES[number] as ENTITY['entityName']]?: Condition<ENTITY> }
   tableName?: string
 } & (QUERY['index'] extends keyof TABLE['indexes']
   ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'

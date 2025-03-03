@@ -23,7 +23,7 @@ describe('fromDTO - table', () => {
     const table = fromTableDTO(tableDTO)
 
     expect(table).toBeInstanceOf(Table)
-    expect(table.name).toBe('pokemons')
+    expect(table.tableName).toBe('pokemons')
 
     expect(table.partitionKey).toStrictEqual({ name: 'pk', type: 'string' })
     expect(table.sortKey).toStrictEqual({ name: 'sk', type: 'number' })
@@ -49,7 +49,7 @@ describe('fromDTO - table', () => {
     const table = fromTableDTO(tableDTO)
 
     expect(table).toBeInstanceOf(Table)
-    expect(table.name).toBeUndefined()
+    expect(table.tableName).toBeUndefined()
 
     expect(table.partitionKey).toStrictEqual({ name: 'pk', type: 'string' })
     expect(table.sortKey).toBeUndefined()

@@ -116,8 +116,8 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [$entity]: EntityA.name, ...formattedItemA },
-      { [$entity]: EntityB.name, ...formattedItemB }
+      { [$entity]: EntityA.entityName, ...formattedItemA },
+      { [$entity]: EntityB.entityName, ...formattedItemB }
     ])
   })
 
@@ -133,8 +133,8 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [$entity]: EntityA.name, [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [$entity]: EntityB.name, [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+      { [$entity]: EntityA.entityName, entity: EntityA.entityName, ...formattedItemA },
+      { [$entity]: EntityB.entityName, entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 
@@ -150,8 +150,8 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [$entity]: EntityA.name, ...formattedItemA },
-      { [$entity]: EntityB.name, ...formattedItemB }
+      { [$entity]: EntityA.entityName, ...formattedItemA },
+      { [$entity]: EntityB.entityName, ...formattedItemB }
     ])
   })
 
@@ -167,8 +167,8 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [$entity]: EntityA.name, [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [$entity]: EntityB.name, [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+      { [$entity]: EntityA.entityName, entity: EntityA.entityName, ...formattedItemA },
+      { [$entity]: EntityB.entityName, entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 })

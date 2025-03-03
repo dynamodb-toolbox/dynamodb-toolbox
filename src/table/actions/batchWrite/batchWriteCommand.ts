@@ -28,7 +28,7 @@ export type RequestEntities<
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends IBatchWriteRequest
       ? REQUESTS_TAIL extends IBatchWriteRequest[]
-        ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
+        ? REQUESTS_HEAD['entity']['entityName'] extends RESULTS[number]['entityName']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
           : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
         : never
@@ -63,11 +63,11 @@ export class BatchWriteCommand<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request.entity.name)) {
+      if (entityNames.has(request.entity.entityName)) {
         continue
       }
       entities.push(request.entity)
-      entityNames.add(request.entity.name)
+      entityNames.add(request.entity.entityName)
     }
 
     return new BatchWriteCommand(this.table, entities as RequestEntities<NEXT_REQUESTS>, requests)

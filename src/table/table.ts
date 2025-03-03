@@ -17,7 +17,7 @@ export class Table<
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
   public documentClient?: DynamoDBDocumentClient
-  public name?: string | (() => string)
+  public tableName?: string | (() => string)
   public partitionKey: PARTITION_KEY
   public sortKey?: SORT_KEY
   public indexes: INDEXES
@@ -41,7 +41,7 @@ export class Table<
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
   }) {
     this.documentClient = documentClient
-    this.name = name
+    this.tableName = name
     this.partitionKey = partitionKey
     if (sortKey) {
       this.sortKey = sortKey
@@ -51,16 +51,16 @@ export class Table<
   }
 
   getName(): string {
-    if (this.name === undefined) {
+    if (this.tableName === undefined) {
       throw new DynamoDBToolboxError('table.missingTableName', {
         message: 'Please specify a table name in your Table constructor or in your command options.'
       })
     }
 
-    if (isString(this.name)) {
-      return this.name
+    if (isString(this.tableName)) {
+      return this.tableName
     } else {
-      return this.name()
+      return this.tableName()
     }
   }
 
