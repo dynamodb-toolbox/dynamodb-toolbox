@@ -6,7 +6,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { Entity, Table, item, number, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
 
 import { ScanCommand } from './scanCommand.js'
 
@@ -133,32 +133,33 @@ describe('scanCommand', () => {
     ])
   })
 
-  test('still tries all formatters if entityAttribute misses (omit invalid items)', async () => {
+  test('tries all formatters if entityAttribute misses and throws on invalid items if noEntityMatchBehavior is "THROW" (default)', async () => {
+    documentClientMock.on(_ScanCommand).resolves({
+      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
+    })
+
+    const invalidCall = async () =>
+      await TestTable.build(ScanCommand)
+        .entities(EntityA, EntityB)
+        .options({ entityAttrFilter: false })
+        .send()
+
+    expect(invalidCall).rejects.toThrow(DynamoDBToolboxError)
+    expect(invalidCall).rejects.toThrow(
+      expect.objectContaining({ code: 'scanCommand.noEntityMatched' })
+    )
+  })
+
+  test('tries all formatters if entityAttribute misses and omit invalid items if noEntityMatchBehavior is "DISCARD"', async () => {
     documentClientMock.on(_ScanCommand).resolves({
       Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
     })
 
     const { Items } = await TestTable.build(ScanCommand)
       .entities(EntityA, EntityB)
-      .options({ entityAttrFilter: false })
+      .options({ entityAttrFilter: false, noEntityMatchBehavior: 'DISCARD' })
       .send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
-  })
-
-  test('still appends entityAttribute if showEntityAttr is true', async () => {
-    documentClientMock.on(_ScanCommand).resolves({
-      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
-    })
-
-    const { Items } = await TestTable.build(ScanCommand)
-      .entities(EntityA, EntityB)
-      .options({ entityAttrFilter: false, showEntityAttr: true })
-      .send()
-
-    expect(Items).toStrictEqual([
-      { entity: EntityA.entityName, ...formattedItemA },
-      { entity: EntityB.entityName, ...formattedItemB }
-    ])
   })
 })

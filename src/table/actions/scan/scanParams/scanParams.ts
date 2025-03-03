@@ -13,6 +13,7 @@ import { parseEntityAttrFilterOption } from '~/options/entityAttrFilter.js'
 import { parseIndexOption } from '~/options/index.js'
 import { parseLimitOption } from '~/options/limit.js'
 import { parseMaxPagesOption } from '~/options/maxPages.js'
+import { parseNoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
 import { parseShowEntityAttrOption } from '~/options/showEntityAttr.js'
@@ -62,6 +63,7 @@ export const scanParams: ScanParamsGetter = <
     tableName,
     entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)),
     showEntityAttr,
+    noEntityMatchBehavior,
     ...extraOptions
   } = options
   rejectExtraOptions(extraOptions)
@@ -115,6 +117,11 @@ export const scanParams: ScanParamsGetter = <
   if (showEntityAttr !== undefined) {
     // showEntityAttr is a meta-option, validated but not used here
     parseShowEntityAttrOption(showEntityAttr)
+  }
+
+  if (noEntityMatchBehavior !== undefined) {
+    // noEntityMatchBehavior is a meta-option, validated but not used here
+    parseNoEntityMatchBehavior(noEntityMatchBehavior)
   }
 
   if (segment !== undefined) {

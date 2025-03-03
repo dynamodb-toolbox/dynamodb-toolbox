@@ -93,7 +93,8 @@ describe('scan', () => {
     assertReturnedItems
   })
 
-  // Options
+  // --- OPTIONS ---
+
   test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestTable.build(ScanCommand)
       .options({ capacity: 'NONE' })
@@ -496,6 +497,19 @@ describe('scan', () => {
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
       expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+  })
+
+  test('throws on invalid noEntityMatchBehavior option', () => {
+    const invalidCall = () =>
+      TestTable.build(ScanCommand)
+        // @ts-expect-error
+        .options({ noEntityMatchBehavior: 'Throw' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidNoEntityMatchBehaviorOption' })
     )
   })
 
