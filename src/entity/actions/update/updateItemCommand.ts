@@ -3,7 +3,7 @@ import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynam
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
-import { sender } from '~/entity/decorator.js'
+import { interceptable } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
@@ -100,7 +100,7 @@ export class UpdateItemCommand<
     return updateItemParams(this.entity, item, options)
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {

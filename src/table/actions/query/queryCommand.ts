@@ -9,7 +9,7 @@ import type { Entity, FormattedItem } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $sentArgs } from '~/table/constants.js'
-import { sender } from '~/table/decorator.js'
+import { interceptable } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
@@ -161,7 +161,7 @@ export class QueryCommand<
     return queryParams(this.table, ...this[$sentArgs]())
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
