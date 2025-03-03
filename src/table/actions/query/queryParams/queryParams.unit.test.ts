@@ -486,7 +486,8 @@ describe('query', () => {
     )
   })
 
-  // Options
+  // --- OPTIONS ---
+
   test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })
@@ -817,6 +818,20 @@ describe('query', () => {
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
       expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+  })
+
+  test('throws on invalid noEntityMatchBehavior option', () => {
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        // @ts-expect-error
+        .options({ noEntityMatchBehavior: 'Throw' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidNoEntityMatchBehaviorOption' })
     )
   })
 

@@ -2,6 +2,7 @@ import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
+import type { NoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
 import type {
   AllProjectedAttributesSelectOption,
   SelectOption,
@@ -26,6 +27,7 @@ export type QueryOptions<
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['entityName']]?: Condition<ENTITY> }
   entityAttrFilter?: boolean
+  noEntityMatchBehavior?: NoEntityMatchBehavior
   showEntityAttr?: boolean
   tableName?: string
 } & (QUERY['index'] extends keyof TABLE['indexes']

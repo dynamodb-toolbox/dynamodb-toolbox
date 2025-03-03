@@ -190,8 +190,13 @@ export class QueryCommand<
     let consumedCapacity: ConsumedCapacity | undefined = undefined
     let responseMetadata: QueryCommandOutput['$metadata'] | undefined = undefined
 
-    // NOTE: maxPages has been validated by this.params()
-    const { attributes, maxPages = 1, showEntityAttr = false } = this[$options]
+    const {
+      attributes,
+      maxPages = 1,
+      showEntityAttr = false,
+      noEntityMatchBehavior = 'THROW'
+    } = this[$options]
+
     let pageIndex = 0
     do {
       pageIndex += 1
@@ -220,8 +225,11 @@ export class QueryCommand<
         }
 
         const itemEntityName = item[entityAttrSavedAs] as unknown
+        const itemEntityFormatter = formattersByName[String(itemEntityName)]
 
-        if (!isString(itemEntityName)) {
+        if (!isString(itemEntityName) || itemEntityFormatter === undefined) {
+          let hasEntityMatch: boolean = false
+
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
           // (NOTE: Can only happen if `entityAttrFilter` is false)
           for (const [entityName, formatter] of Object.entries(formattersByName)) {
@@ -238,23 +246,27 @@ export class QueryCommand<
                 // $entity symbol is useful for the DeletePartition command
                 [$entity]: entityName
               })
+
+              hasEntityMatch = true
               break
             } catch {
               continue
             }
           }
-          // NOTE: Maybe we should throw here? (No formatter worked)
+
+          if (!hasEntityMatch && noEntityMatchBehavior === 'THROW') {
+            throw new DynamoDBToolboxError('queryCommand.noEntityMatched', {
+              message: 'Unable to match item of unidentified entity to the QueryCommand entities',
+              payload: { item }
+            })
+          }
+
           continue
         }
 
-        const formatter = formattersByName[itemEntityName]
-        if (formatter === undefined) {
-          continue
-        }
+        const formattedItem = itemEntityFormatter.format(item, { attributes })
 
-        const formattedItem = formatter.format(item, { attributes })
-
-        const { entityAttribute, entityName } = formatter.entity
+        const { entityAttribute, entityName } = itemEntityFormatter.entity
         const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
         const addEntityAttr = showEntityAttr && isEntityAttrEnabled(entityAttribute)
 
