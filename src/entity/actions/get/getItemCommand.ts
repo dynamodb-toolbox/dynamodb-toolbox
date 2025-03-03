@@ -3,7 +3,7 @@ import type { GetCommandInput, GetCommandOutput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
-import { sender } from '~/entity/decorator.js'
+import { interceptable } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
@@ -75,7 +75,7 @@ export class GetItemCommand<
     return getItemParams(this.entity, ...this[$sentArgs]())
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<GetItemResponse<ENTITY, OPTIONS>> {

@@ -9,7 +9,7 @@ import type { FormattedItem } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CountSelectOption } from '~/options/select.js'
 import { $sentArgs } from '~/table/constants.js'
-import { sender } from '~/table/decorator.js'
+import { interceptable } from '~/table/decorator.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { Table, TableSendableAction } from '~/table/table.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
@@ -118,7 +118,7 @@ export class ScanCommand<
     return scanParams(this.table, ...this[$sentArgs]())
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {

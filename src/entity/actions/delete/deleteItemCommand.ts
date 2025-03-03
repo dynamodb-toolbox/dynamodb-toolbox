@@ -3,7 +3,7 @@ import type { DeleteCommandInput, DeleteCommandOutput } from '@aws-sdk/lib-dynam
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
-import { sender } from '~/entity/decorator.js'
+import { interceptable } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import type { FormattedItem } from '~/entity/index.js'
 import type { KeyInputItem } from '~/entity/index.js'
@@ -76,7 +76,7 @@ export class DeleteItemCommand<
     return deleteItemParams(this.entity, ...this[$sentArgs]())
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
