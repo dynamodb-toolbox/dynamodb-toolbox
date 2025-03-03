@@ -15,7 +15,7 @@ import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchGetCommand } from './batchGetCommand.js'
-import type { BatchGetCommandOptions, BatchGetRequestProps } from './batchGetCommand.js'
+import type { BatchGetCommandOptions, IBatchGetRequest } from './batchGetCommand.js'
 import { $options, $requests } from './constants.js'
 
 export interface ExecuteBatchGetOptions extends DocumentClientOptions {
@@ -76,12 +76,12 @@ type BatchGetResponses<
     : RESPONSES
 
 type BatchGetRequestResponses<
-  REQUESTS extends BatchGetRequestProps[],
+  REQUESTS extends IBatchGetRequest[],
   OPTIONS extends BatchGetCommandOptions,
   ITEMS extends unknown[] = []
 > = REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-  ? REQUESTS_HEAD extends BatchGetRequestProps
-    ? REQUESTS_TAIL extends BatchGetRequestProps[]
+  ? REQUESTS_HEAD extends IBatchGetRequest
+    ? REQUESTS_TAIL extends IBatchGetRequest[]
       ? BatchGetRequestResponses<
           REQUESTS_TAIL,
           OPTIONS,
@@ -109,7 +109,7 @@ type BatchGetRequestResponses<
         ...ITEMS,
         ...(
           | (REQUESTS[number] extends infer ENTITY_REQUEST
-              ? ENTITY_REQUEST extends BatchGetRequestProps
+              ? ENTITY_REQUEST extends IBatchGetRequest
                 ? FormattedItem<
                     ENTITY_REQUEST['entity'],
                     {

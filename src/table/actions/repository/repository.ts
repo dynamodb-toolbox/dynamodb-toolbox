@@ -9,14 +9,15 @@ import type { RequestEntities as BatchGetRequestEntities } from '~/table/actions
 import type {
   BatchGetCommandOptions,
   ExecuteBatchGetInput,
-  ExecuteBatchGetResponses
+  ExecuteBatchGetResponses,
+  IBatchGetRequest
 } from '~/table/actions/batchGet/index.js'
 import { BatchGetCommand, execute as executeBatchGet } from '~/table/actions/batchGet/index.js'
 import type {
   BatchWriteCommandOptions,
   RequestEntities as BatchWriteRequestEntities,
-  BatchWriteRequestProps
-} from '~/table/actions/batchWrite/batchWriteCommand.js'
+  IBatchWriteRequest
+} from '~/table/actions/batchWrite/index.js'
 import {
   BatchWriteCommand,
   execute as executeBatchWrite
@@ -35,11 +36,6 @@ import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
 import { ScanCommand } from '~/table/actions/scan/index.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
-
-const isBatchWriteRequest = (
-  input: BatchWriteCommandOptions | BatchWriteRequestProps
-): input is BatchWriteRequestProps =>
-  input instanceof BatchPutRequest || input instanceof BatchDeleteRequest
 
 export class TableRepository<
   TABLE extends Table = Table,
@@ -91,11 +87,13 @@ export class TableRepository<
   }
 
   batchGet<
-    REQUESTS_OR_OPTIONS extends BatchGetRequest[] | [BatchGetCommandOptions, ...BatchGetRequest[]],
-    REQUESTS extends BatchGetRequest[] = REQUESTS_OR_OPTIONS extends BatchGetRequest[]
+    REQUESTS_OR_OPTIONS extends
+      | IBatchGetRequest[]
+      | [BatchGetCommandOptions, ...IBatchGetRequest[]],
+    REQUESTS extends IBatchGetRequest[] = REQUESTS_OR_OPTIONS extends IBatchGetRequest[]
       ? REQUESTS_OR_OPTIONS
       : REQUESTS_OR_OPTIONS extends [BatchGetCommandOptions, ...infer TAIL_REQUESTS]
-        ? TAIL_REQUESTS extends BatchGetRequest[]
+        ? TAIL_REQUESTS extends IBatchGetRequest[]
           ? TAIL_REQUESTS
           : never
         : never,
@@ -110,10 +108,10 @@ export class TableRepository<
   ): BatchGetCommand<TABLE, REQUEST_ENTITIES, REQUESTS, OPTIONS> {
     const [headRequestOrOptions = {}, ...tailRequests] = _requests
 
-    const requests = tailRequests as BatchGetRequest[]
+    const requests = tailRequests as IBatchGetRequest[]
     let options: BatchGetCommandOptions = {}
 
-    if (headRequestOrOptions instanceof BatchGetRequest) {
+    if (isBatchGetRequest(headRequestOrOptions)) {
       requests.unshift(headRequestOrOptions)
     } else {
       options = headRequestOrOptions
@@ -151,12 +149,12 @@ export class TableRepository<
 
   batchWrite<
     REQUESTS_OR_OPTIONS extends
-      | BatchWriteRequestProps[]
-      | [BatchWriteCommandOptions, ...BatchWriteRequestProps[]],
-    REQUESTS extends BatchWriteRequestProps[] = REQUESTS_OR_OPTIONS extends BatchWriteRequestProps[]
+      | IBatchWriteRequest[]
+      | [BatchWriteCommandOptions, ...IBatchWriteRequest[]],
+    REQUESTS extends IBatchWriteRequest[] = REQUESTS_OR_OPTIONS extends IBatchWriteRequest[]
       ? REQUESTS_OR_OPTIONS
       : REQUESTS_OR_OPTIONS extends [BatchWriteCommandOptions, ...infer TAIL_REQUESTS]
-        ? TAIL_REQUESTS extends BatchWriteRequestProps[]
+        ? TAIL_REQUESTS extends IBatchWriteRequest[]
           ? TAIL_REQUESTS
           : never
         : never,
@@ -164,7 +162,7 @@ export class TableRepository<
   >(..._requests: REQUESTS_OR_OPTIONS): BatchWriteCommand<TABLE, REQUEST_ENTITIES, REQUESTS> {
     const [headRequestOrOptions = {}, ...tailRequests] = _requests
 
-    const requests = tailRequests as BatchWriteRequestProps[]
+    const requests = tailRequests as IBatchWriteRequest[]
     let options: BatchWriteCommandOptions = {}
 
     if (isBatchWriteRequest(headRequestOrOptions)) {
@@ -199,3 +197,11 @@ export class TableRepository<
     )
   }
 }
+const isBatchGetRequest = (
+  input: BatchGetCommandOptions | IBatchWriteRequest
+): input is IBatchGetRequest => input instanceof BatchGetRequest
+
+const isBatchWriteRequest = (
+  input: BatchWriteCommandOptions | IBatchWriteRequest
+): input is IBatchWriteRequest =>
+  input instanceof BatchPutRequest || input instanceof BatchDeleteRequest

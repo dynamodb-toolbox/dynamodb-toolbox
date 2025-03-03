@@ -12,22 +12,22 @@ import type { ListOf } from '~/types/listOf.js'
 
 import { $options, $requests } from './constants.js'
 
-export type BatchWriteRequestProps = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
+export type IBatchWriteRequest = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
 
 export type BatchWriteCommandOptions = {
   tableName?: string
 }
 
 export type RequestEntities<
-  REQUESTS extends BatchWriteRequestProps[],
+  REQUESTS extends IBatchWriteRequest[],
   RESULTS extends Entity[] = []
 > = number extends REQUESTS['length']
-  ? ListOf<REQUESTS[number]> extends BatchWriteRequestProps[]
+  ? ListOf<REQUESTS[number]> extends IBatchWriteRequest[]
     ? RequestEntities<ListOf<REQUESTS[number]>>
     : never
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
-    ? REQUESTS_HEAD extends BatchWriteRequestProps
-      ? REQUESTS_TAIL extends BatchWriteRequestProps[]
+    ? REQUESTS_HEAD extends IBatchWriteRequest
+      ? REQUESTS_TAIL extends IBatchWriteRequest[]
         ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
           : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
@@ -38,7 +38,7 @@ export type RequestEntities<
 export class BatchWriteCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
-  REQUESTS extends BatchWriteRequestProps[] = BatchWriteRequestProps[]
+  REQUESTS extends IBatchWriteRequest[] = IBatchWriteRequest[]
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'batchWrite' as const;
 
@@ -56,7 +56,7 @@ export class BatchWriteCommand<
     this[$options] = options
   }
 
-  requests<NEXT_REQUESTS extends BatchWriteRequestProps[]>(
+  requests<NEXT_REQUESTS extends IBatchWriteRequest[]>(
     ...requests: NEXT_REQUESTS
   ): BatchWriteCommand<TABLE, RequestEntities<NEXT_REQUESTS>, NEXT_REQUESTS> {
     const entities: Entity[] = []
