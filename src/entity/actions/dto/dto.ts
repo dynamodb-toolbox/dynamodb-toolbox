@@ -6,14 +6,15 @@ import { ItemSchema } from '~/schema/item/schema.js'
 import type { ITableDTO } from '~/table/actions/dto/index.js'
 import { TableDTO } from '~/table/actions/dto/index.js'
 
+type EntityAttrOption = boolean | { name?: string; hidden?: boolean }
+
 type TimestampOption = boolean | { name?: string; savedAs?: string; hidden?: boolean }
 
 type TimestampOptions = boolean | { created: TimestampOption; modified: TimestampOption }
 
 export interface IEntityDTO {
   entityName: string
-  entityAttributeName?: string
-  entityAttributeHidden?: boolean
+  entityAttribute?: EntityAttrOption
   timestamps?: TimestampOptions
   schema: ItemSchemaDTO
   table: ITableDTO
@@ -26,8 +27,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   static override actionName = 'dto' as const
   entityName: string
   schema: SchemaDTO
-  entityAttributeName: IEntityDTO['entityAttributeName']
-  entityAttributeHidden: IEntityDTO['entityAttributeHidden']
+  entityAttribute: IEntityDTO['entityAttribute']
   timestamps: IEntityDTO['timestamps']
   table: TableDTO
 
@@ -64,10 +64,9 @@ export class EntityDTO<ENTITY extends Entity = Entity>
       }
     }
 
-    this.entityName = this.entity.name
+    this.entityName = this.entity.entityName
     this.schema = constructorShemaDTO
-    this.entityAttributeName = this.entity.entityAttributeName
-    this.entityAttributeHidden = this.entity.entityAttributeHidden
+    this.entityAttribute = this.entity.entityAttribute
     this.timestamps = this.entity.timestamps
     this.table = this.entity.table.build(TableDTO)
   }
@@ -76,8 +75,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
     return {
       entityName: this.entityName,
       schema: this.schema.toJSON() as ItemSchemaDTO,
-      entityAttributeName: this.entity.entityAttributeName,
-      entityAttributeHidden: this.entity.entityAttributeHidden,
+      entityAttribute: this.entity.entityAttribute,
       timestamps: this.entity.timestamps,
       table: this.table.toJSON()
     }

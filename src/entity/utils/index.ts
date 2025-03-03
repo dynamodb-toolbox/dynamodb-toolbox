@@ -1,8 +1,22 @@
-export { buildEntitySchema } from './buildEntitySchema/index.js'
+export {
+  buildEntitySchema,
+  isTimestampEnabled,
+  getTimestampOptionValue,
+  isEntityAttrEnabled,
+  getEntityAttrOptionValue
+} from './buildEntitySchema/index.js'
 export type {
+  IsTimestampEnabled,
   TimestampsOptions,
-  NarrowTimestampsOptions,
+  TimestampsObjectOptions,
   TimestampsDefaultOptions,
+  TimestampOptionValue,
+  IsEntityAttrEnabled,
+  EntityAttrOptions,
+  EntityAttrObjectOptions,
+  EntityAttrDefaultOptions,
+  EntityAttrOptionValue,
+  NarrowOptions,
   BuildEntitySchema
 } from './buildEntitySchema/index.js'
 export { doesSchemaValidateTableSchema } from './doesSchemaValidateTableSchema.js'

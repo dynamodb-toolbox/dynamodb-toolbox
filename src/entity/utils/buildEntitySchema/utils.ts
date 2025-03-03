@@ -1,6 +1,11 @@
 import { isObject } from '~/utils/validation/isObject.js'
 
-import type { TimestampsDefaultOptions, TimestampsOptions } from './options.js'
+import type {
+  EntityAttrDefaultOptions,
+  EntityAttrOptions,
+  TimestampsDefaultOptions,
+  TimestampsOptions
+} from './options.js'
 
 export type IsTimestampEnabled<
   TIMESTAMP_OPTIONS extends TimestampsOptions,
@@ -70,4 +75,42 @@ export const getTimestampOptionValue = <
   }
 
   return defaultOptions
+}
+
+export type IsEntityAttrEnabled<ENTITY_ATTR_OPTIONS extends EntityAttrOptions> =
+  ENTITY_ATTR_OPTIONS extends true | Record<string, unknown> ? true : false
+
+export const isEntityAttrEnabled = <ENTITY_ATTR_OPTIONS extends EntityAttrOptions>(
+  entityAttrOptions: ENTITY_ATTR_OPTIONS
+): IsEntityAttrEnabled<ENTITY_ATTR_OPTIONS> =>
+  Boolean(entityAttrOptions) as IsEntityAttrEnabled<ENTITY_ATTR_OPTIONS>
+
+const ENTITY_ATTR_DEFAULTS_OPTIONS: EntityAttrDefaultOptions = {
+  name: 'entity',
+  hidden: true
+}
+
+export type EntityAttrOptionValue<
+  ENTITY_ATTR_OPTIONS extends EntityAttrOptions,
+  OPTION_KEY extends 'name' | 'hidden'
+> = ENTITY_ATTR_OPTIONS extends { [KEY in OPTION_KEY]: unknown }
+  ? ENTITY_ATTR_OPTIONS[OPTION_KEY]
+  : EntityAttrDefaultOptions[OPTION_KEY]
+
+export const getEntityAttrOptionValue = <
+  ENTITY_ATTR_OPTIONS extends EntityAttrOptions,
+  OPTION_KEY extends 'name' | 'hidden'
+>(
+  entityAttrOptions: ENTITY_ATTR_OPTIONS,
+  optionKey: OPTION_KEY
+): EntityAttrOptionValue<ENTITY_ATTR_OPTIONS, OPTION_KEY> => {
+  const defaultOptions = ENTITY_ATTR_DEFAULTS_OPTIONS[optionKey] as EntityAttrOptionValue<
+    ENTITY_ATTR_OPTIONS,
+    OPTION_KEY
+  >
+
+  return isObject(entityAttrOptions)
+    ? (entityAttrOptions[optionKey] as EntityAttrOptionValue<ENTITY_ATTR_OPTIONS, OPTION_KEY>) ??
+        defaultOptions
+    : defaultOptions
 }

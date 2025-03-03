@@ -67,6 +67,18 @@ const Entity2 = new Entity({
   table: TestTable
 })
 
+const EntityWithoutEntAttr = new Entity({
+  name: 'entity3',
+  schema: item({
+    categoryId: string().key().savedAs('pk'),
+    productId: string().key().savedAs('sk'),
+    launchDate: string(),
+    price: number()
+  }),
+  table: TestTable,
+  entityAttribute: false
+})
+
 describe('scan', () => {
   test('gets the tableName', async () => {
     const command = TestTable.build(ScanCommand)
@@ -446,6 +458,47 @@ describe('scan', () => {
     )
   })
 
+  test('throws on invalid entityAttrFilter option', () => {
+    const invalidCallA = () =>
+      TestTable.build(ScanCommand)
+        // @ts-expect-error
+        .options({ entityAttrFilter: 'true' })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+
+    const invalidCallB = () =>
+      TestTable.build(ScanCommand)
+        .entities(Entity1, EntityWithoutEntAttr)
+        .options({ entityAttrFilter: true })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+
+    const invalidCallC = () =>
+      TestTable.build(ScanCommand)
+        .entities(Entity1, Entity2)
+        .options({
+          filters: {
+            entity1: { attr: 'age', gte: 40 },
+            entity2: { attr: 'price', gte: 100 }
+          },
+          entityAttrFilter: false
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'options.invalidEntityAttrFilterOption' })
+    )
+  })
+
   test('throws on extra options', () => {
     const invalidCall = () =>
       TestTable.build(ScanCommand)
@@ -459,6 +512,8 @@ describe('scan', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.unknownOption' }))
   })
 
+  // --- FILTERS ---
+
   test('applies blind filter if no entity has been provided', () => {
     const command = TestTable.build(ScanCommand).options({ filter: { attr: 'foo', eq: 'bar' } })
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
@@ -469,7 +524,7 @@ describe('scan', () => {
     expect(ExpressionAttributeValues).toMatchObject({ ':c_1': 'bar' })
   })
 
-  test('ignores filter if entities have been provided', () => {
+  test('ignores blind filter if entities have been provided', () => {
     const command = TestTable.build(ScanCommand)
       .entities(Entity1)
       .options({
@@ -482,33 +537,56 @@ describe('scan', () => {
     expect(Object.values(ExpressionAttributeValues)).not.toContain('bar')
   })
 
-  test('applies entity _et filter', () => {
-    const command = TestTable.build(ScanCommand).entities(Entity1)
+  test('applies entity name filter if possible', () => {
+    const command = TestTable.build(ScanCommand).entities(Entity1, Entity2)
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       command.params()
 
-    expect(FilterExpression).toBe('#c0_1 = :c0_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': TestTable.entityAttributeSavedAs })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': Entity1.name })
-
-    const assertReturnedItems: A.Equals<
-      Awaited<ReturnType<typeof command.send>>['Items'],
-      FormattedItem<typeof Entity1>[] | undefined
-    > = 1
-    assertReturnedItems
+    expect(FilterExpression).toBe('(#c0_1 = :c0_1) OR (#c1_1 = :c1_1)')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#c0_1': TestTable.entityAttributeSavedAs,
+      '#c1_1': TestTable.entityAttributeSavedAs
+    })
+    expect(ExpressionAttributeValues).toMatchObject({
+      ':c0_1': Entity1.entityName,
+      ':c1_1': Entity2.entityName
+    })
   })
 
-  test('does not apply entity _et filter if entityAttrFilter is false', () => {
-    const command = TestTable.build(ScanCommand)
+  test('does not apply entity name filter if not possible', () => {
+    const command = TestTable.build(ScanCommand).entities(EntityWithoutEntAttr)
+    const { FilterExpression } = command.params()
+
+    expect(FilterExpression).toBeUndefined()
+  })
+
+  test('does not apply entity name filter if entityAttrFilter is false', () => {
+    const { FilterExpression } = TestTable.build(ScanCommand)
       .entities(Entity1)
       .options({ entityAttrFilter: false })
-
-    const { FilterExpression } = command.params()
+      .params()
 
     expect(FilterExpression).toBe(undefined)
   })
 
-  test('applies entity _et AND additional filter (even if entityAttrFilter is false)', () => {
+  test('applies the filter if a single entity without entityAttr is provided', () => {
+    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestTable.build(ScanCommand)
+        .entities(EntityWithoutEntAttr)
+        .options({
+          filters: {
+            entity3: { attr: 'price', gte: 100 }
+          },
+          entityAttrFilter: false
+        })
+        .params()
+
+    expect(FilterExpression).toBe('#c0_1 >= :c0_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': 'price' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': 100 })
+  })
+
+  test('applies the filter if a single entity is provided and entityAttrFilter is false', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestTable.build(ScanCommand)
         .entities(Entity1)
@@ -520,40 +598,12 @@ describe('scan', () => {
         })
         .params()
 
-    expect(FilterExpression).toBe('(#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c0_2': 'age'
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
-      ':c0_2': 40
-    })
+    expect(FilterExpression).toBe('#c0_1 >= :c0_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': 'age' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': 40 })
   })
 
-  test('applies two entity filters', () => {
-    const command = TestTable.build(ScanCommand).entities(Entity1, Entity2)
-    const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      command.params()
-
-    expect(FilterExpression).toBe('(#c0_1 = :c0_1) OR (#c1_1 = :c1_1)')
-    expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c1_1': TestTable.entityAttributeSavedAs
-    })
-    expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
-      ':c1_1': Entity2.name
-    })
-
-    const assertReturnedItems: A.Equals<
-      Awaited<ReturnType<typeof command.send>>['Items'],
-      (FormattedItem<typeof Entity1> | FormattedItem<typeof Entity2>)[] | undefined
-    > = 1
-    assertReturnedItems
-  })
-
-  test('applies two entity filters AND additional filters', () => {
+  test('applies two entity filters AND additional filters if possible', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestTable.build(ScanCommand)
         .entities(Entity1, Entity2)
@@ -575,9 +625,9 @@ describe('scan', () => {
       '#c1_2': 'price'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.name,
+      ':c0_1': Entity1.entityName,
       ':c0_2': 40,
-      ':c1_1': Entity2.name,
+      ':c1_1': Entity2.entityName,
       ':c1_2': 100
     })
   })
@@ -619,6 +669,8 @@ describe('scan', () => {
     expect(ExpressionAttributeValues2).toMatchObject({ ':c0_2': 'foo#bar' })
   })
 
+  // --- PROJECTION ---
+
   test('applies entity projection expression', () => {
     const command = TestTable.build(ScanCommand)
       .entities(Entity1)
@@ -632,11 +684,11 @@ describe('scan', () => {
     > = 1
     assertReturnedItems
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #_et')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': '_et',
-      '#p_2': 'age',
-      '#p_3': 'name'
+      '#p_1': 'age',
+      '#p_2': 'name',
+      '#_et': '_et'
     })
   })
 
@@ -659,11 +711,11 @@ describe('scan', () => {
     > = 1
     assertReturnedItems
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3')
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #_et')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': '_et',
-      '#p_2': '_ct',
-      '#p_3': '_md'
+      '#p_1': '_ct',
+      '#p_2': '_md',
+      '#_et': '_et'
     })
   })
 })

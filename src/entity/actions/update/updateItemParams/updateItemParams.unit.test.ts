@@ -204,7 +204,7 @@ describe('update', () => {
       ':s_3': 0,
       ':s_4': false,
       ':s_5': 'NOTHING_TO_COPY',
-      ':s_6': TestEntity.name,
+      ':s_6': TestEntity.entityName,
       ':s_7': expect.any(String),
       ':s_8': expect.any(String),
       ':a_1': 1
@@ -213,7 +213,7 @@ describe('update', () => {
     expect(ToolboxItem).toStrictEqual({
       created: { [$GET]: ['created', expect.any(String)] },
       modified: expect.any(String),
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       email: 'test-pk',
       sort: 'test-sk',
       test_big_number: BigInt('10000000'),

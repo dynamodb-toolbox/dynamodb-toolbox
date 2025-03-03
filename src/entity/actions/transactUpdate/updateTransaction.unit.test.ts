@@ -187,7 +187,7 @@ describe('update transaction', () => {
       ':s_2': 0,
       ':s_3': false,
       ':s_4': 'NOTHING_TO_COPY',
-      ':s_5': TestEntity.name,
+      ':s_5': TestEntity.entityName,
       ':s_6': expect.any(String),
       ':s_7': expect.any(String),
       ':a_1': 1
@@ -196,7 +196,7 @@ describe('update transaction', () => {
     expect(ToolboxItem).toStrictEqual({
       created: { [$GET]: ['created', expect.any(String)] },
       modified: expect.any(String),
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       email: 'test-pk',
       sort: 'test-sk',
       simple_string_copy: 'NOTHING_TO_COPY',
