@@ -14,3 +14,4 @@ DynamoDB-Toolbox exposes the following _utility_ actions for `Entities`:
 - [`EntityFormatter`](../20-format/index.md): Given a saved item, validates that it respects the schema of the `Entity` and formats it
 - [`EntitySpy`](../21-spy/index.md): Enables [spying](https://en.wikipedia.org/wiki/Mock_object) the provided `Entity`
 - [`EntityRepository`](../22-repository/index.md): A utility action that exposes all entity actions as **methods**
+- [`EntityDTO`](../23-dto/index.md): Builds a [Data Transfer Object](https://en.wikipedia.org/wiki/Data_transfer_object) of the provided `Entity`
