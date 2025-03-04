@@ -8,7 +8,8 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   extends SchemaAction<SCHEMA>
   implements ItemSchemaDTO
 {
-  static actionName = 'dto' as const
+  static override actionName = 'dto' as const
+
   type: ItemSchemaDTO['type']
   attributes: ItemSchemaDTO['attributes']
 

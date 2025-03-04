@@ -18,6 +18,7 @@ type EntityParserInput<
 
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parse';
+
   [$parser]: Parser<ENTITY['schema']>
 
   constructor(entity: ENTITY) {

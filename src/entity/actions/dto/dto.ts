@@ -25,6 +25,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   implements IEntityDTO
 {
   static override actionName = 'dto' as const
+
   entityName: string
   schema: SchemaDTO
   entityAttribute: IEntityDTO['entityAttribute']

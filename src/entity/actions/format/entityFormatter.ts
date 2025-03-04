@@ -9,6 +9,7 @@ import type { FormatItemOptions, InferReadItemOptions } from './options.js'
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';
+
   [$formatter]: Formatter<ENTITY['schema']>
 
   constructor(entity: ENTITY) {

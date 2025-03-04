@@ -9,6 +9,7 @@ import { $conditionParser } from './constants.js'
 
 export class EntityConditionParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parseCondition';
+
   [$conditionParser]: ConditionParser<ENTITY['schema']>
 
   constructor(entity: ENTITY, id: string = '') {
