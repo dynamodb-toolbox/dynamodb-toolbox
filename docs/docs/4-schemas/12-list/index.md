@@ -9,24 +9,17 @@ import TabItem from '@theme/TabItem';
 
 # List
 
-Defines a [**list attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), containing elements of any type:
+Describes [**list values**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes), containing elements of any type:
 
 ```ts
-import { list } from 'dynamodb-toolbox/attributes/list';
-import { string } from 'dynamodb-toolbox/attributes/string';
+import { list } from 'dynamodb-toolbox/schema/list';
+import { string } from 'dynamodb-toolbox/schema/string';
 
 const pokeTypeSchema = string().enum('fire', ...)
+const pokemonTypesSchema = list(pokeTypeSchema)
 
-const pokemonSchema = schema({
-  ...
-  pokeTypes: list(pokeTypeSchema),
-});
-
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
-// => {
-//   ...
-//   pokeTypes: ('fire' | ...)[]
-// }
+type PokemonType = FormattedValue<typeof pokemonTypesSchema>;
+// => ('fire' | ...)[]
 ```
 
 List elements must respect some constraints:
@@ -49,7 +42,7 @@ const strList = list(string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -74,7 +67,7 @@ const pokeTypesSchema = list(..., { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips the attribute when formatting items:
+Omits schema values during [formatting](../17-actions/2-format.md):
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).hidden()
@@ -85,7 +78,7 @@ const pokeTypesSchema = list(..., { hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as a primary key attribute or linked to a primary attribute:
+Tags schema values as a primary key attribute or linked to a primary key attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'
@@ -101,7 +94,7 @@ const pokeTypesSchema = list(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
+Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).savedAs('pt')
@@ -112,7 +105,7 @@ const pokeTypesSchema = list(..., { savedAs: 'pt' })
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;ELEMENTS[]&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
+Specifies default values. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::note[Examples]
 
@@ -131,11 +124,7 @@ const timestampsSchema = list(...)
   .updateDefault(() => $append(now()))
 // 👇 ...or
 const timestampsSchema = list(..., {
-  defaults: {
-    key: undefined,
-    put: () => [now()],
-    update: () => $append(now())
-  }
+  putDefault: () => [now()],
 })
 ```
 
@@ -154,14 +143,9 @@ const specifiersSchema = list(...)
   .keyDefault(defaultSpecifiers)
 // 👇 ...or
 const specifiersSchema = list(..., {
-  defaults: {
-    key: defaultSpecifiers,
-    // put & update defaults are not useful in `key` attributes
-    put: undefined,
-    update: undefined
-  },
   key: true,
-  required: 'always'
+  required: 'always',
+  keyDefault: defaultSpecifiers,
 })
 ```
 
@@ -183,7 +167,7 @@ const specifiersSchema = list(..., {
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   pokeTypeSet: set(pokeTypeSchema)
 }).and(prevSchema => ({
   pokeTypeList: set(pokeTypeSchema).link<typeof prevSchema>(
@@ -203,7 +187,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;ELEMENTS[]&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
+Adds custom validation. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::note[Examples]
 
@@ -217,11 +201,7 @@ const nonEmptyListSchema = list(string()).putValidate(
 )
 // 👇 ...or
 const nonEmptyListSchema = list(string(), {
-  validators: {
-    key: undefined,
-    put: input => input.length > 0,
-    update: undefined
-  }
+  putValidator: input => input.length > 0
 })
 ```
 

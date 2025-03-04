@@ -30,6 +30,6 @@ yarn add @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb
 
 :::note
 
-If you use TypeScript, make sure to activate the [`strict`](https://www.typescriptlang.org/tsconfig/#strict) option in your `tsconfig.json` to avoid Type Inference issues.
+If you use TypeScript, make sure to use a version **above v5** and to **activate the [`strict`](https://www.typescriptlang.org/tsconfig/#strict) option** in your `tsconfig.json` to avoid Type Inference issues.
 
 :::

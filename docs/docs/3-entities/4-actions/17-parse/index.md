@@ -95,7 +95,7 @@ The `Table` primary key is derived from the validated input by applying [`comput
 
 :::info
 
-This action is mostly a **wrapper around the schema [`Parser`](../../../4-schemas/16-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
+This action is mostly a **wrapper around the schema [`Parser`](../../../4-schemas/17-actions/1-parse.md) action**, so we highly recommend you read its dedicated documentation first.
 
 :::
 

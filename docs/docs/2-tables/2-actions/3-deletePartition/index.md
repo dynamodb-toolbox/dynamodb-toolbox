@@ -13,7 +13,7 @@ import TabItem from '@theme/TabItem';
 
 `DeletePartitionCommand` is exposed as a quality of life improvement, but is NOT an official DynamoDB operation (eventhough we wish it was).
 
-Use it with ⚠️ **caution** ⚠️! It can be **long** and **costly** on large partitions, and **incomplete** in case of inconsistent read.
+Use it with ⚠️ **caution** ⚠️ It can be **long** and **costly** on large partitions, and **incomplete** in case of inconsistent read.
 
 :::
 
@@ -170,8 +170,17 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
           <td align="center"><code>true</code></td>
           <td>
             By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-                  <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
-                  <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute.
+            <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
+            <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute and improve performance.
+          </td>
+        </tr>
+         <tr>
+          <td><code>noEntityMatch<wbr/>Behavior</code></td>
+          <td align="center"><code>NoEntityMatch<wbr/>Behavior</code></td>
+          <td align="center"><code>"THROW"</code></td>
+          <td>
+            If <code>entityAttrFilter</code> is <code>false</code>, this option defines the behavior when a returned item fails to be formatted for all entities.
+            <br/><br/>Possible values are <code>"THROW"</code> to throw an error and <code>"DISCARD"</code> to discard the item.
           </td>
         </tr>
     </tbody>
@@ -257,6 +266,20 @@ await PokeTable.build(DeletePartitionCommand)
 
 // 👇 Aborts the command
 abortController.abort()
+```
+
+</TabItem>
+<TabItem value="entity-attr" label="Entity Attr.">
+
+```ts
+await PokeTable.build(DeletePartitionCommand)
+  .entities(PokemonEntity, TrainerEntity)
+  .query({ partition: 'ashKetchum' })
+  .options({
+    entityAttrFilter: false,
+    noEntityMatchBehavior: 'DISCARD'
+  })
+  .send()
 ```
 
 </TabItem>

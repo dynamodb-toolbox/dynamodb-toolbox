@@ -9,21 +9,15 @@ import TabItem from '@theme/TabItem';
 
 # Any
 
-Defines an attribute containing **any value**. No validation is applied at run-time, and its type is resolved as `unknown` by default:
+Describes **any value**. No validation is applied at run-time, and its type is resolved as `unknown` by default:
 
 ```ts
-import { any } from 'dynamodb-toolbox/attributes/any';
+import { any } from 'dynamodb-toolbox/schema/any'
 
-const pokemonSchema = schema({
-  ...
-  metadata: any(),
-});
+const metadataSchema = any()
 
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
-// => {
-//   ...
-//   metadata: unknown
-// }
+type Metadata = FormattedValue<typeof metadataSchema>
+// => unknown
 ```
 
 ## Options
@@ -32,7 +26,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -53,7 +47,7 @@ const metadataSchema = any({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips the attribute when formatting items:
+Omits schema values during [formatting](../17-actions/2-format.md):
 
 ```ts
 const metadataSchema = any().hidden()
@@ -64,7 +58,7 @@ const metadataSchema = any({ hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as a primary key attribute or linked to a primary attribute:
+Tags schema values as a primary key attribute or linked to a primary key attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'
@@ -80,7 +74,7 @@ const metadataSchema = any({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
+Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
 
 ```ts
 const metadataSchema = any().savedAs('meta')
@@ -91,7 +85,7 @@ const metadataSchema = any({ savedAs: 'meta' })
 
 <p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>
 
-Overrides the resolved type of the attribute:
+Overrides the resolved type of valid values:
 
 ```ts
 const metadataSchema = any().castAs<{ foo: 'bar' }>()
@@ -101,7 +95,7 @@ const metadataSchema = any().castAs<{ foo: 'bar' }>()
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;unknown&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
 
 ```ts
 const jsonStringify = {
@@ -110,17 +104,17 @@ const jsonStringify = {
 }
 
 // JSON stringifies the value
-const stringifiedSchema = any().transform(prefix)
-const stringifiedSchema = any({ transform: prefix })
+const stringifiedSchema = any().transform(jsonStringify)
+const stringifiedSchema = any({ transform: jsonStringify })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md) (including [`jsonStringify`](../17-transformers/3-json-stringify.md)), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md) (including [`jsonStringify`](../18-transformers/3-json-stringify.md)), so feel free to use them!
 
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;unknown&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
+Specifies default values. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::note[Examples]
 
@@ -132,13 +126,7 @@ const metadataSchema = any().default({ any: 'value' })
 // 👇 Similar to
 const metadataSchema = any().putDefault({ any: 'value' })
 // 👇 ...or
-const metadataSchema = any({
-  defaults: {
-    key: undefined,
-    put: { any: 'value' },
-    update: undefined
-  }
-})
+const metadataSchema = any({ putDefault: { any: 'value' } })
 
 // 🙌 Getters also work!
 const metadataSchema = any().default(() => ({
@@ -155,14 +143,9 @@ const metadataSchema = any().key().default('myKey')
 const metadataSchema = any().key().keyDefault('myKey')
 // 👇 ...or
 const metadataSchema = any({
-  defaults: {
-    key: 'myKey',
-    // put & update defaults are not useful in `key` attributes
-    put: undefined,
-    update: undefined
-  },
   key: true,
-  required: 'always'
+  required: 'always',
+  keyDefault: 'myKey'
 })
 ```
 
@@ -175,11 +158,7 @@ const metadataSchema = any().updateDefault({
 })
 // 👇 Similar to
 const metadataSchema = any({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: { updated: true }
-  }
+  updateDefault: { updated: true }
 })
 ```
 
@@ -195,7 +174,7 @@ const metadataSchema = any({
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   pokeTypes: string()
 }).and(prevSchema => ({
   metadata: any().link<typeof prevSchema>(
@@ -209,7 +188,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;unknown&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
+Adds custom validation. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::note[Examples]
 
@@ -223,11 +202,7 @@ const metadataSchema = any().putValidate(
 )
 // 👇 ...or
 const metadataSchema = any({
-  validators: {
-    key: undefined,
-    put: input => typeof input === 'object',
-    update: undefined
-  }
+  putValidator: input => typeof input === 'object'
 })
 ```
 

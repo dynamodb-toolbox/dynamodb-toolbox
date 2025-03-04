@@ -9,21 +9,15 @@ import TabItem from '@theme/TabItem';
 
 # Number
 
-Defines a [**number attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Describes [**number values**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { number } from 'dynamodb-toolbox/attributes/number';
+import { number } from 'dynamodb-toolbox/schema/number'
 
-const pokemonSchema = schema({
-  ...
-  level: number(),
-});
+const levelSchema = number()
 
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
-// => {
-//   ...
-//   level: number
-// }
+type Level = FormattedValue<typeof levelSchema>
+// => number
 ```
 
 ## Options
@@ -32,7 +26,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -53,7 +47,7 @@ const levelSchema = number({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips the attribute when formatting items:
+Omits schema values during [formatting](../17-actions/2-format.md):
 
 ```ts
 const levelSchema = number().hidden()
@@ -64,7 +58,7 @@ const levelSchema = number({ hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as a primary key attribute or linked to a primary attribute:
+Tags schema values as a primary key attribute or linked to a primary key attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'
@@ -80,7 +74,7 @@ const levelSchema = number({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
+Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
 
 ```ts
 const levelSchema = number().savedAs('lvl')
@@ -102,7 +96,7 @@ const pokemonGenerationSchema = number().const(1)
 
 :::info
 
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+For type inference reasons, the `enum` option is only available as a method and not as input props.
 
 :::
 
@@ -110,7 +104,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;number&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
 
 ```ts
 const addOne = {
@@ -123,7 +117,7 @@ const levelSchema = number().transform(addOne)
 const levelSchema = number({ transform: addOne })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md), so feel free to use them!
 
 ### `.big()`
 
@@ -135,18 +129,15 @@ Allows `BigInt` values:
 const levelSchema = number().big()
 const levelSchema = number({ big: true })
 
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>
-// => {
-//   ...
-//   level: number | bigint
-// }
+type Level = FormattedValue<typeof levelSchema>
+// => number | bigint
 ```
 
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;number&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
+Specifies default values. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::note[Examples]
 
@@ -158,13 +149,7 @@ const levelSchema = number().default(42)
 // 👇 Similar to
 const levelSchema = number().putDefault(42)
 // 👇 ...or
-const levelSchema = number({
-  defaults: {
-    key: undefined,
-    put: 42,
-    update: undefined
-  }
-})
+const levelSchema = number({ putDefault: 42 })
 
 // 🙌 Getters also work!
 const levelSchema = number().default(() => 42)
@@ -179,14 +164,9 @@ const levelSchema = number().key().default(42)
 const levelSchema = number().key().keyDefault(42)
 // 👇 ...or
 const levelSchema = number({
-  defaults: {
-    key: 42,
-    // put & update defaults are not useful in `key` attributes
-    put: undefined,
-    update: undefined
-  },
   key: true,
-  required: 'always'
+  required: 'always',
+  keyDefault: 42
 })
 ```
 
@@ -200,11 +180,7 @@ const updateCountSchema = number()
 
 // 👇 Similar to
 const updateCountSchema = number({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: () => $add(1)
-  }
+  updateDefault: () => $add(1)
 })
 ```
 
@@ -220,7 +196,7 @@ const updateCountSchema = number({
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   level: number()
 }).and(prevSchema => ({
   captureLevel: number().link<typeof prevSchema>(
@@ -234,7 +210,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;number&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
+Adds custom validation. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::note[Examples]
 
@@ -248,11 +224,7 @@ const integerSchema = number().putValidate(input =>
 )
 // 👇 ...or
 const integerSchema = number({
-  validators: {
-    key: undefined,
-    put: input => Number.isInteger(input),
-    update: undefined
-  }
+  putValidator: input => Number.isInteger(input)
 })
 ```
 

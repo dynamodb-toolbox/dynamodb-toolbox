@@ -1,6 +1,7 @@
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
+import type { NoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
 import type { Query } from '~/table/actions/query/index.js'
 import type { Table } from '~/table/index.js'
 
@@ -12,6 +13,7 @@ export type DeletePartitionOptions<
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>
   entityAttrFilter?: boolean
+  noEntityMatchBehavior?: NoEntityMatchBehavior
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
     : { [ENTITY in ENTITIES[number] as ENTITY['entityName']]?: Condition<ENTITY> }
