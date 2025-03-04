@@ -19,6 +19,8 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
+  static override actionName = 'parseCondition' as const
+
   expressionAttributePrefix: `c${string}_`
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]

@@ -37,6 +37,8 @@ export type ParserReturn<
   : TransformedValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
 export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
+  static override actionName = 'parse' as const
+
   start<OPTIONS extends ParseValueOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS

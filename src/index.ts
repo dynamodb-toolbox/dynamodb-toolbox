@@ -1,5 +1,5 @@
 // schema
-export { SchemaAction, attr, attribute } from './schema/index.js'
+export { SchemaAction, schema, s } from './schema/index.js'
 export type {
   Schema,
   Validator,

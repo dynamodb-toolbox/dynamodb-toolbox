@@ -29,6 +29,8 @@ export type FormatterReturn<
   : FormattedValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
+  static override actionName = 'format' as const
+
   start<OPTIONS extends FormatValueOptions<SCHEMA> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS

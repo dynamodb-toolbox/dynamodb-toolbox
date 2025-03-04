@@ -5,7 +5,7 @@ import { getFormattedValueJSONSchema } from './formattedItem/index.js'
 import type { FormattedValueJSONSchema } from './formattedItem/index.js'
 
 export class JSONSchemer<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
-  static actionName = 'jsonSchemer' as const
+  static override actionName = 'jsonSchema' as const
 
   formattedValueSchema(): FormattedValueJSONSchema<SCHEMA> {
     return getFormattedValueJSONSchema(this.schema)

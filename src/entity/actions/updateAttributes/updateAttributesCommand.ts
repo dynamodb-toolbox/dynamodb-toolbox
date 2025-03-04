@@ -34,7 +34,7 @@ export class UpdateAttributesCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static override actionName = 'update' as const;
+  static override actionName = 'updateAttributes' as const;
 
   [$item]?: UpdateAttributesInput<ENTITY>;
   [$options]: OPTIONS

@@ -377,6 +377,16 @@
         "default": "./dist/cjs/table/actions/spy/index.js"
       }
     },
+    "./table/actions/repository": {
+      "import": {
+        "types": "./dist/esm/table/actions/repository/index.d.ts",
+        "default": "./dist/esm/table/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/repository/index.d.ts",
+        "default": "./dist/cjs/table/actions/repository/index.js"
+      }
+    },
     "./table/actions/dto": {
       "import": {
         "types": "./dist/esm/table/actions/dto/index.d.ts",
@@ -397,14 +407,14 @@
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
-    "./table/actions/repository": {
+    "./table/actions/synchronize": {
       "import": {
-        "types": "./dist/esm/table/actions/repository/index.d.ts",
-        "default": "./dist/esm/table/actions/repository/index.js"
+        "types": "./dist/esm/table/actions/synchronize/index.d.ts",
+        "default": "./dist/esm/table/actions/synchronize/index.js"
       },
       "require": {
-        "types": "./dist/cjs/table/actions/repository/index.d.ts",
-        "default": "./dist/cjs/table/actions/repository/index.js"
+        "types": "./dist/cjs/table/actions/synchronize/index.d.ts",
+        "default": "./dist/cjs/table/actions/synchronize/index.js"
       }
     },
     "./entity": {
@@ -617,6 +627,16 @@
         "default": "./dist/cjs/entity/actions/spy/index.js"
       }
     },
+    "./entity/actions/repository": {
+      "import": {
+        "types": "./dist/esm/entity/actions/repository/index.d.ts",
+        "default": "./dist/esm/entity/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/repository/index.d.ts",
+        "default": "./dist/cjs/entity/actions/repository/index.js"
+      }
+    },
     "./entity/actions/dto": {
       "import": {
         "types": "./dist/esm/entity/actions/dto/index.d.ts",
@@ -635,16 +655,6 @@
       "require": {
         "types": "./dist/cjs/entity/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/entity/actions/fromDTO/index.js"
-      }
-    },
-    "./entity/actions/repository": {
-      "import": {
-        "types": "./dist/esm/entity/actions/repository/index.d.ts",
-        "default": "./dist/esm/entity/actions/repository/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/entity/actions/repository/index.d.ts",
-        "default": "./dist/cjs/entity/actions/repository/index.js"
       }
     },
     "./errors": {

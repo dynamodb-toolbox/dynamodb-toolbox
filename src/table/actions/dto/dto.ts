@@ -12,6 +12,7 @@ export interface ITableDTO {
 
 export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> implements ITableDTO {
   static override actionName = 'dto' as const
+
   tableName?: string
   partitionKey: ITableDTO['partitionKey']
   sortKey?: ITableDTO['sortKey']

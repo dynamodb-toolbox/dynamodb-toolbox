@@ -10,6 +10,8 @@ export class PathParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
+  static override actionName = 'parsePath' as const
+
   expressionAttributePrefix: `p${string}_`
   expressionAttributeNames: string[]
   expression: string

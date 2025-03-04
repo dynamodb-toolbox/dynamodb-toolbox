@@ -29,7 +29,7 @@ export * from './item/index.js'
 
 export { SchemaAction } from './schema.js'
 
-export const attribute: {
+export const schema: {
   any: typeof any
   nul: typeof nul
   boolean: typeof boolean
@@ -56,4 +56,4 @@ export const attribute: {
   anyOf,
   item
 }
-export const attr = attribute
+export const s = schema
