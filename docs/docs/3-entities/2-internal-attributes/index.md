@@ -12,7 +12,7 @@ The `Entity` constructor automatically adds **internal attributes** to your sche
 - An [Entity Attribute](#entity) _(required)_ that **tags items with the `name` of the entity**.
 - Two [Timestamp Attributes](#timestamp-attributes) _(optional)_ that **record when the item was created and last modified** with timestamps in [ISO 8601 format](https://wikipedia.org/wiki/ISO_8601).
 
-If the schema contains a conflicting attribute, the constructor throws a `reservedAttributeName` error. To avoid this, DynamoDB-Toolbox lets you customize the name and `savedAs` property of the internal attributes.
+If the schema contains a conflicting attribute, the constructor throws a `reservedAttributeName` error. To avoid this, DynamoDB-Toolbox allows you to customize the `name` and `savedAs` properties of internal attributes.
 
 :::tip
 
@@ -26,7 +26,7 @@ import type { FormattedItem, SavedItem } from 'dynamodb-toolbox/entity'
 
 const PokemonEntity = new Entity({
   name: 'Pokemon',
-  schema: schema({
+  schema: item({
     pokemonClass: string().key().savedAs('pk'),
     pokemonId: string().key().savedAs('sk'),
     level: number()
@@ -64,21 +64,58 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 
 A string attribute that tags your items with the `Entity` name.
 
-This attribute is **required** for some features to work, like allowing for appropriate formatting when fetching multiple items of the same `Table` in a single operation (e.g. [Queries](../../2-tables/2-actions/2-query/index.md) or [Scans](../../2-tables/2-actions/1-scan/index.md)). There are two consequences to that:
+While this attribute can be opted out of, we **strongly recommend keeping it enabled**, especially if you use Single Table Design: It improves performance and enables entity-based filtering when fetching items from multiple entities within the same `Table` (e.g. [Queries](../../2-tables/2-actions/2-query/index.md) or [Scans](../../2-tables/2-actions/1-scan/index.md)).
 
-- The `name` of an `Entity` **cannot be updated** once it has its first items (at least not without a data migration).
-- When migrating existing data to DynamoDB-Toolbox, you also have to add it to your items first.
+If you use it, note that:
 
-By default, the attribute is `hidden` and named `entity`. This can be overridden via the `entityAttributeHidden` and `entityAttributeName` properties:
+- The library automatically re-introduces the entity attribute during reads and writes, so you can start using DynamoDB-Toolbox even if your items don't contain it.
+- However, we still recommend migrating your items for improved performance and entity-based filtering.
+- Finally, the `name` of an `Entity` **cannot be updated** once it has its first items (at least not without a data migration).
+
+By default, the attribute is hidden and named `entity`. This can be overridden via the `entityAttribute` property:
+
+:::note[Examples]
+
+<Tabs>
+<TabItem value="default" label="Default">
 
 ```ts
 const PokemonEntity = new Entity({
   name: 'Pokemon',
-  entityAttributeHidden: false,
-  entityAttributeName: 'item',
+  entityAttribute: true,
   ...
 })
 ```
+
+</TabItem>
+<TabItem value="disabled" label="Disabled">
+
+```ts
+const PokemonEntity = new Entity({
+  name: 'Pokemon',
+  entityAttribute: false,
+  ...
+})
+```
+
+</TabItem>
+<TabItem value="custom" label="Custom">
+
+```ts
+const PokemonEntity = new Entity({
+  name: 'Pokemon',
+  entityAttribute: {
+    name: '__entity__',
+    hidden: false
+  },
+  ...
+})
+```
+
+</TabItem>
+</Tabs>
+
+:::
 
 :::info
 
@@ -205,7 +242,7 @@ const PostEntity = new Entity({
   table: PostsTable,
   // Deactivate internal attributes
   timestamps: false,
-  schema: schema({
+  schema: item({
     postId: string().key(),
     ownerId: string(),
     // We set the timestamp attributes manually

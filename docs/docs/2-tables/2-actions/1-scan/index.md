@@ -24,7 +24,7 @@ const { Items } = await scanCommand.send()
 
 ### `.entities(...)`
 
-Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/2-internal-attributes/index.md#entity) attribute). Also formats them and types the response.
+Provides a list of entities to filter the returned items (via the internal [`entity`](../../../3-entities/2-internal-attributes/index.md#entity) attribute). Also **formats** them and **types** the response:
 
 ```ts
 // 👇 Typed as (Pokemon | Trainer)[]
@@ -41,7 +41,7 @@ Provides additional options:
 const { Items } = await PokeTable.build(ScanCommand)
   .options({
     consistent: true,
-    limit: 10
+    limit: 10,
     ...
   })
   .send()
@@ -127,7 +127,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
             <td>
-              Includes the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute in the returned items. Useful for easily distinguishing items based on their entities.
+              Includes the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute in the returned items (even if it is hidden). Useful for easily distinguishing items based on their entities.
             </td>
         </tr>
         <tr>
@@ -157,7 +157,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowSpan="5" align="center" class="vertical"><b>Filters</b></td>
+            <td rowSpan="6" align="center" class="vertical"><b>Filters</b></td>
             <td><code>select</code></td>
             <td align="center"><code>SelectOption</code></td>
             <td align="center">-</td>
@@ -199,11 +199,20 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
         <tr>
           <td><code>entityAttrFilter</code></td>
           <td align="center"><code>boolean</code></td>
-          <td align="center"><code>true</code></td>
+          <td align="center">-</td>
           <td>
-            By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
-            <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
-            <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute.
+            If <a href="#entities"><code>entities</code></a> are specified, introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Default value is <code>true</code> if all entities use the <a href="#entities"><code>entity</code></a> internal attribute, <code>false</code> otherwise.
+            <br/><br/>Setting this option to <code>false</code> is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In such cases, DynamoDB-Toolbox attempts to format the item with each entity until one succeeds.
+            <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute and improve performance.
+          </td>
+        </tr>
+        <tr>
+          <td><code>noEntityMatch<wbr/>Behavior</code></td>
+          <td align="center"><code>NoEntityMatch<wbr/>Behavior</code></td>
+          <td align="center"><code>"THROW"</code></td>
+          <td>
+            If <a href="#entities"><code>entities</code></a> are specified and <code>entityAttrFilter</code> is <code>false</code>, this option defines the behavior when a returned item fails to be formatted for all entities.
+            <br/><br/>Possible values are <code>"THROW"</code> to throw an error and <code>"DISCARD"</code> to discard the item.
           </td>
         </tr>
         <tr>
@@ -402,6 +411,19 @@ const { Items } = await PokeTable.build(ScanCommand)
 ```
 
 </TabItem>
+<TabItem value="entity-attr" label="Entity Attr.">
+
+```ts
+const { Items } = await PokeTable.build(ScanCommand)
+  .entities(PokemonEntity, TrainerEntity)
+  .options({
+    entityAttrFilter: false,
+    noEntityMatchBehavior: 'DISCARD'
+  })
+  .send()
+```
+
+</TabItem>
 <TabItem value="count" label="Count">
 
 ```ts
@@ -463,7 +485,7 @@ const allItems = [...segment1, ...segment2, ...segment3]
 
 The data is returned using the same response syntax as the [DynamoDB Scan API](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_ResponseElements).
 
-If [`entities`](#entities) have been provided, the response `Items` are formatted by their respective entities.
+If [`entities`](#entities) are provided, the response `Items` are formatted by their respective entities.
 
 You can use the `ScanResponse` type to explicitly type an object as a `ScanCommand` response object:
 

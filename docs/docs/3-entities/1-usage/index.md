@@ -12,19 +12,46 @@ Entities represent a **category of items** in your `Table`.
 An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../4-actions/6-batching/index.md) or [transactions](../4-actions/10-transactions/index.md)):
 
 ```ts
-import { Entity } from 'dynamodb-toolbox/entity';
-import { schema } from 'dynamodb-toolbox/schema';
+import { Entity } from 'dynamodb-toolbox/entity'
+import { item } from 'dynamodb-toolbox/schema/item'
+import { string } from 'dynamodb-toolbox/schema/string'
 
 const PokemonEntity = new Entity({
   name: 'POKEMON',
   table: PokeTable,
-  schema: schema(...)
-});
+  schema: item({
+    name: string(),
+    ...
+  })
+})
 ```
+
+:::info
+
+Note that you can provide a [`map`](../../4-schemas/14-map/index.md) schema to the `Entity` constructor:
+
+```ts
+import { Entity } from 'dynamodb-toolbox/entity'
+import { map } from 'dynamodb-toolbox/schema/map'
+import { string } from 'dynamodb-toolbox/schema/string'
+
+const PokemonEntity = new Entity({
+  name: 'POKEMON',
+  table: PokeTable,
+  schema: map({
+    name: string(),
+    ...
+  })
+})
+```
+
+See the [Schema Section](../../4-schemas/1-usage/index.md) for more details.
+
+:::
 
 ## Constructor
 
-`Entity` takes a single parameter of type `object` that accepts the following properties:
+The `Entity` constructor takes a single parameter of type `object` and accepts the following properties:
 
 ### `name`
 
@@ -41,13 +68,9 @@ const PokemonEntity = new Entity({
 
 :::warning
 
-DynamoDB-Toolbox automatically tags your items with their respective entity names (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
+DynamoDB-Toolbox automatically tags your items with their respective entity names (see [Internal Attributes](../2-internal-attributes/index.md#entity)). While this can be opted out of, we strongly recommend keeping it enabled if you use Single Table Design.
 
-☝️ The consequence is that `name` **cannot be updated** once your `Entity` has its first items\* (at least not without a data migration first), so choose wisely!
-
-<!-- Required for prettier not to prefix * with anti-slash -->
-<!-- prettier-ignore -->
-<sup><i>(* This tag is required for some features to work, so you also have to add it if you migrate existing data to DynamoDB-Toolbox.)</i></sup>
+☝️ A consequence is that `name` **cannot be updated** once your `Entity` has its first items\* (at least not without a data migration first), so choose wisely!
 
 :::
 
@@ -79,7 +102,7 @@ const PokeTable = new Table({
 
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     pk: string().key(),
     sk: number().key(),
     ...
@@ -99,7 +122,7 @@ const PokeTable = new Table({
 
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     // 👇 renaming works
     pokemonId: string().savedAs('pk').key(),
     level: number().savedAs('sk').key(),
@@ -122,7 +145,7 @@ const PokeTable = new Table({
 
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     // 👇 saved as `POKEMON#${pokemonId}`
     pokemonId: string()
       .transform(prefix('POKEMON'))
@@ -134,7 +157,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-👉 See the [transformers section](../../4-schemas/17-transformers/1-usage.md) for more details on transformers.
+👉 See the [transformers section](../../4-schemas/18-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
 <TabItem value="linked" label="Linked">
@@ -147,7 +170,7 @@ const PokeTable = new Table({
 
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     // 👇 linked attributes should also be tagged as `.key()`
     pokemonId: string().key(),
     trainerId: string().key(),
@@ -186,7 +209,7 @@ This can be useful for more complex cases like mapping several attributes to the
 ```ts
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     // 👇 linked attributes should also be tagged as `.key()`
     pokemonId: string().key(),
     level: number().key(),
@@ -206,7 +229,7 @@ const PokemonEntity = new Entity({
 ```ts
 const PokemonEntity = new Entity({
   table: PokeTable,
-  schema: schema({
+  schema: item({
     // 👇 linked attributes should also be tagged as `.key()`
     specifiers: list(string()).key(),
     sk: number().key(),
@@ -224,10 +247,28 @@ const PokemonEntity = new Entity({
 
 :::
 
-### `entityAttributeName`
+### `entityAttribute`
 
-A `string` to customize the name of the internal entity attribute (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
+A `boolean` or `object` to customize the internal `entity` attributes (see [Internal Attributes](../2-internal-attributes/index.md#entity)).
 
 ### `timestamps`
 
 A `boolean` or `object` to customize the internal `created` and `modified` attributes (see [Internal Attributes](../2-internal-attributes/index.md#timestamp-attributes)).
+
+## Building Entity Actions
+
+To allow for **extensibility**, **better code-splitting** and **lighter bundles**, `Entities` only expose a `.build(...)` method which acts as a gateway to perform Entity [Actions](../../1-getting-started/3-usage/index.md#how-do-actions-work):
+
+```ts
+import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
+
+const { Item } = await PokemonEntity.build(GetItemCommand)
+  .key(key)
+  .send()
+```
+
+:::info
+
+If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
+
+:::

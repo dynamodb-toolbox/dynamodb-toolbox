@@ -32,7 +32,7 @@ const handleError = (error: Error) => {
       // => { received: "not a number", expected: "number" }
       break;
       ...
-    case 'entity.invalidItemSchema':
+    case 'entity.invalidSchema':
       const path = error.path; // ❌ error does not have path property
       const payload = error.payload; // ❌ same goes with payload
       ...
