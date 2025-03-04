@@ -85,7 +85,7 @@ Here are **step-by-step** examples:
 ```ts
 const PokemonEntity = new Entity({
   table,
-  schema: schema({
+  schema: item({
     // key attributes
     pokemonClass: string()
       .key()
@@ -305,7 +305,7 @@ flowchart RL
 import type {
   ReadItem,
   FormattedItem
-} from 'dynamodb-toolbox/schema'
+} from 'dynamodb-toolbox/entity'
 
 type Read = ReadItem<typeof PokemonEntity>
 type Formatted = FormattedItem<typeof PokemonEntity>
@@ -322,8 +322,4 @@ type Partial = FormattedItem<
   typeof PokemonEntity,
   { partial: true }
 >
-```
-
-```
-
 ```

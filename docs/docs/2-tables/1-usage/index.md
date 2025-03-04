@@ -27,13 +27,11 @@ The configuration provided to the `Table` constructor must match your resources.
 
 ## Constructor
 
-`Table` takes a single parameter of type `object` and accepts the following properties:
+The `Table` constructor takes a single parameter of type `object` and accepts the following properties:
 
 ### `documentClient`
 
-As mentioned in the [Getting Started section](../../1-getting-started/1-overview/index.md), DynamoDB-Tooblox is an **abstraction layer over the Document Client**, but it does not replace it. A `DocumentClient` instance is explicitly needed for commands to interact with DynamoDB.
-
-You can provide it in the `Table` constructor:
+As mentioned in the [Getting Started section](../../1-getting-started/1-overview/index.md), DynamoDB-Tooblox is an **abstraction layer over the Document Client**, but it does not replace it. A `DocumentClient` instance is explicitly needed for commands to interact with DynamoDB:
 
 ```typescript
 // From peer dependencies
@@ -258,7 +256,7 @@ const MyTable = new Table({
 
 :::warning
 
-When whitelisted, the projected attributes of a secondary index should include the `Table`'s [entity attribute](#entityattributesavedas) for automatic parsing of the returned data.
+When whitelisted, the projected attributes of a secondary index should include the `Table`'s [entity attribute](#entityattributesavedas) for a more performant formatting of the returned data.
 
 :::
 
@@ -281,5 +279,21 @@ const MyTable = new Table({
 :::warning
 
 ☝️ This property **cannot be updated** once your Table has its first item (at least not without a data migration first), so choose wisely!
+
+:::
+
+## Building Table Actions
+
+To allow for **extensibility**, **better code-splitting** and **lighter bundles**, `Tables` only expose a `.build(...)` method which acts as a gateway to perform Table [Actions](../../1-getting-started/3-usage/index.md#how-do-actions-work):
+
+```ts
+import { ScanCommand } from 'dynamodb-toolbox/table/actions/scan'
+
+const { Items } = await PokeTable.build(ScanCommand).send()
+```
+
+:::info
+
+If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
 
 :::

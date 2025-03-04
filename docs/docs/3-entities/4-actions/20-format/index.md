@@ -65,7 +65,7 @@ Note that:
 
 :::info
 
-This action is mostly a **wrapper around the schema [`Formatter`](../../../4-schemas/16-actions/2-format.md) action**, so we highly recommend you read its dedicated documentation first.
+This action is mostly a **wrapper around the schema [`Formatter`](../../../4-schemas/17-actions/2-format.md) action**, so we highly recommend you read its dedicated documentation first.
 
 :::
 

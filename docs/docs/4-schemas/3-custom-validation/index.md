@@ -4,19 +4,19 @@ title: Custom Validation
 
 # Custom Validation
 
-All attribute types support adding custom validation during the **parsing step** (see the [`Parser`](../16-actions/1-parse.md) action for more details).
+All schema types support adding custom validation during the **parsing step** (see the [`Parser`](../17-actions/1-parse.md) action for more details).
 
 There are three kinds of validators:
 
 - `putValidate`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
 - `updateValidate`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
-- `keyValidate`: Overrides other validators on key attributes (ignored otherwise)
+- `keyValidate`: Overrides other validators on key schemas (ignored otherwise)
 
-The `validate` method is a shorthand that acts as `keyValidate` on key attributes and `putValidate` otherwise.
+The `validate` method is a shorthand that acts as `keyValidate` on key schemas and `putValidate` otherwise.
 
 :::info
 
-☝️ In order for the `.validate(...)` shorthand to work properly on key attributes, make sure to use it **after** calling `.key()`.
+☝️ In order for the `.validate(...)` shorthand to work properly on key schemas, make sure to use it **after** calling `.key()`.
 
 :::
 
@@ -24,43 +24,39 @@ The `validate` method is a shorthand that acts as `keyValidate` on key attribute
 
 A custom **validator** is a function that takes an input (validated by the schema) and returns a `boolean`.
 
-For instance, you can make sure that a `string` attribute has more than 3 characters like this:
+For instance, you can make sure that a `string` has more than 3 characters like this:
 
 ```ts
-const mySchema = schema({
-  name: string().validate(
-    // 🙌 Types are correctly inferred!
-    name => name.length > 3
-  )
-})
+const nameSchema = string().validate(
+  // 🙌 Types are correctly inferred!
+  name => name.length > 3
+)
 
 // ❌ Raises a `parsing.customValidationFailed` error
-mySchema.build(Parser).parse({ name: 'foo' })
+nameSchema.build(Parser).parse('foo')
 ```
 
 In case of invalid value, you can **return a `string`** to provide more context through the error message:
 
 ```ts
-const mySchema = schema({
-  name: string().validate(name =>
-    name.length > 3 ? true : 'Provide a longer name'
-  )
-})
+const nameSchema = string().validate(name =>
+  name.length > 3 ? true : 'Provide a longer name'
+)
 
-mySchema.build(Parser).parse({ name: 'foo' })
+nameSchema.build(Parser).parse('foo')
 // => ❌ Custom validation for attribute 'name' failed with message: Provide a longer name.
 ```
 
-Finally, note that the attribute schema is also passed to the validator:
+Finally, note that the schema itself is also passed to the validator:
 
 ```ts
-import type { Attribute } from 'dynamodb-toolbox/attributes'
+import type { Schema } from 'dynamodb-toolbox/schema'
 
-const validator = (input: unknown, attr: Attribute) => {
+const validator = (input: unknown, attr: Schema) => {
   ... // custom validation here
 }
 
-const mySchema = schema({
+const mySchema = item({
   name: string().validate(validator)
 })
 ```
@@ -75,7 +71,7 @@ import { Parser } from 'dynamodb-toolbox/schema/actions/parse'
 const isValidBulletList = (bulletList: unknown): boolean =>
   bulletListSchema.build(Parser).validate(bulletList)
 
-const bulletListSchema = schema({
+const bulletListSchema = item({
   title: string(),
   subBulletList: any()
     .optional()
@@ -105,7 +101,7 @@ const isValidBulletList = (
   return bulletListParser.validate(bulletList)
 }
 
-const bulletListSchema = schema({
+const bulletListSchema = item({
   title: string(),
   subBulletList: any()
     .optional()

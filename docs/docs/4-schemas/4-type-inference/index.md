@@ -15,9 +15,9 @@ Which one you should use depends on your usage context, for instance, whether it
 
 For write operations, DynamoDB-Toolbox exposes the following generic types:
 
-- `ValidValue`: A valid schema item
+- `ValidValue`: A valid schema value
 - `InputValue`: Similar to `ValidValue`, but with defaulted and linked attributes optional
-- `TransformedValue`: A valid schema item after transformation
+- `TransformedValue`: A valid schema value after transformation
 
 ```mermaid
 flowchart LR
@@ -85,7 +85,7 @@ Here are **step-by-step** examples:
 ```ts
 const now = () => new Date().toISOString()
 
-const pokemonSchema = schema({
+const pokemonSchema = item({
   // key attributes
   pokemonClass: string()
     .key()
@@ -255,7 +255,7 @@ const pokemonSchema = schema({
 
 For read operations, DynamoDB-Toolbox exposes the following generic types:
 
-- `ReadValue`: A valid schema item (differs from `ValidValue` as options are different, see below)
+- `ReadValue`: A valid schema value (differs from `ValidValue` as options are different, see below)
 - `FormattedValue`: Similar to `ReadValue`, but with `hidden` attributes omitted
 
 ```mermaid
@@ -299,7 +299,7 @@ type Read = ReadValue<typeof pokemonSchema>
 type Formatted = FormattedValue<typeof pokemonSchema>
 ```
 
-By default, those generics return complete items, but you can filter attributes and/or apply `Partial` (deeply) with the `attributes` and `partial` options:
+By default, those generics return complete values, but you can filter attributes and/or apply `Partial` (deeply) with the `attributes` and `partial` options:
 
 ```ts
 type Filtered = FormattedValue<

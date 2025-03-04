@@ -456,7 +456,7 @@ import {
   $ADD
 } from 'dynamodb-toolbox/entity/actions/update/symbols'
 
-const pokemonSchema = schema({
+const pokemonSchema = item({
   ...
   level: number()
 }).and(prevSchema => ({
