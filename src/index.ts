@@ -83,6 +83,8 @@ export { Entity, EntityAction } from './entity/index.js'
 export type {
   TimestampsOptions,
   TimestampsDefaultOptions,
+  EntityAttrOptions,
+  EntityAttrDefaultOptions,
   InputItem,
   KeyInputItem,
   ValidItem,
