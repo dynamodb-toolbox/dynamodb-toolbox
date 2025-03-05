@@ -52,9 +52,9 @@
     "tsd": "^0.23.0",
     "tsx": "^4.16.5",
     "typescript": "^5.5.4",
-    "vite": "^5.3.1",
+    "vite": "^6.2.0",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.0"
+    "vitest": "^3.0.7"
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
