@@ -64,7 +64,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>
 
 A string attribute that tags your items with the `Entity` name.
 
-While this attribute can be opted out of, we **strongly recommend keeping it enabled**, especially if you use Single Table Design: It improves performance and enables entity-based filtering when fetching items from multiple entities within the same `Table` (e.g. [Queries](../../2-tables/2-actions/2-query/index.md) or [Scans](../../2-tables/2-actions/1-scan/index.md)).
+While this attribute can be opted out of, we strongly **recommend keeping it enabled if you use Single Table Design**: It improves performance and enables entity-based filtering when fetching items from multiple entities within the same `Table` (e.g. [Queries](../../2-tables/2-actions/2-query/index.md) or [Scans](../../2-tables/2-actions/1-scan/index.md)).
 
 If you use it, note that:
 
