@@ -19,7 +19,7 @@ export type WithInternalAttribute<
       : never
 }>
 
-export type $EntityAttribute<
+export type EntityAttribute<
   TABLE extends Table,
   ENTITY_NAME extends string,
   ENTITY_ATTR_OPTIONS extends EntityAttrOptions
@@ -41,10 +41,10 @@ export type WithEntityAttribute<
   : WithInternalAttribute<
       ATTRIBUTES,
       EntityAttrOptionValue<ENTITY_ATTR_OPTIONS, 'name'>,
-      $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS>
+      EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS>
     >
 
-export type $TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean> = StringSchema<{
+export type TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean> = StringSchema<{
   hidden: HIDDEN
   savedAs: SAVED_AS
   putDefault: unknown
@@ -73,15 +73,15 @@ export type WithTimestampAttributes<
           WithInternalAttribute<
             ATTRIBUTES,
             CREATED_NAME,
-            $TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
+            TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
           >,
           MODIFIED_NAME,
-          $TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
+          TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
         WithInternalAttribute<
           ATTRIBUTES,
           CREATED_NAME,
-          $TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
+          TimestampAttribute<CREATED_SAVED_AS, CREATED_HIDDEN>
         >
       >,
       If<
@@ -89,7 +89,7 @@ export type WithTimestampAttributes<
         WithInternalAttribute<
           ATTRIBUTES,
           MODIFIED_NAME,
-          $TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
+          TimestampAttribute<MODIFIED_SAVED_AS, MODIFIED_HIDDEN>
         >,
         ATTRIBUTES
       >
