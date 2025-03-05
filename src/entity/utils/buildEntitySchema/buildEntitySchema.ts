@@ -8,10 +8,10 @@ import type { Table } from '~/table/index.js'
 import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
 import type { EntityAttrOptions, TimestampsOptions } from './options.js'
 import type {
-  $EntityAttribute,
-  $TimestampAttribute,
   BuildEntitySchema,
-  EntitySchemaBuilder
+  EntityAttribute,
+  EntitySchemaBuilder,
+  TimestampAttribute
 } from './types.js'
 import type { TimestampOptionValue } from './utils.js'
 import {
@@ -44,7 +44,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
 
   if (isEntityAttrEnabled(entityAttribute)) {
     const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
-    const entityAttr: $EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS> = new StringSchema({
+    const entityAttr: EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS> = new StringSchema({
       hidden: getEntityAttrOptionValue(entityAttribute, 'hidden'),
       enum: [entityName] as [ENTITY_NAME],
       putDefault: entityName,
@@ -58,7 +58,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
   if (isTimestampEnabled(timestamps, 'created')) {
     const createdName = getTimestampOptionValue(timestamps, 'created', 'name')
 
-    const createdAttribute: $TimestampAttribute<
+    const createdAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'created', 'hidden'>
     > = new StringSchema({
@@ -74,7 +74,7 @@ export const buildEntitySchema: EntitySchemaBuilder = <
   if (isTimestampEnabled(timestamps, 'modified')) {
     const modifiedName = getTimestampOptionValue(timestamps, 'modified', 'name')
 
-    const modifiedAttribute: $TimestampAttribute<
+    const modifiedAttribute: TimestampAttribute<
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'savedAs'>,
       TimestampOptionValue<TIMESTAMP_OPTIONS, 'modified', 'hidden'>
     > = new StringSchema({
