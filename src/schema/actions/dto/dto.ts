@@ -2,7 +2,7 @@ import type { ItemSchema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
 import { getSchemaDTO } from './getSchemaDTO/index.js'
-import type { ISchemaDTO, ItemSchemaDTO } from './types.js'
+import type { ItemSchemaDTO } from './types.js'
 
 export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   extends SchemaAction<SCHEMA>
@@ -21,10 +21,10 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
         attributeName,
         getSchemaDTO(attribute)
       ])
-    )
+    ) as ItemSchemaDTO['attributes']
   }
 
-  toJSON(): ISchemaDTO {
+  toJSON(): ItemSchemaDTO {
     return {
       type: this.type,
       attributes: this.attributes

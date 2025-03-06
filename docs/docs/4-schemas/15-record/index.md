@@ -18,9 +18,7 @@ const pokeTypeSchema = string().enum('fire', ...)
 const weaknessesSchema = record(pokeTypeSchema, number())
 
 type Weaknesses = FormattedValue<typeof weaknessesSchema>
-// => {
-//  [key in PokeType]?: number
-// }
+// => Record<PokeType, number>
 ```
 
 Record elements can have any type. However, they must respect some constraints:
@@ -70,7 +68,7 @@ const weaknessesSchema = record(
 
 // shorthand for `.required('never')`
 const weaknessesSchema = record(...).optional()
-const weaknessesSchema = map(..., { required: 'never' })
+const weaknessesSchema = record(..., { required: 'never' })
 ```
 
 ### `.hidden()`
@@ -115,6 +113,23 @@ const weaknessesSchema = record(
   number()
 ).savedAs('w')
 const weaknessesSchema = record(..., { savedAs: 'w' })
+```
+
+### `.partial()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Turns the record into a **partial** record:
+
+```ts
+const weaknessesSchema = record(
+  string().enum('fire', ...),
+  number()
+).partial()
+const weaknessesSchema = record(..., { partial: true })
+
+type Weaknesses = FormattedValue<typeof weaknessesSchema>
+// => Partial<Record<PokeType, number>>
 ```
 
 ### `.default(...)`

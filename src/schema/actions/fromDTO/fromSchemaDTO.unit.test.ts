@@ -17,8 +17,7 @@ import { fromSchemaDTO } from './fromSchemaDTO/index.js'
 
 describe('fromDTO - schema', () => {
   test('creates correct schema', () => {
-    // TODO: Name ISchemaDTO the union of all schemas DTO
-    const schemaDTO: ItemSchemaDTO['attributes'][string] = {
+    const schemaDTO: ItemSchemaDTO = {
       type: 'item',
       attributes: {
         null: { type: 'null' },

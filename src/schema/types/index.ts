@@ -9,7 +9,7 @@ export type {
   ExtensionParserOptions
 } from './extensionParser.js'
 export type { FormattedValue } from './formattedValue.js'
-export type { ReadValue } from './readValue.js'
+export type { DecodedValue } from './decodedValue.js'
 export type { Paths, SchemaPaths, ItemSchemaPaths, StringToEscape, AppendKey } from './paths.js'
 export * from './schema.js'
 export * from './attribute.js'

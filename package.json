@@ -67,6 +67,7 @@
     "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint && npm run test-exports",
     "test-type": "tsc --noEmit",
     "test-format": "prettier --check 'src/**/*.(js|ts)'",
+    "test-format-fix": "prettier --write 'src/**/*.(js|ts)'",
     "test-unit": "vitest run",
     "test-unit-watch": "vitest",
     "test-lint": "eslint .",

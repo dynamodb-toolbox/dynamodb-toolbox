@@ -36,7 +36,7 @@ export type TransformedValue<
 > = SCHEMA extends ItemSchema
   ? ItemSchemaTransformedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Schema
-    ? AttrTransformedValue<SCHEMA, OPTIONS>
+    ? SchemaTransformedValue<SCHEMA, OPTIONS>
     : never
 
 type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
@@ -64,7 +64,7 @@ type ItemSchemaTransformedValue<
   SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions = {}
 > = ItemSchema extends SCHEMA
-  ? { [KEY: string]: AttrTransformedValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: SchemaTransformedValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
@@ -73,7 +73,7 @@ type ItemSchemaTransformedValue<
           savedAs: string
         }
           ? SCHEMA['attributes'][KEY]['props']['savedAs']
-          : KEY]: AttrTransformedValue<
+          : KEY]: SchemaTransformedValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
         >
@@ -81,7 +81,7 @@ type ItemSchemaTransformedValue<
       OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
-type AttrTransformedValue<
+type SchemaTransformedValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = Schema extends SCHEMA
@@ -145,7 +145,7 @@ type SetSchemaTransformedValue<
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
-          AttrTransformedValue<
+          SchemaTransformedValue<
             SetSchema['elements'],
             Overwrite<OPTIONS, { mode: 'put'; defined: false }>
           >
@@ -154,7 +154,7 @@ type SetSchemaTransformedValue<
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
-          AttrTransformedValue<
+          SchemaTransformedValue<
             SCHEMA['elements'],
             Overwrite<OPTIONS, { mode: 'put'; defined: false }>
           >
@@ -171,7 +171,7 @@ type ListSchemaTransformedValue<
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | AttrTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+      | SchemaTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type MapSchemaTransformedValue<
   SCHEMA extends MapSchema,
@@ -192,7 +192,7 @@ type MapSchemaTransformedValue<
               savedAs: string
             }
               ? SCHEMA['attributes'][KEY]['props']['savedAs']
-              : KEY]: AttrTransformedValue<
+              : KEY]: SchemaTransformedValue<
               SCHEMA['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >
@@ -213,8 +213,8 @@ type RecordSchemaTransformedValue<
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Optional<
           Record<
-            Extract<AttrTransformedValue<SCHEMA['keys'], OPTIONS>, string>,
-            AttrTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+            Extract<SchemaTransformedValue<SCHEMA['keys'], OPTIONS>, string>,
+            SchemaTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
           >,
           | (SCHEMA['props'] extends { partial: true } ? string : never)
           | (OPTIONS extends { mode: 'update' } ? string : never)
@@ -240,7 +240,7 @@ type MapAnyOfSchemaTransformedValue<
       ? MapAnyOfSchemaTransformedValue<
           ELEMENTS_TAIL,
           OPTIONS,
-          RESULTS | AttrTransformedValue<ELEMENTS_HEAD, OPTIONS>
+          RESULTS | SchemaTransformedValue<ELEMENTS_HEAD, OPTIONS>
         >
       : never
     : never

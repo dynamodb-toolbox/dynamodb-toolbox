@@ -32,7 +32,7 @@ export type FormattedValue<
 > = SCHEMA extends ItemSchema
   ? ItemSchemaFormattedValue<SCHEMA, OPTIONS>
   : SCHEMA extends Schema
-    ? AttrFormattedValue<SCHEMA, OPTIONS>
+    ? SchemaFormattedValue<SCHEMA, OPTIONS>
     : never
 
 type MustBeDefined<SCHEMA extends Schema> = Not<Extends<SCHEMA['props'], { required: Never }>>
@@ -57,7 +57,7 @@ type ItemSchemaFormattedValue<
           [KEY in OmitKeys<
             Pick<SCHEMA['attributes'], MATCHING_KEYS>,
             { props: { hidden: true } }
-          >]: AttrFormattedValue<
+          >]: SchemaFormattedValue<
             SCHEMA['attributes'][KEY],
             Overwrite<
               OPTIONS,
@@ -75,28 +75,33 @@ type ItemSchemaFormattedValue<
         OPTIONS extends { partial: true } ? string : OptionalKeys<SCHEMA>
       >
 
-type AttrFormattedValue<SCHEMA extends Schema, OPTIONS extends ReadValueOptions<SCHEMA> = {}> =
-  | (SCHEMA extends AnySchema ? AnySchemaFormattedValue<SCHEMA> : never)
-  | (SCHEMA extends NullSchema
-      ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolvedNullSchema
-      : never)
-  | (SCHEMA extends BooleanSchema
-      ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBooleanSchema<SCHEMA>
-      : never)
-  | (SCHEMA extends NumberSchema
-      ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveNumberSchema<SCHEMA>
-      : never)
-  | (SCHEMA extends StringSchema
-      ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveStringSchema<SCHEMA>
-      : never)
-  | (SCHEMA extends BinarySchema
-      ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBinarySchema<SCHEMA>
-      : never)
-  | (SCHEMA extends SetSchema ? SetSchemaFormattedValue<SCHEMA, OPTIONS> : never)
-  | (SCHEMA extends ListSchema ? ListSchemaFormattedValue<SCHEMA, OPTIONS> : never)
-  | (SCHEMA extends MapSchema ? MapSchemaFormattedValue<SCHEMA, OPTIONS> : never)
-  | (SCHEMA extends RecordSchema ? RecordSchemaFormattedValue<SCHEMA, OPTIONS> : never)
-  | (SCHEMA extends AnyOfSchema ? AnyOfSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+type SchemaFormattedValue<
+  SCHEMA extends Schema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {}
+> = Schema extends SCHEMA
+  ? unknown
+  :
+      | (SCHEMA extends AnySchema ? AnySchemaFormattedValue<SCHEMA> : never)
+      | (SCHEMA extends NullSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolvedNullSchema
+          : never)
+      | (SCHEMA extends BooleanSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBooleanSchema<SCHEMA>
+          : never)
+      | (SCHEMA extends NumberSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveNumberSchema<SCHEMA>
+          : never)
+      | (SCHEMA extends StringSchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveStringSchema<SCHEMA>
+          : never)
+      | (SCHEMA extends BinarySchema
+          ? If<MustBeDefined<SCHEMA>, never, undefined> | ResolveBinarySchema<SCHEMA>
+          : never)
+      | (SCHEMA extends SetSchema ? SetSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends ListSchema ? ListSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends MapSchema ? MapSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends RecordSchema ? RecordSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends AnyOfSchema ? AnyOfSchemaFormattedValue<SCHEMA, OPTIONS> : never)
 
 type AnySchemaFormattedValue<SCHEMA extends AnySchema> = AnySchema extends SCHEMA
   ? unknown
@@ -106,10 +111,10 @@ type SetSchemaFormattedValue<
   SCHEMA extends SetSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = SetSchema extends SCHEMA
-  ? undefined | Set<AttrFormattedValue<SetSchema['elements']>>
+  ? undefined | Set<SchemaFormattedValue<SetSchema['elements']>>
   :
       | If<MustBeDefined<SCHEMA>, never, undefined>
-      | Set<AttrFormattedValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
+      | Set<SchemaFormattedValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
 
 type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
   ? undefined
@@ -122,7 +127,7 @@ type ListSchemaFormattedValue<
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
   FORMATTED_ELEMENTS = ListSchema extends SCHEMA
     ? unknown
-    : AttrFormattedValue<
+    : SchemaFormattedValue<
         SCHEMA['elements'],
         Overwrite<
           OPTIONS,
@@ -163,7 +168,7 @@ type MapSchemaFormattedValue<
                 // Pick only filtered keys
                 Pick<SCHEMA['attributes'], MATCHING_KEYS>,
                 { props: { hidden: true } }
-              >]: AttrFormattedValue<
+              >]: SchemaFormattedValue<
                 SCHEMA['attributes'][KEY],
                 Overwrite<
                   OPTIONS,
@@ -220,7 +225,7 @@ type RecordSchemaFormattedValue<
         | Optional<
             Record<
               MATCHING_KEYS,
-              AttrFormattedValue<
+              SchemaFormattedValue<
                 SCHEMA['elements'],
                 Overwrite<
                   OPTIONS,
@@ -259,7 +264,7 @@ type MapAnyOfSchemaFormattedValue<
           OPTIONS,
           ELEMENTS_TAIL,
           | RESULTS
-          | AttrFormattedValue<
+          | SchemaFormattedValue<
               ELEMENTS_HEAD,
               Overwrite<
                 OPTIONS,

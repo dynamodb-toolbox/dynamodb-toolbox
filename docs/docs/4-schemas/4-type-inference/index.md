@@ -39,7 +39,7 @@ flowchart LR
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b>"]:::mmddescription
-    transformDescr(+ renaming<br/>+ transforms):::mmddescription
+    transformDescr(+ renaming<br/>+ encode):::mmddescription
   end
   Transform:::mmdcontainer
 
@@ -255,8 +255,8 @@ const pokemonSchema = item({
 
 For read operations, DynamoDB-Toolbox exposes the following generic types:
 
-- `ReadValue`: A valid schema value (differs from `ValidValue` as options are different, see below)
-- `FormattedValue`: Similar to `ReadValue`, but with `hidden` attributes omitted
+- `DecodedValue`: A valid schema value (differs from `ValidValue` as options are different, see below)
+- `FormattedValue`: Similar to `DecodedValue`, but with `hidden` attributes omitted
 
 ```mermaid
 flowchart RL
@@ -267,14 +267,14 @@ flowchart RL
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
-    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
+    fillDescr("+ decode<br/>+ renaming"):::mmddescription
   end
   Transform:::mmdcontainer
 
-  ReadValue["<b>ReadValue</b>"]
+  DecodedValue["<b>DecodedValue</b>"]
 
   TransformedValue .- TransformDescription
-  TransformDescription .-> ReadValue
+  TransformDescription .-> DecodedValue
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
@@ -284,18 +284,18 @@ flowchart RL
 
   FormattedValue["<b>FormattedValue</b>"]
 
-  ReadValue .- FormatDescription
+  DecodedValue .- FormatDescription
   FormatDescription .-> FormattedValue
 
 ```
 
 ```ts
 import type {
-  ReadValue,
+  DecodedValue,
   FormattedValue
 } from 'dynamodb-toolbox/schema'
 
-type Read = ReadValue<typeof pokemonSchema>
+type Decoded = DecodedValue<typeof pokemonSchema>
 type Formatted = FormattedValue<typeof pokemonSchema>
 ```
 

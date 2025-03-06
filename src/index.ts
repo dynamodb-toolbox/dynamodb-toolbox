@@ -10,7 +10,7 @@ export type {
   WriteValueOptions,
   ExtensionParser,
   ExtensionParserOptions,
-  ReadValue,
+  DecodedValue,
   FormattedValue,
   ReadValueOptions,
   SchemaPaths,
@@ -107,7 +107,7 @@ export type {
   TransformedItem,
   SavedItem,
   WriteItemOptions,
-  ReadItem,
+  DecodedItem,
   FormattedItem,
   ReadItemOptions
 } from './entity/index.js'

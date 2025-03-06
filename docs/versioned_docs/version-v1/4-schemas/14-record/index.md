@@ -77,7 +77,7 @@ const weaknessesSchema = record(
 
 // shorthand for `.required('never')`
 const weaknessesSchema = record(...).optional()
-const weaknessesSchema = map(..., { required: 'never' })
+const weaknessesSchema = record(..., { required: 'never' })
 ```
 
 ### `.hidden()`

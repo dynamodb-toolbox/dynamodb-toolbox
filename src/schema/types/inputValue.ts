@@ -25,7 +25,7 @@ export type InputValue<
 > = SCHEMA extends ItemSchema
   ? ItemSchemaInputValue<SCHEMA, OPTIONS>
   : SCHEMA extends Schema
-    ? AttrInputValue<SCHEMA, OPTIONS>
+    ? SchemaInputValue<SCHEMA, OPTIONS>
     : never
 
 type MustBeProvided<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
@@ -66,12 +66,12 @@ type ItemSchemaInputValue<
   SCHEMA extends ItemSchema,
   OPTIONS extends WriteValueOptions = {}
 > = ItemSchema extends SCHEMA
-  ? { [KEY: string]: AttrInputValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
+  ? { [KEY: string]: SchemaInputValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
         [KEY in OPTIONS extends { mode: 'key' }
           ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-          : keyof SCHEMA['attributes']]: AttrInputValue<
+          : keyof SCHEMA['attributes']]: SchemaInputValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
         >
@@ -79,7 +79,7 @@ type ItemSchemaInputValue<
       OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
-type AttrInputValue<
+type SchemaInputValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = Schema extends SCHEMA
@@ -121,12 +121,17 @@ type SetSchemaInputValue<
       | undefined
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
-          AttrInputValue<SetSchema['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+          SchemaInputValue<
+            SetSchema['elements'],
+            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
+          >
         >
   :
       | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Set<AttrInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>>
+      | Set<
+          SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+        >
 
 type ListSchemaInputValue<
   SCHEMA extends ListSchema,
@@ -136,7 +141,7 @@ type ListSchemaInputValue<
   :
       | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | AttrInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+      | SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type MapSchemaInputValue<
   SCHEMA extends MapSchema,
@@ -150,7 +155,7 @@ type MapSchemaInputValue<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-              : keyof SCHEMA['attributes']]: AttrInputValue<
+              : keyof SCHEMA['attributes']]: SchemaInputValue<
               SCHEMA['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >
@@ -169,7 +174,7 @@ type RecordSchemaInputValue<
       | Optional<
           Record<
             ResolveStringSchema<SCHEMA['keys']>,
-            AttrInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+            SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
           >,
           | (SCHEMA['props'] extends { partial: true } ? string : never)
           | (OPTIONS extends { mode: 'update' } ? string : never)
@@ -183,4 +188,4 @@ type AnyOfSchemaInputValue<
   :
       | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | AttrInputValue<SCHEMA['elements'][number], OPTIONS>
+      | SchemaInputValue<SCHEMA['elements'][number], OPTIONS>
