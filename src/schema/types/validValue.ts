@@ -24,7 +24,7 @@ export type ValidValue<
 > = SCHEMA extends ItemSchema
   ? ItemSchemaValidValue<SCHEMA, OPTIONS>
   : SCHEMA extends Schema
-    ? AttrValidValue<SCHEMA, OPTIONS>
+    ? SchemaValidValue<SCHEMA, OPTIONS>
     : never
 
 type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions> = If<
@@ -54,7 +54,7 @@ type ItemSchemaValidValue<
       {
         [KEY in OPTIONS extends { mode: 'key' }
           ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-          : keyof SCHEMA['attributes']]: AttrValidValue<
+          : keyof SCHEMA['attributes']]: SchemaValidValue<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
         >
@@ -62,7 +62,7 @@ type ItemSchemaValidValue<
       OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
 
-type AttrValidValue<
+type SchemaValidValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
 > = Schema extends SCHEMA
@@ -104,12 +104,17 @@ type SetSchemaValidValue<
       | undefined
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Set<
-          AttrValidValue<SetSchema['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+          SchemaValidValue<
+            SetSchema['elements'],
+            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
+          >
         >
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Set<AttrValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>>
+      | Set<
+          SchemaValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+        >
 
 type ListSchemaValidValue<
   SCHEMA extends ListSchema,
@@ -119,7 +124,7 @@ type ListSchemaValidValue<
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | AttrValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+      | SchemaValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type MapSchemaValidValue<
   SCHEMA extends MapSchema,
@@ -133,7 +138,7 @@ type MapSchemaValidValue<
           {
             [KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-              : keyof SCHEMA['attributes']]: AttrValidValue<
+              : keyof SCHEMA['attributes']]: SchemaValidValue<
               SCHEMA['attributes'][KEY],
               Overwrite<OPTIONS, { defined: false }>
             >
@@ -151,8 +156,8 @@ type RecordSchemaValidValue<
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | Optional<
           Record<
-            Extract<AttrValidValue<SCHEMA['keys'], OPTIONS>, string>,
-            AttrValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+            Extract<SchemaValidValue<SCHEMA['keys'], OPTIONS>, string>,
+            SchemaValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
           >,
           | (SCHEMA['props'] extends { partial: true } ? string : never)
           | (OPTIONS extends { mode: 'update' } ? string : never)
@@ -178,7 +183,7 @@ type MapAnyOfSchemaValidValue<
       ? MapAnyOfSchemaValidValue<
           ELEMENTS_TAIL,
           OPTIONS,
-          RESULTS | AttrValidValue<ELEMENTS_HEAD, OPTIONS>
+          RESULTS | SchemaValidValue<ELEMENTS_HEAD, OPTIONS>
         >
       : never
     : never
