@@ -1,14 +1,16 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
 
 import type { StringSchema } from '../string/index.js'
-import type { Schema, SchemaProps } from '../types/index.js'
+import type { Schema } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
+import type { RecordSchemaProps } from './types.js'
 
 export class RecordSchema<
   KEYS extends StringSchema = StringSchema,
   ELEMENTS extends Schema = Schema,
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends RecordSchemaProps = RecordSchemaProps
 > {
   type: 'record'
   keys: KEYS
@@ -32,6 +34,18 @@ export class RecordSchema<
     }
 
     checkSchemaProps(this.props, path)
+
+    const { partial } = this.props
+
+    if (partial !== undefined && !isBoolean(partial)) {
+      throw new DynamoDBToolboxError('schema.invalidProp', {
+        message: `Invalid property type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Property: 'partial'. Expected: boolean. Received: ${String(partial)}.`,
+        path,
+        payload: { propName: 'partial', received: partial }
+      })
+    }
 
     if (this.keys.type !== 'string') {
       throw new DynamoDBToolboxError('schema.record.invalidKeys', {

@@ -19,6 +19,7 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsers: [Generator<any, any>, Generator<any, any>][] = []
   const undefinedEntries: [string, undefined][] = []
+  const missingEnumKeys = new Set(schema.keys.props.enum)
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
@@ -28,10 +29,25 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
         continue
       }
 
+      missingEnumKeys.delete(key)
       const nextValuePath = [...valuePath, key]
       parsers.push([
         attrParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
         attrParser(schema.elements, element, {
+          ...restOptions,
+          defined: false,
+          valuePath: nextValuePath
+        })
+      ])
+    }
+  }
+
+  if (!schema.props.partial && options.mode !== 'update') {
+    for (const missingKey of missingEnumKeys) {
+      const nextValuePath = [...valuePath, missingKey]
+      parsers.push([
+        attrParser(schema.keys, missingKey, { ...restOptions, valuePath: nextValuePath }),
+        attrParser(schema.elements, undefined, {
           ...restOptions,
           defined: false,
           valuePath: nextValuePath

@@ -2,7 +2,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { item, string } from '~/schema/index.js'
 
 import * as attrFormatterModule from './attribute.js'
-import { schemaFormatter } from './schema.js'
+import { itemFormatter } from './item.js'
 
 // @ts-ignore
 const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
@@ -12,13 +12,13 @@ const schema = item({
   bar: string().hidden()
 })
 
-describe('schemaFormatter', () => {
+describe('itemFormatter', () => {
   beforeEach(() => {
     attrFormatter.mockClear()
   })
 
   test('throws an error if input is not a map', () => {
-    const invalidCall = () => schemaFormatter(schema, ['foo', 'bar']).next()
+    const invalidCall = () => itemFormatter(schema, ['foo', 'bar']).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidItem' }))
@@ -26,7 +26,7 @@ describe('schemaFormatter', () => {
 
   test('applies attrFormatter on input properties otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const formatter = schemaFormatter(
+    const formatter = itemFormatter(
       schema,
       { _f: 'foo', bar: 'bar' },
       // @ts-expect-error we don't really care about the type here
@@ -53,7 +53,7 @@ describe('schemaFormatter', () => {
 
   test('filters attributes if provided', () => {
     const options = { attributes: ['foo'] }
-    const formatter = schemaFormatter(schema, { _f: 'foo', bar: 'bar' }, options)
+    const formatter = itemFormatter(schema, { _f: 'foo', bar: 'bar' }, options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ foo: 'foo' })
@@ -72,7 +72,7 @@ describe('schemaFormatter', () => {
 
   test('allows incomplete item if partial is true', () => {
     const options = { partial: true }
-    const formatter = schemaFormatter(schema, { _f: 'foo' }, options)
+    const formatter = itemFormatter(schema, { _f: 'foo' }, options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ foo: 'foo' })
@@ -94,7 +94,7 @@ describe('schemaFormatter', () => {
 
   test('does not transform item if transformed is false', () => {
     const options = { transform: false }
-    const formatter = schemaFormatter(schema, { foo: 'foo', bar: 'bar' }, options)
+    const formatter = itemFormatter(schema, { foo: 'foo', bar: 'bar' }, options)
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)

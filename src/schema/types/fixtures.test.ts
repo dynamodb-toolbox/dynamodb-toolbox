@@ -27,7 +27,8 @@ export const testSchema = item({
   set: set(string()),
   list: list(map({ num: number(), str: string() })),
   map: map({ num: number(), str: string() }),
-  record: record(string(), map({ num: number(), str: string() })),
+  record: record(string().enum('foo', 'bar'), map({ num: number(), str: string() })),
+  partialRecord: record(string().enum('foo', 'bar'), string()).partial(),
   anyOf: anyOf(string(), number())
 }).and(s => ({
   linkedStr: string().link<typeof s>(({ keyStr }) => keyStr)

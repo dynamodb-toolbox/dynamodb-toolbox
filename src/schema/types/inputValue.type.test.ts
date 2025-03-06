@@ -19,9 +19,8 @@ const assertPut: A.Equals<
     set: Set<string>
     list: { num: number; str: string }[]
     map: { num: number; str: string }
-    record: {
-      [x: string]: { num: number; str: string } | undefined
-    }
+    record: Record<'foo' | 'bar', { num: number; str: string }>
+    partialRecord: Partial<Record<'foo' | 'bar', string>>
     anyOf: string | number
     linkedStr?: string
   }
@@ -48,9 +47,8 @@ const assertUpdate: A.Equals<
     set?: Set<string>
     list?: ({ num?: number; str?: string } | undefined)[]
     map?: { num?: number; str?: string }
-    record?: {
-      [x: string]: { num?: number; str?: string } | undefined
-    }
+    record?: Partial<Record<'foo' | 'bar', { num?: number; str?: string }>>
+    partialRecord?: Partial<Record<'foo' | 'bar', string>>
     anyOf?: string | number
     linkedStr?: string
   }

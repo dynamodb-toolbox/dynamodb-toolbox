@@ -326,6 +326,24 @@ describe('record', () => {
     expect(rec.props.savedAs).toBe('foo')
   })
 
+  test('returns partial record (prop)', () => {
+    const rec = record(fooBar, str, { partial: true })
+
+    const assertRec: A.Contains<(typeof rec)['props'], { partial: true }> = 1
+    assertRec
+
+    expect(rec.props.partial).toBe(true)
+  })
+
+  test('returns partial record (method)', () => {
+    const rec = record(fooBar, str).partial()
+
+    const assertRec: A.Contains<(typeof rec)['props'], { partial: true }> = 1
+    assertRec
+
+    expect(rec.props.partial).toBe(true)
+  })
+
   test('returns defaulted record (prop)', () => {
     const rcA = record(fooBar, str, {
       // TOIMPROVE: Reintroduce type constraints here
@@ -359,19 +377,19 @@ describe('record', () => {
   })
 
   test('returns defaulted record (method)', () => {
-    const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo' })
+    const rcA = record(fooBar, str).key().keyDefault({ foo: 'foo', bar: 'bar' })
 
     const assertRecA: A.Contains<(typeof rcA)['props'], { keyDefault: unknown }> = 1
     assertRecA
 
-    expect(rcA.props.keyDefault).toStrictEqual({ foo: 'foo' })
+    expect(rcA.props.keyDefault).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
-    const rcB = record(fooBar, str).putDefault({ bar: 'bar' })
+    const rcB = record(fooBar, str).putDefault({ foo: 'foo', bar: 'bar' })
 
     const assertRecB: A.Contains<(typeof rcB)['props'], { putDefault: unknown }> = 1
     assertRecB
 
-    expect(rcB.props.putDefault).toStrictEqual({ bar: 'bar' })
+    expect(rcB.props.putDefault).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
     const rcC = record(fooBar, str).updateDefault({ foo: 'bar' })
 
@@ -382,21 +400,21 @@ describe('record', () => {
   })
 
   test('returns record with PUT default value if it is not key (default shorthand)', () => {
-    const rec = record(fooBar, str).default({ foo: 'foo' })
+    const rec = record(fooBar, str).default({ foo: 'foo', bar: 'bar' })
 
     const assertRec: A.Contains<(typeof rec)['props'], { putDefault: unknown }> = 1
     assertRec
 
-    expect(rec.props.putDefault).toStrictEqual({ foo: 'foo' })
+    expect(rec.props.putDefault).toStrictEqual({ foo: 'foo', bar: 'bar' })
   })
 
   test('returns record with KEY default value if it is key (default shorthand)', () => {
-    const rec = record(fooBar, str).key().default({ foo: 'foo' })
+    const rec = record(fooBar, str).key().default({ foo: 'foo', bar: 'bar' })
 
     const assertRec: A.Contains<(typeof rec)['props'], { keyDefault: unknown }> = 1
     assertRec
 
-    expect(rec.props.keyDefault).toStrictEqual({ foo: 'foo' })
+    expect(rec.props.keyDefault).toStrictEqual({ foo: 'foo', bar: 'bar' })
   })
 
   test('returns linked record (prop)', () => {
@@ -433,7 +451,7 @@ describe('record', () => {
   })
 
   test('returns linked record (method)', () => {
-    const sayHello = () => ({ foo: 'hello' })
+    const sayHello = () => ({ foo: 'hello', bar: 'bar' })
     const rcA = record(fooBar, str).key().keyLink(sayHello)
 
     const assertRecA: A.Contains<(typeof rcA)['props'], { keyLink: unknown }> = 1
@@ -457,7 +475,7 @@ describe('record', () => {
   })
 
   test('returns record with PUT linked value if it is not key (link shorthand)', () => {
-    const sayHello = () => ({ foo: 'hello' })
+    const sayHello = () => ({ foo: 'hello', bar: 'bar' })
     const rec = record(fooBar, str).link(sayHello)
 
     const assertRec: A.Contains<(typeof rec)['props'], { putLink: unknown }> = 1
@@ -467,7 +485,7 @@ describe('record', () => {
   })
 
   test('returns record with KEY linked value if it is key (link shorthand)', () => {
-    const sayHello = () => ({ foo: 'hello' })
+    const sayHello = () => ({ foo: 'hello', bar: 'bar' })
     const rec = record(fooBar, str).key().link(sayHello)
 
     const assertRec: A.Contains<(typeof rec)['props'], { keyLink: unknown }> = 1
@@ -523,7 +541,7 @@ describe('record', () => {
 
     const prevRecord = record(string(), number())
     prevRecord.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [{ [x in string]?: number }, typeof prevRecord]> = 1
+      const assertArgs: A.Equals<typeof args, [Record<string, number>, typeof prevRecord]> = 1
       assertArgs
 
       return true
@@ -531,7 +549,7 @@ describe('record', () => {
 
     const prevOptMap = record(string(), number()).optional()
     prevOptMap.validate((...args) => {
-      const assertArgs: A.Equals<typeof args, [{ [x in string]?: number }, typeof prevOptMap]> = 1
+      const assertArgs: A.Equals<typeof args, [Record<string, number>, typeof prevOptMap]> = 1
       assertArgs
 
       return true

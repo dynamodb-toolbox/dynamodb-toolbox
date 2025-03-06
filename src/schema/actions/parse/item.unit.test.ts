@@ -2,20 +2,20 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { item, string } from '~/schema/index.js'
 
 import * as attrParserModule from './attribute.js'
-import { schemaParser } from './schema.js'
+import { itemParser } from './item.js'
 
 // @ts-ignore
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
 const sch = item({ foo: string(), bar: string() })
 
-describe('schemaParser', () => {
+describe('itemParser', () => {
   beforeEach(() => {
     attrParser.mockClear()
   })
 
   test('throws an error if input is not an object', () => {
-    const invalidCall = () => schemaParser(sch, ['foo', 'bar'], { fill: false }).next()
+    const invalidCall = () => itemParser(sch, ['foo', 'bar'], { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidItem' }))
@@ -23,7 +23,7 @@ describe('schemaParser', () => {
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {
     const options = { some: 'options' }
-    const parser = schemaParser(
+    const parser = itemParser(
       sch,
       { foo: 'foo', bar: 'bar' },
       // @ts-ignore we don't really care about the type here
