@@ -12,7 +12,7 @@ If you're currently using the **v1** of DynamoDB-Toolbox, here are the changes y
 
 ## Rework of the `entity` attribute
 
-The `entityAttributeName` and `entityAttributeHidden` settings have been merged into a single `entityAttribute` setting, similar to the [timestamp attributes](../3-entities/2-internal-attributes/index.md#timestamp-attributes):
+The `entityAttributeName` and `entityAttributeHidden` settings have been **merged into a single `entityAttribute`** setting, similar to the [timestamp attributes](../3-entities/2-internal-attributes/index.md#timestamp-attributes):
 
 ```diff
 import { Entity } from 'dynamodb-toolbox/entity'
@@ -48,8 +48,8 @@ Indeed, in queries and scans, the behavior regarding `Entities` has changed as f
 - If all `Entities` use the internal `entity` attribute, a **[Filter Expression](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax) is applied** based on it.
 - If at least one `Entity` does not use the internal `entity` attribute, or if `entityAttrFilter` is set to `false`, **no Filter Expression is applied**. In this case:
   - Entity-based filtering is **denied** if more than two `Entities` are provided.
-  - Returned items that lack the internal `entity` attribute will be **formatted by all `Entities`** in order until one succeeds, which can lead to decreased performance.
-  - If an item cannot be formatted by any `Entity`, DynamoDB-Toolbox **raises an error**. This behavior can be modified by setting the `noEntityMatchBehavior` option to `'DISCARD'`:
+  - Returned items that lack the internal `entity` attribute are **formatted by all `Entities`** in order until formatting succeeds, which can lead to decreased performance.
+  - If a returned item cannot be formatted by any `Entity`, DynamoDB-Toolbox **raises an error**. This behavior can be modified by setting the `noEntityMatchBehavior` option to `'DISCARD'`:
 
 ```ts
 const { Items } = await PokeTable.build(QueryCommand)
@@ -104,24 +104,7 @@ const pokemonSchema = s.item({
 })
 ```
 
-You can still inspect a schema's properties at runtime and through its types via the **`props` attribute**:
-
-```ts
-const hiddenStr = string().hidden()
-const isHidden = hiddenStr.props.hidden // => true
-```
-
-Previously, calling `.freeze()` validated the schema. In v2, validation is now done using the **`check` method**:
-
-```ts
-const stringWithDefault = string().default('foo')
-const invalidSchema = list(stringWithDefault)
-
-// ❌ List elements cannot have defaults
-invalidSchema.check()
-```
-
-Finally, `map` schemas now have the same **`.pick`, `.omit` and `.and` methods** as `item` schemas and **can be used within the `Entity` constructor**:
+Actually, you don't really need to use `item` schemas as `map` schemas now have the **`.pick`, `.omit` and `.and` methods** and **can be used within the `Entity` constructor**:
 
 ```ts
 import { map } from 'dynamodb-toolbox/schema/map'
@@ -136,15 +119,79 @@ const pokemonSchema = map({
 })
 
 const PokemonEntity = new Entity({
-  // 👇 Creates an `item` schema w. the same attributes
+  // 👇 Creates an `item` schema w. the same attributes + internal attributes
   schema: pokemonSchema,
   ...
 })
 ```
 
+You can still inspect a schema's properties at runtime and through its types via the **`props` attribute**:
+
+```ts
+const hiddenStr = string().hidden()
+const isHidden = hiddenStr.props.hidden // => true
+```
+
+Previously, calling `.freeze()` validated the schema. In v2, validation is now done using the **`check` method** (which is also called in the `Entity` constructor):
+
+```ts
+const stringWithDefault = string().default('foo')
+const invalidSchema = list(stringWithDefault)
+
+// ❌ List elements cannot have defaults
+invalidSchema.check()
+```
+
 Hopefully, this makes it easier to build and re-use schemas accross your codebase.
 
-## Rework of `Transformers`
+## Rework of `record`
+
+Record schemas now **properly translate to the `Record` type** in TS:
+
+```ts
+import { record } from 'dynamodb-toolbox/schema/record'
+import { string } from 'dynamodb-toolbox/schema/string'
+import { number } from 'dynamodb-toolbox/schema/number'
+import { Parser } from 'dynamodb-toolbox/schema/actions/parse'
+
+const rec = record(string(), number())
+const parsed = rec.build(Parser).parse(...)
+// => Record<string, number>
+```
+
+In particular, if the key schema is a `string` enum, the parsing **expects an element to be present for all enum values**:
+
+```ts
+const rec = record(string().enum('foo', 'bar'), number())
+
+// ❌ Raises an error as 'bar' is missing
+rec.build(Parser).parse({ foo: 42 })
+```
+
+You can change this behavior with the **`partial` property**:
+
+```ts
+const rec = record(...).partial()
+
+// ✅ Succeeds
+rec.build(Parser).parse({ foo: 42 })
+```
+
+## Renamings
+
+### `Entity` and `Table` names
+
+The `name` property of `Entity` and `Table` instances have been renamed to `entityName` and `tableName`:
+
+```diff
+- const entityName = PokemonEntity.name
++ const entityName = PokemonEntity.entityName
+
+- const tableName = PokeTable.name
++ const tableName = PokeTable.tableName
+```
+
+### `Transformers`
 
 Transformers' `parse` and `format` properties have been renamed to **`encode`** and **`decode`** for clarity:
 
