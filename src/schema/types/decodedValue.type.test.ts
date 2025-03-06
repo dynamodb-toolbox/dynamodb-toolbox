@@ -1,11 +1,11 @@
 import type { A } from 'ts-toolbelt'
 
+import type { DecodedValue } from './decodedValue.js'
 import type { bigSchema, testSchema } from './fixtures.test.js'
-import type { ReadValue } from './readValue.js'
 
-type Formatted = ReadValue<typeof testSchema>
-const assertFormatted: A.Equals<
-  Formatted,
+type Decoded = DecodedValue<typeof testSchema>
+const assertDecoded: A.Equals<
+  Decoded,
   {
     any: unknown
     nul?: null | undefined
@@ -25,9 +25,9 @@ const assertFormatted: A.Equals<
     linkedStr: string
   }
 > = 1
-assertFormatted
+assertDecoded
 
-type WhiteListedA = ReadValue<
+type WhiteListedA = DecodedValue<
   typeof testSchema,
   { attributes: 'any' | 'nul' | 'list' | 'map' | 'record' }
 >
@@ -43,7 +43,7 @@ const assertWhiteListedA: A.Equals<
 > = 1
 assertWhiteListedA
 
-type WhiteListedB = ReadValue<
+type WhiteListedB = DecodedValue<
   typeof testSchema,
   { attributes: "['any']" | "['nul']" | "['list']" | "['map']" | "['record']" }
 >
@@ -59,7 +59,7 @@ const assertWhiteListedB: A.Equals<
 > = 1
 assertWhiteListedB
 
-type WhiteListedC = ReadValue<
+type WhiteListedC = DecodedValue<
   typeof testSchema,
   { attributes: 'list[0].num' | 'map.num' | 'record.foo' }
 >
@@ -73,7 +73,7 @@ const assertWhiteListedC: A.Equals<
 > = 1
 assertWhiteListedC
 
-type WhiteListedD = ReadValue<
+type WhiteListedD = DecodedValue<
   typeof testSchema,
   { attributes: "['list'][0].num" | "['map'].num" | "['record'].foo" }
 >
@@ -87,7 +87,7 @@ const assertWhiteListedD: A.Equals<
 > = 1
 assertWhiteListedD
 
-type WhiteListedE = ReadValue<
+type WhiteListedE = DecodedValue<
   typeof testSchema,
   { attributes: "list[0]['num']" | "map['num']" | "record['foo']" | "record['foo'].num" }
 >
@@ -101,7 +101,7 @@ const assertWhiteListedE: A.Equals<
 > = 1
 assertWhiteListedE
 
-type WhiteListedF = ReadValue<
+type WhiteListedF = DecodedValue<
   typeof testSchema,
   { attributes: "['list'][0]['num']" | "['map']['num']" | "['record']['foo']" }
 >
@@ -115,15 +115,15 @@ const assertWhiteListedF: A.Equals<
 > = 1
 assertWhiteListedF
 
-type WhiteListedG = ReadValue<typeof testSchema, { attributes: "record['foo'].num" }>
+type WhiteListedG = DecodedValue<typeof testSchema, { attributes: "record['foo'].num" }>
 const assertWhiteListedG: A.Equals<WhiteListedG, { record: Record<'foo', { num: number }> }> = 1
 assertWhiteListedG
 
-type WhiteListedH = ReadValue<typeof testSchema, { attributes: "record['foo']['num']" }>
+type WhiteListedH = DecodedValue<typeof testSchema, { attributes: "record['foo']['num']" }>
 const assertWhiteListedH: A.Equals<WhiteListedH, { record: Record<'foo', { num: number }> }> = 1
 assertWhiteListedH
 
-type Partial_ = ReadValue<typeof testSchema, { partial: true }>
+type Partial_ = DecodedValue<typeof testSchema, { partial: true }>
 const assertPartial: A.Equals<
   Partial_,
   {
@@ -147,7 +147,7 @@ const assertPartial: A.Equals<
 > = 1
 assertPartial
 
-type Big = ReadValue<typeof bigSchema>
+type Big = DecodedValue<typeof bigSchema>
 const assertBig: A.Equals<
   Big,
   {

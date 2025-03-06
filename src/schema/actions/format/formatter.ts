@@ -1,7 +1,7 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {
+  DecodedValue,
   FormattedValue,
-  ReadValue,
   ReadValueOptions,
   Schema,
   TransformedValue
@@ -18,14 +18,14 @@ export type FormatterYield<
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { transform: false } | { format: false }
   ? never
-  : ReadValue<SCHEMA, READ_VALUE_OPTIONS>
+  : DecodedValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export type FormatterReturn<
   SCHEMA extends Schema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
   READ_VALUE_OPTIONS extends ReadValueOptions<SCHEMA> = InferReadValueOptions<SCHEMA, OPTIONS>
 > = OPTIONS extends { format: false }
-  ? ReadValue<SCHEMA, READ_VALUE_OPTIONS>
+  ? DecodedValue<SCHEMA, READ_VALUE_OPTIONS>
   : FormattedValue<SCHEMA, READ_VALUE_OPTIONS>
 
 export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
