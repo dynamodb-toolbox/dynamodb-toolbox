@@ -18,13 +18,13 @@ import {
   anyOf,
   binary,
   boolean,
+  item,
   list,
   map,
   nul,
   number,
   prefix,
   record,
-  schema,
   set,
   string
 } from '~/index.js'
@@ -37,7 +37,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_string_coerce: string().optional(),
@@ -82,14 +82,13 @@ const TestTable2 = new Table({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity2',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
-    test: string().optional(), // TODO: prefix with test---
+    test: string().optional(),
     test_composite: string().optional(),
     test_composite2: string().optional(),
     test_undefined: any()
       .optional()
-      // TODO: use unknown
       .putDefault(() => '')
   }).and(schema => ({
     sort: string()
@@ -114,7 +113,7 @@ const TestTable3 = new Table({
 
 const TestEntity3 = new Entity({
   name: 'TestEntity3',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test: string(),
     test2: string().required('always'),
@@ -134,7 +133,7 @@ const TestTable4 = new Table({
 
 const TestEntity4 = new Entity({
   name: 'TestEntity4',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test_number_default_with_map: number().savedAs('test_mapped_number').default(0)
   }),
@@ -144,7 +143,7 @@ const TestEntity4 = new Entity({
 
 const TestEntity5 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk').transform(prefix('EMAIL')),
     sort: string().key().savedAs('sk'),
     transformedStr: string().transform(prefix('STR')),
@@ -199,7 +198,7 @@ describe('update', () => {
       ':s_3': 0,
       ':s_4': false,
       ':s_5': 'NOTHING_TO_COPY',
-      ':s_6': TestEntity.name,
+      ':s_6': TestEntity.entityName,
       ':s_7': expect.any(String),
       ':s_8': expect.any(String),
       ':a_1': 1
@@ -208,7 +207,7 @@ describe('update', () => {
     expect(ToolboxItem).toStrictEqual({
       created: { [$GET]: ['created', expect.any(String)] },
       modified: expect.any(String),
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       email: 'test-pk',
       sort: 'test-sk',
       test_big_number: BigInt('10000000'),
@@ -1188,7 +1187,7 @@ describe('update', () => {
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_record: { foo: undefined }
+          test_record: {}
         })
         .params()
 
@@ -1470,7 +1469,7 @@ describe('update', () => {
   test('any attribute', () => {
     const TestEntity6 = new Entity({
       name: 'TestEntity',
-      schema: schema({
+      schema: item({
         pk: string().key(),
         sk: string().key(),
         any: any().optional()

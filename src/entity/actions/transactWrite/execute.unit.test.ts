@@ -21,10 +21,10 @@ import {
   any,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
-  schema,
   set,
   string
 } from '~/index.js'
@@ -45,7 +45,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),
@@ -73,7 +73,7 @@ const TestTable2 = new Table({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity2',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test_composite: string().optional(),
     test_composite2: string().optional()
@@ -136,7 +136,7 @@ describe('execute', () => {
         undefined,
         ValidItem<typeof TestEntity2>,
         undefined,
-        UpdateItemInput<typeof TestEntity, true>
+        UpdateItemInput<typeof TestEntity, { filled: true }>
       ]
     > = 1
     assertToolboxItems
@@ -144,7 +144,7 @@ describe('execute', () => {
     const [toolboxItem1, toolboxItem2, toolboxItem3, toolboxItem4, toolboxItem5] = toolboxItems
 
     expect(toolboxItem1).toStrictEqual({
-      entity: TestEntity.name,
+      entity: TestEntity.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'titi@example.com',
@@ -154,14 +154,14 @@ describe('execute', () => {
     })
     expect(toolboxItem2).toBeUndefined()
     expect(toolboxItem3).toStrictEqual({
-      entity: TestEntity2.name,
+      entity: TestEntity2.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'toto@example.com'
     })
     expect(toolboxItem4).toBeUndefined()
     expect(toolboxItem5).toStrictEqual({
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       created: { [$GET]: ['created', mockDate] },
       modified: mockDate,
       email: 'tutu@example.com',
@@ -192,7 +192,7 @@ describe('execute', () => {
         | undefined
         | ValidItem<typeof TestEntity>
         | ValidItem<typeof TestEntity2>
-        | UpdateItemInput<typeof TestEntity, true>
+        | UpdateItemInput<typeof TestEntity, { filled: true }>
       )[]
     > = 1
     assertToolboxItems
@@ -200,7 +200,7 @@ describe('execute', () => {
     const [toolboxItem1, toolboxItem2, toolboxItem3, toolboxItem4, toolboxItem5] = toolboxItems
 
     expect(toolboxItem1).toStrictEqual({
-      entity: TestEntity.name,
+      entity: TestEntity.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'titi@example.com',
@@ -210,14 +210,14 @@ describe('execute', () => {
     })
     expect(toolboxItem2).toBeUndefined()
     expect(toolboxItem3).toStrictEqual({
-      entity: TestEntity2.name,
+      entity: TestEntity2.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'toto@example.com'
     })
     expect(toolboxItem4).toBeUndefined()
     expect(toolboxItem5).toStrictEqual({
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       created: { [$GET]: ['created', mockDate] },
       modified: mockDate,
       email: 'tutu@example.com',
@@ -246,7 +246,7 @@ describe('execute', () => {
       typeof toolboxItems,
       [
         ValidItem<typeof TestEntity>,
-        UpdateItemInput<typeof TestEntity, true>,
+        UpdateItemInput<typeof TestEntity, { filled: true }>,
         ...ValidItem<typeof TestEntity2>[]
       ]
     > = 1
@@ -255,7 +255,7 @@ describe('execute', () => {
     const [toolboxItem1, toolboxItem2, toolboxItem3] = toolboxItems
 
     expect(toolboxItem1).toStrictEqual({
-      entity: TestEntity.name,
+      entity: TestEntity.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'titi@example.com',
@@ -264,14 +264,14 @@ describe('execute', () => {
       test_string: 'test string'
     })
     expect(toolboxItem2).toStrictEqual({
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       created: { [$GET]: ['created', mockDate] },
       modified: mockDate,
       email: 'tutu@example.com',
       sort: 'titi'
     })
     expect(toolboxItem3).toStrictEqual({
-      entity: TestEntity2.name,
+      entity: TestEntity2.entityName,
       created: mockDate,
       modified: mockDate,
       email: 'toto@example.com'
@@ -367,7 +367,7 @@ describe('generateTransactWriteCommandInput', () => {
         },
         {
           ToolboxItem: {
-            entity: TestEntity.name,
+            entity: TestEntity.entityName,
             created: mockDate,
             modified: mockDate,
             email: 'titi@example.com',
@@ -386,7 +386,7 @@ describe('generateTransactWriteCommandInput', () => {
           },
           Put: {
             Item: {
-              _et: TestEntity.name,
+              _et: TestEntity.entityName,
               _ct: mockDate,
               _md: mockDate,
               pk: 'titi@example.com',
@@ -414,7 +414,7 @@ describe('generateTransactWriteCommandInput', () => {
         },
         {
           ToolboxItem: {
-            entity: { [$GET]: ['entity', TestEntity.name] },
+            entity: { [$GET]: ['entity', TestEntity.entityName] },
             created: { [$GET]: ['created', mockDate] },
             modified: mockDate,
             email: 'titi@example.com',
@@ -442,7 +442,7 @@ describe('generateTransactWriteCommandInput', () => {
               ':s_1': [],
               ':s_2': ['toutou'],
               ':s_3': { str: 'B' },
-              ':s_4': TestEntity.name,
+              ':s_4': TestEntity.entityName,
               ':s_5': mockDate,
               ':s_6': mockDate
             },

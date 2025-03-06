@@ -1,6 +1,6 @@
 import type { A } from 'ts-toolbelt'
 
-import type { testSchema } from './fixtures.test.js'
+import type { bigSchema, testSchema } from './fixtures.test.js'
 import type { ValidValue } from './validValue.js'
 
 type Put = ValidValue<typeof testSchema>
@@ -19,9 +19,8 @@ const assertPut: A.Equals<
     set: Set<string>
     list: { num: number; str: string }[]
     map: { num: number; str: string }
-    record: {
-      [x: string]: { num: number; str: string } | undefined
-    }
+    record: Record<'foo' | 'bar', { num: number; str: string }>
+    partialRecord: Partial<Record<'foo' | 'bar', string>>
     anyOf: string | number
     linkedStr: string
   }
@@ -48,11 +47,36 @@ const assertUpdate: A.Equals<
     set?: Set<string>
     list?: ({ num?: number; str?: string } | undefined)[]
     map?: { num?: number; str?: string }
-    record?: {
-      [x: string]: { num?: number; str?: string } | undefined
-    }
+    record?: Partial<Record<'foo' | 'bar', { num?: number; str?: string }>>
+    partialRecord?: Partial<Record<'foo' | 'bar', string>>
     anyOf?: string | number
     linkedStr?: string
   }
 > = 1
 assertUpdate
+
+type Big = ValidValue<typeof bigSchema>
+const assertBig: A.Equals<
+  Big,
+  {
+    list: string[][][][][][][][][][][][][][][]
+    map: {
+      map: {
+        map: {
+          map: {
+            map: {
+              map: {
+                map: {
+                  map: {
+                    map: { map: { map: { map: { map: { map: { map: { str: string } } } } } } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+> = 1
+assertBig

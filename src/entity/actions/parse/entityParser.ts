@@ -18,6 +18,7 @@ type EntityParserInput<
 
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parse';
+
   [$parser]: Parser<ENTITY['schema']>
 
   constructor(entity: ENTITY) {
@@ -26,7 +27,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
   }
 
   parse<OPTIONS extends ParseItemOptions = {}>(
-    input: { [KEY: string]: unknown },
+    input: unknown,
     options: OPTIONS = {} as OPTIONS
   ): {
     parsedItem: ValidItem<ENTITY, InferWriteItemOptions<OPTIONS>>

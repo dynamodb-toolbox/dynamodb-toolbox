@@ -9,10 +9,10 @@ import {
   any,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
-  schema,
   set,
   string
 } from '~/index.js'
@@ -30,7 +30,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),

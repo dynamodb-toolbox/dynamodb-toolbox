@@ -1,6 +1,6 @@
-import type { AnyOfAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { AnyOfSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import { attrParser } from './attribute.js'
@@ -8,11 +8,11 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* anyOfAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: AnyOfAttribute,
+export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: AnyOfSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<AnyOfAttribute, OPTIONS>, ParserReturn<AnyOfAttribute, OPTIONS>> {
+): Generator<ParserYield<AnyOfSchema, OPTIONS>, ParserReturn<AnyOfSchema, OPTIONS>> {
   const { fill = true, transform = true, valuePath = [] } = options
 
   let parser: Generator<any, any> | undefined = undefined
@@ -20,7 +20,7 @@ export function* anyOfAttributeParser<OPTIONS extends ParseAttrValueOptions = {}
   let _linkedValue = undefined
   let _parsedValue = undefined
 
-  for (const elementAttribute of attribute.elements) {
+  for (const elementAttribute of schema.elements) {
     try {
       parser = attrParser(elementAttribute, inputValue, options)
       if (fill) {
@@ -60,7 +60,7 @@ export function* anyOfAttributeParser<OPTIONS extends ParseAttrValueOptions = {}
     })
   }
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {

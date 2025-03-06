@@ -10,7 +10,7 @@ DynamoDB-Toolbox mainly exposes three classes:
 
 - 🏗️ [Tables](../../2-tables/1-usage/index.md) that describe the configuration of your DynamoDB Tables
 - 🐶 [Entities](../../3-entities/1-usage/index.md) that categorize the items contained in your Tables
-- 📐 [Schemas](../../4-schemas/1-usage/index.md) that list the attributes of your entities
+- 📐 [Schemas](../../4-schemas/1-usage/index.md) that describe the attributes of your entities
 
 ```mermaid
 flowchart LR
@@ -51,7 +51,7 @@ flowchart LR
     nameSchema(nameSchema)
     otherSchemas(<small>...</small>):::mmddescription
     hairStyleSchema(hairStyleSchema)
-    schemasDescription(...list <b>attributes</b><br/>of the Table entities.):::mmddescription
+    schemasDescription(...describe <b>attributes</b><br/>of the Table entities.):::mmddescription
 
     pokemonEntity-->pokemonSchema
     trainerEntity-->trainerSchema
@@ -70,7 +70,7 @@ flowchart LR
 ```ts
 import { Table } from 'dynamodb-toolbox/table'
 import { Entity } from 'dynamodb-toolbox/entity'
-import { schema } from 'dynamodb-toolbox/schema'
+import { item } from 'dynamodb-toolbox/schema/item'
 
 // Define a Table
 const PokeTable = new Table(...)
@@ -80,7 +80,7 @@ const PokemonEntity = new Entity({
   // Assign it to a table
   table: PokeTable,
   // Specify its schema
-  schema: schema(...)
+  schema: item(...),
   ...
 })
 ```
@@ -91,7 +91,7 @@ Once you have defined your `Tables` and `Entities`. You can start using them in 
 
 ## Methods vs Actions
 
-Queries, updates, transactions, batch operations... DynamoDB has a **wide range of features**. Exposing all of them as distinct methods would **bloat the `Entity` and `Table` classes**. Class methods are not tree-shakable, and why bother bundling the code needed for a feature (which can be quite large) if you don't need it?
+Queries, updates, transactions, batch operations... DynamoDB has a **wide range of features**. Exposing all of them as methods would **bloat the `Entity` and `Table` classes**. Class methods are not tree-shakable, and why bother bundling the code needed for a feature (which can be quite large) if you don't need it?
 
 Instead, `Tables`, `Entities` and `Schemas` have a single `.build` method which is exactly **1-line long** 🤯 and acts as a gateway to perform [Actions](#how-do-actions-work):
 
@@ -117,7 +117,7 @@ The syntax is a bit more verbose than a simple `PokemonEntity.get(key)`, but it 
 
 :::info
 
-Note that if you don't mind large bundle sizes, you can still use the [`TableRepository`](../../2-tables/2-actions/10-repository/index.md) and [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
+If you don't mind large bundle sizes, you can still use the [`TableRepository`](../../2-tables/2-actions/10-repository/index.md) and [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
 
 :::
 
@@ -141,7 +141,7 @@ abortController.abort()
 
 ## How do Actions work?
 
-There are three types of actions: [Table Actions](../../2-tables/2-actions/1-scan/index.md), [Entity Actions](../../3-entities/4-actions/1-get-item/index.md) and [Schema Actions](../../4-schemas/16-actions/1-parse.md).
+There are three types of actions: [Table Actions](../../2-tables/2-actions/1-scan/index.md), [Entity Actions](../../3-entities/4-actions/1-get-item/index.md) and [Schema Actions](../../4-schemas/17-actions/1-parse.md).
 
 Each type of action is essentially a class that respectively accepts a `Table`, `Entity` or a `Schema` as the first parameter of its constructor, with all other parameters being optional.
 
@@ -160,8 +160,8 @@ export class NameGetter<
     super(entity)
   }
 
-  get(): ENTITY['name'] {
-    return this.entity.name
+  get(): ENTITY['entityName'] {
+    return this.entity.entityName
   }
 }
 

@@ -1,17 +1,20 @@
-import { string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { string } from '~/schema/index.js'
 
-import * as primitiveAttrFormatterModule from './primitive.js'
+import * as primitiveSchemaFormatterModule from './primitive.js'
 import { attrFormatter } from './attribute.js'
 
-const primitiveAttrFormatter = vi.spyOn(primitiveAttrFormatterModule, 'primitiveAttrFormatter')
+const primitiveSchemaFormatter = vi.spyOn(
+  primitiveSchemaFormatterModule,
+  'primitiveSchemaFormatter'
+)
 
-const strAttr = string().freeze('path')
-const optStrAttr = string().optional().freeze('path')
+const strAttr = string()
+const optStrAttr = string().optional()
 
 describe('attrFormatter', () => {
   beforeEach(() => {
-    primitiveAttrFormatter.mockClear()
+    primitiveSchemaFormatter.mockClear()
   })
 
   test('throws an error if value is missing and required', () => {
@@ -39,8 +42,8 @@ describe('attrFormatter', () => {
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual('foo')
 
-    expect(primitiveAttrFormatter).toHaveBeenCalledOnce()
-    expect(primitiveAttrFormatter).toHaveBeenCalledWith(strAttr, 'foo', options)
+    expect(primitiveSchemaFormatter).toHaveBeenCalledOnce()
+    expect(primitiveSchemaFormatter).toHaveBeenCalledWith(strAttr, 'foo', options)
 
     const { done, value: formattedValue } = formatter.next()
     expect(done).toBe(true)
@@ -55,7 +58,7 @@ describe('attrFormatter', () => {
     expect(done).toBe(true)
     expect(formattedValue).toStrictEqual('foo')
 
-    expect(primitiveAttrFormatter).toHaveBeenCalledOnce()
-    expect(primitiveAttrFormatter).toHaveBeenCalledWith(strAttr, 'foo', options)
+    expect(primitiveSchemaFormatter).toHaveBeenCalledOnce()
+    expect(primitiveSchemaFormatter).toHaveBeenCalledWith(strAttr, 'foo', options)
   })
 })

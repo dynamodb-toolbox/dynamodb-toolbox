@@ -1,6 +1,5 @@
-import { anyOf, list, map, number, record, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { schema } from '~/schema/index.js'
+import { anyOf, item, list, map, number, record, string } from '~/schema/index.js'
 
 import { PathParser } from './pathParser.js'
 
@@ -10,7 +9,7 @@ import { PathParser } from './pathParser.js'
 
 describe('parseProjection', () => {
   describe('savedAs attrs', () => {
-    const schemaWithSavedAs = schema({
+    const schemaWithSavedAs = item({
       savedAs: string().savedAs('_s'),
       deep: map({
         savedAs: string().savedAs('_s')
@@ -63,7 +62,7 @@ describe('parseProjection', () => {
   })
 
   describe('anyOf', () => {
-    const schemaWithAnyOf = schema({
+    const schemaWithAnyOf = item({
       anyOf: anyOf(number(), map({ str: string() }), map({ num: number().savedAs('_n') }))
     })
 
@@ -94,7 +93,7 @@ describe('parseProjection', () => {
   })
 
   describe('special char keys', () => {
-    const schemaWithRec = schema({
+    const schemaWithRec = item({
       record: record(string(), string()),
       map: map({
         '[': string()

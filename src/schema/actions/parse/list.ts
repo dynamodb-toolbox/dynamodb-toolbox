@@ -1,6 +1,6 @@
-import type { ListAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { ListSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
@@ -9,11 +9,11 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* listAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: ListAttribute,
+export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: ListSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<ListAttribute, OPTIONS>, ParserReturn<ListAttribute, OPTIONS>> {
+): Generator<ParserYield<ListSchema, OPTIONS>, ParserReturn<ListSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
@@ -22,7 +22,7 @@ export function* listAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
     parsers = inputValue.map((element, index) =>
-      attrParser(attribute.elements, element, {
+      attrParser(schema.elements, element, {
         ...restOptions,
         valuePath: [...valuePath, index],
         defined: false
@@ -39,15 +39,15 @@ export function* listAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<ListAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<ListSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<ListAttribute, OPTIONS>
+      yield linkedValue as ParserYield<ListSchema, OPTIONS>
     }
   }
 
   if (!isInputValueArray) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -59,7 +59,7 @@ export function* listAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = parsers.map(parser => parser.next().value)
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {

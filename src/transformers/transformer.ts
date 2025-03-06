@@ -1,34 +1,34 @@
 import type { Constant, Fn, Identity } from 'hotscript'
 
 export interface Transformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any
+  DECODED_CONSTRAINT = any,
+  DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
+  ENCODED = any
 > {
-  parse: (formatted: FORMATTED) => TRANSFORMED
-  format: (transformed: TRANSFORMED) => FORMATTED_CONSTRAINT
+  encode: (decoded: DECODED) => ENCODED
+  decode: (encoded: ENCODED) => DECODED_CONSTRAINT
 }
 
 export interface TypedTransformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any,
+  DECODED_CONSTRAINT = any,
+  DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
+  ENCODED = any,
   TYPE_MODIFIER extends Fn = Identity
-> extends Transformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED> {
+> extends Transformer<DECODED_CONSTRAINT, DECODED, ENCODED> {
   _typeModifier: TYPE_MODIFIER
 }
 
 export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends TypedTransformer
   ? TRANSFORMER['_typeModifier']
-  : Constant<ReturnType<TRANSFORMER['parse']>>
+  : Constant<ReturnType<TRANSFORMER['encode']>>
 
 export interface SerializableTransformer<
-  FORMATTED_CONSTRAINT = any,
-  FORMATTED extends FORMATTED_CONSTRAINT = FORMATTED_CONSTRAINT,
-  TRANSFORMED = any,
+  DECODED_CONSTRAINT = any,
+  DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
+  ENCODED = any,
   TYPE_MODIFIER extends Fn = Fn,
   DTO extends { transformerId: string } & object = { transformerId: string } & object
-> extends TypedTransformer<FORMATTED_CONSTRAINT, FORMATTED, TRANSFORMED, TYPE_MODIFIER> {
+> extends TypedTransformer<DECODED_CONSTRAINT, DECODED, ENCODED, TYPE_MODIFIER> {
   transformerId: DTO['transformerId']
   toJSON: () => DTO
 }

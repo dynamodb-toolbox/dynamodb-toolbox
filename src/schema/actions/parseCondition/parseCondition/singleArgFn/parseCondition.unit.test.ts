@@ -1,10 +1,9 @@
-import { list, map, number } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+import { item, list, map, number } from '~/schema/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - singleArgFn', () => {
-  const simpleSchema = schema({
+  const simpleSchema = item({
     num: number()
   })
 
@@ -28,7 +27,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  const mapSchema = schema({
+  const mapSchema = item({
     map: map({
       deepA: map({
         deepB: number()
@@ -53,7 +52,7 @@ describe('parseCondition - singleArgFn', () => {
     })
   })
 
-  const listSchema = schema({
+  const listSchema = item({
     listA: list(
       map({
         deep: map({

@@ -3,6 +3,7 @@ import {
   anyOf,
   binary,
   boolean,
+  item,
   list,
   map,
   nul,
@@ -10,10 +11,9 @@ import {
   record,
   set,
   string
-} from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+} from '~/schema/index.js'
 
-export const mySchema = schema({
+export const mySchema = item({
   any: any(),
   nul: nul(),
   bool: boolean(),

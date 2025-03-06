@@ -6,10 +6,10 @@ import {
   any,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
-  schema,
   set,
   string
 } from '~/index.js'
@@ -28,7 +28,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_any: any().optional(),
@@ -55,7 +55,7 @@ const TestTable2 = new Table({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity2',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test_composite: string().optional(),
     test_composite2: string().optional()
@@ -73,7 +73,7 @@ const TestEntity2 = new Entity({
 
 const TestEntity3 = new Entity({
   name: 'TestEntity3',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test: any(),
     test2: string().optional()
@@ -89,7 +89,7 @@ const TestTable3 = new Table({
 
 const TestEntity4 = new Entity({
   name: 'TestEntity4',
-  schema: schema({
+  schema: item({
     id: number().key().savedAs('pk'),
     // sk: { hidden: true, sortKey: true, default: (data: any) => data.id },
     xyz: any().optional().savedAs('test')
@@ -100,7 +100,7 @@ const TestEntity4 = new Entity({
 
 const TestEntity5 = new Entity({
   name: 'TestEntity5',
-  schema: schema({
+  schema: item({
     pk: string().key(),
     test_required_boolean: boolean(),
     test_required_number: number()
@@ -116,7 +116,7 @@ describe('put transaction', () => {
     } = TestEntity.build(PutTransaction).item({ email: 'test-pk', sort: 'test-sk' }).params()
 
     expect(Item).toStrictEqual({
-      _et: TestEntity.name,
+      _et: TestEntity.entityName,
       _ct: expect.any(String),
       _md: expect.any(String),
       pk: 'test-pk',
@@ -126,7 +126,7 @@ describe('put transaction', () => {
     })
 
     expect(ToolboxItem).toMatchObject({
-      entity: TestEntity.name,
+      entity: TestEntity.entityName,
       created: expect.any(String),
       modified: expect.any(String),
       email: 'test-pk',

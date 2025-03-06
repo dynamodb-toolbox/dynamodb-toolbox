@@ -6,17 +6,17 @@ title: Defaults & Links
 
 ## Defaults
 
-All attribute types support providing default values. There are three kinds of defaults:
+All schema types support providing default values. There are three kinds of defaults:
 
 - `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
 - `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
-- `keyDefault`: Overrides other defaults on key attributes (ignored otherwise)
+- `keyDefault`: Overrides other defaults on key schemas (ignored otherwise)
 
-The `default` method is a shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise.
+The `default` method is a shorthand that acts as `keyDefault` on key schemas and `putDefault` otherwise.
 
 :::info
 
-☝️ In order for the `.default(...)` shorthand to work properly on key attributes, make sure to use it **after** calling `.key()`.
+☝️ In order for the `.default(...)` shorthand to work properly on key schemas, make sure to use it **after** calling `.key()`.
 
 :::
 
@@ -42,7 +42,7 @@ In DynamoDB, it is frequent to **infer attribute values from other attributes** 
 In TypeScript, the difficulty is that it's **impossible** to pass the shape of the parent schema to the `.default` method, and thus efficiently type the link arguments:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   ...
   level: number(),
   levelPlusOne: number().default(
@@ -52,10 +52,10 @@ const pokemonSchema = schema({
 })
 ```
 
-The solution is to make good use of the `.and(...)` method (see [Updating Schemas](../1-usage/index.md#updating-schemas)) and build the schema **in two steps**:
+The solution is to make good use of the `.and(...)` method (see [`item`](../13-item/index.md) and [`maps`](../14-map/index.md) for more details) and build the schema **in two steps**:
 
 ```ts
-const basePokemonSchema = schema({
+const basePokemonSchema = item({
   ...,
   level: number()
 })
@@ -67,8 +67,8 @@ const completePokemonSchema = basePokemonSchema.and({
   )
 })
 
-// 👇 OR we can use the getter form:
-const pokemonSchema = schema({
+// 👇 OR we can use the getter syntax:
+const pokemonSchema = item({
   ...
   level: number()
 }).and(prevSchema => ({
@@ -89,24 +89,24 @@ Similarly to defaults, links come in three modes:
 
 - `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
 - `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
-- `keyLink`: Overrides other links on key attributes (ignored otherwise)
+- `keyLink`: Overrides other links on key schemas (ignored otherwise)
 
-The `link` method is a shorthand that acts as `keyLink` on key attributes and `putLink` otherwise.
+The `link` method is a shorthand that acts as `keyLink` on key schemas and `putLink` otherwise.
 
 :::info
 
-☝️ In order for the `.link(...)` shorthand to work properly on key attributes, make sure to use it **after** calling `.key()`.
+☝️ In order for the `.link(...)` shorthand to work properly on key schemas, make sure to use it **after** calling `.key()`.
 
 :::
 
-Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../16-actions/1-parse.md) action for more details).
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../17-actions/1-parse.md) action for more details).
 
 ### Update Syntax
 
 If you use TypeScript, you may notice that the `updateLink` input type can be quite complex. This is to reflect that **extended syntax** (e.g. `$add`, `$get` etc.) is also passed to `updateLink`:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   ...
   level: number()
 }).and(prevSchema => ({
@@ -128,7 +128,7 @@ If you want to leverage extended syntax within the link, check the [`UpdateItemC
 ```ts
 import { isExtension } from 'dynamodb-toolbox/entity/actions/update/symbols'
 
-const pokemonSchema = schema({
+const pokemonSchema = item({
   ...
   level: number()
 }).and(prevSchema => ({

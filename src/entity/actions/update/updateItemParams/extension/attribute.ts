@@ -1,6 +1,11 @@
-import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  Schema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 
 import { isGetting, isRemoval } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
@@ -12,17 +17,19 @@ import { parseReferenceExtension } from './reference.js'
 import { parseSetExtension } from './set.js'
 
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
-  attribute: Attribute,
+  schema: Schema,
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
-  const { transform = true } = options
+  const { transform = true, valuePath } = options
 
   if (isRemoval(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const { path, required } = attribute
+        const { props } = schema
+        const { required } = props
+        const path = formatValuePath(valuePath)
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
@@ -47,24 +54,24 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   }
 
   if (isGetting(input)) {
-    return parseReferenceExtension(attribute, input, options)
+    return parseReferenceExtension(schema, input, options)
   }
 
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'number':
-      return parseNumberExtension(attribute, input, options)
+      return parseNumberExtension(schema, input, options)
     case 'set':
-      return parseSetExtension(attribute, input, options)
+      return parseSetExtension(schema, input, options)
     case 'list':
-      return parseListExtension(attribute, input, options)
+      return parseListExtension(schema, input, options)
     case 'map':
-      return parseMapExtension(attribute, input, options)
+      return parseMapExtension(schema, input, options)
     case 'record':
-      return parseRecordExtension(attribute, input, options)
+      return parseRecordExtension(schema, input, options)
     default:
       return {
         isExtension: false,
-        basicInput: input as AttributeBasicValue<UpdateItemInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
       }
   }
 }

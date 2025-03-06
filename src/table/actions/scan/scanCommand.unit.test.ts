@@ -6,7 +6,7 @@ import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { Entity, Table, number, schema, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
 
 import { ScanCommand } from './scanCommand.js'
 
@@ -23,7 +23,7 @@ const TestTable = new Table({
 
 const EntityA = new Entity({
   name: 'EntityA',
-  schema: schema({
+  schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -31,6 +31,7 @@ const EntityA = new Entity({
   }),
   table: TestTable
 })
+
 const incompleteSavedItemA: Omit<SavedItem<typeof EntityA>, '_et'> = {
   _ct: '2021-09-01T00:00:00.000Z',
   _md: '2021-09-01T00:00:00.000Z',
@@ -54,7 +55,7 @@ const formattedItemA: FormattedItem<typeof EntityA> = {
 
 const EntityB = new Entity({
   name: 'EntityB',
-  schema: schema({
+  schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -127,37 +128,38 @@ describe('scanCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
+      { entity: EntityA.entityName, ...formattedItemA },
+      { entity: EntityB.entityName, ...formattedItemB }
     ])
   })
 
-  test('still tries all formatters if entityAttribute misses (omit invalid items)', async () => {
+  test('tries all formatters if entityAttribute misses and throws on invalid items if noEntityMatchBehavior is "THROW" (default)', async () => {
+    documentClientMock.on(_ScanCommand).resolves({
+      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
+    })
+
+    const invalidCall = async () =>
+      await TestTable.build(ScanCommand)
+        .entities(EntityA, EntityB)
+        .options({ entityAttrFilter: false })
+        .send()
+
+    expect(invalidCall).rejects.toThrow(DynamoDBToolboxError)
+    expect(invalidCall).rejects.toThrow(
+      expect.objectContaining({ code: 'scanCommand.noEntityMatched' })
+    )
+  })
+
+  test('tries all formatters if entityAttribute misses and omit invalid items if noEntityMatchBehavior is "DISCARD"', async () => {
     documentClientMock.on(_ScanCommand).resolves({
       Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
     })
 
     const { Items } = await TestTable.build(ScanCommand)
       .entities(EntityA, EntityB)
-      .options({ entityAttrFilter: false })
+      .options({ entityAttrFilter: false, noEntityMatchBehavior: 'DISCARD' })
       .send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
-  })
-
-  test('still appends entityAttribute if showEntityAttr is true', async () => {
-    documentClientMock.on(_ScanCommand).resolves({
-      Items: [incompleteSavedItemA, incompleteSavedItemB, invalidItem]
-    })
-
-    const { Items } = await TestTable.build(ScanCommand)
-      .entities(EntityA, EntityB)
-      .options({ entityAttrFilter: false, showEntityAttr: true })
-      .send()
-
-    expect(Items).toStrictEqual([
-      { [EntityA.entityAttributeName]: EntityA.name, ...formattedItemA },
-      { [EntityB.entityAttributeName]: EntityB.name, ...formattedItemB }
-    ])
   })
 })

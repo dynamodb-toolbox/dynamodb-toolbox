@@ -18,7 +18,7 @@ type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
   payload: { partition?: unknown }
 }>
 
-export type QueryCommandErrorBlueprints =
+export type QueryCommandParamsErrorBlueprints =
   | InvalidReverseOptionErrorBlueprint
   | InvalidIndexErrorBlueprint
   | InvalidPartitionErrorBlueprint

@@ -1,17 +1,20 @@
-import type { Attribute } from '~/attributes/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
 import type { Key } from '~/table/types/index.js'
 
-export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boolean => {
+import type { EntityAttributes, SchemaOf } from './entityAttributes.js'
+
+export const doesSchemaValidateTableSchemaKey = (
+  schema: SchemaOf<EntityAttributes>,
+  key?: Key
+): boolean => {
   if (key === undefined) return true
 
   const keyAttributeEntry = [...schema.keyAttributeNames.values()]
-    .map(attributeName => [attributeName, schema.attributes[attributeName]] as [string, Attribute])
+    .map(attributeName => [attributeName, schema.attributes[attributeName]] as [string, Schema])
     .find(
-      ([attributeName, attribute]) =>
-        attribute.savedAs === key.name ||
-        (attribute.savedAs === undefined && attributeName === key.name)
+      ([attributeName, { props }]) =>
+        props.savedAs === key.name || (props.savedAs === undefined && attributeName === key.name)
     )
 
   if (keyAttributeEntry === undefined) {
@@ -22,13 +25,16 @@ export const doesSchemaValidateTableSchemaKey = (schema: Schema, key?: Key): boo
 
   return (
     keyAttribute !== undefined &&
-    keyAttribute.key &&
     keyAttribute.type === key.type &&
-    (keyAttribute.required === 'always' || keyAttribute.defaults.key !== undefined)
+    keyAttribute.props.key === true &&
+    (keyAttribute.props.required === 'always' || keyAttribute.props.keyDefault !== undefined)
   )
 }
 
-export const doesSchemaValidateTableSchema = (schema: Schema, table: Table): boolean => {
+export const doesSchemaValidateTableSchema = (
+  schema: SchemaOf<EntityAttributes>,
+  table: Table
+): boolean => {
   const { partitionKey, sortKey } = table
 
   return (

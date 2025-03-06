@@ -1,3 +1,3 @@
-import type { Attribute } from '~/attributes/index.js'
+import type { Schema } from '~/schema/index.js'
 
-export const isKeyAttribute = ({ key }: Attribute): boolean => key
+export const isKeyAttribute = (schema: Schema): boolean => !!schema.props.key

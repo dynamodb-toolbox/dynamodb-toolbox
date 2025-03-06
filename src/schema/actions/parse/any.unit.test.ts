@@ -1,21 +1,21 @@
-import { any } from '~/attributes/any/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { any } from '~/schema/any/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import { anyAttrParser } from './any.js'
+import { anySchemaParser } from './any.js'
 
-describe('anyAttrParser', () => {
+describe('anySchemaParser', () => {
   test('accepts any value', () => {
-    const _any = any().freeze('root')
-    const { value } = anyAttrParser(_any, 42, { fill: false }).next()
+    const _any = any()
+    const { value } = anySchemaParser(_any, 42, { fill: false }).next()
     expect(value).toStrictEqual(42)
   })
 
   test('uses parser if transformer has been provided', () => {
-    const _any = any().transform(jsonStringify()).freeze('path')
+    const _any = any().transform(jsonStringify())
 
     const input = { foo: 'bar' }
-    const parser = anyAttrParser(_any, input, { fill: false })
+    const parser = anySchemaParser(_any, input, { fill: false })
 
     const { value: parsed } = parser.next()
     expect(parsed).toStrictEqual(input)
@@ -26,12 +26,10 @@ describe('anyAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const anyA = any()
-      .validate(input => input === 'foo')
-      .freeze()
+    const anyA = any().validate(input => input === 'foo')
 
     const invalidCallA = () =>
-      anyAttrParser(anyA, 'bar', { fill: false, valuePath: ['root'] }).next()
+      anySchemaParser(anyA, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -41,12 +39,10 @@ describe('anyAttrParser', () => {
       })
     )
 
-    const anyB = any()
-      .validate(input => (input === 'foo' ? true : 'Oh no...'))
-      .freeze('root')
+    const anyB = any().validate(input => (input === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
-      anyAttrParser(anyB, 'bar', { fill: false, valuePath: ['root'] }).next()
+      anySchemaParser(anyB, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

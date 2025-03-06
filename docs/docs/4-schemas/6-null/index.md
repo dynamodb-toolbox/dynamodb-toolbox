@@ -9,33 +9,27 @@ import TabItem from '@theme/TabItem';
 
 # Null
 
-Defines a [**null attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Describes [**null values**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
 // `null` is a reserved keyword 🤷‍♂️
-import { nul } from 'dynamodb-toolbox/attributes/nul';
+import { nul } from 'dynamodb-toolbox/schema/nul'
 
-const pokemonSchema = schema({
-  ...
-  nullValue: nul(),
-});
+const nullSchema = nul()
 
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
-// => {
-//   ...
-//   nullValue: null
-// }
+type Null = FormattedValue<typeof nullSchema>
+// => null
 ```
 
 :::info
 
-Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../15-anyOf/index.md) to define **nullable** attributes:
+Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../16-anyOf/index.md) to define **nullable** schemas:
 
 ```ts
-const pokemonSchema = schema({
-  ...
-  nullableString: anyOf(string(), nul()),
-});
+const nullableString = anyOf(string(), nul())
+
+type NullableString = FormattedValue<typeof nullableString>
+// => string | null
 ```
 
 :::
@@ -46,7 +40,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -54,37 +48,37 @@ Tags the attribute as **required** (at root level or within [Maps](../13-map/ind
 
 ```ts
 // Equivalent
-const nullishSchema = nul()
-const nullishSchema = nul().required()
-const nullishSchema = nul({ required: 'atLeastOnce' })
+const nullSchema = nul()
+const nullSchema = nul().required()
+const nullSchema = nul({ required: 'atLeastOnce' })
 
 // shorthand for `.required('never')`
-const nullishSchema = nul().optional()
-const nullishSchema = nul({ required: 'never' })
+const nullSchema = nul().optional()
+const nullSchema = nul({ required: 'never' })
 ```
 
 ### `.hidden()`
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips the attribute when formatting items:
+Omits schema values during [formatting](../17-actions/2-format.md):
 
 ```ts
-const nullishSchema = nul().hidden()
-const nullishSchema = nul({ hidden: true })
+const nullSchema = nul().hidden()
+const nullSchema = nul({ hidden: true })
 ```
 
 ### `.key()`
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as a primary key attribute or linked to a primary attribute:
+Tags schema values as a primary key attribute or linked to a primary key attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'
 // (it is often the case in practice, you can still use `.optional()` if needed)
-const nullishSchema = nul().key()
-const nullishSchema = nul({
+const nullSchema = nul().key()
+const nullSchema = nul({
   key: true,
   required: 'always'
 })
@@ -94,18 +88,18 @@ const nullishSchema = nul({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
+Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
 
 ```ts
-const nullishSchema = nul().savedAs('_n')
-const nullishSchema = nul({ savedAs: '_n' })
+const nullSchema = nul().savedAs('_n')
+const nullSchema = nul({ savedAs: '_n' })
 ```
 
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;null&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
+Specifies default values. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::note[Examples]
 
@@ -113,36 +107,25 @@ Specifies default values for the attribute. See [Defaults and Links](../2-defaul
 <TabItem value="put" label="Put">
 
 ```ts
-const nullishSchema = nul().default(null)
+const nullSchema = nul().default(null)
 // 👇 Similar to
-const nullishSchema = nul().putDefault(null)
+const nullSchema = nul().putDefault(null)
 // 👇 ...or
-const nullishSchema = nul({
-  defaults: {
-    key: undefined,
-    put: null,
-    update: undefined
-  }
-})
+const nullSchema = nul({ putDefault: null })
 ```
 
 </TabItem>
 <TabItem value="key" label="Key">
 
 ```ts
-const nullishSchema = nul().key().default(null)
+const nullSchema = nul().key().default(null)
 // 👇 Similar to
-const nullishSchema = nul().key().keyDefault(null)
+const nullSchema = nul().key().keyDefault(null)
 // 👇 ...or
-const nullishSchema = nul({
-  defaults: {
-    key: null,
-    // put & update defaults are not useful in `key` attributes
-    put: undefined,
-    update: undefined
-  },
+const nullSchema = nul({
   key: true,
-  required: 'always'
+  required: 'always',
+  keyDefault: null
 })
 ```
 
@@ -152,13 +135,7 @@ const nullishSchema = nul({
 ```ts
 const isUpdatedSchema = nul().updateDefault(null)
 // 👇 Similar to
-const isUpdatedSchema = nul({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: null
-  }
-})
+const isUpdatedSchema = nul({ updateDefault: null })
 ```
 
 </TabItem>
@@ -173,7 +150,7 @@ const isUpdatedSchema = nul({
 Similar to [`.default(...)`](#default) but allows deriving the default value from other attributes. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 ```ts
-const pokemonSchema = schema({
+const pokemonSchema = item({
   boolean: boolean()
 }).and(prevSchema => ({
   nullIfTrue: nul()
@@ -189,4 +166,4 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;null&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details.
+Adds custom validation. See [Custom Validation](../3-custom-validation/index.md) for more details.

@@ -1,7 +1,8 @@
-import type { Attribute } from '~/attributes/index.js'
-import { StringAttribute } from '~/attributes/string/index.js'
-import { string } from '~/attributes/string/index.js'
+import type { Schema } from '~/schema/index.js'
+import { StringSchema } from '~/schema/string/schema.js'
+import { writable } from '~/utils/writable.js'
 
+import type { ConditionType } from '../../condition.js'
 import type { ConditionParser } from '../../conditionParser.js'
 import { isTwoArgsFnOperator } from './types.js'
 import type { TwoArgsFnCondition, TwoArgsFnOperator } from './types.js'
@@ -12,11 +13,18 @@ const twoArgsFnOperatorExpression: Record<TwoArgsFnOperator, string> = {
   type: 'attribute_type'
 }
 
-const stringAttribute = string().freeze()
-
-const typeAttribute = string()
-  .enum('S', 'SS', 'N', 'NS', 'B', 'BS', 'BOOL', 'NULL', 'L', 'M')
-  .freeze()
+const conditionType = writable([
+  'S',
+  'SS',
+  'N',
+  'NS',
+  'B',
+  'BS',
+  'BOOL',
+  'NULL',
+  'L',
+  'M'
+] as const) satisfies ConditionType[]
 
 type TwoArgsFnConditionParser = <CONDITION extends TwoArgsFnCondition>(
   conditionParser: ConditionParser,
@@ -40,10 +48,10 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
   const attribute = conditionParser.appendAttributePath(attributePath)
   conditionParser.appendToExpression(', ')
 
-  let targetAttribute: Attribute
+  let targetAttribute: Schema
   switch (comparisonOperator) {
     case 'type':
-      targetAttribute = new StringAttribute({ ...typeAttribute, path: attributePath })
+      targetAttribute = new StringSchema({ enum: conditionType })
       break
     case 'contains':
       switch (attribute.type) {
@@ -53,7 +61,7 @@ export const parseTwoArgsFnCondition: TwoArgsFnConditionParser = <
           break
         case 'string':
           // We accept any string in case of contains
-          targetAttribute = new StringAttribute({ ...stringAttribute, path: attributePath })
+          targetAttribute = new StringSchema({})
           break
         default:
           targetAttribute = attribute

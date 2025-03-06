@@ -1,48 +1,22 @@
-import { AnyAttribute } from '~/attributes/any/index.js'
-import type { Attribute } from '~/attributes/index.js'
-import { NumberAttribute } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import { AnySchema } from '~/schema/any/schema.js'
 import type { Schema } from '~/schema/index.js'
+import { NumberSchema } from '~/schema/number/schema.js'
 import { combineRegExp } from '~/utils/combineRegExp.js'
 
 export type AppendAttributePathOptions = { size?: boolean }
 
 export interface ExpressionParser {
-  schema: Schema | Attribute
+  schema: Schema
   expressionAttributePrefix: string
   expressionAttributeNames: string[]
-  clone: (schema?: Schema | Attribute) => ExpressionParser
+  clone: (schema?: Schema) => ExpressionParser
   expression: string
   resetExpression: (str?: string) => void
   appendToExpression: (str: string) => void
-  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Attribute
+  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Schema
 }
-
-const defaultAnyAttribute = new AnyAttribute({
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  castAs: undefined,
-  transform: undefined,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-})
-
-const defaultNumberAttribute = new NumberAttribute({
-  required: 'never',
-  hidden: false,
-  key: false,
-  savedAs: undefined,
-  enum: undefined,
-  transform: undefined,
-  big: false,
-  defaults: { key: undefined, put: undefined, update: undefined },
-  links: { key: undefined, put: undefined, update: undefined },
-  validators: { key: undefined, put: undefined, update: undefined }
-})
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
   new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
@@ -61,11 +35,11 @@ export const appendAttributePath = (
   parser: ExpressionParser,
   attributePath: string,
   options: AppendAttributePathOptions = {}
-): Attribute => {
+): Schema => {
   const { size = false } = options
 
   const expressionAttrPrefix = parser.expressionAttributePrefix
-  let parentAttr: Schema | Attribute = parser.schema
+  let parentAttr: Schema = parser.schema
   let expressionPath = ''
   let attrMatches = [...attributePath.matchAll(pathRegex)]
   let attrPathTail: string | undefined
@@ -99,10 +73,7 @@ export const appendAttributePath = (
           }
         }
 
-        parentAttr = new AnyAttribute({
-          ...defaultAnyAttribute,
-          path: [parentAttr.path, match].filter(Boolean).join(matchType === 'regularStr' ? '.' : '')
-        })
+        parentAttr = new AnySchema({ required: 'never' })
         break
       }
       case 'binary':
@@ -114,8 +85,7 @@ export const appendAttributePath = (
 
       case 'record': {
         const keyAttribute = parentAttr.keys
-        // TODO: Maybe re-introduce constraints to record key attributes
-        const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false }) as string
+        const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false })
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
         expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
@@ -123,7 +93,7 @@ export const appendAttributePath = (
         parentAttr = parentAttr.elements
         break
       }
-      case 'schema':
+      case 'item':
       case 'map': {
         const childAttribute = parentAttr.attributes[matchedKey]
         if (!childAttribute) {
@@ -131,7 +101,7 @@ export const appendAttributePath = (
         }
 
         const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          childAttribute.savedAs ?? matchedKey
+          childAttribute.props.savedAs ?? matchedKey
         )
 
         expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
@@ -179,13 +149,11 @@ export const appendAttributePath = (
     root = false
   }
 
-  if (parentAttr.type === 'schema' || (attrPathTail !== undefined && attrPathTail.length > 0)) {
+  if (root || (attrPathTail !== undefined && attrPathTail.length > 0)) {
     throw getInvalidExpressionAttributePathError(attributePath)
   }
 
   parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
 
-  return size
-    ? new NumberAttribute({ ...defaultNumberAttribute, path: parentAttr.path })
-    : parentAttr
+  return size ? new NumberSchema({ required: 'never' }) : parentAttr
 }

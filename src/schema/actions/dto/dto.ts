@@ -1,29 +1,30 @@
+import type { ItemSchema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
-import type { Schema } from '~/schema/index.js'
 
-import { getAttrDTO } from './getAttrDTO/index.js'
-import type { ISchemaDTO } from './types.js'
+import { getSchemaDTO } from './getSchemaDTO/index.js'
+import type { ItemSchemaDTO } from './types.js'
 
-export class SchemaDTO<SCHEMA extends Schema = Schema>
+export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   extends SchemaAction<SCHEMA>
-  implements ISchemaDTO
+  implements ItemSchemaDTO
 {
-  static actionName = 'dto' as const
-  type: ISchemaDTO['type']
-  attributes: ISchemaDTO['attributes']
+  static override actionName = 'dto' as const
+
+  type: ItemSchemaDTO['type']
+  attributes: ItemSchemaDTO['attributes']
 
   constructor(schema: SCHEMA) {
     super(schema)
-    this.type = 'schema'
+    this.type = 'item'
     this.attributes = Object.fromEntries(
       Object.entries(this.schema.attributes).map(([attributeName, attribute]) => [
         attributeName,
-        getAttrDTO(attribute)
+        getSchemaDTO(attribute)
       ])
-    )
+    ) as ItemSchemaDTO['attributes']
   }
 
-  toJSON(): ISchemaDTO {
+  toJSON(): ItemSchemaDTO {
     return {
       type: this.type,
       attributes: this.attributes

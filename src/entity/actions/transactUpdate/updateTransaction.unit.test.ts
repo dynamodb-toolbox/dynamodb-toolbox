@@ -17,12 +17,12 @@ import {
   any,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
   prefix,
   record,
-  schema,
   set,
   string
 } from '~/index.js'
@@ -35,7 +35,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test_string_coerce: string().optional(),
@@ -79,14 +79,13 @@ const TestTable2 = new Table({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity2',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
-    test: string().optional(), // TODO: prefix with test---
+    test: string().optional(),
     test_composite: string().optional(),
     test_composite2: string().optional(),
     test_undefined: any()
       .optional()
-      // TODO: use unknown
       .putDefault(() => '')
   }).and(schema => ({
     sort: string()
@@ -108,7 +107,7 @@ const TestTable3 = new Table({
 
 const TestEntity3 = new Entity({
   name: 'TestEntity3',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test: string(),
     test2: string().required('always'),
@@ -125,7 +124,7 @@ const TestTable4 = new Table({
 
 const TestEntity4 = new Entity({
   name: 'TestEntity4',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     test_number_default_with_map: number().savedAs('test_mapped_number').default(0)
   }),
@@ -135,7 +134,7 @@ const TestEntity4 = new Entity({
 
 const TestEntity5 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk').transform(prefix('EMAIL')),
     sort: string().key().savedAs('sk'),
     transformedStr: string().transform(prefix('STR')),
@@ -188,7 +187,7 @@ describe('update transaction', () => {
       ':s_2': 0,
       ':s_3': false,
       ':s_4': 'NOTHING_TO_COPY',
-      ':s_5': TestEntity.name,
+      ':s_5': TestEntity.entityName,
       ':s_6': expect.any(String),
       ':s_7': expect.any(String),
       ':a_1': 1
@@ -197,7 +196,7 @@ describe('update transaction', () => {
     expect(ToolboxItem).toStrictEqual({
       created: { [$GET]: ['created', expect.any(String)] },
       modified: expect.any(String),
-      entity: { [$GET]: ['entity', TestEntity.name] },
+      entity: { [$GET]: ['entity', TestEntity.entityName] },
       email: 'test-pk',
       sort: 'test-sk',
       simple_string_copy: 'NOTHING_TO_COPY',
@@ -1693,10 +1692,6 @@ describe('update transaction', () => {
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
-
-  /**
-   * @debt TODO "Test anyOf attribute"
-   */
 
   test('uses an alias', async () => {
     const {

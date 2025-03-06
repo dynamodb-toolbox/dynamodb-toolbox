@@ -1,25 +1,25 @@
-import type { AnyAttribute } from '~/attributes/any/index.js'
+import type { AnySchema } from '~/schema/any/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* anyAttrFormatter(
-  attribute: AnyAttribute,
+export function* anySchemaFormatter(
+  schema: AnySchema,
   rawValue: unknown,
-  options: FormatAttrValueOptions<AnyAttribute> = {}
+  options: FormatAttrValueOptions<AnySchema> = {}
 ): Generator<
-  FormatterYield<AnyAttribute, FormatAttrValueOptions<AnyAttribute>>,
-  FormatterReturn<AnyAttribute, FormatAttrValueOptions<AnyAttribute>>
+  FormatterYield<AnySchema, FormatAttrValueOptions<AnySchema>>,
+  FormatterReturn<AnySchema, FormatAttrValueOptions<AnySchema>>
 > {
   const { format = true, transform = true } = options
 
   let transformedValue = undefined
   if (transform) {
-    const transformer = attribute.transform as Transformer
+    const transformer = schema.props.transform as Transformer
     transformedValue =
-      transformer !== undefined ? transformer.format(rawValue) : cloneDeep(rawValue)
+      transformer !== undefined ? transformer.decode(rawValue) : cloneDeep(rawValue)
 
     if (format) {
       yield transformedValue

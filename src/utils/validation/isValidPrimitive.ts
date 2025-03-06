@@ -1,4 +1,4 @@
-import type { PrimitiveAttribute, ResolvedPrimitiveAttribute } from '~/attributes/index.js'
+import type { PrimitiveSchema, ResolvedPrimitiveSchema } from '~/schema/index.js'
 
 import { isBigInt } from './isBigInt.js'
 import { isBinary } from './isBinary.js'
@@ -7,20 +7,17 @@ import { isNull } from './isNull.js'
 import { isNumber } from './isNumber.js'
 import { isString } from './isString.js'
 
-export const isValidPrimitive = <ATTRIBUTE extends Pick<PrimitiveAttribute, 'type'>>(
-  attribute: ATTRIBUTE,
+export const isValidPrimitive = <SCHEMA extends PrimitiveSchema>(
+  schema: SCHEMA,
   candidate: unknown
-): candidate is ResolvedPrimitiveAttribute => {
-  switch (attribute.type) {
+): candidate is ResolvedPrimitiveSchema => {
+  switch (schema.type) {
     case 'null':
       return isNull(candidate)
     case 'boolean':
       return isBoolean(candidate)
     case 'number':
-      return (
-        isNumber(candidate) ||
-        Boolean((attribute as Record<string, unknown>).big && isBigInt(candidate))
-      )
+      return isNumber(candidate) || Boolean(schema.props.big && isBigInt(candidate))
     case 'string':
       return isString(candidate)
     case 'binary':

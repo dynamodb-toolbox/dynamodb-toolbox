@@ -1,21 +1,25 @@
-import type { AttributeBasicValue, MapAttribute } from '~/attributes/index.js'
 import { $SET } from '~/entity/actions/update/symbols/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  MapSchema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
 export const parseMapExtension = (
-  attribute: MapAttribute,
+  schema: MapSchema,
   input: unknown,
-  { transform = true }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateAttributesInputExtension>> => {
   if (isObject(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const parser = new Parser(attribute).start(input, { fill: false, transform })
+        const parser = new Parser(schema).start(input, { fill: false, transform, valuePath })
 
         const parsedValue = { [$SET]: parser.next().value }
         if (transform) {
@@ -32,6 +36,6 @@ export const parseMapExtension = (
 
   return {
     isExtension: false,
-    basicInput: input as AttributeBasicValue<UpdateAttributesInputExtension> | undefined
+    unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
   }
 }

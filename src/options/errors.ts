@@ -90,6 +90,12 @@ type InvalidShowEntityAttrOptionErrorBlueprint = ErrorBlueprint<{
   payload: { showEntityAttr: unknown }
 }>
 
+type InvalidNoEntityMatchBehaviorOptionErrorBlueprint = ErrorBlueprint<{
+  code: 'options.invalidNoEntityMatchBehaviorOption'
+  hasPath: false
+  payload: { noEntityMatchBehavior: unknown }
+}>
+
 type UnknownOptionErrorBlueprint = ErrorBlueprint<{
   code: 'options.unknownOption'
   hasPath: false
@@ -118,5 +124,6 @@ export type OptionsErrorBlueprints =
   | InvalidTableNameOptionErrorBlueprint
   | InvalidEntityAttrFilterOptionErrorBlueprint
   | InvalidShowEntityAttrOptionErrorBlueprint
+  | InvalidNoEntityMatchBehaviorOptionErrorBlueprint
   | UnknownOptionErrorBlueprint
   | MissingDocumentClientErrorBlueprint

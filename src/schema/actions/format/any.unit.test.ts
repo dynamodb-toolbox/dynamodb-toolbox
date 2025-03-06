@@ -1,14 +1,14 @@
-import { any } from '~/attributes/index.js'
+import { any } from '~/schema/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import { anyAttrFormatter } from './any.js'
+import { anySchemaFormatter } from './any.js'
 
-describe('anyAttrFormatter', () => {
+describe('anySchemaFormatter', () => {
   test('simply clones the value', () => {
-    const _any = any().freeze()
+    const schema = any()
 
     const raw = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, raw)
+    const formatter = anySchemaFormatter(schema, raw)
 
     const { value: transformedValue } = formatter.next()
 
@@ -21,10 +21,10 @@ describe('anyAttrFormatter', () => {
   })
 
   test('does not transform if transform is set to false', () => {
-    const _any = any().freeze()
+    const _any = any()
 
     const raw = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, raw, { transform: false })
+    const formatter = anySchemaFormatter(_any, raw, { transform: false })
 
     const { done, value: formattedValue } = formatter.next()
     expect(formattedValue).toStrictEqual(raw)
@@ -32,10 +32,10 @@ describe('anyAttrFormatter', () => {
   })
 
   test('uses formatter if transformer has been provided', () => {
-    const _any = any().transform(jsonStringify()).freeze('path')
+    const _any = any().transform(jsonStringify())
 
     const formatted = { foo: 'bar' }
-    const formatter = anyAttrFormatter(_any, JSON.stringify(formatted))
+    const formatter = anySchemaFormatter(_any, JSON.stringify(formatted))
 
     const transformedValue = formatter.next().value
     expect(transformedValue).toStrictEqual(formatted)

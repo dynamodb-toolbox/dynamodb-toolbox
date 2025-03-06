@@ -1,26 +1,23 @@
-import type { PrimitiveAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { PrimitiveSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* primitiveAttrFormatter(
-  attribute: PrimitiveAttribute,
+export function* primitiveSchemaFormatter(
+  schema: PrimitiveSchema,
   rawValue: unknown,
-  {
-    format = true,
-    transform = true,
-    valuePath = []
-  }: FormatAttrValueOptions<PrimitiveAttribute> = {}
+  { format = true, transform = true, valuePath = [] }: FormatAttrValueOptions<PrimitiveSchema> = {}
 ): Generator<
-  FormatterYield<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>,
-  FormatterReturn<PrimitiveAttribute, FormatAttrValueOptions<PrimitiveAttribute>>
+  FormatterYield<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>,
+  FormatterReturn<PrimitiveSchema, FormatAttrValueOptions<PrimitiveSchema>>
 > {
-  if (!isValidPrimitive(attribute, rawValue)) {
-    const { type } = attribute
+  const { props } = schema
+  if (!isValidPrimitive(schema, rawValue)) {
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -34,21 +31,21 @@ export function* primitiveAttrFormatter(
 
   let transformedValue = undefined
   if (transform) {
-    const transformer = attribute.transform as Transformer
-    transformedValue = transformer !== undefined ? transformer.format(rawValue) : rawValue
+    const transformer = props.transform as Transformer | undefined
+    transformedValue = transformer !== undefined ? transformer.decode(rawValue) : rawValue
   } else {
     transformedValue = rawValue
   }
 
-  if (attribute.enum !== undefined && !(attribute.enum as unknown[]).includes(transformedValue)) {
+  if (props.enum !== undefined && !(props.enum as unknown[]).includes(transformedValue)) {
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
         path !== undefined ? `: '${path}'` : ''
-      }. Should be one of: ${attribute.enum.map(String).join(', ')}.`,
+      }. Should be one of: ${props.enum.map(String).join(', ')}.`,
       path,
-      payload: { received: transformedValue, expected: attribute.enum }
+      payload: { received: transformedValue, expected: props.enum }
     })
   }
 

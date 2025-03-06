@@ -1,22 +1,22 @@
-import { string } from '~/attributes/string/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { string } from '~/schema/string/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import { primitiveAttrParser } from './primitive.js'
+import { primitiveSchemaParser } from './primitive.js'
 
-describe('primitiveAttrParser', () => {
+describe('primitiveSchemaParser', () => {
   test('throws an error if input is not a string', () => {
-    const str = string().freeze()
-    const invalidCall = () => primitiveAttrParser(str, 42, { fill: false }).next()
+    const str = string()
+    const invalidCall = () => primitiveSchemaParser(str, 42, { fill: false }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   test('uses parser if transformer has been provided', () => {
-    const str = string().transform(prefix('TEST')).freeze('path')
+    const str = string().transform(prefix('TEST'))
 
-    const parser = primitiveAttrParser(str, 'bar', { fill: false })
+    const parser = primitiveSchemaParser(str, 'bar', { fill: false })
 
     const { value: parsed } = parser.next()
     expect(parsed).toBe('bar')
@@ -27,15 +27,13 @@ describe('primitiveAttrParser', () => {
   })
 
   test('applies validation if any', () => {
-    const strA = string()
-      .validate(input => input === 'foo')
-      .freeze()
+    const strA = string().validate(input => input === 'foo')
 
-    const { value: parsed } = primitiveAttrParser(strA, 'foo', { fill: false }).next()
+    const { value: parsed } = primitiveSchemaParser(strA, 'foo', { fill: false }).next()
     expect(parsed).toBe('foo')
 
     const invalidCallA = () =>
-      primitiveAttrParser(strA, 'bar', { fill: false, valuePath: ['root'] }).next()
+      primitiveSchemaParser(strA, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -45,12 +43,10 @@ describe('primitiveAttrParser', () => {
       })
     )
 
-    const strB = string()
-      .validate(input => (input === 'foo' ? true : 'Oh no...'))
-      .freeze()
+    const strB = string().validate(input => (input === 'foo' ? true : 'Oh no...'))
 
     const invalidCallB = () =>
-      primitiveAttrParser(strB, 'bar', { fill: false, valuePath: ['root'] }).next()
+      primitiveSchemaParser(strB, 'bar', { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

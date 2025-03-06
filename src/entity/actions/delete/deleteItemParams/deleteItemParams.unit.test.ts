@@ -3,26 +3,20 @@ import {
   DynamoDBToolboxError,
   Entity,
   Table,
+  item,
   prefix,
-  schema,
   string
 } from '~/index.js'
 
 const TestTable = new Table({
   name: 'test-table',
-  partitionKey: {
-    type: 'string',
-    name: 'pk'
-  },
-  sortKey: {
-    type: 'string',
-    name: 'sk'
-  }
+  partitionKey: { type: 'string', name: 'pk' },
+  sortKey: { type: 'string', name: 'sk' }
 })
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()
@@ -32,7 +26,7 @@ const TestEntity = new Entity({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     pk: string().key(),
     sk: string().key(),
     test: string()
@@ -262,7 +256,7 @@ describe('delete', () => {
   test('transformed key', () => {
     const TestEntity3 = new Entity({
       name: 'TestEntity',
-      schema: schema({
+      schema: item({
         email: string().key().savedAs('pk').transform(prefix('EMAIL')),
         sort: string().key().savedAs('sk')
       }),

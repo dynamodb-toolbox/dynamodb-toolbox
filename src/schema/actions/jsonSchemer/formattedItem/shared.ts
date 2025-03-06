@@ -1,18 +1,13 @@
-import type { Always, AtLeastOnce, MapAttribute } from '~/attributes/index.js'
-import type { Schema } from '~/schema/index.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { ItemSchema, MapSchema, Never } from '~/schema/index.js'
+import type { OmitKeys } from '~/types/omitKeys.js'
 
-export type RequiredProperties<SCHEMA extends Schema | MapAttribute> = Schema extends SCHEMA
+export type RequiredProperties<SCHEMA extends MapSchema | ItemSchema> = ItemSchema extends SCHEMA
   ? string
-  : MapAttribute extends SCHEMA
+  : MapSchema extends SCHEMA
     ? string
     : {
-        [KEY in SelectKeys<
+        [KEY in OmitKeys<
           SCHEMA['attributes'],
-          { hidden: false }
-        >]: SCHEMA['attributes'][KEY] extends {
-          required: AtLeastOnce | Always
-        }
-          ? KEY
-          : never
-      }[SelectKeys<SCHEMA['attributes'], { hidden: false }>]
+          { props: { hidden: true } }
+        >]: SCHEMA['attributes'][KEY]['props'] extends { required: Never } ? never : KEY
+      }[OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]

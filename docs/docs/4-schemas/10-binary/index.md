@@ -9,21 +9,15 @@ import TabItem from '@theme/TabItem';
 
 # Binary
 
-Defines a [**binary attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
+Describes [**binary values**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes):
 
 ```ts
-import { binary } from 'dynamodb-toolbox/attributes/binary';
+import { binary } from 'dynamodb-toolbox/schema/binary'
 
-const pokemonSchema = schema({
-  ...
-  hash: binary(),
-});
+const hashSchema = binary()
 
-type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
-// => {
-//   ...
-//   hash: Uint8Array
-// }
+type Hash = FormattedValue<typeof hashSchema>
+// => Uint8Array
 ```
 
 ## Options
@@ -32,7 +26,7 @@ type FormattedPokemon = FormattedItem<typeof PokemonEntity>;
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags the attribute as **required** (at root level or within [Maps](../13-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -53,7 +47,7 @@ const hashSchema = binary({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Skips the attribute when formatting items:
+Omits schema values during [formatting](../17-actions/2-format.md):
 
 ```ts
 const hashSchema = binary().hidden()
@@ -64,7 +58,7 @@ const hashSchema = binary({ hidden: true })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Tags the attribute as a primary key attribute or linked to a primary attribute:
+Tags schema values as a primary key attribute or linked to a primary key attribute:
 
 ```ts
 // Note: The method also sets the `required` property to 'always'
@@ -86,7 +80,7 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames the attribute during the [transformation step](../16-actions/1-parse.md) (at root level or within [Maps](../13-map/index.md)):
+Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
 
 ```ts
 const hashSchema = binary().savedAs('h')
@@ -111,7 +105,7 @@ const hashSchema = binary().const(binA)
 
 :::info
 
-For type inference reasons, the `enum` option is only available as a method and not as a constructor property.
+For type inference reasons, the `enum` option is only available as a method and not as input props.
 
 :::
 
@@ -119,7 +113,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
 
-Allows modifying the attribute values during the [transformation step](../16-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
 
 ```ts
 const PREFIX = new Uint8Array([1, 2, 3])
@@ -142,13 +136,13 @@ const hashSchema = binary().transform(prefix)
 const hashSchema = binary({ transform: prefix })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../17-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Uint8Array&gt;</code></i></p>
 
-Specifies default values for the attribute. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
+Specifies default values. See [Defaults and Links](../2-defaults-and-links/index.md) for more details:
 
 :::note[Examples]
 
@@ -162,13 +156,7 @@ const hashSchema = binary().default(bin)
 // 👇 Similar to
 const hashSchema = binary().putDefault(bin)
 // 👇 ...or
-const hashSchema = binary({
-  defaults: {
-    key: undefined,
-    put: bin,
-    update: undefined
-  }
-})
+const hashSchema = binary({ putDefault: bin })
 
 // 🙌 Getters also work!
 const hashSchema = binary().default(() => bin)
@@ -185,14 +173,9 @@ const hashSchema = binary().key().default(bin)
 const hashSchema = binary().key().keyDefault(bin)
 // 👇 ...or
 const hashSchema = binary({
-  defaults: {
-    key: bin,
-    // put & update defaults are not useful in `key` attributes
-    put: undefined,
-    update: undefined
-  },
   key: true,
-  required: 'always'
+  required: 'always',
+  keyDefault: bin
 })
 ```
 
@@ -204,13 +187,7 @@ const bin = new Uint8Array([1, 2, 3])
 
 const hashSchema = binary().updateDefault(bin)
 // 👇 Similar to
-const hashSchema = binary({
-  defaults: {
-    key: undefined,
-    put: undefined,
-    update: bin
-  }
-})
+const hashSchema = binary({ updateDefault: bin })
 ```
 
 </TabItem>
@@ -227,7 +204,7 @@ Similar to [`.default(...)`](#default) but allows deriving the default value fro
 ```ts
 const encoder = new TextEncoder()
 
-const pokemonSchema = schema({
+const pokemonSchema = item({
   name: string()
 }).and(prevSchema => ({
   nameHash: binary().link<typeof prevSchema>(
@@ -241,7 +218,7 @@ const pokemonSchema = schema({
 
 <p style={{ marginTop: '-15px' }}><i><code>Validator&lt;Uint8Array&gt;</code></i></p>
 
-Adds custom validation to the attribute. See [Custom Validation](../3-custom-validation/index.md) for more details:
+Adds custom validation. See [Custom Validation](../3-custom-validation/index.md) for more details:
 
 :::note[Examples]
 
@@ -255,11 +232,7 @@ const longBinSchema = binary().putValidate(
 )
 // 👇 ...or
 const longBinSchema = binary({
-  validators: {
-    key: undefined,
-    put: input => input.length > 3,
-    update: undefined
-  }
+  putValidator: input => input.length > 3
 })
 ```
 

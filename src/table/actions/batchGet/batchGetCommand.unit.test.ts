@@ -5,8 +5,8 @@ import {
   DynamoDBToolboxError,
   Entity,
   Table,
+  item,
   number,
-  schema,
   string
 } from '~/index.js'
 import { $entities } from '~/table/index.js'
@@ -21,7 +21,7 @@ const TestTable = new Table({
 
 const EntityA = new Entity({
   name: 'EntityA',
-  schema: schema({
+  schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -32,7 +32,7 @@ const EntityA = new Entity({
 
 const EntityB = new Entity({
   name: 'EntityB',
-  schema: schema({
+  schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
     commonAttribute: string(),
@@ -158,7 +158,7 @@ describe('BatchGetCommand', () => {
     })
   })
 
-  test('appends entityAttribute, pk and sk to projection expression', () => {
+  test('appends pk, sk and entityAttribute to projection expression', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
       .options({ attributes: ['commonAttribute'] })
@@ -166,12 +166,12 @@ describe('BatchGetCommand', () => {
 
     expect(completeInput).toMatchObject({
       [TestTable.getName()]: {
-        ProjectionExpression: '#p_1, #p_2, #_pk, #_sk',
+        ProjectionExpression: '#p_1, #_pk, #_sk, #_et',
         ExpressionAttributeNames: {
-          '#p_1': '_et',
-          '#p_2': 'commonAttribute',
+          '#p_1': 'commonAttribute',
           '#_pk': TestTable.partitionKey.name,
-          '#_sk': TestTable.sortKey?.name
+          '#_sk': TestTable.sortKey?.name,
+          '#_et': TestTable.entityAttributeSavedAs
         }
       }
     })

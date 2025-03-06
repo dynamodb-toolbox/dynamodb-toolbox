@@ -1,21 +1,8 @@
-// attributes
-export { attr, attribute } from './attributes/index.js'
-export type { Attribute, Validator } from './attributes/index.js'
-export { any, AnyAttribute, $AnyAttribute } from './attributes/any/index.js'
-export { nul, NullAttribute, $NullAttribute } from './attributes/null/index.js'
-export { boolean, BooleanAttribute, $BooleanAttribute } from './attributes/boolean/index.js'
-export { number, NumberAttribute, $NumberAttribute } from './attributes/number/index.js'
-export { string, StringAttribute, $StringAttribute } from './attributes/string/index.js'
-export { binary, BinaryAttribute, $BinaryAttribute } from './attributes/binary/index.js'
-export { set, SetAttribute, $SetAttribute, SetAttribute_ } from './attributes/set/index.js'
-export { list, ListAttribute, $ListAttribute, ListAttribute_ } from './attributes/list/index.js'
-export { map, MapAttribute, $MapAttribute, MapAttribute_ } from './attributes/map/index.js'
-export { record, RecordAttribute, $RecordAttribute } from './attributes/record/index.js'
-export { anyOf, AnyOfAttribute, $AnyOfAttribute } from './attributes/anyOf/index.js'
-
 // schema
-export { schema, Schema, SchemaAction } from './schema/index.js'
+export { SchemaAction, schema, s } from './schema/index.js'
 export type {
+  Schema,
+  Validator,
   InputValue,
   ValidValue,
   TransformedValue,
@@ -23,33 +10,52 @@ export type {
   WriteValueOptions,
   ExtensionParser,
   ExtensionParserOptions,
-  ReadValue,
+  DecodedValue,
   FormattedValue,
   ReadValueOptions,
-  AttrPaths,
   SchemaPaths,
+  ItemSchemaPaths,
   Paths
 } from './schema/index.js'
-export { Parser } from './schema/actions/parse/index.js'
+export { any, AnySchema, AnySchema_ } from './schema/any/index.js'
+export type { AnySchemaProps } from './schema/any/index.js'
+export { nul, NullSchema, NullSchema_ } from './schema/null/index.js'
+export type { NullSchemaProps } from './schema/null/index.js'
+export { boolean, BooleanSchema, BooleanSchema_ } from './schema/boolean/index.js'
+export type { BooleanSchemaProps } from './schema/boolean/index.js'
+export { number, NumberSchema, NumberSchema_ } from './schema/number/index.js'
+export type { NumberSchemaProps } from './schema/number/index.js'
+export { string, StringSchema, StringSchema_ } from './schema/string/index.js'
+export type { StringSchemaProps } from './schema/string/index.js'
+export { binary, BinarySchema, BinarySchema_ } from './schema/binary/index.js'
+export type { BinarySchemaProps } from './schema/binary/index.js'
+export { set, SetSchema, SetSchema_ } from './schema/set/index.js'
+export type { SetElementSchema } from './schema/set/index.js'
+export { list, ListSchema, ListSchema_ } from './schema/list/index.js'
+export type { ListElementSchema } from './schema/list/index.js'
+export { map, MapSchema, MapSchema_ } from './schema/map/index.js'
+export type { MapAttributes } from './schema/map/index.js'
+export { record, RecordSchema, RecordSchema_ } from './schema/record/index.js'
 export type {
-  ParseValueOptions,
-  InferWriteValueOptions,
-  // deprecated
-  ParsedValueOptions,
-  ParsingOptions,
-  FromParsingOptions,
-  ParsedValue,
-  ParserInput
-} from './schema/actions/parse/index.js'
+  RecordSchemaProps,
+  RecordKeySchema,
+  RecordElementSchema
+} from './schema/record/index.js'
+export { anyOf, AnyOfSchema, AnyOfSchema_ } from './schema/anyOf/index.js'
+export type { AnyOfElementSchema } from './schema/anyOf/index.js'
+export { item, ItemSchema, ItemSchema_ } from './schema/item/index.js'
+export type { ItemAttributes } from './schema/item/index.js'
+export { Parser } from './schema/actions/parse/index.js'
+export type { ParseValueOptions, InferWriteValueOptions } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'
 export type { FormatValueOptions, InferReadValueOptions } from './schema/actions/format/index.js'
 export { PathParser } from './schema/actions/parsePaths/index.js'
 export { ConditionParser } from './schema/actions/parseCondition/index.js'
 export type { SchemaCondition } from './schema/actions/parseCondition/index.js'
 export { JSONSchemer } from './schema/actions/jsonSchemer/index.js'
-export type { FormattedItemJSONSchema } from './schema/actions/jsonSchemer/index.js'
+export type { FormattedValueJSONSchema } from './schema/actions/jsonSchemer/index.js'
 export { SchemaDTO } from './schema/actions/dto/index.js'
-export type { ISchemaDTO, AttributeDTO } from './schema/actions/dto/index.js'
+export type { ItemSchemaDTO, ISchemaDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 
 // tables
@@ -93,13 +99,15 @@ export { Entity, EntityAction } from './entity/index.js'
 export type {
   TimestampsOptions,
   TimestampsDefaultOptions,
+  EntityAttrOptions,
+  EntityAttrDefaultOptions,
   InputItem,
   KeyInputItem,
   ValidItem,
   TransformedItem,
   SavedItem,
   WriteItemOptions,
-  ReadItem,
+  DecodedItem,
   FormattedItem,
   ReadItemOptions
 } from './entity/index.js'
@@ -187,16 +195,7 @@ export type { EntityPaths } from './entity/actions/parsePaths/index.js'
 export { EntityFormatter } from './entity/actions/format/index.js'
 export type { FormatItemOptions, InferReadItemOptions } from './entity/actions/format/index.js'
 export { EntityParser } from './entity/actions/parse/index.js'
-export type {
-  ParseItemOptions,
-  InferWriteItemOptions,
-  // deprecated
-  EntityParserInput,
-  KeyInput,
-  ParsedItem,
-  ParsedItemOptions,
-  ParsedItemDefaultOptions
-} from './entity/actions/parse/index.js'
+export type { ParseItemOptions, InferWriteItemOptions } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'

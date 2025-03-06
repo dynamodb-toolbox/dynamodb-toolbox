@@ -1,5 +1,5 @@
-import type { Attribute } from '~/attributes/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
+import type { Schema } from '~/schema/index.js'
 
 import type { ConditionParser } from './conditionParser.js'
 
@@ -7,13 +7,13 @@ export type AppendAttributeValueOptions = { transform?: boolean }
 
 export const appendAttributeValue = (
   conditionParser: ConditionParser,
-  attribute: Attribute,
+  schema: Schema,
   expressionAttributeValue: unknown,
   options: AppendAttributeValueOptions = {}
 ): void => {
   const { transform = false } = options
 
-  const parsed = new Parser(attribute).parse(expressionAttributeValue, {
+  const parsed = new Parser(schema).parse(expressionAttributeValue, {
     fill: false,
     transform
   })

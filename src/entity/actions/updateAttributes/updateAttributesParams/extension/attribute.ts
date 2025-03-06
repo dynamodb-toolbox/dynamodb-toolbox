@@ -1,10 +1,15 @@
-import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
-import { isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
+import { $GET, isGetting, isRemoval } from '~/entity/actions/update/symbols/index.js'
 import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/extension/number.js'
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  Schema,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 import { parseListExtension } from './list.js'
@@ -12,17 +17,19 @@ import { parseMapExtension } from './map.js'
 import { parseRecordExtension } from './record.js'
 
 export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInputExtension> = (
-  attribute: Attribute,
+  schema: Schema,
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
-  const { transform = true } = options
+  const { transform = true, valuePath = [] } = options
 
   if (isRemoval(input)) {
     return {
       isExtension: true,
       *extensionParser() {
-        const { path, required } = attribute
+        const { props } = schema
+        const { required } = props
+        const path = formatValuePath(valuePath)
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
@@ -46,25 +53,25 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
     }
   }
 
-  if (isGetting(input)) {
-    return parseReferenceExtension(attribute, input, options)
+  if (isGetting(input) && input[$GET] !== undefined) {
+    return parseReferenceExtension(schema, input, options)
   }
 
-  switch (attribute.type) {
+  switch (schema.type) {
     case 'number':
-      return parseNumberExtension(attribute, input, options)
+      return parseNumberExtension(schema, input, options)
     case 'set':
-      return parseSetExtension(attribute, input, options)
+      return parseSetExtension(schema, input, options)
     case 'list':
-      return parseListExtension(attribute, input, options)
+      return parseListExtension(schema, input, options)
     case 'map':
-      return parseMapExtension(attribute, input, options)
+      return parseMapExtension(schema, input, options)
     case 'record':
-      return parseRecordExtension(attribute, input, options)
+      return parseRecordExtension(schema, input, options)
     default:
       return {
         isExtension: false,
-        basicInput: input as AttributeBasicValue<UpdateAttributesInputExtension> | undefined
+        unextendedInput: input as SchemaUnextendedValue<UpdateAttributesInputExtension> | undefined
       }
   }
 }

@@ -1,36 +1,50 @@
-import type { Attribute, AttributeBasicValue } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
-import type { ExtensionParser, WriteMode } from '~/schema/index.js'
+import type { ExtensionParser, Schema, SchemaUnextendedValue, WriteMode } from '~/schema/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import type { ParseAttrValueOptions } from './options.js'
 
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,
-  basicInput: input as AttributeBasicValue<never> | undefined
+  unextendedInput: input as SchemaUnextendedValue<never> | undefined
 })
 
-export const isRequired = (attribute: Attribute, mode: WriteMode): boolean => {
+export const isRequired = (schema: Schema, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
-      return attribute.required !== 'never'
+      return schema.props?.required !== 'never'
     case 'key':
     case 'update':
-      return attribute.required === 'always'
+      return schema.props?.required === 'always'
+  }
+}
+
+const getValidator = (schema: Schema, mode: WriteMode) => {
+  if (schema.props.key) {
+    return schema.props.keyValidator
+  }
+
+  switch (mode) {
+    case 'key':
+      return schema.props.keyValidator
+    case 'put':
+      return schema.props.putValidator
+    case 'update':
+      return schema.props.updateValidator
   }
 }
 
 export const applyCustomValidation = (
-  attribute: Attribute,
+  schema: Schema,
   inputValue: unknown,
   options: ParseAttrValueOptions = {}
 ): void => {
   const { mode = 'put', valuePath = [] } = options
 
-  const customValidator = attribute.validators[attribute.key ? 'key' : mode]
+  const customValidator = getValidator(schema, mode)
   if (customValidator !== undefined) {
-    const validationResult = customValidator(inputValue, attribute)
+    const validationResult = customValidator(inputValue, schema)
 
     if (validationResult !== true) {
       const path = formatValuePath(valuePath)

@@ -1,13 +1,12 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Attribute } from '~/attributes/index.js'
 import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
 import type {
   AppendAttributePathOptions,
   ExpressionParser
 } from '~/schema/actions/utils/appendAttributePath.js'
-import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
+import { SchemaAction } from '~/schema/index.js'
 
 import { appendAttributeValue } from './appendAttributeValue.js'
 import type { AppendAttributeValueOptions } from './appendAttributeValue.js'
@@ -16,10 +15,12 @@ import type { SchemaCondition } from './condition.js'
 import { parseCondition } from './parseCondition/index.js'
 import { toCommandOptions } from './toCommandOptions.js'
 
-export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attribute>
+export class ConditionParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
   implements ExpressionParser
 {
+  static override actionName = 'parseCondition' as const
+
   expressionAttributePrefix: `c${string}_`
   expressionAttributeNames: string[]
   expressionAttributeValues: unknown[]
@@ -48,25 +49,25 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
     return this
   }
 
-  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Attribute {
+  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Schema {
     return appendAttributePath(this, attributePath, options)
   }
 
   appendAttributeValue(
-    attribute: Attribute,
+    schema: Schema,
     expressionAttributeValue: unknown,
     options: AppendAttributeValueOptions = {}
   ): this {
-    appendAttributeValue(this, attribute, expressionAttributeValue, options)
+    appendAttributeValue(this, schema, expressionAttributeValue, options)
     return this
   }
 
   appendAttributeValueOrPath(
-    attribute: Attribute,
+    schema: Schema,
     expressionAttributeValueOrPath: unknown,
     options: AppendAttributePathOptions & AppendAttributeValueOptions = {}
   ): this {
-    appendAttributeValueOrPath(this, attribute, expressionAttributeValueOrPath, options)
+    appendAttributeValueOrPath(this, schema, expressionAttributeValueOrPath, options)
     return this
   }
 
@@ -88,7 +89,7 @@ export class ConditionParser<SCHEMA extends Schema | Attribute = Schema | Attrib
     return toCommandOptions(this)
   }
 
-  clone(schema?: Schema | Attribute): ConditionParser {
+  clone(schema?: Schema): ConditionParser {
     const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
     clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]

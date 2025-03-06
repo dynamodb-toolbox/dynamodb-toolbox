@@ -1,7 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import type { Attribute, AttributeValue } from '~/attributes/index.js'
-import type { Schema, ValidValue } from '~/schema/index.js'
+import type { Schema, SchemaExtendedValue, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -28,13 +27,13 @@ import type { ParsedUpdate } from './type.js'
 import { UpdateExpressionVerbParser } from './verbParser.js'
 
 export class UpdateExpressionParser {
-  schema: Schema | Attribute
+  schema: Schema
   set: UpdateExpressionVerbParser
   remove: UpdateExpressionVerbParser
   add: UpdateExpressionVerbParser
   delete: UpdateExpressionVerbParser
 
-  constructor(schema: Schema | Attribute) {
+  constructor(schema: Schema) {
     this.schema = schema
     this.set = new UpdateExpressionVerbParser(schema, 's')
     this.remove = new UpdateExpressionVerbParser(schema, 'r')
@@ -43,10 +42,7 @@ export class UpdateExpressionParser {
   }
 
   parseUpdate = (
-    parsedValue: ValidValue<
-      Schema | Attribute,
-      { mode: 'update'; extension: UpdateItemInputExtension }
-    >,
+    parsedValue: ValidValue<Schema, { mode: 'update'; extension: UpdateItemInputExtension }>,
     currentPath: (string | number)[] = []
   ): void => {
     if (parsedValue === undefined) {
@@ -83,8 +79,8 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       const [left, right] = parsedValue[$SUM] as [
-        AttributeValue<UpdateItemInputExtension>,
-        AttributeValue<UpdateItemInputExtension>
+        SchemaExtendedValue<UpdateItemInputExtension>,
+        SchemaExtendedValue<UpdateItemInputExtension>
       ]
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
@@ -100,8 +96,8 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       const [left, right] = parsedValue[$SUBTRACT] as [
-        AttributeValue<UpdateItemInputExtension>,
-        AttributeValue<UpdateItemInputExtension>
+        SchemaExtendedValue<UpdateItemInputExtension>,
+        SchemaExtendedValue<UpdateItemInputExtension>
       ]
       this.set.beginNewInstruction()
       this.set.appendValidAttributePath(currentPath)
@@ -120,7 +116,7 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.add.appendValidAttributeValue(
-        parsedValue[$ADD] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$ADD] as SchemaExtendedValue<UpdateItemInputExtension>
       )
       return
     }
@@ -133,7 +129,7 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.delete.appendValidAttributeValue(
-        parsedValue[$DELETE] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$DELETE] as SchemaExtendedValue<UpdateItemInputExtension>
       )
       return
     }
@@ -150,7 +146,7 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.set.appendValidAttributeValue(
-        parsedValue[$APPEND] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$APPEND] as SchemaExtendedValue<UpdateItemInputExtension>
       )
       this.set.appendToExpression(')')
       return
@@ -164,7 +160,7 @@ export class UpdateExpressionParser {
        * @debt type "Fix this cast"
        */
       this.set.appendValidAttributeValue(
-        parsedValue[$PREPEND] as AttributeValue<UpdateItemInputExtension>
+        parsedValue[$PREPEND] as SchemaExtendedValue<UpdateItemInputExtension>
       )
       this.set.appendToExpression(', if_not_exists(')
       this.set.appendValidAttributePath(currentPath)

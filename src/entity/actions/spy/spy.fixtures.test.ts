@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { Entity, Table, schema, string } from '~/index.js'
+import { Entity, Table, item, string } from '~/index.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 export const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -15,7 +15,7 @@ export const TestTable = new Table({
 
 export const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()

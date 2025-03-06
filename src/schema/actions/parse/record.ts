@@ -1,6 +1,6 @@
-import type { RecordAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { RecordSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -9,16 +9,17 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: RecordAttribute,
+export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: RecordSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<RecordAttribute, OPTIONS>, ParserReturn<RecordAttribute, OPTIONS>> {
+): Generator<ParserYield<RecordSchema, OPTIONS>, ParserReturn<RecordSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
   const parsers: [Generator<any, any>, Generator<any, any>][] = []
   const undefinedEntries: [string, undefined][] = []
+  const missingEnumKeys = new Set(schema.keys.props.enum)
 
   const isInputValueObject = isObject(inputValue)
   if (isInputValueObject) {
@@ -28,10 +29,25 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
         continue
       }
 
+      missingEnumKeys.delete(key)
       const nextValuePath = [...valuePath, key]
       parsers.push([
-        attrParser(attribute.keys, key, { ...restOptions, valuePath: nextValuePath }),
-        attrParser(attribute.elements, element, {
+        attrParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
+        attrParser(schema.elements, element, {
+          ...restOptions,
+          defined: false,
+          valuePath: nextValuePath
+        })
+      ])
+    }
+  }
+
+  if (!schema.props.partial && options.mode !== 'update') {
+    for (const missingKey of missingEnumKeys) {
+      const nextValuePath = [...valuePath, missingKey]
+      parsers.push([
+        attrParser(schema.keys, missingKey, { ...restOptions, valuePath: nextValuePath }),
+        attrParser(schema.elements, undefined, {
           ...restOptions,
           defined: false,
           valuePath: nextValuePath
@@ -62,15 +78,15 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<RecordAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<RecordSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<RecordAttribute, OPTIONS>
+      yield linkedValue as ParserYield<RecordSchema, OPTIONS>
     }
   }
 
   if (!isInputValueObject) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -86,7 +102,7 @@ export function* recordAttributeParser<OPTIONS extends ParseAttrValueOptions = {
       .filter(([, element]) => element !== undefined)
   )
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {

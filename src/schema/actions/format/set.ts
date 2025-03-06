@@ -1,24 +1,24 @@
-import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { SetSchema } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
 import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
-export function* setAttrFormatter(
-  attribute: SetAttribute,
+export function* setSchemaFormatter(
+  schema: SetSchema,
   rawValue: unknown,
-  { valuePath = [], ...options }: FormatAttrValueOptions<SetAttribute> = {}
+  { valuePath = [], ...options }: FormatAttrValueOptions<SetSchema> = {}
 ): Generator<
-  FormatterYield<SetAttribute, FormatAttrValueOptions<SetAttribute>>,
-  FormatterReturn<SetAttribute, FormatAttrValueOptions<SetAttribute>>
+  FormatterYield<SetSchema, FormatAttrValueOptions<SetSchema>>,
+  FormatterReturn<SetSchema, FormatAttrValueOptions<SetSchema>>
 > {
   const { format = true, transform = true } = options
 
   if (!isSet(rawValue)) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -32,7 +32,7 @@ export function* setAttrFormatter(
 
   // TODO: Remove this cast
   const formatters: Generator<any, any>[] = [...rawValue.values()].map((value, index) =>
-    attrFormatter(attribute.elements, value, {
+    attrFormatter(schema.elements, value, {
       ...options,
       valuePath: [...valuePath, index],
       attributes: undefined

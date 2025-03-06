@@ -1,19 +1,19 @@
-import type { RecordAttribute } from '~/attributes/index.js'
+import type { RecordSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedAttrJSONSchema } from './attribute.js'
-import { getFormattedAttrJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './attribute.js'
+import { getFormattedValueJSONSchema } from './attribute.js'
 
-export type FormattedRecordAttrJSONSchema<ATTRIBUTE extends RecordAttribute> = ComputeObject<{
+export type FormattedRecordJSONSchema<SCHEMA extends RecordSchema> = ComputeObject<{
   type: 'object'
-  propertyNames: FormattedAttrJSONSchema<ATTRIBUTE['keys']>
-  additionalProperties: FormattedAttrJSONSchema<ATTRIBUTE['elements']>
+  propertyNames: FormattedValueJSONSchema<SCHEMA['keys']>
+  additionalProperties: FormattedValueJSONSchema<SCHEMA['elements']>
 }>
 
-export const getFormattedRecordAttrJSONSchema = <ATTRIBUTE extends RecordAttribute>(
-  attr: ATTRIBUTE
-): FormattedRecordAttrJSONSchema<ATTRIBUTE> => ({
+export const getFormattedRecordJSONSchema = <SCHEMA extends RecordSchema>(
+  schema: SCHEMA
+): FormattedRecordJSONSchema<SCHEMA> => ({
   type: 'object',
-  propertyNames: getFormattedAttrJSONSchema<ATTRIBUTE['keys']>(attr.keys),
-  additionalProperties: getFormattedAttrJSONSchema<ATTRIBUTE['elements']>(attr.elements)
+  propertyNames: getFormattedValueJSONSchema<SCHEMA['keys']>(schema.keys),
+  additionalProperties: getFormattedValueJSONSchema<SCHEMA['elements']>(schema.elements)
 })

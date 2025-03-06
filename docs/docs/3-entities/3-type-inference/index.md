@@ -39,7 +39,7 @@ flowchart LR
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b>"]:::mmddescription
-    transformDescr(+ renaming<br/>+ transforms):::mmddescription
+    transformDescr(+ renaming<br/>+ encode):::mmddescription
   end
   Transform:::mmdcontainer
 
@@ -85,7 +85,7 @@ Here are **step-by-step** examples:
 ```ts
 const PokemonEntity = new Entity({
   table,
-  schema: schema({
+  schema: item({
     // key attributes
     pokemonClass: string()
       .key()
@@ -267,8 +267,8 @@ type Saved = SavedItem<typeof PokemonEntity>
 
 For read operations, DynamoDB-Toolbox exposes the following generic types:
 
-- `ReadItem`: A valid entity item (differs from `ValidItem` as options are different, see below)
-- `FormattedItem`: Similar to `ReadItem`, but with `hidden` attributes omitted
+- `DecodedItem`: A valid entity item (differs from `ValidItem` as options are different, see below)
+- `FormattedItem`: Similar to `DecodedItem`, but with `hidden` attributes omitted
 
 ```mermaid
 flowchart RL
@@ -279,14 +279,14 @@ flowchart RL
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
-    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
+    fillDescr("+ decode<br/>+ renaming"):::mmddescription
   end
   Transform:::mmdcontainer
 
-  ReadItem["<b>ReadItem</b>"]
+  DecodedItem["<b>DecodedItem</b>"]
 
   TransformedItem .- TransformDescription
-  TransformDescription .-> ReadItem
+  TransformDescription .-> DecodedItem
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
@@ -296,18 +296,18 @@ flowchart RL
 
   FormattedItem["<b>FormattedItem</b>"]
 
-  ReadItem .- FormatDescription
+  DecodedItem .- FormatDescription
   FormatDescription .-> FormattedItem
 
 ```
 
 ```ts
 import type {
-  ReadItem,
+  DecodedItem,
   FormattedItem
-} from 'dynamodb-toolbox/schema'
+} from 'dynamodb-toolbox/entity'
 
-type Read = ReadItem<typeof PokemonEntity>
+type Decoded = DecodedItem<typeof PokemonEntity>
 type Formatted = FormattedItem<typeof PokemonEntity>
 ```
 
@@ -322,8 +322,4 @@ type Partial = FormattedItem<
   typeof PokemonEntity,
   { partial: true }
 >
-```
-
-```
-
 ```

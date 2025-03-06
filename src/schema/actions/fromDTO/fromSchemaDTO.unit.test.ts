@@ -1,24 +1,24 @@
+import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
 import {
-  AnyOfAttribute,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
-  NullAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  SetAttribute,
-  StringAttribute
-} from '~/attributes/index.js'
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
-import { Schema } from '~/schema/index.js'
+  AnyOfSchema,
+  BinarySchema,
+  BooleanSchema,
+  ItemSchema,
+  ListSchema,
+  MapSchema,
+  NullSchema,
+  NumberSchema,
+  RecordSchema,
+  SetSchema,
+  StringSchema
+} from '~/schema/index.js'
 
-import { fromSchemaDTO } from './fromSchemaDTO.js'
+import { fromSchemaDTO } from './fromSchemaDTO/index.js'
 
 describe('fromDTO - schema', () => {
   test('creates correct schema', () => {
-    const schemaDTO: ISchemaDTO = {
-      type: 'schema',
+    const schemaDTO: ItemSchemaDTO = {
+      type: 'item',
       attributes: {
         null: { type: 'null' },
         boolean: { type: 'boolean', key: true },
@@ -48,46 +48,51 @@ describe('fromDTO - schema', () => {
 
     const importedSchema = fromSchemaDTO(schemaDTO)
 
-    expect(importedSchema).toBeInstanceOf(Schema)
+    expect(importedSchema).toBeInstanceOf(ItemSchema)
+    const { attributes } = importedSchema as ItemSchema
 
-    const { attributes } = importedSchema
+    expect(attributes.null).toBeInstanceOf(NullSchema)
 
-    expect(attributes.null).toBeInstanceOf(NullAttribute)
+    expect(attributes.boolean).toBeInstanceOf(BooleanSchema)
+    const boolean = attributes.boolean as BooleanSchema
+    expect(boolean.props.key).toBe(true)
 
-    expect(attributes.boolean).toBeInstanceOf(BooleanAttribute)
-    expect(attributes.boolean?.key).toBe(true)
+    expect(attributes.number).toBeInstanceOf(NumberSchema)
+    const number = attributes.number as NumberSchema
+    expect(number.props.enum).toStrictEqual([0, 1, 2])
 
-    expect(attributes.number).toBeInstanceOf(NumberAttribute)
-    expect((attributes.number as NumberAttribute).enum).toStrictEqual([0, 1, 2])
+    expect(attributes.str).toBeInstanceOf(StringSchema)
+    const str = attributes.str as StringSchema
+    expect(str.props.required).toBe('always')
 
-    expect(attributes.str).toBeInstanceOf(StringAttribute)
-    expect(attributes.str?.required).toBe('always')
+    expect(attributes.binary).toBeInstanceOf(BinarySchema)
+    const binary = attributes.binary as BinarySchema
+    expect(binary.props.savedAs).toBe('_b')
+    expect(binary.props.enum).toStrictEqual([new Uint8Array([1, 2, 3]), new Uint8Array([4, 5, 6])])
 
-    expect(attributes.binary).toBeInstanceOf(BinaryAttribute)
-    expect(attributes.binary?.savedAs).toBe('_b')
-    expect((attributes.binary as BinaryAttribute).enum).toStrictEqual([
-      new Uint8Array([1, 2, 3]),
-      new Uint8Array([4, 5, 6])
-    ])
+    expect(attributes.set).toBeInstanceOf(SetSchema)
+    const set = attributes.set as SetSchema
+    expect(set.elements.type).toBe('string')
 
-    expect(attributes.set).toBeInstanceOf(SetAttribute)
-    expect((attributes.set as SetAttribute).elements.type).toBe('string')
+    expect(attributes.list).toBeInstanceOf(ListSchema)
+    const list = attributes.list as ListSchema
+    expect(list.elements.type).toBe('number')
 
-    expect(attributes.list).toBeInstanceOf(ListAttribute)
-    expect((attributes.list as SetAttribute).elements.type).toBe('number')
+    expect(attributes.map).toBeInstanceOf(MapSchema)
+    const map = attributes.map as MapSchema
+    expect(map.attributes.str?.type).toBe('string')
+    expect(map.attributes.num?.type).toBe('number')
 
-    expect(attributes.map).toBeInstanceOf(MapAttribute)
-    expect((attributes.map as MapAttribute).attributes.str?.type).toBe('string')
-    expect((attributes.map as MapAttribute).attributes.num?.type).toBe('number')
+    expect(attributes.record).toBeInstanceOf(RecordSchema)
+    const record = attributes.record as RecordSchema
+    expect(record.keys.type).toBe('string')
+    expect(record.keys.props.enum).toStrictEqual(['a', 'b', 'c'])
+    expect(record.elements.type).toBe('string')
 
-    expect(attributes.record).toBeInstanceOf(RecordAttribute)
-    expect((attributes.record as RecordAttribute).keys.type).toBe('string')
-    expect((attributes.record as RecordAttribute).keys.enum).toStrictEqual(['a', 'b', 'c'])
-    expect((attributes.record as RecordAttribute).elements.type).toBe('string')
-
-    expect(attributes.anyOf).toBeInstanceOf(AnyOfAttribute)
-    expect((attributes.anyOf as AnyOfAttribute).elements).toHaveLength(2)
-    expect((attributes.anyOf as AnyOfAttribute).elements[0]?.type).toBe('string')
-    expect((attributes.anyOf as AnyOfAttribute).elements[1]?.type).toBe('null')
+    expect(attributes.anyOf).toBeInstanceOf(AnyOfSchema)
+    const anyOf = attributes.anyOf as AnyOfSchema
+    expect(anyOf.elements).toHaveLength(2)
+    expect(anyOf.elements[0]?.type).toBe('string')
+    expect(anyOf.elements[1]?.type).toBe('null')
   })
 })

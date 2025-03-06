@@ -1,4 +1,4 @@
-import type { AnyAttrCondition, NonLogicalCondition, SchemaCondition } from '../../condition.js'
+import type { AnySchemaCondition, NonLogicalCondition, SchemaCondition } from '../../condition.js'
 
 export type BeginsWithOperator = 'beginsWith'
 export type TwoArgsFnOperator = 'contains' | 'type' | BeginsWithOperator
@@ -14,7 +14,7 @@ export const isTwoArgsFnOperator: IsTwoArgsFnOperatorAsserter = (
 export type TwoArgsFnCondition = NonLogicalCondition &
   (TwoArgsFnOperator extends infer OPERATOR
     ? OPERATOR extends string
-      ? Extract<AnyAttrCondition<string, string>, { [KEY in OPERATOR]: unknown }>
+      ? Extract<AnySchemaCondition<string, string>, { [KEY in OPERATOR]: unknown }>
       : never
     : never)
 

@@ -1,19 +1,19 @@
-import type { SetAttribute } from '~/attributes/index.js'
+import type { SetSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedAttrJSONSchema } from './attribute.js'
-import { getFormattedAttrJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './attribute.js'
+import { getFormattedValueJSONSchema } from './attribute.js'
 
-export type FormattedSetAttrJSONSchema<ATTRIBUTE extends SetAttribute> = ComputeObject<{
+export type FormattedSetJSONSchema<SCHEMA extends SetSchema> = ComputeObject<{
   type: 'array'
-  items: FormattedAttrJSONSchema<ATTRIBUTE['elements']>
+  items: FormattedValueJSONSchema<SCHEMA['elements']>
   uniqueItems: true
 }>
 
-export const getFormattedSetAttrJSONSchema = <ATTRIBUTE extends SetAttribute>(
-  attr: ATTRIBUTE
-): FormattedSetAttrJSONSchema<ATTRIBUTE> => ({
+export const getFormattedSetJSONSchema = <SCHEMA extends SetSchema>(
+  schema: SCHEMA
+): FormattedSetJSONSchema<SCHEMA> => ({
   type: 'array',
-  items: getFormattedAttrJSONSchema<ATTRIBUTE['elements']>(attr.elements),
+  items: getFormattedValueJSONSchema<SCHEMA['elements']>(schema.elements),
   uniqueItems: true
 })

@@ -1,19 +1,17 @@
-import { anyOf, number, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { anyOf, number, string } from '~/schema/index.js'
 
-import { anyOfAttributeParser } from './anyOf.js'
+import { anyOfSchemaParser } from './anyOf.js'
 
-describe('anyOfAttributeParser', () => {
+describe('anyOfSchemaParser', () => {
   test('applies validation if any', () => {
-    const anyOfA = anyOf(string(), number())
-      .validate(input => typeof input === 'string')
-      .freeze()
+    const anyOfA = anyOf(string(), number()).validate(input => typeof input === 'string')
 
-    const { value: parsed } = anyOfAttributeParser(anyOfA, 'foo', { fill: false }).next()
+    const { value: parsed } = anyOfSchemaParser(anyOfA, 'foo', { fill: false }).next()
     expect(parsed).toStrictEqual('foo')
 
     const invalidCallA = () =>
-      anyOfAttributeParser(anyOfA, 42, { fill: false, valuePath: ['root'] }).next()
+      anyOfSchemaParser(anyOfA, 42, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
     expect(invalidCallA).toThrow(
@@ -23,12 +21,12 @@ describe('anyOfAttributeParser', () => {
       })
     )
 
-    const anyOfB = anyOf(string(), number())
-      .validate(input => (typeof input === 'string' ? true : 'Oh no...'))
-      .freeze('root')
+    const anyOfB = anyOf(string(), number()).validate(input =>
+      typeof input === 'string' ? true : 'Oh no...'
+    )
 
     const invalidCallB = () =>
-      anyOfAttributeParser(anyOfB, 42, { fill: false, valuePath: ['root'] }).next()
+      anyOfSchemaParser(anyOfB, 42, { fill: false, valuePath: ['root'] }).next()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(

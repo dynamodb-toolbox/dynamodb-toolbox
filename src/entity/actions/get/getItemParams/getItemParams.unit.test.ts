@@ -3,8 +3,8 @@ import {
   Entity,
   GetItemCommand,
   Table,
+  item,
   prefix,
-  schema,
   string
 } from '~/index.js'
 
@@ -22,7 +22,7 @@ const TestTable = new Table({
 
 const TestEntity = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
     test: string()
@@ -38,7 +38,7 @@ const TestTable2 = new Table({
 
 const TestEntity2 = new Entity({
   name: 'TestEntity',
-  schema: schema({
+  schema: item({
     pk: string().key(),
     sk: string().key(),
     test: string()
@@ -222,7 +222,7 @@ describe('get', () => {
   test('transformed key', () => {
     const TestEntity3 = new Entity({
       name: 'TestEntity',
-      schema: schema({
+      schema: item({
         email: string().key().savedAs('pk').transform(prefix('EMAIL')),
         sort: string().key().savedAs('sk')
       }),
@@ -235,16 +235,4 @@ describe('get', () => {
 
     expect(Key).toMatchObject({ pk: 'EMAIL#foo@bar.mail' })
   })
-
-  // TODO Create getBatch method and move tests there
-  // test('formats a batch get response', async () => {
-  //   let { Table, Key } = TestEntity.getBatch({ email: 'a', sort: 'b' })
-  //   expect(Table.name).toBe('test-table')
-  //   expect(Key).toEqual({ pk: 'a', sk: 'b' })
-  // })
-
-  // test('fails if no value is provided to the getBatch method', () => {
-  //   // @ts-expect-error
-  //   expect(() => TestEntity.getBatch()).toThrow(`'pk' or 'email' is required`)
-  // })
 })

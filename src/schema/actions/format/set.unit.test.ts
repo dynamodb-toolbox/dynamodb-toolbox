@@ -1,21 +1,21 @@
-import { set, string } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { set, string } from '~/schema/index.js'
 
 import * as attrFormatterModule from './attribute.js'
-import { setAttrFormatter } from './set.js'
+import { setSchemaFormatter } from './set.js'
 
 // @ts-ignore
 const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
 
-const setAttr = set(string()).freeze('path')
+const schema = set(string())
 
-describe('setAttrFormatter', () => {
+describe('setSchemaFormatter', () => {
   beforeEach(() => {
     attrFormatter.mockClear()
   })
 
   test('throws an error if input is not a set', () => {
-    const invalidCall = () => setAttrFormatter(setAttr, { foo: 'bar' }).next()
+    const invalidCall = () => setSchemaFormatter(schema, { foo: 'bar' }).next()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidAttribute' }))
@@ -23,17 +23,17 @@ describe('setAttrFormatter', () => {
 
   test('applies attrFormatter on input elements otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
-    const formatter = setAttrFormatter(setAttr, new Set(['foo', 'bar']), options)
+    const formatter = setSchemaFormatter(schema, new Set(['foo', 'bar']), options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual(new Set(['foo', 'bar']))
 
     expect(attrFormatter).toHaveBeenCalledTimes(2)
-    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'foo', {
+    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, 'foo', {
       ...options,
       valuePath: ['root', 0]
     })
-    expect(attrFormatter).toHaveBeenCalledWith(setAttr.elements, 'bar', {
+    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, 'bar', {
       ...options,
       valuePath: ['root', 1]
     })

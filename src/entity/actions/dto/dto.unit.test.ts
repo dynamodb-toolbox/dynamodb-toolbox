@@ -1,8 +1,8 @@
 import type { A } from 'ts-toolbelt'
 
-import { string } from '~/attributes/string/index.js'
 import { Entity } from '~/entity/entity.js'
-import { schema } from '~/schema/index.js'
+import { item } from '~/schema/item/index.js'
+import { string } from '~/schema/string/index.js'
 import { Table } from '~/table/table.js'
 
 import { EntityDTO } from './dto.js'
@@ -13,10 +13,10 @@ const table = new Table({
 })
 
 describe('DTO', () => {
-  test('correctly builds simple schema DTO', () => {
+  test('correctly builds simple entity DTO', () => {
     const simpleEntity = new Entity({
       name: 'simple',
-      schema: schema({
+      schema: item({
         pk: string().key(),
         attr: string()
       }),
@@ -32,14 +32,13 @@ describe('DTO', () => {
     expect(entityObj).toStrictEqual({
       entityName: 'simple',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' },
           attr: { type: 'string' }
         }
       },
-      entityAttributeName: 'entity',
-      entityAttributeHidden: true,
+      entityAttribute: true,
       timestamps: true,
       table: {
         entityAttributeSavedAs: '_et',
@@ -48,15 +47,50 @@ describe('DTO', () => {
     })
   })
 
-  test('correctly builds rich schema DTO', () => {
-    const richEntity = new Entity({
-      name: 'rich',
-      schema: schema({
+  test('correctly builds customized entity DTO', () => {
+    const simpleEntity = new Entity({
+      name: 'simple',
+      schema: item({
         pk: string().key(),
         attr: string()
       }),
-      entityAttributeName: '__ent__',
-      entityAttributeHidden: false,
+      table,
+      entityAttribute: false,
+      timestamps: false
+    })
+
+    const dto = simpleEntity.build(EntityDTO)
+
+    const assertJSON: A.Contains<typeof dto, IEntityDTO> = 1
+    assertJSON
+
+    const entityObj = JSON.parse(JSON.stringify(dto))
+    expect(entityObj).toStrictEqual({
+      entityName: 'simple',
+      schema: {
+        type: 'item',
+        attributes: {
+          pk: { type: 'string', key: true, required: 'always' },
+          attr: { type: 'string' }
+        }
+      },
+      entityAttribute: false,
+      timestamps: false,
+      table: {
+        entityAttributeSavedAs: '_et',
+        partitionKey: { name: 'pk', type: 'string' }
+      }
+    })
+  })
+
+  test('correctly builds highly customized entity DTO', () => {
+    const richEntity = new Entity({
+      name: 'rich',
+      schema: item({
+        pk: string().key(),
+        attr: string()
+      }),
+      entityAttribute: { name: '__ent__', hidden: false },
       timestamps: {
         created: { hidden: false, name: 'createdAt' },
         modified: false
@@ -73,14 +107,13 @@ describe('DTO', () => {
     expect(entityObj).toStrictEqual({
       entityName: 'rich',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' },
           attr: { type: 'string' }
         }
       },
-      entityAttributeName: '__ent__',
-      entityAttributeHidden: false,
+      entityAttribute: { name: '__ent__', hidden: false },
       timestamps: {
         created: { hidden: false, name: 'createdAt' },
         modified: false
@@ -100,7 +133,7 @@ describe('DTO', () => {
 
     const entity = new Entity({
       name: 'entity',
-      schema: schema({ key: string().key(), attr: string() }),
+      schema: item({ key: string().key(), attr: string() }),
       computeKey: ({ key }) => ({ pk: key, sk: key }),
       table: sortedTable
     })
@@ -121,7 +154,7 @@ describe('DTO', () => {
   test('does not append PK/SK if they are savedAs in the schema', () => {
     const entity = new Entity({
       name: 'entity',
-      schema: schema({ key: string().key().savedAs('pk'), attr: string() }),
+      schema: item({ key: string().key().savedAs('pk'), attr: string() }),
       table
     })
 

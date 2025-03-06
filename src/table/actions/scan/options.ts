@@ -2,6 +2,7 @@ import type { Condition } from '~/entity/actions/parseCondition/index.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
+import type { NoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
 import type {
   AllProjectedAttributesSelectOption,
   SelectOption,
@@ -18,8 +19,9 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
   filter?: Entity[] extends ENTITIES ? Condition : never
   filters?: Entity[] extends ENTITIES
     ? Record<string, Condition>
-    : { [ENTITY in ENTITIES[number] as ENTITY['name']]?: Condition<ENTITY> }
+    : { [ENTITY in ENTITIES[number] as ENTITY['entityName']]?: Condition<ENTITY> }
   entityAttrFilter?: boolean
+  noEntityMatchBehavior?: NoEntityMatchBehavior
   showEntityAttr?: boolean
   tableName?: string
 } & (

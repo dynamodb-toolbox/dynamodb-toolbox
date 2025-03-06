@@ -1,6 +1,6 @@
-import type { MapAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { MapSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
@@ -9,11 +9,11 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: MapAttribute,
+export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: MapSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<MapAttribute, OPTIONS>, ParserReturn<MapAttribute, OPTIONS>> {
+): Generator<ParserYield<MapSchema, OPTIONS>, ParserReturn<MapSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { mode = 'put', fill = true, transform = true } = restOptions
   const parsers: Record<string, Generator<any, any>> = {}
@@ -23,8 +23,8 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   if (isInputValueObject) {
     const additionalAttributeNames = new Set(Object.keys(inputValue))
 
-    Object.entries(attribute.attributes)
-      .filter(([, attr]) => mode !== 'key' || attr.key)
+    Object.entries(schema.attributes)
+      .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
         parsers[attrName] = attrParser(attr, inputValue[attrName], {
           ...restOptions,
@@ -60,15 +60,15 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<MapAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<MapSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<MapAttribute, OPTIONS>
+      yield linkedValue as ParserYield<MapSchema, OPTIONS>
     }
   }
 
   if (!isInputValueObject) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -84,7 +84,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       .filter(([, attrValue]) => attrValue !== undefined)
   )
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {
@@ -97,7 +97,7 @@ export function* mapAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
     Object.entries(parsers)
       .map(([attrName, attrParser]) => [
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        attribute.attributes[attrName]!.savedAs ?? attrName,
+        schema.attributes[attrName]!.props.savedAs ?? attrName,
         attrParser.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)

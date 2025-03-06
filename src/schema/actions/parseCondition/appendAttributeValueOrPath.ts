@@ -1,5 +1,5 @@
-import type { Attribute } from '~/attributes/index.js'
 import type { AppendAttributePathOptions } from '~/schema/actions/utils/appendAttributePath.js'
+import type { Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -11,13 +11,13 @@ const isAttributePath = (valueOrPath: unknown): valueOrPath is { attr: string } 
 
 export const appendAttributeValueOrPath = (
   conditionParser: ConditionParser,
-  attribute: Attribute,
+  schema: Schema,
   expressionAttributeValueOrPath: unknown,
   options: AppendAttributeValueOptions & AppendAttributePathOptions = {}
 ): void => {
   if (isAttributePath(expressionAttributeValueOrPath)) {
     conditionParser.appendAttributePath(expressionAttributeValueOrPath.attr, options)
   } else {
-    conditionParser.appendAttributeValue(attribute, expressionAttributeValueOrPath, options)
+    conditionParser.appendAttributeValue(schema, expressionAttributeValueOrPath, options)
   }
 }

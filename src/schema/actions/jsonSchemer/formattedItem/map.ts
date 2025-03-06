@@ -1,30 +1,31 @@
-import type { MapAttribute } from '~/attributes/index.js'
+import type { MapSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
-import type { SelectKeys } from '~/types/selectKeys.js'
+import type { OmitKeys } from '~/types/omitKeys.js'
 
-import { getFormattedAttrJSONSchema } from './attribute.js'
-import type { FormattedAttrJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './attribute.js'
+import { getFormattedValueJSONSchema } from './attribute.js'
 import type { RequiredProperties } from './shared.js'
 
-export type FormattedMapAttrJSONSchema<
-  ATTRIBUTE extends MapAttribute,
-  REQUIRED_PROPERTIES extends string = RequiredProperties<ATTRIBUTE>
+export type FormattedMapJSONSchema<
+  SCHEMA extends MapSchema,
+  REQUIRED_PROPERTIES extends string = RequiredProperties<SCHEMA>
 > = ComputeObject<
   {
     type: 'object'
     properties: {
-      [KEY in SelectKeys<ATTRIBUTE['attributes'], { hidden: false }>]: FormattedAttrJSONSchema<
-        ATTRIBUTE['attributes'][KEY]
-      >
+      [KEY in OmitKeys<
+        SCHEMA['attributes'],
+        { props: { hidden: true } }
+      >]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
     }
   } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
 >
 
-export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapAttribute>(
-  attr: ATTRIBUTE
-): FormattedMapAttrJSONSchema<ATTRIBUTE> => {
-  const displayedAttrEntries = Object.entries(attr.attributes).filter(
-    ([, attribute]) => !attribute.hidden
+export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
+  schema: SCHEMA
+): FormattedMapJSONSchema<SCHEMA> => {
+  const displayedAttrEntries = Object.entries(schema.attributes).filter(
+    ([, attr]) => !attr.props.hidden
   )
 
   const requiredProperties = displayedAttrEntries.map(([attributeName]) => attributeName)
@@ -34,9 +35,9 @@ export const getFormattedMapAttrJSONSchema = <ATTRIBUTE extends MapAttribute>(
     properties: Object.fromEntries(
       displayedAttrEntries.map(([attributeName, attribute]) => [
         attributeName,
-        getFormattedAttrJSONSchema(attribute)
+        getFormattedValueJSONSchema(attribute)
       ])
     ),
     ...(requiredProperties.length > 0 ? { required: requiredProperties } : {})
-  } as FormattedMapAttrJSONSchema<ATTRIBUTE>
+  } as FormattedMapJSONSchema<SCHEMA>
 }

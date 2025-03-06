@@ -1,15 +1,15 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
-import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
 import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
+import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseTableNameOption } from '~/options/tableName.js'
-import { $entities, TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
+import { $entities, TableAction } from '~/table/index.js'
 import type { ListOf } from '~/types/listOf.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 
@@ -35,7 +35,7 @@ export type RequestEntities<
   : REQUESTS extends [infer REQUESTS_HEAD, ...infer REQUESTS_TAIL]
     ? REQUESTS_HEAD extends IBatchGetRequest
       ? REQUESTS_TAIL extends IBatchGetRequest[]
-        ? REQUESTS_HEAD['entity']['name'] extends RESULTS[number]['name']
+        ? REQUESTS_HEAD['entity']['entityName'] extends RESULTS[number]['entityName']
           ? RequestEntities<REQUESTS_TAIL, RESULTS>
           : RequestEntities<REQUESTS_TAIL, [...RESULTS, REQUESTS_HEAD['entity']]>
         : never
@@ -78,11 +78,11 @@ export class BatchGetCommand<
     const entityNames = new Set<string>()
 
     for (const request of requests) {
-      if (entityNames.has(request.entity.name)) {
+      if (entityNames.has(request.entity.entityName)) {
         continue
       }
       entities.push(request.entity)
-      entityNames.add(request.entity.name)
+      entityNames.add(request.entity.entityName)
     }
 
     return new BatchGetCommand(
@@ -124,29 +124,19 @@ export class BatchGetCommand<
     const expressionAttributeNames: Record<string, string> = {}
 
     /**
-     * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
+     * @debt feature "For now, we compute the projectionExpression using the first entity. To improve."
      */
     if (attributes !== undefined) {
-      const { entityAttributeName } = firstRequestEntity
-
       const { ExpressionAttributeNames: projectionExpressionAttributeNames, ProjectionExpression } =
-        firstRequestEntity
-          .build(EntityPathParser)
-          .parse(
-            // entityAttributeName is required at all times for formatting
-            attributes.includes(entityAttributeName)
-              ? attributes
-              : [entityAttributeName, ...attributes]
-          )
-          .toCommandOptions()
+        firstRequestEntity.build(EntityPathParser).parse(attributes).toCommandOptions()
 
       Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
       projectionExpression = ProjectionExpression
 
-      // table partitionKey and sortKey are required at all times for response re-ordering
-      const { partitionKey, sortKey } = this.table
-
+      const { partitionKey, sortKey, entityAttributeSavedAs } = this.table
       const filteredAttributes = new Set<string>(Object.values(expressionAttributeNames))
+
+      // table partitionKey and sortKey are required at all times for response re-ordering
       if (!filteredAttributes.has(partitionKey.name)) {
         projectionExpression += `, #_pk`
         expressionAttributeNames['#_pk'] = partitionKey.name
@@ -155,6 +145,12 @@ export class BatchGetCommand<
       if (sortKey !== undefined && !filteredAttributes.has(sortKey.name)) {
         projectionExpression += `, #_sk`
         expressionAttributeNames['#_sk'] = sortKey.name
+      }
+
+      // We prefer including the entityAttrSavedAs for faster formatting
+      if (!filteredAttributes.has(entityAttributeSavedAs)) {
+        projectionExpression += `, #_et`
+        expressionAttributeNames['#_et'] = entityAttributeSavedAs
       }
     }
 

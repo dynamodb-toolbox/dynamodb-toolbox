@@ -1,130 +1,128 @@
 import type {
-  AnyAttribute,
-  AnyOfAttribute,
-  Attribute,
-  Attribute_,
-  BinaryAttribute,
-  BooleanAttribute,
-  ListAttribute,
-  MapAttribute,
-  NullAttribute,
-  NumberAttribute,
-  RecordAttribute,
-  SetAttribute,
-  StringAttribute
-} from '~/attributes/index.js'
-import type { Overwrite } from '~/types/index.js'
+  AnyOfSchema,
+  AnySchema,
+  BinarySchema,
+  BooleanSchema,
+  ListSchema,
+  MapSchema,
+  NullSchema,
+  NumberSchema,
+  RecordSchema,
+  Schema,
+  Schema_,
+  SetSchema,
+  StringSchema
+} from '~/schema/index.js'
 
-export type ResetLinks<ATTRIBUTE extends Attribute> =
-  | (ATTRIBUTE extends AnyAttribute
-      ? AnyAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof AnyAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
+export type ResetLinks<SCHEMA extends Schema> =
+  | (SCHEMA extends AnySchema
+      ? AnySchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends NullSchema
+      ? NullSchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends BooleanSchema
+      ? BooleanSchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends NumberSchema
+      ? NumberSchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends StringSchema
+      ? StringSchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends BinarySchema
+      ? BinarySchema<{
+          [KEY in Exclude<
+            keyof SCHEMA['props'],
+            'keyLink' | 'putLink' | 'updateLink'
+          >]: SCHEMA['props'][KEY]
+        }>
+      : never)
+  | (SCHEMA extends SetSchema
+      ? SetSchema<
+          SCHEMA['elements'],
+          {
+            [KEY in Exclude<
+              keyof SCHEMA['props'],
+              'keyLink' | 'putLink' | 'updateLink'
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends NullAttribute
-      ? NullAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof NullAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
+  | (SCHEMA extends ListSchema
+      ? ListSchema<
+          SCHEMA['elements'],
+          {
+            [KEY in Exclude<
+              keyof SCHEMA['props'],
+              'keyLink' | 'putLink' | 'updateLink'
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends BooleanAttribute
-      ? BooleanAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof BooleanAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
+  | (SCHEMA extends MapSchema
+      ? MapSchema<
+          SCHEMA['attributes'],
+          {
+            [KEY in Exclude<
+              keyof SCHEMA['props'],
+              'keyLink' | 'putLink' | 'updateLink'
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends NumberAttribute
-      ? NumberAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof NumberAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
+  | (SCHEMA extends RecordSchema
+      ? RecordSchema<
+          SCHEMA['keys'],
+          SCHEMA['elements'],
+          {
+            [KEY in Exclude<
+              keyof SCHEMA['props'],
+              'keyLink' | 'putLink' | 'updateLink'
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
-  | (ATTRIBUTE extends StringAttribute
-      ? StringAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof StringAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
-        >
-      : never)
-  | (ATTRIBUTE extends BinaryAttribute
-      ? BinaryAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof BinaryAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >
-        >
-      : never)
-  | (ATTRIBUTE extends SetAttribute
-      ? SetAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof SetAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >,
-          ATTRIBUTE['elements']
-        >
-      : never)
-  | (ATTRIBUTE extends ListAttribute
-      ? ListAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof ListAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >,
-          ATTRIBUTE['elements']
-        >
-      : never)
-  | (ATTRIBUTE extends MapAttribute
-      ? MapAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof MapAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >,
-          ATTRIBUTE['attributes']
-        >
-      : never)
-  | (ATTRIBUTE extends RecordAttribute
-      ? RecordAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof RecordAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >,
-          ATTRIBUTE['keys'],
-          ATTRIBUTE['elements']
-        >
-      : never)
-  | (ATTRIBUTE extends AnyOfAttribute
-      ? AnyOfAttribute<
-          Overwrite<
-            // Improves type display
-            Pick<ATTRIBUTE, keyof AnyOfAttribute>,
-            { links: { key: undefined; put: undefined; update: undefined } }
-          >,
-          ATTRIBUTE['elements']
+  | (SCHEMA extends AnyOfSchema
+      ? AnyOfSchema<
+          SCHEMA['elements'],
+          {
+            [KEY in Exclude<
+              keyof SCHEMA['props'],
+              'keyLink' | 'putLink' | 'updateLink'
+            >]: SCHEMA['props'][KEY]
+          }
         >
       : never)
 
-type LinksResetter = <ATTRIBUTE extends Attribute>(attribute: ATTRIBUTE) => ResetLinks<ATTRIBUTE>
+type LinksResetter = <SCHEMA extends Schema>(schema: SCHEMA) => ResetLinks<SCHEMA>
 
-export const resetLinks: LinksResetter = attribute =>
-  (attribute as Attribute_)
+export const resetLinks: LinksResetter = schema =>
+  (schema as Schema_)
     // @ts-expect-error Signatures don't match but we don't care
-    .clone({ links: { key: undefined, put: undefined, update: undefined } })
+    .clone({ keyLink: undefined, putLink: undefined, updateLink: undefined })

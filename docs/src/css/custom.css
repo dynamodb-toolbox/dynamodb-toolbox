@@ -472,6 +472,16 @@ a:hover,
   color: #898989;
 }
 
+.sidebar-action-item-pro {
+  background-image: linear-gradient(
+    to top right,
+    #3b82f62a,
+    #7e22ce2a
+  );
+  border: 1px solid #7e22ce;
+  color: #876e8b;
+}
+
 div.theme-admonition details {
   background: #fff6;
 }

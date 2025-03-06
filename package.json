@@ -67,6 +67,7 @@
     "test": "npm run test-type && npm run test-format && npm run test-unit && npm run test-lint && npm run test-exports",
     "test-type": "tsc --noEmit",
     "test-format": "prettier --check 'src/**/*.(js|ts)'",
+    "test-format-fix": "prettier --write 'src/**/*.(js|ts)'",
     "test-unit": "vitest run",
     "test-unit-watch": "vitest",
     "test-lint": "eslint .",
@@ -87,156 +88,6 @@
         "default": "./dist/cjs/index.js"
       }
     },
-    "./attributes": {
-      "import": {
-        "types": "./dist/esm/attributes/index.d.ts",
-        "default": "./dist/esm/attributes/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/index.d.ts",
-        "default": "./dist/cjs/attributes/index.js"
-      }
-    },
-    "./attributes/any": {
-      "import": {
-        "types": "./dist/esm/attributes/any/index.d.ts",
-        "default": "./dist/esm/attributes/any/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/any/index.d.ts",
-        "default": "./dist/cjs/attributes/any/index.js"
-      }
-    },
-    "./attributes/nul": {
-      "import": {
-        "types": "./dist/esm/attributes/null/index.d.ts",
-        "default": "./dist/esm/attributes/null/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/null/index.d.ts",
-        "default": "./dist/cjs/attributes/null/index.js"
-      }
-    },
-    "./attributes/boolean": {
-      "import": {
-        "types": "./dist/esm/attributes/boolean/index.d.ts",
-        "default": "./dist/esm/attributes/boolean/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/boolean/index.d.ts",
-        "default": "./dist/cjs/attributes/boolean/index.js"
-      }
-    },
-    "./attributes/number": {
-      "import": {
-        "types": "./dist/esm/attributes/number/index.d.ts",
-        "default": "./dist/esm/attributes/number/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/number/index.d.ts",
-        "default": "./dist/cjs/attributes/number/index.js"
-      }
-    },
-    "./attributes/string": {
-      "import": {
-        "types": "./dist/esm/attributes/string/index.d.ts",
-        "default": "./dist/esm/attributes/string/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/string/index.d.ts",
-        "default": "./dist/cjs/attributes/string/index.js"
-      }
-    },
-    "./attributes/binary": {
-      "import": {
-        "types": "./dist/esm/attributes/binary/index.d.ts",
-        "default": "./dist/esm/attributes/binary/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/binary/index.d.ts",
-        "default": "./dist/cjs/attributes/binary/index.js"
-      }
-    },
-    "./attributes/set": {
-      "import": {
-        "types": "./dist/esm/attributes/set/index.d.ts",
-        "default": "./dist/esm/attributes/set/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/set/index.d.ts",
-        "default": "./dist/cjs/attributes/set/index.js"
-      }
-    },
-    "./attributes/list": {
-      "import": {
-        "types": "./dist/esm/attributes/list/index.d.ts",
-        "default": "./dist/esm/attributes/list/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/list/index.d.ts",
-        "default": "./dist/cjs/attributes/list/index.js"
-      }
-    },
-    "./attributes/map": {
-      "import": {
-        "types": "./dist/esm/attributes/map/index.d.ts",
-        "default": "./dist/esm/attributes/map/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/map/index.d.ts",
-        "default": "./dist/cjs/attributes/map/index.js"
-      }
-    },
-    "./attributes/record": {
-      "import": {
-        "types": "./dist/esm/attributes/record/index.d.ts",
-        "default": "./dist/esm/attributes/record/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/record/index.d.ts",
-        "default": "./dist/cjs/attributes/record/index.js"
-      }
-    },
-    "./attributes/anyOf": {
-      "import": {
-        "types": "./dist/esm/attributes/anyOf/index.d.ts",
-        "default": "./dist/esm/attributes/anyOf/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/attributes/anyOf/index.d.ts",
-        "default": "./dist/cjs/attributes/anyOf/index.js"
-      }
-    },
-    "./transformers": {
-      "import": {
-        "types": "./dist/esm/transformers/index.d.ts",
-        "default": "./dist/esm/transformers/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/transformers/index.d.ts",
-        "default": "./dist/cjs/transformers/index.js"
-      }
-    },
-    "./transformers/prefix": {
-      "import": {
-        "types": "./dist/esm/transformers/prefix.d.ts",
-        "default": "./dist/esm/transformers/prefix.js"
-      },
-      "require": {
-        "types": "./dist/cjs/transformers/prefix.d.ts",
-        "default": "./dist/cjs/transformers/prefix.js"
-      }
-    },
-    "./transformers/jsonStringify": {
-      "import": {
-        "types": "./dist/esm/transformers/jsonStringify.d.ts",
-        "default": "./dist/esm/transformers/jsonStringify.js"
-      },
-      "require": {
-        "types": "./dist/cjs/transformers/jsonStringify.d.ts",
-        "default": "./dist/cjs/transformers/jsonStringify.js"
-      }
-    },
     "./schema": {
       "import": {
         "types": "./dist/esm/schema/index.d.ts",
@@ -245,6 +96,126 @@
       "require": {
         "types": "./dist/cjs/schema/index.d.ts",
         "default": "./dist/cjs/schema/index.js"
+      }
+    },
+    "./schema/any": {
+      "import": {
+        "types": "./dist/esm/schema/any/index.d.ts",
+        "default": "./dist/esm/schema/any/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/any/index.d.ts",
+        "default": "./dist/cjs/schema/any/index.js"
+      }
+    },
+    "./schema/nul": {
+      "import": {
+        "types": "./dist/esm/schema/null/index.d.ts",
+        "default": "./dist/esm/schema/null/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/null/index.d.ts",
+        "default": "./dist/cjs/schema/null/index.js"
+      }
+    },
+    "./schema/boolean": {
+      "import": {
+        "types": "./dist/esm/schema/boolean/index.d.ts",
+        "default": "./dist/esm/schema/boolean/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/boolean/index.d.ts",
+        "default": "./dist/cjs/schema/boolean/index.js"
+      }
+    },
+    "./schema/number": {
+      "import": {
+        "types": "./dist/esm/schema/number/index.d.ts",
+        "default": "./dist/esm/schema/number/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/number/index.d.ts",
+        "default": "./dist/cjs/schema/number/index.js"
+      }
+    },
+    "./schema/string": {
+      "import": {
+        "types": "./dist/esm/schema/string/index.d.ts",
+        "default": "./dist/esm/schema/string/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/string/index.d.ts",
+        "default": "./dist/cjs/schema/string/index.js"
+      }
+    },
+    "./schema/binary": {
+      "import": {
+        "types": "./dist/esm/schema/binary/index.d.ts",
+        "default": "./dist/esm/schema/binary/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/binary/index.d.ts",
+        "default": "./dist/cjs/schema/binary/index.js"
+      }
+    },
+    "./schema/set": {
+      "import": {
+        "types": "./dist/esm/schema/set/index.d.ts",
+        "default": "./dist/esm/schema/set/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/set/index.d.ts",
+        "default": "./dist/cjs/schema/set/index.js"
+      }
+    },
+    "./schema/list": {
+      "import": {
+        "types": "./dist/esm/schema/list/index.d.ts",
+        "default": "./dist/esm/schema/list/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/list/index.d.ts",
+        "default": "./dist/cjs/schema/list/index.js"
+      }
+    },
+    "./schema/map": {
+      "import": {
+        "types": "./dist/esm/schema/map/index.d.ts",
+        "default": "./dist/esm/schema/map/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/map/index.d.ts",
+        "default": "./dist/cjs/schema/map/index.js"
+      }
+    },
+    "./schema/record": {
+      "import": {
+        "types": "./dist/esm/schema/record/index.d.ts",
+        "default": "./dist/esm/schema/record/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/record/index.d.ts",
+        "default": "./dist/cjs/schema/record/index.js"
+      }
+    },
+    "./schema/anyOf": {
+      "import": {
+        "types": "./dist/esm/schema/anyOf/index.d.ts",
+        "default": "./dist/esm/schema/anyOf/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/anyOf/index.d.ts",
+        "default": "./dist/cjs/schema/anyOf/index.js"
+      }
+    },
+    "./schema/item": {
+      "import": {
+        "types": "./dist/esm/schema/item/index.d.ts",
+        "default": "./dist/esm/schema/item/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/item/index.d.ts",
+        "default": "./dist/cjs/schema/item/index.js"
       }
     },
     "./schema/actions/parse": {
@@ -295,6 +266,36 @@
       "require": {
         "types": "./dist/cjs/schema/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/schema/actions/fromDTO/index.js"
+      }
+    },
+    "./transformers": {
+      "import": {
+        "types": "./dist/esm/transformers/index.d.ts",
+        "default": "./dist/esm/transformers/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/index.d.ts",
+        "default": "./dist/cjs/transformers/index.js"
+      }
+    },
+    "./transformers/prefix": {
+      "import": {
+        "types": "./dist/esm/transformers/prefix.d.ts",
+        "default": "./dist/esm/transformers/prefix.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/prefix.d.ts",
+        "default": "./dist/cjs/transformers/prefix.js"
+      }
+    },
+    "./transformers/jsonStringify": {
+      "import": {
+        "types": "./dist/esm/transformers/jsonStringify.d.ts",
+        "default": "./dist/esm/transformers/jsonStringify.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/jsonStringify.d.ts",
+        "default": "./dist/cjs/transformers/jsonStringify.js"
       }
     },
     "./table": {
@@ -377,6 +378,16 @@
         "default": "./dist/cjs/table/actions/spy/index.js"
       }
     },
+    "./table/actions/repository": {
+      "import": {
+        "types": "./dist/esm/table/actions/repository/index.d.ts",
+        "default": "./dist/esm/table/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/repository/index.d.ts",
+        "default": "./dist/cjs/table/actions/repository/index.js"
+      }
+    },
     "./table/actions/dto": {
       "import": {
         "types": "./dist/esm/table/actions/dto/index.d.ts",
@@ -397,14 +408,14 @@
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
-    "./table/actions/repository": {
+    "./table/actions/synchronize": {
       "import": {
-        "types": "./dist/esm/table/actions/repository/index.d.ts",
-        "default": "./dist/esm/table/actions/repository/index.js"
+        "types": "./dist/esm/table/actions/synchronize/index.d.ts",
+        "default": "./dist/esm/table/actions/synchronize/index.js"
       },
       "require": {
-        "types": "./dist/cjs/table/actions/repository/index.d.ts",
-        "default": "./dist/cjs/table/actions/repository/index.js"
+        "types": "./dist/cjs/table/actions/synchronize/index.d.ts",
+        "default": "./dist/cjs/table/actions/synchronize/index.js"
       }
     },
     "./entity": {
@@ -617,6 +628,16 @@
         "default": "./dist/cjs/entity/actions/spy/index.js"
       }
     },
+    "./entity/actions/repository": {
+      "import": {
+        "types": "./dist/esm/entity/actions/repository/index.d.ts",
+        "default": "./dist/esm/entity/actions/repository/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/repository/index.d.ts",
+        "default": "./dist/cjs/entity/actions/repository/index.js"
+      }
+    },
     "./entity/actions/dto": {
       "import": {
         "types": "./dist/esm/entity/actions/dto/index.d.ts",
@@ -635,16 +656,6 @@
       "require": {
         "types": "./dist/cjs/entity/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/entity/actions/fromDTO/index.js"
-      }
-    },
-    "./entity/actions/repository": {
-      "import": {
-        "types": "./dist/esm/entity/actions/repository/index.d.ts",
-        "default": "./dist/esm/entity/actions/repository/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/entity/actions/repository/index.d.ts",
-        "default": "./dist/cjs/entity/actions/repository/index.js"
       }
     },
     "./errors": {

@@ -1,5 +1,6 @@
 import type { Entity, FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
+import { getEntityAttrOptionValue, isEntityAttrEnabled } from '~/entity/utils/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Formatter } from '~/schema/actions/format/index.js'
 
@@ -8,6 +9,7 @@ import type { FormatItemOptions, InferReadItemOptions } from './options.js'
 
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';
+
   [$formatter]: Formatter<ENTITY['schema']>
 
   constructor(entity: ENTITY) {
@@ -20,16 +22,20 @@ export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityActio
     options: OPTIONS = {} as OPTIONS
   ): FormattedItem<ENTITY, InferReadItemOptions<ENTITY, OPTIONS>> {
     const { transform = true } = options
-    const { entityAttributeSavedAs } = this.entity.table
+    const { table, entityAttribute, entityName } = this.entity
+    const { entityAttributeSavedAs } = table
+
+    /**
+     * @debt refactor "Simply use readDefault on entityAttr once available"
+     */
+    const entityAttrName = transform
+      ? entityAttributeSavedAs
+      : getEntityAttrOptionValue(entityAttribute, 'name')
+    const addEntityAttr = isEntityAttrEnabled(entityAttribute) && item[entityAttrName] === undefined
 
     try {
       const formatter = this[$formatter].start(
-        {
-          ...item,
-          ...(item[entityAttributeSavedAs] === undefined
-            ? { [entityAttributeSavedAs]: this.entity.name }
-            : {})
-        },
+        { ...item, ...(addEntityAttr ? { [entityAttrName]: entityName } : {}) },
         { ...options, format: true }
       )
       if (transform) {

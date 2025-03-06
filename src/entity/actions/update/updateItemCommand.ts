@@ -3,7 +3,7 @@ import type { UpdateCommandInput, UpdateCommandOutput } from '@aws-sdk/lib-dynam
 
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import { $sentArgs } from '~/entity/constants.js'
-import { sender } from '~/entity/decorator.js'
+import { interceptable } from '~/entity/decorator.js'
 import type { Entity, EntitySendableAction } from '~/entity/entity.js'
 import type { FormattedItem } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
@@ -52,7 +52,7 @@ export type UpdateItemResponse<
   Omit<UpdateCommandOutput, 'Attributes'>,
   {
     Attributes?: ReturnedAttributes<ENTITY, OPTIONS>
-    ToolboxItem: UpdateItemInput<ENTITY, true>
+    ToolboxItem: UpdateItemInput<ENTITY, { filled: true }>
   }
 >
 
@@ -63,7 +63,7 @@ export class UpdateItemCommand<
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
-  static override actionName = 'update' as const;
+  static override actionName = 'updateItem' as const;
 
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
@@ -94,13 +94,13 @@ export class UpdateItemCommand<
     return [this[$item], this[$options]]
   }
 
-  params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, true> } {
+  params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, { filled: true }> } {
     const [item, options] = this[$sentArgs]()
 
     return updateItemParams(this.entity, item, options)
   }
 
-  @sender()
+  @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
   ): Promise<UpdateItemResponse<ENTITY, OPTIONS>> {

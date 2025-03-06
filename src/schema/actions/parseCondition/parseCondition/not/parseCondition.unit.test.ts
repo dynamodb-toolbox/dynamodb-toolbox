@@ -1,10 +1,9 @@
-import { number } from '~/attributes/index.js'
-import { schema } from '~/schema/index.js'
+import { item, number } from '~/schema/index.js'
 
 import { ConditionParser } from '../../conditionParser.js'
 
 describe('parseCondition - Not', () => {
-  const mySchema = schema({
+  const mySchema = item({
     num: number(),
     otherNum: number()
   })

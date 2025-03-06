@@ -1,15 +1,15 @@
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
-import type { Schema } from '~/schema/index.js'
-import { schema } from '~/schema/index.js'
+import type { ItemSchemaDTO } from '~/schema/actions/dto/index.js'
+import { item } from '~/schema/item/index.js'
+import type { ItemSchema } from '~/schema/item/index.js'
 
-import { fromAttrDTO } from './fromAttrDTO/index.js'
+import { fromSchemaDTO as _fromSchemaDTO } from './fromSchemaDTO/index.js'
 
-export const fromSchemaDTO = (schemaDTO: ISchemaDTO): Schema =>
-  schema(
+export const fromSchemaDTO = (schemaDTO: ItemSchemaDTO): ItemSchema =>
+  item(
     Object.fromEntries(
       Object.entries(schemaDTO.attributes).map(([attributeName, attributeDTO]) => [
         attributeName,
-        fromAttrDTO(attributeDTO)
+        _fromSchemaDTO(attributeDTO)
       ])
     )
   )

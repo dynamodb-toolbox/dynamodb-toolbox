@@ -1,6 +1,6 @@
-import type { MapAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { MapSchema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import { attrFormatter } from './attribute.js'
@@ -8,18 +8,18 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* mapAttrFormatter(
-  mapAttribute: MapAttribute,
+export function* mapSchemaFormatter(
+  schema: MapSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapAttribute> = {}
+  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapSchema> = {}
 ): Generator<
-  FormatterYield<MapAttribute, FormatAttrValueOptions<MapAttribute>>,
-  FormatterReturn<MapAttribute, FormatAttrValueOptions<MapAttribute>>
+  FormatterYield<MapSchema, FormatAttrValueOptions<MapSchema>>,
+  FormatterReturn<MapSchema, FormatAttrValueOptions<MapSchema>>
 > {
   const { format = true, transform = true } = restOptions
 
   if (!isObject(rawValue)) {
-    const { type } = mapAttribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
@@ -32,8 +32,9 @@ export function* mapAttrFormatter(
   }
 
   const formatters: Record<string, Generator<unknown, unknown>> = {}
-  for (const [attributeName, attribute] of Object.entries(mapAttribute.attributes)) {
-    const { savedAs } = attribute
+  for (const [attributeName, attribute] of Object.entries(schema.attributes)) {
+    const { props } = attribute
+    const { savedAs } = props
 
     const sanitizedAttributeName = sanitize(attributeName)
     const { isProjected, childrenAttributes } = matchProjection(
@@ -71,7 +72,7 @@ export function* mapAttrFormatter(
       .map(([attrName, formatter]) => [attrName, formatter.next().value] as [string, unknown])
       .filter(
         ([attrName, attrValue]) =>
-          mapAttribute.attributes[attrName]?.hidden !== true && attrValue !== undefined
+          schema.attributes[attrName]?.props.hidden !== true && attrValue !== undefined
       )
   )
 

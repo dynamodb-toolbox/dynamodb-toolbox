@@ -10,13 +10,12 @@ describe('fromDTO - entity', () => {
     const entityDTO: IEntityDTO = {
       entityName: 'pokemons',
       schema: {
-        type: 'schema',
+        type: 'item',
         attributes: {
           pk: { type: 'string', key: true, required: 'always' }
         }
       },
-      entityAttributeName: '__entity__',
-      entityAttributeHidden: false,
+      entityAttribute: { name: '__entity__', hidden: false },
       timestamps: {
         created: { hidden: false, name: 'createdAt' },
         modified: false
@@ -30,21 +29,48 @@ describe('fromDTO - entity', () => {
     const entity = fromEntityDTO(entityDTO)
 
     expect(entity).toBeInstanceOf(Entity)
-    expect(entity.name).toBe('pokemons')
+    expect(entity.entityName).toBe('pokemons')
 
-    expect(entity.constructorSchema).toMatchObject(fromSchemaDTO(entityDTO.schema))
+    expect(entity.attributes).toMatchObject(fromSchemaDTO(entityDTO.schema).attributes)
 
     // We have to do this to avoid reference inequalities
     const receivedTable = JSON.parse(JSON.stringify(entity.table))
     const expectedTable = JSON.parse(JSON.stringify(fromTableDTO(entityDTO.table)))
     expect(receivedTable).toMatchObject(expectedTable)
 
-    expect(entity.entityAttributeName).toBe('__entity__')
-    expect(entity.entityAttributeHidden).toBe(false)
+    expect(entity.entityAttribute).toStrictEqual({ name: '__entity__', hidden: false })
 
     expect(entity.timestamps).toStrictEqual({
       created: { hidden: false, name: 'createdAt' },
       modified: false
     })
+  })
+
+  test('creates customized entity', () => {
+    const entityDTO: IEntityDTO = {
+      entityName: 'pokemons',
+      schema: {
+        type: 'item',
+        attributes: {
+          pk: { type: 'string', key: true, required: 'always' }
+        }
+      },
+      entityAttribute: false,
+      timestamps: false,
+      table: {
+        partitionKey: { type: 'string', name: 'pk' },
+        entityAttributeSavedAs: '__et__'
+      }
+    }
+
+    const entity = fromEntityDTO(entityDTO)
+
+    expect(entity).toBeInstanceOf(Entity)
+    expect(entity.entityName).toBe('pokemons')
+
+    expect(entity.attributes).toMatchObject(fromSchemaDTO(entityDTO.schema).attributes)
+
+    expect(entity.entityAttribute).toBe(false)
+    expect(entity.timestamps).toBe(false)
   })
 })

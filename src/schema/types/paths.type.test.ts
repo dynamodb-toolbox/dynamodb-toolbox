@@ -5,18 +5,18 @@ import {
   anyOf,
   binary,
   boolean,
+  item,
   list,
   map,
   number,
   record,
-  schema,
   set,
   string
 } from '~/index.js'
 
 import type { Paths } from './paths.js'
 
-export const mySchema = schema({
+export const mySchema = item({
   parentId: string().key().savedAs('pk'),
   childId: string().key().savedAs('sk'),
   any: any(),
@@ -37,7 +37,7 @@ export const mySchema = schema({
   union: anyOf(map({ str: string() }), map({ num: number() }))
 })
 
-export type ATTRIBUTE_PATHS = Paths<typeof mySchema>
+export type SCHEMA_PATHS = Paths<typeof mySchema>
 
 const assertAttributePaths: A.Equals<
   | 'parentId'
@@ -67,6 +67,6 @@ const assertAttributePaths: A.Equals<
   | `${'record' | `['record']`}${'.foo' | '.bar' | `['foo']` | `['bar']`}${'' | '.num' | `['num']`}`
   | `${'dict' | `['dict']`}${'' | `.${string}` | `['${string}']`}`
   | `${'union' | `['union']`}${'' | '.str' | `['str']` | '.num' | `['num']`}`,
-  ATTRIBUTE_PATHS
+  SCHEMA_PATHS
 > = 1
 assertAttributePaths

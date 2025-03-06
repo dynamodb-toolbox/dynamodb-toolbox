@@ -1,14 +1,14 @@
 import type {
-  ResolvedBinaryAttribute,
-  ResolvedNumberAttribute,
-  ResolvedStringAttribute
-} from '~/attributes/index.js'
-import type {
   BeginsWithOperator,
   BetweenOperator,
   EqualityOperator,
   RangeOperator
 } from '~/schema/actions/parseCondition/index.js'
+import type {
+  ResolvedBinarySchema,
+  ResolvedNumberSchema,
+  ResolvedStringSchema
+} from '~/schema/index.js'
 import type { IndexNames, IndexSchema } from '~/table/actions/indexes.js'
 import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'
@@ -26,11 +26,11 @@ export const queryOperatorSet = new Set<QueryOperator>([
 ])
 
 type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'number'
-  ? ResolvedNumberAttribute
+  ? ResolvedNumberSchema
   : KEY_TYPE extends 'string'
-    ? ResolvedStringAttribute
+    ? ResolvedStringSchema
     : KEY_TYPE extends 'binary'
-      ? ResolvedBinaryAttribute
+      ? ResolvedBinarySchema
       : never
 
 /**
@@ -38,19 +38,19 @@ type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'numbe
  */
 type QueryRange<
   KEY_TYPE extends IndexableKeyType,
-  ATTRIBUTE_VALUE extends
-    | ResolvedNumberAttribute
-    | ResolvedStringAttribute
-    | ResolvedBinaryAttribute = ResolveKeyType<KEY_TYPE>
+  KEY_VALUE extends
+    | ResolvedNumberSchema
+    | ResolvedStringSchema
+    | ResolvedBinarySchema = ResolveKeyType<KEY_TYPE>
 > =
   | (RangeOperator extends infer COMPARISON_OPERATOR
       ? COMPARISON_OPERATOR extends RangeOperator
-        ? Record<COMPARISON_OPERATOR, ATTRIBUTE_VALUE>
+        ? Record<COMPARISON_OPERATOR, KEY_VALUE>
         : never
       : never)
-  | Record<BetweenOperator, [ATTRIBUTE_VALUE, ATTRIBUTE_VALUE]>
-  | Record<EqualityOperator, ATTRIBUTE_VALUE>
-  | (KEY_TYPE extends 'string' ? Record<BeginsWithOperator, ATTRIBUTE_VALUE> : never)
+  | Record<BetweenOperator, [KEY_VALUE, KEY_VALUE]>
+  | Record<EqualityOperator, KEY_VALUE>
+  | (KEY_TYPE extends 'string' ? Record<BeginsWithOperator, KEY_VALUE> : never)
 
 type SecondaryIndexQuery<
   TABLE extends Table,

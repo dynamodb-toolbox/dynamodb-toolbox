@@ -1,8 +1,12 @@
-import type { AttributeBasicValue, NumberAttribute } from '~/attributes/index.js'
-import { number } from '~/attributes/number/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import type { ExtensionParser, ExtensionParserOptions } from '~/schema/index.js'
+import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type {
+  ExtensionParser,
+  ExtensionParserOptions,
+  SchemaUnextendedValue
+} from '~/schema/index.js'
+import { NumberSchema } from '~/schema/number/schema.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
 import { $ADD, $SUBTRACT, $SUM, isAddition, isSubtraction, isSum } from '../../symbols/index.js'
@@ -10,18 +14,21 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import { parseReferenceExtension } from './reference.js'
 
 export const parseNumberExtension = (
-  attribute: NumberAttribute,
+  schema: NumberSchema,
   inputValue: unknown,
-  { transform = true }: ExtensionParserOptions = {}
+  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
+  const { props } = schema
+
   if (isSum(inputValue) && inputValue[$SUM] !== undefined) {
     return {
       isExtension: true,
       *extensionParser() {
         const sumElements = inputValue[$SUM]
+        const sumValuePath = [...valuePath, '$SUM']
 
         if (!isArray(sumElements) || sumElements.length !== 2) {
-          const { path } = attribute
+          const path = formatValuePath(sumValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Sum for number attribute ${
@@ -33,15 +40,20 @@ export const parseNumberExtension = (
         }
 
         const [left, right] = sumElements
+
         const parsers = [
-          new Parser(number({ big: attribute.big }).freeze(`${attribute.path}[$SUM][0]`)).start(
-            left,
-            { fill: false, transform, parseExtension: parseReferenceExtension }
-          ),
-          new Parser(number({ big: attribute.big }).freeze(`${attribute.path}[$SUM][1]`)).start(
-            right,
-            { fill: false, transform, parseExtension: parseReferenceExtension }
-          )
+          new Parser(new NumberSchema({ big: props.big })).start(left, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension,
+            valuePath: [...sumValuePath, 0]
+          }),
+          new Parser(new NumberSchema({ big: props.big })).start(right, {
+            fill: false,
+            transform,
+            parseExtension: parseReferenceExtension,
+            valuePath: [...sumValuePath, 1]
+          })
         ]
 
         const parsedValue = { [$SUM]: parsers.map(parser => parser.next().value) }
@@ -62,9 +74,10 @@ export const parseNumberExtension = (
       isExtension: true,
       *extensionParser() {
         const subtractElements = inputValue[$SUBTRACT]
+        const subtractValuePath = [...valuePath, '$SUBTRACT']
 
         if (!isArray(subtractElements) || subtractElements.length !== 2) {
-          const { path } = attribute
+          const path = formatValuePath(subtractValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Subtraction for number attribute ${
@@ -79,19 +92,17 @@ export const parseNumberExtension = (
 
         const [left, right] = subtractElements
         const parsers = [
-          new Parser(
-            number({ big: attribute.big }).freeze(`${attribute.path}[$SUBTRACT][0]`)
-          ).start(left, {
+          new Parser(new NumberSchema({ big: props.big })).start(left, {
             fill: false,
             transform,
-            parseExtension: parseReferenceExtension
+            parseExtension: parseReferenceExtension,
+            valuePath: [...subtractValuePath, 0]
           }),
-          new Parser(
-            number({ big: attribute.big }).freeze(`${attribute.path}[$SUBTRACT][1]`)
-          ).start(right, {
+          new Parser(new NumberSchema({ big: props.big })).start(right, {
             fill: false,
             transform,
-            parseExtension: parseReferenceExtension
+            parseExtension: parseReferenceExtension,
+            valuePath: [...subtractValuePath, 1]
           })
         ]
 
@@ -110,12 +121,11 @@ export const parseNumberExtension = (
   }
 
   if (isAddition(inputValue) && inputValue[$ADD] !== undefined) {
-    const parser = new Parser(
-      number({ big: attribute.big }).freeze(`${attribute.path}[$ADD]`)
-    ).start(inputValue[$ADD], {
+    const parser = new Parser(new NumberSchema({ big: props.big })).start(inputValue[$ADD], {
       fill: false,
       transform,
-      parseExtension: parseReferenceExtension
+      parseExtension: parseReferenceExtension,
+      valuePath: [...valuePath, '$ADD']
     })
 
     return {
@@ -137,6 +147,6 @@ export const parseNumberExtension = (
 
   return {
     isExtension: false,
-    basicInput: inputValue as AttributeBasicValue<UpdateItemInputExtension> | undefined
+    unextendedInput: inputValue as SchemaUnextendedValue<UpdateItemInputExtension> | undefined
   }
 }

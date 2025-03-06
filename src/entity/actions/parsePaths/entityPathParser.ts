@@ -7,6 +7,7 @@ import { $pathParser } from './constants.js'
 
 export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parsePaths';
+
   [$pathParser]: PathParser<ENTITY['schema']>
 
   constructor(entity: ENTITY, id: string = '') {

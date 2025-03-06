@@ -1,6 +1,6 @@
-import type { SetAttribute } from '~/attributes/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import type { SetSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
@@ -9,11 +9,11 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
-export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
-  attribute: SetAttribute,
+export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
+  schema: SetSchema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
-): Generator<ParserYield<SetAttribute, OPTIONS>, ParserReturn<SetAttribute, OPTIONS>> {
+): Generator<ParserYield<SetSchema, OPTIONS>, ParserReturn<SetSchema, OPTIONS>> {
   const { valuePath = [], ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
@@ -22,7 +22,7 @@ export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     parsers = [...inputValue.values()].map((element, index) =>
-      attrParser(attribute.elements, element, {
+      attrParser(schema.elements, element, {
         ...restOptions,
         valuePath: [...valuePath, index],
         defined: false
@@ -39,15 +39,15 @@ export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
       yield linkedValue
     } else {
       const defaultedValue = cloneDeep(inputValue)
-      yield defaultedValue as ParserYield<SetAttribute, OPTIONS>
+      yield defaultedValue as ParserYield<SetSchema, OPTIONS>
 
       const linkedValue = defaultedValue
-      yield linkedValue as ParserYield<SetAttribute, OPTIONS>
+      yield linkedValue as ParserYield<SetSchema, OPTIONS>
     }
   }
 
   if (!isInputValueSet) {
-    const { type } = attribute
+    const { type } = schema
     const path = formatValuePath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
@@ -59,7 +59,7 @@ export function* setAttrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = new Set(parsers.map(parser => parser.next().value))
   if (parsedValue !== undefined) {
-    applyCustomValidation(attribute, parsedValue, options)
+    applyCustomValidation(schema, parsedValue, options)
   }
 
   if (transform) {
