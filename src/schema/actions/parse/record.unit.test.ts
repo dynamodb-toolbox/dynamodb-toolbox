@@ -8,6 +8,7 @@ import { recordSchemaParser } from './record.js'
 const attrParser = vi.spyOn(attrParserModule, 'attrParser')
 
 const schema = record(string(), string())
+const enumSchema = record(string().enum('foo', 'bar'), string())
 
 describe('recordSchemaParser', () => {
   beforeEach(() => {
@@ -19,6 +20,27 @@ describe('recordSchemaParser', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('throws an error if keys are an enum and record is incomplete', () => {
+    const invalidCall = () => recordSchemaParser(enumSchema, { foo: 'bar' }, { fill: false }).next()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
+  })
+
+  test('accepts incomplete record if keys are an enum and record is partial', () => {
+    const parser = recordSchemaParser(enumSchema.partial(), { foo: 'bar' }, { fill: false })
+
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual({ foo: 'bar' })
+  })
+
+  test('accepts incomplete record if keys are an enum and mode is update', () => {
+    const parser = recordSchemaParser(enumSchema, { foo: 'bar' }, { fill: false, mode: 'update' })
+
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual({ foo: 'bar' })
   })
 
   test('applies attrParser on input properties otherwise (and pass options)', () => {

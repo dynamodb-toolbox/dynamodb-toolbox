@@ -7,7 +7,7 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 import { matchProjection, sanitize } from './utils.js'
 
-export function* schemaFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
+export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
   schema: ItemSchema,
   rawValue: unknown,
   { attributes, ...restOptions }: OPTIONS = {} as OPTIONS

@@ -9,8 +9,8 @@ import type {
 import { SchemaAction } from '~/schema/index.js'
 
 import { attrFormatter } from './attribute.js'
+import { itemFormatter } from './item.js'
 import type { FormatValueOptions, InferReadValueOptions } from './options.js'
-import { schemaFormatter } from './schema.js'
 
 export type FormatterYield<
   SCHEMA extends Schema,
@@ -36,7 +36,7 @@ export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHE
     options: OPTIONS = {} as OPTIONS
   ): Generator<FormatterYield<SCHEMA, OPTIONS>, FormatterReturn<SCHEMA, OPTIONS>> {
     if (this.schema.type === 'item') {
-      return schemaFormatter(this.schema, inputValue, options) as Generator<
+      return itemFormatter(this.schema, inputValue, options) as Generator<
         FormatterYield<SCHEMA, OPTIONS>,
         FormatterReturn<SCHEMA, OPTIONS>
       >

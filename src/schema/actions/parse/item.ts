@@ -7,7 +7,7 @@ import { attrParser } from './attribute.js'
 import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 
-export function* schemaParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValueOptions = {}>(
+export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValueOptions = {}>(
   schema: SCHEMA,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS

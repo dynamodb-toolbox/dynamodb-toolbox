@@ -143,17 +143,20 @@ type MapSchemaValidValue<
 
 type RecordSchemaValidValue<
   SCHEMA extends RecordSchema,
-  OPTIONS extends WriteValueOptions = {},
-  KEYS extends string = Extract<AttrValidValue<SCHEMA['keys'], OPTIONS>, string>
+  OPTIONS extends WriteValueOptions = {}
 > = RecordSchema extends SCHEMA
-  ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | { [KEY: string]: unknown }
+  ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | Record<string, unknown>
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      // We cannot use Record type as it messes up map resolution down the line
-      | {
-          [KEY in KEYS]?: AttrValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
-        }
+      | Optional<
+          Record<
+            Extract<AttrValidValue<SCHEMA['keys'], OPTIONS>, string>,
+            AttrValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+          >,
+          | (SCHEMA['props'] extends { partial: true } ? string : never)
+          | (OPTIONS extends { mode: 'update' } ? string : never)
+        >
 
 type AnyOfSchemaValidValue<
   SCHEMA extends AnyOfSchema,

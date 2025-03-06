@@ -9,8 +9,8 @@ import type {
 import { SchemaAction } from '~/schema/index.js'
 
 import { attrParser } from './attribute.js'
+import { itemParser } from './item.js'
 import type { InferWriteValueOptions, ParseValueOptions } from './options.js'
-import { schemaParser } from './schema.js'
 
 type ParserInput<
   SCHEMA extends Schema,
@@ -44,7 +44,7 @@ export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
     options: OPTIONS = {} as OPTIONS
   ): Generator<ParserYield<SCHEMA, OPTIONS>, ParserReturn<SCHEMA, OPTIONS>> {
     if (this.schema.type === 'item') {
-      return schemaParser(this.schema, inputValue, options) as Generator<
+      return itemParser(this.schema, inputValue, options) as Generator<
         ParserYield<SCHEMA, OPTIONS>,
         ParserReturn<SCHEMA, OPTIONS>
       >

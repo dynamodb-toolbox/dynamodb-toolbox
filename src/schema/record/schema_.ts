@@ -13,19 +13,18 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
-  SchemaProps,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
 import type { Light } from '../utils/light.js'
 import { light } from '../utils/light.js'
 import { RecordSchema } from './schema.js'
-import type { RecordElementSchema, RecordKeySchema } from './types.js'
+import type { RecordElementSchema, RecordKeySchema, RecordSchemaProps } from './types.js'
 
 type RecordSchemer = <
   KEYS extends RecordKeySchema,
   ELEMENTS extends RecordElementSchema,
-  PROPS extends SchemaProps = {}
+  PROPS extends RecordSchemaProps = {}
 >(
   keys: KEYS,
   elements: ELEMENTS,
@@ -48,7 +47,7 @@ type RecordSchemer = <
 export const record: RecordSchemer = <
   KEYS extends RecordKeySchema,
   ELEMENTS extends RecordElementSchema,
-  PROPS extends SchemaProps = {}
+  PROPS extends RecordSchemaProps = {}
 >(
   keys: KEYS,
   elements: ELEMENTS,
@@ -61,7 +60,7 @@ export const record: RecordSchemer = <
 export class RecordSchema_<
   KEYS extends StringSchema = StringSchema,
   ELEMENTS extends Schema = Schema,
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends RecordSchemaProps = RecordSchemaProps
 > extends RecordSchema<KEYS, ELEMENTS, PROPS> {
   /**
    * Tag attribute as required. Possible values are:
@@ -124,6 +123,19 @@ export class RecordSchema_<
       this.keys,
       this.elements,
       overwrite(this.props, { savedAs: nextSavedAs })
+    )
+  }
+
+  /**
+   * Tag record as partial
+   */
+  partial<NEXT_PARTIAL extends boolean = true>(
+    nextPartial: NEXT_PARTIAL = true as NEXT_PARTIAL
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { partial: NEXT_PARTIAL }>> {
+    return new RecordSchema_(
+      this.keys,
+      this.elements,
+      overwrite(this.props, { partial: nextPartial })
     )
   }
 
@@ -362,7 +374,7 @@ export class RecordSchema_<
     )
   }
 
-  clone<NEXT_PROPS extends SchemaProps = {}>(
+  clone<NEXT_PROPS extends RecordSchemaProps = {}>(
     nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
   ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, NEXT_PROPS>> {
     return new RecordSchema_(this.keys, this.elements, overwrite(this.props, nextProps))

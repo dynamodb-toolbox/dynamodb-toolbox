@@ -12,6 +12,7 @@ const schema = record(
   string().transform(prefix('_', { delimiter: '' })),
   string().transform(prefix('_', { delimiter: '' }))
 )
+const enumSchema = record(string().enum('foo', 'bar'), string())
 
 describe('recordSchemaFormatter', () => {
   beforeEach(() => {
@@ -23,6 +24,34 @@ describe('recordSchemaFormatter', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.invalidAttribute' }))
+  })
+
+  test('throws an error if keys are an enum and record is incomplete', () => {
+    const invalidCall = () => recordSchemaFormatter(enumSchema, { foo: 'bar' }).next()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'formatter.missingAttribute' }))
+  })
+
+  test('accepts incomplete record if keys are an enum and record is partial', () => {
+    const formatter = recordSchemaFormatter(enumSchema.partial(), { foo: 'bar' })
+
+    const { value: transformedValue } = formatter.next()
+    expect(transformedValue).toStrictEqual({ foo: 'bar' })
+  })
+
+  test('accepts incomplete record if keys are an enum and partial is true', () => {
+    const formatter = recordSchemaFormatter(enumSchema, { foo: 'bar' }, { partial: true })
+
+    const { value: transformedValue } = formatter.next()
+    expect(transformedValue).toStrictEqual({ foo: 'bar' })
+  })
+
+  test('accepts incomplete record if keys are an enum and key is not projected', () => {
+    const formatter = recordSchemaFormatter(enumSchema, { foo: 'bar' }, { attributes: ['.foo'] })
+
+    const { value: transformedValue } = formatter.next()
+    expect(transformedValue).toStrictEqual({ foo: 'bar' })
   })
 
   test('applies attrFormatter on input properties otherwise (and pass options)', () => {

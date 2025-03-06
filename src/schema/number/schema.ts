@@ -32,10 +32,7 @@ export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
           path !== undefined ? ` at path '${path}'` : ''
         }. Property: 'big'. Expected: boolean. Received: ${String(big)}.`,
         path,
-        payload: {
-          propName: 'big',
-          received: big
-        }
+        payload: { propName: 'big', received: big }
       })
     }
 

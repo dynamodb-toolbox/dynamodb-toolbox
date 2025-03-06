@@ -36,7 +36,11 @@ export type { ListElementSchema } from './schema/list/index.js'
 export { map, MapSchema, MapSchema_ } from './schema/map/index.js'
 export type { MapAttributes } from './schema/map/index.js'
 export { record, RecordSchema, RecordSchema_ } from './schema/record/index.js'
-export type { RecordKeySchema, RecordElementSchema } from './schema/record/index.js'
+export type {
+  RecordSchemaProps,
+  RecordKeySchema,
+  RecordElementSchema
+} from './schema/record/index.js'
 export { anyOf, AnyOfSchema, AnyOfSchema_ } from './schema/anyOf/index.js'
 export type { AnyOfElementSchema } from './schema/anyOf/index.js'
 export { item, ItemSchema, ItemSchema_ } from './schema/item/index.js'

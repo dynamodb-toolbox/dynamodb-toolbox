@@ -1187,7 +1187,7 @@ describe('update', () => {
         .item({
           email: 'test-pk',
           sort: 'test-sk',
-          test_record: { foo: undefined }
+          test_record: {}
         })
         .params()
 

@@ -1,6 +1,10 @@
 import type { StringSchema, StringSchemaProps } from '../string/index.js'
 import type { AtLeastOnce, Schema, SchemaProps } from '../types/index.js'
 
+export interface RecordSchemaProps extends SchemaProps {
+  partial?: boolean
+}
+
 interface RecordKeyAndElementProps extends SchemaProps {
   required?: AtLeastOnce
   hidden?: false

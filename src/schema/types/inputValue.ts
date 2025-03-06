@@ -162,16 +162,18 @@ type RecordSchemaInputValue<
   SCHEMA extends RecordSchema,
   OPTIONS extends WriteValueOptions = {}
 > = RecordSchema extends SCHEMA
-  ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | { [KEY: string]: unknown }
+  ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | Record<string, unknown>
   :
       | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | {
-          [KEY in ResolveStringSchema<SCHEMA['keys']>]?: AttrInputValue<
-            SCHEMA['elements'],
-            Overwrite<OPTIONS, { defined: false }>
-          >
-        }
+      | Optional<
+          Record<
+            ResolveStringSchema<SCHEMA['keys']>,
+            AttrInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+          >,
+          | (SCHEMA['props'] extends { partial: true } ? string : never)
+          | (OPTIONS extends { mode: 'update' } ? string : never)
+        >
 
 type AnyOfSchemaInputValue<
   SCHEMA extends AnyOfSchema,

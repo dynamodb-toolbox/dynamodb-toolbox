@@ -214,28 +214,33 @@ type RecordSchemaReadValue<
     ? MatchRecordKeys<ResolveStringSchema<SCHEMA['keys']>, OPTIONS['attributes']>
     : ResolveStringSchema<SCHEMA['keys']>
 > = RecordSchema extends SCHEMA
-  ? undefined | { [KEY: string]: unknown }
+  ? undefined | Record<string, unknown>
   : // Possible in case of anyOf subSchema
     [MATCHING_KEYS] extends [never]
     ? never
     :
         | If<MustBeDefined<SCHEMA>, never, undefined>
-        | {
-            [KEY in MATCHING_KEYS]?: SchemaReadValue<
-              SCHEMA['elements'],
-              Overwrite<
-                OPTIONS,
-                {
-                  attributes: OPTIONS extends { attributes: string }
-                    ? Extract<
-                        RecordChildPaths<MATCHING_KEYS, OPTIONS['attributes']>,
-                        Paths<SCHEMA['elements']> | undefined
-                      >
-                    : undefined
-                }
+        | Optional<
+            Record<
+              MATCHING_KEYS,
+              SchemaReadValue<
+                SCHEMA['elements'],
+                Overwrite<
+                  OPTIONS,
+                  {
+                    attributes: OPTIONS extends { attributes: string }
+                      ? Extract<
+                          RecordChildPaths<MATCHING_KEYS, OPTIONS['attributes']>,
+                          Paths<SCHEMA['elements']> | undefined
+                        >
+                      : undefined
+                  }
+                >
               >
-            >
-          }
+            >,
+            | (SCHEMA['props'] extends { partial: true } ? string : never)
+            | (OPTIONS extends { partial: true } ? string : never)
+          >
 
 type AnyOfSchemaReadValue<
   SCHEMA extends AnyOfSchema,
