@@ -10,5 +10,5 @@ export const getItemSchemaDTO = (schema: ItemSchema): ItemSchemaDTO => ({
       attributeName,
       getSchemaDTO(attribute)
     ])
-  )
+  ) as ItemSchemaDTO['attributes']
 })

@@ -149,7 +149,20 @@ export interface AnyOfSchemaDTO extends SchemaPropsDTO {
 
 export interface ItemSchemaDTO extends SchemaPropsDTO {
   type: 'item'
-  attributes: { [name: string]: ISchemaDTO }
+  attributes: {
+    [name: string]:
+      | AnySchemaDTO
+      | NullSchemaDTO
+      | BooleanSchemaDTO
+      | NumberSchemaDTO
+      | StringSchemaDTO
+      | BinarySchemaDTO
+      | SetSchemaDTO
+      | ListSchemaDTO
+      | MapSchemaDTO
+      | RecordSchemaDTO
+      | AnyOfSchemaDTO
+  }
 }
 
 export type ISchemaDTO =
