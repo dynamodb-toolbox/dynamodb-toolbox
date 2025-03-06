@@ -75,7 +75,7 @@ Available schema types are:
 - [**`set`**](../11-set/index.md): Describes [sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of either `number`, `string`, or `binary` elements
 - [**`list`**](../12-list/index.md): Describes [lists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of elements
 - [**`item`**](../13-item/index.md): Describes [items](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) with a finite list of attributes, i.e. key-schema pairs - Should be at the root of `Entity` schemas
-- [**`map`**](../14-map/index.md): Describes [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Similar to [`items`](../13-map/index.md), but can be nested within other schemas
+- [**`map`**](../14-map/index.md): Describes [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Similar to [`items`](../13-item/index.md), but can be nested within other schemas
 - [**`record`**](../15-record/index.md): Describes a different kind of [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Records differ from `maps` as they have a non-explicit (potentially infinite) range of keys, but with a single value type
 - [**`anyOf`**](../5-any/index.md): Describes a finite **union** of possible schemas
 

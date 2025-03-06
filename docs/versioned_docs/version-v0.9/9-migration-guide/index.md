@@ -439,7 +439,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../../docs/4-schemas/17-transformers/1-usage.md) for more infos).
+The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../../docs/4-schemas/18-transformers/1-usage.md) for more infos).
 
 ### `coerce`
 
