@@ -20,7 +20,7 @@ type Metadata = FormattedValue<typeof metadataSchema>
 // => unknown
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

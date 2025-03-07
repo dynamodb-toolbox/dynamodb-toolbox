@@ -36,7 +36,7 @@ const strSet = set(string().key())
 const strSet = set(string().default('foo'))
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

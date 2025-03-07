@@ -124,7 +124,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="5" align="center" class="vertical"><b>General</b></td>
+            <td rowSpan="5" align="center" className="vertical"><b>General</b></td>
             <td><code>consistent</code></td>
             <td align="center"><code>boolean</code></td>
             <td align="center"><code>false</code></td>
@@ -168,7 +168,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowSpan="3" align="center" class="vertical"><b>Pagination</b></td>
+            <td rowSpan="3" align="center" className="vertical"><b>Pagination</b></td>
             <td><code>limit</code></td>
             <td align="center"><code>integer ≥ 1</code></td>
             <td align="center">-</td>
@@ -195,7 +195,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             </td>
         </tr>
         <tr>
-            <td rowSpan="6" align="center" class="vertical"><b>Filters</b></td>
+            <td rowSpan="6" align="center" className="vertical"><b>Filters</b></td>
             <td><code>select</code></td>
             <td align="center"><code>SelectOption</code></td>
             <td align="center">-</td>

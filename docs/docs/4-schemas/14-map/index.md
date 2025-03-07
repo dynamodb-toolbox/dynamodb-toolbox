@@ -35,7 +35,7 @@ type DeepMagic = FormattedValue<typeof deepMagic>
 // => { does: { work: "!" } }
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

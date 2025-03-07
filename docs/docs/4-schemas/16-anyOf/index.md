@@ -71,7 +71,7 @@ const union = anyOf(number(), string().key())
 const union = anyOf(number(), string().default('foo'))
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 
