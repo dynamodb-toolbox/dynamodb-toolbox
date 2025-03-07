@@ -20,7 +20,7 @@ type Level = FormattedValue<typeof levelSchema>
 // => number
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

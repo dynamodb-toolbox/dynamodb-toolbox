@@ -28,7 +28,7 @@ flowchart LR
 
   subgraph Fill[ ]
     FillDescription["<b>Fill</b>"]:::mmddescription
-    fillDescr(+ defaults<br/>+ links):::mmddescription
+    fillDescr("<span>+ defaults<br/>+ links</span>"):::mmddescription
   end
   Fill:::mmdcontainer
 
@@ -39,7 +39,7 @@ flowchart LR
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b>"]:::mmddescription
-    transformDescr(+ renaming<br/>+ transforms):::mmddescription
+    transformDescr("<span>+ renaming<br/>+ transforms</span>"):::mmddescription
   end
   Transform:::mmdcontainer
 
@@ -118,7 +118,7 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="InputValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -129,7 +129,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="valid" label="ValidValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -144,7 +144,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="transformed" label="TransformedValue">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -169,18 +169,18 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="InputValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ (Only key attributes are required)
++ // (Only key attributes are required)
 ```
 
 </TabItem>
 <TabItem value="valid" label="ValidValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -190,7 +190,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="transformed" label="TransformedValue">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -210,7 +210,7 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="InputValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -221,7 +221,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="valid" label="ValidValue">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -233,7 +233,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="transformed" label="TransformedValue">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "bulbasaur",
 + "partitionKey": "POKEMON#bulbasaur",
@@ -267,7 +267,7 @@ flowchart RL
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
-    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
+    fillDescr("<span>+ renaming<br/>+ transforms<br/>(backward)</span>"):::mmddescription
   end
   Transform:::mmdcontainer
 
@@ -278,7 +278,7 @@ flowchart RL
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
-    transformDescr(+ omits hidden<br/>attributes):::mmddescription
+    transformDescr("<span>+ omits hidden<br/>attributes</span>"):::mmddescription
   end
   Format:::mmdcontainer
 

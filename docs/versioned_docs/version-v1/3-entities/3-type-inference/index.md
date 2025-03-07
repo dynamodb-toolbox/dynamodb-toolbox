@@ -28,7 +28,7 @@ flowchart LR
 
   subgraph Fill[ ]
     FillDescription["<b>Fill</b>"]:::mmddescription
-    fillDescr(+ defaults<br/>+ links):::mmddescription
+    fillDescr("<span>+ defaults<br/>+ links</span>"):::mmddescription
   end
   Fill:::mmdcontainer
 
@@ -115,7 +115,7 @@ const PokemonEntity = new Entity({
 <Tabs>
 <TabItem value="input" label="InputItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -126,7 +126,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="valid" label="ValidItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -141,7 +141,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="transformed" label="TransformedItem">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -166,18 +166,18 @@ const PokemonEntity = new Entity({
 <Tabs>
 <TabItem value="input" label="InputItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ (Only key attributes are required)
++ // (Only key attributes are required)
 ```
 
 </TabItem>
 <TabItem value="valid" label="ValidItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -187,7 +187,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="transformed" label="TransformedItem">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -207,7 +207,7 @@ const PokemonEntity = new Entity({
 <Tabs>
 <TabItem value="input" label="InputItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -218,7 +218,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="valid" label="ValidItem">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -230,7 +230,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="transformed" label="TransformedItem">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "bulbasaur",
 + "partitionKey": "POKEMON#bulbasaur",
@@ -279,7 +279,7 @@ flowchart RL
 
   subgraph Transform[ ]
     TransformDescription["<b>Transform</b><br/>(backward)"]:::mmddescription
-    fillDescr("+ renaming<br/>+ transforms<br/>(backward)"):::mmddescription
+    fillDescr("<span>+ renaming<br/>+ transforms<br/>(backward)</span>"):::mmddescription
   end
   Transform:::mmdcontainer
 
@@ -290,7 +290,7 @@ flowchart RL
 
   subgraph Format[ ]
     FormatDescription["<b>Format</b>"]:::mmddescription
-    transformDescr(+ omits hidden<br/>attributes):::mmddescription
+    transformDescr("<span>+ omits hidden<br/>attributes</span>"):::mmddescription
   end
   Format:::mmdcontainer
 

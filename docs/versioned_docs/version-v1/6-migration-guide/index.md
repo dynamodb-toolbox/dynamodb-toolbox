@@ -14,7 +14,7 @@ If you're currently using the **v1** of DynamoDB-Toolbox, here are the changes y
 
 The `entityAttributeName` and `entityAttributeHidden` settings have been **merged into a single `entityAttribute`** setting, similar to the [timestamp attributes](../3-entities/2-internal-attributes/index.md#timestamp-attributes):
 
-```diff
+```diff-ts
 import { Entity } from 'dynamodb-toolbox/entity'
 
 const PokemonEntity = new Entity({
@@ -183,7 +183,7 @@ rec.build(Parser).parse({ foo: 42 })
 
 The `name` property of `Entity` and `Table` instances have been renamed to `entityName` and `tableName`:
 
-```diff
+```diff-ts
 - const entityName = PokemonEntity.name
 + const entityName = PokemonEntity.entityName
 
@@ -195,7 +195,7 @@ The `name` property of `Entity` and `Table` instances have been renamed to `enti
 
 Transformers' `parse` and `format` properties have been renamed to **`encode`** and **`decode`** for clarity:
 
-```diff
+```diff-ts
 const prefix = {
 - parse: (input: string) => [PREFIX, input].join(''),
 + encode: (input: string) => [PREFIX, input].join(''),
@@ -208,7 +208,7 @@ const prefixedStrSchema = string().transform(prefix)
 
 Similarly, the `ReadValue` and `ReadItem` types have been renamed to **`DecodedValue`** and **`DecodedItem`**:
 
-```diff
+```diff-ts
 - type ReadPokemonItem = ReadItem<typeof PokemonEntity>
 + type DecodedPokemonItem = DecodedItem<typeof PokemonEntity>
 

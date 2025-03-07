@@ -36,7 +36,7 @@ const strList = list(string().key())
 const strList = list(string().default('foo'))
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

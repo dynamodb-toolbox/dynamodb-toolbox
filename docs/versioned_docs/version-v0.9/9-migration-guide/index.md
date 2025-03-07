@@ -27,7 +27,7 @@ Well, probably... as there are two exceptions:
 
 Primary Key attributes now have a `type` along with their `names`:
 
-```diff
+```diff-ts
 import { Table } from 'dynamodb-toolbox/table'
 
 const MyTable = new Table({
@@ -46,7 +46,7 @@ In the same way, index attributes now have a `type` property as well as an expli
 <Tabs>
 <TabItem value="gsi" label="Global Index">
 
-```diff
+```diff-ts
 const MyTable = new Table({
   indexes: {
 -   byTrainerId: { partitionKey: 'trainerId', sortKey: 'level' },
@@ -63,7 +63,7 @@ const MyTable = new Table({
 </TabItem>
 <TabItem value="lsi" label="Local index">
 
-```diff
+```diff-ts
 const MyTable = new Table({
   indexes: {
 -   byLevel: { sortKey: 'level' },
@@ -85,7 +85,7 @@ const MyTable = new Table({
 
 It cannot be set to `false` anymore (as it is required to infer correct formatting during [Scans](../../../docs/2-tables/2-actions/1-scan/index.md) and [Queries](../../../docs/2-tables/2-actions/2-query/index.md)):
 
-```diff
+```diff-ts
 const MyTable = new Table({
   ...,
 - entityField: '__entity__',
@@ -109,7 +109,7 @@ Finally, table `attributes` have not been re-implemented yet (but you can still 
 
 The `typeAlias` and `typeHidden` have respectively been renamed to `entityAttributeName` and `entityAttributeHidden`:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - typeAlias: 'ent',
@@ -128,7 +128,7 @@ Timestamp attributes can also be hidden and independently disabled:
 <Tabs>
 <TabItem value="fine-tuned" label="Configured">
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - timestamps: true,
@@ -153,7 +153,7 @@ const PokemonEntity = new Entity({
 </TabItem>
 <TabItem value="disabled" label="Enabled/Disabled">
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - timestamps: false,
@@ -175,7 +175,7 @@ The `autoExecute` and `autoParse` options have been removed for the sake of simp
 
 The schema definition API (previous `attributes`) is the part that received the most significant overhaul:
 
-```diff
+```diff-ts
 + import { schema } from 'dynamodb-toolbox/schema'
 + import { string } from 'dynamodb-toolbox/attributes/string'
 
@@ -200,7 +200,7 @@ See the [Schema documentation](../../../docs/4-schemas/1-usage/index.md) for a c
 
 `map` and `alias` options have been simplified to a single `savedAs` options:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -222,7 +222,7 @@ Instead of `partitionKey` and `sortKey` booleans that mapped attributes to the p
 
 The renaming can simply be done through the `savedAs` option, which is more explicit:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -240,7 +240,7 @@ const PokemonEntity = new Entity({
 
 The schema is validated against the `Table` primary key. A `computeKey` function is required if it doesn't match:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
   schema: schema({
@@ -266,7 +266,7 @@ There are no equivalent to the `saved: false` option for the moment. Feel free t
 
 Attributes are now **required by default**. You can tag them as optional via the `.required("never")` method (or the equivalent `.optional()` shorthand):
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -293,7 +293,7 @@ The `default` and `onUpdate` options have been reworked into the following optio
 - `keyDefault`: Overrides other defaults on key attributes (ignored otherwise)
 - `default`: Shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -320,7 +320,7 @@ If a default value is derived from other attributes, the v1 introduces a new not
 - `keyLink`: Overrides other links on key attributes (ignored otherwise)
 - `link`: Shorthand that acts as `keyLink` on key attributes and `putLink` otherwise
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -351,7 +351,7 @@ In vanilla JS, `links` can be used directly in the original schema.
 
 For example, we can make use of links to compute the primary key instead of using the `computeKey` function:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - computeKey: ({ trainerId, pokemonId }) => ({
@@ -381,7 +381,7 @@ Note that links are applied **after** defaults, but links and defaults in themse
 
 You can avoid link dependencies by factorizing the underlying code:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -417,7 +417,7 @@ const PokemonEntity = new Entity({
 
 The `transform` and `format` options have been merged into a single `transform` option:
 
-```diff
+```diff-ts
 const PokemonEntity = new Entity({
   ...,
 - attributes: {
@@ -455,7 +455,7 @@ Using an array for composite keys is not supported anymore: Use [links](#default
 
 Instead of having dedicated methods, `Tables` and `Entities` now have a single `.build` method which acts as a gateway to perform **actions**:
 
-```diff
+```diff-ts
 + import { GetItemCommand } from 'dynamodb-toolbox/entity/actions/get'
 
 - const { Item } = await PokemonEntity.get({ pokemonId })
@@ -481,7 +481,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="2" align="center" class="vertical"><b>Fetching</b></td>
+            <td rowSpan="2" align="center" className="vertical"><b>Fetching</b></td>
             <td><code>.scan(...)</code></td>
             <td><a href="/docs/tables/actions/scan"><code>ScanCommand</code></a></td>
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html">Scan Operation</a> on a <code>Table</code></td>
@@ -492,7 +492,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html">Query Operation</a> on a <code>Table</code></td>
         </tr>
         <tr>
-            <td rowSpan="2" align="center" class="vertical"><b>Batching</b></td>
+            <td rowSpan="2" align="center" className="vertical"><b>Batching</b></td>
             <td><code>.batchGet(...)</code></td>
             <td><a href="/docs/tables/actions/batch-get"><code>BatchGetCommand</code></a></td>
             <td>Groups one or several <a href="/docs/entities/actions/batch-get"><code>BatchGetRequest</code></a> from the <code>Table</code> entities to execute a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html"><code>BatchGetItem</code></a></td>
@@ -503,7 +503,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Groups one or several <a href="/docs/entities/actions/batch-put"><code>BatchPutRequest</code></a> and <a href="/docs/entities/actions/batch-delete"><code>BatchDeleteRequest</code></a> from the <code>Table</code> entities to execute a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html">BatchWriteItem</a> operation</td>
         </tr>
         <tr>
-            <td rowSpan="2" align="center" class="vertical"><b>Transactions</b></td>
+            <td rowSpan="2" align="center" className="vertical"><b>Transactions</b></td>
             <td><code>.transactGet(...)</code></td>
             <td><a href="/docs/entities/actions/transact-get"><code>GetTransaction</code></a></td>
             <td>Builds a transaction to get an entity item, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html">TransactGetItems operations</a></td>
@@ -529,7 +529,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
     </thead>
     <tbody>
         <tr>
-            <td rowSpan="4" align="center" class="vertical"><b>General</b></td>
+            <td rowSpan="4" align="center" className="vertical"><b>General</b></td>
             <td><code>.get(...)</code></td>
             <td><a href="/docs/entities/actions/get-item"><code>GetItemCommand</code></a></td>
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html">GetItem Operation</a> on an entity item</td>
@@ -550,7 +550,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Performs a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html">DeleteItem Operation</a> on an entity item</td>
         </tr>
         <tr>
-            <td rowSpan="3" align="center" class="vertical"><b>Batching</b></td>
+            <td rowSpan="3" align="center" className="vertical"><b>Batching</b></td>
             <td><code>.getBatch(...)</code></td>
             <td><a href="/docs/entities/actions/batch-get"><code>BatchGetRequest</code></a></td>
             <td>Builds a request to get an entity item, to be used within <a href="/docs/tables/actions/batch-get"><code>BatchGetCommands</code></a></td>
@@ -566,7 +566,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Builds a request to delete an entity item, to be used within <a href="/docs/tables/actions/batch-write"><code>BatchWriteCommands</code></a></td>
         </tr>
         <tr>
-            <td rowSpan="5" align="center" class="vertical"><b>Transactions</b></td>
+            <td rowSpan="5" align="center" className="vertical"><b>Transactions</b></td>
             <td><code>.getTransaction(...)</code></td>
             <td><a href="/docs/entities/actions/transact-get"><code>GetTransaction</code></a></td>
             <td>Builds a transaction to get an entity item, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactGetItems.html">TransactGetItems operations</a></td>
@@ -592,7 +592,7 @@ Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not p
             <td>Builds a condition to check against an entity item for the transaction to succeed, to be used within <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html">TransactWriteItems operations</a></td>
         </tr>
         <tr>
-            <td rowSpan="2" align="center" class="vertical"><b>Fetching</b></td>
+            <td rowSpan="2" align="center" className="vertical"><b>Fetching</b></td>
             <td><code>.scan(...)</code></td>
             <td>-</td>
             <td>Not implemented yet, use the Table <a href="/docs/tables/actions/scan"><code>ScanCommand</code></a> instead</td>

@@ -90,7 +90,8 @@ const config = {
       },
       prism: {
         theme: lightCodeTheme,
-        darkTheme: darkCodeTheme
+        darkTheme: darkCodeTheme,
+        additionalLanguages: ['diff', 'diff-ts']
       },
       docs: {
         sidebar: {

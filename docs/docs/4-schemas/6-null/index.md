@@ -34,7 +34,7 @@ type NullableString = FormattedValue<typeof nullableString>
 
 :::
 
-## Options
+## Properties
 
 ### `.required()`
 

@@ -20,7 +20,7 @@ type Name = FormattedValue<typeof nameSchema>
 // => string
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

@@ -20,7 +20,7 @@ type Hash = FormattedValue<typeof hashSchema>
 // => Uint8Array
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 

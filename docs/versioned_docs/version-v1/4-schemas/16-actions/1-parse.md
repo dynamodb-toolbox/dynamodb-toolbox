@@ -132,7 +132,7 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="Input">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -143,7 +143,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="defaulted" label="Defaulted">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -157,7 +157,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="linked" label="Linked">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -172,7 +172,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="parsed" label="Parsed">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
@@ -182,13 +182,13 @@ const pokemonSchema = schema({
   "level": 1,
   "levelPlusOne": 2,
 }
-+ Item is valid ✅
++ // Item is valid ✅
 ```
 
 </TabItem>
 <TabItem value="transformed" label="Transformed">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -213,51 +213,51 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="Input">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ (Only key attributes are required)
++ // (Only key attributes are required)
 ```
 
 </TabItem>
 <TabItem value="defaulted" label="Defaulted">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ No default to apply ✅
++ // No default to apply ✅
 ```
 
 </TabItem>
 <TabItem value="linked" label="Linked">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ No link to apply ✅
++ // No link to apply ✅
 ```
 
 </TabItem>
 <TabItem value="parsed" label="Parsed">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "pikachu",
   "pokemonId": "123",
 }
-+ Item is valid ✅
++ // Item is valid ✅
 ```
 
 </TabItem>
 <TabItem value="transformed" label="Transformed">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "pikachu",
 + "partitionKey": "POKEMON#pikachu",
@@ -277,7 +277,7 @@ const pokemonSchema = schema({
 <Tabs>
 <TabItem value="input" label="Input">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -288,7 +288,7 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="defaulted" label="Defaulted">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
@@ -300,33 +300,33 @@ const pokemonSchema = schema({
 </TabItem>
 <TabItem value="linked" label="Linked">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
   "modified": "2022-01-01T00:00:00.000Z",
   "name": "PlantyDino",
 }
-+ No updateLink to apply ✅
++ // No updateLink to apply ✅
 ```
 
 </TabItem>
 <TabItem value="parsed" label="Parsed">
 
-```diff
+```diff-ts
 {
   "pokemonClass": "bulbasaur",
   "pokemonId": "123",
   "modified": "2022-01-01T00:00:00.000Z",
   "name": "PlantyDino",
 }
-+ Item is valid ✅
++ // Item is valid ✅
 ```
 
 </TabItem>
 <TabItem value="transformed" label="Transformed">
 
-```diff
+```diff-ts
 {
 - "pokemonClass": "bulbasaur",
 + "partitionKey": "POKEMON#bulbasaur",

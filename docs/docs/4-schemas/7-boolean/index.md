@@ -20,7 +20,7 @@ type IsLegendary = FormattedValue<typeof isLegendarySchema>
 // => boolean
 ```
 
-## Options
+## Properties
 
 ### `.required()`
 
