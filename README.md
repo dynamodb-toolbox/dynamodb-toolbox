@@ -1,6 +1,7 @@
-![dynamodb-toolbox](https://user-images.githubusercontent.com/2053544/69847647-b7910780-1245-11ea-8403-a35a0158f3aa.png)
+![DynamoDB-Toolbox](./assets/header.png)
 
-<p align="center">
+<div align="center">
+  <h1>DynamoDB-Toolbox</h1>
   <a aria-label="NPM version" href="https://www.npmjs.com/package/dynamodb-toolbox">
     <img alt="" src="https://img.shields.io/npm/v/dynamodb-toolbox?color=a2c8f7&style=for-the-badge">
   </a>
@@ -10,7 +11,16 @@
     <img alt="" src=https://img.shields.io/npm/dt/dynamodb-toolbox?color=%232e6ca9&style=for-the-badge>
     <br/>
     <br/>
-</p>
+  <a href="https://www.dynamodbtoolbox.com/docs/getting-started/overview">Quickstart</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://dynamodbtoolbox.com">Docs</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://github.com/sponsors/ThomasAribart">Sponsor</a>
+  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+  <a href="https://dynamodb-toolshack.com">DynamoDB-Toolshack</a>
+  <br />
+  <hr />
+</div>
 
 💖 _Huge thanks to the [sponsors](https://github.com/sponsors/ThomasAribart) who help me maintain this repo:_
 
@@ -20,17 +30,11 @@
   <a href="https://github.com/sponsors/ThomasAribart"><img src="assets/plus-sign.png" width="50px" alt="Plus sign" title="Your brand here!"/></a>
 </p>
 
-# DynamoDB-Toolbox <!-- omit in toc -->
-
 ---
-
-<p align="center"><b>Light-weight</b> and <b>type-safe</b><br/><b>query builder</b> for DynamoDB and TypeScript.</p>
-
----
-
-DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **turns your DynamoDB journey into a ✨ bliss ✨**
 
 ## Features <!-- omit in toc -->
+
+DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **turns your DynamoDB journey into a ✨ bliss ✨**
 
 🤗 **Simpler queries**: DynamoDB-Toolbox does all the heavy-lifting of crafting those **complex DynamoDB requests**. It makes your code **clearer**, **more concise** and **easier to maintain**.
 
@@ -48,7 +52,14 @@ DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **tur
 
 ## Visit the 👉 [official documentation](https://dynamodbtoolbox.com/) 👈 to get started! <!-- omit in toc -->
 
-## Why use it? <!-- omit in toc -->
+> [!TIP]  
+> Want to get more our of your code? Try [DynamoDB-Toolshack](https://dynamodb-toolshack.com/) 🙌
+>
+> DynamoDB-Toolshack is a SaaS that connects to DynamoDB-Toolbox to elevate your DynamoDB experience with a <b>schema-aware UI</b>, table <b>consitency checks</b> and a <b>migration system</b>.
+>
+> [Join the Beta](https://aws.amazon.com/marketplace/pp/prodview-rexdp6m3af2hg) and get started in just a few clicks!
+
+## Why use DynamoDB-Toolbox? <!-- omit in toc -->
 
 If you're here, we're assuming you know DynamoDB.
 

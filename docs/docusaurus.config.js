@@ -70,10 +70,14 @@ const config = {
       navbar: {
         hideOnScroll: true,
         style: 'dark',
-        title: 'DynamoDB Toolbox',
+        title: 'DynamoDB-Toolbox',
         logo: {
-          alt: 'DynamoDB Toolbox',
-          src: 'img/dynamodb-toolbox-icon.svg'
+          alt: 'DynamoDB-Toolbox',
+          src: 'img/logo.svg',
+          style: {
+            'border-radius': '50%',
+            border: 'solid 1px gray'
+          }
         },
         items: [
           {
@@ -120,7 +124,7 @@ const config = {
       announcementBar: {
         id: 'dynamodb_toolshack_beta',
         content:
-          '🙌 Announcing <b>DynamoDB-Toolshack</b>: A comprehensive DynamoDB studio based on DynamoDB-Toolbox 🙌<br/><div><a href="https://dynamodb-toolshack.com/" target="_blank" rel="noopener noreferrer">Learn More</a> • <a href="https://demo.dynamodb-toolshack.com/" target="_blank" rel="noopener noreferrer">Online Demo</a> • <a href="mailto:contact@dynamodb-toolshack.com?subject=Request to Join Beta Test List&body=Dear Thomas,%0D%0A%0D%0AI’m excited about your product and would love the opportunity to join the beta test list. Could we schedule a quick call to discuss the process and any requirements for participation?%0D%0A%0D%0ALooking forward to hearing from you.%0D%0A%0D%0ABest regards,%0D%0A%0D%0A[Your Name]%0D%0A%0D%0A[Your Company]">Join Beta</a></div>',
+          '🙌 Announcing <b>DynamoDB-Toolshack</b>: A comprehensive DynamoDB studio based on DynamoDB-Toolbox 🙌<br/><div><a href="https://dynamodb-toolshack.com/" target="_blank" rel="noopener noreferrer">Learn More</a> • <a href="https://demo.dynamodb-toolshack.com/" target="_blank" rel="noopener noreferrer">Online Demo</a> • <a href="https://aws.amazon.com/marketplace/pp/prodview-rexdp6m3af2hg" target="_blank" rel="noopener noreferrer">Join Beta</a></div>',
         isCloseable: true
       }
     })
