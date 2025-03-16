@@ -11,9 +11,9 @@ const PREFIX = 'POKEMON#'
 
 const prefix = {
   // Updates the value during parsing
-  parse: (input: string) => [PREFIX, input].join(''),
+  encode: (input: string) => [PREFIX, input].join(''),
   // Updates the value back during formatting
-  format: (saved: string) => saved.slice(PREFIX.length)
+  decode: (saved: string) => saved.slice(PREFIX.length)
 }
 
 // Saves the prefixed value
