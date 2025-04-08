@@ -72,7 +72,7 @@ For the moment, `anyOf` properties can only be set by using methods.
 AnyOf elements can have any type. However, they must respect some constraints:
 
 - They cannot be `optional` or always required
-- They cannot be `hidden` or `key` (tagging the `record` itself as `key` is enough)
+- They cannot be `hidden` or `key` (tagging the `anyOf` itself as `key` is enough)
 - They cannot have `default` or `links`
 
 ```ts
