@@ -159,7 +159,8 @@ const getDiscriminators = (schema: Schema): Record<string, string> | undefined =
         if (
           attr.type === 'string' &&
           attr.props.enum !== undefined &&
-          (attr.props.required === undefined || attr.props.required !== 'never')
+          (attr.props.required === undefined || attr.props.required !== 'never') &&
+          attr.props.transform === undefined
         ) {
           discriminators[attrName] = attr.props.savedAs ?? attrName
         }

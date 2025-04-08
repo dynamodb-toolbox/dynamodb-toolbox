@@ -13,6 +13,7 @@ type ElementDiscriminator<ELEMENT extends Schema> = Schema extends ELEMENT
                 ? ELEMENT['attributes'][KEY]['props'] extends {
                     enum: string[]
                     required?: AtLeastOnce | Always
+                    transform?: undefined
                   }
                   ? [
                       KEY,

@@ -1,6 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { prefix } from '~/transformers/prefix.js'
 
 import { map } from '../map/index.js'
 import { number } from '../number/index.js'
@@ -199,11 +200,9 @@ describe('anyOf', () => {
 
     // Rejects non-enum str
     const invalidCallA = () =>
-      anyOf(map({ kind: string().enum('dog') }), map({ kind: string() }))
-        .discriminate(
-          // @ts-expect-error
-          'kind'
-        )
+      anyOf(map({ kind: string() }))
+        // @ts-expect-error
+        .discriminate('kind')
         .check(path)
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -217,10 +216,8 @@ describe('anyOf', () => {
         map({ kind: string().enum('dog').savedAs('k') }),
         map({ kind: string().enum('cat').savedAs('_k') })
       )
-        .discriminate(
-          // @ts-expect-error
-          'kind'
-        )
+        // @ts-expect-error
+        .discriminate('kind')
         .check(path)
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
@@ -230,15 +227,25 @@ describe('anyOf', () => {
 
     // Rejects non-required
     const invalidCallC = () =>
-      anyOf(map({ kind: string().enum('dog').optional() }), map({ kind: string().enum('cat') }))
-        .discriminate(
-          // @ts-expect-error
-          'kind'
-        )
+      anyOf(map({ kind: string().enum('dog').optional() }))
+        // @ts-expect-error
+        .discriminate('kind')
         .check(path)
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
     expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
+    )
+
+    // Rejects transformed
+    const invalidCallD = () =>
+      anyOf(map({ kind: string().enum('dog').transform(prefix('_')) }))
+        // @ts-expect-error
+        .discriminate('kind')
+        .check(path)
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(
       expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
     )
   })
