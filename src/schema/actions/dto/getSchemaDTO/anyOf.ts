@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getAnyOfSchemaDTO = (schema: AnyOfSchema): AnyOfSchemaDTO => {
   const defaultsDTO = getDefaultsDTO(schema)
-  const { required, hidden, key, savedAs } = schema.props
+  const { required, hidden, key, savedAs, discriminator } = schema.props
 
   return {
     type: 'anyOf',
@@ -18,6 +18,7 @@ export const getAnyOfSchemaDTO = (schema: AnyOfSchema): AnyOfSchemaDTO => {
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),
     ...(savedAs !== undefined ? { savedAs } : {}),
+    ...(discriminator !== undefined ? { discriminator } : {}),
     ...defaultsDTO
   }
 }

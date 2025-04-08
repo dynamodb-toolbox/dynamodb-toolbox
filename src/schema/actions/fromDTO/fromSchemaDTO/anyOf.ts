@@ -20,6 +20,7 @@ export const fromAnyOfSchemaDTO = ({ elements, ...props }: AnyOfSchemaDTO): AnyO
     hidden,
     key,
     savedAs,
+    discriminator,
     keyDefault,
     putDefault,
     updateDefault,
@@ -48,6 +49,10 @@ export const fromAnyOfSchemaDTO = ({ elements, ...props }: AnyOfSchemaDTO): AnyO
 
   if (savedAs !== undefined) {
     $attr = $attr.savedAs(savedAs)
+  }
+
+  if (discriminator !== undefined) {
+    $attr = $attr.discriminate(discriminator)
   }
 
   return $attr
