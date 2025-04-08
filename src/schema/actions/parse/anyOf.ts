@@ -23,13 +23,11 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   let _linkedValue = undefined
   let _parsedValue = undefined
 
-  if (
-    discriminator !== undefined &&
-    isObject(inputValue) &&
-    discriminator in inputValue &&
-    isString(inputValue[discriminator])
-  ) {
-    const matchingElement = schema.match(inputValue[discriminator])
+  if (discriminator !== undefined && isObject(inputValue) && discriminator in inputValue) {
+    const discriminatorValue = inputValue[discriminator]
+    const matchingElement = isString(discriminatorValue)
+      ? schema.match(discriminatorValue)
+      : undefined
 
     if (matchingElement !== undefined) {
       parser = schemaParser(matchingElement, inputValue, options)

@@ -29,10 +29,12 @@ export function* anyOfSchemaFormatter(
   if (
     discriminatorSavedAs !== undefined &&
     isObject(rawValue) &&
-    discriminatorSavedAs in rawValue &&
-    isString(rawValue[discriminatorSavedAs])
+    discriminatorSavedAs in rawValue
   ) {
-    const matchingElement = schema.match(rawValue[discriminatorSavedAs])
+    const discriminatorValue = rawValue[discriminatorSavedAs]
+    const matchingElement = isString(discriminatorValue)
+      ? schema.match(discriminatorValue)
+      : undefined
 
     if (matchingElement !== undefined) {
       formatter = schemaFormatter(
