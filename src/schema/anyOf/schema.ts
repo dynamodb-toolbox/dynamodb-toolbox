@@ -4,7 +4,7 @@ import { isArray } from '~/utils/validation/isArray.js'
 import type { Schema } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
-import { $discriminations, $discriminators } from './constants.js'
+import { $discriminations_, $discriminators, $discriminators_ } from './constants.js'
 import type { AnyOfSchemaProps } from './types.js'
 
 export class AnyOfSchema<
@@ -16,8 +16,8 @@ export class AnyOfSchema<
   props: PROPS;
 
   // Lazily computed discriminators (attrName to attrSavedAs mapping) & element schema matches
-  [$discriminators]?: Record<string, string>;
-  [$discriminations]?: Record<string, Schema>
+  [$discriminators_]?: Record<string, string>;
+  [$discriminations_]?: Record<string, Schema>
 
   constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'anyOf'
@@ -96,7 +96,7 @@ export class AnyOfSchema<
 
     const { discriminator } = this.props
     if (discriminator !== undefined) {
-      if (!(discriminator in this.discriminators)) {
+      if (!(discriminator in this[$discriminators])) {
         throw new DynamoDBToolboxError('schema.anyOf.invalidDiscriminator', {
           message: `Invalid discriminator${
             path !== undefined ? ` at path '${path}'` : ''
@@ -115,20 +115,18 @@ export class AnyOfSchema<
     Object.freeze(this.elements)
   }
 
-  get discriminators(): Record<string, string> {
-    if (this[$discriminators] !== undefined) {
-      return this[$discriminators]
+  get [$discriminators](): Record<string, string> {
+    if (this[$discriminators_] === undefined) {
+      this[$discriminators_] =
+        this.elements.map(getDiscriminators).reduce(intersectDiscriminators, undefined) ?? {}
     }
 
-    this[$discriminators] =
-      this.elements.map(getDiscriminators).reduce(intersectDiscriminators, undefined) ?? {}
-
-    return this[$discriminators]
+    return this[$discriminators_]
   }
 
   match(value: string): Schema | undefined {
-    if (this[$discriminations] === undefined) {
-      this[$discriminations] = {}
+    if (this[$discriminations_] === undefined) {
+      this[$discriminations_] = {}
 
       const { discriminator } = this.props
 
@@ -137,21 +135,21 @@ export class AnyOfSchema<
       }
 
       for (const elementSchema of this.elements) {
-        this[$discriminations] = {
-          ...this[$discriminations],
+        this[$discriminations_] = {
+          ...this[$discriminations_],
           ...getDiscriminations(elementSchema, discriminator)
         }
       }
     }
 
-    return this[$discriminations][value]
+    return this[$discriminations_][value]
   }
 }
 
 const getDiscriminators = (schema: Schema): Record<string, string> | undefined => {
   switch (schema.type) {
     case 'anyOf':
-      return schema.discriminators
+      return schema[$discriminators]
     case 'map': {
       const discriminators: Record<string, string> = {}
 

@@ -8,6 +8,7 @@ import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { Light } from '../utils/light.js'
+import { $discriminators } from './constants.js'
 import type { AnyOfSchema } from './schema.js'
 import { anyOf } from './schema_.js'
 
@@ -184,8 +185,7 @@ describe('anyOf', () => {
     const horseSchema = map({ kind: string().enum('horse').savedAs('k') })
 
     const anyOfSchema = anyOf(petSchema, horseSchema).discriminate('kind')
-
-    expect(anyOfSchema.discriminators).toStrictEqual({ kind: 'k' })
+    expect(anyOfSchema[$discriminators]).toStrictEqual({ kind: 'k' })
 
     const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { discriminator: 'kind' }> = 1
     assertAnyOf

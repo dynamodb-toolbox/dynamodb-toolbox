@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { $discriminators } from '~/schema/anyOf/constants.js'
 import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -24,7 +25,7 @@ export function* anyOfSchemaFormatter(
   let _formattedValue = undefined
 
   const discriminatorSavedAs =
-    discriminator && transform ? schema.discriminators[discriminator] : discriminator
+    discriminator && transform ? schema[$discriminators][discriminator] : discriminator
 
   if (
     discriminatorSavedAs !== undefined &&
