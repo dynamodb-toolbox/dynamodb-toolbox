@@ -1,10 +1,12 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { AnyOfSchema, Schema } from '~/schema/index.js'
+import { isObject } from '~/utils/validation/isObject.js'
+import { isString } from '~/utils/validation/isString.js'
 
-import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 
 export function* anyOfSchemaFormatter(
   schema: AnyOfSchema,
@@ -14,24 +16,53 @@ export function* anyOfSchemaFormatter(
   FormatterYield<AnyOfSchema, FormatAttrValueOptions<AnyOfSchema>>,
   FormatterReturn<AnyOfSchema, FormatAttrValueOptions<AnyOfSchema>>
 > {
+  const { discriminator } = schema.props
   const { format = true, transform = true, valuePath } = options
 
   let formatter: Generator<unknown, unknown> | undefined = undefined
   let _transformedValue = undefined
   let _formattedValue = undefined
 
-  for (const element of schema.elements) {
-    try {
-      formatter = attrFormatter(element, rawValue, options as FormatAttrValueOptions<Schema>)
+  const discriminatorSavedAs =
+    discriminator && transform ? schema.discriminators[discriminator] : discriminator
+
+  if (
+    discriminatorSavedAs !== undefined &&
+    isObject(rawValue) &&
+    discriminatorSavedAs in rawValue &&
+    isString(rawValue[discriminatorSavedAs])
+  ) {
+    const matchingElement = schema.match(rawValue[discriminatorSavedAs])
+
+    if (matchingElement !== undefined) {
+      formatter = schemaFormatter(
+        matchingElement,
+        rawValue,
+        options as FormatAttrValueOptions<Schema>
+      )
       if (transform) {
         _transformedValue = formatter.next().value
       }
       if (format) {
         _formattedValue = formatter.next().value
       }
-      break
-    } catch (error) {
-      continue
+    }
+  }
+
+  if (formatter === undefined) {
+    for (const element of schema.elements) {
+      try {
+        formatter = schemaFormatter(element, rawValue, options as FormatAttrValueOptions<Schema>)
+        if (transform) {
+          _transformedValue = formatter.next().value
+        }
+        if (format) {
+          _formattedValue = formatter.next().value
+        }
+        break
+      } catch (error) {
+        continue
+      }
     }
   }
 

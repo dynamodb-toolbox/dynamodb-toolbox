@@ -4,9 +4,9 @@ import type { RecordSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrFormatter } from './attribute.js'
 import { Formatter, type FormatterReturn, type FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* recordSchemaFormatter(
@@ -63,7 +63,7 @@ export function* recordSchemaFormatter(
 
     formatters.push([
       formattedKey,
-      attrFormatter(schema.elements, element, {
+      schemaFormatter(schema.elements, element, {
         attributes: childrenAttributes,
         valuePath: elmtValuePath,
         ...restOptions
@@ -90,7 +90,7 @@ export function* recordSchemaFormatter(
 
       formatters.push([
         missingKey,
-        attrFormatter(schema.elements, undefined, {
+        schemaFormatter(schema.elements, undefined, {
           attributes: childrenAttributes,
           valuePath: elmtValuePath,
           ...restOptions

@@ -3,9 +3,9 @@ import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { MapSchema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* mapSchemaFormatter(
@@ -47,7 +47,7 @@ export function* mapSchemaFormatter(
     }
 
     const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
-    formatters[attributeName] = attrFormatter(attribute, rawValue[attributeSavedAs], {
+    formatters[attributeName] = schemaFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
       valuePath: [...valuePath, attributeSavedAs],
       ...restOptions

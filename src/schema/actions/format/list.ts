@@ -3,9 +3,9 @@ import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { ListSchema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 import { matchProjection } from './utils.js'
 
 export function* listSchemaFormatter(
@@ -38,7 +38,7 @@ export function* listSchemaFormatter(
   const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
 
   const formatters = rawValue.map((element, index) =>
-    attrFormatter(schema.elements, element, {
+    schemaFormatter(schema.elements, element, {
       attributes: childrenAttributes,
       valuePath: [...valuePath, index],
       ...restOptions
