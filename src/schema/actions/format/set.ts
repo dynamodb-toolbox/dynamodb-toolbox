@@ -3,9 +3,9 @@ import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { SetSchema } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
-import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 
 export function* setSchemaFormatter(
   schema: SetSchema,
@@ -32,7 +32,7 @@ export function* setSchemaFormatter(
 
   // TODO: Remove this cast
   const formatters: Generator<any, any>[] = [...rawValue.values()].map((value, index) =>
-    attrFormatter(schema.elements, value, {
+    schemaFormatter(schema.elements, value, {
       ...options,
       valuePath: [...valuePath, index],
       attributes: undefined

@@ -1,17 +1,17 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { set, string } from '~/schema/index.js'
 
-import * as attrParserModule from './attribute.js'
+import * as schemaParserModule from './schema.js'
 import { setSchemaParser } from './set.js'
 
 // @ts-ignore
-const attrParser = vi.spyOn(attrParserModule, 'attrParser')
+const schemaParser = vi.spyOn(schemaParserModule, 'schemaParser')
 
 const schema = set(string())
 
 describe('setSchemaParser', () => {
   beforeEach(() => {
-    attrParser.mockClear()
+    schemaParser.mockClear()
   })
 
   test('throws an error if input is not a set', () => {
@@ -21,20 +21,20 @@ describe('setSchemaParser', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('applies attrParser on input elements otherwise (and pass options)', () => {
+  test('applies schemaParser on input elements otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
     const parser = setSchemaParser(schema, new Set(['foo', 'bar']), options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual(new Set(['foo', 'bar']))
 
-    expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'foo', {
+    expect(schemaParser).toHaveBeenCalledTimes(2)
+    expect(schemaParser).toHaveBeenCalledWith(schema.elements, 'foo', {
       ...options,
       valuePath: ['root', 0],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'bar', {
+    expect(schemaParser).toHaveBeenCalledWith(schema.elements, 'bar', {
       ...options,
       valuePath: ['root', 1],
       defined: false

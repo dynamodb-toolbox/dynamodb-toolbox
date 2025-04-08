@@ -42,7 +42,7 @@ export type {
   RecordElementSchema
 } from './schema/record/index.js'
 export { anyOf, AnyOfSchema, AnyOfSchema_ } from './schema/anyOf/index.js'
-export type { AnyOfElementSchema } from './schema/anyOf/index.js'
+export type { AnyOfSchemaProps, AnyOfElementSchema } from './schema/anyOf/index.js'
 export { item, ItemSchema, ItemSchema_ } from './schema/item/index.js'
 export type { ItemAttributes } from './schema/item/index.js'
 export { Parser } from './schema/actions/parse/index.js'

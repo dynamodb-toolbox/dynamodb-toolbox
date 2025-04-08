@@ -4,9 +4,9 @@ import type { SetSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -22,7 +22,7 @@ export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const isInputValueSet = isSet(inputValue)
   if (isInputValueSet) {
     parsers = [...inputValue.values()].map((element, index) =>
-      attrParser(schema.elements, element, {
+      schemaParser(schema.elements, element, {
         ...restOptions,
         valuePath: [...valuePath, index],
         defined: false

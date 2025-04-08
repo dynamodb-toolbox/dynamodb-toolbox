@@ -2,9 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { ItemSchema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrFormatter } from './attribute.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
+import { schemaFormatter } from './schema.js'
 import { matchProjection, sanitize } from './utils.js'
 
 export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
@@ -36,7 +36,7 @@ export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = 
     }
 
     const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
-    formatters[attributeName] = attrFormatter(attribute, rawValue[attributeSavedAs], {
+    formatters[attributeName] = schemaFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
       valuePath: [attributeSavedAs],
       ...restOptions

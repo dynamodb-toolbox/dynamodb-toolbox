@@ -12,14 +12,13 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
-  SchemaProps,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
 import type { LightTuple } from '../utils/light.js'
 import { lightTuple } from '../utils/light.js'
 import { AnyOfSchema } from './schema.js'
-import type { AnyOfElementSchema } from './types.js'
+import type { AnyOfElementSchema, AnyOfSchemaProps, Discriminator } from './types.js'
 
 type AnyOfSchemer = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
@@ -36,7 +35,7 @@ export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_(lightTuple(
  */
 export class AnyOfSchema_<
   ELEMENTS extends Schema[] = Schema[],
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends AnyOfSchemaProps = AnyOfSchemaProps
 > extends AnyOfSchema<ELEMENTS, PROPS> {
   /**
    * Tag attribute as required. Possible values are:
@@ -87,6 +86,18 @@ export class AnyOfSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new AnyOfSchema_(this.elements, overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Discriminates the union with a shared string attribute with enum
+   */
+  discriminate<NEXT_DISCRIMINATOR extends Discriminator<ELEMENTS>>(
+    nextDiscriminator: NEXT_DISCRIMINATOR
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { discriminator: NEXT_DISCRIMINATOR }>> {
+    return new AnyOfSchema_(
+      this.elements,
+      overwrite(this.props, { discriminator: nextDiscriminator })
+    )
   }
 
   /**
@@ -300,10 +311,10 @@ export class AnyOfSchema_<
     )
   }
 
-  clone<NEXT_PROPS extends SchemaProps = {}>(
-    nextprops: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
+  clone<NEXT_PROPS extends AnyOfSchemaProps = {}>(
+    nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
   ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, NEXT_PROPS>> {
-    return new AnyOfSchema_(this.elements, overwrite(this.props, nextprops))
+    return new AnyOfSchema_(this.elements, overwrite(this.props, nextProps))
   }
 
   build<ACTION extends SchemaAction<this> = SchemaAction<this>>(

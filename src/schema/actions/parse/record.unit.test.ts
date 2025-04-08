@@ -1,18 +1,18 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { record, string } from '~/schema/index.js'
 
-import * as attrParserModule from './attribute.js'
+import * as schemaParserModule from './schema.js'
 import { recordSchemaParser } from './record.js'
 
 // @ts-ignore
-const attrParser = vi.spyOn(attrParserModule, 'attrParser')
+const schemaParser = vi.spyOn(schemaParserModule, 'schemaParser')
 
 const schema = record(string(), string())
 const enumSchema = record(string().enum('foo', 'bar'), string())
 
 describe('recordSchemaParser', () => {
   beforeEach(() => {
-    attrParser.mockClear()
+    schemaParser.mockClear()
   })
 
   test('throws an error if input is not a record', () => {
@@ -43,28 +43,28 @@ describe('recordSchemaParser', () => {
     expect(parsedValue).toStrictEqual({ foo: 'bar' })
   })
 
-  test('applies attrParser on input properties otherwise (and pass options)', () => {
+  test('applies schemaParser on input properties otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
     const parser = recordSchemaParser(schema, { foo: 'foo1', bar: 'bar1' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo1', bar: 'bar1' })
 
-    expect(attrParser).toHaveBeenCalledTimes(4)
-    expect(attrParser).toHaveBeenCalledWith(schema.keys, 'foo', {
+    expect(schemaParser).toHaveBeenCalledTimes(4)
+    expect(schemaParser).toHaveBeenCalledWith(schema.keys, 'foo', {
       ...options,
       valuePath: ['root', 'foo']
     })
-    expect(attrParser).toHaveBeenCalledWith(schema.keys, 'bar', {
+    expect(schemaParser).toHaveBeenCalledWith(schema.keys, 'bar', {
       ...options,
       valuePath: ['root', 'bar']
     })
-    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'foo1', {
+    expect(schemaParser).toHaveBeenCalledWith(schema.elements, 'foo1', {
       ...options,
       valuePath: ['root', 'foo'],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(schema.elements, 'bar1', {
+    expect(schemaParser).toHaveBeenCalledWith(schema.elements, 'bar1', {
       ...options,
       valuePath: ['root', 'bar'],
       defined: false

@@ -3,9 +3,9 @@ import type { ItemSchema, Schema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 
 export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValueOptions = {}>(
   schema: SCHEMA,
@@ -28,7 +28,7 @@ export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValu
     Object.entries(schema.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], {
+        parsers[attrName] = schemaParser(attr, inputValue[attrName], {
           ...options,
           valuePath: [attrName],
           defined: false

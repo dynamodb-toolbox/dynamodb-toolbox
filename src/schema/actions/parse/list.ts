@@ -4,9 +4,9 @@ import type { ListSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -22,7 +22,7 @@ export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   const isInputValueArray = isArray(inputValue)
   if (isInputValueArray) {
     parsers = inputValue.map((element, index) =>
-      attrParser(schema.elements, element, {
+      schemaParser(schema.elements, element, {
         ...restOptions,
         valuePath: [...valuePath, index],
         defined: false

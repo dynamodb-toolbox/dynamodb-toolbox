@@ -4,9 +4,9 @@ import type { RecordSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -32,8 +32,8 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
       missingEnumKeys.delete(key)
       const nextValuePath = [...valuePath, key]
       parsers.push([
-        attrParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
-        attrParser(schema.elements, element, {
+        schemaParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
+        schemaParser(schema.elements, element, {
           ...restOptions,
           defined: false,
           valuePath: nextValuePath
@@ -46,8 +46,8 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     for (const missingKey of missingEnumKeys) {
       const nextValuePath = [...valuePath, missingKey]
       parsers.push([
-        attrParser(schema.keys, missingKey, { ...restOptions, valuePath: nextValuePath }),
-        attrParser(schema.elements, undefined, {
+        schemaParser(schema.keys, missingKey, { ...restOptions, valuePath: nextValuePath }),
+        schemaParser(schema.elements, undefined, {
           ...restOptions,
           defined: false,
           valuePath: nextValuePath

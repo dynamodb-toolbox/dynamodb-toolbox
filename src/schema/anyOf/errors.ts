@@ -36,6 +36,14 @@ type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+type InvalidDiscriminatorErrorBlueprint = ErrorBlueprint<{
+  code: 'schema.anyOf.invalidDiscriminator'
+  hasPath: true
+  payload: {
+    discriminator: unknown
+  }
+}>
+
 export type AnyOfSchemaErrorBlueprint =
   | InvalidElementsErrorBlueprint
   | MissingElementsErrorBlueprint
@@ -43,3 +51,4 @@ export type AnyOfSchemaErrorBlueprint =
   | HiddenElementsErrorBlueprint
   | SavedAsElementsErrorBlueprint
   | DefaultedElementsErrorBlueprint
+  | InvalidDiscriminatorErrorBlueprint

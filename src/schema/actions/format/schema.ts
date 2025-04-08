@@ -17,7 +17,7 @@ export const requiringOptions = new Set<SchemaRequiredProp>(['always', 'atLeastO
 export const isRequired = ({ props }: Schema): boolean =>
   requiringOptions.has(props.required ?? 'atLeastOnce')
 
-export function* attrFormatter<
+export function* schemaFormatter<
   SCHEMA extends Schema,
   OPTIONS extends FormatAttrValueOptions<SCHEMA> = {}
 >(

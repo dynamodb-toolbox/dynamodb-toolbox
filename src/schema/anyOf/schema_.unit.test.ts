@@ -1,11 +1,14 @@
 import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { prefix } from '~/transformers/prefix.js'
 
+import { map } from '../map/index.js'
 import { number } from '../number/index.js'
 import { string } from '../string/index.js'
 import type { Always, AtLeastOnce, Never, Validator } from '../types/index.js'
 import type { Light } from '../utils/light.js'
+import { $discriminators } from './constants.js'
 import type { AnyOfSchema } from './schema.js'
 import { anyOf } from './schema_.js'
 
@@ -172,6 +175,79 @@ describe('anyOf', () => {
     assertAnyOf
 
     expect(anyOfSchema.props.savedAs).toBe('foo')
+  })
+
+  // TODO: Reimplement props as potential first argument
+  test('returns discriminated anyOf (method)', () => {
+    const dogSchema = map({ kind: string().enum('dog').savedAs('k').required('always') })
+    const catSchema = map({ kind: string().enum('cat').savedAs('k') })
+    const petSchema = anyOf(dogSchema, catSchema)
+    const horseSchema = map({ kind: string().enum('horse').savedAs('k') })
+
+    const anyOfSchema = anyOf(petSchema, horseSchema).discriminate('kind')
+    expect(anyOfSchema[$discriminators]).toStrictEqual({ kind: 'k' })
+
+    const assertAnyOf: A.Contains<(typeof anyOfSchema)['props'], { discriminator: 'kind' }> = 1
+    assertAnyOf
+
+    expect(anyOfSchema.props.discriminator).toBe('kind')
+    anyOfSchema.check()
+
+    expect(anyOfSchema.match('cat')).toBe(catSchema)
+    expect(anyOfSchema.match('dog')).toBe(dogSchema)
+    expect(anyOfSchema.match('horse')).toBe(horseSchema)
+    expect(anyOfSchema.match('unknown')).toBeUndefined()
+
+    // Rejects non-enum str
+    const invalidCallA = () =>
+      anyOf(map({ kind: string() }))
+        // @ts-expect-error
+        .discriminate('kind')
+        .check(path)
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
+    )
+
+    // Rejects non-matching savedAs
+    const invalidCallB = () =>
+      anyOf(
+        map({ kind: string().enum('dog').savedAs('k') }),
+        map({ kind: string().enum('cat').savedAs('_k') })
+      )
+        // @ts-expect-error
+        .discriminate('kind')
+        .check(path)
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
+    )
+
+    // Rejects non-required
+    const invalidCallC = () =>
+      anyOf(map({ kind: string().enum('dog').optional() }))
+        // @ts-expect-error
+        .discriminate('kind')
+        .check(path)
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
+    )
+
+    // Rejects transformed
+    const invalidCallD = () =>
+      anyOf(map({ kind: string().enum('dog').transform(prefix('_')) }))
+        // @ts-expect-error
+        .discriminate('kind')
+        .check(path)
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(
+      expect.objectContaining({ code: 'schema.anyOf.invalidDiscriminator', path })
+    )
   })
 
   // TODO: Reimplement props as potential first argument

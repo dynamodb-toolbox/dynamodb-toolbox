@@ -2,11 +2,11 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { record, string } from '~/schema/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import * as attrFormatterModule from './attribute.js'
+import * as schemaFormatterModule from './schema.js'
 import { recordSchemaFormatter } from './record.js'
 
 // @ts-ignore
-const attrFormatter = vi.spyOn(attrFormatterModule, 'attrFormatter')
+const schemaFormatter = vi.spyOn(schemaFormatterModule, 'schemaFormatter')
 
 const schema = record(
   string().transform(prefix('_', { delimiter: '' })),
@@ -16,7 +16,7 @@ const enumSchema = record(string().enum('foo', 'bar'), string())
 
 describe('recordSchemaFormatter', () => {
   beforeEach(() => {
-    attrFormatter.mockClear()
+    schemaFormatter.mockClear()
   })
 
   test('throws an error if input is not a map', () => {
@@ -54,27 +54,27 @@ describe('recordSchemaFormatter', () => {
     expect(transformedValue).toStrictEqual({ foo: 'bar' })
   })
 
-  test('applies attrFormatter on input properties otherwise (and pass options)', () => {
+  test('applies schemaFormatter on input properties otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
     const formatter = recordSchemaFormatter(schema, { _f: '_foo', _b: '_bar' }, options)
 
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ f: 'foo', b: 'bar' })
 
-    expect(attrFormatter).toHaveBeenCalledTimes(4)
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, '_f', {
+    expect(schemaFormatter).toHaveBeenCalledTimes(4)
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, '_f', {
       transform: true,
       valuePath: ['root', '_f']
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, '_foo', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.elements, '_foo', {
       ...options,
       valuePath: ['root', '_f']
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, '_b', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, '_b', {
       transform: true,
       valuePath: ['root', '_b']
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, '_bar', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.elements, '_bar', {
       ...options,
       valuePath: ['root', '_b']
     })
@@ -91,17 +91,17 @@ describe('recordSchemaFormatter', () => {
     const { value: transformedValue } = formatter.next()
     expect(transformedValue).toStrictEqual({ f: 'foo' })
 
-    expect(attrFormatter).toHaveBeenCalledTimes(3)
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, '_f', {
+    expect(schemaFormatter).toHaveBeenCalledTimes(3)
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, '_f', {
       transform: true,
       valuePath: ['_f']
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, '_foo', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.elements, '_foo', {
       ...options,
       valuePath: ['_f'],
       attributes: undefined
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, '_b', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, '_b', {
       transform: true,
       valuePath: ['_b']
     })
@@ -119,14 +119,14 @@ describe('recordSchemaFormatter', () => {
     expect(done).toBe(true)
     expect(formattedValue).toStrictEqual({ f: 'foo', b: 'bar' })
 
-    expect(attrFormatter).toHaveBeenCalledTimes(4)
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, 'f', { ...options, valuePath: ['f'] })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, 'foo', {
+    expect(schemaFormatter).toHaveBeenCalledTimes(4)
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, 'f', { ...options, valuePath: ['f'] })
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.elements, 'foo', {
       ...options,
       valuePath: ['f']
     })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.keys, 'b', { ...options, valuePath: ['b'] })
-    expect(attrFormatter).toHaveBeenCalledWith(schema.elements, 'bar', {
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.keys, 'b', { ...options, valuePath: ['b'] })
+    expect(schemaFormatter).toHaveBeenCalledWith(schema.elements, 'bar', {
       ...options,
       valuePath: ['b']
     })

@@ -12,12 +12,12 @@ interface SchemaDefaultsDTO {
 }
 
 // TODO: Infer from actual list of linkers
-type LinkerDTO = { linkerId: 'custom' }
+type LinkDTO = { linkerId: 'custom' }
 
 interface SchemaLinksDTO {
-  keyLink?: LinkerDTO
-  putLink?: LinkerDTO
-  updateLink?: LinkerDTO
+  keyLink?: LinkDTO
+  putLink?: LinkDTO
+  updateLink?: LinkDTO
 }
 
 interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
@@ -145,6 +145,7 @@ export interface AnyOfSchemaDTO extends SchemaPropsDTO {
     putLink?: undefined
     updateLink?: undefined
   })[]
+  discriminator?: string
 }
 
 export interface ItemSchemaDTO extends SchemaPropsDTO {
