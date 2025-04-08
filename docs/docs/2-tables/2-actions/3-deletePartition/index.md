@@ -17,7 +17,7 @@ Use it with ⚠️ **caution** ⚠️ It can be **long** and **costly** on large
 
 :::
 
-Performs a paginated [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table` and run subsequent [`BatchWriteCommands`](../6-batch-write/index.md) to batch delete returned items:
+Performs one or more [Query operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table`, and then runs [`BatchWriteCommands`](../6-batch-write/index.md) to batch delete the returned items. Automatically iterates through query pages if needed:
 
 ```ts
 import { DeletePartitionCommand } from 'dynamodb-toolbox/table/actions/deletePartition'

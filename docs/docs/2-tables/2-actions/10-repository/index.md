@@ -126,7 +126,7 @@ const { Items } = await pokeTableRepository.query(
 
 :::
 
-Performs a paginated [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on a `Table` and run subsequent [`BatchWriteCommands`](../6-batch-write/index.md) to batch delete returned items. See [`DeletePartitionCommand`](../3-deletePartition/index.md) for more details:
+Performs one or more [Query operations](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on the `Table`, and then runs [`BatchWriteCommands`](../6-batch-write/index.md) to batch delete the returned items. Automatically iterates through query pages if needed. See [`DeletePartitionCommand`](../3-deletePartition/index.md) for more details:
 
 :::note[Examples]
 
