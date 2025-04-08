@@ -1,17 +1,17 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { map, string } from '~/schema/index.js'
 
-import * as attrParserModule from './attribute.js'
+import * as schemaParserModule from './schema.js'
 import { mapSchemaParser } from './map.js'
 
 // @ts-ignore
-const attrParser = vi.spyOn(attrParserModule, 'attrParser')
+const schemaParser = vi.spyOn(schemaParserModule, 'schemaParser')
 
 const mapSchema = map({ foo: string(), bar: string() })
 
 describe('mapSchemaParser', () => {
   beforeEach(() => {
-    attrParser.mockClear()
+    schemaParser.mockClear()
   })
 
   test('throws an error if input is not a map', () => {
@@ -21,20 +21,20 @@ describe('mapSchemaParser', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('applies attrParser on input properties otherwise (and pass options)', () => {
+  test('applies schemaParser on input properties otherwise (and pass options)', () => {
     const options = { valuePath: ['root'] }
     const parser = mapSchemaParser(mapSchema, { foo: 'foo', bar: 'bar' }, options)
 
     const { value: defaultedValue } = parser.next()
     expect(defaultedValue).toStrictEqual({ foo: 'foo', bar: 'bar' })
 
-    expect(attrParser).toHaveBeenCalledTimes(2)
-    expect(attrParser).toHaveBeenCalledWith(mapSchema.attributes.foo, 'foo', {
+    expect(schemaParser).toHaveBeenCalledTimes(2)
+    expect(schemaParser).toHaveBeenCalledWith(mapSchema.attributes.foo, 'foo', {
       ...options,
       valuePath: ['root', 'foo'],
       defined: false
     })
-    expect(attrParser).toHaveBeenCalledWith(mapSchema.attributes.bar, 'bar', {
+    expect(schemaParser).toHaveBeenCalledWith(mapSchema.attributes.bar, 'bar', {
       ...options,
       valuePath: ['root', 'bar'],
       defined: false

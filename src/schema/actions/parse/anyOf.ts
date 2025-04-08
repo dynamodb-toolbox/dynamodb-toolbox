@@ -2,10 +2,12 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
 import type { AnyOfSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
+import { isObject } from '~/utils/validation/isObject.js'
+import { isString } from '~/utils/validation/isString.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -13,6 +15,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<AnyOfSchema, OPTIONS>, ParserReturn<AnyOfSchema, OPTIONS>> {
+  const { discriminator } = schema.props
   const { fill = true, transform = true, valuePath = [] } = options
 
   let parser: Generator<any, any> | undefined = undefined
@@ -20,22 +23,42 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   let _linkedValue = undefined
   let _parsedValue = undefined
 
-  for (const elementAttribute of schema.elements) {
-    try {
-      parser = attrParser(elementAttribute, inputValue, options)
+  if (
+    discriminator !== undefined &&
+    isObject(inputValue) &&
+    discriminator in inputValue &&
+    isString(inputValue[discriminator])
+  ) {
+    const matchingElement = schema.match(inputValue[discriminator])
+
+    if (matchingElement !== undefined) {
+      parser = schemaParser(matchingElement, inputValue, options)
       if (fill) {
         _defaultedValue = parser.next().value
-        // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)
         _linkedValue = parser.next().value
       }
       _parsedValue = parser.next().value
-      break
-    } catch (error) {
-      parser = undefined
-      _defaultedValue = undefined
-      _linkedValue = undefined
-      _parsedValue = undefined
-      continue
+    }
+  }
+
+  if (parser === undefined) {
+    for (const elementAttribute of schema.elements) {
+      try {
+        parser = schemaParser(elementAttribute, inputValue, options)
+        if (fill) {
+          _defaultedValue = parser.next().value
+          // Note: Links cannot be used in anyOf elements or sub elements for this reason (we need the return of the yield)
+          _linkedValue = parser.next().value
+        }
+        _parsedValue = parser.next().value
+        break
+      } catch (error) {
+        parser = undefined
+        _defaultedValue = undefined
+        _linkedValue = undefined
+        _parsedValue = undefined
+        continue
+      }
     }
   }
 
@@ -59,6 +82,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
       payload: { received: inputValue }
     })
   }
+
   if (parsedValue !== undefined) {
     applyCustomValidation(schema, parsedValue, options)
   }

@@ -15,7 +15,7 @@ import { recordSchemaParser } from './record.js'
 import { setSchemaParser } from './set.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
-export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
+export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: Schema,
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
@@ -50,7 +50,7 @@ export function* attrParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
     let linkedValue = defaultedValue
     if (linkedValue === undefined && itemInput !== undefined) {
-      const modeLink = getLinker(schema, mode)
+      const modeLink = getModeLink(schema, mode)
       linkedValue = (isFunction(modeLink) ? modeLink(itemInput) : linkedValue) as any
     }
     yield linkedValue
@@ -141,7 +141,7 @@ const getDefaulter = (schema: Schema, mode: WriteMode) => {
   }
 }
 
-const getLinker = (schema: Schema, mode: WriteMode) => {
+const getModeLink = (schema: Schema, mode: WriteMode) => {
   const { props } = schema
 
   if (props.key) {

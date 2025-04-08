@@ -4,9 +4,9 @@ import type { MapSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { attrParser } from './attribute.js'
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
+import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
 export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -26,7 +26,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     Object.entries(schema.attributes)
       .filter(([, attr]) => mode !== 'key' || attr.props.key)
       .forEach(([attrName, attr]) => {
-        parsers[attrName] = attrParser(attr, inputValue[attrName], {
+        parsers[attrName] = schemaParser(attr, inputValue[attrName], {
           ...restOptions,
           valuePath: [...valuePath, attrName],
           defined: false
@@ -80,7 +80,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attrName, attrParser]) => [attrName, attrParser.next().value])
+      .map(([attrName, schemaParser]) => [attrName, schemaParser.next().value])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
   if (parsedValue !== undefined) {
@@ -95,10 +95,10 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const transformedValue = Object.fromEntries(
     Object.entries(parsers)
-      .map(([attrName, attrParser]) => [
+      .map(([attrName, schemaParser]) => [
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         schema.attributes[attrName]!.props.savedAs ?? attrName,
-        attrParser.next().value
+        schemaParser.next().value
       ])
       .filter(([, attrValue]) => attrValue !== undefined)
   )
