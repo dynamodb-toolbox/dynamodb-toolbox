@@ -12,6 +12,7 @@ import type {
 } from '~/schema/index.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
+import { parseAnyExtension } from './any.js'
 import { parseListExtension } from './list.js'
 import { parseMapExtension } from './map.js'
 import { parseRecordExtension } from './record.js'
@@ -58,6 +59,8 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
   }
 
   switch (schema.type) {
+    case 'any':
+      return parseAnyExtension(schema, input, options)
     case 'number':
       return parseNumberExtension(schema, input, options)
     case 'set':
