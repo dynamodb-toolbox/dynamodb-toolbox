@@ -1,1 +1,1 @@
-export { fromEntityDTO } from './fromEntityDTO.js'
+export { fromEntityDTO, fromEntityDTO as fromDTO } from './fromEntityDTO.js'

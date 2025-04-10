@@ -40,6 +40,7 @@ const TestEntity = new Entity({
   schema: item({
     email: string().key().savedAs('pk'),
     sort: string().key().savedAs('sk'),
+    test_any: any().optional(),
     test_string_coerce: string().optional(),
     count: number().optional().savedAs('test_number'),
     test_boolean: boolean().optional(),
@@ -879,6 +880,32 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
+  test('overrides existing any', () => {
+    const {
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'test-pk', sort: 'test-sk', test_any: { foo: 'bar' } })
+      .params()
+
+    expect(UpdateExpressionA).toContain('#s_1 = :s_1')
+    expect(ExpressionAttributeNamesA).toMatchObject({ '#s_1': 'test_any' })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': { foo: 'bar' } })
+
+    const {
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'test-pk', sort: 'test-sk', test_any: ['foo', 42] })
+      .params()
+
+    expect(UpdateExpressionB).toContain('#s_1 = :s_1')
+    expect(ExpressionAttributeNamesB).toMatchObject({ '#s_1': 'test_any' })
+    expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': ['foo', 42] })
+  })
+
   test('overrides existing list', () => {
     const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.build(UpdateAttributesCommand)
@@ -1464,26 +1491,5 @@ describe('update', () => {
       ':s_3': { str: 'MAP#map' },
       ':s_4': { 'RECORD_KEY#recordKey': 'RECORD_VALUE#recordValue' }
     })
-  })
-
-  test('any attribute', () => {
-    const TestEntity6 = new Entity({
-      name: 'TestEntity',
-      schema: item({
-        pk: string().key(),
-        sk: string().key(),
-        any: any().optional()
-      }),
-      table: TestTable
-    })
-
-    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-      TestEntity6.build(UpdateAttributesCommand)
-        .item({ pk: 'pk', sk: 'sk', any: { key: $set({ foo: 'bar' }) } })
-        .params()
-
-    expect(UpdateExpression).toContain('SET #s_1.#s_2 = :s_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'any', '#s_2': 'key' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': { foo: 'bar' } })
   })
 })

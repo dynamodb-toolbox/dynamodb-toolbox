@@ -187,7 +187,7 @@ await PokemonEntity.build(UpdateItemCommand)
 
 ### Deep attributes
 
-In the case of deep attributes (e.g. `lists`, `maps` and `records`), updates are **partial by default**:
+In the case of deep attributes (e.g. `lists`, `maps`, `records` and potentially `any`), updates are **partial by default**:
 
 ```ts
 // 👇 Partial overrides
