@@ -27,7 +27,7 @@ const PokemonEntity = new Entity({
 
 :::info
 
-Note that you can provide a [`map`](../../4-schemas/14-map/index.md) schema to the `Entity` constructor, although only its attributes will be kept (not its props):
+Note that you can provide a [`map`](../../4-schemas/14-map/index.md) schema to the `Entity` constructor, although only its attributes are kept (not its props):
 
 ```ts
 import { map } from 'dynamodb-toolbox/schema/map'
@@ -150,7 +150,7 @@ pokeTypeSchema.check('pokeType')
 
 :::info
 
-☝️ Checking a schema will also [freeze](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) its props.
+☝️ Checking a schema also [freezes](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze) its props.
 
 :::
 

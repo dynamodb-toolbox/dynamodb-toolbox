@@ -176,7 +176,7 @@ To be used as a discriminator, an attribute **must meet all of the following con
 - ✅ If renamed, the same `savedAs` value must be used **across all options**.
 - ❌ It must **not** be `optional` or `transformed`.
 
-The following examples will raise **both type and runtime errors**:
+The following examples raises **both type and runtime errors**:
 
 ```ts
 // ❌ 'age' is not a string with enum values

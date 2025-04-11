@@ -176,7 +176,7 @@ export const scanParams: ScanParamsGetter = <
     let index = 0
     for (const entity of entities) {
       /**
-       * @debt feature "For now, we compute the projectionExpression using the first entity. Will probably use Table schemas once they exist."
+       * @debt feature "For now, we compute the projectionExpression using the first entity."
        */
       if (projectionExpression === undefined && attributes !== undefined) {
         const {
