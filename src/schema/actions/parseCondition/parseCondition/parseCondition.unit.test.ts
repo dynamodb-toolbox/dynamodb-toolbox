@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { anyOf, item, list, map, number, record, string } from '~/schema/index.js'
+import { any, anyOf, item, list, map, number, record, string } from '~/schema/index.js'
+import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { ConditionParser } from '../conditionParser.js'
 
@@ -121,6 +122,49 @@ describe('parseCondition', () => {
         ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
         ExpressionAttributeNames: { '#c_1': 'anyOf', '#c_2': 'strOrNum' },
         ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+    })
+  })
+
+  describe('anyOf (discriminated)', () => {
+    const schemaWithAnyOf = item({
+      anyOf: anyOf(
+        map({ status: string().enum('a') }),
+        map({ status: string().enum('b') }),
+        map({ status: string().enum('c') })
+      )
+    })
+
+    test('correctly parses condition (deep str)', () => {
+      expect(
+        schemaWithAnyOf
+          .build(ConditionParser)
+          .parse({ attr: 'anyOf.status', eq: 'c' })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1.#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': 'anyOf', '#c_2': 'status' },
+        ExpressionAttributeValues: { ':c_1': 'c' }
+      })
+    })
+  })
+
+  describe.only('any (transformed)', () => {
+    const schemaWithTransformedAny = item({
+      any: any().castAs<Record<string, unknown>>().transform(jsonStringify())
+    })
+
+    test('correctly parses condition (deep str)', () => {
+      expect(
+        schemaWithTransformedAny
+          .build(ConditionParser)
+          // @ts-expect-error SHOULD WORK
+          .parse({ attr: 'any', eq: { foo: 'bar' } })
+          .toCommandOptions()
+      ).toStrictEqual({
+        ConditionExpression: '#c_1 = :c_1',
+        ExpressionAttributeNames: { '#c_1': 'any' },
+        ExpressionAttributeValues: { ':c_1': JSON.stringify({ foo: 'bar' }) }
       })
     })
   })

@@ -45,6 +45,7 @@ export const appendAttributePath = (
   let attrPathTail: string | undefined
 
   let root = true
+
   while (attrMatches.length > 0) {
     const attrMatch = attrMatches.shift() as RegExpMatchArray
 
