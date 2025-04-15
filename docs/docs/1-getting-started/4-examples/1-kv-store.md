@@ -114,7 +114,7 @@ const PokemonEntity = new Entity({
 
 ### Insert an Item
 
-In order to [improve tree-shaking](../3-usage/index.md#methods-vs-actions), `Entities` only expose a single `.build(...)` method that acts as a gateway to perform [Actions](../3-usage/index.md#how-do-actions-work) (if you don't mind larger bundle sizes, you can use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions instead):
+In order to [improve tree-shaking](../3-usage/index.md#methods-vs-actions), `Entities` only expose a single `.build(...)` method that acts as a gateway to perform [Actions](../3-usage/index.md#how-do-actions-work) (if you don't mind larger bundle sizes, you can use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) action instead):
 
 Let's use the [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md) action to write our first item:
 
