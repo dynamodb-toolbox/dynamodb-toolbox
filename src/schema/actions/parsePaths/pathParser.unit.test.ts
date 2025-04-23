@@ -34,8 +34,8 @@ describe('parseProjection', () => {
       expect(
         schemaWithSavedAs.build(PathParser).parse(['savedAs', 'deep.savedAs']).toCommandOptions()
       ).toStrictEqual({
-        ProjectionExpression: '#p_1, #p_2.#p_3',
-        ExpressionAttributeNames: { '#p_1': '_s', '#p_2': '_n', '#p_3': '_s' }
+        ProjectionExpression: '#p_1, #p_2.#p_1',
+        ExpressionAttributeNames: { '#p_1': '_s', '#p_2': '_n' }
       })
     })
 
@@ -55,8 +55,8 @@ describe('parseProjection', () => {
           .parse(['savedAs', 'listed[4].savedAs'])
           .toCommandOptions()
       ).toStrictEqual({
-        ProjectionExpression: '#p_1, #p_2[4].#p_3',
-        ExpressionAttributeNames: { '#p_1': '_s', '#p_2': '_l', '#p_3': '_s' }
+        ProjectionExpression: '#p_1, #p_2[4].#p_1',
+        ExpressionAttributeNames: { '#p_1': '_s', '#p_2': '_l' }
       })
     })
   })

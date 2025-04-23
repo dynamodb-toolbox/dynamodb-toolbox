@@ -21,21 +21,24 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
 {
   static override actionName = 'parseCondition' as const
 
-  expressionAttributePrefix: `c${string}_`
-  expressionAttributeNames: string[]
-  expressionAttributeValues: unknown[]
-  expression: string
+  expression: ExpressionParser['expression']
+  expressionAttributeNames: ExpressionParser['expressionAttributeNames']
+  expressionAttributeNameTokens: ExpressionParser['expressionAttributeNameTokens']
+
   id: string
+  expressionAttributePrefix: `c${string}_`
+  expressionAttributeValues: unknown[]
 
   constructor(schema: SCHEMA, id = '') {
     super(schema)
 
+    this.expression = []
+    this.expressionAttributeNames = {}
+    this.expressionAttributeNameTokens = {}
+
     this.id = id
     this.expressionAttributePrefix = `c${id}_`
-
-    this.expressionAttributeNames = []
     this.expressionAttributeValues = []
-    this.expression = ''
   }
 
   setId(nextId: string): this {
@@ -44,9 +47,23 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
     return this
   }
 
-  resetExpression(initialStr = ''): this {
-    this.expression = initialStr
+  resetExpression(...expression: (string | symbol)[]): this {
+    this.expression = expression
     return this
+  }
+
+  getToken(expressionPart: string): symbol {
+    const prevToken = this.expressionAttributeNameTokens[expressionPart]
+
+    if (prevToken !== undefined) {
+      return prevToken
+    }
+
+    const token = Symbol(expressionPart)
+    this.expressionAttributeNames[token] = expressionPart
+    this.expressionAttributeNameTokens[expressionPart] = token
+
+    return token
   }
 
   appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Schema {
@@ -71,8 +88,8 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
     return this
   }
 
-  appendToExpression(conditionExpressionPart: string): this {
-    this.expression += conditionExpressionPart
+  appendToExpression(...expressionParts: (string | symbol)[]): this {
+    this.expression.push(...expressionParts)
     return this
   }
 
@@ -92,9 +109,11 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
   clone(schema?: Schema): ConditionParser {
     const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
 
-    clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
+    clonedParser.expression = [...this.expression]
+    clonedParser.expressionAttributeNames = { ...this.expressionAttributeNames }
+    clonedParser.expressionAttributeNameTokens = { ...this.expressionAttributeNameTokens }
+
     clonedParser.expressionAttributeValues = [...this.expressionAttributeValues]
-    clonedParser.expression = this.expression
 
     return clonedParser
   }

@@ -9,13 +9,17 @@ export type AppendAttributePathOptions = { size?: boolean }
 
 export interface ExpressionParser {
   schema: Schema
-  expressionAttributePrefix: string
-  expressionAttributeNames: string[]
-  clone: (schema?: Schema) => ExpressionParser
-  expression: string
-  resetExpression: (str?: string) => void
-  appendToExpression: (str: string) => void
+  // --- STATE ---
+  expression: (string | symbol)[]
+  expressionAttributeNames: Record<symbol, string>
+  expressionAttributeNameTokens: Record<string, symbol>
+  getToken: (pathPart: string) => symbol
+  // --- SETTER ---
+  appendToExpression: (...expressionParts: (string | symbol)[]) => void
   appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Schema
+  // --- UTILS ---
+  clone: (schema?: Schema) => ExpressionParser
+  resetExpression: (...expression: (string | symbol)[]) => void
 }
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
@@ -38,9 +42,7 @@ export const appendAttributePath = (
 ): Schema => {
   const { size = false } = options
 
-  const expressionAttrPrefix = parser.expressionAttributePrefix
   let parentAttr: Schema = parser.schema
-  let expressionPath = ''
   let attrMatches = [...attributePath.matchAll(pathRegex)]
   let attrPathTail: string | undefined
 
@@ -64,12 +66,15 @@ export const appendAttributePath = (
       case 'any': {
         switch (matchType) {
           case 'listIndex': {
-            expressionPath += `[${matchedKey}]`
+            parser.appendToExpression(`[${matchedKey}]`)
             break
           }
           default: {
-            const expressionAttributeNameIndex = parser.expressionAttributeNames.push(matchedKey)
-            expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
+            const matchedKeyToken = parser.getToken(matchedKey)
+            if (!root) {
+              parser.appendToExpression('.')
+            }
+            parser.appendToExpression(matchedKeyToken)
           }
         }
 
@@ -86,9 +91,12 @@ export const appendAttributePath = (
       case 'record': {
         const keyAttribute = parentAttr.keys
         const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false })
+        const parsedKeyToken = parser.getToken(parsedKey)
 
-        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(parsedKey)
-        expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
+        if (!root) {
+          parser.appendToExpression('.')
+        }
+        parser.appendToExpression(parsedKeyToken)
 
         parentAttr = parentAttr.elements
         break
@@ -100,11 +108,14 @@ export const appendAttributePath = (
           throw getInvalidExpressionAttributePathError(attributePath)
         }
 
-        const expressionAttributeNameIndex = parser.expressionAttributeNames.push(
-          childAttribute.props.savedAs ?? matchedKey
-        )
+        const attrName = childAttribute.props.savedAs ?? matchedKey
+        const attrNameToken = parser.getToken(attrName)
 
-        expressionPath += `${root ? '' : '.'}#${expressionAttrPrefix}${expressionAttributeNameIndex}`
+        if (!root) {
+          parser.appendToExpression('.')
+        }
+        parser.appendToExpression(attrNameToken)
+
         parentAttr = childAttribute
         break
       }
@@ -113,7 +124,8 @@ export const appendAttributePath = (
           throw getInvalidExpressionAttributePathError(attributePath)
         }
 
-        expressionPath += match
+        parser.appendToExpression(match)
+
         parentAttr = parentAttr.elements
         break
       }
@@ -138,7 +150,12 @@ export const appendAttributePath = (
         }
 
         parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
-        expressionPath += `${root ? '' : '.'}${validElementExpressionParser.expression}`
+        parser.expressionAttributeNameTokens =
+          validElementExpressionParser.expressionAttributeNameTokens
+        if (!root) {
+          parser.appendToExpression('.')
+        }
+        parser.appendToExpression(...validElementExpressionParser.expression)
         // No need to go over the rest of the path
         attrMatches = []
 
@@ -153,7 +170,10 @@ export const appendAttributePath = (
     throw getInvalidExpressionAttributePathError(attributePath)
   }
 
-  parser.appendToExpression(size ? `size(${expressionPath})` : expressionPath)
+  if (size) {
+    parser.expression.unshift('size(')
+    parser.appendToExpression(')')
+  }
 
   return size ? new NumberSchema({ required: 'never' }) : parentAttr
 }

@@ -426,16 +426,14 @@ describe('generateTransactWriteCommandInput', () => {
           Update: {
             Key: { pk: 'titi@example.com', sk: 'titi' },
             UpdateExpression:
-              'SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2), #s_2 = :s_3, #s_3 = if_not_exists(#s_4, :s_4), #s_5 = if_not_exists(#s_6, :s_5), #s_7 = :s_6 ADD #a_1 :a_1',
+              'SET #s_1 = list_append(if_not_exists(#s_1, :s_1), :s_2), #s_2 = :s_3, #s_3 = if_not_exists(#s_3, :s_4), #s_4 = if_not_exists(#s_4, :s_5), #s_5 = :s_6 ADD #a_1 :a_1',
             ExpressionAttributeNames: {
               '#a_1': 'test_number',
               '#s_1': 'test_list',
               '#s_2': 'test_map',
               '#s_3': '_et',
-              '#s_4': '_et',
-              '#s_5': '_ct',
-              '#s_6': '_ct',
-              '#s_7': '_md'
+              '#s_4': '_ct',
+              '#s_5': '_md'
             },
             ExpressionAttributeValues: {
               ':a_1': 3,

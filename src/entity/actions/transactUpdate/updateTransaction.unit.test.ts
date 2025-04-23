@@ -166,20 +166,16 @@ describe('update transaction', () => {
     expect(Key).toStrictEqual({ pk: 'test-pk', sk: 'test-sk' })
 
     expect(UpdateExpression).toStrictEqual(
-      'SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4, #s_5 = if_not_exists(#s_6, :s_5), #s_7 = if_not_exists(#s_8, :s_6), #s_9 = :s_7 ADD #a_1 :a_1'
+      'SET #s_1 = :s_1, #s_2 = :s_2, #s_3 = :s_3, #s_4 = :s_4, #s_5 = if_not_exists(#s_5, :s_5), #s_6 = if_not_exists(#s_6, :s_6), #s_7 = :s_7 ADD #a_1 :a_1'
     )
     expect(ExpressionAttributeNames).toStrictEqual({
       '#s_1': 'test_string',
       '#s_2': 'test_number_default',
       '#s_3': 'test_boolean_default',
       '#s_4': 'simple_string_copy',
-      // TODO: Re-use s5
       '#s_5': '_et',
-      '#s_6': '_et',
-      // TODO: Re-use s7
-      '#s_7': '_ct',
-      '#s_8': '_ct',
-      '#s_9': '_md',
+      '#s_6': '_ct',
+      '#s_7': '_md',
       '#a_1': 'touchCount'
     })
     expect(ExpressionAttributeValues).toStrictEqual({
@@ -550,7 +546,7 @@ describe('update transaction', () => {
       .params()
 
     expect(UpdateExpressionD).toContain(
-      'SET #s_1 = :s_1, #s_2 = if_not_exists(#s_3, :s_2) + if_not_exists(#s_4, :s_3)'
+      'SET #s_1 = :s_1, #s_2 = if_not_exists(#s_3, :s_2) + if_not_exists(#s_3, :s_3)'
     )
     expect(ExpressionAttributeNamesD).toMatchObject({
       '#s_2': 'test_number_default',
@@ -697,7 +693,7 @@ describe('update transaction', () => {
       .params()
 
     expect(UpdateExpressionD).toContain(
-      'SET #s_1 = :s_1, #s_2 = if_not_exists(#s_3, :s_2) - if_not_exists(#s_4, :s_3)'
+      'SET #s_1 = :s_1, #s_2 = if_not_exists(#s_3, :s_2) - if_not_exists(#s_3, :s_3)'
     )
     expect(ExpressionAttributeNamesD).toMatchObject({
       '#s_2': 'test_number_default',
