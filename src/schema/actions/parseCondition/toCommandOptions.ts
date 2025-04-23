@@ -1,5 +1,7 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
+import { isString } from '~/utils/validation/isString.js'
+
 import type { ConditionParser } from './conditionParser.js'
 
 /**
@@ -14,18 +16,35 @@ export const toCommandOptions = (
 } => {
   const ExpressionAttributeNames: Record<string, string> = {}
 
-  conditionParser.expressionAttributeNames.forEach((expressionAttributeName, index) => {
-    ExpressionAttributeNames[`#${conditionParser.expressionAttributePrefix}${index + 1}`] =
-      expressionAttributeName
-  })
+  const stringTokens: Record<symbol, string> = {}
+  let cursor = 1
+  let ConditionExpression = ''
+
+  for (const expressionPart of conditionParser.expression) {
+    if (isString(expressionPart)) {
+      ConditionExpression += expressionPart
+      continue
+    }
+
+    let stringToken = stringTokens[expressionPart]
+
+    if (stringToken === undefined) {
+      stringToken = `#${conditionParser.expressionAttributePrefix}${cursor}`
+      ExpressionAttributeNames[stringToken] =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        conditionParser.expressionAttributeNames[expressionPart]!
+      stringTokens[expressionPart] = stringToken
+      cursor++
+    }
+
+    ConditionExpression += stringToken
+  }
 
   const ExpressionAttributeValues: Record<string, NativeAttributeValue> = {}
   conditionParser.expressionAttributeValues.forEach((expressionAttributeValue, index) => {
     ExpressionAttributeValues[`:${conditionParser.expressionAttributePrefix}${index + 1}`] =
       expressionAttributeValue
   })
-
-  const ConditionExpression = conditionParser.expression
 
   return {
     ExpressionAttributeNames,

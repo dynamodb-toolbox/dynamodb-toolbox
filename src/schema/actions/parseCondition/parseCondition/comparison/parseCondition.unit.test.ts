@@ -237,16 +237,14 @@ describe('parseCondition - comparison', () => {
         })
         .toCommandOptions()
     ).toStrictEqual({
-      ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 = #c_5[3].#c_6.#c_7[4].#c_8',
+      ConditionExpression: '#c_1[1].#c_2.#c_3[2].#c_4 = #c_5[3].#c_2.#c_6[4].#c_4',
       ExpressionAttributeNames: {
         '#c_1': 'listA',
         '#c_2': 'deep',
         '#c_3': 'listB',
         '#c_4': 'value',
         '#c_5': 'listC',
-        '#c_6': 'deep',
-        '#c_7': 'listD',
-        '#c_8': 'value'
+        '#c_6': 'listD'
       },
       ExpressionAttributeValues: {}
     })

@@ -1,5 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { any, anyOf, map, number, string } from '~/schema/index.js'
+import { isString } from '~/utils/validation/isString.js'
 
 import * as schemaParserModule from './schema.js'
 import { anyOfSchemaParser } from './anyOf.js'
@@ -9,7 +10,7 @@ const schemaParser = vi.spyOn(schemaParserModule, 'schemaParser')
 
 describe('anyOfSchemaParser', () => {
   test('applies validation if any', () => {
-    const anyOfA = anyOf(string(), number()).validate(input => typeof input === 'string')
+    const anyOfA = anyOf(string(), number()).validate(isString)
 
     const { value: parsed } = anyOfSchemaParser(anyOfA, 'foo', { fill: false }).next()
     expect(parsed).toStrictEqual('foo')
@@ -26,7 +27,7 @@ describe('anyOfSchemaParser', () => {
     )
 
     const anyOfB = anyOf(string(), number()).validate(input =>
-      typeof input === 'string' ? true : 'Oh no...'
+      isString(input) ? true : 'Oh no...'
     )
 
     const invalidCallB = () =>

@@ -24,7 +24,7 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
   ) as keyof CONDITION & LogicalCombinationOperator
 
   const childrenConditions = condition[logicalCombinationOperator] as unknown as SchemaCondition[]
-  const childrenConditionExpressions: string[] = []
+  const childrenConditionExpressions: (string | symbol)[][] = []
   conditionParser.resetExpression()
   for (const childCondition of childrenConditions) {
     conditionParser.parse(childCondition)
@@ -32,12 +32,21 @@ export const parseLogicalCombinationCondition: AppendLogicalCombinationCondition
   }
 
   if (childrenConditionExpressions.length === 1) {
-    conditionParser.resetExpression(childrenConditionExpressions[0])
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    conditionParser.resetExpression(...childrenConditionExpressions[0]!)
   } else {
-    conditionParser.resetExpression(
-      `(${childrenConditionExpressions.join(
-        `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
-      )})`
-    )
+    conditionParser.resetExpression('(')
+
+    childrenConditionExpressions.forEach((childConditionExpression, index) => {
+      if (index > 0) {
+        conditionParser.appendToExpression(
+          `) ${logicalCombinationOperatorExpression[logicalCombinationOperator]} (`
+        )
+      }
+
+      conditionParser.appendToExpression(...childConditionExpression)
+    })
+
+    conditionParser.appendToExpression(')')
   }
 }

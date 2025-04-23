@@ -5,6 +5,7 @@ import type {
 } from '~/schema/actions/utils/appendAttributePath.js'
 import type { Schema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
+import { isString } from '~/utils/validation/isString.js'
 
 export class PathParser<SCHEMA extends Schema = Schema>
   extends SchemaAction<SCHEMA>
@@ -12,18 +13,22 @@ export class PathParser<SCHEMA extends Schema = Schema>
 {
   static override actionName = 'parsePath' as const
 
-  expressionAttributePrefix: `p${string}_`
-  expressionAttributeNames: string[]
-  expression: string
+  expression: ExpressionParser['expression']
+  expressionAttributeNames: ExpressionParser['expressionAttributeNames']
+  expressionAttributeNameTokens: ExpressionParser['expressionAttributeNameTokens']
+
   id: string
+  expressionAttributePrefix: `p${string}_`
 
   constructor(schema: SCHEMA, id = '') {
     super(schema)
 
-    this.expressionAttributePrefix = `p${id}_`
-    this.expressionAttributeNames = []
-    this.expression = ''
+    this.expression = []
+    this.expressionAttributeNames = {}
+    this.expressionAttributeNameTokens = {}
+
     this.id = id
+    this.expressionAttributePrefix = `p${id}_`
   }
 
   setId(nextId: string): this {
@@ -32,8 +37,8 @@ export class PathParser<SCHEMA extends Schema = Schema>
     return this
   }
 
-  resetExpression(initialStr = ''): this {
-    this.expression = initialStr
+  resetExpression(...expression: (string | symbol)[]): this {
+    this.expression = expression
     return this
   }
 
@@ -41,9 +46,23 @@ export class PathParser<SCHEMA extends Schema = Schema>
     return appendAttributePath(this, attributePath, options)
   }
 
-  appendToExpression(projectionExpressionPart: string): this {
-    this.expression += projectionExpressionPart
+  appendToExpression(...expressionParts: (string | symbol)[]): this {
+    this.expression.push(...expressionParts)
     return this
+  }
+
+  getToken(expressionPart: string): symbol {
+    const prevToken = this.expressionAttributeNameTokens[expressionPart]
+
+    if (prevToken !== undefined) {
+      return prevToken
+    }
+
+    const token = Symbol(expressionPart)
+    this.expressionAttributeNames[token] = expressionPart
+    this.expressionAttributeNameTokens[expressionPart] = token
+
+    return token
   }
 
   parse(attributes: string[]): this {
@@ -69,12 +88,28 @@ export class PathParser<SCHEMA extends Schema = Schema>
   } {
     const ExpressionAttributeNames: Record<string, string> = {}
 
-    this.expressionAttributeNames.forEach((expressionAttributeName, index) => {
-      ExpressionAttributeNames[`#${this.expressionAttributePrefix}${index + 1}`] =
-        expressionAttributeName
-    })
+    const stringTokens: Record<symbol, string> = {}
+    let cursor = 1
+    let ProjectionExpression = ''
 
-    const ProjectionExpression = this.expression
+    for (const expressionPart of this.expression) {
+      if (isString(expressionPart)) {
+        ProjectionExpression += expressionPart
+        continue
+      }
+
+      let stringToken = stringTokens[expressionPart]
+
+      if (stringToken === undefined) {
+        stringToken = `#${this.expressionAttributePrefix}${cursor}`
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ExpressionAttributeNames[stringToken] = this.expressionAttributeNames[expressionPart]!
+        stringTokens[expressionPart] = stringToken
+        cursor++
+      }
+
+      ProjectionExpression += stringToken
+    }
 
     return {
       ExpressionAttributeNames,
@@ -85,8 +120,9 @@ export class PathParser<SCHEMA extends Schema = Schema>
   clone(schema?: Schema): PathParser {
     const clonedParser = new PathParser(schema ?? this.schema, this.id)
 
-    clonedParser.expressionAttributeNames = [...this.expressionAttributeNames]
-    clonedParser.expression = this.expression
+    clonedParser.expression = [...this.expression]
+    clonedParser.expressionAttributeNames = { ...this.expressionAttributeNames }
+    clonedParser.expressionAttributeNameTokens = { ...this.expressionAttributeNameTokens }
 
     return clonedParser
   }
