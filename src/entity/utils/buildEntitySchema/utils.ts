@@ -66,11 +66,11 @@ export const getTimestampOptionValue = <
     const timestampOptions = timestampsOptions[timestampKey]
 
     return isObject(timestampOptions)
-      ? (timestampOptions[optionKey] as TimestampOptionValue<
+      ? ((timestampOptions[optionKey] as TimestampOptionValue<
           TIMESTAMP_OPTIONS,
           TIMESTAMP_KEY,
           OPTION_KEY
-        >) ?? defaultOptions
+        >) ?? defaultOptions)
       : defaultOptions
   }
 
@@ -110,7 +110,7 @@ export const getEntityAttrOptionValue = <
   >
 
   return isObject(entityAttrOptions)
-    ? (entityAttrOptions[optionKey] as EntityAttrOptionValue<ENTITY_ATTR_OPTIONS, OPTION_KEY>) ??
-        defaultOptions
+    ? ((entityAttrOptions[optionKey] as EntityAttrOptionValue<ENTITY_ATTR_OPTIONS, OPTION_KEY>) ??
+        defaultOptions)
     : defaultOptions
 }

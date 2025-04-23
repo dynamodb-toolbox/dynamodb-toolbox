@@ -5,22 +5,7 @@ import type { Schema } from '~/schema/index.js'
 import { NumberSchema } from '~/schema/number/schema.js'
 import { combineRegExp } from '~/utils/combineRegExp.js'
 
-export type AppendAttributePathOptions = { size?: boolean }
-
-export interface ExpressionParser {
-  schema: Schema
-  // --- STATE ---
-  expression: (string | symbol)[]
-  expressionAttributeNames: Record<symbol, string>
-  expressionAttributeNameTokens: Record<string, symbol>
-  getToken: (pathPart: string) => symbol
-  // --- SETTER ---
-  appendToExpression: (...expressionParts: (string | symbol)[]) => void
-  appendAttributePath: (path: string, options?: AppendAttributePathOptions) => Schema
-  // --- UTILS ---
-  clone: (schema?: Schema) => ExpressionParser
-  resetExpression: (...expression: (string | symbol)[]) => void
-}
+import type { AppendAttributePathOptions, ExpressionParser } from './expressionParser.js'
 
 const getInvalidExpressionAttributePathError = (attributePath: string): DynamoDBToolboxError =>
   new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
@@ -70,7 +55,7 @@ export const appendAttributePath = (
             break
           }
           default: {
-            const matchedKeyToken = parser.getToken(matchedKey)
+            const matchedKeyToken = parser.tokenize(matchedKey)
             if (!root) {
               parser.appendToExpression('.')
             }
@@ -91,7 +76,7 @@ export const appendAttributePath = (
       case 'record': {
         const keyAttribute = parentAttr.keys
         const parsedKey = new Parser(keyAttribute).parse(matchedKey, { fill: false })
-        const parsedKeyToken = parser.getToken(parsedKey)
+        const parsedKeyToken = parser.tokenize(parsedKey)
 
         if (!root) {
           parser.appendToExpression('.')
@@ -109,7 +94,7 @@ export const appendAttributePath = (
         }
 
         const attrName = childAttribute.props.savedAs ?? matchedKey
-        const attrNameToken = parser.getToken(attrName)
+        const attrNameToken = parser.tokenize(attrName)
 
         if (!root) {
           parser.appendToExpression('.')
@@ -150,8 +135,7 @@ export const appendAttributePath = (
         }
 
         parser.expressionAttributeNames = validElementExpressionParser.expressionAttributeNames
-        parser.expressionAttributeNameTokens =
-          validElementExpressionParser.expressionAttributeNameTokens
+        parser.expressionAttributeTokens = validElementExpressionParser.expressionAttributeTokens
         if (!root) {
           parser.appendToExpression('.')
         }
