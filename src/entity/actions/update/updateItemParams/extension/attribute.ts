@@ -29,7 +29,7 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       *extensionParser() {
         const { props } = schema
         const { required } = props
-        const path = formatArrayPath(valuePath)
+        const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {

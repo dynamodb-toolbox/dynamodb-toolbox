@@ -14,7 +14,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<MapSchema, OPTIONS>, ParserReturn<MapSchema, OPTIONS>> {
-  const { valuePath = [], ...restOptions } = options
+  const { valuePath, ...restOptions } = options
   const { mode = 'put', fill = true, transform = true } = restOptions
   const parsers: Record<string, Generator<any, any>> = {}
   let restEntries: [string, unknown][] = []
@@ -28,7 +28,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
       .forEach(([attrName, attr]) => {
         parsers[attrName] = schemaParser(attr, inputValue[attrName], {
           ...restOptions,
-          valuePath: [...valuePath, attrName],
+          valuePath: [...(valuePath ?? []), attrName],
           defined: false
         })
 
@@ -69,7 +69,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!isInputValueObject) {
     const { type } = schema
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,

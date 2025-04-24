@@ -14,7 +14,7 @@ export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<PrimitiveSchema, OPTIONS>, ParserReturn<PrimitiveSchema, OPTIONS>> {
-  const { fill = true, transform = true, valuePath = [] } = options
+  const { fill = true, transform = true, valuePath } = options
 
   const linkedValue = inputValue
 
@@ -28,7 +28,7 @@ export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {
 
   if (!isValidPrimitive(schema, linkedValue)) {
     const { type } = schema
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,
@@ -39,7 +39,7 @@ export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {
 
   const { props } = schema
   if (props.enum !== undefined && !(props.enum as unknown[]).includes(linkedValue)) {
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${

@@ -14,7 +14,7 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<RecordSchema, OPTIONS>, ParserReturn<RecordSchema, OPTIONS>> {
-  const { valuePath = [], ...restOptions } = options
+  const { valuePath, ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
   const parsers: [Generator<any, any>, Generator<any, any>][] = []
@@ -30,7 +30,7 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
       }
 
       missingEnumKeys.delete(key)
-      const nextValuePath = [...valuePath, key]
+      const nextValuePath = [...(valuePath ?? []), key]
       parsers.push([
         schemaParser(schema.keys, key, { ...restOptions, valuePath: nextValuePath }),
         schemaParser(schema.elements, element, {
@@ -44,7 +44,7 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!schema.props.partial && options.mode !== 'update') {
     for (const missingKey of missingEnumKeys) {
-      const nextValuePath = [...valuePath, missingKey]
+      const nextValuePath = [...(valuePath ?? []), missingKey]
       parsers.push([
         schemaParser(schema.keys, missingKey, { ...restOptions, valuePath: nextValuePath }),
         schemaParser(schema.elements, undefined, {
@@ -87,7 +87,7 @@ export function* recordSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!isInputValueObject) {
     const { type } = schema
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,

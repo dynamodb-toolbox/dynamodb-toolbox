@@ -40,14 +40,14 @@ export const applyCustomValidation = (
   inputValue: unknown,
   options: ParseAttrValueOptions = {}
 ): void => {
-  const { mode = 'put', valuePath = [] } = options
+  const { mode = 'put', valuePath } = options
 
   const customValidator = getValidator(schema, mode)
   if (customValidator !== undefined) {
     const validationResult = customValidator(inputValue, schema)
 
     if (validationResult !== true) {
-      const path = formatArrayPath(valuePath)
+      const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
       throw new DynamoDBToolboxError('parsing.customValidationFailed', {
         message: `Custom validation${

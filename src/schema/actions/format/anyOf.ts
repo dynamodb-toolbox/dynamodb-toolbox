@@ -72,7 +72,7 @@ export function* anyOfSchemaFormatter(
   const transformedValue = _transformedValue
   const formattedValue = _formattedValue
   if ((transform && transformedValue === undefined) || (format && formattedValue === undefined)) {
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting. Attribute does not match any of the possible sub-types${

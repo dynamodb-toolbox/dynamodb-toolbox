@@ -3,22 +3,23 @@ import { AnySchema } from '~/schema/any/schema.js'
 import type { Schema } from '~/schema/index.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 
+import { Path } from './path.js'
 import type { ArrayPath } from './types.js'
 
 export const getPathSchemas = (
   schema: Schema,
   path: ArrayPath
-): { transformedPath: ArrayPath; subSchema: Schema }[] => {
+): { path: Path; schema: Schema }[] => {
   const [pathHead, ...pathTail] = path
 
   if (pathHead === undefined) {
-    return [{ transformedPath: [], subSchema: schema }]
+    return [{ path: Path.fromArray([]), schema }]
   }
 
   switch (schema.type) {
     case 'any': {
       // Why Required never?
-      return [{ transformedPath: path, subSchema: new AnySchema({ required: 'never' }) }]
+      return [{ path: Path.fromArray(path), schema: new AnySchema({ required: 'never' }) }]
     }
 
     case 'null':
@@ -39,9 +40,9 @@ export const getPathSchemas = (
         return []
       }
 
-      return getPathSchemas(schema.elements, pathTail).map(({ transformedPath, subSchema }) => ({
-        transformedPath: [parsedKey, ...transformedPath],
-        subSchema
+      return getPathSchemas(schema.elements, pathTail).map(({ path, ...rest }) => ({
+        path: path.prepend(Path.fromArray([parsedKey])),
+        ...rest
       }))
     }
     case 'item':
@@ -53,9 +54,9 @@ export const getPathSchemas = (
 
       const transformedLocalPath = childAttribute.props.savedAs ?? pathHead
 
-      return getPathSchemas(childAttribute, pathTail).map(({ transformedPath, subSchema }) => ({
-        transformedPath: [transformedLocalPath, ...transformedPath],
-        subSchema
+      return getPathSchemas(childAttribute, pathTail).map(({ path, ...rest }) => ({
+        path: path.prepend(Path.fromArray([transformedLocalPath])),
+        ...rest
       }))
     }
     case 'list': {
@@ -63,9 +64,9 @@ export const getPathSchemas = (
         return []
       }
 
-      return getPathSchemas(schema.elements, pathTail).map(({ transformedPath, subSchema }) => ({
-        transformedPath: [pathHead, ...transformedPath],
-        subSchema
+      return getPathSchemas(schema.elements, pathTail).map(({ path, ...rest }) => ({
+        path: path.prepend(Path.fromArray([pathHead])),
+        ...rest
       }))
     }
     case 'anyOf': {

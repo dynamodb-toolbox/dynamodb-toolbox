@@ -14,7 +14,7 @@ export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<ListSchema, OPTIONS>, ParserReturn<ListSchema, OPTIONS>> {
-  const { valuePath = [], ...restOptions } = options
+  const { valuePath, ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
   let parsers: Generator<any, any>[] = []
@@ -24,7 +24,7 @@ export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     parsers = inputValue.map((element, index) =>
       schemaParser(schema.elements, element, {
         ...restOptions,
-        valuePath: [...valuePath, index],
+        valuePath: [...(valuePath ?? []), index],
         defined: false
       })
     )
@@ -48,7 +48,7 @@ export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!isInputValueArray) {
     const { type } = schema
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,

@@ -19,7 +19,7 @@ export const parseReferenceExtension: ExtensionParser<
 > = (
   schema: Schema,
   inputValue: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ) => {
   if (!isGetting(inputValue) || inputValue[$GET] === undefined) {
     return {
@@ -32,7 +32,7 @@ export const parseReferenceExtension: ExtensionParser<
     isExtension: true,
     *extensionParser() {
       const references = inputValue[$GET]
-      const referencesPath = [...valuePath, '$GET']
+      const referencesPath = [...(valuePath ?? []), '$GET']
 
       if (!isArray(references)) {
         const path = formatArrayPath(referencesPath)

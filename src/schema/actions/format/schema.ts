@@ -32,7 +32,7 @@ export function* schemaFormatter<
 
   if (rawValue === undefined) {
     if (isRequired(schema) && options.partial !== true) {
-      const path = formatArrayPath(valuePath)
+      const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
       throw new DynamoDBToolboxError('formatter.missingAttribute', {
         message: `Missing required attribute for formatting${

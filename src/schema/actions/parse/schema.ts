@@ -34,7 +34,7 @@ export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
      * @debt type "Maybe there's a way not to have to cast here"
      */
     parseExtension = defaultParseExtension as unknown as NonNullable<OPTIONS['parseExtension']>,
-    valuePath = []
+    valuePath
   } = options
 
   let filledValue = inputValue
@@ -80,7 +80,7 @@ export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 
   if (unextendedInput === undefined) {
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     // We don't need to fill
     if (isRequired(schema, mode) || defined) {

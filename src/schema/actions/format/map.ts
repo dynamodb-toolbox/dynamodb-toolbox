@@ -11,7 +11,7 @@ import { matchProjection, sanitize } from './utils.js'
 export function* mapSchemaFormatter(
   schema: MapSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<MapSchema> = {}
+  { attributes, valuePath, ...restOptions }: FormatAttrValueOptions<MapSchema> = {}
 ): Generator<
   FormatterYield<MapSchema, FormatAttrValueOptions<MapSchema>>,
   FormatterReturn<MapSchema, FormatAttrValueOptions<MapSchema>>
@@ -20,7 +20,7 @@ export function* mapSchemaFormatter(
 
   if (!isObject(rawValue)) {
     const { type } = schema
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -49,7 +49,7 @@ export function* mapSchemaFormatter(
     const attributeSavedAs = transform ? (savedAs ?? attributeName) : attributeName
     formatters[attributeName] = schemaFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
-      valuePath: [...valuePath, attributeSavedAs],
+      valuePath: [...(valuePath ?? []), attributeSavedAs],
       ...restOptions
     })
   }

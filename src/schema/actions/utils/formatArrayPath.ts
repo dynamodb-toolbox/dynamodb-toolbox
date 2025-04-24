@@ -6,11 +6,7 @@ import type { ArrayPath, StrPath } from './types.js'
 
 const charsToEscape: CharsToEscape[] = ['[', ']', '.']
 
-export const formatArrayPath = (arrayPath: ArrayPath | undefined): StrPath | undefined => {
-  if (arrayPath === undefined || arrayPath.length === 0) {
-    return undefined
-  }
-
+export const formatArrayPath = (arrayPath: ArrayPath): StrPath => {
   let path = ''
   let isRoot = true
 

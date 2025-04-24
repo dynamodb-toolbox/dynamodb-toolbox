@@ -12,7 +12,7 @@ import type { UpdateItemInputExtension } from '../../types.js'
 export const parseMapExtension = (
   schema: MapSchema,
   input: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (isSetting(input) && input[$SET] !== undefined) {
     return {
@@ -21,7 +21,7 @@ export const parseMapExtension = (
         const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
-          valuePath: [...valuePath, '$SET']
+          valuePath: [...(valuePath ?? []), '$SET']
         })
 
         const parsedValue = { [$SET]: parser.next().value }

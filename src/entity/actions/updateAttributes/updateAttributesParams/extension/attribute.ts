@@ -22,7 +22,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
   input: unknown,
   options: ExtensionParserOptions = {}
 ) => {
-  const { transform = true, valuePath = [] } = options
+  const { transform = true, valuePath } = options
 
   if (isRemoval(input)) {
     return {
@@ -30,7 +30,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
       *extensionParser() {
         const { props } = schema
         const { required } = props
-        const path = formatArrayPath(valuePath)
+        const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {

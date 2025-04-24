@@ -16,13 +16,14 @@ import {
 import { prefix } from '~/transformers/prefix.js'
 
 import { getPathSchemas } from './getPathSchemas.js'
+import { Path } from './path.js'
 
 describe('getPathSchemas', () => {
   describe('empty path', () => {
     test('returns original schema if path is empty', () => {
       const schema = string()
 
-      expect(getPathSchemas(schema, [])).toStrictEqual([{ transformedPath: [], subSchema: schema }])
+      expect(getPathSchemas(schema, [])).toStrictEqual([{ path: Path.fromArray([]), schema }])
     })
   })
 
@@ -32,8 +33,8 @@ describe('getPathSchemas', () => {
 
       expect(getPathSchemas(anySchema, ['foo'])).toStrictEqual([
         {
-          transformedPath: ['foo'],
-          subSchema: expect.objectContaining(new AnySchema({ required: 'never' }))
+          path: Path.fromArray(['foo']),
+          schema: expect.objectContaining(new AnySchema({ required: 'never' }))
         }
       ])
     })
@@ -74,25 +75,25 @@ describe('getPathSchemas', () => {
 
     test('correctly find schema & transformed path (root)', () => {
       expect(getPathSchemas(schemaWithSavedAs, ['savedAs'])).toStrictEqual([
-        { transformedPath: ['_s'], subSchema: strSchema }
+        { path: Path.fromArray(['_s']), schema: strSchema }
       ])
     })
 
     test('correctly find schema & transformed path (root + escaped string)', () => {
       expect(getPathSchemas(schemaWithSavedAs, ['escaped.['])).toStrictEqual([
-        { transformedPath: ['.[escaped'], subSchema: escapedStrSchema }
+        { path: Path.fromArray(['.[escaped']), schema: escapedStrSchema }
       ])
     })
 
     test('correctly find schema & transformed path (deep)', () => {
       expect(getPathSchemas(schemaWithSavedAs, ['deep', 'savedAs'])).toStrictEqual([
-        { transformedPath: ['_n', '_s'], subSchema: strSchema }
+        { path: Path.fromArray(['_n', '_s']), schema: strSchema }
       ])
     })
 
     test('correctly find schema & transformed path (deep within list)', () => {
       expect(getPathSchemas(schemaWithSavedAs, ['listed', 4, 'savedAs'])).toStrictEqual([
-        { transformedPath: ['_l', 4, '_s'], subSchema: strSchema }
+        { path: Path.fromArray(['_l', 4, '_s']), schema: strSchema }
       ])
     })
   })
@@ -109,13 +110,13 @@ describe('records', () => {
 
   test('correctly find schema & transformed path (root)', () => {
     expect(getPathSchemas(schema, ['record'])).toStrictEqual([
-      { transformedPath: ['_r'], subSchema: recordSchema }
+      { path: Path.fromArray(['_r']), schema: recordSchema }
     ])
   })
 
   test('correctly find schema & transformed path (deep)', () => {
     expect(getPathSchemas(schema, ['record', 'key', 2, 'value'])).toStrictEqual([
-      { transformedPath: ['_r', '_key', 2, '_v'], subSchema: valueSchema }
+      { path: Path.fromArray(['_r', '_key', 2, '_v']), schema: valueSchema }
     ])
   })
 })
@@ -128,13 +129,13 @@ describe('anyOf', () => {
 
   test('correctly find schema & transformed path (root)', () => {
     expect(getPathSchemas(schemaWithAnyOf, ['anyOf'])).toStrictEqual([
-      { transformedPath: ['anyOf'], subSchema: anyOfAttrSchema }
+      { path: Path.fromArray(['anyOf']), schema: anyOfAttrSchema }
     ])
   })
 
   test('correctly find schema & transformed path (deep num)', () => {
     expect(getPathSchemas(schemaWithAnyOf, ['anyOf', 'strOrNum'])).toStrictEqual([
-      { transformedPath: ['anyOf', 'strOrNum'], subSchema: strOrNumSchema }
+      { path: Path.fromArray(['anyOf', 'strOrNum']), schema: strOrNumSchema }
     ])
   })
 
@@ -147,8 +148,8 @@ describe('anyOf', () => {
     })
 
     expect(getPathSchemas(deepAnyOf, ['anyOf', 'status'])).toStrictEqual([
-      { transformedPath: ['anyOf', 'status'], subSchema: statusSchemaA },
-      { transformedPath: ['anyOf', '_st'], subSchema: statusSchemaB }
+      { path: Path.fromArray(['anyOf', 'status']), schema: statusSchemaA },
+      { path: Path.fromArray(['anyOf', '_st']), schema: statusSchemaB }
     ])
   })
 })

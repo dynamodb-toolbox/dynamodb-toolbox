@@ -16,7 +16,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<AnyOfSchema, OPTIONS>, ParserReturn<AnyOfSchema, OPTIONS>> {
   const { discriminator } = schema.props
-  const { fill = true, transform = true, valuePath = [] } = options
+  const { fill = true, transform = true, valuePath } = options
 
   let parser: Generator<any, any> | undefined = undefined
   let _defaultedValue = undefined
@@ -70,7 +70,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = _parsedValue
   if (parser === undefined || parsedValue === undefined) {
-    const path = formatArrayPath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${
