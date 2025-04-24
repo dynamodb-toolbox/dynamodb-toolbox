@@ -1,3 +1,4 @@
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { Paths, Schema } from '~/schema/index.js'
 
 export interface FormatValueOptions<SCHEMA extends Schema> {
@@ -8,7 +9,7 @@ export interface FormatValueOptions<SCHEMA extends Schema> {
 }
 
 export interface FormatAttrValueOptions<SCHEMA extends Schema> extends FormatValueOptions<SCHEMA> {
-  valuePath?: (string | number)[]
+  valuePath?: ArrayPath
 }
 
 export interface InferReadValueOptions<

@@ -1,3 +1,4 @@
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { Extension, ItemSchema, Schema, SchemaUnextendedValue } from '~/schema/index.js'
 
 import type { TransformedValue } from './transformedValue.js'
@@ -9,7 +10,7 @@ export type $extension = typeof $extension
 export const $contextExtension = Symbol('$contextExtension')
 export type $contextExtension = typeof $contextExtension
 
-export type ExtensionParserOptions = { transform?: boolean; valuePath?: (string | number)[] }
+export type ExtensionParserOptions = { transform?: boolean; valuePath?: ArrayPath }
 
 export type ExtensionParser<
   EXTENSION extends Extension = Extension,

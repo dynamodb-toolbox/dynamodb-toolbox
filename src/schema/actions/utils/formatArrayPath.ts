@@ -2,16 +2,19 @@ import type { CharsToEscape } from '~/schema/types/paths.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import type { ArrayPath, StrPath } from './types.js'
+
 const charsToEscape: CharsToEscape[] = ['[', ']', '.']
-export const formatValuePath = (valuePath: (string | number)[] | undefined): string | undefined => {
-  if (valuePath === undefined || valuePath.length === 0) {
+
+export const formatArrayPath = (arrayPath: ArrayPath | undefined): StrPath | undefined => {
+  if (arrayPath === undefined || arrayPath.length === 0) {
     return undefined
   }
 
   let path = ''
   let isRoot = true
 
-  for (const valuePathPart of valuePath) {
+  for (const valuePathPart of arrayPath) {
     if (isString(valuePathPart)) {
       const shouldBeEscaped = charsToEscape.some(charToEscape =>
         valuePathPart.includes(charToEscape)

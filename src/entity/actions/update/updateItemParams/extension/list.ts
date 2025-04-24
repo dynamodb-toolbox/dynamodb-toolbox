@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -222,7 +222,7 @@ export const parseListExtension = (
 
         for (const inputKey of Object.keys(parsers)) {
           const parsedInputKey = parseFloat(inputKey)
-          const path = formatValuePath(valuePath)
+          const path = formatArrayPath(valuePath)
 
           if (!isInteger(parsedInputKey)) {
             throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

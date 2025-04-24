@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { SetSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
@@ -48,7 +48,7 @@ export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!isInputValueSet) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,

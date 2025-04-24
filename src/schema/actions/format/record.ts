@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { RecordSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -21,7 +21,7 @@ export function* recordSchemaFormatter(
 
   if (!isObject(rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${

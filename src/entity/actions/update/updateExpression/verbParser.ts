@@ -1,4 +1,5 @@
 import { ExpressionParser } from '~/schema/actions/utils/expressionParser.js'
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { Schema, TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -32,7 +33,7 @@ export class UpdateExpressionVerbParser<
     }
   }
 
-  appendValidAttributePath = (validAttributePath: (string | number)[]): void => {
+  appendValidAttributePath = (validAttributePath: ArrayPath): void => {
     validAttributePath.forEach((pathPart, index) => {
       if (isString(pathPart)) {
         if (index > 0) {

@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { Schema, SchemaRequiredProp } from '~/schema/index.js'
 
 import { anySchemaFormatter } from './any.js'
@@ -32,7 +32,7 @@ export function* schemaFormatter<
 
   if (rawValue === undefined) {
     if (isRequired(schema) && options.partial !== true) {
-      const path = formatValuePath(valuePath)
+      const path = formatArrayPath(valuePath)
 
       throw new DynamoDBToolboxError('formatter.missingAttribute', {
         message: `Missing required attribute for formatting${

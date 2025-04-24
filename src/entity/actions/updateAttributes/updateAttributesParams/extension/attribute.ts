@@ -3,7 +3,7 @@ import { parseNumberExtension } from '~/entity/actions/update/updateItemParams/e
 import { parseReferenceExtension } from '~/entity/actions/update/updateItemParams/extension/reference.js'
 import { parseSetExtension } from '~/entity/actions/update/updateItemParams/extension/set.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -30,7 +30,7 @@ export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInp
       *extensionParser() {
         const { props } = schema
         const { required } = props
-        const path = formatValuePath(valuePath)
+        const path = formatArrayPath(valuePath)
 
         if (required !== 'never') {
           throw new DynamoDBToolboxError('parsing.attributeRequired', {

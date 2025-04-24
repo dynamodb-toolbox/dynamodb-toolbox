@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { InputValue, ItemSchema, Schema, WriteMode } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isFunction } from '~/utils/validation/isFunction.js'
@@ -80,7 +80,7 @@ export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   }
 
   if (unextendedInput === undefined) {
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     // We don't need to fill
     if (isRequired(schema, mode) || defined) {

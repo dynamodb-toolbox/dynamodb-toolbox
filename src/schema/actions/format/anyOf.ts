@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import { $discriminators } from '~/schema/anyOf/constants.js'
 import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -72,7 +72,7 @@ export function* anyOfSchemaFormatter(
   const transformedValue = _transformedValue
   const formattedValue = _formattedValue
   if ((transform && transformedValue === undefined) || (format && formattedValue === undefined)) {
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting. Attribute does not match any of the possible sub-types${

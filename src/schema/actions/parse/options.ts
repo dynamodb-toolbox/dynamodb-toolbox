@@ -1,3 +1,4 @@
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { $contextExtension, $extension, ExtensionParser, WriteMode } from '~/schema/index.js'
 
 export interface ParseValueOptions {
@@ -9,7 +10,7 @@ export interface ParseValueOptions {
 }
 
 export interface ParseAttrValueOptions extends ParseValueOptions {
-  valuePath?: (string | number)[]
+  valuePath?: ArrayPath
 }
 
 export interface InferWriteValueOptions<

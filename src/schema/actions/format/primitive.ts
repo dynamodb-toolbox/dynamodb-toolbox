@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { PrimitiveSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
@@ -18,7 +18,7 @@ export function* primitiveSchemaFormatter(
   const { props } = schema
   if (!isValidPrimitive(schema, rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -38,7 +38,7 @@ export function* primitiveSchemaFormatter(
   }
 
   if (props.enum !== undefined && !(props.enum as unknown[]).includes(transformedValue)) {
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${

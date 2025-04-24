@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { SetSchema } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
@@ -19,7 +19,7 @@ export function* setSchemaFormatter(
 
   if (!isSet(rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${

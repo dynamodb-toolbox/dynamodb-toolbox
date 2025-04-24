@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -28,7 +28,7 @@ export const parseNumberExtension = (
         const sumValuePath = [...valuePath, '$SUM']
 
         if (!isArray(sumElements) || sumElements.length !== 2) {
-          const path = formatValuePath(sumValuePath)
+          const path = formatArrayPath(sumValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Sum for number attribute ${
@@ -77,7 +77,7 @@ export const parseNumberExtension = (
         const subtractValuePath = [...valuePath, '$SUBTRACT']
 
         if (!isArray(subtractElements) || subtractElements.length !== 2) {
-          const path = formatValuePath(subtractValuePath)
+          const path = formatArrayPath(subtractValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Subtraction for number attribute ${

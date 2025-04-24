@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { PrimitiveSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
@@ -28,7 +28,7 @@ export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {
 
   if (!isValidPrimitive(schema, linkedValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,
@@ -39,7 +39,7 @@ export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {
 
   const { props } = schema
   if (props.enum !== undefined && !(props.enum as unknown[]).includes(linkedValue)) {
-    const path = formatValuePath(valuePath)
+    const path = formatArrayPath(valuePath)
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${
