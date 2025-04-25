@@ -6,7 +6,7 @@ import type { ConditionParser } from './conditionParser.js'
 export type AppendAttributeValueOptions = { transform?: boolean }
 
 export const appendAttributeValue = (
-  conditionParser: ConditionParser,
+  parser: ConditionParser,
   schema: Schema,
   expressionAttributeValue: unknown,
   options: AppendAttributeValueOptions = {}
@@ -18,9 +18,7 @@ export const appendAttributeValue = (
     transform
   })
 
-  const expressionAttributeValueIndex = conditionParser.expressionAttributeValues.push(parsed)
+  const expressionAttributeValueIndex = parser.expressionAttributeValues.push(parsed)
 
-  conditionParser.appendToExpression(
-    `:${conditionParser.expressionAttributePrefix}${expressionAttributeValueIndex}`
-  )
+  parser.appendToExpression(`:${parser.expressionTokenPrefix}${expressionAttributeValueIndex}`)
 }

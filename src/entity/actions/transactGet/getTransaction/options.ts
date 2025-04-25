@@ -26,7 +26,6 @@ export const parseOptions: OptionsParser = (entity, options) => {
     const { ExpressionAttributeNames, ProjectionExpression } = entity
       .build(EntityPathParser)
       .parse(attributes)
-      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames

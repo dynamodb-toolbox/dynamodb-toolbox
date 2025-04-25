@@ -1,8 +1,5 @@
-import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
-import type {
-  AppendAttributePathOptions,
-  ExpressionParser
-} from '~/schema/actions/utils/appendAttributePath.js'
+import { ExpressionParser } from '~/schema/actions/utils/expressionParser.js'
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { Schema, TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
@@ -11,60 +8,23 @@ import { $GET, isGetting } from '../symbols/index.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
 import type { ParsedUpdate } from './type.js'
 
-export class UpdateExpressionVerbParser implements ExpressionParser {
-  schema: Schema
-  expression: ExpressionParser['expression']
-  expressionAttributeNames: ExpressionParser['expressionAttributeNames']
-  expressionAttributeNameTokens: ExpressionParser['expressionAttributeNameTokens']
-
-  id: string
+export class UpdateExpressionVerbParser<
+  SCHEMA extends Schema = Schema
+> extends ExpressionParser<SCHEMA> {
   verbPrefix: 's' | 'r' | 'a' | 'd'
-  expressionAttributePrefix: `${'s' | 'r' | 'a' | 'd'}${string}_`
   expressionAttributeValues: unknown[]
 
-  constructor(schema: Schema, verbPrefix: 's' | 'r' | 'a' | 'd', id = '') {
-    this.schema = schema
-    this.expression = []
-    this.expressionAttributeNames = {}
-    this.expressionAttributeNameTokens = {}
-
+  constructor(schema: SCHEMA, verbPrefix: 's' | 'r' | 'a' | 'd', expressionId = '') {
+    super(schema, expressionId)
     this.verbPrefix = verbPrefix
-    this.expressionAttributePrefix = `${verbPrefix}${id}_`
+    this.expressionTokenPrefix = `${verbPrefix}${this.expressionId}_`
     this.expressionAttributeValues = []
-    this.id = id
   }
-
-  resetExpression(...expression: (string | symbol)[]): this {
-    this.expression = expression
-    return this
-  }
-
-  getToken(expressionPart: string): symbol {
-    const prevToken = this.expressionAttributeNameTokens[expressionPart]
-
-    if (prevToken !== undefined) {
-      return prevToken
-    }
-
-    const token = Symbol(expressionPart)
-    this.expressionAttributeNames[token] = expressionPart
-    this.expressionAttributeNameTokens[expressionPart] = token
-
-    return token
-  }
-
-  appendAttributePath = (attributePath: string, options: AppendAttributePathOptions = {}): Schema =>
-    appendAttributePath(this, attributePath, options)
 
   appendAttributeValue = (_: Schema, attributeValue: unknown): void => {
     const expressionAttributeValueIndex = this.expressionAttributeValues.push(attributeValue)
 
-    this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
-  }
-
-  appendToExpression(...expressionParts: (string | symbol)[]): this {
-    this.expression.push(...expressionParts)
-    return this
+    this.appendToExpression(`:${this.expressionTokenPrefix}${expressionAttributeValueIndex}`)
   }
 
   beginNewInstruction = () => {
@@ -73,14 +33,14 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
     }
   }
 
-  appendValidAttributePath = (validAttributePath: (string | number)[]): void => {
+  appendValidAttributePath = (validAttributePath: ArrayPath): void => {
     validAttributePath.forEach((pathPart, index) => {
       if (isString(pathPart)) {
         if (index > 0) {
           this.appendToExpression('.')
         }
 
-        this.appendToExpression(this.getToken(pathPart))
+        this.appendToExpression(this.tokenize(pathPart))
       }
 
       if (isNumber(pathPart)) {
@@ -119,61 +79,35 @@ export class UpdateExpressionVerbParser implements ExpressionParser {
 
     const expressionAttributeValueIndex = this.expressionAttributeValues.push(validAttributeValue)
 
-    this.appendToExpression(`:${this.expressionAttributePrefix}${expressionAttributeValueIndex}`)
+    this.appendToExpression(`:${this.expressionTokenPrefix}${expressionAttributeValueIndex}`)
   }
 
-  /**
-   * @debt refactor "factorize with other expressions"
-   */
   toCommandOptions = (): ParsedUpdate => {
-    const ExpressionAttributeNames: ParsedUpdate['ExpressionAttributeNames'] = {}
-
-    const stringTokens: Record<symbol, string> = {}
-    let cursor = 1
-    let UpdateExpression = ''
-
-    for (const expressionPart of this.expression) {
-      if (isString(expressionPart)) {
-        UpdateExpression += expressionPart
-        continue
-      }
-
-      let stringToken = stringTokens[expressionPart]
-
-      if (stringToken === undefined) {
-        stringToken = `#${this.expressionAttributePrefix}${cursor}`
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        ExpressionAttributeNames[stringToken] = this.expressionAttributeNames[expressionPart]!
-        stringTokens[expressionPart] = stringToken
-        cursor++
-      }
-
-      UpdateExpression += stringToken
-    }
+    const { Expression: UpdateExpression, ExpressionAttributeNames } = this.resolve()
 
     const ExpressionAttributeValues: ParsedUpdate['ExpressionAttributeValues'] = {}
     this.expressionAttributeValues.forEach((expressionAttributeValue, index) => {
-      ExpressionAttributeValues[`:${this.expressionAttributePrefix}${index + 1}`] =
+      ExpressionAttributeValues[`:${this.expressionTokenPrefix}${index + 1}`] =
         expressionAttributeValue
     })
 
     return {
+      UpdateExpression,
       ExpressionAttributeNames,
-      ExpressionAttributeValues,
-      UpdateExpression
+      ExpressionAttributeValues
     }
   }
 
-  clone = (schema?: Schema): UpdateExpressionVerbParser => {
+  override clone(schema?: Schema): UpdateExpressionVerbParser {
     const clonedParser = new UpdateExpressionVerbParser(
       schema ?? this.schema,
       this.verbPrefix,
-      this.id
+      this.expressionId
     )
 
     clonedParser.expression = [...this.expression]
     clonedParser.expressionAttributeNames = { ...this.expressionAttributeNames }
-    clonedParser.expressionAttributeNameTokens = { ...this.expressionAttributeNameTokens }
+    clonedParser.expressionAttributeTokens = { ...this.expressionAttributeTokens }
 
     clonedParser.expressionAttributeValues = [...this.expressionAttributeValues]
 

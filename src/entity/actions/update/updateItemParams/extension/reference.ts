@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -19,7 +19,7 @@ export const parseReferenceExtension: ExtensionParser<
 > = (
   schema: Schema,
   inputValue: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ) => {
   if (!isGetting(inputValue) || inputValue[$GET] === undefined) {
     return {
@@ -32,10 +32,10 @@ export const parseReferenceExtension: ExtensionParser<
     isExtension: true,
     *extensionParser() {
       const references = inputValue[$GET]
-      const referencesPath = [...valuePath, '$GET']
+      const referencesPath = [...(valuePath ?? []), '$GET']
 
       if (!isArray(references)) {
-        const path = formatValuePath(referencesPath)
+        const path = formatArrayPath(referencesPath)
 
         throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
           message: `References ${
@@ -49,7 +49,7 @@ export const parseReferenceExtension: ExtensionParser<
       const [reference, fallback] = references
 
       if (!isString(reference)) {
-        const path = formatValuePath([...referencesPath, 0])
+        const path = formatArrayPath([...referencesPath, 0])
 
         throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
           message: `First elements of references ${

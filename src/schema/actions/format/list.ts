@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { ListSchema } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 
@@ -11,7 +11,7 @@ import { matchProjection } from './utils.js'
 export function* listSchemaFormatter(
   schema: ListSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<ListSchema> = {}
+  { attributes, valuePath, ...restOptions }: FormatAttrValueOptions<ListSchema> = {}
 ): Generator<
   FormatterYield<ListSchema, FormatAttrValueOptions<ListSchema>>,
   FormatterReturn<ListSchema, FormatAttrValueOptions<ListSchema>>
@@ -20,7 +20,7 @@ export function* listSchemaFormatter(
 
   if (!isArray(rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -40,7 +40,7 @@ export function* listSchemaFormatter(
   const formatters = rawValue.map((element, index) =>
     schemaFormatter(schema.elements, element, {
       attributes: childrenAttributes,
-      valuePath: [...valuePath, index],
+      valuePath: [...(valuePath ?? []), index],
       ...restOptions
     })
   )

@@ -1,5 +1,6 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
+import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { Schema, SchemaExtendedValue, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -43,7 +44,7 @@ export class UpdateExpressionParser {
 
   parseUpdate = (
     parsedValue: ValidValue<Schema, { mode: 'update'; extension: UpdateItemInputExtension }>,
-    currentPath: (string | number)[] = []
+    currentPath: ArrayPath = []
   ): void => {
     if (parsedValue === undefined) {
       return

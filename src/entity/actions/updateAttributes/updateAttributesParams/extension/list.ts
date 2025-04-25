@@ -23,12 +23,12 @@ export const parseListExtension = (
   input: unknown,
   options: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateAttributesInputExtension>> => {
-  const { transform = true, valuePath = [] } = options
+  const { transform = true, valuePath } = options
 
   if (isObject(input)) {
     if (isAppending(input) && input[$APPEND] !== undefined) {
       const appendedValue = input[$APPEND]
-      const appendedValuePath = [...valuePath, '$APPEND']
+      const appendedValuePath = [...(valuePath ?? []), '$APPEND']
 
       if (isArray(appendedValue)) {
         return {
@@ -81,7 +81,7 @@ export const parseListExtension = (
 
     if (isPrepending(input) && input[$PREPEND] !== undefined) {
       const prependedValue = input[$PREPEND]
-      const prependedValuePath = [...valuePath, '$PREPEND']
+      const prependedValuePath = [...(valuePath ?? []), '$PREPEND']
 
       if (isArray(prependedValue)) {
         return {

@@ -182,7 +182,7 @@ export const scanParams: ScanParamsGetter = <
         const {
           ExpressionAttributeNames: projectionExpressionAttributeNames,
           ProjectionExpression
-        } = entity.build(EntityPathParser).parse(attributes).toCommandOptions()
+        } = entity.build(EntityPathParser).parse(attributes)
 
         Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
         projectionExpression = ProjectionExpression

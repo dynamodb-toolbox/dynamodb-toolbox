@@ -1,6 +1,7 @@
 import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { PathParser } from '~/schema/actions/parsePaths/index.js'
+import type { ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
 import type { Paths } from '~/schema/index.js'
 
 import { $pathParser } from './constants.js'
@@ -10,26 +11,13 @@ export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityActi
 
   [$pathParser]: PathParser<ENTITY['schema']>
 
-  constructor(entity: ENTITY, id: string = '') {
+  constructor(entity: ENTITY) {
     super(entity)
-    this[$pathParser] = new PathParser(entity.schema, id)
+    this[$pathParser] = new PathParser(entity.schema)
   }
 
-  setId(nextId: string): this {
-    this[$pathParser].setId(nextId)
-    return this
-  }
-
-  parse = (attributes: string[]): this => {
-    this[$pathParser].parse(attributes)
-    return this
-  }
-
-  toCommandOptions(): {
-    ProjectionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-  } {
-    return this[$pathParser].toCommandOptions()
+  parse = (attributes: string[], expressionId = ''): ProjectionExpression => {
+    return this[$pathParser].parse(attributes, expressionId)
   }
 }
 

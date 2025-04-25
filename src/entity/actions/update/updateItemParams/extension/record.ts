@@ -17,7 +17,7 @@ import { parseUpdateExtension } from './attribute.js'
 function* recordElementsParser(
   schema: RecordSchema,
   inputValue: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): Generator<
   ValidValue<Schema, { extension: UpdateItemInputExtension }>,
   | ValidValue<Schema, { extension: UpdateItemInputExtension }>
@@ -47,7 +47,7 @@ function* recordElementsParser(
 export const parseRecordExtension = (
   schema: RecordSchema,
   input: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (isSetting(input) && input[$SET] !== undefined) {
     return {
@@ -56,7 +56,7 @@ export const parseRecordExtension = (
         const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
-          valuePath: [...valuePath, '$SET']
+          valuePath: [...(valuePath ?? []), '$SET']
         })
 
         const parsedValue = { [$SET]: parser.next().value }
@@ -82,7 +82,7 @@ export const parseRecordExtension = (
             new Parser(schema.keys).start(inputKey, { fill: false, transform }),
             recordElementsParser(schema, inputValue, {
               transform,
-              valuePath: [...valuePath, inputKey]
+              valuePath: [...(valuePath ?? []), inputKey]
             })
           ])
 

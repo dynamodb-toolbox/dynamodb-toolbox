@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { ExtensionParser, Schema, SchemaUnextendedValue, WriteMode } from '~/schema/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
@@ -40,14 +40,14 @@ export const applyCustomValidation = (
   inputValue: unknown,
   options: ParseAttrValueOptions = {}
 ): void => {
-  const { mode = 'put', valuePath = [] } = options
+  const { mode = 'put', valuePath } = options
 
   const customValidator = getValidator(schema, mode)
   if (customValidator !== undefined) {
     const validationResult = customValidator(inputValue, schema)
 
     if (validationResult !== true) {
-      const path = formatValuePath(valuePath)
+      const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
       throw new DynamoDBToolboxError('parsing.customValidationFailed', {
         message: `Custom validation${

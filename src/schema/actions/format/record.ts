@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { RecordSchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -12,7 +12,7 @@ import { matchProjection, sanitize } from './utils.js'
 export function* recordSchemaFormatter(
   schema: RecordSchema,
   rawValue: unknown,
-  { attributes, valuePath = [], ...restOptions }: FormatAttrValueOptions<RecordSchema> = {}
+  { attributes, valuePath, ...restOptions }: FormatAttrValueOptions<RecordSchema> = {}
 ): Generator<
   FormatterYield<RecordSchema, FormatAttrValueOptions<RecordSchema>>,
   FormatterReturn<RecordSchema, FormatAttrValueOptions<RecordSchema>>
@@ -21,7 +21,7 @@ export function* recordSchemaFormatter(
 
   if (!isObject(rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -42,7 +42,7 @@ export function* recordSchemaFormatter(
 
     // NOTE: If transform is true, `key` is the transformed value which is what we want
     // If not, `key` should already be formatted, which is what we also want
-    const elmtValuePath = [...valuePath, key]
+    const elmtValuePath = [...(valuePath ?? []), key]
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const formattedKey = new Formatter(schema.keys).format(key, {
@@ -85,8 +85,11 @@ export function* recordSchemaFormatter(
 
       const elmtValuePath =
         transform && schema.keys.props.transform !== undefined
-          ? [...valuePath, (schema.keys.props.transform as Transformer<string>).encode(missingKey)]
-          : [...valuePath, missingKey]
+          ? [
+              ...(valuePath ?? []),
+              (schema.keys.props.transform as Transformer<string>).encode(missingKey)
+            ]
+          : [...(valuePath ?? []), missingKey]
 
       formatters.push([
         missingKey,

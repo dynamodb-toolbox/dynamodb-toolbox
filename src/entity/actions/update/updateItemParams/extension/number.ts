@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -16,7 +16,7 @@ import { parseReferenceExtension } from './reference.js'
 export const parseNumberExtension = (
   schema: NumberSchema,
   inputValue: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions = {}
+  { transform = true, valuePath }: ExtensionParserOptions = {}
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   const { props } = schema
 
@@ -25,10 +25,10 @@ export const parseNumberExtension = (
       isExtension: true,
       *extensionParser() {
         const sumElements = inputValue[$SUM]
-        const sumValuePath = [...valuePath, '$SUM']
+        const sumValuePath = [...(valuePath ?? []), '$SUM']
 
         if (!isArray(sumElements) || sumElements.length !== 2) {
-          const path = formatValuePath(sumValuePath)
+          const path = formatArrayPath(sumValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Sum for number attribute ${
@@ -74,10 +74,10 @@ export const parseNumberExtension = (
       isExtension: true,
       *extensionParser() {
         const subtractElements = inputValue[$SUBTRACT]
-        const subtractValuePath = [...valuePath, '$SUBTRACT']
+        const subtractValuePath = [...(valuePath ?? []), '$SUBTRACT']
 
         if (!isArray(subtractElements) || subtractElements.length !== 2) {
-          const path = formatValuePath(subtractValuePath)
+          const path = formatArrayPath(subtractValuePath)
 
           throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
             message: `Subtraction for number attribute ${
@@ -125,7 +125,7 @@ export const parseNumberExtension = (
       fill: false,
       transform,
       parseExtension: parseReferenceExtension,
-      valuePath: [...valuePath, '$ADD']
+      valuePath: [...(valuePath ?? []), '$ADD']
     })
 
     return {

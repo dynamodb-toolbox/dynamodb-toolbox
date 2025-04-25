@@ -1,73 +1,30 @@
 import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
 
-import { appendAttributePath } from '~/schema/actions/utils/appendAttributePath.js'
-import type {
-  AppendAttributePathOptions,
-  ExpressionParser
-} from '~/schema/actions/utils/appendAttributePath.js'
+import type { AppendAttributePathOptions } from '~/schema/actions/utils/expressionParser.js'
+import { ExpressionParser } from '~/schema/actions/utils/expressionParser.js'
 import type { Schema } from '~/schema/index.js'
-import { SchemaAction } from '~/schema/index.js'
 
-import { appendAttributeValue } from './appendAttributeValue.js'
 import type { AppendAttributeValueOptions } from './appendAttributeValue.js'
+import { appendAttributeValue } from './appendAttributeValue.js'
 import { appendAttributeValueOrPath } from './appendAttributeValueOrPath.js'
 import type { SchemaCondition } from './condition.js'
 import { parseCondition } from './parseCondition/index.js'
-import { toCommandOptions } from './toCommandOptions.js'
 
-export class ConditionParser<SCHEMA extends Schema = Schema>
-  extends SchemaAction<SCHEMA>
-  implements ExpressionParser
-{
+export class ConditionParser<SCHEMA extends Schema = Schema> extends ExpressionParser<SCHEMA> {
   static override actionName = 'parseCondition' as const
 
-  expression: ExpressionParser['expression']
-  expressionAttributeNames: ExpressionParser['expressionAttributeNames']
-  expressionAttributeNameTokens: ExpressionParser['expressionAttributeNameTokens']
-
-  id: string
-  expressionAttributePrefix: `c${string}_`
   expressionAttributeValues: unknown[]
 
-  constructor(schema: SCHEMA, id = '') {
-    super(schema)
-
-    this.expression = []
-    this.expressionAttributeNames = {}
-    this.expressionAttributeNameTokens = {}
-
-    this.id = id
-    this.expressionAttributePrefix = `c${id}_`
+  constructor(schema: SCHEMA, expressionId = '') {
+    super(schema, expressionId)
+    this.expressionTokenPrefix = `c${this.expressionId}_`
     this.expressionAttributeValues = []
   }
 
-  setId(nextId: string): this {
-    this.id = nextId
-    this.expressionAttributePrefix = `c${nextId}_`
+  override setId(nextId: string): this {
+    this.expressionId = nextId
+    this.expressionTokenPrefix = `c${nextId}_`
     return this
-  }
-
-  resetExpression(...expression: (string | symbol)[]): this {
-    this.expression = expression
-    return this
-  }
-
-  getToken(expressionPart: string): symbol {
-    const prevToken = this.expressionAttributeNameTokens[expressionPart]
-
-    if (prevToken !== undefined) {
-      return prevToken
-    }
-
-    const token = Symbol(expressionPart)
-    this.expressionAttributeNames[token] = expressionPart
-    this.expressionAttributeNameTokens[expressionPart] = token
-
-    return token
-  }
-
-  appendAttributePath(attributePath: string, options: AppendAttributePathOptions = {}): Schema {
-    return appendAttributePath(this, attributePath, options)
   }
 
   appendAttributeValue(
@@ -88,11 +45,6 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
     return this
   }
 
-  appendToExpression(...expressionParts: (string | symbol)[]): this {
-    this.expression.push(...expressionParts)
-    return this
-  }
-
   parse(condition: SchemaCondition): this {
     parseCondition(this, condition)
     return this
@@ -103,15 +55,27 @@ export class ConditionParser<SCHEMA extends Schema = Schema>
     ExpressionAttributeNames: Record<string, string>
     ExpressionAttributeValues: Record<string, NativeAttributeValue>
   } {
-    return toCommandOptions(this)
+    const { Expression: ConditionExpression, ExpressionAttributeNames } = this.resolve()
+
+    const ExpressionAttributeValues: Record<string, NativeAttributeValue> = {}
+    this.expressionAttributeValues.forEach((expressionAttributeValue, index) => {
+      ExpressionAttributeValues[`:${this.expressionTokenPrefix}${index + 1}`] =
+        expressionAttributeValue
+    })
+
+    return {
+      ExpressionAttributeNames,
+      ExpressionAttributeValues,
+      ConditionExpression
+    }
   }
 
-  clone(schema?: Schema): ConditionParser {
-    const clonedParser = new ConditionParser(schema ?? this.schema, this.id)
+  override clone(schema?: Schema): ConditionParser {
+    const clonedParser = new ConditionParser(schema ?? this.schema, this.expressionId)
 
     clonedParser.expression = [...this.expression]
     clonedParser.expressionAttributeNames = { ...this.expressionAttributeNames }
-    clonedParser.expressionAttributeNameTokens = { ...this.expressionAttributeNameTokens }
+    clonedParser.expressionAttributeTokens = { ...this.expressionAttributeTokens }
 
     clonedParser.expressionAttributeValues = [...this.expressionAttributeValues]
 

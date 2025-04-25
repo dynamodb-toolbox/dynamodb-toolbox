@@ -102,14 +102,14 @@ export class BatchGetCommand<
   }
 
   params(): NonNullable<BatchGetCommandInput['RequestItems']> {
-    if (this[$requests] === undefined || this[$requests].length === 0) {
+    const requests = this[$requests] ?? []
+    const firstRequest = requests[0]
+    if (firstRequest === undefined) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchGetCommand incomplete: No BatchGetRequest supplied'
       })
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const firstRequest = this[$requests][0]!
     const firstRequestEntity = firstRequest.entity
 
     const { consistent, attributes: _attributes, tableName, ...extraOptions } = this[$options] ?? {}
@@ -126,11 +126,11 @@ export class BatchGetCommand<
     /**
      * @debt feature "For now, we compute the projectionExpression using the first entity. To improve."
      */
-    if (attributes !== undefined) {
-      const { ExpressionAttributeNames: projectionExpressionAttributeNames, ProjectionExpression } =
-        firstRequestEntity.build(EntityPathParser).parse(attributes).toCommandOptions()
+    if (attributes !== undefined && attributes.length > 0) {
+      const { ExpressionAttributeNames: projectionAttributeNames, ProjectionExpression } =
+        firstRequestEntity.build(EntityPathParser).parse(attributes)
 
-      Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
+      Object.assign(expressionAttributeNames, projectionAttributeNames)
       projectionExpression = ProjectionExpression
 
       const { partitionKey, sortKey, entityAttributeSavedAs } = this.table
@@ -156,7 +156,7 @@ export class BatchGetCommand<
 
     const keys: Record<string, any>[] = []
 
-    for (const request of this[$requests]) {
+    for (const request of requests) {
       const key = request.params()
       keys.push(key)
     }

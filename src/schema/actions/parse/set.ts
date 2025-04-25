@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { SetSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isSet } from '~/utils/validation/isSet.js'
@@ -14,7 +14,7 @@ export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   inputValue: unknown,
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<SetSchema, OPTIONS>, ParserReturn<SetSchema, OPTIONS>> {
-  const { valuePath = [], ...restOptions } = options
+  const { valuePath, ...restOptions } = options
   const { fill = true, transform = true } = restOptions
 
   let parsers: Generator<any, any>[] = []
@@ -24,7 +24,7 @@ export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     parsers = [...inputValue.values()].map((element, index) =>
       schemaParser(schema.elements, element, {
         ...restOptions,
-        valuePath: [...valuePath, index],
+        valuePath: [...(valuePath ?? []), index],
         defined: false
       })
     )
@@ -48,7 +48,7 @@ export function* setSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   if (!isInputValueSet) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${path !== undefined ? ` '${path}'` : ''} should be a ${type}.`,

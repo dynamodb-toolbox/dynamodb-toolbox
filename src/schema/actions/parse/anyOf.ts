@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { AnyOfSchema } from '~/schema/index.js'
 import { cloneDeep } from '~/utils/cloneDeep.js'
 import { isObject } from '~/utils/validation/isObject.js'
@@ -16,7 +16,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   options: OPTIONS = {} as OPTIONS
 ): Generator<ParserYield<AnyOfSchema, OPTIONS>, ParserReturn<AnyOfSchema, OPTIONS>> {
   const { discriminator } = schema.props
-  const { fill = true, transform = true, valuePath = [] } = options
+  const { fill = true, transform = true, valuePath } = options
 
   let parser: Generator<any, any> | undefined = undefined
   let _defaultedValue = undefined
@@ -70,7 +70,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   const parsedValue = _parsedValue
   if (parser === undefined || parsedValue === undefined) {
-    const path = formatValuePath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
       message: `Attribute${

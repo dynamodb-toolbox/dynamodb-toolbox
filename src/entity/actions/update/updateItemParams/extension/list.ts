@@ -1,6 +1,6 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { Parser } from '~/schema/actions/parse/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type {
   ExtensionParser,
   ExtensionParserOptions,
@@ -30,7 +30,7 @@ import { parseReferenceExtension } from './reference.js'
 function* listElementParser(
   schema: ListSchema,
   inputValue: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions
+  { transform = true, valuePath }: ExtensionParserOptions
 ): Generator<
   ValidValue<Schema, { extension: UpdateItemInputExtension }> | undefined,
   | ValidValue<Schema, { extension: UpdateItemInputExtension }>
@@ -72,7 +72,7 @@ function* listElementParser(
 export const parseListExtension = (
   schema: ListSchema,
   input: unknown,
-  { transform = true, valuePath = [] }: ExtensionParserOptions
+  { transform = true, valuePath }: ExtensionParserOptions
 ): ReturnType<ExtensionParser<UpdateItemInputExtension>> => {
   if (isSetting(input) && input[$SET] !== undefined) {
     return {
@@ -81,7 +81,7 @@ export const parseListExtension = (
         const parser = new Parser(schema).start(input[$SET], {
           fill: false,
           transform,
-          valuePath: [...valuePath, '$SET']
+          valuePath: [...(valuePath ?? []), '$SET']
         })
 
         const parsedValue = { [$SET]: parser.next().value }
@@ -100,7 +100,7 @@ export const parseListExtension = (
   if (isObject(input) || isArray(input)) {
     if (isAppending(input) && input[$APPEND] !== undefined) {
       const appendedValue = input[$APPEND]
-      const appendedValuePath = [...valuePath, '$APPEND']
+      const appendedValuePath = [...(valuePath ?? []), '$APPEND']
 
       if (isArray(appendedValue)) {
         return {
@@ -153,7 +153,7 @@ export const parseListExtension = (
 
     if (isPrepending(input) && input[$PREPEND] !== undefined) {
       const prependedValue = input[$PREPEND]
-      const prependedValuePath = [...valuePath, '$PREPEND']
+      const prependedValuePath = [...(valuePath ?? []), '$PREPEND']
 
       if (isArray(prependedValue)) {
         return {
@@ -216,13 +216,16 @@ export const parseListExtension = (
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [
             index,
-            listElementParser(schema, element, { transform, valuePath: [...valuePath, index] })
+            listElementParser(schema, element, {
+              transform,
+              valuePath: [...(valuePath ?? []), index]
+            })
           ])
         )
 
         for (const inputKey of Object.keys(parsers)) {
           const parsedInputKey = parseFloat(inputKey)
-          const path = formatValuePath(valuePath)
+          const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
           if (!isInteger(parsedInputKey)) {
             throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {

@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { formatValuePath } from '~/schema/actions/utils/formatValuePath.js'
+import { formatArrayPath } from '~/schema/actions/utils/formatArrayPath.js'
 import type { SetSchema } from '~/schema/index.js'
 import { isSet } from '~/utils/validation/isSet.js'
 
@@ -10,7 +10,7 @@ import { schemaFormatter } from './schema.js'
 export function* setSchemaFormatter(
   schema: SetSchema,
   rawValue: unknown,
-  { valuePath = [], ...options }: FormatAttrValueOptions<SetSchema> = {}
+  { valuePath, ...options }: FormatAttrValueOptions<SetSchema> = {}
 ): Generator<
   FormatterYield<SetSchema, FormatAttrValueOptions<SetSchema>>,
   FormatterReturn<SetSchema, FormatAttrValueOptions<SetSchema>>
@@ -19,7 +19,7 @@ export function* setSchemaFormatter(
 
   if (!isSet(rawValue)) {
     const { type } = schema
-    const path = formatValuePath(valuePath)
+    const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
     throw new DynamoDBToolboxError('formatter.invalidAttribute', {
       message: `Invalid attribute detected while formatting${
@@ -34,7 +34,7 @@ export function* setSchemaFormatter(
   const formatters: Generator<any, any>[] = [...rawValue.values()].map((value, index) =>
     schemaFormatter(schema.elements, value, {
       ...options,
-      valuePath: [...valuePath, index],
+      valuePath: [...(valuePath ?? []), index],
       attributes: undefined
     })
   )
