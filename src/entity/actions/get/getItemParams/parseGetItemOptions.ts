@@ -35,7 +35,6 @@ export const parseGetItemOptions: GetItemOptionsParser = (entity, getItemOptions
     const { ExpressionAttributeNames, ProjectionExpression } = entity
       .build(EntityPathParser)
       .parse(attributes)
-      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

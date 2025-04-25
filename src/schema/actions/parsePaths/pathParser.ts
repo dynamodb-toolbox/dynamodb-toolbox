@@ -1,56 +1,37 @@
-import { ExpressionParser } from '~/schema/actions/utils/expressionParser.js'
+import { DynamoDBToolboxError } from '~/errors/index.js'
+import { SchemaAction } from '~/schema/index.js'
 import type { Schema } from '~/schema/index.js'
 
-export class PathParser<SCHEMA extends Schema = Schema> extends ExpressionParser<SCHEMA> {
+import { getPathSchemas } from '../utils/getPathSchemas.js'
+import { parseStringPath } from '../utils/parseStringPath.js'
+import { Projection } from './projectionExpression.js'
+import type { ProjectionExpression } from './projectionExpression.js'
+
+export class PathParser<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'parsePath' as const
 
-  constructor(schema: SCHEMA, expressionId = '') {
-    super(schema, expressionId)
-    this.expressionTokenPrefix = `p${this.expressionId}_`
-  }
+  project(paths: string[]): Projection {
+    const projection = new Projection()
 
-  override setId(nextId: string): this {
-    this.expressionId = nextId
-    this.expressionTokenPrefix = `p${nextId}_`
-    return this
-  }
+    for (const attributePath of paths) {
+      const matchingSchemas = getPathSchemas(this.schema, parseStringPath(attributePath))
 
-  parse(attributes: string[]): this {
-    const [firstAttribute, ...restAttributes] = attributes
+      if (matchingSchemas.length === 0) {
+        throw new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
+          message: `Unable to match expression attribute path with schema: ${attributePath}`,
+          payload: { attributePath }
+        })
+      }
 
-    if (firstAttribute === undefined) {
-      return this
+      for (const matchingSchema of matchingSchemas) {
+        projection.addPath(matchingSchema.path)
+      }
     }
 
-    this.appendAttributePath(firstAttribute)
-
-    for (const attribute of restAttributes) {
-      this.appendToExpression(', ')
-      this.appendAttributePath(attribute)
-    }
-
-    return this
+    return projection
   }
 
-  toCommandOptions(): {
-    ProjectionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-  } {
-    const { Expression: ProjectionExpression, ExpressionAttributeNames } = this.resolve()
-
-    return {
-      ProjectionExpression,
-      ExpressionAttributeNames
-    }
-  }
-
-  override clone(schema?: Schema): PathParser {
-    const clonedParser = new PathParser(schema ?? this.schema, this.expressionId)
-
-    clonedParser.expression = [...this.expression]
-    clonedParser.expressionAttributeNames = { ...this.expressionAttributeNames }
-    clonedParser.expressionAttributeTokens = { ...this.expressionAttributeTokens }
-
-    return clonedParser
+  parse(paths: string[], expressionId = ''): ProjectionExpression {
+    return this.project(paths).express(expressionId)
   }
 }
