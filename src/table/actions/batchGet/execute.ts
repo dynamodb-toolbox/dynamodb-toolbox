@@ -91,10 +91,11 @@ type BatchGetRequestResponses<
               | FormattedItem<
                   REQUESTS_HEAD['entity'],
                   {
-                    attributes: OPTIONS extends {
-                      attributes: Paths<REQUESTS_HEAD['entity']['schema']>[]
-                    }
-                      ? OPTIONS['attributes'][number]
+                    attributes: OPTIONS extends { attributes: string[] }
+                      ? Extract<
+                          OPTIONS['attributes'][number],
+                          Paths<REQUESTS_HEAD['entity']['schema']>
+                        >
                       : undefined
                   }
                 >

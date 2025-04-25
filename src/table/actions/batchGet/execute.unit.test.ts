@@ -37,7 +37,7 @@ const EntityA = new Entity({
   schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
-    commonAttribute: string(),
+    common: string(),
     name: string()
   }),
   table: TestTable1
@@ -50,7 +50,7 @@ const savedItemA: SavedItem<typeof EntityA> = {
   pk: 'a',
   sk: 'a',
   name: 'foo',
-  commonAttribute: 'bar'
+  common: 'bar'
 }
 const formattedItemA: FormattedItem<typeof EntityA> = {
   created: '2021-09-01T00:00:00.000Z',
@@ -58,7 +58,7 @@ const formattedItemA: FormattedItem<typeof EntityA> = {
   pkA: 'a',
   skA: 'a',
   name: 'foo',
-  commonAttribute: 'bar'
+  common: 'bar'
 }
 
 const EntityB = new Entity({
@@ -66,7 +66,7 @@ const EntityB = new Entity({
   schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
-    commonAttribute: string(),
+    common: string().savedAs('_c'),
     age: number()
   }),
   table: TestTable1
@@ -79,7 +79,7 @@ const savedItemB: SavedItem<typeof EntityB> = {
   pk: 'b',
   sk: 'b',
   age: 42,
-  commonAttribute: 'bar'
+  _c: 'bar'
 }
 const formattedItemB: FormattedItem<typeof EntityB> = {
   created: '2021-09-01T00:00:00.000Z',
@@ -87,7 +87,7 @@ const formattedItemB: FormattedItem<typeof EntityB> = {
   pkB: 'b',
   skB: 'b',
   age: 42,
-  commonAttribute: 'bar'
+  common: 'bar'
 }
 
 const TestTable2 = new Table({
@@ -280,7 +280,7 @@ describe('execute (batchGet)', () => {
           EntityA.build(BatchGetRequest).key(keyA),
           EntityB.build(BatchGetRequest).key(keyB)
         )
-        .options({ attributes: ['commonAttribute'] }),
+        .options({ attributes: ['age', 'name'] }),
       TestTable2.build(BatchGetCommand)
         .requests(EntityC.build(BatchGetRequest).key(keyC))
         .options({ attributes: ['pkC'] })
@@ -290,8 +290,8 @@ describe('execute (batchGet)', () => {
       typeof Responses,
       [
         [
-          FormattedItem<typeof EntityA, { attributes: 'commonAttribute' }> | undefined,
-          FormattedItem<typeof EntityB, { attributes: 'commonAttribute' }> | undefined
+          FormattedItem<typeof EntityA, { attributes: 'name' }> | undefined,
+          FormattedItem<typeof EntityB, { attributes: 'age' }> | undefined
         ],
         [FormattedItem<typeof EntityC, { attributes: 'pkC' }> | undefined]
       ]
@@ -299,7 +299,7 @@ describe('execute (batchGet)', () => {
     assertResponse
 
     expect(Responses).toStrictEqual([
-      [pick(formattedItemA, 'commonAttribute'), pick(formattedItemB, 'commonAttribute')],
+      [pick(formattedItemA, 'name'), pick(formattedItemB, 'age')],
       [pick(formattedItemC, 'pkC')]
     ])
   })

@@ -1,5 +1,5 @@
 import type { Condition } from '~/entity/actions/parseCondition/index.js'
-import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
+import type { EntityPathsUnion } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { CapacityOption } from '~/options/capacity.js'
 import type { NoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
@@ -51,7 +51,7 @@ export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] =
   (
     | { attributes?: undefined; select?: SelectOption }
     | {
-        attributes: EntityPathsIntersection<ENTITIES>[]
+        attributes: Entity[] extends ENTITIES ? string[] : EntityPathsUnion<ENTITIES>[]
         // "SPECIFIC_ATTRIBUTES" is the only valid option if projectionExpression is present
         select?: SpecificAttributesSelectOption
       }

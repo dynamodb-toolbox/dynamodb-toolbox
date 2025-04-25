@@ -19,6 +19,7 @@ import { parseSelectOption } from '~/options/select.js'
 import { parseShowEntityAttrOption } from '~/options/showEntityAttr.js'
 import { parseTableNameOption } from '~/options/tableName.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
+import { Projection } from '~/schema/actions/parsePaths/index.js'
 import { AnySchema } from '~/schema/any/schema.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
@@ -169,29 +170,44 @@ export const queryParams: QueryParamsGetter = <
     const filterExpressions: string[] = []
     let projectionExpression: string | undefined = undefined
 
-    let index = 0
-    for (const entity of entities) {
-      /**
-       * @debt feature "For now, we compute the projectionExpression using the first entity."
-       */
-      if (projectionExpression === undefined && attributes !== undefined) {
-        const {
-          ExpressionAttributeNames: projectionExpressionAttributeNames,
-          ProjectionExpression
-        } = entity.build(EntityPathParser).parse(attributes)
+    if (attributes !== undefined && attributes.length > 0) {
+      const projection = new Projection()
 
-        Object.assign(expressionAttributeNames, projectionExpressionAttributeNames)
-        projectionExpression = ProjectionExpression
+      for (const entity of entities) {
+        const entityProjection = entity
+          .build(EntityPathParser)
+          .project(attributes, { strict: false })
 
-        const { entityAttributeSavedAs } = table
+        if (entityProjection.paths.length === 0) {
+          throw new DynamoDBToolboxError('queryCommand.invalidProjectionExpression', {
+            message: `Unable to match any expression attribute path with entity: ${entity.entityName}`,
+            payload: { entity: entity.entityName }
+          })
+        }
 
-        // We prefer including the entityAttrSavedAs for faster formatting
-        if (!Object.values(expressionAttributeNames).includes(entityAttributeSavedAs)) {
-          projectionExpression += `, #_et`
-          expressionAttributeNames['#_et'] = entityAttributeSavedAs
+        for (const path of entityProjection.paths) {
+          projection.addPath(path)
         }
       }
 
+      const { ExpressionAttributeNames: projectionAttributeNames, ProjectionExpression } =
+        projection.express()
+
+      Object.assign(expressionAttributeNames, projectionAttributeNames)
+      projectionExpression = ProjectionExpression
+
+      const { entityAttributeSavedAs } = table
+      const filteredAttributes = new Set(Object.values(expressionAttributeNames))
+
+      // include the entityAttrSavedAs for faster formatting
+      if (!filteredAttributes.has(entityAttributeSavedAs)) {
+        projectionExpression += `, #_et`
+        expressionAttributeNames['#_et'] = entityAttributeSavedAs
+      }
+    }
+
+    let index = 0
+    for (const entity of entities) {
       const entityOptionsFilter = filters[entity.entityName]
       const entityNameFilter = entityAttrFilter
         ? // NOTE: We validated that all entities have entityAttr enabled

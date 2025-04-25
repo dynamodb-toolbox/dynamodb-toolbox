@@ -41,8 +41,8 @@ type ReturnedItems<
                 FormattedItem<
                   ENTITY,
                   {
-                    attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-                      ? OPTIONS['attributes'][number]
+                    attributes: OPTIONS extends { attributes: string[] }
+                      ? Extract<OPTIONS['attributes'][number], EntityPaths<ENTITY>>
                       : undefined
                   }
                 >,
@@ -56,8 +56,8 @@ type ReturnedItems<
             : FormattedItem<
                 ENTITY,
                 {
-                  attributes: OPTIONS['attributes'] extends EntityPaths<ENTITY>[]
-                    ? OPTIONS['attributes'][number]
+                  attributes: OPTIONS extends { attributes: string[] }
+                    ? Extract<OPTIONS['attributes'][number], EntityPaths<ENTITY>>
                     : undefined
                 }
               >

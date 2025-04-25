@@ -27,7 +27,6 @@ const EntityA = new Entity({
   schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
-    commonAttribute: string(),
     name: string()
   }),
   table: TestTable
@@ -37,8 +36,7 @@ const incompleteSavedItemA: Omit<SavedItem<typeof EntityA>, '_et'> = {
   _md: '2021-09-01T00:00:00.000Z',
   pk: 'a',
   sk: 'a',
-  name: 'foo',
-  commonAttribute: 'bar'
+  name: 'foo'
 }
 const completeSavedItemA: SavedItem<typeof EntityA> = {
   ...incompleteSavedItemA,
@@ -49,8 +47,7 @@ const formattedItemA: FormattedItem<typeof EntityA> = {
   modified: '2021-09-01T00:00:00.000Z',
   pkA: 'a',
   skA: 'a',
-  name: 'foo',
-  commonAttribute: 'bar'
+  name: 'foo'
 }
 
 const EntityB = new Entity({
@@ -58,7 +55,6 @@ const EntityB = new Entity({
   schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
-    commonAttribute: string(),
     age: number()
   }),
   table: TestTable
@@ -68,8 +64,7 @@ const incompleteSavedItemB: Omit<SavedItem<typeof EntityB>, '_et'> = {
   _md: '2021-09-01T00:00:00.000Z',
   pk: 'b',
   sk: 'b',
-  age: 42,
-  commonAttribute: 'bar'
+  age: 42
 }
 const completeSavedItemB: SavedItem<typeof EntityB> = {
   ...incompleteSavedItemB,
@@ -80,8 +75,7 @@ const formattedItemB: FormattedItem<typeof EntityB> = {
   modified: '2021-09-01T00:00:00.000Z',
   pkB: 'b',
   skB: 'b',
-  age: 42,
-  commonAttribute: 'bar'
+  age: 42
 }
 
 const invalidItem = {

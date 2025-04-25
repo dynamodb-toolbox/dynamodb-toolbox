@@ -58,7 +58,7 @@ import type {
   ValidItem
 } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
-import type { ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
+import type { ParseOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
@@ -187,8 +187,8 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new EntityConditionParser(this.entity, id).parse(condition).toCommandOptions()
   }
 
-  parsePaths(attributes: EntityPaths<ENTITY>[], expressionId: string = ''): ProjectionExpression {
-    return new EntityPathParser(this.entity).parse(attributes, expressionId)
+  parsePaths(attributes: EntityPaths<ENTITY>[], options: ParseOptions = {}): ProjectionExpression {
+    return new EntityPathParser(this.entity).parse(attributes, options)
   }
 
   format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(

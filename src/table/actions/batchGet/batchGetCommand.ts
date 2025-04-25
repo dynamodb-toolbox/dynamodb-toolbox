@@ -1,13 +1,14 @@
 import type { BatchGetCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import type { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
-import type { EntityPathsIntersection } from '~/entity/actions/parsePaths/index.js'
+import type { EntityPathsUnion } from '~/entity/actions/parsePaths/index.js'
 import { EntityPathParser } from '~/entity/actions/parsePaths/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseTableNameOption } from '~/options/tableName.js'
+import { Projection } from '~/schema/actions/parsePaths/index.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { ListOf } from '~/types/listOf.js'
@@ -22,8 +23,11 @@ export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   tableName?: string
   // For some reason, this union is required to keep the strict type of `options.attributes`
   // when building a `BatchGetCommand` directly inside `execute`:
-  // => execute(TestTable1.build(BatchGetCommand).requests(...).options({ attributes: ['attr'] }))
-} & ({ attributes?: undefined } | { attributes: EntityPathsIntersection<ENTITIES>[] })
+  // => execute(MyTable.build(BatchGetCommand).requests(...).options({ attributes: ['attr'] }))
+} & (
+  | { attributes?: undefined }
+  | { attributes: Entity[] extends ENTITIES ? string[] : EntityPathsUnion<ENTITIES>[] }
+)
 
 export type RequestEntities<
   REQUESTS extends IBatchGetRequest[],
@@ -102,15 +106,12 @@ export class BatchGetCommand<
   }
 
   params(): NonNullable<BatchGetCommandInput['RequestItems']> {
-    const requests = this[$requests] ?? []
-    const firstRequest = requests[0]
-    if (firstRequest === undefined) {
+    const requests = this[$requests]
+    if (requests === undefined || requests.length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
         message: 'BatchGetCommand incomplete: No BatchGetRequest supplied'
       })
     }
-
-    const firstRequestEntity = firstRequest.entity
 
     const { consistent, attributes: _attributes, tableName, ...extraOptions } = this[$options] ?? {}
     rejectExtraOptions(extraOptions)
@@ -123,18 +124,34 @@ export class BatchGetCommand<
     let projectionExpression: string | undefined = undefined
     const expressionAttributeNames: Record<string, string> = {}
 
-    /**
-     * @debt feature "For now, we compute the projectionExpression using the first entity. To improve."
-     */
     if (attributes !== undefined && attributes.length > 0) {
+      const projection = new Projection()
+
+      for (const entity of this[$entities]) {
+        const entityProjection = entity
+          .build(EntityPathParser)
+          .project(attributes, { strict: false })
+
+        if (entityProjection.paths.length === 0) {
+          throw new DynamoDBToolboxError('batchGetCommand.invalidProjectionExpression', {
+            message: `Unable to match any expression attribute path with entity: ${entity.entityName}`,
+            payload: { entity: entity.entityName }
+          })
+        }
+
+        for (const path of entityProjection.paths) {
+          projection.addPath(path)
+        }
+      }
+
       const { ExpressionAttributeNames: projectionAttributeNames, ProjectionExpression } =
-        firstRequestEntity.build(EntityPathParser).parse(attributes)
+        projection.express()
 
       Object.assign(expressionAttributeNames, projectionAttributeNames)
       projectionExpression = ProjectionExpression
 
       const { partitionKey, sortKey, entityAttributeSavedAs } = this.table
-      const filteredAttributes = new Set<string>(Object.values(expressionAttributeNames))
+      const filteredAttributes = new Set(Object.values(expressionAttributeNames))
 
       // table partitionKey and sortKey are required at all times for response re-ordering
       if (!filteredAttributes.has(partitionKey.name)) {
@@ -147,7 +164,7 @@ export class BatchGetCommand<
         expressionAttributeNames['#_sk'] = sortKey.name
       }
 
-      // We prefer including the entityAttrSavedAs for faster formatting
+      // include the entityAttrSavedAs for faster formatting
       if (!filteredAttributes.has(entityAttributeSavedAs)) {
         projectionExpression += `, #_et`
         expressionAttributeNames['#_et'] = entityAttributeSavedAs

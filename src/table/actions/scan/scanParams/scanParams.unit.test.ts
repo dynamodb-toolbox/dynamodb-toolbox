@@ -51,7 +51,8 @@ const Entity1 = new Entity({
     userPoolId: string().key().savedAs('pk'),
     userId: string().key().savedAs('sk'),
     name: string(),
-    age: number()
+    age: number(),
+    common: string().optional()
   }),
   table: TestTable
 })
@@ -62,7 +63,8 @@ const Entity2 = new Entity({
     productGroupId: string().key().savedAs('pk'),
     productId: string().key().savedAs('sk'),
     launchDate: string(),
-    price: number()
+    price: number(),
+    common: string().optional().savedAs('_c')
   }),
   table: TestTable
 })
@@ -709,27 +711,40 @@ describe('scan', () => {
   test('applies two entity projection expressions', () => {
     const command = TestTable.build(ScanCommand)
       .entities(Entity1, Entity2)
-      .options({
-        attributes: ['created', 'modified']
-      })
+      .options({ attributes: ['age', 'price', 'common'] })
 
     const { ProjectionExpression, ExpressionAttributeNames } = command.params()
 
     const assertReturnedItems: A.Equals<
       Awaited<ReturnType<typeof command.send>>['Items'],
       | (
-          | FormattedItem<typeof Entity1, { attributes: 'created' | 'modified' }>
-          | FormattedItem<typeof Entity2, { attributes: 'created' | 'modified' }>
+          | FormattedItem<typeof Entity1, { attributes: 'age' | 'common' }>
+          | FormattedItem<typeof Entity2, { attributes: 'price' | 'common' }>
         )[]
       | undefined
     > = 1
     assertReturnedItems
 
-    expect(ProjectionExpression).toBe('#p_1, #p_2, #_et')
+    expect(ProjectionExpression).toBe('#p_1, #p_2, #p_3, #p_4, #_et')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#p_1': '_ct',
-      '#p_2': '_md',
+      '#p_1': 'age',
+      '#p_2': 'common',
+      '#p_3': 'price',
+      '#p_4': '_c',
       '#_et': '_et'
     })
+  })
+
+  test('rejects projection expression if one entity has no match', () => {
+    const command = TestTable.build(ScanCommand)
+      .entities(Entity1, Entity2)
+      .options({ attributes: ['age', 'name'] })
+
+    const invalidCall = () => command.params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'scanCommand.invalidProjectionExpression' })
+    )
   })
 })
