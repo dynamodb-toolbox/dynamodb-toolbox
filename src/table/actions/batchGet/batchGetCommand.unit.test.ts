@@ -24,8 +24,8 @@ const EntityA = new Entity({
   schema: item({
     pkA: string().key().savedAs('pk'),
     skA: string().key().savedAs('sk'),
-    commonAttribute: string(),
-    name: string()
+    name: string(),
+    common: string()
   }),
   table: TestTable
 })
@@ -35,7 +35,7 @@ const EntityB = new Entity({
   schema: item({
     pkB: string().key().savedAs('pk'),
     skB: string().key().savedAs('sk'),
-    commonAttribute: string(),
+    common: string().savedAs('_c'),
     age: number()
   }),
   table: TestTable
@@ -129,20 +129,19 @@ describe('BatchGetCommand', () => {
           EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
           EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
         )
-        // @ts-expect-error (NOTE: we have to use an attribute from the 2nd entity as the first is used to parse the paths)
         .options({ attributes: ['age'] })
         .params()
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+      expect.objectContaining({ code: 'batchGetCommand.invalidProjectionExpression' })
     )
   })
 
   test('parses projection expression', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
-      .options({ attributes: ['entity', 'pkA', 'skA', 'commonAttribute'] })
+      .options({ attributes: ['entity', 'pkA', 'skA', 'name'] })
       .params()
 
     expect(completeInput).toMatchObject({
@@ -152,29 +151,70 @@ describe('BatchGetCommand', () => {
           '#p_1': '_et',
           '#p_2': 'pk',
           '#p_3': 'sk',
-          '#p_4': 'commonAttribute'
+          '#p_4': 'name'
         }
       }
     })
   })
 
-  test('appends pk, sk and entityAttribute to projection expression', () => {
+  test('appends pk, sk and entityAttribute to projection expression if they miss', () => {
     const completeInput = TestTable.build(BatchGetCommand)
       .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
-      .options({ attributes: ['commonAttribute'] })
+      .options({ attributes: ['name'] })
       .params()
 
     expect(completeInput).toMatchObject({
       [TestTable.getName()]: {
         ProjectionExpression: '#p_1, #_pk, #_sk, #_et',
         ExpressionAttributeNames: {
-          '#p_1': 'commonAttribute',
+          '#p_1': 'name',
           '#_pk': TestTable.partitionKey.name,
           '#_sk': TestTable.sortKey?.name,
           '#_et': TestTable.entityAttributeSavedAs
         }
       }
     })
+  })
+
+  test('applies two entity projection expressions', () => {
+    const completeInput = TestTable.build(BatchGetCommand)
+      .requests(
+        EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
+        EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
+      )
+      .options({ attributes: ['age', 'name', 'common'] })
+      .params()
+
+    expect(completeInput).toMatchObject({
+      [TestTable.getName()]: {
+        ProjectionExpression: '#p_1, #p_2, #p_3, #p_4, #_pk, #_sk, #_et',
+        ExpressionAttributeNames: {
+          '#p_1': 'name',
+          '#p_2': 'common',
+          '#p_3': 'age',
+          '#p_4': '_c',
+          '#_pk': TestTable.partitionKey.name,
+          '#_sk': TestTable.sortKey?.name,
+          '#_et': TestTable.entityAttributeSavedAs
+        }
+      }
+    })
+  })
+
+  test('rejects projection expression if one entity has no match', () => {
+    const command = TestTable.build(BatchGetCommand)
+      .requests(
+        EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }),
+        EntityB.build(BatchGetRequest).key({ pkB: 'b', skB: 'b' })
+      )
+      .options({ attributes: ['age'] })
+
+    const invalidCall = () => command.params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'batchGetCommand.invalidProjectionExpression' })
+    )
   })
 
   test('parses tableName options', () => {

@@ -6,4 +6,12 @@ type InvalidSegmentOptionErrorBlueprint = ErrorBlueprint<{
   payload: { segment?: unknown; totalSegments?: unknown }
 }>
 
-export type ScanCommandParamsErrorBlueprints = InvalidSegmentOptionErrorBlueprint
+type InvalidProjectionExpressionErrorBlueprint = ErrorBlueprint<{
+  code: 'scanCommand.invalidProjectionExpression'
+  hasPath: false
+  payload: { entity: string }
+}>
+
+export type ScanCommandParamsErrorBlueprints =
+  | InvalidSegmentOptionErrorBlueprint
+  | InvalidProjectionExpressionErrorBlueprint

@@ -6,6 +6,12 @@ type InvalidReverseOptionErrorBlueprint = ErrorBlueprint<{
   payload: { reverse?: unknown }
 }>
 
+type InvalidProjectionExpressionErrorBlueprint = ErrorBlueprint<{
+  code: 'queryCommand.invalidProjectionExpression'
+  hasPath: false
+  payload: { entity: string }
+}>
+
 type InvalidIndexErrorBlueprint = ErrorBlueprint<{
   code: 'queryCommand.invalidIndex'
   hasPath: false
@@ -20,5 +26,6 @@ type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
 
 export type QueryCommandParamsErrorBlueprints =
   | InvalidReverseOptionErrorBlueprint
+  | InvalidProjectionExpressionErrorBlueprint
   | InvalidIndexErrorBlueprint
   | InvalidPartitionErrorBlueprint
