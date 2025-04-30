@@ -8,7 +8,7 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import { parseConsistentOption } from '~/options/consistent.js'
 import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseTableNameOption } from '~/options/tableName.js'
-import { Projection } from '~/schema/actions/parsePaths/index.js'
+import { Deduper } from '~/schema/actions/utils/deduper.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 import type { ListOf } from '~/types/listOf.js'
@@ -125,27 +125,27 @@ export class BatchGetCommand<
     const expressionAttributeNames: Record<string, string> = {}
 
     if (attributes !== undefined && attributes.length > 0) {
-      const projection = new Projection()
+      const transformedPaths = new Deduper<string>({ serializer: value => value })
 
       for (const entity of this[$entities]) {
-        const entityProjection = entity
+        const entityTransformedPaths = entity
           .build(EntityPathParser)
-          .project(attributes, { strict: false })
+          .transform(attributes, { strict: false })
 
-        if (entityProjection.paths.length === 0) {
+        if (entityTransformedPaths.length === 0) {
           throw new DynamoDBToolboxError('batchGetCommand.invalidProjectionExpression', {
             message: `Unable to match any expression attribute path with entity: ${entity.entityName}`,
             payload: { entity: entity.entityName }
           })
         }
 
-        for (const path of entityProjection.paths) {
-          projection.addPath(path)
+        for (const transformedPath of entityTransformedPaths) {
+          transformedPaths.push(transformedPath)
         }
       }
 
       const { ExpressionAttributeNames: projectionAttributeNames, ProjectionExpression } =
-        projection.express()
+        EntityPathParser.express(transformedPaths.values)
 
       Object.assign(expressionAttributeNames, projectionAttributeNames)
       projectionExpression = ProjectionExpression

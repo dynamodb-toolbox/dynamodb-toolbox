@@ -1,5 +1,3 @@
-import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
-
 import { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
 import { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
@@ -58,7 +56,11 @@ import type {
   ValidItem
 } from '~/entity/index.js'
 import { EntityAction } from '~/entity/index.js'
-import type { ParseOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
+import type {
+  ConditionExpression,
+  ParseConditionOptions
+} from '~/schema/actions/parseCondition/index.js'
+import type { ParsePathsOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
@@ -178,16 +180,15 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
 
   parseCondition(
     condition: Condition<ENTITY>,
-    id: string = ''
-  ): {
-    ConditionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-    ExpressionAttributeValues: Record<string, NativeAttributeValue>
-  } {
-    return new EntityConditionParser(this.entity, id).parse(condition).toCommandOptions()
+    options: ParseConditionOptions = {}
+  ): ConditionExpression {
+    return new EntityConditionParser(this.entity).parse(condition, options)
   }
 
-  parsePaths(attributes: EntityPaths<ENTITY>[], options: ParseOptions = {}): ProjectionExpression {
+  parsePaths(
+    attributes: EntityPaths<ENTITY>[],
+    options: ParsePathsOptions = {}
+  ): ProjectionExpression {
     return new EntityPathParser(this.entity).parse(attributes, options)
   }
 

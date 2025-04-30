@@ -1,47 +1,26 @@
-import { DynamoDBToolboxError } from '~/errors/index.js'
-import { Finder } from '~/schema/actions/finder/index.js'
 import type { Schema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
-import type { ProjectionExpression } from './projectionExpression.js'
-import { Projection } from './projectionExpression.js'
+import { expressPaths } from './expressPaths.js'
+import { transformPaths } from './transformPaths.js'
+import type { TransformPathsOptions } from './transformPaths.js'
+import type { ProjectionExpression } from './types.js'
 
-export interface ProjectOptions {
-  strict?: boolean
-}
-
-export interface ParseOptions extends ProjectOptions {
+export interface ParsePathsOptions extends TransformPathsOptions {
   expressionId?: string
 }
 
 export class PathParser<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'parsePath' as const
-
-  project(paths: string[], { strict = true }: { strict?: boolean } = {}): Projection {
-    const projection = new Projection()
-
-    for (const attributePath of paths) {
-      const subSchemas = new Finder(this.schema).search(attributePath)
-
-      if (subSchemas.length === 0 && strict) {
-        throw new DynamoDBToolboxError('actions.invalidExpressionAttributePath', {
-          message: `Unable to match expression attribute path with schema: ${attributePath}`,
-          payload: { attributePath }
-        })
-      }
-
-      for (const subSchema of subSchemas) {
-        projection.addPath(subSchema.transformedPath)
-      }
-    }
-
-    return projection
+  static express(paths: string[]): ProjectionExpression {
+    return expressPaths(paths)
   }
 
-  parse(
-    paths: string[],
-    { expressionId, ...parseOptions }: ParseOptions = {}
-  ): ProjectionExpression {
-    return this.project(paths, parseOptions).express(expressionId)
+  transform(paths: string[], options?: TransformPathsOptions): string[] {
+    return transformPaths(this.schema, paths, options)
+  }
+
+  parse(paths: string[], options?: TransformPathsOptions): ProjectionExpression {
+    return PathParser.express(this.transform(paths, options))
   }
 }

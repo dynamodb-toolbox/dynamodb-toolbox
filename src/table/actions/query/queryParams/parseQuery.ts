@@ -12,7 +12,7 @@ import type { Table } from '~/table/index.js'
 import type { Index, IndexableKeyType, Key } from '~/table/types/index.js'
 import { pick } from '~/utils/pick.js'
 
-import { queryOperatorSet } from '../types.js'
+import type { QueryOperator } from '../types.js'
 import type { Query } from '../types.js'
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
@@ -22,6 +22,16 @@ type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   QueryCommandInput,
   'KeyConditionExpression' | 'ExpressionAttributeNames' | 'ExpressionAttributeValues'
 >
+
+const queryOperatorSet = new Set<QueryOperator>([
+  'eq',
+  'gt',
+  'gte',
+  'lt',
+  'lte',
+  'between',
+  'beginsWith'
+])
 
 const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Schema => {
   switch (key.type) {
@@ -85,10 +95,9 @@ export const parseQuery: QueryParser = (table, query) => {
     condition = { and: [condition, sortKeyCondition] }
   }
 
-  const conditionParser = new ConditionParser(indexSchema, '0')
-  conditionParser.parse(condition)
+  const conditionParser = new ConditionParser(indexSchema)
   const { ConditionExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
-    conditionParser.toCommandOptions()
+    conditionParser.parse(condition, { expressionId: '0' })
 
   return {
     KeyConditionExpression: ConditionExpression,

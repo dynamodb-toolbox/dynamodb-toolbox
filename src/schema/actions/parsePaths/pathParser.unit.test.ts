@@ -35,15 +35,6 @@ describe('parseProjection', () => {
       })
     })
 
-    test('correctly parses projection (with id)', () => {
-      expect(
-        schemaWithSavedAs.build(PathParser).parse(['savedAs'], { expressionId: '1' })
-      ).toStrictEqual({
-        ProjectionExpression: '#p1_1',
-        ExpressionAttributeNames: { '#p1_1': '_s' }
-      })
-    })
-
     test('correctly parses condition (listed)', () => {
       expect(
         schemaWithSavedAs.build(PathParser).parse(['savedAs', 'listed[4].savedAs'])

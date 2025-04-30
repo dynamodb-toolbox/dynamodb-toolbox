@@ -142,7 +142,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
@@ -154,7 +156,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallC = () =>
       TestTable.build(QueryCommand)
@@ -168,7 +172,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallD = () =>
       TestTable.build(QueryCommand)
@@ -249,7 +255,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
@@ -262,7 +270,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallC = () =>
       TestTable.build(QueryCommand)
@@ -277,7 +287,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallD = () =>
       TestTable.build(QueryCommand)
@@ -352,7 +364,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
@@ -424,7 +438,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
-    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallB = () =>
       TestTable.build(QueryCommand)
@@ -437,7 +453,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
-    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallC = () =>
       TestTable.build(QueryCommand)
@@ -452,7 +470,9 @@ describe('query', () => {
         .params()
 
     expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallC).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
 
     const invalidCallD = () =>
       TestTable.build(QueryCommand)
@@ -886,14 +906,13 @@ describe('query', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       command.params()
 
-    expect(FilterExpression).toBe('(#c1_1 = :c1_1) OR (#c2_1 = :c2_1)')
+    expect(FilterExpression).toBe('(#c1_1 = :c1_1) OR (#c1_1 = :c1_2)')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c1_1': TestTable.entityAttributeSavedAs,
-      '#c2_1': TestTable.entityAttributeSavedAs
+      '#c1_1': TestTable.entityAttributeSavedAs
     })
     expect(ExpressionAttributeValues).toMatchObject({
       ':c1_1': Entity1.entityName,
-      ':c2_1': Entity2.entityName
+      ':c1_2': Entity2.entityName
     })
   })
 
@@ -967,19 +986,18 @@ describe('query', () => {
         .params()
 
     expect(FilterExpression).toBe(
-      '((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)) OR ((#c2_1 = :c2_1) AND (#c2_2 >= :c2_2))'
+      '((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2)) OR ((#c1_1 = :c1_3) AND (#c1_3 >= :c1_4))'
     )
     expect(ExpressionAttributeNames).toMatchObject({
       '#c1_1': TestTable.entityAttributeSavedAs,
       '#c1_2': 'age',
-      '#c2_1': TestTable.entityAttributeSavedAs,
-      '#c2_2': 'price'
+      '#c1_3': 'price'
     })
     expect(ExpressionAttributeValues).toMatchObject({
       ':c1_1': Entity1.entityName,
       ':c1_2': 40,
-      ':c2_1': Entity2.entityName,
-      ':c2_2': 100
+      ':c1_3': Entity2.entityName,
+      ':c1_4': 100
     })
   })
 

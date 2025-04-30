@@ -1,7 +1,7 @@
 import type { UpdateCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { EntityParser } from '~/entity/actions/parse/index.js'
-import { parseUpdate } from '~/entity/actions/update/updateExpression/index.js'
+import { expressUpdate } from '~/entity/actions/update/expressUpdate/index.js'
 import type { Entity } from '~/entity/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { omit } from '~/utils/omit.js'
@@ -37,7 +37,7 @@ export const updateAttributesParams: UpdateAttributesParamsGetter = <
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(item, ...Object.keys(key)))
+  } = expressUpdate(entity, omit(item, ...Object.keys(key)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,

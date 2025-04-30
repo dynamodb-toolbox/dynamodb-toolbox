@@ -30,7 +30,6 @@ export const parseOptions: OptionsParser = (entity, options) => {
     const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
       .build(EntityConditionParser)
       .parse(condition)
-      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames
