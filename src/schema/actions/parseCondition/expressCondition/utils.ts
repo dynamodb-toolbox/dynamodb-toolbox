@@ -12,7 +12,7 @@ export const pathTokens = (
 ): string => {
   let tokens = ''
 
-  Path.fromStr(attr).arrayPath.forEach((pathPart, index) => {
+  new Path(attr).arrayPath.forEach((pathPart, index) => {
     if (isNumber(pathPart)) {
       tokens += `[${pathPart}]`
       return

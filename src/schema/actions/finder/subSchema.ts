@@ -1,22 +1,22 @@
 import type { Path } from '~/schema/actions/utils/path.js'
 import type { Schema } from '~/schema/index.js'
+import { SchemaAction } from '~/schema/index.js'
 
-export class SubSchema {
-  public schema: Schema
-  public originalPath: Path
+export class SubSchema<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
+  public formattedPath: Path
   public transformedPath: Path
 
   constructor({
     schema,
-    originalPath,
+    formattedPath,
     transformedPath
   }: {
-    schema: Schema
-    originalPath: Path
+    schema: SCHEMA
+    formattedPath: Path
     transformedPath: Path
   }) {
-    this.schema = schema
-    this.originalPath = originalPath
+    super(schema)
+    this.formattedPath = formattedPath
     this.transformedPath = transformedPath
   }
 }

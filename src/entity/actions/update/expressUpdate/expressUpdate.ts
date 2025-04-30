@@ -37,7 +37,7 @@ export const expressUpdate = (
     deleteExpressions,
     ExpressionAttributeNames,
     ExpressionAttributeValues
-  } = expressUpdateRec(input, Path.fromArray([]), {
+  } = expressUpdateRec(input, new Path(), {
     rootSchema: entity.schema,
     setExpressions: [],
     removeExpressions: [],
@@ -199,7 +199,7 @@ const expressUpdateRec = (
     }
     case isObject(value): {
       for (const [attrName, attrValue] of Object.entries(value)) {
-        expressUpdateRec(attrValue, path.append(Path.fromArray([attrName])), state)
+        expressUpdateRec(attrValue, path.append(attrName), state)
       }
       break
     }
@@ -209,7 +209,7 @@ const expressUpdateRec = (
           return
         }
 
-        expressUpdateRec(element, path.append(Path.fromArray([index])), state)
+        expressUpdateRec(element, path.append(index), state)
       })
       break
     }
