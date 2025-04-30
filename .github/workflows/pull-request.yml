@@ -9,14 +9,7 @@ jobs:
     strategy:
       matrix:
         node: [16, 18, 20]
-        typescript: [
-            # '~5.0.4', `switch (true) {` (used in expressions) is not a typeguard until 5.3. TODO: Remove it and reintroduce versions
-            # '~5.1.6',
-            # '~5.2.2',
-            '~5.3.3',
-            '~5.4.2',
-            'latest'
-          ]
+        typescript: ['~5.0.4', '~5.1.6', '~5.2.2', '~5.3.3', '~5.4.2', 'latest']
     name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
       - name: ♻️ Checkout
