@@ -192,7 +192,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
             <td align="center">-</td>
             <td>
               To specify a list of attributes to retrieve (improves performances but does not reduce costs).
-              <br/><br/>Requires <a href="#entities"><code>entities</code></a>. Paths must be common to all entities.
+              <br/><br/>Requires <a href="#entities"><code>entities</code></a>. Each path must match at least one entity schema.
               <br/><br/>See the <a href="../../entities/actions/parse-paths#paths"><code>PathParser</code></a> action for more details on how to write attribute paths.
             </td>
         </tr>

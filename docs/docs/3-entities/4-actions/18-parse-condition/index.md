@@ -19,72 +19,126 @@ const {
   ConditionExpression,
   ExpressionAttributeNames,
   ExpressionAttributeValues
-} = PokemonEntity.build(ConditionParser)
-  .parse({
-    // Pokemons with levels ≥ 50
-    attr: 'level',
-    gte: 50
-  })
-  .toCommandOptions()
+} = PokemonEntity.build(ConditionParser).parse({
+  // Pokemons with levels ≥ 50
+  attr: 'level',
+  gte: 50
+})
 ```
+
+See [Building Conditions](#building-conditions) for more details on how to write conditions.
 
 ## Methods
 
+### `transform(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(condition: Condition&lt;ENTITY&gt;) => Condition</code></i></p>
+
+**Validates a condition** for the provided `Entity` and **transforms it** to match the underlying data if needed:
+
+```ts
+const pokemonSchema = item({
+  level: number().transform(addOne).savedAs('_l'),
+  ...
+})
+
+PokemonEntity.build(ConditionParser).transform({
+  attr: 'level',
+  gte: 50
+})
+// => {
+//   attr: '_l',
+//   gte: 51
+// }
+```
+
+:::note
+
+You can opt out of the value transformation by unsetting the `transform` option:
+
+```ts
+PokemonEntity.build(ConditionParser).transform({
+  attr: 'level',
+  gte: 50,
+  transform: false
+})
+// => {
+//   attr: '_l',
+//   gte: 50
+// }
+```
+
+:::
+
+:::info
+
+Note that the `transform(...)` method **may alter the condition** if several options of an [`anyOf`](../../../4-schemas/16-anyOf/index.md) attribute match a provided path or reference:
+
+<details className="details-in-admonition">
+<summary>🔎 <b>Show example</b></summary>
+
+```ts
+const pokemonSchema = item({
+  meta: anyOf(
+    map({ description: string() }),
+    map({ description: string().savedAs('d') })
+    ...
+  )
+  ...
+})
+
+PokemonEntity.build(ConditionParser).transform({
+  attr: 'meta.description',
+  exists: true
+})
+// => {
+//   or: [
+//     { attr: 'meta.description', exists: true },
+//     { attr: 'meta.d', exists: true }
+//   ]
+// }
+```
+
+</details>
+
+:::
+
+### `express(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code><b>static</b> (condition: Condition) => ConditionExpression</code></i></p>
+
+Translates **any condition** to a DynamoDB [Condition Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ConditionExpressions.html):
+
+```ts
+ConditionParser.express({ attr: 'level', gte: 50 })
+// => {
+//   ConditionExpression: '#c_1 >= :c_1',
+//   ExpressionAttributeNames: { '#c_1': 'level' },
+//   ExpressionAttributeValues: { ':c_1': 50 }
+// }
+```
+
+:::caution
+
+The method's static nature emphasizes that it **does not validate the condition**. It should only be used on [`transformed`](#transform) conditions.
+
+:::
+
 ### `parse(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>(condition: Condition&lt;ENTITY&gt;) => ConditionParser</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>(condition: Condition&lt;ENTITY&gt;, opt?: Options) => ConditionExpression</code></i></p>
 
-Parses a condition. Throws an `invalidCondition` error if the condition is invalid:
+Subsequently [`transform`](#transform) and [`express`](#express) a condition for the provided `Entity`:
 
 ```ts
 PokemonEntity.build(ConditionParser).parse({
   attr: 'level',
   gte: 50
 })
-```
-
-Note that the `parse` method should only be used once per instance (for now). See [Building Conditions](#building-conditions) for more details on how to write conditions.
-
-### `toCommandOptions()`
-
-<p style={{ marginTop: '-15px' }}><i><code>() => CommandOptions</code></i></p>
-
-Collapses the `ConditionParser` state to a set of options that can be used in a DynamoDB command:
-
-```ts
-const {
-  ConditionExpression,
-  ExpressionAttributeNames,
-  ExpressionAttributeValues
-} = PokemonEntity.build(ConditionParser)
-  .parse({ attr: 'level', gte: 50 })
-  .toCommandOptions()
-```
-
-### `setId(...)`
-
-<p style={{ marginTop: '-15px' }}><i><code>(id: string) => ConditionParser</code></i></p>
-
-Adds a prefix to expression attribute keys. Useful to avoid conflicts when using several expressions in a single command:
-
-```ts
-PokemonEntity.build(ConditionParser)
-  .parse({ attr: 'level', gte: 50 })
-  .toCommandOptions()
 // => {
 //   ConditionExpression: '#c_1 >= :c_1',
-//   ExpressionAttributeNames: { '#c_1': 'sk' },
+//   ExpressionAttributeNames: { '#c_1': 'level' },
 //   ExpressionAttributeValues: { ':c_1': 50 }
-// }
-
-PokemonEntity.build(ConditionParser)
-  .setId('0')
-  .parse({ attr: 'level', gte: 50 })
-  .toCommandOptions()
-// => {
-//   ConditionExpression: '#c0_1 >= :c0_1',
-//   ExpressionAttributeNames: { '#c0_1': 'sk' },
-//   ExpressionAttributeValues: { ':c0_1': 50 }
 // }
 ```
 
