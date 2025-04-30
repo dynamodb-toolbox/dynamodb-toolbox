@@ -1,8 +1,8 @@
+import { Path } from '~/schema/actions/utils/path.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
-import { Path } from '../../utils/path.js'
-import type { ExpressionState } from './types.js'
+import type { ExpressionState } from '../types.js'
 
 export const pathTokens = (
   attr: string,
@@ -12,7 +12,7 @@ export const pathTokens = (
 ): string => {
   let tokens = ''
 
-  Path.fromStr(attr).arrayPath.forEach((pathPart, index) => {
+  new Path(attr).arrayPath.forEach((pathPart, index) => {
     if (isNumber(pathPart)) {
       tokens += `[${pathPart}]`
       return

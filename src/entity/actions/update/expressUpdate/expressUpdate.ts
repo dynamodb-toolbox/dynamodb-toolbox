@@ -1,17 +1,10 @@
 import type { Entity, TransformedItem } from '~/entity/index.js'
 import { Path } from '~/schema/actions/utils/path.js'
-import type { Schema, SchemaExtendedValue, ValidValue } from '~/schema/index.js'
+import type { Schema, ValidValue } from '~/schema/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
 import { isObject } from '~/utils/validation/isObject.js'
 
 import {
-  $ADD,
-  $APPEND,
-  $DELETE,
-  $PREPEND,
-  $SET,
-  $SUBTRACT,
-  $SUM,
   isAddition,
   isAppending,
   isDeletion,
@@ -24,7 +17,16 @@ import {
 } from '../symbols/index.js'
 import type { UpdateItemInputExtension } from '../types.js'
 import type { ExpressionState, UpdateExpression } from './types.js'
-import { pathTokens, refOrValueTokens } from './utils.js'
+import { expressAddUpdate } from './updates/add.js'
+import { expressAppendUpdate } from './updates/append.js'
+import { expressDeleteUpdate } from './updates/delete.js'
+import { expressGetUpdate } from './updates/get.js'
+import { expressPrependUpdate } from './updates/prepend.js'
+import { expressRemoveUpdate } from './updates/remove.js'
+import { expressSetUpdate } from './updates/set.js'
+import { expressSubtractUpdate } from './updates/subtract.js'
+import { expressSumUpdate } from './updates/sum.js'
+import { pathTokens, refOrValueTokens } from './updates/utils.js'
 
 export const expressUpdate = (
   entity: Entity,
@@ -37,7 +39,7 @@ export const expressUpdate = (
     deleteExpressions,
     ExpressionAttributeNames,
     ExpressionAttributeValues
-  } = expressUpdateRec(input, Path.fromArray([]), {
+  } = expressUpdateRec(input, new Path(), {
     rootSchema: entity.schema,
     setExpressions: [],
     removeExpressions: [],
@@ -80,146 +82,66 @@ const expressUpdateRec = (
     return state
   }
 
-  switch (true) {
-    case isSetting(value): {
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = '
-      setExpression += refOrValueTokens(value[$SET], 's', state)
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isGetting(value): {
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = '
-      setExpression += refOrValueTokens(value, 's', state)
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isSum(value): {
-      /**
-       * @debt type "Fix this cast"
-       */
-      const [left, right] = value[$SUM] as [
-        SchemaExtendedValue<UpdateItemInputExtension>,
-        SchemaExtendedValue<UpdateItemInputExtension>
-      ]
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = '
-      setExpression += refOrValueTokens(left, 's', state)
-      setExpression += ' + '
-      setExpression += refOrValueTokens(right, 's', state)
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isSubtraction(value): {
-      /**
-       * @debt type "Fix this cast"
-       */
-      const [left, right] = value[$SUBTRACT] as [
-        SchemaExtendedValue<UpdateItemInputExtension>,
-        SchemaExtendedValue<UpdateItemInputExtension>
-      ]
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = '
-      setExpression += refOrValueTokens(left, 's', state)
-      setExpression += ' - '
-      setExpression += refOrValueTokens(right, 's', state)
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isAppending(value): {
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = list_append(if_not_exists('
-      setExpression += pathTokens(path, 's', state)
-      setExpression += ', '
-      setExpression += refOrValueTokens([], 's', state)
-      setExpression += '), '
-      /**
-       * @debt type "Fix this cast"
-       */
-      setExpression += refOrValueTokens(
-        value[$APPEND] as SchemaExtendedValue<UpdateItemInputExtension>,
-        's',
-        state
-      )
-      setExpression += ')'
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isPrepending(value): {
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = list_append('
-      /**
-       * @debt type "Fix this cast"
-       */
-      setExpression += refOrValueTokens(
-        value[$PREPEND] as SchemaExtendedValue<UpdateItemInputExtension>,
-        's',
-        state
-      )
-      setExpression += ', if_not_exists('
-      setExpression += pathTokens(path, 's', state)
-      setExpression += ', '
-      setExpression += refOrValueTokens([], 's', state)
-      setExpression += '))'
-      state.setExpressions.push(setExpression)
-      break
-    }
-    case isRemoval(value): {
-      state.removeExpressions.push(pathTokens(path, 'r', state))
-      break
-    }
-    case isAddition(value): {
-      let addExpression = pathTokens(path, 'a', state)
-      addExpression += ' '
-      addExpression += refOrValueTokens(
-        /**
-         * @debt type "Fix this cast"
-         */
-        value[$ADD] as SchemaExtendedValue<UpdateItemInputExtension>,
-        'a',
-        state
-      )
-      state.addExpressions.push(addExpression)
-      break
-    }
-    case isDeletion(value): {
-      let deleteExpression = pathTokens(path, 'd', state)
-      deleteExpression += ' '
-      /**
-       * @debt type "Fix this cast"
-       */
-      deleteExpression += refOrValueTokens(
-        value[$DELETE] as SchemaExtendedValue<UpdateItemInputExtension>,
-        'd',
-        state
-      )
-      state.deleteExpressions.push(deleteExpression)
-      break
-    }
-    case isObject(value): {
-      for (const [attrName, attrValue] of Object.entries(value)) {
-        expressUpdateRec(attrValue, path.append(Path.fromArray([attrName])), state)
-      }
-      break
-    }
-    case isArray(value): {
-      value.forEach((element, index) => {
-        if (element === undefined) {
-          return
-        }
-
-        expressUpdateRec(element, path.append(Path.fromArray([index])), state)
-      })
-      break
-    }
-    default: {
-      let setExpression = pathTokens(path, 's', state)
-      setExpression += ' = '
-      setExpression += refOrValueTokens(value, 's', state)
-      state.setExpressions.push(setExpression)
-    }
+  if (isSetting(value)) {
+    return expressSetUpdate(value, path, state)
   }
+
+  if (isGetting(value)) {
+    return expressGetUpdate(value, path, state)
+  }
+
+  if (isSum(value)) {
+    return expressSumUpdate(value, path, state)
+  }
+
+  if (isSubtraction(value)) {
+    return expressSubtractUpdate(value, path, state)
+  }
+
+  if (isAppending(value)) {
+    return expressAppendUpdate(value, path, state)
+  }
+
+  if (isPrepending(value)) {
+    return expressPrependUpdate(value, path, state)
+  }
+
+  if (isRemoval(value)) {
+    return expressRemoveUpdate(value, path, state)
+  }
+
+  if (isAddition(value)) {
+    return expressAddUpdate(value, path, state)
+  }
+
+  if (isDeletion(value)) {
+    return expressDeleteUpdate(value, path, state)
+  }
+
+  if (isObject(value)) {
+    for (const [attrName, attrValue] of Object.entries(value)) {
+      expressUpdateRec(attrValue, path.append(attrName), state)
+    }
+
+    return state
+  }
+
+  if (isArray(value)) {
+    value.forEach((element, index) => {
+      if (element === undefined) {
+        return
+      }
+
+      expressUpdateRec(element, path.append(index), state)
+    })
+
+    return state
+  }
+
+  let setExpression = pathTokens(path, 's', state)
+  setExpression += ' = '
+  setExpression += refOrValueTokens(value, 's', state)
+  state.setExpressions.push(setExpression)
 
   return state
 }

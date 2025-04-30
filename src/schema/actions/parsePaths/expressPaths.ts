@@ -15,7 +15,7 @@ export const expressPaths = (paths: string[]): ProjectionExpression => {
       ProjectionExpression += ', '
     }
 
-    Path.fromStr(path).arrayPath.forEach((pathPart, index) => {
+    new Path(path).arrayPath.forEach((pathPart, index) => {
       if (isNumber(pathPart)) {
         ProjectionExpression += `[${pathPart}]`
         return

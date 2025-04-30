@@ -7,35 +7,33 @@ export class Path {
   strPath: StrPath
 
   static fromArray(arrayPath: ArrayPath): Path {
-    return new Path({
-      arrayPath,
-      strPath: formatArrayPath(arrayPath)
-    })
+    return new Path(formatArrayPath(arrayPath), arrayPath)
   }
 
-  static fromStr(strPath: StrPath): Path {
-    const arrayPath = parseStringPath(strPath)
-    return Path.fromArray(arrayPath)
-  }
-
-  constructor({ arrayPath, strPath }: { arrayPath: ArrayPath; strPath: StrPath }) {
+  constructor(strPath = '', arrayPath = parseStringPath(strPath)) {
     this.arrayPath = arrayPath
-    this.strPath = strPath
+    this.strPath = formatArrayPath(this.arrayPath)
   }
 
-  // TODO: Just use string|number
-  prepend(path: Path): Path {
-    return new Path({
-      arrayPath: path.arrayPath.concat(this.arrayPath),
-      strPath: [path.strPath, this.strPath].filter(Boolean).join(this.strPath[0] !== '[' ? '.' : '')
-    })
+  prepend(...arrayPath: ArrayPath): Path {
+    return this.prependPath(Path.fromArray(arrayPath))
   }
 
-  // TODO: Just use string|number
-  append(path: Path): Path {
-    return new Path({
-      arrayPath: this.arrayPath.concat(path.arrayPath),
-      strPath: [this.strPath, path.strPath].filter(Boolean).join(path.strPath[0] !== '[' ? '.' : '')
-    })
+  prependPath(path: Path): Path {
+    return new Path(
+      [path.strPath, this.strPath].filter(Boolean).join(this.strPath[0] !== '[' ? '.' : ''),
+      path.arrayPath.concat(this.arrayPath)
+    )
+  }
+
+  append(...arrayPath: ArrayPath): Path {
+    return this.appendPath(Path.fromArray(arrayPath))
+  }
+
+  appendPath(path: Path): Path {
+    return new Path(
+      [this.strPath, path.strPath].filter(Boolean).join(path.strPath[0] !== '[' ? '.' : ''),
+      this.arrayPath.concat(path.arrayPath)
+    )
   }
 }

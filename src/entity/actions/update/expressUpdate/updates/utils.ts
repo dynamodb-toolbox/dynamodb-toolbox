@@ -4,9 +4,9 @@ import type { Path } from '~/schema/actions/utils/path.js'
 import type { Schema, TransformedValue, ValidValue } from '~/schema/index.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 
-import { $GET, isGetting } from '../symbols/index.js'
-import type { ReferenceExtension, UpdateItemInputExtension } from '../types.js'
-import type { ExpressionPrefix, ExpressionState } from './types.js'
+import { $GET, isGetting } from '../../symbols/index.js'
+import type { ReferenceExtension, UpdateItemInputExtension } from '../../types.js'
+import type { ExpressionPrefix, ExpressionState } from '../types.js'
 
 export const pathTokens = (
   path: Path,

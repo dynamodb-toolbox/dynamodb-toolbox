@@ -26,11 +26,7 @@ describe('finder', () => {
       const finder = schema.build(Finder)
 
       expect(finder.search('')).toStrictEqual([
-        new SubSchema({
-          schema,
-          originalPath: Path.fromArray([]),
-          transformedPath: Path.fromArray([])
-        })
+        new SubSchema({ schema, formattedPath: new Path(), transformedPath: new Path() })
       ])
     })
   })
@@ -42,9 +38,9 @@ describe('finder', () => {
 
       expect(finder.search('foo')).toStrictEqual([
         new SubSchema({
-          schema: new AnySchema({ required: 'never' }),
-          originalPath: Path.fromArray(['foo']),
-          transformedPath: Path.fromArray(['foo'])
+          schema: new AnySchema({}),
+          formattedPath: new Path('foo'),
+          transformedPath: new Path('foo')
         })
       ])
     })
@@ -87,8 +83,8 @@ describe('finder', () => {
       expect(schema.build(Finder).search('savedAs')).toStrictEqual([
         new SubSchema({
           schema: strSchema,
-          originalPath: Path.fromArray(['savedAs']),
-          transformedPath: Path.fromArray(['_s'])
+          formattedPath: new Path('savedAs'),
+          transformedPath: new Path('_s')
         })
       ])
     })
@@ -99,7 +95,7 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: escapedStrSchema,
-          originalPath: Path.fromArray(['escaped.[']),
+          formattedPath: Path.fromArray(['escaped.[']),
           transformedPath: Path.fromArray(['.[escaped'])
         })
       ])
@@ -111,8 +107,8 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: strSchema,
-          originalPath: Path.fromStr(path),
-          transformedPath: Path.fromArray(['_n', '_s'])
+          formattedPath: new Path(path),
+          transformedPath: new Path('_n._s')
         })
       ])
     })
@@ -123,7 +119,7 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: strSchema,
-          originalPath: Path.fromStr(path),
+          formattedPath: new Path(path),
           transformedPath: Path.fromArray(['_l', 4, '_s'])
         })
       ])
@@ -145,8 +141,8 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: recordSchema,
-          originalPath: Path.fromStr(path),
-          transformedPath: Path.fromArray(['_r'])
+          formattedPath: new Path(path),
+          transformedPath: new Path('_r')
         })
       ])
     })
@@ -157,7 +153,7 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: valueSchema,
-          originalPath: Path.fromStr(path),
+          formattedPath: new Path(path),
           transformedPath: Path.fromArray(['_r', '_key', 2, '_v'])
         })
       ])
@@ -174,8 +170,8 @@ describe('finder', () => {
       expect(schema.build(Finder).search('anyOf')).toStrictEqual([
         new SubSchema({
           schema: anyOfAttrSchema,
-          originalPath: Path.fromStr('anyOf'),
-          transformedPath: Path.fromStr('anyOf')
+          formattedPath: new Path('anyOf'),
+          transformedPath: new Path('anyOf')
         })
       ])
     })
@@ -186,8 +182,8 @@ describe('finder', () => {
       expect(schema.build(Finder).search(path)).toStrictEqual([
         new SubSchema({
           schema: strOrNumSchema,
-          originalPath: Path.fromStr(path),
-          transformedPath: Path.fromStr(path)
+          formattedPath: new Path(path),
+          transformedPath: new Path(path)
         })
       ])
     })
@@ -205,13 +201,13 @@ describe('finder', () => {
       expect(schema.build(Finder).search("['anyOf']['status']")).toStrictEqual([
         new SubSchema({
           schema: statusSchemaA,
-          originalPath: Path.fromStr(path),
-          transformedPath: Path.fromStr(path)
+          formattedPath: new Path(path),
+          transformedPath: new Path(path)
         }),
         new SubSchema({
           schema: statusSchemaB,
-          originalPath: Path.fromStr(path),
-          transformedPath: Path.fromArray(['anyOf', '_st'])
+          formattedPath: new Path(path),
+          transformedPath: new Path('anyOf._st')
         })
       ])
     })

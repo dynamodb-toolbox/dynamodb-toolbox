@@ -22,22 +22,15 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
   const [pathHead, ...pathTail] = path
 
   if (pathHead === undefined) {
-    return [
-      new SubSchema({
-        schema,
-        originalPath: Path.fromArray([]),
-        transformedPath: Path.fromArray([])
-      })
-    ]
+    return [new SubSchema({ schema, formattedPath: new Path(), transformedPath: new Path() })]
   }
 
   switch (schema.type) {
     case 'any': {
       return [
         new SubSchema({
-          // Why Required never?
-          schema: new AnySchema({ required: 'never' }),
-          originalPath: Path.fromArray(path),
+          schema: new AnySchema({}),
+          formattedPath: Path.fromArray(path),
           transformedPath: Path.fromArray(path)
         })
       ]
@@ -62,11 +55,11 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
       }
 
       return findSubSchemas(schema.elements, pathTail).map(
-        ({ schema, originalPath, transformedPath }) =>
+        ({ schema, formattedPath, transformedPath }) =>
           new SubSchema({
             schema,
-            originalPath: originalPath.prepend(Path.fromArray([pathHead])),
-            transformedPath: transformedPath.prepend(Path.fromArray([parsedKey]))
+            formattedPath: formattedPath.prepend(pathHead),
+            transformedPath: transformedPath.prepend(parsedKey)
           })
       )
     }
@@ -80,11 +73,11 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
       const transformedLocalPath = childAttribute.props.savedAs ?? pathHead
 
       return findSubSchemas(childAttribute, pathTail).map(
-        ({ schema, originalPath, transformedPath }) =>
+        ({ schema, formattedPath, transformedPath }) =>
           new SubSchema({
             schema,
-            originalPath: originalPath.prepend(Path.fromArray([pathHead])),
-            transformedPath: transformedPath.prepend(Path.fromArray([transformedLocalPath]))
+            formattedPath: formattedPath.prepend(pathHead),
+            transformedPath: transformedPath.prepend(transformedLocalPath)
           })
       )
     }
@@ -94,11 +87,11 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
       }
 
       return findSubSchemas(schema.elements, pathTail).map(
-        ({ schema, originalPath, transformedPath }) =>
+        ({ schema, formattedPath, transformedPath }) =>
           new SubSchema({
             schema,
-            originalPath: originalPath.prepend(Path.fromArray([pathHead])),
-            transformedPath: transformedPath.prepend(Path.fromArray([pathHead]))
+            formattedPath: formattedPath.prepend(pathHead),
+            transformedPath: transformedPath.prepend(pathHead)
           })
       )
     }
