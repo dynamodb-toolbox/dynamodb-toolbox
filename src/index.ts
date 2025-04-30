@@ -57,6 +57,7 @@ export type { FormattedValueJSONSchema } from './schema/actions/jsonSchemer/inde
 export { SchemaDTO } from './schema/actions/dto/index.js'
 export type { ItemSchemaDTO, ISchemaDTO } from './schema/actions/dto/index.js'
 export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
+export { Finder, SubSchema } from './schema/actions/finder/index.js'
 
 // tables
 export { Table, TableAction, $entities } from './table/index.js'
