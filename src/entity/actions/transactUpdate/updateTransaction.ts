@@ -1,6 +1,6 @@
 import { EntityParser } from '~/entity/actions/parse/index.js'
+import { expressUpdate } from '~/entity/actions/update/expressUpdate/index.js'
 import type { UpdateItemInput } from '~/entity/actions/update/index.js'
-import { parseUpdate } from '~/entity/actions/update/updateExpression/parse.js'
 import { parseUpdateExtension } from '~/entity/actions/update/updateItemParams/extension/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
@@ -63,7 +63,7 @@ export class UpdateTransaction<
       ExpressionAttributeNames: updateExpressionAttributeNames,
       ExpressionAttributeValues: updateExpressionAttributeValues,
       UpdateExpression
-    } = parseUpdate(this.entity, omit(item, ...Object.keys(key)))
+    } = expressUpdate(this.entity, omit(item, ...Object.keys(key)))
 
     const options = this[$options]
     const {

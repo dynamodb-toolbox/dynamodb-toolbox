@@ -1,1 +1,1 @@
-export type { ConditionParserErrorBlueprints } from './parseCondition/errors.js'
+export type { TransformConditionErrorBlueprints as ConditionParserErrorBlueprints } from './transformCondition/errors.js'

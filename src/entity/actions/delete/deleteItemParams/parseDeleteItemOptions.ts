@@ -59,7 +59,6 @@ export const parseDeleteItemOptions: DeleteItemOptionsParser = (entity, deleteIt
     const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
       .build(EntityConditionParser)
       .parse(condition)
-      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

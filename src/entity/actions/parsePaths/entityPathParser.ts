@@ -2,17 +2,19 @@ import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
 import { PathParser } from '~/schema/actions/parsePaths/index.js'
 import type {
-  ParseOptions,
-  ProjectOptions,
-  Projection,
-  ProjectionExpression
+  ParsePathsOptions,
+  ProjectionExpression,
+  TransformPathsOptions
 } from '~/schema/actions/parsePaths/index.js'
 import type { Paths } from '~/schema/index.js'
 
 import { $pathParser } from './constants.js'
 
 export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static override actionName: 'parsePaths';
+  static override actionName: 'parsePaths'
+  static express(paths: string[]): ProjectionExpression {
+    return PathParser.express(paths)
+  }
 
   [$pathParser]: PathParser<ENTITY['schema']>
 
@@ -21,11 +23,11 @@ export class EntityPathParser<ENTITY extends Entity = Entity> extends EntityActi
     this[$pathParser] = new PathParser(entity.schema)
   }
 
-  project(paths: string[], options: ProjectOptions = {}): Projection {
-    return this[$pathParser].project(paths, options)
+  transform(paths: string[], options?: TransformPathsOptions): string[] {
+    return this[$pathParser].transform(paths, options)
   }
 
-  parse(attributes: string[], options: ParseOptions = {}): ProjectionExpression {
+  parse(attributes: string[], options?: ParsePathsOptions): ProjectionExpression {
     return this[$pathParser].parse(attributes, options)
   }
 }

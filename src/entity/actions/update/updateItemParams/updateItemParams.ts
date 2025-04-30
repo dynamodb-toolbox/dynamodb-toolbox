@@ -5,9 +5,9 @@ import type { Entity } from '~/entity/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { omit } from '~/utils/omit.js'
 
+import { expressUpdate } from '../expressUpdate/index.js'
 import type { UpdateItemOptions } from '../options.js'
 import type { UpdateItemInput } from '../types.js'
-import { parseUpdate } from '../updateExpression/index.js'
 import { parseUpdateExtension } from './extension/index.js'
 import { parseUpdateItemOptions } from './parseUpdateItemOptions.js'
 
@@ -34,7 +34,7 @@ export const updateItemParams: UpdateItemParamsGetter = <
     ExpressionAttributeNames: updateExpressionAttributeNames,
     ExpressionAttributeValues: updateExpressionAttributeValues,
     ...update
-  } = parseUpdate(entity, omit(item, ...Object.keys(key)))
+  } = expressUpdate(entity, omit(item, ...Object.keys(key)))
 
   const {
     ExpressionAttributeNames: optionsExpressionAttributeNames,

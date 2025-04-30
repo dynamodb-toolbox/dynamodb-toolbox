@@ -59,7 +59,6 @@ export const parsePutItemOptions: PutItemOptionsParser = (entity, putItemOptions
     const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
       .build(EntityConditionParser)
       .parse(condition)
-      .toCommandOptions()
 
     if (!isEmpty(ExpressionAttributeNames)) {
       commandOptions.ExpressionAttributeNames = ExpressionAttributeNames

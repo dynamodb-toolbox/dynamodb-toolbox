@@ -29,7 +29,6 @@ export const parseOptions: OptionsParser = (entity, options) => {
     const { ExpressionAttributeNames, ExpressionAttributeValues, ConditionExpression } = entity
       .build(EntityConditionParser)
       .parse(condition)
-      .toCommandOptions()
 
     transactionOptions.ExpressionAttributeNames = ExpressionAttributeNames
     transactionOptions.ExpressionAttributeValues = ExpressionAttributeValues

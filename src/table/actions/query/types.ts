@@ -1,10 +1,4 @@
 import type {
-  BeginsWithOperator,
-  BetweenOperator,
-  EqualityOperator,
-  RangeOperator
-} from '~/schema/actions/parseCondition/index.js'
-import type {
   ResolvedBinarySchema,
   ResolvedNumberSchema,
   ResolvedStringSchema
@@ -14,16 +8,11 @@ import type { Table } from '~/table/index.js'
 import type { GlobalIndex, IndexableKeyType, Key, LocalIndex } from '~/table/types/index.js'
 import type { ComputeDeep } from '~/types/compute.js'
 
-type QueryOperator = EqualityOperator | RangeOperator | BeginsWithOperator | BetweenOperator
-export const queryOperatorSet = new Set<QueryOperator>([
-  'eq',
-  'gt',
-  'gte',
-  'lt',
-  'lte',
-  'between',
-  'beginsWith'
-])
+type BeginsWithOperator = 'beginsWith'
+type BetweenOperator = 'between'
+type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
+type EqualityOperator = 'eq'
+export type QueryOperator = EqualityOperator | RangeOperator | BeginsWithOperator | BetweenOperator
 
 type ResolveKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'number'
   ? ResolvedNumberSchema

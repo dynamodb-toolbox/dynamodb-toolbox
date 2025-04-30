@@ -18,8 +18,9 @@ import { rejectExtraOptions } from '~/options/rejectExtraOptions.js'
 import { parseSelectOption } from '~/options/select.js'
 import { parseShowEntityAttrOption } from '~/options/showEntityAttr.js'
 import { parseTableNameOption } from '~/options/tableName.js'
+import { expressCondition } from '~/schema/actions/parseCondition/expressCondition/expressCondition.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
-import { Projection } from '~/schema/actions/parsePaths/index.js'
+import { Deduper } from '~/schema/actions/utils/deduper.js'
 import { AnySchema } from '~/schema/any/schema.js'
 import type { Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
@@ -158,12 +159,51 @@ export const scanParams: ScanParamsGetter = <
   const expressionAttributeNames: Record<string, string> = {}
   const expressionAttributeValues: Record<string, any> = {}
 
+  // --- PROJECTION ---
+  if (attributes !== undefined && attributes.length > 0) {
+    if (entities.length === 0) {
+      // TODO: Handle projections even without entities
+    } else {
+      const transformedPaths = new Deduper<string>({ serializer: value => value })
+
+      for (const entity of entities) {
+        const entityTransformedPaths = entity
+          .build(EntityPathParser)
+          .transform(attributes, { strict: false })
+
+        if (entityTransformedPaths.length === 0) {
+          throw new DynamoDBToolboxError('scanCommand.invalidProjectionExpression', {
+            message: `Unable to match any expression attribute path with entity: ${entity.entityName}`,
+            payload: { entity: entity.entityName }
+          })
+        }
+
+        for (const transformedPath of entityTransformedPaths) {
+          transformedPaths.push(transformedPath)
+        }
+      }
+
+      const expression = EntityPathParser.express(transformedPaths.values)
+      Object.assign(expressionAttributeNames, expression.ExpressionAttributeNames)
+
+      // include the entityAttrSavedAs for faster formatting
+      const { entityAttributeSavedAs } = table
+      if (!Object.values(expression.ExpressionAttributeNames).includes(entityAttributeSavedAs)) {
+        commandOptions.ProjectionExpression = [expression.ProjectionExpression, '#_et'].join(', ')
+        expressionAttributeNames['#_et'] = entityAttributeSavedAs
+      } else {
+        commandOptions.ProjectionExpression = expression.ProjectionExpression
+      }
+    }
+  }
+
+  // --- FILTERS ---
   if (entities.length === 0 && filter !== undefined) {
     const {
       ExpressionAttributeNames: filterExpressionAttributeNames,
       ExpressionAttributeValues: filterExpressionAttributeValues,
       ConditionExpression: filterExpression
-    } = new ConditionParser(defaultAnySchema).parse(filter).toCommandOptions()
+    } = new ConditionParser(defaultAnySchema).parse(filter)
 
     Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
     Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
@@ -171,85 +211,35 @@ export const scanParams: ScanParamsGetter = <
   }
 
   if (entities.length > 0) {
-    const filterExpressions: string[] = []
-    let projectionExpression: string | undefined = undefined
+    const transformedFilters: Condition[] = []
 
-    if (attributes !== undefined && attributes.length > 0) {
-      const projection = new Projection()
-
-      for (const entity of entities) {
-        const entityProjection = entity
-          .build(EntityPathParser)
-          .project(attributes, { strict: false })
-
-        if (entityProjection.paths.length === 0) {
-          throw new DynamoDBToolboxError('scanCommand.invalidProjectionExpression', {
-            message: `Unable to match any expression attribute path with entity: ${entity.entityName}`,
-            payload: { entity: entity.entityName }
-          })
-        }
-
-        for (const path of entityProjection.paths) {
-          projection.addPath(path)
-        }
-      }
-
-      const { ExpressionAttributeNames: projectionAttributeNames, ProjectionExpression } =
-        projection.express()
-
-      Object.assign(expressionAttributeNames, projectionAttributeNames)
-      projectionExpression = ProjectionExpression
-
-      const { entityAttributeSavedAs } = table
-      const filteredAttributes = new Set(Object.values(expressionAttributeNames))
-
-      // include the entityAttrSavedAs for faster formatting
-      if (!filteredAttributes.has(entityAttributeSavedAs)) {
-        projectionExpression += `, #_et`
-        expressionAttributeNames['#_et'] = entityAttributeSavedAs
-      }
-    }
-
-    let index = 0
     for (const entity of entities) {
       const entityOptionsFilter = filters[entity.entityName]
       const entityNameFilter = entityAttrFilter
         ? // NOTE: We validated that all entities have entityAttr enabled
-          { attr: getEntityAttrOptionValue(entity.entityAttribute, 'name'), eq: entity.entityName }
+          {
+            attr: getEntityAttrOptionValue(entity.entityAttribute, 'name'),
+            eq: entity.entityName
+          }
         : undefined
 
       if (entityOptionsFilter === undefined && entityNameFilter === undefined) {
         continue
       }
 
-      const entityFilters = [entityNameFilter, entityOptionsFilter].filter(Boolean) as Condition[]
+      const transformedFilter = entity.build(EntityConditionParser).transform({
+        and: [entityNameFilter, entityOptionsFilter].filter(Boolean) as Condition[]
+      })
 
-      const {
-        ExpressionAttributeNames: filterExpressionAttributeNames,
-        ExpressionAttributeValues: filterExpressionAttributeValues,
-        ConditionExpression: filterExpression
-      } = entity
-        .build(EntityConditionParser)
-        .setId(index.toString())
-        .parse({ and: entityFilters })
-        .toCommandOptions()
-
-      Object.assign(expressionAttributeNames, filterExpressionAttributeNames)
-      Object.assign(expressionAttributeValues, filterExpressionAttributeValues)
-      filterExpressions.push(filterExpression)
-
-      index++
+      transformedFilters.push(transformedFilter)
     }
 
-    if (filterExpressions.length > 0) {
-      commandOptions.FilterExpression =
-        filterExpressions.length === 1
-          ? filterExpressions[0]
-          : `(${filterExpressions.filter(Boolean).join(') OR (')})`
-    }
+    if (transformedFilters.length > 0) {
+      const expression = expressCondition({ or: transformedFilters })
 
-    if (projectionExpression !== undefined) {
-      commandOptions.ProjectionExpression = projectionExpression
+      Object.assign(expressionAttributeNames, expression.ExpressionAttributeNames)
+      Object.assign(expressionAttributeValues, expression.ExpressionAttributeValues)
+      commandOptions.FilterExpression = expression.ConditionExpression
     }
   }
 

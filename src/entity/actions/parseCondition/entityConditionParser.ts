@@ -1,38 +1,33 @@
-import type { NativeAttributeValue } from '@aws-sdk/util-dynamodb'
-
-import { EntityAction } from '~/entity/index.js'
 import type { Entity } from '~/entity/index.js'
+import { EntityAction } from '~/entity/index.js'
+import type {
+  ConditionExpression,
+  ParseConditionOptions,
+  SchemaCondition
+} from '~/schema/actions/parseCondition/index.js'
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
-import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
 
 import { $conditionParser } from './constants.js'
 
 export class EntityConditionParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
-  static override actionName: 'parseCondition';
+  static override actionName: 'parseCondition'
+  static express(condition: SchemaCondition, expressionId = ''): ConditionExpression {
+    return ConditionParser.express(condition, expressionId)
+  }
 
   [$conditionParser]: ConditionParser<ENTITY['schema']>
 
-  constructor(entity: ENTITY, id: string = '') {
+  constructor(entity: ENTITY) {
     super(entity)
-    this[$conditionParser] = new ConditionParser(entity.schema, id)
+    this[$conditionParser] = new ConditionParser(entity.schema)
   }
 
-  setId(nextId: string): this {
-    this[$conditionParser].setId(nextId)
-    return this
+  transform(condition: SchemaCondition): SchemaCondition {
+    return this[$conditionParser].transform(condition)
   }
 
-  parse = (condition: SchemaCondition): this => {
-    this[$conditionParser].parse(condition)
-    return this
-  }
-
-  toCommandOptions(): {
-    ConditionExpression: string
-    ExpressionAttributeNames: Record<string, string>
-    ExpressionAttributeValues: Record<string, NativeAttributeValue>
-  } {
-    return this[$conditionParser].toCommandOptions()
+  parse(condition: SchemaCondition, options: ParseConditionOptions = {}): ConditionExpression {
+    return this[$conditionParser].parse(condition, options)
   }
 }
 

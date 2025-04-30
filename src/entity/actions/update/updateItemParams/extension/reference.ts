@@ -72,7 +72,9 @@ export const parseReferenceExtension: ExtensionParser<
 
       const parsedValue = {
         [$GET]: [
-          // NOTE: Reference validation is done in UpdateExpressionParser
+          /**
+           * @debt "TODO: Validate reference here and remove entities/schemas in expressUpdate"
+           */
           reference,
           ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
         ]
@@ -84,11 +86,7 @@ export const parseReferenceExtension: ExtensionParser<
       }
 
       const transformedValue = {
-        [$GET]: [
-          // NOTE: Reference validation is done in UpdateExpressionParser
-          reference,
-          ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])
-        ]
+        [$GET]: [reference, ...(fallbackParser !== undefined ? [fallbackParser.next().value] : [])]
       }
       return transformedValue
     }

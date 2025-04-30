@@ -558,14 +558,13 @@ describe('scan', () => {
     const { FilterExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       command.params()
 
-    expect(FilterExpression).toBe('(#c0_1 = :c0_1) OR (#c1_1 = :c1_1)')
+    expect(FilterExpression).toBe('(#c_1 = :c_1) OR (#c_1 = :c_2)')
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c1_1': TestTable.entityAttributeSavedAs
+      '#c_1': TestTable.entityAttributeSavedAs
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.entityName,
-      ':c1_1': Entity2.entityName
+      ':c_1': Entity1.entityName,
+      ':c_2': Entity2.entityName
     })
   })
 
@@ -597,9 +596,9 @@ describe('scan', () => {
         })
         .params()
 
-    expect(FilterExpression).toBe('#c0_1 >= :c0_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': 'price' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': 100 })
+    expect(FilterExpression).toBe('#c_1 >= :c_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'price' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c_1': 100 })
   })
 
   test('applies the filter if a single entity is provided and entityAttrFilter is false', () => {
@@ -614,9 +613,9 @@ describe('scan', () => {
         })
         .params()
 
-    expect(FilterExpression).toBe('#c0_1 >= :c0_1')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c0_1': 'age' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_1': 40 })
+    expect(FilterExpression).toBe('#c_1 >= :c_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c_1': 'age' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c_1': 40 })
   })
 
   test('applies two entity filters AND additional filters if possible', () => {
@@ -632,19 +631,18 @@ describe('scan', () => {
         .params()
 
     expect(FilterExpression).toBe(
-      '((#c0_1 = :c0_1) AND (#c0_2 >= :c0_2)) OR ((#c1_1 = :c1_1) AND (#c1_2 >= :c1_2))'
+      '((#c_1 = :c_1) AND (#c_2 >= :c_2)) OR ((#c_1 = :c_3) AND (#c_3 >= :c_4))'
     )
     expect(ExpressionAttributeNames).toMatchObject({
-      '#c0_1': TestTable.entityAttributeSavedAs,
-      '#c0_2': 'age',
-      '#c1_1': TestTable.entityAttributeSavedAs,
-      '#c1_2': 'price'
+      '#c_1': TestTable.entityAttributeSavedAs,
+      '#c_2': 'age',
+      '#c_3': 'price'
     })
     expect(ExpressionAttributeValues).toMatchObject({
-      ':c0_1': Entity1.entityName,
-      ':c0_2': 40,
-      ':c1_1': Entity2.entityName,
-      ':c1_2': 100
+      ':c_1': Entity1.entityName,
+      ':c_2': 40,
+      ':c_3': Entity2.entityName,
+      ':c_4': 100
     })
   })
 
@@ -669,9 +667,9 @@ describe('scan', () => {
         })
         .params()
 
-    expect(FilterExpression).toContain('#c0_2 >= :c0_2')
-    expect(ExpressionAttributeNames).toMatchObject({ '#c0_2': 'transformedStr' })
-    expect(ExpressionAttributeValues).toMatchObject({ ':c0_2': 'bar' })
+    expect(FilterExpression).toContain('#c_2 >= :c_2')
+    expect(ExpressionAttributeNames).toMatchObject({ '#c_2': 'transformedStr' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':c_2': 'bar' })
 
     const { ExpressionAttributeValues: ExpressionAttributeValues2 } = TestTable.build(ScanCommand)
       .entities(TestEntity3)
@@ -682,7 +680,7 @@ describe('scan', () => {
       })
       .params()
 
-    expect(ExpressionAttributeValues2).toMatchObject({ ':c0_2': 'foo#bar' })
+    expect(ExpressionAttributeValues2).toMatchObject({ ':c_2': 'foo#bar' })
   })
 
   // --- PROJECTION ---

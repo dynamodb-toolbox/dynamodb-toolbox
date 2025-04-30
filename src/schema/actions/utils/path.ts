@@ -23,6 +23,7 @@ export class Path {
     this.strPath = strPath
   }
 
+  // TODO: Just use string|number
   prepend(path: Path): Path {
     return new Path({
       arrayPath: path.arrayPath.concat(this.arrayPath),
@@ -30,6 +31,7 @@ export class Path {
     })
   }
 
+  // TODO: Just use string|number
   append(path: Path): Path {
     return new Path({
       arrayPath: this.arrayPath.concat(path.arrayPath),
