@@ -6,9 +6,7 @@ import { transformPaths } from './transformPaths.js'
 import type { TransformPathsOptions } from './transformPaths.js'
 import type { ProjectionExpression } from './types.js'
 
-export interface ParsePathsOptions extends TransformPathsOptions {
-  expressionId?: string
-}
+export interface ParsePathsOptions extends TransformPathsOptions {}
 
 export class PathParser<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'parsePath' as const

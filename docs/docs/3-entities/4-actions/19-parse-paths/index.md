@@ -13,66 +13,106 @@ import { PathParser } from 'dynamodb-toolbox/entity/actions/parsePaths'
 
 // 👇 To be used in DynamoDB commands
 const { ProjectionExpression, ExpressionAttributeNames } =
-  PokemonEntity.build(PathParser)
-    .parse(['name', 'level'])
-    .toCommandOptions()
+  PokemonEntity.build(PathParser).parse(['name', 'level'])
 ```
 
 ## Methods
 
-### `parse(...)`
+### `transform(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>(paths: Path&lt;ENTITY&gt;[]) => PathParser</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>(paths: Path&lt;ENTITY&gt;[], opt?: Options) => string[]</code></i></p>
 
-Parses a list of paths. Throws an `invalidExpressionAttributePath` error if a path is invalid:
+**Validates the paths** for the provided `Entity` and **transforms them** to match the underlying data if needed:
 
 ```ts
-PokemonEntity.build(PathParser).parse(['name', 'level'])
+const pokemonSchema = item({
+  name: string(),
+  level: number().savedAs('_l')
+  ...
+})
+
+PokemonEntity.build(PathParser).transform(['name', 'level'])
+// => ['name', '_l']
 ```
 
-Note that the `parse` method should only be used once per instance (for now). See [Paths](#paths) for more details on how to write paths.
-
-### `toCommandOptions()`
-
-<p style={{ marginTop: '-15px' }}><i><code>() => CommandOptions</code></i></p>
-
-Collapses the `PathParser` state to a set of options that can be used in a DynamoDB command:
+By default, the method expects all the paths to be valid for the provided `Entity` and throws an `invalidExpressionAttributePath` error if not. You can unset the `strict` option to skip invalid paths:
 
 ```ts
-const { ProjectionExpression, ExpressionAttributeNames } =
-  PokemonEntity.build(PathParser)
-    .parse(['name', 'level'])
-    .toCommandOptions()
+const pokemonSchema = item({
+  name: string(),
+  level: number().savedAs('_l')
+  ...
+})
+
+PokemonEntity.build(PathParser).transform(
+  ['name', 'level', 'unknown.path'],
+  { strict: false }
+)
+// => ['name', '_l']
 ```
 
-### `setId(...)`
+:::info
 
-<p style={{ marginTop: '-15px' }}><i><code>(id: string) => ConditionParser</code></i></p>
+Note that the `transform(...)` method **may add paths** if several options of an [`anyOf`](../../../4-schemas/16-anyOf/index.md) attribute match a provided path:
 
-Adds a prefix to expression attribute keys. Useful to avoid conflicts when using several expressions in a single command:
+<details className="details-in-admonition">
+<summary>🔎 <b>Show example</b></summary>
 
 ```ts
-PokemonEntity.build(PathParser)
-  .parse(['name', 'level'])
-  .toCommandOptions()
+const pokemonSchema = item({
+  meta: anyOf(
+    map({ description: string() }),
+    map({ description: string().savedAs('d') })
+    ...
+  )
+  ...
+})
+
+PokemonEntity.build(PathParser).transform(['meta.description'])
+// => ['meta.description', 'meta.d']
+```
+
+</details>
+
+:::
+
+### `express(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code><b>static</b> (paths: string[]) => ProjectionExpression</code></i></p>
+
+Translates **any path list** to a DynamoDB [Projection Expression](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html):
+
+```ts
+PathParser.express(['name', 'level'])
 // => {
 //   ProjectionExpression: '#p_1, #p_2',
 //   ExpressionAttributeNames: {
 //     '#p_1': 'name',
 //     '#p_2': 'level'
-//   }
+//   },
 // }
+```
 
-PokemonEntity.build(PathParser)
-  .setId('0')
-  .parse(['name', 'level'])
-  .toCommandOptions()
+:::caution
+
+The method's static nature emphasizes that it **does not validate the paths**. It should only be used on [`transformed`](#transform) paths.
+
+:::
+
+### `parse(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(paths: Path&lt;ENTITY&gt;[]) => ProjectionExpression</code></i></p>
+
+Subsequently [`transform`](#transform) and [`express`](#express) paths for the provided `Entity`:
+
+```ts
+PokemonEntity.build(PathParser).parse(['name', 'level'])
 // => {
-//   ProjectionExpression: '#p0_1, #p0_2',
+//   ProjectionExpression: '#p_1, #p_2',
 //   ExpressionAttributeNames: {
-//     '#p0_1': 'name',
-//     '#p0_2': 'level'
-//   }
+//     '#p_1': 'name',
+//     '#p_2': 'level'
+//   },
 // }
 ```
 
@@ -81,12 +121,9 @@ PokemonEntity.build(PathParser)
 The path syntax from DynamoDB-Toolbox follows the [DynamoDB specifications](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Expressions.ProjectionExpressions.html), while making it **type-safe** and **simpler**:
 
 ```ts
-import type {
-  Path,
-  PathIntersection
-} from 'dynamodb-toolbox/entity/actions/parsePaths'
+import type { EntityPaths } from 'dynamodb-toolbox/entity/actions/parsePaths'
 
-type PokemonPath = Path<typeof PokemonEntity>
+type PokemonPath = EntityPaths<typeof PokemonEntity>
 
 const namePath: PokemonPath = 'name'
 
@@ -98,10 +135,4 @@ const deepMapOrRecordPath: PokemonPath = `weaknesses['fire']`
 
 // 👇 Use this syntax to escape special chars (e.g. in `records`)
 const deepRecordPath: PokemonPath = `meta['any[char]-you.want!']`
-
-// Path common to both entities
-type PokemonAndTrainerPath = PathIntersection<
-  [typeof PokemonEntity, typeof TrainerEntity]
->
-const commonPath: PokemonAndTrainerPath = 'name'
 ```
