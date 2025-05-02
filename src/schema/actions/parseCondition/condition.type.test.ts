@@ -40,8 +40,23 @@ type ALL_PATHS = Paths<typeof mySchema>
 
 type ANY_ATTR_PATH = 'any' | "['any']"
 type ANY_CONDITION = AttrCondition<ANY_ATTR_PATH, ATTRIBUTES['any'], ALL_PATHS>
+
 const anyCondition: A.Equals<
   ANY_CONDITION,
+  // Exact path
+  | ExistsCondition<ANY_ATTR_PATH>
+  | TypeCondition<ANY_ATTR_PATH>
+  | NullSchemaCondition<ANY_ATTR_PATH>
+  | BooleanSchemaCondition<ANY_ATTR_PATH, BooleanSchema, ALL_PATHS, { foo: 'bar' }>
+  | NumberSchemaCondition<ANY_ATTR_PATH, NumberSchema, ALL_PATHS, { foo: 'bar' }>
+  | StringSchemaCondition<ANY_ATTR_PATH, StringSchema, ALL_PATHS, { foo: 'bar' }>
+  | BinarySchemaCondition<ANY_ATTR_PATH, BinarySchema, ALL_PATHS, { foo: 'bar' }>
+  | SetSchemaCondition<ANY_ATTR_PATH, SetSchema, ALL_PATHS>
+  | ListSchemaCondition<ANY_ATTR_PATH, ListSchema, ALL_PATHS>
+  | MapSchemaCondition<ANY_ATTR_PATH, MapSchema, ALL_PATHS>
+  | RecordSchemaCondition<ANY_ATTR_PATH, RecordSchema, ALL_PATHS>
+  | AnyOfSchemaCondition<ANY_ATTR_PATH, AnyOfSchema, ALL_PATHS>
+  // Sub-paths
   | ExistsCondition<`${ANY_ATTR_PATH}${string}`>
   | TypeCondition<`${ANY_ATTR_PATH}${string}`>
   | NullSchemaCondition<`${ANY_ATTR_PATH}${string}`>
@@ -143,16 +158,16 @@ const assertStrCondition: A.Equals<
     }
   | { attr: STR_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
   // Using size
-  | { size: STR_ATTR_PATH; eq: number | bigint | { attr: ALL_PATHS } }
-  | { size: STR_ATTR_PATH; ne: number | bigint | { attr: ALL_PATHS } }
-  | { size: STR_ATTR_PATH; in: (number | bigint | { attr: ALL_PATHS })[] }
-  | { size: STR_ATTR_PATH; lt: number | bigint | { attr: ALL_PATHS } }
-  | { size: STR_ATTR_PATH; lte: number | bigint | { attr: ALL_PATHS } }
-  | { size: STR_ATTR_PATH; gt: number | bigint | { attr: ALL_PATHS } }
-  | { size: STR_ATTR_PATH; gte: number | bigint | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; eq: number | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; ne: number | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; in: (number | { attr: ALL_PATHS })[] }
+  | { size: STR_ATTR_PATH; lt: number | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; lte: number | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; gt: number | { attr: ALL_PATHS } }
+  | { size: STR_ATTR_PATH; gte: number | { attr: ALL_PATHS } }
   | {
       size: STR_ATTR_PATH
-      between: [number | bigint | { attr: ALL_PATHS }, number | bigint | { attr: ALL_PATHS }]
+      between: [number | { attr: ALL_PATHS }, number | { attr: ALL_PATHS }]
     }
 > = 1
 assertStrCondition

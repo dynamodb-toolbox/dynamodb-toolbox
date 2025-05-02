@@ -19,7 +19,7 @@ export const transformGteCondition = (
   const attributePath = size ? condition.size : condition.attr
   const transform = size ? undefined : condition.transform
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedGte)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedGte, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath
@@ -56,7 +56,7 @@ export const transformGtCondition = (
   const attributePath = size ? condition.size : condition.attr
   const transform = size ? undefined : condition.transform
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedGt)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedGt, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath
@@ -93,7 +93,7 @@ export const transformLteCondition = (
   const attributePath = size ? condition.size : condition.attr
   const transform = size ? undefined : condition.transform
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedLte)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedLte, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath
@@ -130,7 +130,7 @@ export const transformLtCondition = (
   const attributePath = size ? condition.size : condition.attr
   const transform = size ? undefined : condition.transform
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedLt)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedLt, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath

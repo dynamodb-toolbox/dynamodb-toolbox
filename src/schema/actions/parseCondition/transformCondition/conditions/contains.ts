@@ -17,7 +17,7 @@ export const transformContainsCondition = (
   const { contains: formattedContains, transform } = condition
   const attributePath = condition.attr
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedContains)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedContains, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath

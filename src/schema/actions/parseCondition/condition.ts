@@ -12,6 +12,7 @@ import type {
   Paths,
   PrimitiveSchema,
   RecordSchema,
+  ResolveAnySchema,
   ResolveBinarySchema,
   ResolveBooleanSchema,
   ResolveNumberSchema,
@@ -27,27 +28,38 @@ import type {
 } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
-export type AnySchemaCondition<ATTR_PATH extends string, ALL_PATHS extends string> = AttrCondition<
-  ATTR_PATH,
-  Exclude<Schema, AnySchema>,
-  ALL_PATHS
->
+export type AnySchemaCondition<
+  SCHEMA extends AnySchema,
+  ATTR_PATH extends string,
+  ALL_PATHS extends string
+> =
+  | AttrCondition<ATTR_PATH, Exclude<Schema, AnySchema>, ALL_PATHS, ResolveAnySchema<SCHEMA>>
+  | AttrCondition<`${ATTR_PATH}${string}`, Exclude<Schema, AnySchema>, ALL_PATHS>
 
 export type ConditionType = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
 
 export type AttrCondition<
   ATTR_PATH extends string,
   SCHEMA extends Schema,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > =
-  | (SCHEMA extends AnySchema ? AnySchemaCondition<`${ATTR_PATH}${string}`, ALL_PATHS> : never)
+  | (SCHEMA extends AnySchema ? AnySchemaCondition<SCHEMA, ATTR_PATH, ALL_PATHS> : never)
   | (SCHEMA extends NullSchema ? NullSchemaCondition<ATTR_PATH> : never)
-  | (SCHEMA extends BooleanSchema ? BooleanSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
-  | (SCHEMA extends NumberSchema ? NumberSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
+  | (SCHEMA extends BooleanSchema
+      ? BooleanSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
+      : never)
+  | (SCHEMA extends NumberSchema
+      ? NumberSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
+      : never)
   // Size ok
-  | (SCHEMA extends StringSchema ? StringSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
+  | (SCHEMA extends StringSchema
+      ? StringSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
+      : never)
   // Size ok
-  | (SCHEMA extends BinarySchema ? BinarySchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
+  | (SCHEMA extends BinarySchema
+      ? BinarySchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
+      : never)
   // Size ok
   | (SCHEMA extends SetSchema ? SetSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
   // Size ok
@@ -68,118 +80,163 @@ export type TypeCondition<ATTR_PATH extends string> = {
   type: ConditionType
 }
 
-export type EqCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type EqCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  eq: ATTR_VALUE | { attr: ALL_PATHS }
+  eq: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  eq: ResolvedNumberSchema | { attr: ALL_PATHS }
+  eq: number | { attr: ALL_PATHS }
 }
 
-export type NotEqCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type NotEqCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  ne: ATTR_VALUE | { attr: ALL_PATHS }
+  ne: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeNotEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  ne: ResolvedNumberSchema | { attr: ALL_PATHS }
+  ne: number | { attr: ALL_PATHS }
 }
 
-export type InCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type InCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  in: (ATTR_VALUE | { attr: ALL_PATHS })[]
+  in: (ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE)[]
   transform?: boolean
 }
 
 type SizeInCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  in: (ResolvedNumberSchema | { attr: ALL_PATHS })[]
+  in: (number | { attr: ALL_PATHS })[]
 }
 
-export type ValueCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> =
-  | EqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | NotEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | InCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
+export type ValueCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> =
+  | EqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | NotEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | InCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
 
 type SizeValueCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   | SizeEqCondition<ATTR_PATH, ALL_PATHS>
   | SizeNotEqCondition<ATTR_PATH, ALL_PATHS>
   | SizeInCondition<ATTR_PATH, ALL_PATHS>
 
-export type LessThanCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type LessThanCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  lt: ATTR_VALUE | { attr: ALL_PATHS }
+  lt: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeLessThanCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  lt: ResolvedNumberSchema | { attr: ALL_PATHS }
+  lt: number | { attr: ALL_PATHS }
 }
 
 export type LessThanOrEqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > = {
   attr: ATTR_PATH
-  lte: ATTR_VALUE | { attr: ALL_PATHS }
+  lte: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeLessThanOrEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  lte: ResolvedNumberSchema | { attr: ALL_PATHS }
+  lte: number | { attr: ALL_PATHS }
 }
 
-export type GreaterThanCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type GreaterThanCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  gt: ATTR_VALUE | { attr: ALL_PATHS }
+  gt: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeGreaterThanCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  gt: ResolvedNumberSchema | { attr: ALL_PATHS }
+  gt: number | { attr: ALL_PATHS }
 }
 
 export type GreaterThanOrEqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > = {
   attr: ATTR_PATH
-  gte: ATTR_VALUE | { attr: ALL_PATHS }
+  gte: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 type SizeGreaterThanOrEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  gte: ResolvedNumberSchema | { attr: ALL_PATHS }
+  gte: number | { attr: ALL_PATHS }
 }
 
-export type BetweenCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type BetweenCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  between: [ATTR_VALUE | { attr: ALL_PATHS }, ATTR_VALUE | { attr: ALL_PATHS }]
+  between: [
+    ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE,
+    ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
+  ]
   transform?: boolean
 }
 
 type SizeBetweenCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   size: ATTR_PATH
-  between: [ResolvedNumberSchema | { attr: ALL_PATHS }, ResolvedNumberSchema | { attr: ALL_PATHS }]
+  between: [number | { attr: ALL_PATHS }, number | { attr: ALL_PATHS }]
 }
 
-export type RangeCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> =
-  | LessThanCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | LessThanOrEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | GreaterThanCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | GreaterThanOrEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
-  | BetweenCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS>
+export type RangeCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> =
+  | LessThanCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | LessThanOrEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | GreaterThanCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | GreaterThanOrEqCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
+  | BetweenCondition<ATTR_PATH, ATTR_VALUE, ALL_PATHS, CUSTOM_VALUE>
 
 type SizeRangeCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   | SizeLessThanCondition<ATTR_PATH, ALL_PATHS>
@@ -199,57 +256,71 @@ export type NullSchemaCondition<ATTR_PATH extends string> =
 export type BooleanSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends BooleanSchema,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > =
   | ExistsCondition<ATTR_PATH>
   | TypeCondition<ATTR_PATH>
-  | ValueCondition<ATTR_PATH, ResolveBooleanSchema<SCHEMA>, ALL_PATHS>
+  | ValueCondition<ATTR_PATH, ResolveBooleanSchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
 
 export type NumberSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends NumberSchema,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > =
   | ExistsCondition<ATTR_PATH>
   | TypeCondition<ATTR_PATH>
-  | ValueCondition<ATTR_PATH, ResolveNumberSchema<SCHEMA>, ALL_PATHS>
-  | RangeCondition<ATTR_PATH, ResolvedNumberSchema, ALL_PATHS>
+  | ValueCondition<ATTR_PATH, ResolveNumberSchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
+  | RangeCondition<ATTR_PATH, ResolvedNumberSchema, ALL_PATHS, CUSTOM_VALUE>
 
-export type ContainsCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type ContainsCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  contains: ATTR_VALUE | { attr: ALL_PATHS }
+  contains: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
-export type BeginsWithCondition<ATTR_PATH extends string, ATTR_VALUE, ALL_PATHS extends string> = {
+export type BeginsWithCondition<
+  ATTR_PATH extends string,
+  ATTR_VALUE,
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
+> = {
   attr: ATTR_PATH
-  beginsWith: ATTR_VALUE | { attr: ALL_PATHS }
+  beginsWith: ATTR_VALUE | { attr: ALL_PATHS } | CUSTOM_VALUE
   transform?: boolean
 }
 
 export type StringSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends StringSchema,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > =
   | ExistsCondition<ATTR_PATH>
   | TypeCondition<ATTR_PATH>
-  | ValueCondition<ATTR_PATH, ResolveStringSchema<SCHEMA>, ALL_PATHS>
-  | RangeCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS>
-  | BeginsWithCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS>
-  | ContainsCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS>
+  | ValueCondition<ATTR_PATH, ResolveStringSchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
+  | RangeCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS, CUSTOM_VALUE>
+  | BeginsWithCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS, CUSTOM_VALUE>
+  | ContainsCondition<ATTR_PATH, ResolvedStringSchema, ALL_PATHS, CUSTOM_VALUE>
   // "If the attribute is of type `String`, `size` returns the length of the string"
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
 export type BinarySchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends BinarySchema,
-  ALL_PATHS extends string
+  ALL_PATHS extends string,
+  CUSTOM_VALUE = never
 > =
   | ExistsCondition<ATTR_PATH>
   | TypeCondition<ATTR_PATH>
-  | ValueCondition<ATTR_PATH, ResolveBinarySchema<SCHEMA>, ALL_PATHS>
-  | RangeCondition<ATTR_PATH, ResolvedBinarySchema, ALL_PATHS>
+  | ValueCondition<ATTR_PATH, ResolveBinarySchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
+  | RangeCondition<ATTR_PATH, ResolvedBinarySchema, ALL_PATHS, CUSTOM_VALUE>
   // "If the attribute is of type `Binary`, `size` returns the number of bytes in the attribute value"
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
@@ -336,7 +407,7 @@ export type AnyOfSchemaCondition<
         : never)
 
 export type NonLogicalCondition<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
-  ? AnySchemaCondition<string, string>
+  ? AnySchemaCondition<AnySchema, string, string>
   : keyof SCHEMA['attributes'] extends infer ATTR_PATH
     ? ATTR_PATH extends string
       ? AttrCondition<
