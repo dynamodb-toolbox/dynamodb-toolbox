@@ -2,14 +2,22 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { Finder, SubSchema } from '~/schema/actions/finder/index.js'
 import type { Deduper } from '~/schema/actions/utils/deduper.js'
 import { isObject } from '~/utils/validation/isObject.js'
+import { isString } from '~/utils/validation/isString.js'
 
 import type { SchemaCondition } from '../../condition.js'
 
 export const getComparedSubSchemas = (
   schemaFinder: Finder,
-  comparedValue: string | number | bigint | boolean | Uint8Array | { attr: string }
+  comparedValue: unknown,
+  transform: boolean | undefined
 ): SubSchema[] | undefined =>
-  isObject(comparedValue) && 'attr' in comparedValue
+  isObject(comparedValue) &&
+  'attr' in comparedValue &&
+  isString(comparedValue.attr) &&
+  /**
+   * @debt bug "Adding this check as syntax can conflict with `any` attribute w. object values. Use symbol instead"
+   */
+  transform !== true
     ? schemaFinder.search(comparedValue.attr)
     : undefined
 

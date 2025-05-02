@@ -21,8 +21,8 @@ export const transformBetweenCondition = (
   const subSchemas = schemaFinder.search(attributePath)
 
   const [formattedLeft, formattedRight] = formattedBetween
-  const comparedLeftSubSchemas = getComparedSubSchemas(schemaFinder, formattedLeft)
-  const comparedRightSubSchemas = getComparedSubSchemas(schemaFinder, formattedRight)
+  const comparedLeftSubSchemas = getComparedSubSchemas(schemaFinder, formattedLeft, transform)
+  const comparedRightSubSchemas = getComparedSubSchemas(schemaFinder, formattedRight, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath

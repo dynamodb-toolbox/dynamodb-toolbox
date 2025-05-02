@@ -14,7 +14,7 @@ import {
 } from '~/schema/index.js'
 
 export const mySchema = item({
-  any: any(),
+  any: any().castAs<{ foo: 'bar' }>(),
   nul: nul(),
   bool: boolean(),
   num: number(),

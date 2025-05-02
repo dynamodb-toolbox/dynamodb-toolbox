@@ -130,15 +130,12 @@ describe('parseCondition', () => {
 
   describe('any (transformed)', () => {
     const schemaWithTransformedAny = item({
-      any: any().castAs<Record<string, unknown>>().transform(jsonStringify())
+      any: any().castAs<{ foo: 'bar' }>().transform(jsonStringify())
     })
 
     test('correctly parses condition (deep str)', () => {
       expect(
-        schemaWithTransformedAny
-          .build(ConditionParser)
-          // @ts-expect-error SHOULD WORK
-          .parse({ attr: 'any', eq: { foo: 'bar' } })
+        schemaWithTransformedAny.build(ConditionParser).parse({ attr: 'any', eq: { foo: 'bar' } })
       ).toStrictEqual({
         ConditionExpression: '#c_1 = :c_1',
         ExpressionAttributeNames: { '#c_1': 'any' },

@@ -41,11 +41,7 @@ export const pathTokens = (
   return tokens
 }
 
-export const valueToken = (
-  value: string | number | bigint | boolean | Uint8Array,
-  prefix = '',
-  state: ExpressionState
-): string => {
+export const valueToken = (value: unknown, prefix = '', state: ExpressionState): string => {
   const token = `:c${prefix}_${state.valuesCursor}`
   state.ExpressionAttributeValues[token] = value
   state.valuesCursor++
@@ -53,12 +49,15 @@ export const valueToken = (
   return token
 }
 
+// NOTE: Simple object check is enough as objects are not valid condition values
+const isAttr = (attrOrValue: unknown): attrOrValue is { attr: string } => isObject(attrOrValue)
+
 export const attrOrValueTokens = (
-  attrOrValue: string | number | bigint | boolean | Uint8Array | { attr: string },
+  attrOrValue: unknown,
   prefix = '',
   state: ExpressionState
 ): string => {
-  if (isObject(attrOrValue) && 'attr' in attrOrValue) {
+  if (isAttr(attrOrValue)) {
     return pathTokens(attrOrValue.attr, prefix, state)
   } else {
     return valueToken(attrOrValue, prefix, state)

@@ -29,7 +29,7 @@ export const transformInCondition = (
     const _in = new Deduper({ serializer: value => JSON.stringify({ _: value }) })
 
     for (const formattedRangeValue of formattedIns) {
-      const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedRangeValue)
+      const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedRangeValue, transform)
 
       if (comparedSubSchemas !== undefined) {
         for (const comparedSubSchema of comparedSubSchemas) {

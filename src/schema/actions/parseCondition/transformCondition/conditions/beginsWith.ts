@@ -16,7 +16,7 @@ export const transformBeginsWithCondition = (
   const { beginsWith: formattedBeginsWith, transform } = condition
   const attributePath = condition.attr
   const subSchemas = schemaFinder.search(attributePath)
-  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedBeginsWith)
+  const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedBeginsWith, transform)
 
   for (const subSchema of subSchemas) {
     const path = subSchema.transformedPath.strPath
