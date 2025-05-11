@@ -70,6 +70,7 @@ export const queryParams: QueryParamsGetter = <
     tableName,
     entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)),
     showEntityAttr,
+    tagEntities,
     noEntityMatchBehavior,
     ...extraOptions
   } = options
@@ -135,6 +136,18 @@ export const queryParams: QueryParamsGetter = <
   if (showEntityAttr !== undefined) {
     // showEntityAttr is a meta-option, validated but not used here
     parseShowEntityAttrOption(showEntityAttr)
+  }
+
+  if (tagEntities !== undefined) {
+    // tagEntities is a meta-option, validated but not used here
+    if (!isBoolean(tagEntities)) {
+      throw new DynamoDBToolboxError('queryCommand.invalidTagEntitiesOption', {
+        message: `Invalid 'tagEntities' option: '${String(
+          tagEntities
+        )}'. 'tagEntities' must be a boolean.`,
+        payload: { tagEntities }
+      })
+    }
   }
 
   if (noEntityMatchBehavior !== undefined) {

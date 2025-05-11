@@ -194,6 +194,7 @@ export class QueryCommand<
       attributes,
       maxPages = 1,
       showEntityAttr = false,
+      tagEntities = false,
       noEntityMatchBehavior = 'THROW'
     } = this[$options]
 
@@ -244,7 +245,7 @@ export class QueryCommand<
                 ...formattedItem,
                 ...(addEntityAttr ? { [entityAttrName]: entityName } : {}),
                 // $entity symbol is useful for the DeletePartition command
-                [$entity]: entityName
+                ...(tagEntities ? { [$entity]: entityName } : {})
               })
 
               hasEntityMatch = true
@@ -274,7 +275,7 @@ export class QueryCommand<
           ...formattedItem,
           ...(addEntityAttr ? { [entityAttrName]: entityName } : {}),
           // $entity symbol is useful for the DeletePartition command
-          [$entity]: itemEntityName
+          ...(tagEntities ? { [$entity]: entityName } : {})
         })
       }
 

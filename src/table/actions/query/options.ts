@@ -29,6 +29,7 @@ export type QueryOptions<
   entityAttrFilter?: boolean
   noEntityMatchBehavior?: NoEntityMatchBehavior
   showEntityAttr?: boolean
+  tagEntities?: boolean
   tableName?: string
 } & (QUERY['index'] extends keyof TABLE['indexes']
   ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
