@@ -113,6 +113,7 @@ export class DeletePartitionCommand<
     return new QueryCommand(this.table, this[$entities], this[$query], {
       ...this[$options],
       attributes: undefined,
+      tagEntities: true,
       ...(exclusiveStartKey !== undefined ? { ExclusiveStartKey: exclusiveStartKey } : {}),
       // 1 page <= 1MB and max data of BatchWriteItem is 16MB
       maxPages: 16
@@ -158,7 +159,7 @@ export class DeletePartitionCommand<
         }
 
         const batchDeleteRequests: BatchDeleteRequest[] = []
-        for (const item of itemChunk as ({ [name: string]: unknown } & { [$entity]: string })[]) {
+        for (const item of itemChunk as (Record<string, unknown> & { [$entity]: string })[]) {
           const entity = entitiesByName[item[$entity]]
           if (entity === undefined) {
             continue

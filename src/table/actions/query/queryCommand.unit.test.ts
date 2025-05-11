@@ -109,10 +109,7 @@ describe('queryCommand', () => {
       .options({ entityAttrFilter: false })
       .send()
 
-    expect(Items).toStrictEqual([
-      { [$entity]: EntityA.entityName, ...formattedItemA },
-      { [$entity]: EntityB.entityName, ...formattedItemB }
-    ])
+    expect(Items).toStrictEqual([formattedItemA, formattedItemB])
   })
 
   test('appends entityAttribute if showEntityAttr is true', async () => {
@@ -127,8 +124,25 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([
-      { [$entity]: EntityA.entityName, entity: EntityA.entityName, ...formattedItemA },
-      { [$entity]: EntityB.entityName, entity: EntityB.entityName, ...formattedItemB }
+      { entity: EntityA.entityName, ...formattedItemA },
+      { entity: EntityB.entityName, ...formattedItemB }
+    ])
+  })
+
+  test('appends $entity symbol if tagEntities is true', async () => {
+    documentClientMock.on(_QueryCommand).resolves({
+      Items: [completeSavedItemA, completeSavedItemB]
+    })
+
+    const { Items } = await TestTable.build(QueryCommand)
+      .entities(EntityA, EntityB)
+      .query({ partition: 'a' })
+      .options({ tagEntities: true })
+      .send()
+
+    expect(Items).toStrictEqual([
+      { [$entity]: EntityA.entityName, ...formattedItemA },
+      { [$entity]: EntityB.entityName, ...formattedItemB }
     ])
   })
 
@@ -161,9 +175,6 @@ describe('queryCommand', () => {
       .options({ entityAttrFilter: false, noEntityMatchBehavior: 'DISCARD' })
       .send()
 
-    expect(Items).toStrictEqual([
-      { [$entity]: EntityA.entityName, ...formattedItemA },
-      { [$entity]: EntityB.entityName, ...formattedItemB }
-    ])
+    expect(Items).toStrictEqual([formattedItemA, formattedItemB])
   })
 })
