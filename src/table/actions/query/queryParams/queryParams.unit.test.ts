@@ -30,6 +30,10 @@ const TestTable = new Table({
       type: 'global',
       partitionKey: { name: 'gsiCompositePK', type: 'string' },
       sortKey: { name: 'gsiCompositeSK', type: 'string' }
+    },
+    gsiType: {
+      type: 'global',
+      partitionKey: { name: '_et', type: 'string' }
     }
   }
 })
@@ -970,6 +974,15 @@ describe('query', () => {
     expect(FilterExpression).toBe('#c1_1 >= :c1_1')
     expect(ExpressionAttributeNames).toMatchObject({ '#c1_1': 'age' })
     expect(ExpressionAttributeValues).toMatchObject({ ':c1_1': 40 })
+  })
+
+  test('does not apply entity name filter if querying type index', () => {
+    const { FilterExpression } = TestTable.build(QueryCommand)
+      .entities(Entity1)
+      .query({ partition: 'entity1', index: 'gsiType' })
+      .params()
+
+    expect(FilterExpression).toBe(undefined)
   })
 
   test('applies two entity filters AND additional filters if possible', () => {

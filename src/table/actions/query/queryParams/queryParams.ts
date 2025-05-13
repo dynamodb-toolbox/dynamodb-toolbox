@@ -68,7 +68,12 @@ export const queryParams: QueryParamsGetter = <
     filters: _filters,
     attributes: _attributes,
     tableName,
-    entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)),
+    entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)) &&
+      ((index &&
+        table.indexes[index] &&
+        table.indexes[index].type === 'global' &&
+        table.entityAttributeSavedAs !== table.indexes[index].partitionKey.name) ??
+        true),
     showEntityAttr,
     tagEntities,
     noEntityMatchBehavior,
