@@ -37,31 +37,31 @@ export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCH
       | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
       | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
-export const getFormattedValueJSONSchema = <VALUE extends Schema>(
-  schema: VALUE
-): FormattedValueJSONSchema<VALUE> => {
-  type Response = FormattedValueJSONSchema<VALUE>
+export const getFormattedValueJSONSchema = <SCHEMA extends Schema>(
+  schema: SCHEMA
+): FormattedValueJSONSchema<SCHEMA> => {
+  type RESPONSE = FormattedValueJSONSchema<SCHEMA>
 
   switch (schema.type) {
     case 'any':
-      return {} as Response
+      return {} as RESPONSE
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveJSONSchema(schema) as Response
+      return getFormattedPrimitiveJSONSchema(schema) as RESPONSE
     case 'set':
-      return getFormattedSetJSONSchema(schema) as Response
+      return getFormattedSetJSONSchema(schema) as RESPONSE
     case 'list':
-      return getFormattedListJSONSchema(schema) as Response
+      return getFormattedListJSONSchema(schema) as RESPONSE
     case 'map':
-      return getFormattedMapJSONSchema(schema) as Response
+      return getFormattedMapJSONSchema(schema) as RESPONSE
     case 'record':
-      return getFormattedRecordJSONSchema(schema) as Response
+      return getFormattedRecordJSONSchema(schema) as RESPONSE
     case 'anyOf':
-      return getFormattedAnyOfJSONSchema(schema) as Response
+      return getFormattedAnyOfJSONSchema(schema) as RESPONSE
     case 'item':
-      return getFormattedItemJSONSchema(schema) as Response
+      return getFormattedItemJSONSchema(schema) as RESPONSE
   }
 }

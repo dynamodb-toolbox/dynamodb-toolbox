@@ -2,8 +2,8 @@ import type { MapSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
-import type { FormattedValueJSONSchema } from './attribute.js'
-import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './schema.js'
+import { getFormattedValueJSONSchema } from './schema.js'
 import type { RequiredProperties } from './shared.js'
 
 export type FormattedMapJSONSchema<
@@ -28,7 +28,9 @@ export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
     ([, attr]) => !attr.props.hidden
   )
 
-  const requiredProperties = displayedAttrEntries.map(([attributeName]) => attributeName)
+  const requiredProperties = displayedAttrEntries
+    .filter(([, { props }]) => props.required !== 'never')
+    .map(([attributeName]) => attributeName)
 
   return {
     type: 'object',
