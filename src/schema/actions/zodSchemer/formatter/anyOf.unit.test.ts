@@ -18,7 +18,7 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns discriminated union zod schema when discriminator is present', () => {
+  test('returns discriminated union zod schema if discriminator is present', () => {
     const schema = anyOf(
       map({ type: string().const('a') }),
       map({ type: string().enum('b', 'c') })
@@ -46,7 +46,7 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns optional zod schema when partial is true', () => {
+  test('returns optional zod schema if partial is true', () => {
     const schema = anyOf(string(), number())
     const output = schemaZodFormatter(schema, { partial: true })
     const expected = z.union([z.string(), z.number()]).optional()
@@ -57,7 +57,7 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns non-optional zod schema when partial is true but defined is true', () => {
+  test('returns non-optional zod schema if partial is true but defined is true', () => {
     const schema = anyOf(string(), number())
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.union([z.string(), z.number()])

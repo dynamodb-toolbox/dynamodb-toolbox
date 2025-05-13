@@ -20,7 +20,9 @@ export type MapZodFormatter<
       OPTIONS,
       z.ZodObject<
         {
-          [KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+          [KEY in OPTIONS extends { format: false }
+            ? keyof SCHEMA['attributes']
+            : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
             SCHEMA['attributes'][KEY],
             Overwrite<OPTIONS, { defined: false }>
           >
@@ -33,9 +35,11 @@ export const mapZodFormatter = (
   schema: MapSchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => {
-  const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, { props }]) => !props.hidden
-  )
+  const { format = true } = options
+
+  const displayedAttrEntries = format
+    ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
+    : Object.entries(schema.attributes)
 
   return optionalWrapper(
     schema,

@@ -41,7 +41,7 @@ describe('zodSchemer > formatter > number', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns optional zod schema when partial is true', () => {
+  test('returns optional zod schema if partial is true', () => {
     const schema = number()
     const output = schemaZodFormatter(schema, { partial: true })
     const expected = z.number().optional()
@@ -52,7 +52,7 @@ describe('zodSchemer > formatter > number', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns non-optional zod schema when partial is true but defined is true', () => {
+  test('returns non-optional zod schema if partial is true but defined is true', () => {
     const schema = number()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.number()
@@ -63,7 +63,7 @@ describe('zodSchemer > formatter > number', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns literal zod schema when enum has one value', () => {
+  test('returns literal zod schema if enum has one value', () => {
     const schema = number().const(42)
     const output = schemaZodFormatter(schema)
     const expected = z.literal(42)
@@ -74,7 +74,7 @@ describe('zodSchemer > formatter > number', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns union of literals zod schema when enum has more than one values', () => {
+  test('returns union of literals zod schema if enum has more than one values', () => {
     const schema = number().enum(42, 43)
     const output = schemaZodFormatter(schema)
     const expected = z.union([z.literal(42), z.literal(43)])

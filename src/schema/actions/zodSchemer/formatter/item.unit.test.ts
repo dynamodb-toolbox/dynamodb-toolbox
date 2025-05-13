@@ -18,7 +18,18 @@ describe('zodSchemer > formatter > item', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns partial zod schema when partial is true', () => {
+  test('shows hidden attributes if format is false', () => {
+    const schema = item({ str: string(), num: number(), hidden: string().hidden() })
+    const output = itemZodFormatter(schema, { format: false })
+    const expected = z.object({ str: z.string(), num: z.number(), hidden: z.string() })
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(zerialize(output)).toStrictEqual(zerialize(expected))
+  })
+
+  test('returns partial zod schema if partial is true', () => {
     const schema = item({ str: string(), num: number() })
     const output = itemZodFormatter(schema, { partial: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial()
@@ -29,7 +40,7 @@ describe('zodSchemer > formatter > item', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns partial zod schema when partial is true but defined is true', () => {
+  test('returns partial zod schema if partial is true but defined is true', () => {
     const schema = item({ str: string(), num: number() })
     const output = itemZodFormatter(schema, { partial: true, defined: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial()

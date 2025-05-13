@@ -29,7 +29,18 @@ describe('zodSchemer > formatter > map', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns optional & partial zod schema when partial is true', () => {
+  test('shows hidden attributes if format is false', () => {
+    const schema = map({ str: string(), num: number(), hidden: string().hidden() })
+    const output = schemaZodFormatter(schema, { format: false })
+    const expected = z.object({ str: z.string(), num: z.number(), hidden: z.string() })
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(zerialize(output)).toStrictEqual(zerialize(expected))
+  })
+
+  test('returns optional & partial zod schema if partial is true', () => {
     const schema = map({ str: string(), num: number() })
     const output = schemaZodFormatter(schema, { partial: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial().optional()
@@ -40,7 +51,7 @@ describe('zodSchemer > formatter > map', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns non-optional & partial zod schema when partial is true but defined is true', () => {
+  test('returns non-optional & partial zod schema if partial is true but defined is true', () => {
     const schema = map({ str: string(), num: number() })
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial()

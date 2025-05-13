@@ -43,7 +43,7 @@ describe('zodSchemer > formatter > any', () => {
     expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
   })
 
-  test('returns optional zod schema when partial is true', () => {
+  test('returns optional zod schema if partial is true', () => {
     const schema = any()
     const output = schemaZodFormatter(schema, { partial: true })
     const expected = z.custom().optional()
@@ -55,7 +55,7 @@ describe('zodSchemer > formatter > any', () => {
     expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
   })
 
-  test('returns non-optional zod schema when partial is true but defined is true', () => {
+  test('returns non-optional zod schema if partial is true but defined is true', () => {
     const schema = any()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.custom()

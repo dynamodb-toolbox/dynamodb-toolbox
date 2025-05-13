@@ -15,7 +15,9 @@ export type ItemZodFormatter<
   ? z.AnyZodObject
   : z.ZodObject<
       {
-        [KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+        [KEY in OPTIONS extends { format: false }
+          ? keyof SCHEMA['attributes']
+          : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
           SCHEMA['attributes'][KEY],
           Overwrite<OPTIONS, { defined: false }>
         >
@@ -30,9 +32,11 @@ export const itemZodFormatter = <
   schema: SCHEMA,
   options: OPTIONS = {} as OPTIONS
 ): ItemZodFormatter<SCHEMA, OPTIONS> => {
-  const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, { props }]) => !props.hidden
-  )
+  const { format = true } = options
+
+  const displayedAttrEntries = format
+    ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
+    : Object.entries(schema.attributes)
 
   return z.object(
     Object.fromEntries(
