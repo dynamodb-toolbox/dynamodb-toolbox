@@ -2,6 +2,10 @@ import { z } from 'zod'
 
 import type { AnySchema } from '~/schema/index.js'
 
-export type FormattedAnyZodSchema<SCHEMA extends AnySchema> = z.ZodAny
+import type { AddOptional } from './utils.js'
+import { addOptional } from './utils.js'
 
-export const getFormattedAnyZodSchema = (schema: AnySchema): z.ZodTypeAny => z.any()
+export type FormattedAnyZodSchema<SCHEMA extends AnySchema> = AddOptional<SCHEMA, z.ZodAny>
+
+export const getFormattedAnyZodSchema = (schema: AnySchema): z.ZodTypeAny =>
+  addOptional(schema, z.any())

@@ -9,3 +9,8 @@ const schema = set(string())
 const zodSchema = z.set(z.string())
 const assertSchema: A.Equals<FormattedValueZodSchema<typeof schema>, typeof zodSchema> = 1
 assertSchema
+
+const optSchema = set(string()).optional()
+const optZodSchema = z.set(z.string()).optional()
+const assertOptSchema: A.Equals<FormattedValueZodSchema<typeof optSchema>, typeof optZodSchema> = 1
+assertOptSchema

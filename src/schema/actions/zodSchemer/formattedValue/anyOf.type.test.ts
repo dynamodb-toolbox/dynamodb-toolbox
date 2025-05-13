@@ -9,3 +9,8 @@ const schema = anyOf(string(), number())
 const zodSchema = z.union([z.string(), z.number()])
 const assertSchema: A.Equals<FormattedValueZodSchema<typeof schema>, typeof zodSchema> = 1
 assertSchema
+
+const optSchema = anyOf(string(), number()).optional()
+const optZodSchema = z.union([z.string(), z.number()]).optional()
+const assertOptSchema: A.Equals<FormattedValueZodSchema<typeof optSchema>, typeof optZodSchema> = 1
+assertOptSchema

@@ -5,9 +5,14 @@ import type { Cast } from '~/types/cast.js'
 
 import type { FormattedValueZodSchema } from './schema.js'
 import { getFormattedValueZodSchema } from './schema.js'
+import type { AddOptional } from './utils.js'
+import { addOptional } from './utils.js'
 
-export type FormattedAnyOfZodSchema<SCHEMA extends AnyOfSchema> = z.ZodUnion<
-  Cast<FormattedAnyOfZodSchemaMap<SCHEMA['elements']>, readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]>
+export type FormattedAnyOfZodSchema<SCHEMA extends AnyOfSchema> = AddOptional<
+  SCHEMA,
+  z.ZodUnion<
+    Cast<FormattedAnyOfZodSchemaMap<SCHEMA['elements']>, readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]>
+  >
 >
 
 type FormattedAnyOfZodSchemaMap<
@@ -25,10 +30,13 @@ type FormattedAnyOfZodSchemaMap<
   : RESULTS
 
 export const getFormattedAnyOfZodSchema = (schema: AnyOfSchema): z.ZodTypeAny =>
-  z.union(
-    schema.elements.map(getFormattedValueZodSchema) as [
-      z.ZodTypeAny,
-      z.ZodTypeAny,
-      ...z.ZodTypeAny[]
-    ]
+  addOptional(
+    schema,
+    z.union(
+      schema.elements.map(getFormattedValueZodSchema) as [
+        z.ZodTypeAny,
+        z.ZodTypeAny,
+        ...z.ZodTypeAny[]
+      ]
+    )
   )
