@@ -11,7 +11,7 @@ import { optionalWrapper } from './utils.js'
 
 export type ListZodFormatter<
   SCHEMA extends ListSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = ListSchema extends SCHEMA
   ? z.ZodTypeAny
   : OptionalWrapper<
@@ -20,7 +20,10 @@ export type ListZodFormatter<
       z.ZodArray<SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
     >
 
-export const listZodFormatter = (schema: ListSchema, options: ZodFormatterOptions): z.ZodTypeAny =>
+export const listZodFormatter = (
+  schema: ListSchema,
+  options: ZodFormatterOptions = {}
+): z.ZodTypeAny =>
   optionalWrapper(
     schema,
     options,

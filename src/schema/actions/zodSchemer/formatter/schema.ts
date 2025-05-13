@@ -69,9 +69,9 @@ export type SchemaZodFormatter<
       | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA, OPTIONS> : never)
 
-export const schemaZodFormatter = <SCHEMA extends Schema, OPTIONS extends ZodFormatterOptions>(
+export const schemaZodFormatter = <SCHEMA extends Schema, OPTIONS extends ZodFormatterOptions = {}>(
   schema: SCHEMA,
-  options: OPTIONS
+  options: OPTIONS = {} as OPTIONS
 ): SchemaZodFormatter<SCHEMA, OPTIONS> => {
   type ZOD_FORMATTER = SchemaZodFormatter<SCHEMA, OPTIONS>
 

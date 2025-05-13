@@ -8,7 +8,7 @@ import { optionalWrapper } from './utils.js'
 
 export type StringZodFormatter<
   SCHEMA extends StringSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<
   SCHEMA,
   OPTIONS,
@@ -21,7 +21,7 @@ export type StringZodFormatter<
 
 export const getStringZodFormatter = (
   schema: StringSchema,
-  options: ZodFormatterOptions
+  options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 

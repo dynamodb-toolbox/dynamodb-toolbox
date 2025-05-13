@@ -8,8 +8,10 @@ import { optionalWrapper } from './utils.js'
 
 export type NullZodFormatter<
   SCHEMA extends NullSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<SCHEMA, OPTIONS, z.ZodNull>
 
-export const nullZodFormatter = (schema: NullSchema, options: ZodFormatterOptions): z.ZodTypeAny =>
-  optionalWrapper(schema, options, z.null())
+export const nullZodFormatter = (
+  schema: NullSchema,
+  options: ZodFormatterOptions = {}
+): z.ZodTypeAny => optionalWrapper(schema, options, z.null())

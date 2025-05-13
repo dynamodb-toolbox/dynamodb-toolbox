@@ -12,7 +12,7 @@ import { optionalWrapper } from './utils.js'
 
 export type MapZodFormatter<
   SCHEMA extends MapSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = MapSchema extends SCHEMA
   ? z.AnyZodObject
   : OptionalWrapper<
@@ -29,9 +29,12 @@ export type MapZodFormatter<
       >
     >
 
-export const mapZodFormatter = (schema: MapSchema, options: ZodFormatterOptions): z.ZodTypeAny => {
+export const mapZodFormatter = (
+  schema: MapSchema,
+  options: ZodFormatterOptions = {}
+): z.ZodTypeAny => {
   const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, attr]) => !attr.props.hidden
+    ([, { props }]) => !props.hidden
   )
 
   return optionalWrapper(
@@ -41,7 +44,7 @@ export const mapZodFormatter = (schema: MapSchema, options: ZodFormatterOptions)
       Object.fromEntries(
         displayedAttrEntries.map(([attributeName, attribute]) => [
           attributeName,
-          schemaZodFormatter(attribute, { ...options, defined: true })
+          schemaZodFormatter(attribute, { ...options, defined: false })
         ])
       )
     )

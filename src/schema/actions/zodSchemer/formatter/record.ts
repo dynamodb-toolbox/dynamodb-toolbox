@@ -12,7 +12,7 @@ import { optionalWrapper } from './utils.js'
 
 export type RecordZodFormatter<
   SCHEMA extends RecordSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = RecordSchema extends SCHEMA
   ? z.ZodTypeAny
   : OptionalWrapper<
@@ -42,7 +42,7 @@ export type RecordZodFormatter<
 
 export const recordZodFormatter = (
   schema: RecordSchema,
-  options: ZodFormatterOptions
+  options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 

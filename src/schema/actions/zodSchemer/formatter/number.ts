@@ -9,7 +9,7 @@ import { optionalWrapper } from './utils.js'
 
 export type NumberZodFormatter<
   SCHEMA extends NumberSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<
   SCHEMA,
   OPTIONS,
@@ -24,7 +24,7 @@ export type NumberZodFormatter<
 
 export const numberZodFormatter = (
   schema: NumberSchema,
-  options: ZodFormatterOptions
+  options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 

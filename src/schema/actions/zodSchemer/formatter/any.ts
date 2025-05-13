@@ -8,7 +8,7 @@ import { optionalWrapper } from './utils.js'
 
 export type AnyZodFormatter<
   SCHEMA extends AnySchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<SCHEMA, OPTIONS, z.ZodType<SCHEMA['props']['castAs']>>
 
 export const anyZodFormatter = (schema: AnySchema, options: ZodFormatterOptions): z.ZodTypeAny =>

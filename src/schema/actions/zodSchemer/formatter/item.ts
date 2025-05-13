@@ -10,7 +10,7 @@ import type { ZodFormatterOptions } from './types.js'
 
 export type ItemZodFormatter<
   SCHEMA extends ItemSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = ItemSchema extends SCHEMA
   ? z.AnyZodObject
   : z.ZodObject<
@@ -23,12 +23,15 @@ export type ItemZodFormatter<
       'strip'
     >
 
-export const itemZodFormatter = (
-  schema: ItemSchema,
-  options: ZodFormatterOptions
-): z.ZodTypeAny => {
+export const itemZodFormatter = <
+  SCHEMA extends ItemSchema,
+  OPTIONS extends ZodFormatterOptions = {}
+>(
+  schema: SCHEMA,
+  options: OPTIONS = {} as OPTIONS
+): ItemZodFormatter<SCHEMA, OPTIONS> => {
   const displayedAttrEntries = Object.entries(schema.attributes).filter(
-    ([, attr]) => !attr.props.hidden
+    ([, { props }]) => !props.hidden
   )
 
   return z.object(
@@ -38,5 +41,5 @@ export const itemZodFormatter = (
         schemaZodFormatter(attribute, { ...options, defined: false })
       ])
     )
-  )
+  ) as ItemZodFormatter<SCHEMA, OPTIONS>
 }

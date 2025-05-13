@@ -8,10 +8,10 @@ import { optionalWrapper } from './utils.js'
 
 export type BinaryZodFormatter<
   SCHEMA extends BinarySchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<SCHEMA, OPTIONS, z.ZodType<Uint8Array>>
 
 export const binaryZodFormatter = (
   schema: BinarySchema,
-  options: ZodFormatterOptions
+  options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => optionalWrapper(schema, options, z.instanceof(Uint8Array))

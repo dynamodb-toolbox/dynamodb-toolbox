@@ -9,7 +9,7 @@ import { optionalWrapper } from './utils.js'
 
 export type BooleanZodFormatter<
   SCHEMA extends BooleanSchema,
-  OPTIONS extends ZodFormatterOptions
+  OPTIONS extends ZodFormatterOptions = {}
 > = OptionalWrapper<
   SCHEMA,
   OPTIONS,
