@@ -29,7 +29,14 @@ export type FormattedNumberZodSchema<SCHEMA extends NumberSchema> = AddOptional<
 export const getFormattedNumberZodSchema = (schema: NumberSchema): z.ZodTypeAny =>
   addOptional(schema, z.number())
 
-export type FormattedStringZodSchema<SCHEMA extends StringSchema> = AddOptional<SCHEMA, z.ZodString>
+export type FormattedStringZodSchema<SCHEMA extends StringSchema> = AddOptional<
+  SCHEMA,
+  SCHEMA['props'] extends { enum: [string] }
+    ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+    : SCHEMA['props'] extends { enum: [string, ...string[]] }
+      ? z.ZodEnum<SCHEMA['props']['enum']>
+      : z.ZodString
+>
 
 export const getFormattedStringZodSchema = (schema: StringSchema): z.ZodTypeAny =>
   addOptional(schema, z.string())

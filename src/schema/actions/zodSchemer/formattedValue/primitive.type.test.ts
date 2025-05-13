@@ -66,6 +66,22 @@ const assertOptStrSchema: A.Equals<
 > = 1
 assertOptStrSchema
 
+const literalStrSchema = strSchema.const('foo')
+const literalZodStrSchema = z.literal('foo')
+const assertLiteralStrSchema: A.Equals<
+  FormattedValueZodSchema<typeof literalStrSchema>,
+  typeof literalZodStrSchema
+> = 1
+assertLiteralStrSchema
+
+const enumStrSchema = strSchema.enum('foo', 'bar')
+const enumStrZodSchema = z.enum(['foo', 'bar'])
+const assertEnumStrSchema: A.Equals<
+  FormattedValueZodSchema<typeof enumStrSchema>,
+  typeof enumStrZodSchema
+> = 1
+assertEnumStrSchema
+
 // --- BIN ---
 
 const binSchema = binary()

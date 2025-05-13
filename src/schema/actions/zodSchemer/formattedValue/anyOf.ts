@@ -10,9 +10,17 @@ import { addOptional } from './utils.js'
 
 export type FormattedAnyOfZodSchema<SCHEMA extends AnyOfSchema> = AddOptional<
   SCHEMA,
-  z.ZodUnion<
-    Cast<FormattedAnyOfZodSchemaMap<SCHEMA['elements']>, readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]>
-  >
+  SCHEMA['props'] extends { discriminator: string }
+    ? z.ZodDiscriminatedUnion<
+        SCHEMA['props']['discriminator'],
+        FormattedAnyOfZodSchemaMap<SCHEMA['elements']>
+      >
+    : z.ZodUnion<
+        Cast<
+          FormattedAnyOfZodSchemaMap<SCHEMA['elements']>,
+          readonly [z.ZodTypeAny, ...z.ZodTypeAny[]]
+        >
+      >
 >
 
 type FormattedAnyOfZodSchemaMap<
