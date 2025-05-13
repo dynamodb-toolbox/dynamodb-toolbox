@@ -17,3 +17,19 @@ const assertOptNumSchema: A.Equals<
   typeof optZodNumSchema
 > = 1
 assertOptNumSchema
+
+const literalNumSchema = numSchema.const(42)
+const literalZodNumSchema = z.literal(42)
+const assertLiteralNumSchema: A.Equals<
+  FormattedValueZodSchema<typeof literalNumSchema>,
+  typeof literalZodNumSchema
+> = 1
+assertLiteralNumSchema
+
+const enumNumSchema = numSchema.enum(42, 43)
+const enumNumZodSchema = z.union([z.literal(42), z.literal(43)])
+const assertEnumNumSchema: A.Equals<
+  FormattedValueZodSchema<typeof enumNumSchema>,
+  typeof enumNumZodSchema
+> = 1
+assertEnumNumSchema

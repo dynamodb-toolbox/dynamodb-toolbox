@@ -26,11 +26,11 @@ export type FormattedAnyOfZodSchema<SCHEMA extends AnyOfSchema> = AddOptional<
 type FormattedAnyOfZodSchemaMap<
   SCHEMAS extends Schema[],
   RESULTS extends z.ZodTypeAny[] = []
-> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAILS]
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
   ? SCHEMAS_HEAD extends Schema
-    ? SCHEMAS_TAILS extends Schema[]
+    ? SCHEMAS_TAIL extends Schema[]
       ? FormattedAnyOfZodSchemaMap<
-          SCHEMAS_TAILS,
+          SCHEMAS_TAIL,
           [...RESULTS, FormattedValueZodSchema<SCHEMAS_HEAD>]
         >
       : never

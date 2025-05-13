@@ -1,7 +1,7 @@
 import type { A } from 'ts-toolbelt'
 import { z } from 'zod'
 
-import { binary, boolean, nul, number, string } from '~/schema/index.js'
+import { nul } from '~/schema/index.js'
 
 import type { FormattedValueZodSchema } from './schema.js'
 
@@ -17,82 +17,3 @@ const assertOptNulSchema: A.Equals<
   typeof optZodNulSchema
 > = 1
 assertOptNulSchema
-
-// --- BOOL ---
-
-const boolSchema = boolean()
-const boolZodSchema = z.boolean()
-const assertBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof boolSchema>,
-  typeof boolZodSchema
-> = 1
-assertBoolSchema
-
-const optBoolSchema = boolSchema.optional()
-const optZodBoolSchema = boolZodSchema.optional()
-const assertOptBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof optBoolSchema>,
-  typeof optZodBoolSchema
-> = 1
-assertOptBoolSchema
-
-// --- NUM ---
-
-const numSchema = number()
-const numZodSchema = z.number()
-const assertNumSchema: A.Equals<FormattedValueZodSchema<typeof numSchema>, typeof numZodSchema> = 1
-assertNumSchema
-
-const optNumSchema = numSchema.optional()
-const optZodNumSchema = numZodSchema.optional()
-const assertOptNumSchema: A.Equals<
-  FormattedValueZodSchema<typeof optNumSchema>,
-  typeof optZodNumSchema
-> = 1
-assertOptNumSchema
-
-// --- STR ---
-
-const strSchema = string()
-const strZodSchema = z.string()
-const assertStrSchema: A.Equals<FormattedValueZodSchema<typeof strSchema>, typeof strZodSchema> = 1
-assertStrSchema
-
-const optStrSchema = strSchema.optional()
-const optZodStrSchema = strZodSchema.optional()
-const assertOptStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof optStrSchema>,
-  typeof optZodStrSchema
-> = 1
-assertOptStrSchema
-
-const literalStrSchema = strSchema.const('foo')
-const literalZodStrSchema = z.literal('foo')
-const assertLiteralStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof literalStrSchema>,
-  typeof literalZodStrSchema
-> = 1
-assertLiteralStrSchema
-
-const enumStrSchema = strSchema.enum('foo', 'bar')
-const enumStrZodSchema = z.enum(['foo', 'bar'])
-const assertEnumStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof enumStrSchema>,
-  typeof enumStrZodSchema
-> = 1
-assertEnumStrSchema
-
-// --- BIN ---
-
-const binSchema = binary()
-const binZodSchema = z.instanceof(Uint8Array)
-const assertBinSchema: A.Equals<FormattedValueZodSchema<typeof binSchema>, typeof binZodSchema> = 1
-assertBinSchema
-
-const optBinSchema = binSchema.optional()
-const optZodBinSchema = binZodSchema.optional()
-const assertOptBinSchema: A.Equals<
-  FormattedValueZodSchema<typeof optBinSchema>,
-  typeof optZodBinSchema
-> = 1
-assertOptBinSchema

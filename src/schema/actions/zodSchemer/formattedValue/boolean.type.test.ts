@@ -20,3 +20,19 @@ const assertOptBoolSchema: A.Equals<
   typeof optZodBoolSchema
 > = 1
 assertOptBoolSchema
+
+const literalBoolSchema = boolSchema.const(true)
+const literalZodBoolSchema = z.literal(true)
+const assertLiteralBoolSchema: A.Equals<
+  FormattedValueZodSchema<typeof literalBoolSchema>,
+  typeof literalZodBoolSchema
+> = 1
+assertLiteralBoolSchema
+
+const enumBoolSchema = boolSchema.enum(true, false)
+const enumBoolZodSchema = z.union([z.literal(true), z.literal(false)])
+const assertEnumBoolSchema: A.Equals<
+  FormattedValueZodSchema<typeof enumBoolSchema>,
+  typeof enumBoolZodSchema
+> = 1
+assertEnumBoolSchema
