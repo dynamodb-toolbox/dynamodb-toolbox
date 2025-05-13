@@ -3,16 +3,16 @@ import { z } from 'zod'
 import type { MapSchema } from '~/schema/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
-import { getFormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
+import { getZodFormatter } from './schema.js'
 import type { AddOptional } from './utils.js'
 import { addOptional } from './utils.js'
 
-export type FormattedMapZodSchema<SCHEMA extends MapSchema> = AddOptional<
+export type MapZodFormatter<SCHEMA extends MapSchema> = AddOptional<
   SCHEMA,
   z.ZodObject<
     {
-      [KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: FormattedValueZodSchema<
+      [KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: ZodFormatter<
         SCHEMA['attributes'][KEY]
       >
     },
@@ -20,7 +20,7 @@ export type FormattedMapZodSchema<SCHEMA extends MapSchema> = AddOptional<
   >
 >
 
-export const getFormattedMapZodSchema = (schema: MapSchema): z.ZodTypeAny => {
+export const getMapZodFormatter = (schema: MapSchema): z.ZodTypeAny => {
   const displayedAttrEntries = Object.entries(schema.attributes).filter(
     ([, attr]) => !attr.props.hidden
   )
@@ -31,7 +31,7 @@ export const getFormattedMapZodSchema = (schema: MapSchema): z.ZodTypeAny => {
       Object.fromEntries(
         displayedAttrEntries.map(([attributeName, attribute]) => [
           attributeName,
-          getFormattedValueZodSchema(attribute)
+          getZodFormatter(attribute)
         ])
       )
     )

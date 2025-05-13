@@ -1,2 +1,2 @@
-export { getFormattedValueZodSchema } from './schema.js'
-export type { FormattedValueZodSchema } from './schema.js'
+export { getZodFormatter } from './schema.js'
+export type { ZodFormatter } from './schema.js'

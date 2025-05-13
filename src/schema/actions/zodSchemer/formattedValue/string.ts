@@ -5,7 +5,7 @@ import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 import type { AddOptional } from './utils.js'
 import { addOptional } from './utils.js'
 
-export type FormattedStringZodSchema<SCHEMA extends StringSchema> = AddOptional<
+export type StringZodFormatter<SCHEMA extends StringSchema> = AddOptional<
   SCHEMA,
   SCHEMA['props'] extends { enum: [ResolvedStringSchema] }
     ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
@@ -14,17 +14,17 @@ export type FormattedStringZodSchema<SCHEMA extends StringSchema> = AddOptional<
       : z.ZodString
 >
 
-export const getFormattedStringZodSchema = (schema: StringSchema): z.ZodTypeAny => {
-  let zodSchema: z.ZodTypeAny
+export const getStringZodFormatter = (schema: StringSchema): z.ZodTypeAny => {
+  let zodFormatter: z.ZodTypeAny
 
   const { props } = schema
   const [enumHead, ...enumTail] = props.enum ?? []
 
   if (enumHead !== undefined) {
-    zodSchema = enumTail.length > 0 ? z.enum([enumHead, ...enumTail]) : z.literal(enumHead)
+    zodFormatter = enumTail.length > 0 ? z.enum([enumHead, ...enumTail]) : z.literal(enumHead)
   } else {
-    zodSchema = z.string()
+    zodFormatter = z.string()
   }
 
-  return addOptional(schema, zodSchema)
+  return addOptional(schema, zodFormatter)
 }

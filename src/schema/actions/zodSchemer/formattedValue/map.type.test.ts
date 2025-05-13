@@ -3,14 +3,14 @@ import { z } from 'zod'
 
 import { map, number, string } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
 const schema = map({ str: string(), num: number(), hidden: string().hidden() })
-const zodSchema = z.object({ str: z.string(), num: z.number() })
-const assertSchema: A.Equals<FormattedValueZodSchema<typeof schema>, typeof zodSchema> = 1
-assertSchema
+const zodFormatter = z.object({ str: z.string(), num: z.number() })
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
 const optSchema = schema.optional()
-const optZodSchema = zodSchema.optional()
-const assertOptSchema: A.Equals<FormattedValueZodSchema<typeof optSchema>, typeof optZodSchema> = 1
-assertOptSchema
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt

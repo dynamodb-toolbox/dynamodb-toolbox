@@ -16,76 +16,74 @@ import type {
   StringSchema
 } from '~/schema/index.js'
 
-import { getFormattedAnyZodSchema } from './any.js'
-import type { FormattedAnyZodSchema } from './any.js'
-import { getFormattedAnyOfZodSchema } from './anyOf.js'
-import type { FormattedAnyOfZodSchema } from './anyOf.js'
-import { getFormattedBinaryZodSchema } from './binary.js'
-import type { FormattedBinaryZodSchema } from './binary.js'
-import { getFormattedBooleanZodSchema } from './boolean.js'
-import type { FormattedBooleanZodSchema } from './boolean.js'
-import { getFormattedItemZodSchema } from './item.js'
-import type { FormattedItemZodSchema } from './item.js'
-import type { FormattedListZodSchema } from './list.js'
-import { getFormattedListZodSchema } from './list.js'
-import type { FormattedMapZodSchema } from './map.js'
-import { getFormattedMapZodSchema } from './map.js'
-import { getFormattedNullZodSchema } from './null.js'
-import type { FormattedNullZodSchema } from './null.js'
-import { getFormattedNumberZodSchema } from './number.js'
-import type { FormattedNumberZodSchema } from './number.js'
-import { getFormattedRecordZodSchema } from './record.js'
-import type { FormattedRecordZodSchema } from './record.js'
-import { getFormattedSetZodSchema } from './set.js'
-import type { FormattedSetZodSchema } from './set.js'
-import { getFormattedStringZodSchema } from './string.js'
-import type { FormattedStringZodSchema } from './string.js'
+import { getAnyZodFormatter } from './any.js'
+import type { AnyZodFormatter } from './any.js'
+import { getAnyOfZodFormatter } from './anyOf.js'
+import type { AnyOfZodFormatter } from './anyOf.js'
+import { getBinaryZodFormatter } from './binary.js'
+import type { BinaryZodFormatter } from './binary.js'
+import { getBooleanZodFormatter } from './boolean.js'
+import type { BooleanZodFormatter } from './boolean.js'
+import { getItemZodFormatter } from './item.js'
+import type { ItemZodFormatter } from './item.js'
+import type { ListZodFormatter } from './list.js'
+import { getListZodFormatter } from './list.js'
+import type { MapZodFormatter } from './map.js'
+import { getMapZodFormatter } from './map.js'
+import { getNullZodFormatter } from './null.js'
+import type { NullZodFormatter } from './null.js'
+import { getNumberZodFormatter } from './number.js'
+import type { NumberZodFormatter } from './number.js'
+import { getRecordZodFormatter } from './record.js'
+import type { RecordZodFormatter } from './record.js'
+import { getSetZodFormatter } from './set.js'
+import type { SetZodFormatter } from './set.js'
+import { getStringZodFormatter } from './string.js'
+import type { StringZodFormatter } from './string.js'
 
-export type FormattedValueZodSchema<SCHEMA extends Schema> = Schema extends SCHEMA
+export type ZodFormatter<SCHEMA extends Schema> = Schema extends SCHEMA
   ? z.ZodTypeAny
   :
-      | (SCHEMA extends AnySchema ? FormattedAnyZodSchema<SCHEMA> : never)
-      | (SCHEMA extends NullSchema ? FormattedNullZodSchema<SCHEMA> : never)
-      | (SCHEMA extends BooleanSchema ? FormattedBooleanZodSchema<SCHEMA> : never)
-      | (SCHEMA extends NumberSchema ? FormattedNumberZodSchema<SCHEMA> : never)
-      | (SCHEMA extends StringSchema ? FormattedStringZodSchema<SCHEMA> : never)
-      | (SCHEMA extends BinarySchema ? FormattedBinaryZodSchema<SCHEMA> : never)
-      | (SCHEMA extends SetSchema ? FormattedSetZodSchema<SCHEMA> : never)
-      | (SCHEMA extends ListSchema ? FormattedListZodSchema<SCHEMA> : never)
-      | (SCHEMA extends MapSchema ? FormattedMapZodSchema<SCHEMA> : never)
-      | (SCHEMA extends RecordSchema ? FormattedRecordZodSchema<SCHEMA> : never)
-      | (SCHEMA extends AnyOfSchema ? FormattedAnyOfZodSchema<SCHEMA> : never)
-      | (SCHEMA extends ItemSchema ? FormattedItemZodSchema<SCHEMA> : never)
+      | (SCHEMA extends AnySchema ? AnyZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends NullSchema ? NullZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends BooleanSchema ? BooleanZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends NumberSchema ? NumberZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends StringSchema ? StringZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends BinarySchema ? BinaryZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends SetSchema ? SetZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends ListSchema ? ListZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends MapSchema ? MapZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA> : never)
+      | (SCHEMA extends ItemSchema ? ItemZodFormatter<SCHEMA> : never)
 
-export const getFormattedValueZodSchema = <SCHEMA extends Schema>(
-  schema: SCHEMA
-): FormattedValueZodSchema<SCHEMA> => {
-  type RESPONSE = FormattedValueZodSchema<SCHEMA>
+export const getZodFormatter = <SCHEMA extends Schema>(schema: SCHEMA): ZodFormatter<SCHEMA> => {
+  type RESPONSE = ZodFormatter<SCHEMA>
 
   switch (schema.type) {
     case 'any':
-      return getFormattedAnyZodSchema(schema) as RESPONSE
+      return getAnyZodFormatter(schema) as RESPONSE
     case 'null':
-      return getFormattedNullZodSchema(schema) as RESPONSE
+      return getNullZodFormatter(schema) as RESPONSE
     case 'boolean':
-      return getFormattedBooleanZodSchema(schema) as RESPONSE
+      return getBooleanZodFormatter(schema) as RESPONSE
     case 'number':
-      return getFormattedNumberZodSchema(schema) as RESPONSE
+      return getNumberZodFormatter(schema) as RESPONSE
     case 'string':
-      return getFormattedStringZodSchema(schema) as RESPONSE
+      return getStringZodFormatter(schema) as RESPONSE
     case 'binary':
-      return getFormattedBinaryZodSchema(schema) as RESPONSE
+      return getBinaryZodFormatter(schema) as RESPONSE
     case 'set':
-      return getFormattedSetZodSchema(schema) as RESPONSE
+      return getSetZodFormatter(schema) as RESPONSE
     case 'list':
-      return getFormattedListZodSchema(schema) as RESPONSE
+      return getListZodFormatter(schema) as RESPONSE
     case 'map':
-      return getFormattedMapZodSchema(schema) as RESPONSE
+      return getMapZodFormatter(schema) as RESPONSE
     case 'record':
-      return getFormattedRecordZodSchema(schema) as RESPONSE
+      return getRecordZodFormatter(schema) as RESPONSE
     case 'anyOf':
-      return getFormattedAnyOfZodSchema(schema) as RESPONSE
+      return getAnyOfZodFormatter(schema) as RESPONSE
     case 'item':
-      return getFormattedItemZodSchema(schema) as RESPONSE
+      return getItemZodFormatter(schema) as RESPONSE
   }
 }

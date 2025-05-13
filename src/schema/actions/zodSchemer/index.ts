@@ -1,2 +1,2 @@
 export { ZodSchemer } from './zodSchemer.js'
-export type { FormattedValueZodSchema } from './formattedValue/index.js'
+export type { ZodFormatter } from './formattedValue/index.js'

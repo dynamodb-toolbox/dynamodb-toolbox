@@ -3,17 +3,14 @@ import { z } from 'zod'
 
 import { nul } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
-const nulSchema = nul()
-const nulZodSchema = z.null()
-const assertNulSchema: A.Equals<FormattedValueZodSchema<typeof nulSchema>, typeof nulZodSchema> = 1
-assertNulSchema
+const schema = nul()
+const zodFormatter = z.null()
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
-const optNulSchema = nulSchema.optional()
-const optZodNulSchema = nulZodSchema.optional()
-const assertOptNulSchema: A.Equals<
-  FormattedValueZodSchema<typeof optNulSchema>,
-  typeof optZodNulSchema
-> = 1
-assertOptNulSchema
+const optSchema = schema.optional()
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt

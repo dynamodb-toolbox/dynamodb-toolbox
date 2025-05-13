@@ -3,36 +3,24 @@ import { z } from 'zod'
 
 import { boolean } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
-const boolSchema = boolean()
-const boolZodSchema = z.boolean()
-const assertBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof boolSchema>,
-  typeof boolZodSchema
-> = 1
-assertBoolSchema
+const schema = boolean()
+const zodFormatter = z.boolean()
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
-const optBoolSchema = boolSchema.optional()
-const optZodBoolSchema = boolZodSchema.optional()
-const assertOptBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof optBoolSchema>,
-  typeof optZodBoolSchema
-> = 1
-assertOptBoolSchema
+const optSchema = schema.optional()
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt
 
-const literalBoolSchema = boolSchema.const(true)
-const literalZodBoolSchema = z.literal(true)
-const assertLiteralBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof literalBoolSchema>,
-  typeof literalZodBoolSchema
-> = 1
-assertLiteralBoolSchema
+const literalSchema = schema.const(true)
+const literalZodFormatter = z.literal(true)
+const assertLiteral: A.Equals<ZodFormatter<typeof literalSchema>, typeof literalZodFormatter> = 1
+assertLiteral
 
-const enumBoolSchema = boolSchema.enum(true, false)
-const enumBoolZodSchema = z.union([z.literal(true), z.literal(false)])
-const assertEnumBoolSchema: A.Equals<
-  FormattedValueZodSchema<typeof enumBoolSchema>,
-  typeof enumBoolZodSchema
-> = 1
-assertEnumBoolSchema
+const enumSchema = schema.enum(true, false)
+const enumZodFormatter = z.union([z.literal(true), z.literal(false)])
+const assertEnum: A.Equals<ZodFormatter<typeof enumSchema>, typeof enumZodFormatter> = 1
+assertEnum

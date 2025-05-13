@@ -3,17 +3,14 @@ import { z } from 'zod'
 
 import { binary } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
-const binSchema = binary()
-const binZodSchema = z.instanceof(Uint8Array)
-const assertBinSchema: A.Equals<FormattedValueZodSchema<typeof binSchema>, typeof binZodSchema> = 1
-assertBinSchema
+const schema = binary()
+const zodFormatter = z.instanceof(Uint8Array)
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
-const optBinSchema = binSchema.optional()
-const optZodBinSchema = binZodSchema.optional()
-const assertOptBinSchema: A.Equals<
-  FormattedValueZodSchema<typeof optBinSchema>,
-  typeof optZodBinSchema
-> = 1
-assertOptBinSchema
+const optSchema = schema.optional()
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt

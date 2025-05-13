@@ -6,7 +6,7 @@ import type { Cast } from '~/types/cast.js'
 import type { AddOptional, ZodLiteralMap } from './utils.js'
 import { addOptional } from './utils.js'
 
-export type FormattedBooleanZodSchema<SCHEMA extends BooleanSchema> = AddOptional<
+export type BooleanZodFormatter<SCHEMA extends BooleanSchema> = AddOptional<
   SCHEMA,
   SCHEMA['props'] extends { enum: [ResolvedBooleanSchema] }
     ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
@@ -15,8 +15,8 @@ export type FormattedBooleanZodSchema<SCHEMA extends BooleanSchema> = AddOptiona
       : z.ZodBoolean
 >
 
-export const getFormattedBooleanZodSchema = (schema: BooleanSchema): z.ZodTypeAny => {
-  let zodSchema: z.ZodTypeAny
+export const getBooleanZodFormatter = (schema: BooleanSchema): z.ZodTypeAny => {
+  let zodFormatter: z.ZodTypeAny
 
   const { props } = schema
   const [enumHead, ...enumTail] = props.enum ?? []
@@ -24,7 +24,7 @@ export const getFormattedBooleanZodSchema = (schema: BooleanSchema): z.ZodTypeAn
   if (enumHead !== undefined) {
     const [enumTailHead, ...enumTailTail] = enumTail
 
-    zodSchema =
+    zodFormatter =
       enumTailHead !== undefined
         ? z.union([
             z.literal(enumHead),
@@ -33,8 +33,8 @@ export const getFormattedBooleanZodSchema = (schema: BooleanSchema): z.ZodTypeAn
           ])
         : z.literal(enumHead)
   } else {
-    zodSchema = z.boolean()
+    zodFormatter = z.boolean()
   }
 
-  return addOptional(schema, zodSchema)
+  return addOptional(schema, zodFormatter)
 }

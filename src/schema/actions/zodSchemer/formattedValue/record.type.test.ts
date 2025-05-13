@@ -3,30 +3,24 @@ import { z } from 'zod'
 
 import { number, record, string } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
 const schema = record(string(), number())
-const zodSchema = z.record(z.string(), z.number())
-const assertSchema: A.Equals<FormattedValueZodSchema<typeof schema>, typeof zodSchema> = 1
-assertSchema
+const zodFormatter = z.record(z.string(), z.number())
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
 const optSchema = schema.optional()
-const optZodSchema = zodSchema.optional()
-const assertOptSchema: A.Equals<FormattedValueZodSchema<typeof optSchema>, typeof optZodSchema> = 1
-assertOptSchema
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt
 
 const strictSchema = record(string().enum('foo', 'bar'), number())
-const zodStrictSchema = z.object({ foo: z.number(), bar: z.number() })
-const assertStrictSchema: A.Equals<
-  FormattedValueZodSchema<typeof strictSchema>,
-  typeof zodStrictSchema
-> = 1
-assertStrictSchema
+const strictZodFormatter = z.object({ foo: z.number(), bar: z.number() })
+const assertStrict: A.Equals<ZodFormatter<typeof strictSchema>, typeof strictZodFormatter> = 1
+assertStrict
 
 const partialSchema = strictSchema.partial()
-const zodPartialSchema = z.record(z.enum(['foo', 'bar']), z.number())
-const assertPartialSchema: A.Equals<
-  FormattedValueZodSchema<typeof partialSchema>,
-  typeof zodPartialSchema
-> = 1
-assertPartialSchema
+const partialZodFormatter = z.record(z.enum(['foo', 'bar']), z.number())
+const assertPartial: A.Equals<ZodFormatter<typeof partialSchema>, typeof partialZodFormatter> = 1
+assertPartial

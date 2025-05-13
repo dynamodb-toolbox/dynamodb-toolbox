@@ -3,33 +3,24 @@ import { z } from 'zod'
 
 import { string } from '~/schema/index.js'
 
-import type { FormattedValueZodSchema } from './schema.js'
+import type { ZodFormatter } from './schema.js'
 
-const strSchema = string()
-const strZodSchema = z.string()
-const assertStrSchema: A.Equals<FormattedValueZodSchema<typeof strSchema>, typeof strZodSchema> = 1
-assertStrSchema
+const schema = string()
+const zodFormatter = z.string()
+const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
+assert
 
-const optStrSchema = strSchema.optional()
-const optZodStrSchema = strZodSchema.optional()
-const assertOptStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof optStrSchema>,
-  typeof optZodStrSchema
-> = 1
-assertOptStrSchema
+const optSchema = schema.optional()
+const optZodFormatter = zodFormatter.optional()
+const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
+assertOpt
 
-const literalStrSchema = strSchema.const('foo')
-const literalZodStrSchema = z.literal('foo')
-const assertLiteralStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof literalStrSchema>,
-  typeof literalZodStrSchema
-> = 1
-assertLiteralStrSchema
+const literalSchema = schema.const('foo')
+const literalZodFormatter = z.literal('foo')
+const assertLiteral: A.Equals<ZodFormatter<typeof literalSchema>, typeof literalZodFormatter> = 1
+assertLiteral
 
-const enumStrSchema = strSchema.enum('foo', 'bar')
-const enumStrZodSchema = z.enum(['foo', 'bar'])
-const assertEnumStrSchema: A.Equals<
-  FormattedValueZodSchema<typeof enumStrSchema>,
-  typeof enumStrZodSchema
-> = 1
-assertEnumStrSchema
+const enumSchema = schema.enum('foo', 'bar')
+const enumZodFormatter = z.enum(['foo', 'bar'])
+const assertEnum: A.Equals<ZodFormatter<typeof enumSchema>, typeof enumZodFormatter> = 1
+assertEnum
