@@ -33,3 +33,11 @@ const assertEnumNumSchema: A.Equals<
   typeof enumNumZodSchema
 > = 1
 assertEnumNumSchema
+
+const bigSchema = numSchema.big()
+const zodBigSchema = z.union([z.number(), z.bigint()])
+const assertBigNumSchema: A.Equals<
+  FormattedValueZodSchema<typeof bigSchema>,
+  typeof zodBigSchema
+> = 1
+assertBigNumSchema

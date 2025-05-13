@@ -12,7 +12,9 @@ export type FormattedNumberZodSchema<SCHEMA extends NumberSchema> = AddOptional<
     ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
     : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
       ? z.ZodUnion<Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>>
-      : z.ZodNumber
+      : SCHEMA['props'] extends { big: true }
+        ? z.ZodUnion<[z.ZodNumber, z.ZodBigInt]>
+        : z.ZodNumber
 >
 
 export const getFormattedNumberZodSchema = (schema: NumberSchema): z.ZodTypeAny => {
@@ -33,7 +35,8 @@ export const getFormattedNumberZodSchema = (schema: NumberSchema): z.ZodTypeAny 
           ])
         : z.literal(enumHead)
   } else {
-    zodSchema = z.number()
+    const { big = false } = props
+    zodSchema = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
   return addOptional(schema, zodSchema)
