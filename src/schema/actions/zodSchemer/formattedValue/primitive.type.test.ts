@@ -10,8 +10,8 @@ const nulZodSchema = z.null()
 const assertNulSchema: A.Equals<FormattedValueZodSchema<typeof nulSchema>, typeof nulZodSchema> = 1
 assertNulSchema
 
-const optNulSchema = nul().optional()
-const optZodNulSchema = z.null().optional()
+const optNulSchema = nulSchema.optional()
+const optZodNulSchema = nulZodSchema.optional()
 const assertOptNulSchema: A.Equals<
   FormattedValueZodSchema<typeof optNulSchema>,
   typeof optZodNulSchema
@@ -28,8 +28,8 @@ const assertBoolSchema: A.Equals<
 > = 1
 assertBoolSchema
 
-const optBoolSchema = boolean().optional()
-const optZodBoolSchema = z.boolean().optional()
+const optBoolSchema = boolSchema.optional()
+const optZodBoolSchema = boolZodSchema.optional()
 const assertOptBoolSchema: A.Equals<
   FormattedValueZodSchema<typeof optBoolSchema>,
   typeof optZodBoolSchema
@@ -43,8 +43,8 @@ const numZodSchema = z.number()
 const assertNumSchema: A.Equals<FormattedValueZodSchema<typeof numSchema>, typeof numZodSchema> = 1
 assertNumSchema
 
-const optNumSchema = number().optional()
-const optZodNumSchema = z.number().optional()
+const optNumSchema = numSchema.optional()
+const optZodNumSchema = numZodSchema.optional()
 const assertOptNumSchema: A.Equals<
   FormattedValueZodSchema<typeof optNumSchema>,
   typeof optZodNumSchema
@@ -58,8 +58,8 @@ const strZodSchema = z.string()
 const assertStrSchema: A.Equals<FormattedValueZodSchema<typeof strSchema>, typeof strZodSchema> = 1
 assertStrSchema
 
-const optStrSchema = string().optional()
-const optZodStrSchema = z.string().optional()
+const optStrSchema = strSchema.optional()
+const optZodStrSchema = strZodSchema.optional()
 const assertOptStrSchema: A.Equals<
   FormattedValueZodSchema<typeof optStrSchema>,
   typeof optZodStrSchema
@@ -73,8 +73,8 @@ const binZodSchema = z.instanceof(Uint8Array)
 const assertBinSchema: A.Equals<FormattedValueZodSchema<typeof binSchema>, typeof binZodSchema> = 1
 assertBinSchema
 
-const optBinSchema = binary().optional()
-const optZodBinSchema = z.instanceof(Uint8Array).optional()
+const optBinSchema = binSchema.optional()
+const optZodBinSchema = binZodSchema.optional()
 const assertOptBinSchema: A.Equals<
   FormattedValueZodSchema<typeof optBinSchema>,
   typeof optZodBinSchema

@@ -10,7 +10,7 @@ const zodSchema = z.object({ str: z.string(), num: z.number() })
 const assertSchema: A.Equals<FormattedValueZodSchema<typeof schema>, typeof zodSchema> = 1
 assertSchema
 
-const optSchema = map({ str: string(), num: number() }).optional()
-const optZodSchema = z.object({ str: z.string(), num: z.number() }).optional()
+const optSchema = schema.optional()
+const optZodSchema = zodSchema.optional()
 const assertOptSchema: A.Equals<FormattedValueZodSchema<typeof optSchema>, typeof optZodSchema> = 1
 assertOptSchema
