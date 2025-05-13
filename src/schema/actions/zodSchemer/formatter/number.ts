@@ -3,11 +3,16 @@ import { z } from 'zod'
 import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
-import type { AddOptional, ZodLiteralMap } from './utils.js'
-import { addOptional } from './utils.js'
+import type { ZodFormatterOptions } from './types.js'
+import type { OptionalWrapper, ZodLiteralMap } from './utils.js'
+import { optionalWrapper } from './utils.js'
 
-export type NumberZodFormatter<SCHEMA extends NumberSchema> = AddOptional<
+export type NumberZodFormatter<
+  SCHEMA extends NumberSchema,
+  OPTIONS extends ZodFormatterOptions
+> = OptionalWrapper<
   SCHEMA,
+  OPTIONS,
   SCHEMA['props'] extends { enum: [ResolvedNumberSchema] }
     ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
     : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
@@ -17,7 +22,10 @@ export type NumberZodFormatter<SCHEMA extends NumberSchema> = AddOptional<
         : z.ZodNumber
 >
 
-export const getNumberZodFormatter = (schema: NumberSchema): z.ZodTypeAny => {
+export const numberZodFormatter = (
+  schema: NumberSchema,
+  options: ZodFormatterOptions
+): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 
   const { props } = schema
@@ -39,5 +47,5 @@ export const getNumberZodFormatter = (schema: NumberSchema): z.ZodTypeAny => {
     zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
-  return addOptional(schema, zodFormatter)
+  return optionalWrapper(schema, options, zodFormatter)
 }

@@ -3,11 +3,16 @@ import { z } from 'zod'
 import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
-import type { AddOptional, ZodLiteralMap } from './utils.js'
-import { addOptional } from './utils.js'
+import type { ZodFormatterOptions } from './types.js'
+import type { OptionalWrapper, ZodLiteralMap } from './utils.js'
+import { optionalWrapper } from './utils.js'
 
-export type BooleanZodFormatter<SCHEMA extends BooleanSchema> = AddOptional<
+export type BooleanZodFormatter<
+  SCHEMA extends BooleanSchema,
+  OPTIONS extends ZodFormatterOptions
+> = OptionalWrapper<
   SCHEMA,
+  OPTIONS,
   SCHEMA['props'] extends { enum: [ResolvedBooleanSchema] }
     ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
     : SCHEMA['props'] extends { enum: [ResolvedBooleanSchema, ...ResolvedBooleanSchema[]] }
@@ -15,7 +20,10 @@ export type BooleanZodFormatter<SCHEMA extends BooleanSchema> = AddOptional<
       : z.ZodBoolean
 >
 
-export const getBooleanZodFormatter = (schema: BooleanSchema): z.ZodTypeAny => {
+export const booleanZodFormatter = (
+  schema: BooleanSchema,
+  options: ZodFormatterOptions
+): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 
   const { props } = schema
@@ -36,5 +44,5 @@ export const getBooleanZodFormatter = (schema: BooleanSchema): z.ZodTypeAny => {
     zodFormatter = z.boolean()
   }
 
-  return addOptional(schema, zodFormatter)
+  return optionalWrapper(schema, options, zodFormatter)
 }

@@ -1,12 +1,15 @@
 import type { A } from 'ts-toolbelt'
 import { z } from 'zod'
 
-import { number, record, string } from '~/schema/index.js'
+import { map, number, record, string } from '~/schema/index.js'
 
 import type { ZodFormatter } from './schema.js'
 
-const schema = record(string(), number())
-const zodFormatter = z.record(z.string(), z.number())
+const elmtSchema = map({ num: number() })
+const elmtZodFormatter = z.object({ num: z.number() })
+
+const schema = record(string(), elmtSchema)
+const zodFormatter = z.record(z.string(), elmtZodFormatter)
 const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
 assert
 
@@ -14,6 +17,20 @@ const optSchema = schema.optional()
 const optZodFormatter = zodFormatter.optional()
 const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
 assertOpt
+
+const deepPartialZodFormatter = z.record(z.string(), elmtZodFormatter.partial()).optional()
+const assertDeepPartial: A.Equals<
+  ZodFormatter<typeof schema, { partial: true }>,
+  typeof deepPartialZodFormatter
+> = 1
+assertDeepPartial
+
+const definedZodFormatter = deepPartialZodFormatter.unwrap()
+const assertDefined: A.Equals<
+  ZodFormatter<typeof schema, { partial: true; defined: true }>,
+  typeof definedZodFormatter
+> = 1
+assertDefined
 
 const strictSchema = record(string().enum('foo', 'bar'), number())
 const strictZodFormatter = z.object({ foo: z.number(), bar: z.number() })

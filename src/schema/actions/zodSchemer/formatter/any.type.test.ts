@@ -15,6 +15,18 @@ const optZodFormatter = zodFormatter.optional()
 const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
 assertOpt
 
+const assertPartial: A.Equals<
+  ZodFormatter<typeof schema, { partial: true }>,
+  typeof optZodFormatter
+> = 1
+assertPartial
+
+const assertDefined: A.Equals<
+  ZodFormatter<typeof schema, { partial: true; defined: true }>,
+  typeof zodFormatter
+> = 1
+assertDefined
+
 const castSchema = schema.castAs<string>()
 const castZodFormatter = z.custom<string>()
 const assertCast: A.Equals<ZodFormatter<typeof castSchema>, typeof castZodFormatter> = 1

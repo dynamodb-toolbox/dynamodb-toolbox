@@ -1,12 +1,12 @@
 import type { A } from 'ts-toolbelt'
 import { z } from 'zod'
 
-import { number } from '~/schema/index.js'
+import { boolean } from '~/schema/index.js'
 
 import type { ZodFormatter } from './schema.js'
 
-const schema = number()
-const zodFormatter = z.number()
+const schema = boolean()
+const zodFormatter = z.boolean()
 const assert: A.Equals<ZodFormatter<typeof schema>, typeof zodFormatter> = 1
 assert
 
@@ -15,17 +15,24 @@ const optZodFormatter = zodFormatter.optional()
 const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
 assertOpt
 
-const literalSchema = schema.const(42)
-const literalZodFormatter = z.literal(42)
+const assertPartial: A.Equals<
+  ZodFormatter<typeof schema, { partial: true }>,
+  typeof optZodFormatter
+> = 1
+assertPartial
+
+const assertDefined: A.Equals<
+  ZodFormatter<typeof schema, { partial: true; defined: true }>,
+  typeof zodFormatter
+> = 1
+assertDefined
+
+const literalSchema = schema.const(true)
+const literalZodFormatter = z.literal(true)
 const assertLiteral: A.Equals<ZodFormatter<typeof literalSchema>, typeof literalZodFormatter> = 1
 assertLiteral
 
-const enumSchema = schema.enum(42, 43)
-const enumZodFormatter = z.union([z.literal(42), z.literal(43)])
+const enumSchema = schema.enum(true, false)
+const enumZodFormatter = z.union([z.literal(true), z.literal(false)])
 const assertEnum: A.Equals<ZodFormatter<typeof enumSchema>, typeof enumZodFormatter> = 1
 assertEnum
-
-const bigSchema = schema.big()
-const bigZodFormatter = z.union([z.number(), z.bigint()])
-const assertBig: A.Equals<ZodFormatter<typeof bigSchema>, typeof bigZodFormatter> = 1
-assertBig

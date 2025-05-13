@@ -14,3 +14,17 @@ const optSchema = schema.optional()
 const optZodFormatter = zodFormatter.optional()
 const assertOpt: A.Equals<ZodFormatter<typeof optSchema>, typeof optZodFormatter> = 1
 assertOpt
+
+const partialZodFormatter = zodFormatter.partial().optional()
+const assertPartial: A.Equals<
+  ZodFormatter<typeof schema, { partial: true }>,
+  typeof partialZodFormatter
+> = 1
+assertPartial
+
+const definedZodFormatter = zodFormatter.partial()
+const assertDefined: A.Equals<
+  ZodFormatter<typeof schema, { partial: true; defined: true }>,
+  typeof definedZodFormatter
+> = 1
+assertDefined
