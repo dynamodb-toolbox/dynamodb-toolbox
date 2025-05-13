@@ -9,12 +9,24 @@ import { addOptional } from './utils.js'
 
 export type FormattedRecordZodSchema<SCHEMA extends RecordSchema> = AddOptional<
   SCHEMA,
-  z.ZodRecord<
-    FormattedValueZodSchema<SCHEMA['keys']> extends z.KeySchema
-      ? FormattedValueZodSchema<SCHEMA['keys']>
-      : never,
-    FormattedValueZodSchema<SCHEMA['elements']>
-  >
+  /**
+   * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
+   */
+  SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
+    ? z.ZodObject<
+        {
+          [KEY in SCHEMA['keys']['props']['enum'][number]]: FormattedValueZodSchema<
+            SCHEMA['elements']
+          >
+        },
+        'strip'
+      >
+    : z.ZodRecord<
+        FormattedValueZodSchema<SCHEMA['keys']> extends z.KeySchema
+          ? FormattedValueZodSchema<SCHEMA['keys']>
+          : never,
+        FormattedValueZodSchema<SCHEMA['elements']>
+      >
 >
 
 export const getFormattedRecordZodSchema = (schema: RecordSchema): z.ZodTypeAny =>
