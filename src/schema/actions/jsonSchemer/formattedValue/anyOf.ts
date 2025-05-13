@@ -1,8 +1,8 @@
 import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedValueJSONSchema } from './attribute.js'
-import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './schema.js'
+import { getFormattedValueJSONSchema } from './schema.js'
 
 export type FormattedAnyOfJSONSchema<SCHEMA extends AnyOfSchema> = ComputeObject<{
   anyOf: MapFormattedValueJSONSchema<SCHEMA['elements']>

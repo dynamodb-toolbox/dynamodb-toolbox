@@ -1,8 +1,8 @@
 import type { SetSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedValueJSONSchema } from './attribute.js'
-import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './schema.js'
+import { getFormattedValueJSONSchema } from './schema.js'
 
 export type FormattedSetJSONSchema<SCHEMA extends SetSchema> = ComputeObject<{
   type: 'array'

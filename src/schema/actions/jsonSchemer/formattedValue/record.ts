@@ -1,8 +1,8 @@
 import type { RecordSchema } from '~/schema/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 
-import type { FormattedValueJSONSchema } from './attribute.js'
-import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './schema.js'
+import { getFormattedValueJSONSchema } from './schema.js'
 
 export type FormattedRecordJSONSchema<SCHEMA extends RecordSchema> = ComputeObject<{
   type: 'object'

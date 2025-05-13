@@ -2,8 +2,8 @@ import type { ItemSchema } from '~/schema/item/index.js'
 import type { ComputeObject } from '~/types/computeObject.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
-import type { FormattedValueJSONSchema } from './attribute.js'
-import { getFormattedValueJSONSchema } from './attribute.js'
+import type { FormattedValueJSONSchema } from './schema.js'
+import { getFormattedValueJSONSchema } from './schema.js'
 import type { RequiredProperties } from './shared.js'
 
 export type FormattedItemJSONSchema<

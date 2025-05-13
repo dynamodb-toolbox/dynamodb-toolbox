@@ -1,0 +1,61 @@
+// import type { A } from 'ts-toolbelt'
+import { z } from 'zod'
+import { zerialize } from 'zodex'
+
+import { binary } from '~/schema/index.js'
+
+import { schemaZodFormatter } from './schema.js'
+
+describe('zodSchemer > formatter > binary', () => {
+  test('returns instanceof zod schema', () => {
+    const schema = binary()
+    const output = schemaZodFormatter(schema)
+    const expected = z.instanceof(Uint8Array)
+
+    // NOTE: Cannot test this atm because Uint8Array is generic in latest TS versions
+    // const assert: A.Contains<typeof output, typeof expected> = 1
+    // assert
+
+    // `instanceof` is not supported by zodex
+    expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
+  })
+
+  test('returns optional zod schema', () => {
+    const schema = binary().optional()
+    const output = schemaZodFormatter(schema)
+    const expected = z.instanceof(Uint8Array).optional()
+
+    // NOTE: Cannot test this atm because Uint8Array is generic in latest TS versions
+    // const assert: A.Contains<typeof output, typeof expected> = 1
+    // assert
+
+    // `instanceof` is not supported by zodex
+    expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
+  })
+
+  test('returns optional zod schema if partial is true', () => {
+    const schema = binary()
+    const output = schemaZodFormatter(schema, { partial: true })
+    const expected = z.instanceof(Uint8Array).optional()
+
+    // NOTE: Cannot test this atm because Uint8Array is generic in latest TS versions
+    // const assert: A.Contains<typeof output, typeof expected> = 1
+    // assert
+
+    // `instanceof` is not supported by zodex
+    expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
+  })
+
+  test('returns non-optional zod schema if partial is true but defined is true', () => {
+    const schema = binary()
+    const output = schemaZodFormatter(schema, { partial: true, defined: true })
+    const expected = z.instanceof(Uint8Array)
+
+    // NOTE: Cannot test this atm because Uint8Array is generic in latest TS versions
+    // const assert: A.Contains<typeof output, typeof expected> = 1
+    // assert
+
+    // `instanceof` is not supported by zodex
+    expect(zerialize(output as any)).toStrictEqual(zerialize(expected as any))
+  })
+})

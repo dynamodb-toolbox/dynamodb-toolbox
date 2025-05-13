@@ -54,11 +54,14 @@
     "typescript": "^5.5.4",
     "vite": "^5.3.1",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.0"
+    "vitest": "^1.6.0",
+    "zod": "^3.24.4",
+    "zodex": "^0.18.2"
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0"
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "zod": "^3.0.0"
   },
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json && echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",
@@ -68,8 +71,8 @@
     "test-type": "tsc --noEmit",
     "test-format": "prettier --check 'src/**/*.(js|ts)'",
     "test-format-fix": "prettier --write 'src/**/*.(js|ts)'",
-    "test-unit": "vitest run",
-    "test-unit-watch": "vitest",
+    "test-unit": "vitest run --reporter=verbose",
+    "test-unit-watch": "vitest --reporter=verbose",
     "test-lint": "eslint .",
     "test-exports": "attw --pack . --ignore-rules no-resolution"
   },
@@ -246,6 +249,16 @@
       "require": {
         "types": "./dist/cjs/schema/actions/jsonSchemer/index.d.ts",
         "default": "./dist/cjs/schema/actions/jsonSchemer/index.js"
+      }
+    },
+    "./schema/actions/zodSchemer": {
+      "import": {
+        "types": "./dist/esm/schema/actions/zodSchemer/index.d.ts",
+        "default": "./dist/esm/schema/actions/zodSchemer/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/actions/zodSchemer/index.d.ts",
+        "default": "./dist/cjs/schema/actions/zodSchemer/index.js"
       }
     },
     "./schema/actions/dto": {
