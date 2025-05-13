@@ -20,30 +20,26 @@ import { getFormattedAnyZodSchema } from './any.js'
 import type { FormattedAnyZodSchema } from './any.js'
 import { getFormattedAnyOfZodSchema } from './anyOf.js'
 import type { FormattedAnyOfZodSchema } from './anyOf.js'
+import { getFormattedBinaryZodSchema } from './binary.js'
+import type { FormattedBinaryZodSchema } from './binary.js'
+import { getFormattedBooleanZodSchema } from './boolean.js'
+import type { FormattedBooleanZodSchema } from './boolean.js'
 import { getFormattedItemZodSchema } from './item.js'
 import type { FormattedItemZodSchema } from './item.js'
 import type { FormattedListZodSchema } from './list.js'
 import { getFormattedListZodSchema } from './list.js'
 import type { FormattedMapZodSchema } from './map.js'
 import { getFormattedMapZodSchema } from './map.js'
-import {
-  getFormattedBinaryZodSchema,
-  getFormattedBooleanZodSchema,
-  getFormattedNullZodSchema,
-  getFormattedNumberZodSchema,
-  getFormattedStringZodSchema
-} from './primitive.js'
-import type {
-  FormattedBinaryZodSchema,
-  FormattedBooleanZodSchema,
-  FormattedNullZodSchema,
-  FormattedNumberZodSchema,
-  FormattedStringZodSchema
-} from './primitive.js'
+import { getFormattedNullZodSchema } from './null.js'
+import type { FormattedNullZodSchema } from './null.js'
+import { getFormattedNumberZodSchema } from './number.js'
+import type { FormattedNumberZodSchema } from './number.js'
 import { getFormattedRecordZodSchema } from './record.js'
 import type { FormattedRecordZodSchema } from './record.js'
 import { getFormattedSetZodSchema } from './set.js'
 import type { FormattedSetZodSchema } from './set.js'
+import { getFormattedStringZodSchema } from './string.js'
+import type { FormattedStringZodSchema } from './string.js'
 
 export type FormattedValueZodSchema<SCHEMA extends Schema> = Schema extends SCHEMA
   ? z.ZodTypeAny
