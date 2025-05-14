@@ -5,6 +5,7 @@ import { zerialize } from 'zodex'
 import { map, number, string } from '~/schema/index.js'
 
 import { schemaZodFormatter } from './schema.js'
+import { compileRenamer } from './utils.js'
 
 describe('zodSchemer > formatter > map', () => {
   test('returns object zod schema', () => {
@@ -18,10 +19,30 @@ describe('zodSchemer > formatter > map', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
-  test('returns optional zod schema', () => {
-    const schema = map({ str: string(), num: number() }).optional()
+  test('returns a zod effect if an attribute is renamed', () => {
+    const schema = map({ str: string(), num: number().savedAs('_n'), hidden: string().hidden() })
     const output = schemaZodFormatter(schema)
-    const expected = z.object({ str: z.string(), num: z.number() }).optional()
+    const expectedSchema = z.object({ str: z.string(), num: z.number() })
+    const expectedEffect = z.preprocess(compileRenamer(schema), expectedSchema)
+
+    const assert: A.Equals<
+      typeof output,
+      // NOTE: I couldn't find a way to pass an input type to an effect so I have to re-define one here
+      z.ZodEffects<
+        typeof expectedSchema,
+        z.output<typeof expectedSchema>,
+        { str: string; _n: number; hidden: string }
+      >
+    > = 1
+    assert
+
+    expect(zerialize(output)).toStrictEqual(zerialize(expectedEffect))
+  })
+
+  test('returns a zod schema if an attribute is renamed but transform is false', () => {
+    const schema = map({ str: string(), num: number().savedAs('_n'), hidden: string().hidden() })
+    const output = schemaZodFormatter(schema, { transform: false })
+    const expected = z.object({ str: z.string(), num: z.number() })
 
     const assert: A.Equals<typeof output, typeof expected> = 1
     assert

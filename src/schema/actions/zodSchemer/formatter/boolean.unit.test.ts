@@ -29,6 +29,43 @@ describe('zodSchemer > formatter > boolean', () => {
     expect(zerialize(output)).toStrictEqual(zerialize(expected))
   })
 
+  test('returns zod effect if transform is set', () => {
+    const transformer = {
+      encode: (decoded: boolean) => String(decoded),
+      decode: (encoded: string) => encoded === 'true'
+    }
+    const schema = boolean().transform(transformer)
+    const output = schemaZodFormatter(schema)
+    const expectedSchema = z.boolean()
+    const expectedEffect = z.preprocess(arg => transformer.decode(arg as any), expectedSchema)
+
+    const assert: A.Equals<
+      typeof output,
+      // NOTE: I couldn't find a way to pass an input type to an effect so I have to re-define one here
+      z.ZodEffects<typeof expectedSchema, z.output<typeof expectedSchema>, string>
+    > = 1
+    assert
+
+    expect(output.parse('true')).toBe(true)
+    expect(expectedEffect.parse('true')).toBe(true)
+  })
+
+  test('returns untransformed zod schema if transform is set but transform is false', () => {
+    const transformer = {
+      encode: (decoded: boolean) => String(decoded),
+      decode: (encoded: string) => encoded === 'true'
+    }
+    const schema = boolean().transform(transformer)
+    const output = schemaZodFormatter(schema, { transform: false })
+    const expected = z.boolean()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output.parse(true)).toBe(true)
+    expect(expected.parse(true)).toBe(true)
+  })
+
   test('returns optional zod schema if partial is true', () => {
     const schema = boolean()
     const output = schemaZodFormatter(schema, { partial: true })

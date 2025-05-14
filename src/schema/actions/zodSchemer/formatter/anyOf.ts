@@ -6,35 +6,33 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { OptionalWrapper } from './utils.js'
-import { optionalWrapper } from './utils.js'
+import type { WithOptional } from './utils.js'
+import { withOptional } from './utils.js'
 
 export type AnyOfZodFormatter<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = AnyOfSchema extends SCHEMA
-  ? z.ZodTypeAny
-  : OptionalWrapper<
-      SCHEMA,
-      OPTIONS,
-      SCHEMA['props'] extends { discriminator: string }
-        ? z.ZodDiscriminatedUnion<
-            SCHEMA['props']['discriminator'],
-            MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-          >
-        : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-          ? SCHEMAS_HEAD extends Schema
-            ? SCHEMAS_TAIL extends Schema[]
-              ? z.ZodUnion<
-                  [
-                    SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
-                    ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
-                  ]
-                >
-              : never
-            : never
-          : z.ZodTypeAny
-    >
+> = WithOptional<
+  SCHEMA,
+  OPTIONS,
+  SCHEMA['props'] extends { discriminator: string }
+    ? z.ZodDiscriminatedUnion<
+        SCHEMA['props']['discriminator'],
+        MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+      >
+    : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+      ? SCHEMAS_HEAD extends Schema
+        ? SCHEMAS_TAIL extends Schema[]
+          ? z.ZodUnion<
+              [
+                SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
+                ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
+              ]
+            >
+          : never
+        : never
+      : z.ZodTypeAny
+>
 
 type MapAnyOfZodFormatter<
   SCHEMAS extends Schema[],
@@ -60,7 +58,8 @@ export const anyOfZodFormatter = (
 
   const { discriminator } = schema.props
   if (discriminator !== undefined) {
-    // NOTE: Will not support nested `anyOf`s for now
+    // LIMITATION: Does not support nested `anyOf`s for now, should change with v4: https://v4.zod.dev/v4#upgraded-zdiscriminatedunion
+    // LIMITATION: Does not support `savedAs` attributes for now as ZodEffects are not valid discriminatedUnion options
     zodFormatter = z.discriminatedUnion(
       discriminator,
       schema.elements.map(element =>
@@ -75,5 +74,5 @@ export const anyOfZodFormatter = (
     )
   }
 
-  return optionalWrapper(schema, options, zodFormatter)
+  return withOptional(schema, options, zodFormatter)
 }

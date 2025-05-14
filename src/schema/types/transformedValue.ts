@@ -115,7 +115,11 @@ type PrimitiveSchemaTransformedValue<
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | (SCHEMA extends NullSchema ? ResolvedNullSchema : never)
+      | (SCHEMA extends NullSchema
+          ? SCHEMA['props'] extends { transform: Transformer }
+            ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolvedNullSchema>
+            : ResolvedNullSchema
+          : never)
       | (SCHEMA extends NumberSchema
           ? SCHEMA['props'] extends { transform: Transformer }
             ? Call<TypeModifier<SCHEMA['props']['transform']>, ResolveNumberSchema<SCHEMA>>

@@ -4,20 +4,27 @@ import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
 import type { ZodFormatterOptions } from './types.js'
-import type { OptionalWrapper, ZodLiteralMap } from './utils.js'
-import { optionalWrapper } from './utils.js'
+import type { WithOptional, WithTransform, ZodLiteralMap } from './utils.js'
+import { withOptional, withTransform } from './utils.js'
 
 export type BooleanZodFormatter<
   SCHEMA extends BooleanSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = OptionalWrapper<
+> = WithTransform<
   SCHEMA,
   OPTIONS,
-  SCHEMA['props'] extends { enum: [ResolvedBooleanSchema] }
-    ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
-    : SCHEMA['props'] extends { enum: [ResolvedBooleanSchema, ...ResolvedBooleanSchema[]] }
-      ? z.ZodUnion<Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>>
-      : z.ZodBoolean
+  WithOptional<
+    SCHEMA,
+    OPTIONS,
+    SCHEMA['props'] extends { enum: [ResolvedBooleanSchema] }
+      ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+      : SCHEMA['props'] extends { enum: [ResolvedBooleanSchema, ...ResolvedBooleanSchema[]] }
+        ? // NOTE: Could be a single Literal with v4: https://v4.zod.dev/v4#multiple-values-in-zliteral
+          z.ZodUnion<
+            Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>
+          >
+        : z.ZodBoolean
+  >
 >
 
 export const booleanZodFormatter = (
@@ -44,5 +51,5 @@ export const booleanZodFormatter = (
     zodFormatter = z.boolean()
   }
 
-  return optionalWrapper(schema, options, zodFormatter)
+  return withTransform(schema, options, withOptional(schema, options, zodFormatter))
 }

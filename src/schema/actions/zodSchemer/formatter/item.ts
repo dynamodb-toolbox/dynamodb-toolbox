@@ -7,23 +7,27 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
+import type { WithRenaming } from './utils.js'
+import { withRenaming } from './utils.js'
 
 export type ItemZodFormatter<
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = ItemSchema extends SCHEMA
-  ? z.AnyZodObject
-  : z.ZodObject<
-      {
-        [KEY in OPTIONS extends { format: false }
-          ? keyof SCHEMA['attributes']
-          : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-          SCHEMA['attributes'][KEY],
-          Overwrite<OPTIONS, { defined: false }>
-        >
-      },
-      'strip'
-    >
+> = WithRenaming<
+  SCHEMA,
+  OPTIONS,
+  z.ZodObject<
+    {
+      [KEY in OPTIONS extends { format: false }
+        ? keyof SCHEMA['attributes']
+        : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+        SCHEMA['attributes'][KEY],
+        Overwrite<OPTIONS, { defined: false }>
+      >
+    },
+    'strip'
+  >
+>
 
 export const itemZodFormatter = <
   SCHEMA extends ItemSchema,
@@ -38,12 +42,16 @@ export const itemZodFormatter = <
     ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
     : Object.entries(schema.attributes)
 
-  return z.object(
-    Object.fromEntries(
-      displayedAttrEntries.map(([attributeName, attribute]) => [
-        attributeName,
-        schemaZodFormatter(attribute, { ...options, defined: false })
-      ])
+  return withRenaming(
+    schema,
+    options,
+    z.object(
+      Object.fromEntries(
+        displayedAttrEntries.map(([attributeName, attribute]) => [
+          attributeName,
+          schemaZodFormatter(attribute, { ...options, defined: false })
+        ])
+      )
     )
   ) as ItemZodFormatter<SCHEMA, OPTIONS>
 }

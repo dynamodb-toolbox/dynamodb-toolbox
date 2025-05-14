@@ -4,22 +4,29 @@ import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
 import type { ZodFormatterOptions } from './types.js'
-import type { OptionalWrapper, ZodLiteralMap } from './utils.js'
-import { optionalWrapper } from './utils.js'
+import type { WithOptional, WithTransform, ZodLiteralMap } from './utils.js'
+import { withOptional, withTransform } from './utils.js'
 
 export type NumberZodFormatter<
   SCHEMA extends NumberSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = OptionalWrapper<
+> = WithTransform<
   SCHEMA,
   OPTIONS,
-  SCHEMA['props'] extends { enum: [ResolvedNumberSchema] }
-    ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
-    : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
-      ? z.ZodUnion<Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>>
-      : SCHEMA['props'] extends { big: true }
-        ? z.ZodUnion<[z.ZodNumber, z.ZodBigInt]>
-        : z.ZodNumber
+  WithOptional<
+    SCHEMA,
+    OPTIONS,
+    SCHEMA['props'] extends { enum: [ResolvedNumberSchema] }
+      ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+      : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
+        ? // NOTE: Could be a single Literal with v4: https://v4.zod.dev/v4#multiple-values-in-zliteral
+          z.ZodUnion<
+            Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>
+          >
+        : SCHEMA['props'] extends { big: true }
+          ? z.ZodUnion<[z.ZodNumber, z.ZodBigInt]>
+          : z.ZodNumber
+  >
 >
 
 export const numberZodFormatter = (
@@ -47,5 +54,5 @@ export const numberZodFormatter = (
     zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
-  return optionalWrapper(schema, options, zodFormatter)
+  return withTransform(schema, options, withOptional(schema, options, zodFormatter))
 }
