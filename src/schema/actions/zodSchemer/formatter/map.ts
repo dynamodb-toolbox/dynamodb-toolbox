@@ -7,27 +7,31 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { OptionalWrapper } from './utils.js'
-import { optionalWrapper } from './utils.js'
+import type { WithOptional, WithRenaming } from './utils.js'
+import { withOptional, withRenaming } from './utils.js'
 
 export type MapZodFormatter<
   SCHEMA extends MapSchema,
   OPTIONS extends ZodFormatterOptions = {}
 > = MapSchema extends SCHEMA
-  ? z.AnyZodObject
-  : OptionalWrapper<
+  ? z.ZodTypeAny
+  : WithRenaming<
       SCHEMA,
       OPTIONS,
-      z.ZodObject<
-        {
-          [KEY in OPTIONS extends { format: false }
-            ? keyof SCHEMA['attributes']
-            : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-            SCHEMA['attributes'][KEY],
-            Overwrite<OPTIONS, { defined: false }>
-          >
-        },
-        'strip'
+      WithOptional<
+        SCHEMA,
+        OPTIONS,
+        z.ZodObject<
+          {
+            [KEY in OPTIONS extends { format: false }
+              ? keyof SCHEMA['attributes']
+              : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+              SCHEMA['attributes'][KEY],
+              Overwrite<OPTIONS, { defined: false }>
+            >
+          },
+          'strip'
+        >
       >
     >
 
@@ -41,15 +45,19 @@ export const mapZodFormatter = (
     ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
     : Object.entries(schema.attributes)
 
-  return optionalWrapper(
+  return withRenaming(
     schema,
     options,
-    z.object(
-      Object.fromEntries(
-        displayedAttrEntries.map(([attributeName, attribute]) => [
-          attributeName,
-          schemaZodFormatter(attribute, { ...options, defined: false })
-        ])
+    withOptional(
+      schema,
+      options,
+      z.object(
+        Object.fromEntries(
+          displayedAttrEntries.map(([attributeName, attribute]) => [
+            attributeName,
+            schemaZodFormatter(attribute, { ...options, defined: false })
+          ])
+        )
       )
     )
   )

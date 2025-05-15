@@ -1,5 +1,5 @@
 export interface ZodFormatterOptions {
-  // transform?: boolean
+  transform?: boolean
   format?: boolean
   partial?: boolean
   defined?: boolean

@@ -3,20 +3,24 @@ import { z } from 'zod'
 import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 
 import type { ZodFormatterOptions } from './types.js'
-import type { OptionalWrapper } from './utils.js'
-import { optionalWrapper } from './utils.js'
+import type { WithOptional, WithTransform } from './utils.js'
+import { withOptional, withTransform } from './utils.js'
 
 export type StringZodFormatter<
   SCHEMA extends StringSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = OptionalWrapper<
+> = WithTransform<
   SCHEMA,
   OPTIONS,
-  SCHEMA['props'] extends { enum: [ResolvedStringSchema] }
-    ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
-    : SCHEMA['props'] extends { enum: [ResolvedStringSchema, ...ResolvedStringSchema[]] }
-      ? z.ZodEnum<SCHEMA['props']['enum']>
-      : z.ZodString
+  WithOptional<
+    SCHEMA,
+    OPTIONS,
+    SCHEMA['props'] extends { enum: [ResolvedStringSchema] }
+      ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+      : SCHEMA['props'] extends { enum: [ResolvedStringSchema, ...ResolvedStringSchema[]] }
+        ? z.ZodEnum<SCHEMA['props']['enum']>
+        : z.ZodString
+  >
 >
 
 export const getStringZodFormatter = (
@@ -34,5 +38,5 @@ export const getStringZodFormatter = (
     zodFormatter = z.string()
   }
 
-  return optionalWrapper(schema, options, zodFormatter)
+  return withTransform(schema, options, withOptional(schema, options, zodFormatter))
 }
