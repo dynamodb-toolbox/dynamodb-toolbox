@@ -35,7 +35,7 @@ describe('zodSchemer > formatter > binary', () => {
   test('returns zod effect if transform is set', () => {
     const transformer = {
       encode: (decoded: Uint8Array) => Buffer.from(decoded).toString('base64'),
-      decode: (encoded: string) => Buffer.from(encoded, 'base64')
+      decode: (encoded: string) => new Uint8Array(Buffer.from(encoded, 'base64'))
     }
     const schema = binary().transform(transformer)
     const output = schemaZodFormatter(schema)
@@ -59,7 +59,7 @@ describe('zodSchemer > formatter > binary', () => {
   test('returns untransformed zod schema if transform is set but transform is false', () => {
     const transformer = {
       encode: (decoded: Uint8Array) => Buffer.from(decoded).toString('base64'),
-      decode: (encoded: string) => Buffer.from(encoded, 'base64')
+      decode: (encoded: string) => new Uint8Array(Buffer.from(encoded, 'base64'))
     }
     const schema = binary().transform(transformer)
     const output = schemaZodFormatter(schema, { transform: false })

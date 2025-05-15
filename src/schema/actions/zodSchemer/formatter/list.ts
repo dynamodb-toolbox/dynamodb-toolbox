@@ -12,11 +12,13 @@ import { withOptional } from './utils.js'
 export type ListZodFormatter<
   SCHEMA extends ListSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithOptional<
-  SCHEMA,
-  OPTIONS,
-  z.ZodArray<SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
->
+> = ListSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithOptional<
+      SCHEMA,
+      OPTIONS,
+      z.ZodArray<SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
+    >
 
 export const listZodFormatter = (
   schema: ListSchema,

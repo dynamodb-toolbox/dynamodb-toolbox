@@ -12,27 +12,29 @@ import { withOptional } from './utils.js'
 export type AnyOfZodFormatter<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithOptional<
-  SCHEMA,
-  OPTIONS,
-  SCHEMA['props'] extends { discriminator: string }
-    ? z.ZodDiscriminatedUnion<
-        SCHEMA['props']['discriminator'],
-        MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-      >
-    : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-      ? SCHEMAS_HEAD extends Schema
-        ? SCHEMAS_TAIL extends Schema[]
-          ? z.ZodUnion<
-              [
-                SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
-                ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
-              ]
-            >
-          : never
-        : never
-      : z.ZodTypeAny
->
+> = AnyOfSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithOptional<
+      SCHEMA,
+      OPTIONS,
+      SCHEMA['props'] extends { discriminator: string }
+        ? z.ZodDiscriminatedUnion<
+            SCHEMA['props']['discriminator'],
+            MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+          >
+        : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+          ? SCHEMAS_HEAD extends Schema
+            ? SCHEMAS_TAIL extends Schema[]
+              ? z.ZodUnion<
+                  [
+                    SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
+                    ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
+                  ]
+                >
+              : never
+            : never
+          : z.ZodTypeAny
+    >
 
 type MapAnyOfZodFormatter<
   SCHEMAS extends Schema[],

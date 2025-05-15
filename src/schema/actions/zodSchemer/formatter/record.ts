@@ -46,34 +46,36 @@ const withTransformedKeys = (
 export type RecordZodFormatter<
   SCHEMA extends RecordSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithOptional<
-  SCHEMA,
-  OPTIONS,
-  /**
-   * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
-   */
-  SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
-    ? WithTransformedKeys<
-        SCHEMA,
-        OPTIONS,
-        z.ZodObject<
-          {
-            [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodFormatter<
-              SCHEMA['elements'],
-              Overwrite<OPTIONS, { defined: false }>
+> = RecordSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithOptional<
+      SCHEMA,
+      OPTIONS,
+      /**
+       * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
+       */
+      SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
+        ? WithTransformedKeys<
+            SCHEMA,
+            OPTIONS,
+            z.ZodObject<
+              {
+                [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodFormatter<
+                  SCHEMA['elements'],
+                  Overwrite<OPTIONS, { defined: false }>
+                >
+              },
+              'strip'
             >
-          },
-          'strip'
-        >
-      >
-    : z.ZodRecord<
-        Cast<
-          SchemaZodFormatter<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
-          z.KeySchema
-        >,
-        SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-      >
->
+          >
+        : z.ZodRecord<
+            Cast<
+              SchemaZodFormatter<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
+              z.KeySchema
+            >,
+            SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+          >
+    >
 
 export const recordZodFormatter = (
   schema: RecordSchema,

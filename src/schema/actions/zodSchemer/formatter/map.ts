@@ -13,25 +13,27 @@ import { withOptional, withRenaming } from './utils.js'
 export type MapZodFormatter<
   SCHEMA extends MapSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithRenaming<
-  SCHEMA,
-  OPTIONS,
-  WithOptional<
-    SCHEMA,
-    OPTIONS,
-    z.ZodObject<
-      {
-        [KEY in OPTIONS extends { format: false }
-          ? keyof SCHEMA['attributes']
-          : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-          SCHEMA['attributes'][KEY],
-          Overwrite<OPTIONS, { defined: false }>
+> = MapSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithRenaming<
+      SCHEMA,
+      OPTIONS,
+      WithOptional<
+        SCHEMA,
+        OPTIONS,
+        z.ZodObject<
+          {
+            [KEY in OPTIONS extends { format: false }
+              ? keyof SCHEMA['attributes']
+              : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+              SCHEMA['attributes'][KEY],
+              Overwrite<OPTIONS, { defined: false }>
+            >
+          },
+          'strip'
         >
-      },
-      'strip'
+      >
     >
-  >
->
 
 export const mapZodFormatter = (
   schema: MapSchema,

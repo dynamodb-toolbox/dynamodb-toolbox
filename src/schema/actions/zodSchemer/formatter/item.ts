@@ -13,21 +13,23 @@ import { withRenaming } from './utils.js'
 export type ItemZodFormatter<
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithRenaming<
-  SCHEMA,
-  OPTIONS,
-  z.ZodObject<
-    {
-      [KEY in OPTIONS extends { format: false }
-        ? keyof SCHEMA['attributes']
-        : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-        SCHEMA['attributes'][KEY],
-        Overwrite<OPTIONS, { defined: false }>
+> = ItemSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithRenaming<
+      SCHEMA,
+      OPTIONS,
+      z.ZodObject<
+        {
+          [KEY in OPTIONS extends { format: false }
+            ? keyof SCHEMA['attributes']
+            : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+            SCHEMA['attributes'][KEY],
+            Overwrite<OPTIONS, { defined: false }>
+          >
+        },
+        'strip'
       >
-    },
-    'strip'
-  >
->
+    >
 
 export const itemZodFormatter = <
   SCHEMA extends ItemSchema,
