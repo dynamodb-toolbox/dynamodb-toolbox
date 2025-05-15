@@ -1,0 +1,54 @@
+import { z } from 'zod'
+
+import type { MapSchema } from '~/schema/index.js'
+import type { OmitKeys } from '~/types/omitKeys.js'
+import type { Overwrite } from '~/types/overwrite.js'
+
+import type { SchemaZodParser } from './schema.js'
+import { schemaZodParser } from './schema.js'
+import type { ZodParserOptions } from './types.js'
+import type { WithAttributeNameEncoding, WithOptional } from './utils.js'
+import { withAttributeNameEncoding, withOptional } from './utils.js'
+
+export type MapZodParser<
+  SCHEMA extends MapSchema,
+  OPTIONS extends ZodParserOptions = {}
+> = MapSchema extends SCHEMA
+  ? z.ZodTypeAny
+  : WithAttributeNameEncoding<
+      SCHEMA,
+      OPTIONS,
+      WithOptional<
+        SCHEMA,
+        OPTIONS,
+        z.ZodObject<
+          {
+            [KEY in OPTIONS extends { format: false }
+              ? keyof SCHEMA['attributes']
+              : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodParser<
+              SCHEMA['attributes'][KEY],
+              Overwrite<OPTIONS, { defined: false }>
+            >
+          },
+          'strip'
+        >
+      >
+    >
+
+export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
+  withAttributeNameEncoding(
+    schema,
+    options,
+    withOptional(
+      schema,
+      options,
+      z.object(
+        Object.fromEntries(
+          Object.entries(schema.attributes).map(([attributeName, attribute]) => [
+            attributeName,
+            schemaZodParser(attribute, { ...options, defined: false })
+          ])
+        )
+      )
+    )
+  )
