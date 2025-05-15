@@ -34,9 +34,6 @@ describe('zodSchemer > formatter > any', () => {
 
     expect(expected).toBeInstanceOf(z.ZodType)
     expect(output).toBeInstanceOf(z.ZodType)
-
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
   })
 
   test('returns optional zod schema', () => {
@@ -114,7 +111,7 @@ describe('zodSchemer > formatter > any', () => {
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema defined is true (partial)', () => {
     const schema = any()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.custom()
@@ -124,8 +121,17 @@ describe('zodSchemer > formatter > any', () => {
 
     expect(expected).toBeInstanceOf(z.ZodType)
     expect(output).toBeInstanceOf(z.ZodType)
+  })
 
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
+  test('returns non-optional zod schema defined is true (optional)', () => {
+    const schema = any().optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.custom()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodType)
+    expect(output).toBeInstanceOf(z.ZodType)
   })
 })

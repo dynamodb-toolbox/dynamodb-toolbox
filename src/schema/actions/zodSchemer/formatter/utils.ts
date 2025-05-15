@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { ItemSchema, MapSchema, Schema, TransformedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/transformer.js'
 
+import type { SavedAsAttributes } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
 
 export type ZodLiteralMap<
@@ -20,20 +21,26 @@ export type WithOptional<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
-> = OPTIONS extends { partial: true; defined?: false }
-  ? z.ZodOptional<ZOD_SCHEMA>
-  : SCHEMA['props'] extends { required: 'never' }
+> = OPTIONS extends { defined: true }
+  ? ZOD_SCHEMA
+  : OPTIONS extends { partial: true }
     ? z.ZodOptional<ZOD_SCHEMA>
-    : ZOD_SCHEMA
+    : SCHEMA['props'] extends { required: 'never' }
+      ? z.ZodOptional<ZOD_SCHEMA>
+      : ZOD_SCHEMA
 
 export const withOptional = (
   schema: Schema,
-  { partial = false, defined = false }: ZodFormatterOptions,
+  { partial, defined }: ZodFormatterOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
-  (partial && !defined) || schema.props.required === 'never' ? z.optional(zodSchema) : zodSchema
+  defined === true
+    ? zodSchema
+    : partial === true || schema.props.required === 'never'
+      ? z.optional(zodSchema)
+      : zodSchema
 
-export type WithTransform<
+export type WithDecoding<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
@@ -43,52 +50,47 @@ export type WithTransform<
     ? z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>
     : ZOD_SCHEMA
 
-export const withTransform = (
+export const withDecoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
-  { transform = true }: ZodFormatterOptions,
+  { transform }: ZodFormatterOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
-  transform && schema.props.transform !== undefined
-    ? z.preprocess(value => (schema.props.transform as Transformer).decode(value), zodSchema)
-    : zodSchema
+  transform === false
+    ? zodSchema
+    : schema.props.transform !== undefined
+      ? z.preprocess(encoded => (schema.props.transform as Transformer).decode(encoded), zodSchema)
+      : zodSchema
 
-type RenamedAttributes<SCHEMA extends MapSchema | ItemSchema> = {
-  [KEY in keyof SCHEMA['attributes']]: SCHEMA['attributes'][KEY]['props'] extends {
-    savedAs: string
-  }
-    ? KEY
-    : never
-}[keyof SCHEMA['attributes']]
-
-export type WithRenaming<
+export type WithAttributeNameDecoding<
   SCHEMA extends MapSchema | ItemSchema,
   OPTIONS extends ZodFormatterOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
 > = OPTIONS extends { transform: false }
   ? ZOD_SCHEMA
-  : [RenamedAttributes<SCHEMA>] extends [never]
+  : [SavedAsAttributes<SCHEMA>] extends [never]
     ? ZOD_SCHEMA
     : z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>
 
-export const compileRenamer =
+export const withAttributeNameDecoding = (
+  schema: MapSchema | ItemSchema,
+  { transform }: ZodFormatterOptions,
+  zodSchema: z.ZodTypeAny
+): z.ZodTypeAny =>
+  transform === false
+    ? zodSchema
+    : Object.values(schema.attributes).every(attribute => attribute.props.savedAs === undefined)
+      ? zodSchema
+      : z.preprocess(compileAttributeNameDecoder(schema), zodSchema)
+
+export const compileAttributeNameDecoder =
   (schema: MapSchema | ItemSchema) =>
   (encoded: unknown): Record<string, unknown> => {
-    const renamedValue: Record<string, unknown> = {}
+    const decoded: Record<string, unknown> = {}
 
     for (const [attrName, attribute] of Object.entries(schema.attributes)) {
       const savedAs = attribute.props.savedAs ?? attrName
-      renamedValue[attrName] = (encoded as Record<string, unknown>)[savedAs]
+      decoded[attrName] = (encoded as Record<string, unknown>)[savedAs]
     }
 
-    return renamedValue
+    return decoded
   }
-
-export const withRenaming = (
-  schema: MapSchema | ItemSchema,
-  { transform = true }: ZodFormatterOptions,
-  zodSchema: z.ZodTypeAny
-): z.ZodTypeAny =>
-  transform &&
-  Object.values(schema.attributes).some(attribute => attribute.props.savedAs !== undefined)
-    ? z.preprocess(compileRenamer(schema), zodSchema)
-    : zodSchema

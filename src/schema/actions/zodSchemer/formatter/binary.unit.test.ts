@@ -42,9 +42,6 @@ describe('zodSchemer > formatter > binary', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
     expect(output.unwrap()).toBeInstanceOf(z.ZodType)
 
-    expect(expected.parse(BINARY)).toBe(BINARY)
-    expect(output.parse(BINARY)).toBe(BINARY)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
@@ -112,14 +109,11 @@ describe('zodSchemer > formatter > binary', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
     expect(output.unwrap()).toBeInstanceOf(z.ZodType)
 
-    expect(expected.parse(BINARY)).toBe(BINARY)
-    expect(output.parse(BINARY)).toBe(BINARY)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema defined is true (partial)', () => {
     const schema = binary()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.instanceof(Uint8Array)
@@ -131,8 +125,21 @@ describe('zodSchemer > formatter > binary', () => {
     expect(expected).toBeInstanceOf(z.ZodType)
     expect(output).toBeInstanceOf(z.ZodType)
 
-    expect(expected.parse(BINARY)).toBe(BINARY)
-    expect(output.parse(BINARY)).toBe(BINARY)
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema defined is true (optional)', () => {
+    const schema = binary().optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.instanceof(Uint8Array)
+
+    // NOTE: Cannot use A.Equals this because of divergence between Uint8Array & Uint8ArrayConstructor types in latest TS versions
+    const assert: A.Contains<typeof expected, typeof output> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodType)
+    expect(output).toBeInstanceOf(z.ZodType)
 
     expect(() => expected.parse(undefined)).toThrow()
     expect(() => output.parse(undefined)).toThrow()

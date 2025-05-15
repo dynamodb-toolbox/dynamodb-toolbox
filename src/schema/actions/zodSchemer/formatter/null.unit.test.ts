@@ -39,9 +39,6 @@ describe('zodSchemer > formatter > nul', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodNull)
     expect(output.unwrap()).toBeInstanceOf(z.ZodNull)
 
-    expect(expected.parse(NULL)).toBe(NULL)
-    expect(output.parse(NULL)).toBe(NULL)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
@@ -106,14 +103,11 @@ describe('zodSchemer > formatter > nul', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodNull)
     expect(output.unwrap()).toBeInstanceOf(z.ZodNull)
 
-    expect(expected.parse(NULL)).toBe(NULL)
-    expect(output.parse(NULL)).toBe(NULL)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema if defined is true (partial)', () => {
     const schema = nul()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.null()
@@ -124,7 +118,22 @@ describe('zodSchemer > formatter > nul', () => {
     expect(expected).toBeInstanceOf(z.ZodNull)
     expect(output).toBeInstanceOf(z.ZodNull)
 
-    expect(expected.parse(NULL)).toBe(NULL)
-    expect(output.parse(NULL)).toBe(NULL)
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = nul().optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.null()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodNull)
+    expect(output).toBeInstanceOf(z.ZodNull)
+
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
   })
 })

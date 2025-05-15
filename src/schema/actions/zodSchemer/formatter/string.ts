@@ -3,13 +3,13 @@ import { z } from 'zod'
 import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 
 import type { ZodFormatterOptions } from './types.js'
-import type { WithOptional, WithTransform } from './utils.js'
-import { withOptional, withTransform } from './utils.js'
+import type { WithDecoding, WithOptional } from './utils.js'
+import { withDecoding, withOptional } from './utils.js'
 
 export type StringZodFormatter<
   SCHEMA extends StringSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithTransform<
+> = WithDecoding<
   SCHEMA,
   OPTIONS,
   WithOptional<
@@ -38,5 +38,5 @@ export const getStringZodFormatter = (
     zodFormatter = z.string()
   }
 
-  return withTransform(schema, options, withOptional(schema, options, zodFormatter))
+  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
 }

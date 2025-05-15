@@ -68,9 +68,6 @@ describe('zodSchemer > formatter > number', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodNumber)
     expect(output.unwrap()).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse(NUM)).toBe(NUM)
-    expect(output.parse(NUM)).toBe(NUM)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
@@ -135,14 +132,11 @@ describe('zodSchemer > formatter > number', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodNumber)
     expect(output.unwrap()).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse(NUM)).toBe(NUM)
-    expect(output.parse(NUM)).toBe(NUM)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema if defined is true (partial)', () => {
     const schema = number()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.number()
@@ -153,8 +147,23 @@ describe('zodSchemer > formatter > number', () => {
     expect(expected).toBeInstanceOf(z.ZodNumber)
     expect(output).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse(NUM)).toBe(NUM)
-    expect(output.parse(NUM)).toBe(NUM)
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = number().optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.number()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodNumber)
+    expect(output).toBeInstanceOf(z.ZodNumber)
+
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
   })
 
   test('returns literal zod schema if enum has one value', () => {

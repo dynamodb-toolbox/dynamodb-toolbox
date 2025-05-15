@@ -115,9 +115,36 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(output.parse(undefined)).toBe(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema if defined is true (partial)', () => {
     const schema = anyOf(string(), number())
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
+    const expected = z.union([z.string(), z.number()])
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodUnion)
+    expect(expected.options).toHaveLength(2)
+    expect(expected.options[0]).toBeInstanceOf(z.ZodString)
+    expect(expected.options[1]).toBeInstanceOf(z.ZodNumber)
+    expect(output).toBeInstanceOf(z.ZodUnion)
+    expect(output.options).toHaveLength(2)
+    expect(output.options[0]).toBeInstanceOf(z.ZodString)
+    expect(output.options[1]).toBeInstanceOf(z.ZodNumber)
+
+    expect(expected.parse(STR)).toBe(STR)
+    expect(expected.parse(NUM)).toBe(NUM)
+    expect(() => expected.parse(TRUE)).toThrow()
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(output.parse(STR)).toBe(STR)
+    expect(output.parse(NUM)).toBe(NUM)
+    expect(() => output.parse(TRUE)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = anyOf(string(), number()).optional()
+    const output = schemaZodFormatter(schema, { defined: true })
     const expected = z.union([z.string(), z.number()])
 
     const assert: A.Equals<typeof output, typeof expected> = 1

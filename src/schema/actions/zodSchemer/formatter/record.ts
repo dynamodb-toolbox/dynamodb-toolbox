@@ -11,7 +11,7 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithOptional } from './utils.js'
 import { withOptional } from './utils.js'
 
-type WithTransformedKeys<
+type WithDecodedKeys<
   SCHEMA extends RecordSchema,
   OPTIONS extends ZodFormatterOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
@@ -21,27 +21,29 @@ type WithTransformedKeys<
     ? z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>
     : ZOD_SCHEMA
 
-export const compileKeysTransformer =
-  (schema: RecordSchema) =>
-  (encoded: unknown): Record<string, unknown> => {
-    const transformedValue: Record<string, unknown> = {}
-
-    for (const [key, value] of Object.entries(encoded as Record<string, unknown>)) {
-      const transformedKey = (schema.keys.props.transform as Transformer).decode(key)
-      transformedValue[transformedKey] = value
-    }
-
-    return transformedValue
-  }
-
-const withTransformedKeys = (
+const withDecodedKeys = (
   schema: RecordSchema,
-  { transform = true }: ZodFormatterOptions,
+  { transform }: ZodFormatterOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
-  transform && schema.keys.props.transform !== undefined
-    ? z.preprocess(compileKeysTransformer(schema), zodSchema)
-    : zodSchema
+  transform === false
+    ? zodSchema
+    : schema.keys.props.transform !== undefined
+      ? z.preprocess(compileKeysDecoder(schema), zodSchema)
+      : zodSchema
+
+export const compileKeysDecoder =
+  (schema: RecordSchema) =>
+  (encoded: unknown): Record<string, unknown> => {
+    const decoded: Record<string, unknown> = {}
+
+    for (const [key, value] of Object.entries(encoded as Record<string, unknown>)) {
+      const decodedKey = (schema.keys.props.transform as Transformer).decode(key)
+      decoded[decodedKey] = value
+    }
+
+    return decoded
+  }
 
 export type RecordZodFormatter<
   SCHEMA extends RecordSchema,
@@ -55,7 +57,7 @@ export type RecordZodFormatter<
        * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
        */
       SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
-        ? WithTransformedKeys<
+        ? WithDecodedKeys<
             SCHEMA,
             OPTIONS,
             z.ZodObject<
@@ -89,7 +91,7 @@ export const recordZodFormatter = (
     /**
      * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
      */
-    zodFormatter = withTransformedKeys(
+    zodFormatter = withDecodedKeys(
       schema,
       options,
       z.object(Object.fromEntries(schema.keys.props.enum.map(key => [key, elementsFormatter])))

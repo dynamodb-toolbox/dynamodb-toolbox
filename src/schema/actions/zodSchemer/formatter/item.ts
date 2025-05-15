@@ -7,15 +7,15 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithRenaming } from './utils.js'
-import { withRenaming } from './utils.js'
+import type { WithAttributeNameDecoding } from './utils.js'
+import { withAttributeNameDecoding } from './utils.js'
 
 export type ItemZodFormatter<
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodFormatterOptions = {}
 > = ItemSchema extends SCHEMA
   ? z.ZodTypeAny
-  : WithRenaming<
+  : WithAttributeNameDecoding<
       SCHEMA,
       OPTIONS,
       z.ZodObject<
@@ -44,7 +44,7 @@ export const itemZodFormatter = <
     ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
     : Object.entries(schema.attributes)
 
-  return withRenaming(
+  return withAttributeNameDecoding(
     schema,
     options,
     z.object(

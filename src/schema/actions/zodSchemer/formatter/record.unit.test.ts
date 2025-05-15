@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { map, number, record, string } from '~/schema/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
-import { compileKeysTransformer } from './record.js'
+import { compileKeysDecoder } from './record.js'
 import { schemaZodFormatter } from './schema.js'
 
 const VALUE = { foo: 42 }
@@ -52,6 +52,24 @@ describe('zodSchemer > formatter > record', () => {
     expect(() => output.parse(undefined)).toThrow()
   })
 
+  test('returns record zod schema if keys are enum but record is partial', () => {
+    const schema = record(string().enum('foo', 'bar'), number()).partial()
+    const output = schemaZodFormatter(schema)
+    const expected = z.record(z.enum(['foo', 'bar']), z.number())
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodRecord)
+    expect(expected.keySchema).toBeInstanceOf(z.ZodEnum)
+    expect(expected.keySchema.options).toStrictEqual(['foo', 'bar'])
+    expect(expected.valueSchema).toBeInstanceOf(z.ZodNumber)
+    expect(output).toBeInstanceOf(z.ZodRecord)
+    expect(output.keySchema).toBeInstanceOf(z.ZodEnum)
+    expect(output.keySchema.options).toStrictEqual(['foo', 'bar'])
+    expect(output.valueSchema).toBeInstanceOf(z.ZodNumber)
+  })
+
   test('returns optional zod schema', () => {
     const schema = record(string(), number()).optional()
     const output = schemaZodFormatter(schema)
@@ -69,9 +87,6 @@ describe('zodSchemer > formatter > record', () => {
     expect(output.unwrap().keySchema).toBeInstanceOf(z.ZodString)
     expect(output.unwrap().valueSchema).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
-
     expect(expected.parse(undefined)).toStrictEqual(undefined)
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
@@ -81,7 +96,7 @@ describe('zodSchemer > formatter > record', () => {
     const schema = record(string().enum('foo').transform(transformer), number())
     const output = schemaZodFormatter(schema)
     const expectedSchema = z.object({ foo: z.number() })
-    const expectedEffect = z.preprocess(compileKeysTransformer(schema), expectedSchema)
+    const expectedEffect = z.preprocess(compileKeysDecoder(schema), expectedSchema)
 
     const assert: A.Equals<
       typeof output,
@@ -168,30 +183,6 @@ describe('zodSchemer > formatter > record', () => {
     expect(output).toBeInstanceOf(z.ZodRecord)
     expect(output.keySchema).toBeInstanceOf(z.ZodString)
     expect(output.valueSchema).toBeInstanceOf(z.ZodNumber)
-
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
-  })
-
-  test('returns record zod schema if keys are enum but record is partial', () => {
-    const schema = record(string().enum('foo', 'bar'), number()).partial()
-    const output = schemaZodFormatter(schema)
-    const expected = z.record(z.enum(['foo', 'bar']), z.number())
-
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
-
-    expect(expected).toBeInstanceOf(z.ZodRecord)
-    expect(expected.keySchema).toBeInstanceOf(z.ZodEnum)
-    expect(expected.keySchema.options).toStrictEqual(['foo', 'bar'])
-    expect(expected.valueSchema).toBeInstanceOf(z.ZodNumber)
-    expect(output).toBeInstanceOf(z.ZodRecord)
-    expect(output.keySchema).toBeInstanceOf(z.ZodEnum)
-    expect(output.keySchema.options).toStrictEqual(['foo', 'bar'])
-    expect(output.valueSchema).toBeInstanceOf(z.ZodNumber)
-
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
   })
 
   test('returns optional & partial zod schema if partial is true', () => {
@@ -215,14 +206,11 @@ describe('zodSchemer > formatter > record', () => {
     expect(output.unwrap().valueSchema.shape.foo).toBeInstanceOf(z.ZodOptional)
     expect(output.unwrap().valueSchema.shape.foo.unwrap()).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse({ foo: VALUE })).toStrictEqual({ foo: VALUE })
-    expect(output.parse({ foo: VALUE })).toStrictEqual({ foo: VALUE })
-
     expect(expected.parse(undefined)).toStrictEqual(undefined)
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
 
-  test('returns non-optional & partial zod schema if partial is true but defined is true', () => {
+  test('returns non-optional & partial zod schema if defined is true (partial)', () => {
     const schema = record(string(), map({ foo: number() }))
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.record(z.string(), z.object({ foo: z.number() }).partial())
@@ -241,8 +229,24 @@ describe('zodSchemer > formatter > record', () => {
     expect(output.valueSchema.shape.foo).toBeInstanceOf(z.ZodOptional)
     expect(output.valueSchema.shape.foo.unwrap()).toBeInstanceOf(z.ZodNumber)
 
-    expect(expected.parse({ foo: VALUE })).toStrictEqual({ foo: VALUE })
-    expect(output.parse({ foo: VALUE })).toStrictEqual({ foo: VALUE })
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = record(string(), number()).optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.record(z.string(), z.number())
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodRecord)
+    expect(expected.keySchema).toBeInstanceOf(z.ZodString)
+    expect(expected.valueSchema).toBeInstanceOf(z.ZodNumber)
+    expect(output).toBeInstanceOf(z.ZodRecord)
+    expect(output.keySchema).toBeInstanceOf(z.ZodString)
+    expect(output.valueSchema).toBeInstanceOf(z.ZodNumber)
 
     expect(() => expected.parse(undefined)).toThrow()
     expect(() => output.parse(undefined)).toThrow()

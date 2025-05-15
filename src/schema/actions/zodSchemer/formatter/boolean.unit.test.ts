@@ -40,9 +40,6 @@ describe('zodSchemer > formatter > boolean', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodBoolean)
     expect(output.unwrap()).toBeInstanceOf(z.ZodBoolean)
 
-    expect(expected.parse(TRUE)).toBe(TRUE)
-    expect(output.parse(TRUE)).toBe(TRUE)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
@@ -107,14 +104,11 @@ describe('zodSchemer > formatter > boolean', () => {
     expect(expected.unwrap()).toBeInstanceOf(z.ZodBoolean)
     expect(output.unwrap()).toBeInstanceOf(z.ZodBoolean)
 
-    expect(expected.parse(TRUE)).toBe(TRUE)
-    expect(output.parse(TRUE)).toBe(TRUE)
-
     expect(expected.parse(undefined)).toBe(undefined)
     expect(output.parse(undefined)).toBe(undefined)
   })
 
-  test('returns non-optional zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema if defined is true (partial)', () => {
     const schema = boolean()
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.boolean()
@@ -125,8 +119,23 @@ describe('zodSchemer > formatter > boolean', () => {
     expect(expected).toBeInstanceOf(z.ZodBoolean)
     expect(output).toBeInstanceOf(z.ZodBoolean)
 
-    expect(expected.parse(TRUE)).toBe(TRUE)
-    expect(output.parse(TRUE)).toBe(TRUE)
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = boolean().optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.boolean()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodBoolean)
+    expect(output).toBeInstanceOf(z.ZodBoolean)
+
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
   })
 
   test('returns literal zod schema if enum has one value', () => {

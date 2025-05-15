@@ -4,13 +4,13 @@ import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
 import type { ZodFormatterOptions } from './types.js'
-import type { WithOptional, WithTransform, ZodLiteralMap } from './utils.js'
-import { withOptional, withTransform } from './utils.js'
+import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
+import { withDecoding, withOptional } from './utils.js'
 
 export type NumberZodFormatter<
   SCHEMA extends NumberSchema,
   OPTIONS extends ZodFormatterOptions = {}
-> = WithTransform<
+> = WithDecoding<
   SCHEMA,
   OPTIONS,
   WithOptional<
@@ -54,5 +54,5 @@ export const numberZodFormatter = (
     zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
-  return withTransform(schema, options, withOptional(schema, options, zodFormatter))
+  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
 }

@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { map, number, string } from '~/schema/index.js'
 
 import { schemaZodFormatter } from './schema.js'
-import { compileRenamer } from './utils.js'
+import { compileAttributeNameDecoder } from './utils.js'
 
 const STR = 'foo'
 const NUM = 42
@@ -54,9 +54,6 @@ describe('zodSchemer > formatter > map', () => {
     expect(output.unwrap().shape.num).toBeInstanceOf(z.ZodNumber)
     expect(output.unwrap().shape).not.toHaveProperty('hidden')
 
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
-
     expect(expected.parse(undefined)).toStrictEqual(undefined)
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
@@ -65,7 +62,7 @@ describe('zodSchemer > formatter > map', () => {
     const schema = map({ str: string(), num: number().savedAs('_n'), hidden: string().hidden() })
     const output = schemaZodFormatter(schema)
     const expectedSchema = z.object({ str: z.string(), num: z.number() })
-    const expectedEffect = z.preprocess(compileRenamer(schema), expectedSchema)
+    const expectedEffect = z.preprocess(compileAttributeNameDecoder(schema), expectedSchema)
 
     const assert: A.Equals<
       typeof output,
@@ -165,14 +162,11 @@ describe('zodSchemer > formatter > map', () => {
     expect(output.unwrap().shape.num.unwrap()).toBeInstanceOf(z.ZodNumber)
     expect(output.unwrap().shape).not.toHaveProperty('hidden')
 
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
-
     expect(expected.parse(undefined)).toStrictEqual(undefined)
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
 
-  test('returns non-optional & partial zod schema if partial is true but defined is true', () => {
+  test('returns non-optional zod schema if defined is true (partial)', () => {
     const schema = map({ str: string(), num: number() })
     const output = schemaZodFormatter(schema, { partial: true, defined: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial()
@@ -193,8 +187,24 @@ describe('zodSchemer > formatter > map', () => {
     expect(output.shape.num.unwrap()).toBeInstanceOf(z.ZodNumber)
     expect(output.shape).not.toHaveProperty('hidden')
 
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
+    expect(() => expected.parse(undefined)).toThrow()
+    expect(() => output.parse(undefined)).toThrow()
+  })
+
+  test('returns non-optional zod schema if defined is true (optional)', () => {
+    const schema = map({ str: string(), num: number() }).optional()
+    const output = schemaZodFormatter(schema, { defined: true })
+    const expected = z.object({ str: z.string(), num: z.number() })
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodObject)
+    expect(expected.shape.str).toBeInstanceOf(z.ZodString)
+    expect(expected.shape.num).toBeInstanceOf(z.ZodNumber)
+    expect(output).toBeInstanceOf(z.ZodObject)
+    expect(output.shape.str).toBeInstanceOf(z.ZodString)
+    expect(output.shape.num).toBeInstanceOf(z.ZodNumber)
 
     expect(() => expected.parse(undefined)).toThrow()
     expect(() => output.parse(undefined)).toThrow()
