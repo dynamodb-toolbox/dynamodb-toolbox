@@ -49,7 +49,7 @@ export const withTransform = (
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
   transform && schema.props.transform !== undefined
-    ? z.preprocess((schema.props.transform as Transformer).decode, zodSchema)
+    ? z.preprocess(value => (schema.props.transform as Transformer).decode(value), zodSchema)
     : zodSchema
 
 type RenamedAttributes<SCHEMA extends MapSchema | ItemSchema> = {
