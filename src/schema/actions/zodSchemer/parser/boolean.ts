@@ -3,14 +3,14 @@ import { z } from 'zod'
 import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
-import type { ZodFormatterOptions } from './types.js'
-import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
-import { withDecoding, withOptional } from './utils.js'
+import type { ZodParserOptions } from './types.js'
+import type { WithEncoding, WithOptional, ZodLiteralMap } from './utils.js'
+import { withEncoding, withOptional } from './utils.js'
 
-export type BooleanZodFormatter<
+export type BooleanZodParser<
   SCHEMA extends BooleanSchema,
-  OPTIONS extends ZodFormatterOptions = {}
-> = WithDecoding<
+  OPTIONS extends ZodParserOptions = {}
+> = WithEncoding<
   SCHEMA,
   OPTIONS,
   WithOptional<
@@ -27,9 +27,9 @@ export type BooleanZodFormatter<
   >
 >
 
-export const booleanZodFormatter = (
+export const booleanZodParser = (
   schema: BooleanSchema,
-  options: ZodFormatterOptions
+  options: ZodParserOptions
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 
@@ -51,5 +51,5 @@ export const booleanZodFormatter = (
     zodFormatter = z.boolean()
   }
 
-  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
+  return withEncoding(schema, options, withOptional(schema, options, zodFormatter))
 }

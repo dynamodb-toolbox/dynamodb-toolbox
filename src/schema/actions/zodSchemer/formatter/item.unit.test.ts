@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { item, number, string } from '~/schema/index.js'
 
 import { itemZodFormatter } from './item.js'
-import { compileRenamer } from './utils.js'
+import { compileAttributeNameDecoder } from './utils.js'
 
 const STR = 'foo'
 const NUM = 42
@@ -39,7 +39,7 @@ describe('zodSchemer > formatter > item', () => {
     const schema = item({ str: string(), num: number().savedAs('_n'), hidden: string().hidden() })
     const output = itemZodFormatter(schema)
     const expectedSchema = z.object({ str: z.string(), num: z.number() })
-    const expectedEffect = z.preprocess(compileRenamer(schema), expectedSchema)
+    const expectedEffect = z.preprocess(compileAttributeNameDecoder(schema), expectedSchema)
 
     const assert: A.Equals<
       typeof output,
@@ -116,7 +116,7 @@ describe('zodSchemer > formatter > item', () => {
     expect(() => output.parse(VALUE)).toThrow()
   })
 
-  test('returns non-optional & partial zod schema if partial is true', () => {
+  test('returns partial zod schema if partial is true', () => {
     const schema = item({ str: string(), num: number(), hidden: string().hidden() })
     const output = itemZodFormatter(schema, { partial: true })
     const expected = z.object({ str: z.string(), num: z.number() }).partial()
@@ -136,34 +136,6 @@ describe('zodSchemer > formatter > item', () => {
     expect(output.shape.num).toBeInstanceOf(z.ZodOptional)
     expect(output.shape.num.unwrap()).toBeInstanceOf(z.ZodNumber)
     expect(output.shape).not.toHaveProperty('hidden')
-
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
-
-    expect(() => expected.parse(undefined)).toThrow()
-    expect(() => output.parse(undefined)).toThrow()
-  })
-
-  test('returns non-optional & partial zod schema if partial is true but defined is true', () => {
-    const schema = item({ str: string(), num: number() })
-    const output = itemZodFormatter(schema, { partial: true, defined: true })
-    const expected = z.object({ str: z.string(), num: z.number() }).partial()
-
-    expect(expected).toBeInstanceOf(z.ZodObject)
-    expect(expected.shape.str).toBeInstanceOf(z.ZodOptional)
-    expect(expected.shape.str.unwrap()).toBeInstanceOf(z.ZodString)
-    expect(expected.shape.num).toBeInstanceOf(z.ZodOptional)
-    expect(expected.shape.num.unwrap()).toBeInstanceOf(z.ZodNumber)
-    expect(expected.shape).not.toHaveProperty('hidden')
-    expect(output).toBeInstanceOf(z.ZodObject)
-    expect(output.shape.str).toBeInstanceOf(z.ZodOptional)
-    expect(output.shape.str.unwrap()).toBeInstanceOf(z.ZodString)
-    expect(output.shape.num).toBeInstanceOf(z.ZodOptional)
-    expect(output.shape.num.unwrap()).toBeInstanceOf(z.ZodNumber)
-    expect(output.shape).not.toHaveProperty('hidden')
-
-    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(VALUE)).toStrictEqual(VALUE)
 
     expect(() => expected.parse(undefined)).toThrow()
     expect(() => output.parse(undefined)).toThrow()

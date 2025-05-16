@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { number } from '~/schema/index.js'
 
-import { schemaZodFormatter } from './schema.js'
+import { schemaZodParser } from './schema.js'
 
 const NUM = 42
 const NUM_2 = 43
@@ -12,7 +12,7 @@ const BIG_NUM = BigInt('42')
 describe('zodSchemer > formatter > number', () => {
   test('returns number zod schema', () => {
     const schema = number()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.number()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -33,7 +33,7 @@ describe('zodSchemer > formatter > number', () => {
 
   test('returns union zod schema if big is true', () => {
     const schema = number().big()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.union([z.number(), z.bigint()])
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -57,7 +57,7 @@ describe('zodSchemer > formatter > number', () => {
 
   test('returns optional zod schema', () => {
     const schema = number().optional()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.number().optional()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -78,14 +78,14 @@ describe('zodSchemer > formatter > number', () => {
       decode: ({ value }: { value: number }) => value
     }
     const schema = number().transform(transformer)
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expectedSchema = z.number()
-    const expectedEffect = z.preprocess(arg => transformer.decode(arg as any), expectedSchema)
+    const expectedEffect = expectedSchema.transform(arg => transformer.encode(arg))
 
     const assert: A.Equals<
       typeof output,
       // NOTE: I couldn't find a way to pass an input type to an effect so I have to re-define one here
-      z.ZodEffects<typeof expectedSchema, z.output<typeof expectedSchema>, { value: number }>
+      z.ZodEffects<typeof expectedSchema, { value: number }, z.input<typeof expectedSchema>>
     > = 1
     assert
 
@@ -96,8 +96,8 @@ describe('zodSchemer > formatter > number', () => {
     expect(output).toBeInstanceOf(z.ZodEffects)
     expect(output.innerType()).toBeInstanceOf(z.ZodNumber)
 
-    expect(expectedEffect.parse(VALUE_NUM)).toBe(NUM)
-    expect(output.parse(VALUE_NUM)).toBe(NUM)
+    expect(expectedEffect.parse(NUM)).toStrictEqual(VALUE_NUM)
+    expect(output.parse(NUM)).toStrictEqual(VALUE_NUM)
   })
 
   test('returns untransformed zod schema if transform is set but transform is false', () => {
@@ -106,7 +106,7 @@ describe('zodSchemer > formatter > number', () => {
       decode: ({ value }: { value: number }) => value
     }
     const schema = number().transform(transformer)
-    const output = schemaZodFormatter(schema, { transform: false })
+    const output = schemaZodParser(schema, { transform: false })
     const expected = z.number()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -119,41 +119,9 @@ describe('zodSchemer > formatter > number', () => {
     expect(output.parse(NUM)).toBe(NUM)
   })
 
-  test('returns optional zod schema if partial is true', () => {
-    const schema = number()
-    const output = schemaZodFormatter(schema, { partial: true })
-    const expected = z.number().optional()
-
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
-
-    expect(expected).toBeInstanceOf(z.ZodOptional)
-    expect(output).toBeInstanceOf(z.ZodOptional)
-    expect(expected.unwrap()).toBeInstanceOf(z.ZodNumber)
-    expect(output.unwrap()).toBeInstanceOf(z.ZodNumber)
-
-    expect(expected.parse(undefined)).toBe(undefined)
-    expect(output.parse(undefined)).toBe(undefined)
-  })
-
-  test('returns non-optional zod schema if defined is true (partial)', () => {
-    const schema = number()
-    const output = schemaZodFormatter(schema, { partial: true, defined: true })
-    const expected = z.number()
-
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
-
-    expect(expected).toBeInstanceOf(z.ZodNumber)
-    expect(output).toBeInstanceOf(z.ZodNumber)
-
-    expect(() => expected.parse(undefined)).toThrow()
-    expect(() => output.parse(undefined)).toThrow()
-  })
-
-  test('returns non-optional zod schema if defined is true (optional)', () => {
+  test('returns non-optional zod schema if defined is true', () => {
     const schema = number().optional()
-    const output = schemaZodFormatter(schema, { defined: true })
+    const output = schemaZodParser(schema, { defined: true })
     const expected = z.number()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -168,7 +136,7 @@ describe('zodSchemer > formatter > number', () => {
 
   test('returns literal zod schema if enum has one value', () => {
     const schema = number().const(NUM)
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.literal(NUM)
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -183,7 +151,7 @@ describe('zodSchemer > formatter > number', () => {
 
   test('returns union of literals zod schema if enum has more than one values', () => {
     const schema = number().enum(NUM, NUM_2)
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.union([z.literal(NUM), z.literal(NUM_2)])
 
     const assert: A.Equals<typeof output, typeof expected> = 1

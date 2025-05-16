@@ -3,14 +3,14 @@ import { z } from 'zod'
 import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
-import type { ZodFormatterOptions } from './types.js'
-import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
-import { withDecoding, withOptional } from './utils.js'
+import type { ZodParserOptions } from './types.js'
+import type { WithEncoding, WithOptional, ZodLiteralMap } from './utils.js'
+import { withEncoding, withOptional } from './utils.js'
 
-export type NumberZodFormatter<
+export type NumberZodParser<
   SCHEMA extends NumberSchema,
-  OPTIONS extends ZodFormatterOptions = {}
-> = WithDecoding<
+  OPTIONS extends ZodParserOptions = {}
+> = WithEncoding<
   SCHEMA,
   OPTIONS,
   WithOptional<
@@ -29,9 +29,9 @@ export type NumberZodFormatter<
   >
 >
 
-export const numberZodFormatter = (
+export const numberZodParser = (
   schema: NumberSchema,
-  options: ZodFormatterOptions = {}
+  options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 
@@ -54,5 +54,5 @@ export const numberZodFormatter = (
     zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
-  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
+  return withEncoding(schema, options, withOptional(schema, options, zodFormatter))
 }

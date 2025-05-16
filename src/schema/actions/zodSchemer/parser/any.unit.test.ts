@@ -4,14 +4,14 @@ import { z } from 'zod'
 import { any } from '~/schema/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
-import { schemaZodFormatter } from './schema.js'
+import { schemaZodParser } from './schema.js'
 
 const VALUE = { foo: 'bar' }
 
-describe('zodSchemer > formatter > any', () => {
+describe('zodSchemer > parser > any', () => {
   test('returns custom zod schema', () => {
     const schema = any()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.custom()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -26,7 +26,7 @@ describe('zodSchemer > formatter > any', () => {
 
   test('returns casted custom zod schema', () => {
     const schema = any().castAs<{ foo: 'bar' }>()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.custom<{ foo: 'bar' }>()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -34,11 +34,14 @@ describe('zodSchemer > formatter > any', () => {
 
     expect(expected).toBeInstanceOf(z.ZodType)
     expect(output).toBeInstanceOf(z.ZodType)
+
+    expect(expected.parse(VALUE)).toStrictEqual(VALUE)
+    expect(output.parse(VALUE)).toStrictEqual(VALUE)
   })
 
   test('returns optional zod schema', () => {
     const schema = any().optional()
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expected = z.custom().optional()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -56,14 +59,14 @@ describe('zodSchemer > formatter > any', () => {
   test('returns zod effect if transform is set', () => {
     const transformer = jsonStringify()
     const schema = any().transform(transformer)
-    const output = schemaZodFormatter(schema)
+    const output = schemaZodParser(schema)
     const expectedSchema = z.custom()
-    const expectedEffect = z.preprocess(arg => transformer.decode(arg as any), expectedSchema)
+    const expectedEffect = expectedSchema.transform(arg => transformer.encode(arg))
 
     const assert: A.Equals<
       typeof output,
       // NOTE: I couldn't find a way to pass an input type to an effect so I have to re-define one here
-      z.ZodEffects<typeof expectedSchema, z.output<typeof expectedSchema>, string>
+      z.ZodEffects<typeof expectedSchema, string, z.input<typeof expectedSchema>>
     > = 1
     assert
 
@@ -74,14 +77,14 @@ describe('zodSchemer > formatter > any', () => {
 
     const JSON_VALUE = JSON.stringify(VALUE)
 
-    expect(expectedEffect.parse(JSON_VALUE)).toStrictEqual(VALUE)
-    expect(output.parse(JSON_VALUE)).toStrictEqual(VALUE)
+    expect(expectedEffect.parse(VALUE)).toStrictEqual(JSON_VALUE)
+    expect(output.parse(VALUE)).toStrictEqual(JSON_VALUE)
   })
 
   test('returns untransformed zod schema if transform is set but transform is false', () => {
     const transformer = jsonStringify()
     const schema = any().transform(transformer)
-    const output = schemaZodFormatter(schema, { transform: false })
+    const output = schemaZodParser(schema, { transform: false })
     const expected = z.custom()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
@@ -94,38 +97,9 @@ describe('zodSchemer > formatter > any', () => {
     expect(output.parse(VALUE)).toStrictEqual(VALUE)
   })
 
-  test('returns optional zod schema if partial is true', () => {
-    const schema = any()
-    const output = schemaZodFormatter(schema, { partial: true })
-    const expected = z.custom().optional()
-
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
-
-    expect(expected).toBeInstanceOf(z.ZodOptional)
-    expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
-    expect(output).toBeInstanceOf(z.ZodOptional)
-    expect(output.unwrap()).toBeInstanceOf(z.ZodType)
-
-    expect(expected.parse(undefined)).toStrictEqual(undefined)
-    expect(output.parse(undefined)).toStrictEqual(undefined)
-  })
-
-  test('returns non-optional zod schema defined is true (partial)', () => {
-    const schema = any()
-    const output = schemaZodFormatter(schema, { partial: true, defined: true })
-    const expected = z.custom()
-
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
-
-    expect(expected).toBeInstanceOf(z.ZodType)
-    expect(output).toBeInstanceOf(z.ZodType)
-  })
-
-  test('returns non-optional zod schema defined is true (optional)', () => {
+  test('returns non-optional zod schema if defined is true', () => {
     const schema = any().optional()
-    const output = schemaZodFormatter(schema, { defined: true })
+    const output = schemaZodParser(schema, { defined: true })
     const expected = z.custom()
 
     const assert: A.Equals<typeof output, typeof expected> = 1

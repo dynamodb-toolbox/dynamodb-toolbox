@@ -2,14 +2,14 @@ import { z } from 'zod'
 
 import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 
-import type { ZodFormatterOptions } from './types.js'
-import type { WithDecoding, WithOptional } from './utils.js'
-import { withDecoding, withOptional } from './utils.js'
+import type { ZodParserOptions } from './types.js'
+import type { WithEncoding, WithOptional } from './utils.js'
+import { withEncoding, withOptional } from './utils.js'
 
-export type StringZodFormatter<
+export type StringZodParser<
   SCHEMA extends StringSchema,
-  OPTIONS extends ZodFormatterOptions = {}
-> = WithDecoding<
+  OPTIONS extends ZodParserOptions = {}
+> = WithEncoding<
   SCHEMA,
   OPTIONS,
   WithOptional<
@@ -23,9 +23,9 @@ export type StringZodFormatter<
   >
 >
 
-export const getStringZodFormatter = (
+export const getStringZodParser = (
   schema: StringSchema,
-  options: ZodFormatterOptions = {}
+  options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
   let zodFormatter: z.ZodTypeAny
 
@@ -38,5 +38,5 @@ export const getStringZodFormatter = (
     zodFormatter = z.string()
   }
 
-  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
+  return withEncoding(schema, options, withOptional(schema, options, zodFormatter))
 }

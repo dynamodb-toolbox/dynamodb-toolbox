@@ -5,7 +5,7 @@ import type { Transformer } from '~/transformers/transformer.js'
 import type { Extends, If, Or } from '~/types/index.js'
 
 import type { SavedAsAttributes } from '../utils.js'
-import type { ZodFormatterOptions } from './types.js'
+import type { ZodParserOptions } from './types.js'
 
 export type ZodLiteralMap<
   LITERALS extends z.Primitive[],
@@ -20,83 +20,79 @@ export type ZodLiteralMap<
 
 export type WithOptional<
   SCHEMA extends Schema,
-  OPTIONS extends ZodFormatterOptions,
+  OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
 > = If<
   Extends<OPTIONS, { defined: true }>,
   ZOD_SCHEMA,
-  If<
-    Or<Extends<OPTIONS, { partial: true }>, Extends<SCHEMA['props'], { required: 'never' }>>,
-    z.ZodOptional<ZOD_SCHEMA>,
-    ZOD_SCHEMA
-  >
+  If<Extends<SCHEMA['props'], { required: 'never' }>, z.ZodOptional<ZOD_SCHEMA>, ZOD_SCHEMA>
 >
 
 export const withOptional = (
   schema: Schema,
-  { partial, defined }: ZodFormatterOptions,
+  { defined }: ZodParserOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
   defined === true
     ? zodSchema
-    : partial === true || schema.props.required === 'never'
+    : schema.props.required === 'never'
       ? z.optional(zodSchema)
       : zodSchema
 
-export type WithDecoding<
+export type WithEncoding<
   SCHEMA extends Schema,
-  OPTIONS extends ZodFormatterOptions,
+  OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
 > = If<
   Extends<OPTIONS, { transform: false }>,
   ZOD_SCHEMA,
   If<
     Extends<SCHEMA['props'], { transform: Transformer }>,
-    z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>,
+    z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>,
     ZOD_SCHEMA
   >
 >
 
-export const withDecoding = (
+export const withEncoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
-  { transform }: ZodFormatterOptions,
+  { transform }: ZodParserOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
   transform === false
     ? zodSchema
     : schema.props.transform !== undefined
-      ? z.preprocess(encoded => (schema.props.transform as Transformer).decode(encoded), zodSchema)
+      ? zodSchema.transform(decoded => (schema.props.transform as Transformer).encode(decoded))
       : zodSchema
 
-export type WithAttributeNameDecoding<
+export type WithAttributeNameEncoding<
   SCHEMA extends MapSchema | ItemSchema,
-  OPTIONS extends ZodFormatterOptions,
+  OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
 > = If<
   Or<Extends<OPTIONS, { transform: false }>, Extends<[SavedAsAttributes<SCHEMA>], [never]>>,
   ZOD_SCHEMA,
-  z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>
+  z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
 >
 
-export const withAttributeNameDecoding = (
+export const withAttributeNameEncoding = (
   schema: MapSchema | ItemSchema,
-  { transform }: ZodFormatterOptions,
+  { transform }: ZodParserOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
   transform === false ||
   Object.values(schema.attributes).every(attribute => attribute.props.savedAs === undefined)
     ? zodSchema
-    : z.preprocess(compileAttributeNameDecoder(schema), zodSchema)
+    : zodSchema.transform(compileAttributeNameEncoder(schema))
 
-export const compileAttributeNameDecoder =
+export const compileAttributeNameEncoder =
   (schema: MapSchema | ItemSchema) =>
-  (encoded: unknown): Record<string, unknown> => {
-    const decoded: Record<string, unknown> = {}
+  (decoded: unknown): Record<string, unknown> => {
+    const encoded: Record<string, unknown> = {}
 
     for (const [attrName, attribute] of Object.entries(schema.attributes)) {
       const savedAs = attribute.props.savedAs ?? attrName
-      decoded[attrName] = (encoded as Record<string, unknown>)[savedAs]
+      encoded[savedAs] = (decoded as Record<string, unknown>)[attrName]
     }
 
-    return decoded
+    return encoded
   }
