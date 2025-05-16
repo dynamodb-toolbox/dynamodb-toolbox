@@ -7,8 +7,8 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
-import type { WithAttributeNameEncoding, WithOptional } from './utils.js'
-import { withAttributeNameEncoding, withOptional } from './utils.js'
+import type { WithAttributeNameEncoding, WithDefault, WithOptional } from './utils.js'
+import { withAttributeNameEncoding, withDefault, withOptional } from './utils.js'
 
 export type MapZodParser<
   SCHEMA extends MapSchema,
@@ -18,19 +18,23 @@ export type MapZodParser<
   : WithAttributeNameEncoding<
       SCHEMA,
       OPTIONS,
-      WithOptional<
+      WithDefault<
         SCHEMA,
         OPTIONS,
-        z.ZodObject<
-          {
-            [KEY in OPTIONS extends { format: false }
-              ? keyof SCHEMA['attributes']
-              : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodParser<
-              SCHEMA['attributes'][KEY],
-              Overwrite<OPTIONS, { defined: false }>
-            >
-          },
-          'strip'
+        WithOptional<
+          SCHEMA,
+          OPTIONS,
+          z.ZodObject<
+            {
+              [KEY in OPTIONS extends { format: false }
+                ? keyof SCHEMA['attributes']
+                : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodParser<
+                SCHEMA['attributes'][KEY],
+                Overwrite<OPTIONS, { defined: false }>
+              >
+            },
+            'strip'
+          >
         >
       >
     >
@@ -39,15 +43,19 @@ export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}):
   withAttributeNameEncoding(
     schema,
     options,
-    withOptional(
+    withDefault(
       schema,
       options,
-      z.object(
-        Object.fromEntries(
-          Object.entries(schema.attributes).map(([attributeName, attribute]) => [
-            attributeName,
-            schemaZodParser(attribute, { ...options, defined: false })
-          ])
+      withOptional(
+        schema,
+        options,
+        z.object(
+          Object.fromEntries(
+            Object.entries(schema.attributes).map(([attributeName, attribute]) => [
+              attributeName,
+              schemaZodParser(attribute, { ...options, defined: false })
+            ])
+          )
         )
       )
     )

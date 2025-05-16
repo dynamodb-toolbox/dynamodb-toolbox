@@ -1,6 +1,6 @@
 export interface ZodParserOptions {
   transform?: boolean
   defined?: boolean
-  // fill?: boolean TODO
+  fill?: boolean
   // mode?: string TODO
 }

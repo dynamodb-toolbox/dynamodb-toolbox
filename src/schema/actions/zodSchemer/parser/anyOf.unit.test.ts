@@ -39,7 +39,7 @@ describe('zodSchemer > parser > anyOf', () => {
 
   test('returns discriminated union zod schema if discriminator is present', () => {
     const schema = anyOf(
-      map({ type: string().const('a') }),
+      map({ type: string().enum('a') }),
       map({ type: string().enum('b', 'c') })
     ).discriminate('type')
     const output = schemaZodParser(schema)
@@ -117,5 +117,74 @@ describe('zodSchemer > parser > anyOf', () => {
     expect(output.parse(NUM)).toBe(NUM)
     expect(() => output.parse(TRUE)).toThrow()
     expect(() => output.parse(undefined)).toThrow()
+  })
+
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = anyOf(string(), number()).default(STR)
+      const output = schemaZodParser(schema)
+      const expected = z.union([z.string(), z.number()]).default(STR)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodUnion)
+      expect(expected.removeDefault().options).toHaveLength(2)
+      expect(expected.removeDefault().options[0]).toBeInstanceOf(z.ZodString)
+      expect(expected.removeDefault().options[1]).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodUnion)
+      expect(output.removeDefault().options).toHaveLength(2)
+      expect(output.removeDefault().options[0]).toBeInstanceOf(z.ZodString)
+      expect(output.removeDefault().options[1]).toBeInstanceOf(z.ZodNumber)
+
+      expect(expected.parse(undefined)).toStrictEqual(STR)
+      expect(output.parse(undefined)).toStrictEqual(STR)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = anyOf(string(), number()).key().default(STR)
+      const output = schemaZodParser(schema)
+      const expected = z.union([z.string(), z.number()]).default(STR)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodUnion)
+      expect(expected.removeDefault().options).toHaveLength(2)
+      expect(expected.removeDefault().options[0]).toBeInstanceOf(z.ZodString)
+      expect(expected.removeDefault().options[1]).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodUnion)
+      expect(output.removeDefault().options).toHaveLength(2)
+      expect(output.removeDefault().options[0]).toBeInstanceOf(z.ZodString)
+      expect(output.removeDefault().options[1]).toBeInstanceOf(z.ZodNumber)
+
+      expect(expected.parse(undefined)).toStrictEqual(STR)
+      expect(output.parse(undefined)).toStrictEqual(STR)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = anyOf(string(), number()).default(STR)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.union([z.string(), z.number()])
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodUnion)
+      expect(expected.options).toHaveLength(2)
+      expect(expected.options[0]).toBeInstanceOf(z.ZodString)
+      expect(expected.options[1]).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodUnion)
+      expect(output.options).toHaveLength(2)
+      expect(output.options[0]).toBeInstanceOf(z.ZodString)
+      expect(output.options[1]).toBeInstanceOf(z.ZodNumber)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
   })
 })

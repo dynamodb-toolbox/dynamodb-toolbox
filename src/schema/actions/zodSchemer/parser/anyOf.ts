@@ -6,34 +6,38 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
-import type { WithOptional } from './utils.js'
-import { withOptional } from './utils.js'
+import type { WithDefault, WithOptional } from './utils.js'
+import { withDefault, withOptional } from './utils.js'
 
 export type AnyOfZodParser<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ZodParserOptions = {}
 > = AnyOfSchema extends SCHEMA
   ? z.ZodTypeAny
-  : WithOptional<
+  : WithDefault<
       SCHEMA,
       OPTIONS,
-      SCHEMA['props'] extends { discriminator: string }
-        ? z.ZodDiscriminatedUnion<
-            SCHEMA['props']['discriminator'],
-            MapAnyOfZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-          >
-        : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-          ? SCHEMAS_HEAD extends Schema
-            ? SCHEMAS_TAIL extends Schema[]
-              ? z.ZodUnion<
-                  [
-                    SchemaZodParser<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
-                    ...MapAnyOfZodParser<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
-                  ]
-                >
+      WithOptional<
+        SCHEMA,
+        OPTIONS,
+        SCHEMA['props'] extends { discriminator: string }
+          ? z.ZodDiscriminatedUnion<
+              SCHEMA['props']['discriminator'],
+              MapAnyOfZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+            >
+          : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+            ? SCHEMAS_HEAD extends Schema
+              ? SCHEMAS_TAIL extends Schema[]
+                ? z.ZodUnion<
+                    [
+                      SchemaZodParser<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
+                      ...MapAnyOfZodParser<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
+                    ]
+                  >
+                : never
               : never
-            : never
-          : z.ZodTypeAny
+            : z.ZodTypeAny
+      >
     >
 
 type MapAnyOfZodParser<
@@ -79,5 +83,5 @@ export const anyOfZodParser = (
     )
   }
 
-  return withOptional(schema, options, zodFormatter)
+  return withDefault(schema, options, withOptional(schema, options, zodFormatter))
 }

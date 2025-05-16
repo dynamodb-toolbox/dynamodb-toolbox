@@ -54,6 +54,69 @@ describe('zodSchemer > parser > map', () => {
     expect(output.parse(undefined)).toStrictEqual(undefined)
   })
 
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = map({ str: string(), num: number() }).default(VALUE)
+      const output = schemaZodParser(schema)
+      const expected = z.object({ str: z.string(), num: z.number() }).default(VALUE)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodObject)
+      expect(expected.removeDefault().shape.str).toBeInstanceOf(z.ZodString)
+      expect(expected.removeDefault().shape.num).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodObject)
+      expect(output.removeDefault().shape.str).toBeInstanceOf(z.ZodString)
+      expect(output.removeDefault().shape.num).toBeInstanceOf(z.ZodNumber)
+
+      expect(expected.parse(undefined)).toStrictEqual(VALUE)
+      expect(output.parse(undefined)).toStrictEqual(VALUE)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = map({ str: string(), num: number() }).key().default(VALUE)
+      const output = schemaZodParser(schema)
+      const expected = z.object({ str: z.string(), num: z.number() }).default(VALUE)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodObject)
+      expect(expected.removeDefault().shape.str).toBeInstanceOf(z.ZodString)
+      expect(expected.removeDefault().shape.num).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodObject)
+      expect(output.removeDefault().shape.str).toBeInstanceOf(z.ZodString)
+      expect(output.removeDefault().shape.num).toBeInstanceOf(z.ZodNumber)
+
+      expect(expected.parse(undefined)).toStrictEqual(VALUE)
+      expect(output.parse(undefined)).toStrictEqual(VALUE)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = map({ str: string(), num: number() }).key().default(VALUE)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.object({ str: z.string(), num: z.number() })
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodObject)
+      expect(expected.shape.str).toBeInstanceOf(z.ZodString)
+      expect(expected.shape.num).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodObject)
+      expect(output.shape.str).toBeInstanceOf(z.ZodString)
+      expect(output.shape.num).toBeInstanceOf(z.ZodNumber)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
+  })
+
   test('returns a zod effect if an attribute is renamed', () => {
     const schema = map({ str: string(), num: number().savedAs('_n') })
     const output = schemaZodParser(schema)
