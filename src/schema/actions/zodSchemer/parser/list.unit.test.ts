@@ -28,39 +28,41 @@ describe('zodSchemer > parser > list', () => {
     expect(() => output.parse(undefined)).toThrow()
   })
 
-  test('returns optional zod schema', () => {
-    const schema = list(string()).optional()
-    const output = schemaZodParser(schema)
-    const expected = z.array(z.string()).optional()
+  describe('optionality', () => {
+    test('returns optional zod schema', () => {
+      const schema = list(string()).optional()
+      const output = schemaZodParser(schema)
+      const expected = z.array(z.string()).optional()
 
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
 
-    expect(expected).toBeInstanceOf(z.ZodOptional)
-    expect(expected.unwrap()).toBeInstanceOf(z.ZodArray)
-    expect(expected.unwrap().element).toBeInstanceOf(z.ZodString)
-    expect(output).toBeInstanceOf(z.ZodOptional)
-    expect(output.unwrap()).toBeInstanceOf(z.ZodArray)
-    expect(output.unwrap().element).toBeInstanceOf(z.ZodString)
+      expect(expected).toBeInstanceOf(z.ZodOptional)
+      expect(expected.unwrap()).toBeInstanceOf(z.ZodArray)
+      expect(expected.unwrap().element).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodOptional)
+      expect(output.unwrap()).toBeInstanceOf(z.ZodArray)
+      expect(output.unwrap().element).toBeInstanceOf(z.ZodString)
 
-    expect(expected.parse(undefined)).toStrictEqual(undefined)
-    expect(output.parse(undefined)).toStrictEqual(undefined)
-  })
+      expect(expected.parse(undefined)).toStrictEqual(undefined)
+      expect(output.parse(undefined)).toStrictEqual(undefined)
+    })
 
-  test('returns non-optional zod schema if defined is true', () => {
-    const schema = list(string()).optional()
-    const output = schemaZodParser(schema, { defined: true })
-    const expected = z.array(z.string())
-    const assert: A.Equals<typeof output, typeof expected> = 1
-    assert
+    test('returns non-optional zod schema if defined is true', () => {
+      const schema = list(string()).optional()
+      const output = schemaZodParser(schema, { defined: true })
+      const expected = z.array(z.string())
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
 
-    expect(expected).toBeInstanceOf(z.ZodArray)
-    expect(expected.element).toBeInstanceOf(z.ZodString)
-    expect(expected).toBeInstanceOf(z.ZodArray)
-    expect(expected.element).toBeInstanceOf(z.ZodString)
+      expect(expected).toBeInstanceOf(z.ZodArray)
+      expect(expected.element).toBeInstanceOf(z.ZodString)
+      expect(expected).toBeInstanceOf(z.ZodArray)
+      expect(expected.element).toBeInstanceOf(z.ZodString)
 
-    expect(() => expected.parse(undefined)).toThrow()
-    expect(() => output.parse(undefined)).toThrow()
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
   })
 
   describe('defaults', () => {

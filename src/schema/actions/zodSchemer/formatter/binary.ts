@@ -6,6 +6,7 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
+// LIMITATION: Binary enums are not supported
 export type BinaryZodFormatter<
   SCHEMA extends BinarySchema,
   OPTIONS extends ZodFormatterOptions = {}
