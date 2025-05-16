@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 import type { ItemSchema } from '~/schema/index.js'
-import type { OmitKeys } from '~/types/omitKeys.js'
 import type { Overwrite } from '~/types/overwrite.js'
+import type { SelectKeys } from '~/types/selectKeys.js'
 
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
@@ -20,9 +20,9 @@ export type ItemZodParser<
       OPTIONS,
       z.ZodObject<
         {
-          [KEY in OPTIONS extends { format: false }
-            ? keyof SCHEMA['attributes']
-            : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodParser<
+          [KEY in OPTIONS extends { mode: 'key' }
+            ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
+            : keyof SCHEMA['attributes']]: SchemaZodParser<
             SCHEMA['attributes'][KEY],
             Overwrite<OPTIONS, { defined: false }>
           >
@@ -34,16 +34,24 @@ export type ItemZodParser<
 export const itemZodParser = <SCHEMA extends ItemSchema, OPTIONS extends ZodParserOptions = {}>(
   schema: SCHEMA,
   options: OPTIONS = {} as OPTIONS
-): ItemZodParser<SCHEMA, OPTIONS> =>
-  withAttributeNameEncoding(
+): ItemZodParser<SCHEMA, OPTIONS> => {
+  const { mode = 'put' } = options
+
+  const displayedAttrEntries =
+    mode === 'key'
+      ? Object.entries(schema.attributes).filter(([, { props }]) => props.key)
+      : Object.entries(schema.attributes)
+
+  return withAttributeNameEncoding(
     schema,
     options,
     z.object(
       Object.fromEntries(
-        Object.entries(schema.attributes).map(([attributeName, attribute]) => [
+        displayedAttrEntries.map(([attributeName, attribute]) => [
           attributeName,
           schemaZodParser(attribute, { ...options, defined: false })
         ])
       )
     )
   ) as ItemZodParser<SCHEMA, OPTIONS>
+}

@@ -33,6 +33,29 @@ describe('zodSchemer > parser > item', () => {
     expect(() => output.parse(undefined)).toThrow()
   })
 
+  describe('mode', () => {
+    test('shows keys attributes if mode is key', () => {
+      const schema = item({ str: string().key(), num: number() })
+      const output = itemZodParser(schema, { mode: 'key' })
+      const expected = z.object({ str: z.string() })
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodObject)
+      expect(expected.shape.str).toBeInstanceOf(z.ZodString)
+      expect(expected.shape).not.toHaveProperty('num')
+      expect(output).toBeInstanceOf(z.ZodObject)
+      expect(output.shape.str).toBeInstanceOf(z.ZodString)
+      expect(expected.shape).not.toHaveProperty('num')
+
+      const KEY_VALUE = { str: STR }
+
+      expect(expected.parse(VALUE)).toStrictEqual(KEY_VALUE)
+      expect(output.parse(VALUE)).toStrictEqual(KEY_VALUE)
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effects if an attribute is renamed', () => {
       const schema = item({ str: string(), num: number().savedAs('_n') })
