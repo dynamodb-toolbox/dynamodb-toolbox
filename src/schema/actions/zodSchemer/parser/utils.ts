@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import type { ItemSchema, MapSchema, Schema, TransformedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/transformer.js'
+import type { Extends, If, Or } from '~/types/index.js'
 
 import type { SavedAsAttributes } from '../utils.js'
 import type { ZodParserOptions } from './types.js'
@@ -21,11 +22,11 @@ export type WithOptional<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
-> = OPTIONS extends { defined: true }
-  ? ZOD_SCHEMA
-  : SCHEMA['props'] extends { required: 'never' }
-    ? z.ZodOptional<ZOD_SCHEMA>
-    : ZOD_SCHEMA
+> = If<
+  Extends<OPTIONS, { defined: true }>,
+  ZOD_SCHEMA,
+  If<Extends<SCHEMA['props'], { required: 'never' }>, z.ZodOptional<ZOD_SCHEMA>, ZOD_SCHEMA>
+>
 
 export const withOptional = (
   schema: Schema,
@@ -42,11 +43,15 @@ export type WithEncoding<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
-> = OPTIONS extends { transform: false }
-  ? ZOD_SCHEMA
-  : SCHEMA['props'] extends { transform: Transformer }
-    ? z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
-    : ZOD_SCHEMA
+> = If<
+  Extends<OPTIONS, { transform: false }>,
+  ZOD_SCHEMA,
+  If<
+    Extends<SCHEMA['props'], { transform: Transformer }>,
+    z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>,
+    ZOD_SCHEMA
+  >
+>
 
 export const withEncoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
@@ -63,22 +68,21 @@ export type WithAttributeNameEncoding<
   SCHEMA extends MapSchema | ItemSchema,
   OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
-> = OPTIONS extends { transform: false }
-  ? ZOD_SCHEMA
-  : [SavedAsAttributes<SCHEMA>] extends [never]
-    ? ZOD_SCHEMA
-    : z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
+> = If<
+  Or<Extends<OPTIONS, { transform: false }>, Extends<[SavedAsAttributes<SCHEMA>], [never]>>,
+  ZOD_SCHEMA,
+  z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
+>
 
 export const withAttributeNameEncoding = (
   schema: MapSchema | ItemSchema,
   { transform }: ZodParserOptions,
   zodSchema: z.ZodTypeAny
 ): z.ZodTypeAny =>
-  transform === false
+  transform === false ||
+  Object.values(schema.attributes).every(attribute => attribute.props.savedAs === undefined)
     ? zodSchema
-    : Object.values(schema.attributes).every(attribute => attribute.props.savedAs === undefined)
-      ? zodSchema
-      : zodSchema.transform(compileAttributeNameEncoder(schema))
+    : zodSchema.transform(compileAttributeNameEncoder(schema))
 
 export const compileAttributeNameEncoder =
   (schema: MapSchema | ItemSchema) =>

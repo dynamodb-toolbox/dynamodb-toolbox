@@ -3,6 +3,7 @@ import { z } from 'zod'
 import type { RecordSchema, TransformedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/transformer.js'
 import type { Cast } from '~/types/cast.js'
+import type { Extends, If } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { SchemaZodParser } from './schema.js'
@@ -15,11 +16,15 @@ type WithEncodedKeys<
   SCHEMA extends RecordSchema,
   OPTIONS extends ZodParserOptions,
   ZOD_SCHEMA extends z.ZodTypeAny
-> = OPTIONS extends { transform: false }
-  ? ZOD_SCHEMA
-  : SCHEMA['keys']['props'] extends { transform: Transformer }
-    ? z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
-    : ZOD_SCHEMA
+> = If<
+  Extends<OPTIONS, { transform: false }>,
+  ZOD_SCHEMA,
+  If<
+    Extends<SCHEMA['keys']['props'], { transform: Transformer }>,
+    z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>,
+    ZOD_SCHEMA
+  >
+>
 
 const withEncodedKeys = (
   schema: RecordSchema,
