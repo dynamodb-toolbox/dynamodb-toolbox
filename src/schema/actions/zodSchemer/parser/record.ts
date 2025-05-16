@@ -9,8 +9,8 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
-import type { WithOptional } from './utils.js'
-import { withOptional } from './utils.js'
+import type { WithDefault, WithOptional } from './utils.js'
+import { withDefault, withOptional } from './utils.js'
 
 type WithEncodedKeys<
   SCHEMA extends RecordSchema,
@@ -55,33 +55,37 @@ export type RecordZodParser<
   OPTIONS extends ZodParserOptions = {}
 > = RecordSchema extends SCHEMA
   ? z.ZodTypeAny
-  : WithOptional<
+  : WithDefault<
       SCHEMA,
       OPTIONS,
-      /**
-       * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
-       */
-      SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
-        ? WithEncodedKeys<
-            SCHEMA,
-            OPTIONS,
-            z.ZodObject<
-              {
-                [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodParser<
-                  SCHEMA['elements'],
-                  Overwrite<OPTIONS, { defined: false }>
-                >
-              },
-              'strip'
+      WithOptional<
+        SCHEMA,
+        OPTIONS,
+        /**
+         * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
+         */
+        SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
+          ? WithEncodedKeys<
+              SCHEMA,
+              OPTIONS,
+              z.ZodObject<
+                {
+                  [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodParser<
+                    SCHEMA['elements'],
+                    Overwrite<OPTIONS, { defined: false }>
+                  >
+                },
+                'strip'
+              >
             >
-          >
-        : z.ZodRecord<
-            Cast<
-              SchemaZodParser<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
-              z.KeySchema
-            >,
-            SchemaZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-          >
+          : z.ZodRecord<
+              Cast<
+                SchemaZodParser<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
+                z.KeySchema
+              >,
+              SchemaZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+            >
+      >
     >
 
 export const recordZodParser = (
@@ -108,5 +112,5 @@ export const recordZodParser = (
     )
   }
 
-  return withOptional(schema, options, zodFormatter)
+  return withDefault(schema, options, withOptional(schema, options, zodFormatter))
 }

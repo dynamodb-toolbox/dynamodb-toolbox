@@ -18,6 +18,36 @@ export type ZodLiteralMap<
     : never
   : RESULTS
 
+export type WithDefault<
+  SCHEMA extends Schema,
+  OPTIONS extends ZodParserOptions,
+  ZOD_SCHEMA extends z.ZodTypeAny
+> = If<
+  Extends<OPTIONS, { fill: false }>,
+  ZOD_SCHEMA,
+  If<
+    Or<
+      Extends<SCHEMA['props'], { key: true; keyDefault: unknown }>,
+      Extends<SCHEMA['props'], { key?: false; putDefault: unknown }>
+    >,
+    z.ZodDefault<ZOD_SCHEMA>,
+    ZOD_SCHEMA
+  >
+>
+
+export const withDefault = (
+  schema: Schema,
+  { fill }: ZodParserOptions,
+  zodSchema: z.ZodTypeAny
+): z.ZodTypeAny =>
+  fill === false
+    ? zodSchema
+    : schema.props.key === true && schema.props.keyDefault !== undefined
+      ? zodSchema.default(schema.props.keyDefault)
+      : schema.props.putDefault !== undefined
+        ? zodSchema.default(schema.props.putDefault)
+        : zodSchema
+
 export type WithOptional<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,

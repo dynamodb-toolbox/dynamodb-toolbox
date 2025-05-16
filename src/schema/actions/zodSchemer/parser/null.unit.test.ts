@@ -43,6 +43,57 @@ describe('zodSchemer > formatter > nul', () => {
     expect(output.parse(undefined)).toBe(undefined)
   })
 
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = nul().default(NULL)
+      const output = schemaZodParser(schema)
+      const expected = z.null().default(NULL)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodNull)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodNull)
+
+      expect(expected.parse(undefined)).toStrictEqual(NULL)
+      expect(output.parse(undefined)).toStrictEqual(NULL)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = nul().key().default(NULL)
+      const output = schemaZodParser(schema)
+      const expected = z.null().default(NULL)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodNull)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodNull)
+
+      expect(expected.parse(undefined)).toStrictEqual(NULL)
+      expect(output.parse(undefined)).toStrictEqual(NULL)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = nul().default(NULL)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.null()
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodNull)
+      expect(output).toBeInstanceOf(z.ZodNull)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
+  })
+
   test('returns zod effect if transform is set', () => {
     const transformer = {
       encode: (value: null) => ({ value }),

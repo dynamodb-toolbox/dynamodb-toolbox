@@ -47,6 +47,57 @@ describe('zodSchemer > formatter > string', () => {
     expect(output.parse(undefined)).toBe(undefined)
   })
 
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = string().default(FOO)
+      const output = schemaZodParser(schema)
+      const expected = z.string().default(FOO)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodType)
+
+      expect(expected.parse(undefined)).toStrictEqual(FOO)
+      expect(output.parse(undefined)).toStrictEqual(FOO)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = string().key().default(FOO)
+      const output = schemaZodParser(schema)
+      const expected = z.string().default(FOO)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodType)
+
+      expect(expected.parse(undefined)).toStrictEqual(FOO)
+      expect(output.parse(undefined)).toStrictEqual(FOO)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = string().default(FOO)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.string()
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
+  })
+
   test('returns zod effect if transform is set', () => {
     const transformer = {
       encode: (content: string) => ({ content }),
@@ -110,7 +161,7 @@ describe('zodSchemer > formatter > string', () => {
   })
 
   test('returns literal zod schema if enum has one value', () => {
-    const schema = string().const(FOO)
+    const schema = string().enum(FOO)
     const output = schemaZodParser(schema)
     const expected = z.literal(FOO)
 

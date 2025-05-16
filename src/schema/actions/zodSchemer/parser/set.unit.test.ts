@@ -65,4 +65,61 @@ describe('zodSchemer > parser > set', () => {
     expect(() => expected.parse(undefined)).toThrow()
     expect(() => output.parse(undefined)).toThrow()
   })
+
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = set(string()).default(SET)
+      const output = schemaZodParser(schema)
+      const expected = z.set(z.string()).default(SET)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodSet)
+      expect(expected.removeDefault()._def.valueType).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodSet)
+      expect(output.removeDefault()._def.valueType).toBeInstanceOf(z.ZodString)
+
+      expect(expected.parse(undefined)).toStrictEqual(SET)
+      expect(output.parse(undefined)).toStrictEqual(SET)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = set(string()).key().default(SET)
+      const output = schemaZodParser(schema)
+      const expected = z.set(z.string()).default(SET)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodSet)
+      expect(expected.removeDefault()._def.valueType).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodSet)
+      expect(output.removeDefault()._def.valueType).toBeInstanceOf(z.ZodString)
+
+      expect(expected.parse(undefined)).toStrictEqual(SET)
+      expect(output.parse(undefined)).toStrictEqual(SET)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = set(string()).key().default(SET)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.set(z.string())
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodSet)
+      expect(expected._def.valueType).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodSet)
+      expect(output._def.valueType).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
+  })
 })

@@ -46,6 +46,60 @@ describe('zodSchemer > parser > binary', () => {
     expect(output.parse(undefined)).toBe(undefined)
   })
 
+  describe('defaults', () => {
+    test('returns defaulted zod schema', () => {
+      const schema = binary().default(BINARY)
+      const output = schemaZodParser(schema)
+      const expected = z.instanceof(Uint8Array).default(BINARY)
+
+      // NOTE: Cannot use A.Equals this because of divergence between Uint8Array & Uint8ArrayConstructor types in latest TS versions
+      const assert: A.Contains<typeof expected, typeof output> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodType)
+
+      expect(expected.parse(undefined)).toStrictEqual(BINARY)
+      expect(output.parse(undefined)).toStrictEqual(BINARY)
+    })
+
+    test('returns defaulted zod schema (key)', () => {
+      const schema = binary().key().default(BINARY)
+      const output = schemaZodParser(schema)
+      const expected = z.instanceof(Uint8Array).default(BINARY)
+
+      // NOTE: Cannot use A.Equals this because of divergence between Uint8Array & Uint8ArrayConstructor types in latest TS versions
+      const assert: A.Contains<typeof expected, typeof output> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodDefault)
+      expect(expected.removeDefault()).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodDefault)
+      expect(output.removeDefault()).toBeInstanceOf(z.ZodType)
+
+      expect(expected.parse(undefined)).toStrictEqual(BINARY)
+      expect(output.parse(undefined)).toStrictEqual(BINARY)
+    })
+
+    test('returns non-defaulted zod schema if fill is false', () => {
+      const schema = binary().default(BINARY)
+      const output = schemaZodParser(schema, { fill: false })
+      const expected = z.instanceof(Uint8Array)
+
+      // NOTE: Cannot use A.Equals this because of divergence between Uint8Array & Uint8ArrayConstructor types in latest TS versions
+      const assert: A.Contains<typeof expected, typeof output> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodType)
+
+      expect(() => expected.parse(undefined)).toThrow()
+      expect(() => output.parse(undefined)).toThrow()
+    })
+  })
+
   test('returns zod effect if transform is set', () => {
     const transformer = {
       encode: (decoded: Uint8Array) => Buffer.from(decoded).toString('base64'),
