@@ -22,7 +22,9 @@ In this guide, we’ll explore how to use the **BatchGet** and **BatchWrite** ac
 
 ## Writing Multiple Items
 
-### Single Table
+### Single Table, Single Entity
+
+### Single Table, Multiple Entities
 
 ### Multiple Tables
 
