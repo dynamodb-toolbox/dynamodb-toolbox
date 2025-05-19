@@ -15,9 +15,9 @@ Describes a **union of types**, i.e. a range of possible types:
 import { anyOf } from 'dynamodb-toolbox/schema/anyOf'
 
 const pokeTypeSchema = anyOf(
-  string().const('fire'),
-  string().const('grass'),
-  string().const('water')
+  string().enum('fire'),
+  string().enum('grass'),
+  string().enum('water')
 )
 
 type PokeType = FormattedValue<typeof pokeTypeSchema>

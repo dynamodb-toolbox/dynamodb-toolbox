@@ -115,6 +115,26 @@ describe('zodSchemer > formatter > string', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNonEmpty = (input: string): boolean => input.length > 0
+      const schema = string().validate(isNonEmpty)
+      const output = schemaZodParser(schema)
+      const expected = z.string().refine(isNonEmpty)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse(1)).toThrow()
+      expect(() => output.parse(1)).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effect if transform is set', () => {
       const transformer = {

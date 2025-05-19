@@ -116,8 +116,8 @@ Allows modifying schema values during the [transformation step](../17-actions/1-
 
 ```ts
 const negate = {
-  parse: (input: boolean) => !input,
-  format: (saved: boolean) => !saved
+  encode: (input: boolean) => !input,
+  decode: (saved: boolean) => !saved
 }
 
 // Saves the negated value

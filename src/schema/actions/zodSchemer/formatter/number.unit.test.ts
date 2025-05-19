@@ -89,6 +89,26 @@ describe('zodSchemer > formatter > number', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isOdd = (input: number): boolean => input % 2 === 0
+      const schema = number().validate(isOdd)
+      const output = schemaZodFormatter(schema)
+      const expected = z.number().refine(isOdd)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodNumber)
+
+      expect(() => expected.parse(1)).toThrow()
+      expect(() => output.parse(1)).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effect if transform is set', () => {
       const transformer = {

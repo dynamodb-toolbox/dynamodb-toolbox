@@ -178,6 +178,30 @@ describe('zodSchemer > parser > record', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNonEmpty = (input: Record<string, unknown>): boolean => Object.keys(input).length > 0
+      const schema = record(string(), number()).validate(isNonEmpty)
+      const output = schemaZodParser(schema)
+      const expected = z.record(z.string(), z.number()).refine(isNonEmpty)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodRecord)
+      expect(expected.innerType().keySchema).toBeInstanceOf(z.ZodString)
+      expect(expected.innerType().valueSchema).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodRecord)
+      expect(output.innerType().keySchema).toBeInstanceOf(z.ZodString)
+      expect(output.innerType().valueSchema).toBeInstanceOf(z.ZodNumber)
+
+      expect(() => expected.parse({})).toThrow()
+      expect(() => output.parse({})).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns object zod effects if keys are enum & transformed', () => {
       const transformer = prefix('_', { delimiter: '' })

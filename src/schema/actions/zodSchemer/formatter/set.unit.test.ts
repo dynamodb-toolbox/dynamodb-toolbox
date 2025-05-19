@@ -65,6 +65,28 @@ describe('zodSchemer > formatter > set', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNonEmpty = (input: Set<unknown>): boolean => input.size > 0
+      const schema = set(string()).validate(isNonEmpty)
+      const output = schemaZodFormatter(schema)
+      const expected = z.set(z.string()).refine(isNonEmpty)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodSet)
+      expect(expected.innerType()._def.valueType).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodSet)
+      expect(output.innerType()._def.valueType).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse(new Set())).toThrow()
+      expect(() => output.parse(new Set())).toThrow()
+    })
+  })
+
   describe('partiality', () => {
     test('returns optional zod schema if partial is true', () => {
       const schema = set(string())

@@ -119,7 +119,7 @@ Allows modifying schema values during the [transformation step](../17-actions/1-
 const PREFIX = new Uint8Array([1, 2, 3])
 
 const prefix = {
-  parse: (input: Uint8Array) => {
+  encode: (input: Uint8Array) => {
     const concat = new Uint8Array(
       PREFIX.length + input.length
     )
@@ -128,7 +128,7 @@ const prefix = {
 
     return concat
   },
-  format: (saved: Uint8Array) => saved.slice(PREFIX.length)
+  decode: (saved: Uint8Array) => saved.slice(PREFIX.length)
 }
 
 // Prefixes the value
