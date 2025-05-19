@@ -121,4 +121,26 @@ describe('zodSchemer > parser > list', () => {
       expect(() => output.parse(undefined)).toThrow()
     })
   })
+
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNonEmpty = (input: unknown[]): boolean => input.length > 0
+      const schema = list(string()).validate(isNonEmpty)
+      const output = schemaZodParser(schema)
+      const expected = z.array(z.string()).refine(isNonEmpty)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodArray)
+      expect(expected.innerType().element).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodArray)
+      expect(output.innerType().element).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse([])).toThrow()
+      expect(() => output.parse([])).toThrow()
+    })
+  })
 })

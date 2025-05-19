@@ -3,9 +3,11 @@ import { z } from 'zod'
 import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithDecoding, WithOptional, WithValidate, ZodLiteralMap } from './utils.js'
-import { withDecoding, withOptional, withValidate } from './utils.js'
+import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
+import { withDecoding, withOptional } from './utils.js'
 
 export type BooleanZodFormatter<
   SCHEMA extends BooleanSchema,

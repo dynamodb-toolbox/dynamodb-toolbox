@@ -112,6 +112,26 @@ describe('zodSchemer > parser > boolean', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isTrue = (input: boolean): boolean => input === true
+      const schema = boolean().validate(isTrue)
+      const output = schemaZodParser(schema)
+      const expected = z.boolean().refine(isTrue)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodBoolean)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodBoolean)
+
+      expect(() => expected.parse(false)).toThrow()
+      expect(() => output.parse(false)).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effect if transform is set', () => {
       const transformer = {

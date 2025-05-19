@@ -4,11 +4,13 @@ import type { MapSchema } from '~/schema/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithAttributeNameDecoding, WithOptional, WithValidate } from './utils.js'
-import { withAttributeNameDecoding, withOptional, withValidate } from './utils.js'
+import type { WithAttributeNameDecoding, WithOptional } from './utils.js'
+import { withAttributeNameDecoding, withOptional } from './utils.js'
 
 export type MapZodFormatter<
   SCHEMA extends MapSchema,

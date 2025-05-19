@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import type { ItemSchema, MapSchema, Schema, TransformedValue, Validator } from '~/schema/index.js'
+import type { ItemSchema, MapSchema, Schema, TransformedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/transformer.js'
 import type { Extends, If, Or } from '~/types/index.js'
 
@@ -17,29 +17,6 @@ export type ZodLiteralMap<
       : never
     : never
   : RESULTS
-
-export type WithValidate<SCHEMA extends Schema, ZOD_SCHEMA extends z.ZodTypeAny> = If<
-  Or<
-    Extends<SCHEMA['props'], { key: true; keyValidator: Validator }>,
-    Extends<SCHEMA['props'], { key?: false; putValidator: Validator }>
-  >,
-  z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, z.input<ZOD_SCHEMA>>,
-  ZOD_SCHEMA
->
-
-export const withValidate = (schema: Schema, zodSchema: z.ZodTypeAny): z.ZodTypeAny => {
-  const { key = false, keyValidator, putValidator } = schema.props
-
-  if (key && keyValidator !== undefined) {
-    return zodSchema.refine(input => keyValidator(input, schema))
-  }
-
-  if (!key && putValidator !== undefined) {
-    return zodSchema.refine(input => putValidator(input, schema))
-  }
-
-  return zodSchema
-}
 
 export type WithOptional<
   SCHEMA extends Schema,

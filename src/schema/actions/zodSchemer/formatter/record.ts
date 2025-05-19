@@ -6,11 +6,13 @@ import type { Cast } from '~/types/cast.js'
 import type { Extends, If } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithOptional, WithValidate } from './utils.js'
-import { withOptional, withValidate } from './utils.js'
+import type { WithOptional } from './utils.js'
+import { withOptional } from './utils.js'
 
 type WithDecodedKeys<
   SCHEMA extends RecordSchema,

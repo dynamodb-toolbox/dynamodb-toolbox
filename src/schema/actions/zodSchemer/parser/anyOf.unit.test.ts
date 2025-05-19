@@ -189,4 +189,32 @@ describe('zodSchemer > parser > anyOf', () => {
       expect(() => output.parse(undefined)).toThrow()
     })
   })
+
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isTruthy = (input: unknown): boolean => Boolean(input)
+      const schema = anyOf(string(), number()).validate(isTruthy)
+      const output = schemaZodParser(schema)
+      const expected = z.union([z.string(), z.number()]).refine(isTruthy)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodUnion)
+      expect(expected.innerType().options).toHaveLength(2)
+      expect(expected.innerType().options[0]).toBeInstanceOf(z.ZodString)
+      expect(expected.innerType().options[1]).toBeInstanceOf(z.ZodNumber)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodUnion)
+      expect(output.innerType().options).toHaveLength(2)
+      expect(output.innerType().options[0]).toBeInstanceOf(z.ZodString)
+      expect(output.innerType().options[1]).toBeInstanceOf(z.ZodNumber)
+
+      expect(() => expected.parse('')).toThrow()
+      expect(() => output.parse('')).toThrow()
+      expect(() => expected.parse(0)).toThrow()
+      expect(() => output.parse(0)).toThrow()
+    })
+  })
 })

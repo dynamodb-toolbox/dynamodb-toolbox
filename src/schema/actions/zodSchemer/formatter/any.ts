@@ -2,9 +2,11 @@ import { z } from 'zod'
 
 import type { AnySchema } from '~/schema/index.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithDecoding, WithOptional, WithValidate } from './utils.js'
-import { withDecoding, withOptional, withValidate } from './utils.js'
+import type { WithDecoding, WithOptional } from './utils.js'
+import { withDecoding, withOptional } from './utils.js'
 
 export type AnyZodFormatter<
   SCHEMA extends AnySchema,

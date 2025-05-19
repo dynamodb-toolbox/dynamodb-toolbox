@@ -3,6 +3,8 @@ import { z } from 'zod'
 import type { SetSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -20,7 +22,10 @@ export type SetZodParser<
       WithOptional<
         SCHEMA,
         OPTIONS,
-        z.ZodSet<SchemaZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
+        WithValidate<
+          SCHEMA,
+          z.ZodSet<SchemaZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
+        >
       >
     >
 
@@ -31,6 +36,6 @@ export const getSetZodParser = (schema: SetSchema, options: ZodParserOptions = {
     withOptional(
       schema,
       options,
-      z.set(schemaZodParser(schema.elements, { ...options, defined: true }))
+      withValidate(schema, z.set(schemaZodParser(schema.elements, { ...options, defined: true })))
     )
   )
