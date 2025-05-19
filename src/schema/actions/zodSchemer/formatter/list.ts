@@ -6,8 +6,8 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithOptional } from './utils.js'
-import { withOptional } from './utils.js'
+import type { WithOptional, WithValidate } from './utils.js'
+import { withOptional, withValidate } from './utils.js'
 
 export type ListZodFormatter<
   SCHEMA extends ListSchema,
@@ -17,7 +17,10 @@ export type ListZodFormatter<
   : WithOptional<
       SCHEMA,
       OPTIONS,
-      z.ZodArray<SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
+      WithValidate<
+        SCHEMA,
+        z.ZodArray<SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>>
+      >
     >
 
 export const listZodFormatter = (
@@ -27,5 +30,8 @@ export const listZodFormatter = (
   withOptional(
     schema,
     options,
-    z.array(schemaZodFormatter(schema.elements, { ...options, defined: true }))
+    withValidate(
+      schema,
+      z.array(schemaZodFormatter(schema.elements, { ...options, defined: true }))
+    )
   )

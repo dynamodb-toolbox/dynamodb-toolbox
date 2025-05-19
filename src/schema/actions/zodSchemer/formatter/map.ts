@@ -7,8 +7,8 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
-import type { WithAttributeNameDecoding, WithOptional } from './utils.js'
-import { withAttributeNameDecoding, withOptional } from './utils.js'
+import type { WithAttributeNameDecoding, WithOptional, WithValidate } from './utils.js'
+import { withAttributeNameDecoding, withOptional, withValidate } from './utils.js'
 
 export type MapZodFormatter<
   SCHEMA extends MapSchema,
@@ -21,16 +21,19 @@ export type MapZodFormatter<
       WithOptional<
         SCHEMA,
         OPTIONS,
-        z.ZodObject<
-          {
-            [KEY in OPTIONS extends { format: false }
-              ? keyof SCHEMA['attributes']
-              : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-              SCHEMA['attributes'][KEY],
-              Overwrite<OPTIONS, { defined: false }>
-            >
-          },
-          'strip'
+        WithValidate<
+          SCHEMA,
+          z.ZodObject<
+            {
+              [KEY in OPTIONS extends { format: false }
+                ? keyof SCHEMA['attributes']
+                : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
+                SCHEMA['attributes'][KEY],
+                Overwrite<OPTIONS, { defined: false }>
+              >
+            },
+            'strip'
+          >
         >
       >
     >
@@ -51,12 +54,15 @@ export const mapZodFormatter = (
     withOptional(
       schema,
       options,
-      z.object(
-        Object.fromEntries(
-          displayedAttrEntries.map(([attributeName, attribute]) => [
-            attributeName,
-            schemaZodFormatter(attribute, { ...options, defined: false })
-          ])
+      withValidate(
+        schema,
+        z.object(
+          Object.fromEntries(
+            displayedAttrEntries.map(([attributeName, attribute]) => [
+              attributeName,
+              schemaZodFormatter(attribute, { ...options, defined: false })
+            ])
+          )
         )
       )
     )
