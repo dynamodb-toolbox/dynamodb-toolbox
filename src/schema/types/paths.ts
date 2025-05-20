@@ -46,9 +46,9 @@ export type ItemSchemaPaths<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema
       : never
     : never
 
-type AnySchemaPaths<SCHEMA_PATH extends string = string> =
-  | SCHEMA_PATH
-  | `${SCHEMA_PATH}${'.' | '['}${string}`
+type AnySchemaPaths<SCHEMA_PATH extends string = ''> = SCHEMA_PATH extends ''
+  ? string
+  : SCHEMA_PATH | `${SCHEMA_PATH}${'.' | '['}${string}`
 
 type ListSchemaPaths<
   SCHEMA extends ListSchema,
