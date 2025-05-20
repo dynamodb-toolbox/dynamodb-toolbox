@@ -44,7 +44,10 @@ const assertAttributePaths: A.Equals<
   | `['parentId']`
   | 'childId'
   | `['childId']`
-  | `${'any' | `['any']`}${string}`
+  | 'any'
+  | `['any']`
+  | `${'any' | `['any']`}.${string}`
+  | `${'any' | `['any']`}[${string}`
   | 'const'
   | `['const']`
   | 'num'
