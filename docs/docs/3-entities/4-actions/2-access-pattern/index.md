@@ -89,7 +89,7 @@ It is advised to provide `schema` first as it constrains the query type.
 Produces a [`QueryCommand`](../../../2-tables/2-actions/2-query/index.md) from valid pattern inputs:
 
 ```ts
-const queryCommand = await highLevelPokemons
+const queryCommand = highLevelPokemons
   .query({ trainerId, level: 70 })
   .options({ consistent: true })
 

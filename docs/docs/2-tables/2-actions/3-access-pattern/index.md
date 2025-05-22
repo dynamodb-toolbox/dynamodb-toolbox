@@ -99,7 +99,7 @@ It is advised to provide `entities` and `schema` first as they constrain the que
 Produces a [`QueryCommand`](../2-query/index.md) from valid pattern inputs:
 
 ```ts
-const queryCommand = await highLevelPokemons
+const queryCommand = highLevelPokemons
   .query({ trainerId, level: 70 })
   .options({ consistent: true })
 
