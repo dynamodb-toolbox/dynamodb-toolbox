@@ -294,6 +294,6 @@ const { Items } = await PokeTable.build(ScanCommand).send()
 
 :::info
 
-If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
+If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) actions that expose all the others as methods.
 
 :::

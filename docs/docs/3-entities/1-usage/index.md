@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 Entities represent a **category of items** in your `Table`.
 
-An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../4-actions/6-batching/index.md) or [transactions](../4-actions/10-transactions/index.md)):
+An entity must belong to a `Table`, but a `Table` can **contain items from several entities**. DynamoDB-Toolbox is designed with [Single Tables](https://www.alexdebrie.com/posts/dynamodb-single-table/) in mind, but works just as well with multiple tables and still makes your life much easier (e.g. for [batch operations](../4-actions/7-batching/index.md) or [transactions](../4-actions/11-transactions/index.md)):
 
 ```ts
 import { Entity } from 'dynamodb-toolbox/entity'
@@ -269,6 +269,6 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
 
 :::info
 
-If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) actions that expose all the others as methods.
+If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) actions that expose all the others as methods.
 
 :::

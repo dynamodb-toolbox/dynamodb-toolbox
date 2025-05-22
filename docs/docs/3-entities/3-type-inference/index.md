@@ -251,7 +251,7 @@ const PokemonEntity = new Entity({
 For convenience, DynamoDB-Toolbox also exposes the following generic types:
 
 - `KeyInputItem`: Similar to `InputItem` in the `key` mode.
-- `SavedItem`: Similar to `TransformedItem` but adds the [`PrimaryKey`](../../2-tables/2-actions/8-parse-primary-key/index.md#output) of the Entity's Table
+- `SavedItem`: Similar to `TransformedItem` but adds the [`PrimaryKey`](../../2-tables/2-actions/9-parse-primary-key/index.md#output) of the Entity's Table
 
 ```ts
 import {
