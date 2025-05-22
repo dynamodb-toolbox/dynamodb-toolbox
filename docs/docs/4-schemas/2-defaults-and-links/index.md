@@ -9,7 +9,7 @@ title: Defaults & Links
 All schema types support providing default values. There are three kinds of defaults:
 
 - `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/4-update-item/index.md))
 - `keyDefault`: Overrides other defaults on key schemas (ignored otherwise)
 
 The `default` method is a shorthand that acts as `keyDefault` on key schemas and `putDefault` otherwise.
@@ -88,7 +88,7 @@ This is only required if you need type inference. In vanilla JS, `links` can be 
 Similarly to defaults, links come in three modes:
 
 - `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md))
-- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
+- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/4-update-item/index.md))
 - `keyLink`: Overrides other links on key schemas (ignored otherwise)
 
 The `link` method is a shorthand that acts as `keyLink` on key schemas and `putLink` otherwise.
@@ -140,7 +140,7 @@ const pokemonSchema = item({
 }))
 ```
 
-If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
+If you want to leverage extended syntax within the link, check the [`UpdateItemCommand`](../../3-entities/4-actions/4-update-item/index.md#extended-syntax) docs for more details. If you don't, you can escape it with the `isExtension` type guard:
 
 ```ts
 import { isExtension } from 'dynamodb-toolbox/entity/actions/update/symbols'
