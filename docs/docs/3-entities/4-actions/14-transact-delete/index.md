@@ -21,11 +21,11 @@ const params = transaction.params()
 await execute(transaction, ...otherTransactions)
 ```
 
-`DeleteTransactions` can be executed in conjunction with [`PutTransactions`](../12-transact-put/index.md), [`UpdateTransactions`](../13-transact-update/index.md) and [`ConditionChecks`](../15-condition-check/index.md).
+`DeleteTransactions` can be executed in conjunction with [`PutTransactions`](../13-transact-put/index.md), [`UpdateTransactions`](../15-transact-update/index.md) and [`ConditionChecks`](../16-condition-check/index.md).
 
 :::info
 
-Check the [Transaction Documentation](../10-transactions/index.md#transactwrite) to learn more about the `execute` function.
+Check the [Transaction Documentation](../11-transactions/index.md#transactwrite) to learn more about the `execute` function.
 
 :::
 
@@ -93,7 +93,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 | Option                                          |               Type                | Default  | Description                                                                                                                                                                                                                      |
 | ----------------------------------------------- | :-------------------------------: | :------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `condition`                                     | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../18-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
+| `condition`                                     | `Condition<typeof PokemonEntity>` |    -     | A condition that must be satisfied in order for the `DeleteTransaction` to succeed.<br/><br/>See the [`ConditionParser`](../19-parse-condition/index.md#building-conditions) action for more details on how to write conditions. |
 | <code>returnValuesOn<wbr/>ConditionFalse</code> |       `ReturnValuesOption`        | `"NONE"` | To get the item attributes if the `condition` fails.<br/><br/>Possible values are `"NONE"` and `"ALL_OLD"`.                                                                                                                      |
 | `tableName`                                     |             `string`              |    -     | Overrides the `Table` name. Mostly useful for [multitenancy](https://en.wikipedia.org/wiki/Multitenancy).                                                                                                                        |
 
@@ -140,6 +140,6 @@ const transac = PokemonEntity.build(DeleteTransaction)
 
 :::info
 
-Contrary to [`DeleteItemCommand`](../5-delete-item/index.md), delete transactions cannot return the values of the deleted items.
+Contrary to [`DeleteItemCommand`](../6-delete-item/index.md), delete transactions cannot return the values of the deleted items.
 
 :::

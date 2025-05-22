@@ -114,9 +114,9 @@ const PokemonEntity = new Entity({
 
 ### Insert an Item
 
-In order to [improve tree-shaking](../3-usage/index.md#methods-vs-actions), `Entities` only expose a single `.build(...)` method that acts as a gateway to perform [Actions](../3-usage/index.md#how-do-actions-work) (if you don't mind larger bundle sizes, you can use the [`EntityRepository`](../../3-entities/4-actions/22-repository/index.md) action instead):
+In order to [improve tree-shaking](../3-usage/index.md#methods-vs-actions), `Entities` only expose a single `.build(...)` method that acts as a gateway to perform [Actions](../3-usage/index.md#how-do-actions-work) (if you don't mind larger bundle sizes, you can use the [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) action instead).
 
-Let's use the [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md) action to write our first item:
+Let's use the [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md) action to write our first item:
 
 ```ts
 import { PutItemCommand } from 'dynamodb-toolbox/entity/actions/put'
@@ -191,7 +191,7 @@ const { Item: pikachu } = await command.send()
 
 ### Update an Item
 
-We can update our pokemon with the [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md) and [`UpdateAttributesCommand`](../../3-entities/4-actions/4-update-attributes/index.md). For instance, let's evolve our pokemon:
+We can update our pokemon with the [`UpdateItemCommand`](../../3-entities/4-actions/4-update-item/index.md) and [`UpdateAttributesCommand`](../../3-entities/4-actions/5-update-attributes/index.md). For instance, let's evolve our pokemon:
 
 ```ts
 import {
@@ -220,7 +220,7 @@ await command.send()
 
 ### Delete an Item
 
-Finally, we can clear our pokemon with the [`DeleteItemCommand`](../../3-entities/4-actions/5-delete-item/index.md):
+Finally, we can clear our pokemon with the [`DeleteItemCommand`](../../3-entities/4-actions/6-delete-item/index.md):
 
 ```ts
 import { DeleteItemCommand } from 'dynamodb-toolbox/entity/actions/delete'

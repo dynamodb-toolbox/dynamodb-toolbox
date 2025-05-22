@@ -8,7 +8,7 @@ title: Defaults & Links
 
 All schema types support providing default values. There are three kinds of defaults:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md))
 - `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on key schemas (ignored otherwise)
 
@@ -87,7 +87,7 @@ This is only required if you need type inference. In vanilla JS, `links` can be 
 
 Similarly to defaults, links come in three modes:
 
-- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
+- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md))
 - `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
 - `keyLink`: Overrides other links on key schemas (ignored otherwise)
 
@@ -96,6 +96,23 @@ The `link` method is a shorthand that acts as `keyLink` on key schemas and `putL
 :::info
 
 ☝️ In order for the `.link(...)` shorthand to work properly on key schemas, make sure to use it **after** calling `.key()`.
+
+:::
+
+:::warning
+
+☝️ When linking `key` attributes, do not forget to **tag linked attributes with `.key()`** as well:
+
+```ts
+const schema = item({
+  a: string().key(),
+  b: string().key()
+}).and(prevSchema => ({
+  c: string()
+    .key()
+    .link<typeof prevSchema>(({ a, b }) => [a, b].join())
+}))
+```
 
 :::
 

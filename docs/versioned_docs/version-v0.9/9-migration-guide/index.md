@@ -16,7 +16,7 @@ The good news is that the breaking changes **only concern the API**: You won't n
 
 Well, probably... as there are two exceptions:
 
-- If you de-activated the internal [`entity`](../../../docs/../docs/3-entities/2-internal-attributes/index.md#entity) attribute (by setting `entityField` to `false`), it is now required, so must be re-introduced in the data
+- If you de-activated the internal [`entity`](../../version-v1/3-entities/2-internal-attributes/index.md#entity) attribute (by setting `entityField` to `false`), it is now required, so must be re-introduced in the data (although that has been fixed in the v2)
 - If you used the `saved: false` option on an attribute, there is no equivalent yet
 
 :::
@@ -83,7 +83,7 @@ const MyTable = new Table({
 
 `entityField` has been renamed to `entityAttributeSavedAs` to be more closely aligned with the new `schema` syntax.
 
-It cannot be set to `false` anymore (as it is required to infer correct formatting during [Scans](../../../docs/2-tables/2-actions/1-scan/index.md) and [Queries](../../../docs/2-tables/2-actions/2-query/index.md)):
+It cannot be set to `false` anymore (as it is required to infer correct formatting during [Scans](../../version-v1/2-tables/2-actions/1-scan/index.md) and [Queries](../../version-v1/2-tables/2-actions/2-query/index.md)) (although that has been fixed in the v2):
 
 ```diff-ts
 const MyTable = new Table({
@@ -101,7 +101,7 @@ The `removeNullAttributes` option has been removed. Attribute removals benefit f
 
 The `alias` option has also been removed. Feel free to [open a discussion](https://github.com/jeremydaly/dynamodb-toolbox/discussions/new/choose) if you need it back.
 
-Finally, table `attributes` have not been re-implemented yet (but you can still share attribute schemas between entities, see the [Schema documentation](../../../docs/4-schemas/1-usage/index.md) for more details)
+Finally, table `attributes` have not been re-implemented yet (but you can still share attribute schemas between entities, see the [Schema documentation](../../version-v1/4-schemas/1-usage/index.md) for more details)
 
 ## `Entity`
 
@@ -194,7 +194,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-See the [Schema documentation](../../../docs/4-schemas/1-usage/index.md) for a complete documentation on the new syntax.
+See the [Schema documentation](../../version-v1/4-schemas/1-usage/index.md) for a complete documentation on the new syntax.
 
 ### `map` & `alias`
 
@@ -288,8 +288,8 @@ const PokemonEntity = new Entity({
 
 The `default` and `onUpdate` options have been reworked into the following options:
 
-- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../../docs/3-entities/4-actions/2-put-item/index.md))
-- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../../docs/3-entities/4-actions/3-update-item/index.md))
+- `putDefault`: Applied on put actions (e.g. [`PutItemCommand`](../../version-v1/3-entities/4-actions/2-put-item/index.md))
+- `updateDefault`: Applied on update actions (e.g. [`UpdateItemCommand`](../../version-v1/3-entities/4-actions/3-update-item/index.md))
 - `keyDefault`: Overrides other defaults on key attributes (ignored otherwise)
 - `default`: Shorthand that acts as `keyDefault` on key attributes and `putDefault` otherwise
 
@@ -313,10 +313,10 @@ const PokemonEntity = new Entity({
 })
 ```
 
-If a default value is derived from other attributes, the v1 introduces a new notion called `links`. See the [Defaults & Links section](../../../docs/4-schemas/2-defaults-and-links/index.md) for more details:
+If a default value is derived from other attributes, the v1 introduces a new notion called `links`. See the [Defaults & Links section](../../version-v1/4-schemas/2-defaults-and-links/index.md) for more details:
 
-- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../../docs/3-entities/4-actions/2-put-item/index.md))
-- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../../docs/3-entities/4-actions/3-update-item/index.md))
+- `putLink`: Applied on put actions (e.g. [`PutItemCommand`](../../version-v1/3-entities/4-actions/2-put-item/index.md))
+- `updateLink`: Applied on update actions (e.g. [`UpdateItemCommand`](../../version-v1/3-entities/4-actions/3-update-item/index.md))
 - `keyLink`: Overrides other links on key attributes (ignored otherwise)
 - `link`: Shorthand that acts as `keyLink` on key attributes and `putLink` otherwise
 
@@ -439,7 +439,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../../docs/4-schemas/18-transformers/1-usage.md) for more infos).
+The `prefix` and `suffix` options are now examples of transformers (see the [list of available transformers](../../version-v1/4-schemas/17-transformers/1-usage.md) for more infos).
 
 ### `coerce`
 
@@ -464,7 +464,7 @@ Instead of having dedicated methods, `Tables` and `Entities` now have a single `
 +   .send()
 ```
 
-See the [Getting Started section](../../../docs/1-getting-started/3-usage/index.md#methods-vs-actions) for more details on why we think this is a better syntax.
+See the [Getting Started section](../../version-v1/1-getting-started/3-usage/index.md#methods-vs-actions) for more details on why we think this is a better syntax.
 
 Adding [custom parameters and clauses](../6-custom-parameters/index.md) is not possible anymore, but you can always use the `.params()` methods and build from there.
 

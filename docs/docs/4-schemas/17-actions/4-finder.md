@@ -30,7 +30,7 @@ const [levelSubSchema] = subschemas
 
 :::info
 
-The path formalism is the same as within [`Conditions`](../../3-entities/4-actions/18-parse-condition/index.md#paths) and [`Projections`](../../3-entities/4-actions/19-parse-paths/index.md#paths).
+The path formalism is the same as within [`Conditions`](../../3-entities/4-actions/19-parse-condition/index.md#paths) and [`Projections`](../../3-entities/4-actions/20-parse-paths/index.md#paths).
 
 :::
 
