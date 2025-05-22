@@ -1,0 +1,5 @@
+export const $schema = Symbol('$schema')
+export type $schema = typeof $schema
+
+export const $pattern = Symbol('$pattern')
+export type $pattern = typeof $pattern
