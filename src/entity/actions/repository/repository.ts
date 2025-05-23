@@ -1,3 +1,5 @@
+import type { Pattern } from '~/entity/actions/accessPattern/accessPattern.js'
+import { AccessPattern } from '~/entity/actions/accessPattern/accessPattern.js'
 import { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
 import { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
@@ -19,12 +21,14 @@ import type { ConditionCheckOptions } from '~/entity/actions/transactCheck/index
 import { ConditionCheck } from '~/entity/actions/transactCheck/index.js'
 import type { DeleteTransactionOptions } from '~/entity/actions/transactDelete/index.js'
 import { DeleteTransaction } from '~/entity/actions/transactDelete/index.js'
-import type { GetTransactionOptions } from '~/entity/actions/transactGet/index.js'
-import { GetTransaction } from '~/entity/actions/transactGet/index.js'
-import { execute as executeTransactGet } from '~/entity/actions/transactGet/index.js'
 import type {
   ExecuteTransactGetInput,
-  ExecuteTransactGetResponses
+  ExecuteTransactGetResponses,
+  GetTransactionOptions
+} from '~/entity/actions/transactGet/index.js'
+import {
+  GetTransaction,
+  execute as executeTransactGet
 } from '~/entity/actions/transactGet/index.js'
 import type { PutTransactionOptions } from '~/entity/actions/transactPut/index.js'
 import { PutTransaction } from '~/entity/actions/transactPut/index.js'
@@ -61,7 +65,9 @@ import type {
   ParseConditionOptions
 } from '~/schema/actions/parseCondition/index.js'
 import type { ParsePathsOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
+import type { Schema } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
+import type { QueryOptions } from '~/table/actions/query/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
@@ -165,6 +171,20 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     options: ConditionCheckOptions = {}
   ): ConditionCheck<ENTITY> {
     return new ConditionCheck(this.entity, key, condition, options)
+  }
+
+  accessPattern<
+    SCHEMA extends Schema,
+    OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY]> = QueryOptions<
+      ENTITY['table'],
+      [ENTITY]
+    >
+  >(
+    schema: SCHEMA,
+    pattern: Pattern<ENTITY, SCHEMA>,
+    options: OPTIONS = {} as OPTIONS
+  ): AccessPattern<ENTITY, SCHEMA, OPTIONS> {
+    return new AccessPattern(this.entity, schema, pattern, options)
   }
 
   parse<OPTIONS extends ParseItemOptions = {}>(

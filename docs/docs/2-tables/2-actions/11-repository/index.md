@@ -334,6 +334,24 @@ await TableRepository.executeBatchWrite(
 
 ## Utils
 
+### `accessPattern(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(sch: SCHEMA, ptrn: Pattern&lt;SCHEMA&gt;, opt?: OPTIONS) => AccessPattern&lt;TABLE, SCHEMA, OPTIONS&gt;</code></i></p>
+
+Creates an `AccessPattern`. See [`AccessPattern`](../3-access-pattern/index.md) for more details:
+
+```ts
+const accessPattern = pokeTableRepository.accessPattern(
+  map({ trainerId: string() }),
+  ({ trainerId }) => ({ partition: trainerId }),
+  { attributes: ['trainerId'] }
+)
+
+const { Items } = await accessPattern
+  .query({ trainerId: '123' })
+  .send()
+```
+
 ### `parsePrimaryKey(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>(input: unknown) => PrimaryKey&lt;TABLE&gt;</code></i></p>

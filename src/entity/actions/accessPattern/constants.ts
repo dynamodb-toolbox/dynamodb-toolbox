@@ -3,3 +3,6 @@ export type $schema = typeof $schema
 
 export const $pattern = Symbol('$pattern')
 export type $pattern = typeof $pattern
+
+export const $options = Symbol('$options')
+export type $options = typeof $options

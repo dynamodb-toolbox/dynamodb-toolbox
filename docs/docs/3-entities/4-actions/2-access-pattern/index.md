@@ -18,9 +18,10 @@ const highLevelPokemons = PokemonEntity.build(AccessPattern)
   .pattern(({ trainerId, level }) => ({
     index: 'byLevel',
     partition: trainerId,
-    range: { gte: level },
-    options: { maxPages: 3 } // optional
+    range: { gte: level }
   }))
+  // Optional: provide additional options
+  .options({ maxPages: 3 })
 
 const { Items } = await highLevelPokemons
   .query({ trainerId, level: 70 })
@@ -54,11 +55,13 @@ For multiple `Entities` access patterns, see the dedicated [`AccessPattern`](../
 
 Defines the input schema for the pattern parameters (see the [Schema Section](../../../4-schemas/1-usage/index.md) for more details):
 
+<!-- prettier-ignore -->
 ```ts
 import { string } from 'dynamodb-toolbox/schema/string'
 
-const stringAccessPattern =
-  PokeTable.build(AccessPattern).schema(string())
+const stringAccessPattern = PokemonEntity
+  .build(AccessPattern)
+  .schema(string())
 ```
 
 ### `.pattern(...)`
@@ -70,28 +73,43 @@ Defines how pattern inputs (parsed by the [`schema`](#schema)) are translated in
 - `partition`: The partition key to query
 - <code>index <i>(optional)</i></code>: The name of a secondary index to query
 - <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range or Equality Condition</a>
-- <code>options <i>(optional)</i></code>: Additional `QueryCommand` options (see [`QueryCommands`](../../../2-tables/2-actions/2-query/index.md#options) for more details)
 
+<!-- prettier-ignore -->
 ```ts
-const stringAccessPattern = PokeTable.build(AccessPattern)
+const stringAccessPattern = PokemonEntity
+  .build(AccessPattern)
   .schema(string())
   .pattern(str => ({ partition: str }))
 ```
 
 :::info
 
-It is advised to provide `schema` first as it constrains the query type.
+It is advised to provide `schema` first as it constrains the `pattern` type.
 
 :::
+
+### `.options(...)`
+
+Provides additional options to the resulting `QueryCommands` (see [`QueryCommands`](../../../2-tables/2-actions/2-query/index.md#options) for more details):
+
+<!-- prettier-ignore -->
+```ts
+const projectedPattern = PokemonEntity
+  .build(AccessPattern)
+  .options({ attributes: ['name', 'trainerId'] })
+```
 
 ### `.query(...)`
 
 Produces a [`QueryCommand`](../../../2-tables/2-actions/2-query/index.md) from valid pattern inputs:
 
+<!-- prettier-ignore -->
 ```ts
 const queryCommand = highLevelPokemons
   .query({ trainerId, level: 70 })
-  .options({ consistent: true })
 
-const { Items } = await queryCommand.send()
+const { Items } = await queryCommand
+  // Optional: Refine queryCommand
+  .options({ consistent: true })
+  .send()
 ```

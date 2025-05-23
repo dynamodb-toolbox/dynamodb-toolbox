@@ -2,6 +2,7 @@ import type { A } from 'ts-toolbelt'
 
 import { $entities, Entity, QueryCommand, Table, item, map, number, string } from '~/index.js'
 import { $options, $query } from '~/table/actions/query/constants.js'
+import type { Query } from '~/table/actions/query/index.js'
 
 import { AccessPattern } from './accessPattern.js'
 
@@ -76,15 +77,24 @@ describe('accessPattern', () => {
     const pk = TestTable.build(AccessPattern)
       .entities(Entity1, Entity2)
       .schema(string())
-      .pattern(partition => ({
-        partition,
-        options: { filters: { entity1: { attr: 'age', exists: true } } }
-      }))
+      .pattern(partition => ({ partition }))
+      .options({ attributes: ['age', 'price'] })
 
     const command = pk.query('123')
 
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof Entity1, typeof Entity2],
+        Query<typeof TestTable>,
+        { attributes: ('age' | 'price')[] }
+      >
+    > = 1
+    assert
+
     expect(command).toBeInstanceOf(QueryCommand)
-    expect(command[$options]).toStrictEqual({ filters: { entity1: { attr: 'age', exists: true } } })
+    expect(command[$options]).toStrictEqual({ attributes: ['age', 'price'] })
   })
 
   test('builds more complex query', () => {
