@@ -514,6 +514,24 @@ const { Responses } = await EntityRepository.executeTransactGet(
 
 ## Utils
 
+### `accessPattern(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(sch: SCHEMA, ptrn: Pattern&lt;SCHEMA&gt;, opt?: OPTIONS) => AccessPattern&lt;TABLE, SCHEMA, OPTIONS&gt;</code></i></p>
+
+Creates an `AccessPattern`. See [`AccessPattern`](../2-access-pattern/index.md) for more details:
+
+```ts
+const accessPattern = pokemonRepository.accessPattern(
+  map({ trainerId: string() }),
+  ({ trainerId }) => ({ partition: trainerId }),
+  { attributes: ['name', 'level'] }
+)
+
+const { Items } = await accessPattern
+  .query({ trainerId: '123' })
+  .send()
+```
+
 ### `parse(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>(input: unknown, opt?: OPTIONS) => ParserOutput&lt;ENTITY, OPTIONS&gt;</code></i></p>

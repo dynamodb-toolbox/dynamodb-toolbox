@@ -89,6 +89,7 @@ export type {
   ExecuteBatchWriteOptions
 } from './table/actions/batchWrite/index.js'
 export { AccessPattern as TableAccessPattern } from './table/actions/accessPattern/index.js'
+export type { Pattern as TablePattern } from './table/actions/accessPattern/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 export { TableDTO } from './table/actions/dto/index.js'
@@ -193,6 +194,7 @@ export type { DeleteTransactionOptions } from './entity/actions/transactDelete/i
 export { ConditionCheck } from './entity/actions/transactCheck/index.js'
 export type { ConditionCheckOptions } from './entity/actions/transactCheck/index.js'
 export { AccessPattern as EntityAccessPattern } from './entity/actions/accessPattern/index.js'
+export type { Pattern as EntityPattern } from './table/actions/accessPattern/index.js'
 export { EntityParser } from './entity/actions/parse/index.js'
 export type { ParseItemOptions, InferWriteItemOptions } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'

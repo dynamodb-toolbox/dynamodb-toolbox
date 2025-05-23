@@ -20,9 +20,10 @@ const highLevelPokemons = PokeTable.build(AccessPattern)
   .pattern(({ trainerId, level }) => ({
     index: 'byLevel',
     partition: trainerId,
-    range: { gte: level },
-    options: { maxPages: 3 }, // optional
+    range: { gte: level }
   }))
+  // Optional: provide additional options
+  .options({ maxPages: 3 })
 
 const { Items } = await highLevelPokemons
   .query({ trainerId, level: 70 })
@@ -80,7 +81,6 @@ Defines how pattern inputs (parsed by the [`schema`](#schema)) are translated in
 - `partition`: The partition key to query
 - <code>index <i>(optional)</i></code>: The name of a secondary index to query
 - <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range or Equality Condition</a>
-- <code>options <i>(optional)</i></code>: Additional `QueryCommand` options (see [`QueryCommands`](../2-query/index.md#options) for more details)
 
 ```ts
 const stringAccessPattern = PokeTable.build(AccessPattern)
@@ -90,7 +90,23 @@ const stringAccessPattern = PokeTable.build(AccessPattern)
 
 :::info
 
-It is advised to provide `entities` and `schema` first as they constrain the query type.
+It is advised to provide `entities` and `schema` first as they constrain the `pattern` type.
+
+:::
+
+### `.options(...)`
+
+Provides additional options to the resulting `QueryCommands` (see [`QueryCommands`](../2-query/index.md#options) for more details):
+
+```ts
+const projectedPattern = PokeTable.build(AccessPattern)
+  .entities(TrainerEntity, PokemonEntity)
+  .options({ attributes: ['name', 'trainerId'] })
+```
+
+:::info
+
+It is advised to provide `entities` first as it constrains the `options` type.
 
 :::
 
@@ -98,10 +114,13 @@ It is advised to provide `entities` and `schema` first as they constrain the que
 
 Produces a [`QueryCommand`](../2-query/index.md) from valid pattern inputs:
 
+<!-- prettier-ignore -->
 ```ts
 const queryCommand = highLevelPokemons
   .query({ trainerId, level: 70 })
-  .options({ consistent: true })
 
-const { Items } = await queryCommand.send()
+const { Items } = await queryCommand
+  // Optional: Refine queryCommand
+  .options({ consistent: true })
+  .send()
 ```

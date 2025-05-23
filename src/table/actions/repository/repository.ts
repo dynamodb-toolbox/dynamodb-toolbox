@@ -5,6 +5,9 @@ import { BatchGetRequest } from '~/entity/actions/batchGet/batchGetRequest.js'
 import { BatchPutRequest } from '~/entity/actions/batchPut/batchPutRequest.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Schema } from '~/schema/index.js'
+import { AccessPattern } from '~/table/actions/accessPattern/index.js'
+import type { Pattern } from '~/table/actions/accessPattern/index.js'
 import type { RequestEntities as BatchGetRequestEntities } from '~/table/actions/batchGet/batchGetCommand.js'
 import type {
   BatchGetCommandOptions,
@@ -196,7 +199,19 @@ export class TableRepository<
       options
     )
   }
+
+  accessPattern<
+    SCHEMA extends Schema,
+    OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+  >(
+    schema: SCHEMA,
+    pattern: Pattern<TABLE, SCHEMA>,
+    options: OPTIONS = {} as OPTIONS
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, OPTIONS> {
+    return new AccessPattern(this.table, this[$entities], schema, pattern, options)
+  }
 }
+
 const isBatchGetRequest = (
   input: BatchGetCommandOptions | IBatchWriteRequest
 ): input is IBatchGetRequest => input instanceof BatchGetRequest

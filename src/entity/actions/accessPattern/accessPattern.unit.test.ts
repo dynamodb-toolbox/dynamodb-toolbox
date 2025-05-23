@@ -1,6 +1,7 @@
 import type { A } from 'ts-toolbelt'
 
 import { $entities, Entity, QueryCommand, Table, item, map, number, string } from '~/index.js'
+import type { Query } from '~/index.js'
 import { $options, $query } from '~/table/actions/query/constants.js'
 
 import { AccessPattern } from './accessPattern.js'
@@ -60,12 +61,24 @@ describe('accessPattern', () => {
   test('builds query w. options', () => {
     const pk = TestEntity.build(AccessPattern)
       .schema(string())
-      .pattern(partition => ({ partition, options: { maxPages: Infinity } }))
+      .pattern(partition => ({ partition }))
+      .options({ attributes: ['age'] })
 
     const command = pk.query('123')
 
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof TestEntity],
+        Query<typeof TestTable>,
+        { attributes: 'age'[] }
+      >
+    > = 1
+    assert
+
     expect(command).toBeInstanceOf(QueryCommand)
-    expect(command[$options]).toStrictEqual({ maxPages: Infinity })
+    expect(command[$options]).toStrictEqual({ attributes: ['age'] })
   })
 
   test('builds more complex query', () => {
