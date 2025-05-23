@@ -169,7 +169,7 @@ Available options (see the [DynamoDB Query documentation](https://docs.aws.amazo
           <td align="center"><code>boolean</code></td>
           <td align="center"><code>true</code></td>
           <td>
-            By default, specifying <a href="#entities"><code>entities</code></a> introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute. Set this option to <code>false</code> to disable this behavior.
+             If <a href="#entities"><code>entities</code></a> are specified, introduces a <a href="https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html#API_Scan_RequestSyntax">Filter Expression</a> on the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> attribute. Default value is <code>true</code> if the <code>entity</code> attribute is enabled in all entities and is not part of the queried <a href="#query"><code>index</code></a>, <code>false</code> otherwise.
             <br/><br/>This option is useful for querying items that lack the <a href="../../entities/internal-attributes#entity"><code>entity</code></a> internal attribute (e.g., when migrating to DynamoDB-Toolbox). In this case, DynamoDB-Toolbox attempts to format the item for each entity and disregards it if none succeed.
             <br/><br/>Note that you can also use <a href="https://aws.amazon.com/fr/blogs/developer/middleware-stack-modular-aws-sdk-js/">Middleware Stacks</a> to reintroduce the entity attribute and improve performance.
           </td>
