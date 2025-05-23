@@ -22,7 +22,7 @@ import { expressCondition } from '~/schema/actions/parseCondition/expressConditi
 import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import { Deduper } from '~/schema/actions/utils/deduper.js'
 import { AnySchema } from '~/schema/any/schema.js'
-import type { Table } from '~/table/index.js'
+import type { Key, Table } from '~/table/index.js'
 import { isEmpty } from '~/utils/isEmpty.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 
@@ -55,6 +55,7 @@ export const queryParams: QueryParamsGetter = <
   query: QUERY,
   options: OPTIONS = {} as OPTIONS
 ) => {
+  const { entityAttributeSavedAs, indexes } = table
   const { index } = query
   const {
     capacity,
@@ -69,11 +70,10 @@ export const queryParams: QueryParamsGetter = <
     attributes: _attributes,
     tableName,
     entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)) &&
-      ((index &&
-        table.indexes[index] &&
-        table.indexes[index].type === 'global' &&
-        table.entityAttributeSavedAs !== table.indexes[index].partitionKey.name) ??
-        true),
+      !isKeyAttribute(
+        index !== undefined ? indexes[index] ?? table : table,
+        entityAttributeSavedAs
+      ),
     showEntityAttr,
     tagEntities,
     noEntityMatchBehavior,
@@ -268,3 +268,8 @@ export const queryParams: QueryParamsGetter = <
 
   return commandOptions
 }
+
+const isKeyAttribute = (
+  { partitionKey, sortKey }: { partitionKey?: Key; sortKey?: Key },
+  attrSavedAs: string
+): boolean => partitionKey?.name === attrSavedAs || sortKey?.name === attrSavedAs
