@@ -67,7 +67,10 @@ import type {
 import type { ParsePathsOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
 import type { Schema } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
-import type { QueryOptions } from '~/table/actions/query/index.js'
+import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/index.js'
+import { QueryCommand } from '~/table/actions/query/index.js'
+import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
+import { ScanCommand } from '~/table/actions/scan/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
@@ -107,6 +110,35 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     options: OPTIONS = {} as OPTIONS
   ): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     return new DeleteItemCommand(this.entity, key, options).send()
+  }
+
+  async scan<
+    OPTIONS extends ScanOptions<ENTITY['table'], [ENTITY]> = ScanOptions<ENTITY['table'], [ENTITY]>
+  >(options: OPTIONS = {} as OPTIONS): Promise<ScanResponse<ENTITY['table'], [ENTITY], OPTIONS>> {
+    return new ScanCommand<ENTITY['table'], [ENTITY], OPTIONS>(
+      this.entity.table,
+      [this.entity],
+      options
+    ).send()
+  }
+
+  async query<
+    QUERY extends Query<ENTITY['table']>,
+    OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY> = QueryOptions<
+      ENTITY['table'],
+      [ENTITY],
+      QUERY
+    >
+  >(
+    query: QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ): Promise<QueryResponse<ENTITY['table'], QUERY, [ENTITY], OPTIONS>> {
+    return new QueryCommand<ENTITY['table'], [ENTITY], QUERY, OPTIONS>(
+      this.entity.table,
+      [this.entity],
+      query,
+      options
+    ).send()
   }
 
   batchGet(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {

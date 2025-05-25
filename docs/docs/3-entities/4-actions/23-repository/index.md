@@ -210,6 +210,82 @@ await pokemonRepository.delete(
 
 :::
 
+### `scan(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(opt?: OPTIONS) => ScanResponse&lt;ENTITY['table'], [ENTITY], OPTIONS&gt;</code></i></p>
+
+Performs a [Scan Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html) on the `Entity` table. See [`ScanCommand`](../../../2-tables/2-actions/1-scan/index.md) for more details:
+
+:::note[Examples]
+
+<Tabs>
+<TabItem value="usage" label="Usage">
+
+```ts
+const { Items } = await pokemonRepository.scan()
+```
+
+</TabItem>
+<TabItem value="options" label="Options">
+
+```ts
+const { Items } = await pokemonRepository.scan({
+  consistent: true,
+  limit: 10
+})
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+### `query(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>(query: QUERY, options?: OPTIONS) => QueryResponse&lt;ENTITY['table'], QUERY, [ENTITY], OPTIONS&gt;</code></i></p>
+
+Performs a [Query Operation](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html) on the `Entity` table. See [`QueryCommand`](../../../2-tables/2-actions/2-query/index.md) for more details:
+
+:::note[Examples]
+
+<Tabs>
+<TabItem value="usage" label="Usage">
+
+```ts
+// Get 'ashKetchum' pokemons
+const { Items } = await pokemonRepository.query({
+  partition: 'ashKetchum'
+})
+```
+
+</TabItem>
+<TabItem value="index" label="Index">
+
+```ts
+// Get 'ashKetchum1' pokemons with a level ≥ 50
+const { Items } = await pokemonRepository.query({
+  partition: 'ashKetchum1',
+  index: 'byTrainerId',
+  range: { gte: 50 }
+})
+```
+
+</TabItem>
+<TabItem value="options" label="Options">
+
+```ts
+// Consistently get less than 10 'ashKetchum' pokemons
+const { Items } = await pokemonRepository.query(
+  { partition: 'ashKetchum' },
+  { consistent: true, limit: 10 }
+)
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
 ## Batching
 
 ### `batchGet(...)`
