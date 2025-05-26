@@ -7,7 +7,13 @@ import { QueryCommand } from '~/table/actions/query/queryCommand.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 
-import { $options, $pattern, $schema } from './constants.js'
+import { $meta, $options, $pattern, $schema } from './constants.js'
+
+interface AccessPatternMetadata {
+  operationId?: string
+  title?: string
+  description?: string
+}
 
 export class IAccessPattern<
   TABLE extends Table = Table,
@@ -21,19 +27,22 @@ export class IAccessPattern<
   [$schema]?: SCHEMA;
   // any is needed for contravariance
   [$pattern]?: (input: Schema extends SCHEMA ? any : TransformedValue<SCHEMA>) => QUERY;
-  [$options]: OPTIONS
+  [$options]: OPTIONS;
+  [$meta]: AccessPatternMetadata
 
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
     schema?: SCHEMA,
     pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
+    options: OPTIONS = {} as OPTIONS,
+    meta: AccessPatternMetadata = {}
   ) {
     super(table, entities)
     this[$schema] = schema
     this[$pattern] = pattern
     this[$options] = options
+    this[$meta] = meta
   }
 
   // IQueryCommand is needed for contravariance
@@ -84,9 +93,10 @@ export class AccessPattern<
     entities = [] as unknown as ENTITIES,
     schema?: SCHEMA,
     pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
+    options: OPTIONS = {} as OPTIONS,
+    meta: AccessPatternMetadata = {}
   ) {
-    super(table, entities, schema, pattern, options)
+    super(table, entities, schema, pattern, options, meta)
   }
 
   entities<NEXT_ENTITIES extends Entity[]>(
@@ -144,6 +154,17 @@ export class AccessPattern<
       this[$schema],
       this[$pattern],
       nextOptions
+    )
+  }
+
+  meta(nextMeta: AccessPatternMetadata): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
+    return new AccessPattern(
+      this.table,
+      this[$entities],
+      this[$schema],
+      this[$pattern],
+      this[$options],
+      nextMeta
     )
   }
 }

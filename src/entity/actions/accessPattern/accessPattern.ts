@@ -6,7 +6,13 @@ import type { InputValue, Schema, TransformedValue } from '~/schema/index.js'
 import type { IQueryCommand, Query, QueryOptions } from '~/table/actions/query/index.js'
 import { QueryCommand } from '~/table/actions/query/queryCommand.js'
 
-import { $options, $pattern, $schema } from './constants.js'
+import { $meta, $options, $pattern, $schema } from './constants.js'
+
+interface AccessPatternMetadata {
+  operationId?: string
+  title?: string
+  description?: string
+}
 
 export class IAccessPattern<
   ENTITY extends Entity = Entity,
@@ -23,18 +29,21 @@ export class IAccessPattern<
   [$schema]?: SCHEMA;
   // any is needed for contravariance
   [$pattern]?: (input: Schema extends SCHEMA ? any : TransformedValue<SCHEMA>) => QUERY;
-  [$options]: OPTIONS
+  [$options]: OPTIONS;
+  [$meta]: AccessPatternMetadata
 
   constructor(
     entity: ENTITY,
     schema?: SCHEMA,
     pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
+    options: OPTIONS = {} as OPTIONS,
+    meta: AccessPatternMetadata = {}
   ) {
     super(entity)
     this[$schema] = schema
     this[$pattern] = pattern
     this[$options] = options
+    this[$meta] = meta
   }
 
   // IQueryCommand is needed for contravariance
@@ -89,9 +98,10 @@ export class AccessPattern<
     entity: ENTITY,
     schema?: SCHEMA,
     pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
+    options: OPTIONS = {} as OPTIONS,
+    meta: AccessPatternMetadata = {}
   ) {
-    super(entity, schema, pattern, options)
+    super(entity, schema, pattern, options, meta)
   }
 
   schema<NEXT_SCHEMA extends Schema>(
@@ -101,19 +111,24 @@ export class AccessPattern<
       this.entity,
       nextSchema,
       this[$pattern] as (input: TransformedValue<NEXT_SCHEMA>) => QUERY,
-      this[$options]
+      this[$options],
+      this[$meta]
     )
   }
 
   pattern<NEXT_QUERY extends Query<ENTITY['table']>>(
     nextPattern: (input: TransformedValue<SCHEMA>) => NEXT_QUERY
   ): AccessPattern<ENTITY, SCHEMA, NEXT_QUERY, OPTIONS> {
-    return new AccessPattern(this.entity, this[$schema], nextPattern, this[$options])
+    return new AccessPattern(this.entity, this[$schema], nextPattern, this[$options], this[$meta])
   }
 
   options<NEXT_OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY>>(
     nextOptions: NEXT_OPTIONS
   ): AccessPattern<ENTITY, SCHEMA, QUERY, NEXT_OPTIONS> {
-    return new AccessPattern(this.entity, this[$schema], this[$pattern], nextOptions)
+    return new AccessPattern(this.entity, this[$schema], this[$pattern], nextOptions, this[$meta])
+  }
+
+  meta(nextMeta: AccessPatternMetadata): AccessPattern<ENTITY, SCHEMA, QUERY, OPTIONS> {
+    return new AccessPattern(this.entity, this[$schema], this[$pattern], this[$options], nextMeta)
   }
 }

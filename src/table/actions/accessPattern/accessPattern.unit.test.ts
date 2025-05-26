@@ -6,6 +6,7 @@ import type { Query } from '~/table/actions/query/index.js'
 
 import { AccessPattern } from './accessPattern.js'
 import type { IAccessPattern } from './accessPattern.js'
+import { $meta } from './constants.js'
 
 const TestTable = new Table({
   name: 'test-table',
@@ -109,5 +110,17 @@ describe('accessPattern', () => {
     const command = eq.query({ partition: 'p', eq: 'e' })
 
     expect(command[$query]).toStrictEqual({ partition: 'p', range: { eq: 'e' } })
+  })
+
+  test('describes access pattern', () => {
+    const meta = {
+      operationId: 'getByPartition',
+      title: 'Get entities by partition',
+      description: 'Sort key is OP!'
+    }
+
+    const ap = TestTable.build(AccessPattern).meta(meta)
+
+    expect(ap[$meta]).toStrictEqual(meta)
   })
 })
