@@ -47,6 +47,8 @@ export class DBTable<
 
   // @ts-ignore
   override entities: { [ENTITY in ENTITIES[number] as ENTITY['entityName']]: ENTITY }
+  // @ts-ignore
+  override accessPatterns: ACCESS_PATTERNS
   query: { [KEY in keyof ACCESS_PATTERNS]: ACCESS_PATTERNS[KEY]['query'] }
 
   constructor(
@@ -66,6 +68,8 @@ export class DBTable<
     this.entities = Object.fromEntries(
       entities.map((entity: Entity) => [entity.entityName, entity])
     ) as { [ENTITY in ENTITIES[number] as ENTITY['entityName']]: ENTITY }
+
+    this.accessPatterns = accessPatterns
 
     this.query = Object.fromEntries(
       Object.entries(accessPatterns).map(([key, ap]) => [

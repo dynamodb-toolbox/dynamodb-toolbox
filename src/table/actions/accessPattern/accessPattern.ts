@@ -10,7 +10,6 @@ import { $entities, TableAction } from '~/table/index.js'
 import { $meta, $options, $pattern, $schema } from './constants.js'
 
 interface AccessPatternMetadata {
-  operationId?: string
   title?: string
   description?: string
 }
