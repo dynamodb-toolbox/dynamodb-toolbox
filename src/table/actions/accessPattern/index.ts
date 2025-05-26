@@ -1,2 +1,3 @@
-export { AccessPattern } from './accessPattern.js'
-export type { Pattern } from './accessPattern.js'
+export { IAccessPattern, AccessPattern } from './accessPattern.js'
+// Temporary
+export { $schema, $meta, $options, $pattern } from './constants.js'

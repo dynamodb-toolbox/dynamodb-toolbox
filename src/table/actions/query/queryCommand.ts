@@ -79,7 +79,7 @@ export type QueryResponse<
   }
 >
 
-export class QueryCommand<
+export class IQueryCommand<
     TABLE extends Table = Table,
     ENTITIES extends Entity[] = Entity[],
     QUERY extends Query<TABLE> = Query<TABLE>,
@@ -102,52 +102,6 @@ export class QueryCommand<
     super(table, entities)
     this[$query] = query
     this[$options] = options
-  }
-
-  entities<NEXT_ENTITIES extends Entity[]>(
-    ...nextEntities: NEXT_ENTITIES
-  ): QueryCommand<
-    TABLE,
-    NEXT_ENTITIES,
-    QUERY,
-    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
-      ? OPTIONS
-      : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
-  > {
-    return new QueryCommand(
-      this.table,
-      nextEntities,
-      this[$query],
-      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
-        ? OPTIONS
-        : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
-    )
-  }
-
-  query<NEXT_QUERY extends Query<TABLE>>(
-    nextQuery: NEXT_QUERY
-  ): QueryCommand<
-    TABLE,
-    ENTITIES,
-    NEXT_QUERY,
-    OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
-      ? OPTIONS
-      : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
-  > {
-    return new QueryCommand(
-      this.table,
-      this[$entities],
-      nextQuery,
-      this[$options] as OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
-        ? OPTIONS
-        : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
-    )
-  }
-
-  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
-    nextOptions: NEXT_OPTIONS
-  ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {
-    return new QueryCommand(this.table, this[$entities], this[$query], nextOptions)
   }
 
   [$sentArgs](): [Entity[], Query<TABLE>, QueryOptions<TABLE, Entity[], Query<TABLE>>] {
@@ -306,5 +260,67 @@ export class QueryCommand<
           }
         : {})
     }
+  }
+}
+
+export class QueryCommand<
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  QUERY extends Query<TABLE> = Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
+> extends IQueryCommand<TABLE, ENTITIES, QUERY, OPTIONS> {
+  constructor(
+    table: TABLE,
+    entities = [] as unknown as ENTITIES,
+    query?: QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ) {
+    super(table, entities, query, options)
+  }
+
+  entities<NEXT_ENTITIES extends Entity[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): QueryCommand<
+    TABLE,
+    NEXT_ENTITIES,
+    QUERY,
+    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+      ? OPTIONS
+      : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+  > {
+    return new QueryCommand(
+      this.table,
+      nextEntities,
+      this[$query],
+      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+        ? OPTIONS
+        : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+    )
+  }
+
+  query<NEXT_QUERY extends Query<TABLE>>(
+    nextQuery: NEXT_QUERY
+  ): QueryCommand<
+    TABLE,
+    ENTITIES,
+    NEXT_QUERY,
+    OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+      ? OPTIONS
+      : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+  > {
+    return new QueryCommand(
+      this.table,
+      this[$entities],
+      nextQuery,
+      this[$options] as OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+        ? OPTIONS
+        : QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+    )
+  }
+
+  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
+    nextOptions: NEXT_OPTIONS
+  ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {
+    return new QueryCommand(this.table, this[$entities], this[$query], nextOptions)
   }
 }

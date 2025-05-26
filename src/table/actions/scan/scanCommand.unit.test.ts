@@ -4,11 +4,13 @@ import { DynamoDBDocumentClient, ScanCommand as _ScanCommand } from '@aws-sdk/li
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
+import type { A } from 'ts-toolbelt'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
 import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
 
 import { ScanCommand } from './scanCommand.js'
+import type { IScanCommand } from './scanCommand.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -108,6 +110,13 @@ describe('scanCommand', () => {
     documentClientMock.on(_ScanCommand).resolves({
       Items: [completeSavedItemA, completeSavedItemB]
     })
+
+    const cmd = TestTable.build(ScanCommand)
+      .entities(EntityA, EntityB)
+      .options({ entityAttrFilter: false })
+
+    const assertExtends: A.Extends<typeof cmd, IScanCommand> = 1
+    assertExtends
 
     const { Items } = await TestTable.build(ScanCommand)
       .entities(EntityA, EntityB)

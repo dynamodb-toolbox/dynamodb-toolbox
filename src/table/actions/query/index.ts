@@ -1,4 +1,4 @@
-export { QueryCommand } from './queryCommand.js'
+export { IQueryCommand, QueryCommand } from './queryCommand.js'
 export { $entity } from './constants.js'
 export type { QueryResponse } from './queryCommand.js'
 export type { QueryOptions } from './options.js'

@@ -336,7 +336,7 @@ await TableRepository.executeBatchWrite(
 
 ### `accessPattern(...)`
 
-<p style={{ marginTop: '-15px' }}><i><code>(sch: SCHEMA, ptrn: Pattern&lt;SCHEMA&gt;, opt?: OPTIONS) => AccessPattern&lt;TABLE, SCHEMA, OPTIONS&gt;</code></i></p>
+<p style={{ marginTop: '-15px' }}><i><code>(sch: SCHEMA, ptrn: Pattern&lt;SCHEMA, QUERY&gt;, opt?: OPTIONS) => AccessPattern&lt;TABLE, SCHEMA, QUERY, OPTIONS&gt;</code></i></p>
 
 Creates an `AccessPattern`. See [`AccessPattern`](../3-access-pattern/index.md) for more details:
 
