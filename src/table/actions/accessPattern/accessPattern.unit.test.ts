@@ -114,7 +114,6 @@ describe('accessPattern', () => {
 
   test('describes access pattern', () => {
     const meta = {
-      operationId: 'getByPartition',
       title: 'Get entities by partition',
       description: 'Sort key is OP!'
     }

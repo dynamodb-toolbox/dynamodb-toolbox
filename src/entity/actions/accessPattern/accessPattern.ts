@@ -9,7 +9,6 @@ import { QueryCommand } from '~/table/actions/query/queryCommand.js'
 import { $meta, $options, $pattern, $schema } from './constants.js'
 
 interface AccessPatternMetadata {
-  operationId?: string
   title?: string
   description?: string
 }
