@@ -1,4 +1,3 @@
-import type { Pattern } from '~/entity/actions/accessPattern/accessPattern.js'
 import { AccessPattern } from '~/entity/actions/accessPattern/accessPattern.js'
 import { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
@@ -65,7 +64,7 @@ import type {
   ParseConditionOptions
 } from '~/schema/actions/parseCondition/index.js'
 import type { ParsePathsOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { Schema, TransformedValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
 import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/index.js'
 import { QueryCommand } from '~/table/actions/query/index.js'
@@ -207,15 +206,16 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
 
   accessPattern<
     SCHEMA extends Schema,
+    QUERY extends Query<ENTITY['table']>,
     OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY]> = QueryOptions<
       ENTITY['table'],
       [ENTITY]
     >
   >(
     schema: SCHEMA,
-    pattern: Pattern<ENTITY, SCHEMA>,
+    pattern: (input: TransformedValue<SCHEMA>) => QUERY,
     options: OPTIONS = {} as OPTIONS
-  ): AccessPattern<ENTITY, SCHEMA, OPTIONS> {
+  ): AccessPattern<ENTITY, SCHEMA, QUERY, OPTIONS> {
     return new AccessPattern(this.entity, schema, pattern, options)
   }
 

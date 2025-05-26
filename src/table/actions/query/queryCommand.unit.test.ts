@@ -4,12 +4,14 @@ import { DynamoDBDocumentClient, QueryCommand as _QueryCommand } from '@aws-sdk/
 import type { AwsStub } from 'aws-sdk-client-mock'
 import { mockClient } from 'aws-sdk-client-mock'
 import MockDate from 'mockdate'
+import type { A } from 'ts-toolbelt'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
 import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
 
 import { $entity } from './constants.js'
 import { QueryCommand } from './queryCommand.js'
+import type { IQueryCommand } from './queryCommand.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -103,11 +105,15 @@ describe('queryCommand', () => {
       Items: [completeSavedItemA, completeSavedItemB]
     })
 
-    const { Items } = await TestTable.build(QueryCommand)
+    const cmd = TestTable.build(QueryCommand)
       .entities(EntityA, EntityB)
       .query({ partition: 'a' })
       .options({ entityAttrFilter: false })
-      .send()
+
+    const assertExtends: A.Extends<typeof cmd, IQueryCommand> = 1
+    assertExtends
+
+    const { Items } = await cmd.send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
   })

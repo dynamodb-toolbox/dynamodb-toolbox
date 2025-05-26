@@ -77,7 +77,7 @@ export type ScanResponse<
   }
 >
 
-export class ScanCommand<
+export class IScanCommand<
     TABLE extends Table = Table,
     ENTITIES extends Entity[] = Entity[],
     OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
@@ -96,23 +96,6 @@ export class ScanCommand<
   ) {
     super(table, entities)
     this[$options] = options
-  }
-
-  entities<NEXT_ENTITIES extends Entity[]>(
-    ...nextEntities: NEXT_ENTITIES
-  ): ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>> {
-    return new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
-      this.table,
-      nextEntities,
-      // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
-      this[$options] as ScanOptions<TABLE, NEXT_ENTITIES>
-    )
-  }
-
-  options<NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
-  ): ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS> {
-    return new ScanCommand(this.table, this[$entities], nextOptions)
   }
 
   [$sentArgs](): [Entity[], ScanOptions<TABLE, Entity[]>] {
@@ -260,5 +243,36 @@ export class ScanCommand<
           }
         : {})
     }
+  }
+}
+
+export class ScanCommand<
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
+> extends IScanCommand<TABLE, ENTITIES, OPTIONS> {
+  constructor(
+    table: TABLE,
+    entities = [] as unknown as ENTITIES,
+    options: OPTIONS = {} as OPTIONS
+  ) {
+    super(table, entities, options)
+  }
+
+  entities<NEXT_ENTITIES extends Entity[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>> {
+    return new ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>>(
+      this.table,
+      nextEntities,
+      // For some reason we can't do the same as Query (cast OPTIONS) as it triggers an infinite type compute
+      this[$options] as ScanOptions<TABLE, NEXT_ENTITIES>
+    )
+  }
+
+  options<NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
+    nextOptions: NEXT_OPTIONS
+  ): ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS> {
+    return new ScanCommand(this.table, this[$entities], nextOptions)
   }
 }

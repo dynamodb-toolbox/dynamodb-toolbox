@@ -1,2 +1,1 @@
-export { AccessPattern } from './accessPattern.js'
-export type { Pattern } from './accessPattern.js'
+export { IAccessPattern, AccessPattern } from './accessPattern.js'

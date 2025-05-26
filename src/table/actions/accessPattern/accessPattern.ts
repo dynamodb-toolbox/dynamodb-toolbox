@@ -2,34 +2,32 @@ import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { Parser } from '~/schema/actions/parse/parser.js'
 import type { InputValue, Schema, TransformedValue } from '~/schema/index.js'
-import type { Query, QueryOptions } from '~/table/actions/query/index.js'
+import type { IQueryCommand, Query, QueryOptions } from '~/table/actions/query/index.js'
 import { QueryCommand } from '~/table/actions/query/queryCommand.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 
 import { $options, $pattern, $schema } from './constants.js'
 
-export type Pattern<TABLE extends Table, SCHEMA extends Schema> = (
-  input: TransformedValue<SCHEMA>
-) => Query<TABLE>
-
-export class AccessPattern<
+export class IAccessPattern<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
   SCHEMA extends Schema = Schema,
+  QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'access-pattern' as const;
 
   [$schema]?: SCHEMA;
-  [$pattern]?: Pattern<TABLE, SCHEMA>;
+  // any is needed for contravariance
+  [$pattern]?: (input: Schema extends SCHEMA ? any : TransformedValue<SCHEMA>) => QUERY;
   [$options]: OPTIONS
 
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
     schema?: SCHEMA,
-    pattern?: Pattern<TABLE, SCHEMA>,
+    pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
     options: OPTIONS = {} as OPTIONS
   ) {
     super(table, entities)
@@ -38,62 +36,14 @@ export class AccessPattern<
     this[$options] = options
   }
 
-  entities<NEXT_ENTITIES extends Entity[]>(
-    ...nextEntities: NEXT_ENTITIES
-  ): AccessPattern<
-    TABLE,
-    NEXT_ENTITIES,
-    SCHEMA,
-    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-      ? OPTIONS
-      : QueryOptions<TABLE, NEXT_ENTITIES>
-  > {
-    return new AccessPattern(
-      this.table,
-      nextEntities,
-      this[$schema],
-      this[$pattern] as unknown as Pattern<TABLE, SCHEMA>,
-      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-        ? OPTIONS
-        : QueryOptions<TABLE, NEXT_ENTITIES>
-    )
-  }
+  // IQueryCommand is needed for contravariance
+  query(
+    input: InputValue<SCHEMA>
+  ): Table extends TABLE ? IQueryCommand : QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS> {
+    type QUERY_COMMAND = Table extends TABLE
+      ? IQueryCommand
+      : QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS>
 
-  schema<NEXT_SCHEMA extends Schema>(
-    nextSchema: NEXT_SCHEMA
-  ): AccessPattern<TABLE, ENTITIES, NEXT_SCHEMA, OPTIONS> {
-    return new AccessPattern(
-      this.table,
-      this[$entities],
-      nextSchema,
-      this[$pattern] as unknown as Pattern<TABLE, NEXT_SCHEMA>,
-      this[$options]
-    )
-  }
-
-  pattern(nextPattern: Pattern<TABLE, SCHEMA>): AccessPattern<TABLE, ENTITIES, SCHEMA, OPTIONS> {
-    return new AccessPattern(
-      this.table,
-      this[$entities],
-      this[$schema],
-      nextPattern,
-      this[$options]
-    )
-  }
-
-  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
-  ): AccessPattern<TABLE, ENTITIES, SCHEMA, NEXT_OPTIONS> {
-    return new AccessPattern(
-      this.table,
-      this[$entities],
-      this[$schema],
-      this[$pattern],
-      nextOptions
-    )
-  }
-
-  query(input: InputValue<SCHEMA>): QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS> {
     const schema = this[$schema]
     if (schema === undefined) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -118,6 +68,82 @@ export class AccessPattern<
       this[$entities],
       query,
       options
+    ) as QUERY_COMMAND
+  }
+}
+
+export class AccessPattern<
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  SCHEMA extends Schema = Schema,
+  QUERY extends Query<TABLE> = Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+> extends IAccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
+  constructor(
+    table: TABLE,
+    entities = [] as unknown as ENTITIES,
+    schema?: SCHEMA,
+    pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ) {
+    super(table, entities, schema, pattern, options)
+  }
+
+  entities<NEXT_ENTITIES extends Entity[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): AccessPattern<
+    TABLE,
+    NEXT_ENTITIES,
+    SCHEMA,
+    QUERY,
+    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+      ? OPTIONS
+      : QueryOptions<TABLE, NEXT_ENTITIES>
+  > {
+    return new AccessPattern(
+      this.table,
+      nextEntities,
+      this[$schema],
+      this[$pattern],
+      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
+        ? OPTIONS
+        : QueryOptions<TABLE, NEXT_ENTITIES>
+    )
+  }
+
+  schema<NEXT_SCHEMA extends Schema>(
+    nextSchema: NEXT_SCHEMA
+  ): AccessPattern<TABLE, ENTITIES, NEXT_SCHEMA, QUERY, OPTIONS> {
+    return new AccessPattern(
+      this.table,
+      this[$entities],
+      nextSchema,
+      this[$pattern] as (input: TransformedValue<NEXT_SCHEMA>) => QUERY,
+      this[$options]
+    )
+  }
+
+  pattern<NEXT_QUERY extends Query<TABLE>>(
+    nextPattern: (input: TransformedValue<SCHEMA>) => NEXT_QUERY
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, NEXT_QUERY, OPTIONS> {
+    return new AccessPattern(
+      this.table,
+      this[$entities],
+      this[$schema],
+      nextPattern,
+      this[$options]
+    )
+  }
+
+  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
+    nextOptions: NEXT_OPTIONS
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS> {
+    return new AccessPattern(
+      this.table,
+      this[$entities],
+      this[$schema],
+      this[$pattern],
+      nextOptions
     )
   }
 }
