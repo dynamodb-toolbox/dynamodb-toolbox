@@ -1,12 +1,14 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
+import type { IAccessPattern as IEntityAccessPattern } from '~/entity/actions/accessPattern/index.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { IAccessPattern as ITableAccessPattern } from '~/table/actions/accessPattern/index.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $interceptor, $sentArgs } from './constants.js'
+import { $accessPatterns, $interceptor, $sentArgs } from './constants.js'
 import { $entities } from './constants.js'
 import type { Index, Key } from './types/index.js'
 
@@ -27,6 +29,9 @@ export class Table<
 
   constructor({
     documentClient,
+    /**
+     * @debt v3 "To rename tableName"
+     */
     name,
     partitionKey,
     sortKey,
@@ -78,6 +83,146 @@ export class Table<
     }
 
     return this.documentClient
+  }
+
+  entities<NEXT_ENTITIES extends Entity[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): Table_<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS, NEXT_ENTITIES> {
+    return new Table_<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS, NEXT_ENTITIES>(
+      /**
+       * @debt v3 "Just provide `this` once name is renamed to tableName"
+       */
+      {
+        documentClient: this.documentClient,
+        name: this.tableName,
+        partitionKey: this.partitionKey,
+        sortKey: this.sortKey,
+        indexes: this.indexes,
+        entityAttributeSavedAs: this.entityAttributeSavedAs
+      },
+      nextEntities
+    )
+  }
+}
+
+// NOTE: Need to be kept in the same file as Table to avoid circular dep
+export class Table_<
+  PARTITION_KEY extends Key = Key,
+  SORT_KEY extends Key = Key,
+  INDEXES extends Record<string, Index> = Key extends PARTITION_KEY ? Record<string, Index> : {},
+  ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et',
+  ENTITIES extends Entity[] = Entity[],
+  ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern> = Record<
+    string,
+    ITableAccessPattern | IEntityAccessPattern
+  >
+> extends Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS> {
+  [$entities]: ENTITIES;
+  [$accessPatterns]: ACCESS_PATTERNS
+
+  constructor(
+    args: {
+      documentClient?: DynamoDBDocumentClient
+      name?: string | (() => string)
+      partitionKey: NarrowObject<PARTITION_KEY>
+      sortKey?: NarrowObject<SORT_KEY>
+      indexes?: NarrowObjectRec<INDEXES>
+      entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
+    },
+    entities = [] as unknown as ENTITIES,
+    accessPatterns = {} as ACCESS_PATTERNS
+  ) {
+    super(args)
+    this[$entities] = entities
+    this[$accessPatterns] = accessPatterns
+  }
+
+  override entities<NEXT_ENTITIES extends Entity[]>(
+    ...nextEntities: NEXT_ENTITIES
+  ): Table_<
+    PARTITION_KEY,
+    SORT_KEY,
+    INDEXES,
+    ENTITY_ATTRIBUTE_SAVED_AS,
+    NEXT_ENTITIES,
+    ACCESS_PATTERNS
+  > {
+    return new Table_<
+      PARTITION_KEY,
+      SORT_KEY,
+      INDEXES,
+      ENTITY_ATTRIBUTE_SAVED_AS,
+      NEXT_ENTITIES,
+      ACCESS_PATTERNS
+    >(
+      /**
+       * @debt v3 "Just provide `this` once name is renamed to tableName"
+       */
+      {
+        documentClient: this.documentClient,
+        name: this.tableName,
+        partitionKey: this.partitionKey,
+        sortKey: this.sortKey,
+        indexes: this.indexes,
+        entityAttributeSavedAs: this.entityAttributeSavedAs
+      },
+      nextEntities,
+      this[$accessPatterns]
+    )
+  }
+
+  accessPatterns<
+    NEXT_ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern>
+  >(
+    nextAccessPatterns: NEXT_ACCESS_PATTERNS
+  ): Table_<
+    PARTITION_KEY,
+    SORT_KEY,
+    INDEXES,
+    ENTITY_ATTRIBUTE_SAVED_AS,
+    ENTITIES,
+    NEXT_ACCESS_PATTERNS
+  > {
+    return new Table_<
+      PARTITION_KEY,
+      SORT_KEY,
+      INDEXES,
+      ENTITY_ATTRIBUTE_SAVED_AS,
+      ENTITIES,
+      NEXT_ACCESS_PATTERNS
+    >(
+      /**
+       * @debt v3 "Just provide `this` once name is renamed to tableName"
+       */
+      {
+        documentClient: this.documentClient,
+        name: this.tableName,
+        partitionKey: this.partitionKey,
+        sortKey: this.sortKey,
+        indexes: this.indexes,
+        entityAttributeSavedAs: this.entityAttributeSavedAs
+      },
+      this[$entities],
+      nextAccessPatterns
+    )
+  }
+
+  // @ts-ignore
+  override build<
+    ACTION extends TableAction<
+      Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
+      ENTITIES
+    > = TableAction<Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>, ENTITIES>
+  >(
+    Action: new (
+      table: Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
+      entities?: ENTITIES
+    ) => ACTION
+  ): ACTION {
+    return new Action(
+      this as Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
+      this[$entities]
+    )
   }
 }
 

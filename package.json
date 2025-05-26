@@ -700,6 +700,16 @@
         "default": "./dist/cjs/entity/actions/fromDTO/index.js"
       }
     },
+    "./database": {
+      "import": {
+        "types": "./dist/esm/database/index.d.ts",
+        "default": "./dist/esm/database/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/database/index.d.ts",
+        "default": "./dist/cjs/database/index.js"
+      }
+    },
     "./errors": {
       "import": {
         "types": "./dist/esm/errors/index.d.ts",
