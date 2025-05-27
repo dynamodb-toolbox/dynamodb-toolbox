@@ -712,12 +712,12 @@
     },
     "./database/actions/mcpToolkit": {
       "import": {
-        "types": "./dist/esm/entity/actions/mcpToolkit/index.d.ts",
-        "default": "./dist/esm/entity/actions/mcpToolkit/index.js"
+        "types": "./dist/esm/database/actions/mcpToolkit/index.d.ts",
+        "default": "./dist/esm/database/actions/mcpToolkit/index.js"
       },
       "require": {
-        "types": "./dist/cjs/entity/actions/mcpToolkit/index.d.ts",
-        "default": "./dist/cjs/entity/actions/mcpToolkit/index.js"
+        "types": "./dist/cjs/database/actions/mcpToolkit/index.d.ts",
+        "default": "./dist/cjs/database/actions/mcpToolkit/index.js"
       }
     },
     "./errors": {
