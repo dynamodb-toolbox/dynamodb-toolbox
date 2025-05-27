@@ -4,7 +4,8 @@ export type NoneMetricsOption = 'NONE'
 export type SizeMetricsOption = 'SIZE'
 export type MetricsOption = NoneMetricsOption | SizeMetricsOption
 
-export const metricsOptionsSet = new Set<MetricsOption>(['NONE', 'SIZE'])
+export const metricsOptions = ['NONE', 'SIZE'] as const satisfies readonly MetricsOption[]
+export const metricsOptionsSet = new Set<MetricsOption>(metricsOptions)
 
 export const parseMetricsOption = (metrics: MetricsOption): MetricsOption => {
   if (!metricsOptionsSet.has(metrics)) {

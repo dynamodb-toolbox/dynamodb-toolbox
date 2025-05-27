@@ -7,10 +7,13 @@ import type { ReturnValuesOnConditionFalseOption } from '~/options/returnValuesO
 
 export type PutItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
-export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturnValuesOption>([
+export const putItemCommandReturnValuesOptions = [
   'NONE',
   'ALL_OLD'
-])
+] as const satisfies readonly PutItemCommandReturnValuesOption[]
+export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturnValuesOption>(
+  putItemCommandReturnValuesOptions
+)
 
 export interface PutItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
