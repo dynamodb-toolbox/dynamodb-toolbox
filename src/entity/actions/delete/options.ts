@@ -7,8 +7,12 @@ import type { ReturnValuesOnConditionFalseOption } from '~/options/returnValuesO
 
 export type DeleteItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
+export const deleteItemCommandReturnValuesOptions = [
+  'NONE',
+  'ALL_OLD'
+] as const satisfies readonly DeleteItemCommandReturnValuesOption[]
 export const deleteItemCommandReturnValuesOptionsSet = new Set<DeleteItemCommandReturnValuesOption>(
-  ['NONE', 'ALL_OLD']
+  deleteItemCommandReturnValuesOptions
 )
 
 export interface DeleteItemOptions<ENTITY extends Entity = Entity> {
