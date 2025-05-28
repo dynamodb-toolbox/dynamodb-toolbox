@@ -1,9 +1,8 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 
-import { $entity } from '~/database/constants.js'
-import type { DB as DBEntity } from '~/database/utils/dbEntity.js'
 import { GetItemCommand } from '~/entity/actions/get/index.js'
+import type { Entity } from '~/entity/entity.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
 
@@ -21,10 +20,10 @@ const defaultGetOptionsSchema = z
 
 export const addGetEntityItemTool = (
   server: McpServer,
-  dbEntity: DBEntity,
+  entity: Entity,
   options: AddEntityToolsOptions
 ) => {
-  const { entityName, table } = dbEntity
+  const { entityName, table } = entity
   const { dbTableKey } = options
 
   const tableName = table.tableName !== undefined ? table.getName() : undefined
@@ -37,7 +36,7 @@ export const addGetEntityItemTool = (
   const getToolName = `ddb-tb_get-${entityName}-item-from-${dbTableKey}-table`
   let getToolDescription = `Get a '${entityName}' Item from the ${tableName ?? dbTableKey} Table.`
 
-  const { title, description } = dbEntity.meta
+  const { title, description } = entity.meta
   if (title !== undefined) {
     getToolDescription += `\n# ${title}`
   }
@@ -49,7 +48,7 @@ export const addGetEntityItemTool = (
     getToolName,
     getToolDescription,
     {
-      key: new ZodSchemer(dbEntity.schema).parser({
+      key: new ZodSchemer(entity.schema).parser({
         mode: 'key',
         transform: false
       }) as z.ZodTypeAny,
@@ -58,7 +57,7 @@ export const addGetEntityItemTool = (
     { title: getToolDescription, readOnlyHint: true },
     async ({ key, options }) => {
       try {
-        const Response = await new GetItemCommand(dbEntity[$entity], key, options).send()
+        const Response = await new GetItemCommand(entity, key, options).send()
 
         if (Response.Item === undefined) {
           return {

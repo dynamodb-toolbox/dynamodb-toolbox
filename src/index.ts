@@ -60,7 +60,7 @@ export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 export { Finder, SubSchema } from './schema/actions/finder/index.js'
 
 // tables
-export { Table, Table_, TableAction } from './table/index.js'
+export { Table, TableAction } from './table/index.js'
 export type { Index, LocalIndex, GlobalIndex, Key, TableMetadata } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
@@ -99,6 +99,7 @@ export { TableDTO } from './table/actions/dto/index.js'
 export type { ITableDTO } from './table/actions/dto/index.js'
 export { fromTableDTO } from './table/actions/fromDTO/index.js'
 export { TableRepository } from './table/actions/repository/index.js'
+export { Registry } from './table/actions/registry/index.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
