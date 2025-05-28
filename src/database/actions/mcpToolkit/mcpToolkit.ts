@@ -9,13 +9,13 @@ import type { AddToolsOptions } from './options.js'
 
 export class MCPToolkit<DATABASE extends Database> extends DatabaseAction<DATABASE> {
   addTools(mcpServer: McpServer, options: AddToolsOptions = {}): this {
-    for (const [tableDBKey, table] of Object.entries(this.database.tables)) {
-      for (const entity of Object.values(table.entities)) {
-        addEntityTools(mcpServer, entity, { ...options, tableDBKey })
+    for (const [dbTableKey, dbTable] of Object.entries(this.database.tables)) {
+      for (const entity of Object.values(dbTable.entities)) {
+        addEntityTools(mcpServer, entity, { ...options, dbTableKey })
       }
 
-      for (const [accessPatternDBKey, accessPattern] of Object.entries(table.accessPatterns)) {
-        addAccessPatternTool(mcpServer, accessPattern, { tableDBKey, accessPatternDBKey })
+      for (const [dbAccessPatternKey, accessPattern] of Object.entries(dbTable.accessPatterns)) {
+        addAccessPatternTool(mcpServer, accessPattern, { dbTableKey, dbAccessPatternKey })
       }
     }
 

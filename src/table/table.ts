@@ -8,9 +8,9 @@ import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $accessPatterns, $interceptor, $sentArgs } from './constants.js'
+import { $accessPatterns, $interceptor, $meta, $sentArgs } from './constants.js'
 import { $entities } from './constants.js'
-import type { Index, Key } from './types/index.js'
+import type { Index, Key, TableMetadata } from './types/index.js'
 
 export class Table<
   PARTITION_KEY extends Key = Key,
@@ -18,14 +18,16 @@ export class Table<
   INDEXES extends Record<string, Index> = Key extends PARTITION_KEY ? Record<string, Index> : {},
   ENTITY_ATTRIBUTE_SAVED_AS extends string = Key extends PARTITION_KEY ? string : '_et'
 > {
-  public documentClient?: DynamoDBDocumentClient
-  public tableName?: string | (() => string)
-  public partitionKey: PARTITION_KEY
-  public sortKey?: SORT_KEY
-  public indexes: INDEXES
-  public entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS;
+  documentClient?: DynamoDBDocumentClient
+  tableName?: string | (() => string)
+  readonly partitionKey: PARTITION_KEY
+  readonly sortKey?: SORT_KEY
+  readonly indexes: INDEXES
+  readonly entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS;
 
-  [$interceptor]?: (action: TableSendableAction) => any
+  [$interceptor]?: (action: TableSendableAction) => any;
+  [$entities]: Entity[];
+  [$meta]: TableMetadata
 
   constructor({
     documentClient,
@@ -53,6 +55,8 @@ export class Table<
     }
     this.indexes = indexes as INDEXES
     this.entityAttributeSavedAs = entityAttributeSavedAs
+    this[$entities] = []
+    this[$meta] = {}
   }
 
   getName(): string {
@@ -69,12 +73,6 @@ export class Table<
     }
   }
 
-  build<ACTION extends TableAction<this> = TableAction<this>>(
-    Action: new (table: this) => ACTION
-  ): ACTION {
-    return new Action(this)
-  }
-
   getDocumentClient = (): DynamoDBDocumentClient => {
     if (this.documentClient === undefined) {
       throw new DynamoDBToolboxError('actions.missingDocumentClient', {
@@ -83,6 +81,17 @@ export class Table<
     }
 
     return this.documentClient
+  }
+
+  build<ACTION extends TableAction<this, this[$entities]> = TableAction<this, this[$entities]>>(
+    Action: new (table: this, entities?: this[$entities]) => ACTION
+  ): ACTION {
+    return new Action(this, this[$entities])
+  }
+
+  meta(nextMetadata: TableMetadata): this {
+    this[$meta] = nextMetadata
+    return this
   }
 
   entities<NEXT_ENTITIES extends Entity[]>(
@@ -117,7 +126,7 @@ export class Table_<
     ITableAccessPattern | IEntityAccessPattern
   >
 > extends Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS> {
-  [$entities]: ENTITIES;
+  override [$entities]: ENTITIES;
   [$accessPatterns]: ACCESS_PATTERNS
 
   constructor(
@@ -204,24 +213,6 @@ export class Table_<
       },
       this[$entities],
       nextAccessPatterns
-    )
-  }
-
-  // @ts-ignore
-  override build<
-    ACTION extends TableAction<
-      Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
-      ENTITIES
-    > = TableAction<Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>, ENTITIES>
-  >(
-    Action: new (
-      table: Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
-      entities?: ENTITIES
-    ) => ACTION
-  ): ACTION {
-    return new Action(
-      this as Table<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS>,
-      this[$entities]
     )
   }
 }

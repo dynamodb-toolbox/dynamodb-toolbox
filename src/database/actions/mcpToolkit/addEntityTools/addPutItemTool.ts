@@ -1,9 +1,10 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 
+import { $entity } from '~/database/constants.js'
+import type { DB as DBEntity } from '~/database/utils/dbEntity.js'
 import { PutItemCommand } from '~/entity/actions/put/index.js'
 import { putItemCommandReturnValuesOptions } from '~/entity/actions/put/options.js'
-import type { Entity } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
@@ -22,11 +23,11 @@ const defaultPutOptionsSchema = z
 
 export const addPutEntityItemTool = (
   server: McpServer,
-  entity: Entity,
+  dbEntity: DBEntity,
   options: AddEntityToolsOptions
 ) => {
-  const { entityName, table } = entity
-  const { tableDBKey } = options
+  const { entityName, table } = dbEntity
+  const { dbTableKey } = options
 
   const tableName = table.tableName !== undefined ? table.getName() : undefined
   const hasTableName = tableName !== undefined
@@ -35,21 +36,28 @@ export const addPutEntityItemTool = (
     ? defaultPutOptionsSchema
     : defaultPutOptionsSchema.removeDefault().required({ tableName: true })
 
-  const putToolName = `ddb-tb_put-${entityName}-item-in-${tableDBKey}-table`.substring(0, 64)
-  const putToolDescription = `Put a '${entityName}' Item in the ${tableName ?? tableDBKey} Table.`
-  // TODO: Add metadata to Entities
+  const putToolName = `ddb-tb_put-${entityName}-item-in-${dbTableKey}-table`.substring(0, 64)
+  let putToolDescription = `Put a '${entityName}' Item in the ${tableName ?? dbTableKey} Table.`
+
+  const { title, description } = dbEntity.meta
+  if (title !== undefined) {
+    putToolDescription += `\n# ${title}`
+  }
+  if (description !== undefined) {
+    putToolDescription += `\n\n${description}.`
+  }
 
   server.tool(
     putToolName,
     putToolDescription,
     {
-      item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodTypeAny,
+      item: new ZodSchemer(dbEntity.schema).parser({ transform: false }) as z.ZodTypeAny,
       options: putOptionsSchema
     },
     { title: putToolDescription, readOnlyHint: false, destructiveHint: false },
     async ({ item, options }) => {
       try {
-        const Response = await new PutItemCommand(entity, item, options).send()
+        const Response = await new PutItemCommand(dbEntity[$entity], item, options).send()
 
         return {
           content: [{ type: 'text', text: JSON.stringify(Response) }]

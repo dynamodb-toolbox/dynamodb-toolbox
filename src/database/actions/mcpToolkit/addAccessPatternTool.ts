@@ -3,9 +3,9 @@ import { z } from 'zod'
 
 import {
   $meta as $entityMeta,
-  $schema as $entitySchema,
-  IAccessPattern as IEntityAccessPattern
-} from '~/entity/actions/accessPattern/index.js'
+  $schema as $entitySchema
+} from '~/entity/actions/accessPattern/constants.js'
+import { IAccessPattern as IEntityAccessPattern } from '~/entity/actions/accessPattern/index.js'
 import type { Entity } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { selectOptions } from '~/options/select.js'
@@ -13,9 +13,9 @@ import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
 import type { Schema } from '~/schema/index.js'
 import {
   $meta as $tableMeta,
-  $schema as $tableSchema,
-  IAccessPattern as ITableAccessPattern
-} from '~/table/actions/accessPattern/index.js'
+  $schema as $tableSchema
+} from '~/table/actions/accessPattern/constants.js'
+import { IAccessPattern as ITableAccessPattern } from '~/table/actions/accessPattern/index.js'
 import type { QueryCommand, QueryOptions } from '~/table/actions/query/index.js'
 import { $entities } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
@@ -38,14 +38,14 @@ const defaultQueryOptionsSchema = z
   .default({})
 
 interface AddAccessPatternToolOptions {
-  tableDBKey: string
-  accessPatternDBKey: string
+  dbTableKey: string
+  dbAccessPatternKey: string
 }
 
 export const addAccessPatternTool = (
   server: McpServer,
   accessPattern: IEntityAccessPattern | ITableAccessPattern,
-  { tableDBKey, accessPatternDBKey }: AddAccessPatternToolOptions
+  { dbTableKey, dbAccessPatternKey }: AddAccessPatternToolOptions
 ): void => {
   let table: Table | undefined = undefined
   let entity: Entity | undefined = undefined
@@ -73,7 +73,6 @@ export const addAccessPatternTool = (
     return
   }
 
-  const { title, description } = meta
   const tableName = table.tableName !== undefined ? table.getName() : undefined
   const hasTableName = tableName !== undefined
 
@@ -81,8 +80,10 @@ export const addAccessPatternTool = (
     ? defaultQueryOptionsSchema
     : defaultQueryOptionsSchema.removeDefault().required({ tableName: true })
 
-  const queryToolName = `ddb-tb_use-${accessPatternDBKey}-access-pattern`.substring(0, 64)
-  let queryToolDescription = `Query multiple ${entity !== undefined ? `'${entity.entityName}' ` : ''} Items from the ${tableName ?? tableDBKey} Table using the ${accessPatternDBKey} AccessPattern.`
+  const queryToolName = `ddb-tb_use-${dbAccessPatternKey}-access-pattern`.substring(0, 64)
+  let queryToolDescription = `Query multiple ${entity !== undefined ? `'${entity.entityName}' ` : ''} Items from the ${tableName ?? dbTableKey} Table using the ${dbAccessPatternKey} AccessPattern.`
+
+  const { title, description } = meta
   if (title !== undefined) {
     queryToolDescription += `\n# ${title}`
   }

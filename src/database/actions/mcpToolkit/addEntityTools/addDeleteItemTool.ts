@@ -1,9 +1,10 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 
+import { $entity } from '~/database/constants.js'
+import type { DB as DBEntity } from '~/database/utils/dbEntity.js'
 import { DeleteItemCommand } from '~/entity/actions/delete/index.js'
 import { deleteItemCommandReturnValuesOptions } from '~/entity/actions/delete/options.js'
-import type { Entity } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
@@ -22,11 +23,11 @@ const defaultDeleteOptionsSchema = z
 
 export const addDeleteEntityItemTool = (
   server: McpServer,
-  entity: Entity,
+  dbEntity: DBEntity,
   options: AddEntityToolsOptions
 ) => {
-  const { entityName, table } = entity
-  const { tableDBKey } = options
+  const { entityName, table } = dbEntity
+  const { dbTableKey } = options
 
   const tableName = table.tableName !== undefined ? table.getName() : undefined
   const hasTableName = tableName !== undefined
@@ -35,24 +36,34 @@ export const addDeleteEntityItemTool = (
     ? defaultDeleteOptionsSchema
     : defaultDeleteOptionsSchema.removeDefault().required({ tableName: true })
 
-  const deleteToolName = `ddb-tb_delete-${entityName}-item-from-${tableDBKey}-table`.substring(
+  const deleteToolName = `ddb-tb_delete-${entityName}-item-from-${dbTableKey}-table`.substring(
     0,
     64
   )
-  const deleteToolDescription = `Delete a '${entityName}' Item from the ${tableName ?? tableDBKey} Table.`
-  // TODO: Add metadata to Entities
+  let deleteToolDescription = `Delete a '${entityName}' Item from the ${tableName ?? dbTableKey} Table.`
+
+  const { title, description } = dbEntity.meta
+  if (title !== undefined) {
+    deleteToolDescription += `\n# ${title}`
+  }
+  if (description !== undefined) {
+    deleteToolDescription += `\n\n${description}.`
+  }
 
   server.tool(
     deleteToolName,
     deleteToolDescription,
     {
-      key: new ZodSchemer(entity.schema).parser({ mode: 'key', transform: false }) as z.ZodTypeAny,
+      key: new ZodSchemer(dbEntity.schema).parser({
+        mode: 'key',
+        transform: false
+      }) as z.ZodTypeAny,
       options: deleteOptionsSchema
     },
     { title: deleteToolDescription, readOnlyHint: false, destructiveHint: true },
     async ({ key, options }) => {
       try {
-        const Response = await new DeleteItemCommand(entity, key, options).send()
+        const Response = await new DeleteItemCommand(dbEntity[$entity], key, options).send()
 
         return {
           content: [{ type: 'text', text: JSON.stringify(Response) }]
