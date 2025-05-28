@@ -10,13 +10,7 @@ import { assignAccessRole, putAccessRole } from './putAccessRole.js'
 import { putAWSAccount } from './putAwsAccount.js'
 import { putEntity } from './putEntity.js'
 import { putTable } from './putTable.js'
-import type {
-  AWSAccount,
-  AWSConfig,
-  FetchOpts,
-  SyncedEntityMetadata,
-  SyncedTableMetadata
-} from './types.js'
+import type { AWSAccount, FetchOpts, SyncedEntityMetadata, SyncedTableMetadata } from './types.js'
 
 export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATABASE> {
   static override actionName = 'synchronize' as const
@@ -24,11 +18,11 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
   apiUrl: string;
   [$awsAccount]?: AWSAccount
 
-  constructor(database: DATABASE, awsConfig?: AWSConfig) {
+  constructor(database: DATABASE, awsAccount?: AWSAccount) {
     super(database)
 
     this.apiUrl = 'https://api.dynamodb-toolshack.com'
-    this[$awsAccount] = awsConfig
+    this[$awsAccount] = awsAccount
   }
 
   awsAccount(awsAccount: AWSAccount): Synchronizer<DATABASE> {
@@ -45,18 +39,19 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
     fetch?: typeof fetch
   }): Promise<void> {
     const fetchOpts: FetchOpts = { apiUrl: this.apiUrl, fetch: _fetch, apiKey }
-    const awsConfig = this[$awsAccount]
+    const awsAccount = this[$awsAccount]
 
-    if (awsConfig === undefined) {
+    if (awsAccount === undefined) {
       throw new Error('Synchronizer incomplete: Missing "awsConfig" property')
     }
+
     const {
       awsAccountId,
       awsRegion,
       title: awsAccountTitle = String(awsAccountId),
       color: awsAccountColor = 'blue',
       description: awsAccountDescription
-    } = awsConfig
+    } = awsAccount
 
     await putAWSAccount(
       {
@@ -79,16 +74,17 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
       await putTable(
         {
           tableName,
-          ...awsConfig,
+          ...awsAccount,
           ...tableDTO,
-          icon: tableMetadata.icon ?? 'database-zap',
           title: tableMetadata.title,
-          description: tableMetadata.description
+          description: tableMetadata.description,
+          icon: tableMetadata._ddbToolshack?.icon ?? 'database-zap'
         },
         fetchOpts
       )
 
-      const { accessRole } = tableMetadata
+      const accessRole = tableMetadata._ddbToolshack?.accessRole
+
       if (accessRole !== undefined) {
         const { roleName } = accessRole
 
@@ -117,9 +113,9 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
             awsRegion,
             tableName,
             ...entityDTO,
-            icon: entityMetadata.icon ?? 'database-zap',
             title: entityMetadata.title,
-            description: entityMetadata.description
+            description: entityMetadata.description,
+            icon: entityMetadata._ddbToolshack?.icon ?? 'database-zap'
           },
           fetchOpts
         )
