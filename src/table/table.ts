@@ -8,7 +8,7 @@ import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
 import { isString } from '~/utils/validation/isString.js'
 
-import { $accessPatterns, $interceptor, $meta, $sentArgs } from './constants.js'
+import { $accessPatterns, $interceptor, $sentArgs } from './constants.js'
 import { $entities } from './constants.js'
 import type { Index, Key, TableMetadata } from './types/index.js'
 
@@ -26,8 +26,9 @@ export class Table<
   readonly entityAttributeSavedAs: ENTITY_ATTRIBUTE_SAVED_AS;
 
   [$interceptor]?: (action: TableSendableAction) => any;
-  [$entities]: Entity[];
-  [$meta]: TableMetadata
+  [$entities]: Entity[]
+
+  public meta: TableMetadata
 
   constructor({
     documentClient,
@@ -38,7 +39,8 @@ export class Table<
     partitionKey,
     sortKey,
     indexes = {} as INDEXES,
-    entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS
+    entityAttributeSavedAs = '_et' as ENTITY_ATTRIBUTE_SAVED_AS,
+    meta = {}
   }: {
     documentClient?: DynamoDBDocumentClient
     name?: string | (() => string)
@@ -46,6 +48,7 @@ export class Table<
     sortKey?: NarrowObject<SORT_KEY>
     indexes?: NarrowObjectRec<INDEXES>
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
+    meta?: TableMetadata
   }) {
     this.documentClient = documentClient
     this.tableName = name
@@ -56,7 +59,7 @@ export class Table<
     this.indexes = indexes as INDEXES
     this.entityAttributeSavedAs = entityAttributeSavedAs
     this[$entities] = []
-    this[$meta] = {}
+    this.meta = meta
   }
 
   getName(): string {
@@ -89,11 +92,6 @@ export class Table<
     return new Action(this, this[$entities])
   }
 
-  meta(nextMetadata: TableMetadata): this {
-    this[$meta] = nextMetadata
-    return this
-  }
-
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): Table_<PARTITION_KEY, SORT_KEY, INDEXES, ENTITY_ATTRIBUTE_SAVED_AS, NEXT_ENTITIES> {
@@ -107,7 +105,8 @@ export class Table<
         partitionKey: this.partitionKey,
         sortKey: this.sortKey,
         indexes: this.indexes,
-        entityAttributeSavedAs: this.entityAttributeSavedAs
+        entityAttributeSavedAs: this.entityAttributeSavedAs,
+        meta: this.meta
       },
       nextEntities
     )
@@ -137,6 +136,7 @@ export class Table_<
       sortKey?: NarrowObject<SORT_KEY>
       indexes?: NarrowObjectRec<INDEXES>
       entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
+      meta?: TableMetadata
     },
     entities = [] as unknown as ENTITIES,
     accessPatterns = {} as ACCESS_PATTERNS

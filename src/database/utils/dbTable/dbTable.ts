@@ -1,20 +1,17 @@
 import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 
-import { $entities, $meta } from '~/table/constants.js'
-import type { Table, TableAction } from '~/table/index.js'
-import type { Table_ } from '~/table/index.js'
-import type { TableMetadata } from '~/table/types/index.js'
+import { $entities } from '~/table/constants.js'
+import type { Table, TableAction, TableMetadata, Table_ } from '~/table/index.js'
 
 import { $table } from '../../constants.js'
-import { dbTableAccessPatterns, dbTableEntities, dbTableQuery } from './utils.js'
 import type { DBTableAccessPatterns, DBTableEntities, DBTableQuery } from './utils.js'
+import { dbTableAccessPatterns, dbTableEntities, dbTableQuery } from './utils.js'
 
 export class DB<TABLE extends Table | Table_ = Table | Table_> {
   [$table]: TABLE
   entities: DBTableEntities<TABLE>
   accessPatterns: DBTableAccessPatterns<TABLE>
   query: DBTableQuery<TABLE>
-  meta: TableMetadata
 
   // Original Table Props & methods
   readonly partitionKey: TABLE['partitionKey']
@@ -29,7 +26,6 @@ export class DB<TABLE extends Table | Table_ = Table | Table_> {
     this.entities = dbTableEntities(table)
     this.accessPatterns = dbTableAccessPatterns(table)
     this.query = dbTableQuery(table)
-    this.meta = table[$meta]
 
     this.partitionKey = table.partitionKey
     this.sortKey = table.sortKey
@@ -39,20 +35,28 @@ export class DB<TABLE extends Table | Table_ = Table | Table_> {
     this.getDocumentClient = table.getDocumentClient
   }
 
+  get documentClient(): DynamoDBDocumentClient | undefined {
+    return this[$table].documentClient
+  }
+
   set documentClient(documentClient: DynamoDBDocumentClient | undefined) {
     this[$table].documentClient = documentClient
   }
 
-  get documentClient(): DynamoDBDocumentClient | undefined {
-    return this[$table].documentClient
+  get tableName(): string | (() => string) | undefined {
+    return this[$table].tableName
   }
 
   set tableName(tableName: string | (() => string) | undefined) {
     this[$table].tableName = tableName
   }
 
-  get tableName(): string | (() => string) | undefined {
-    return this[$table].tableName
+  get meta(): TableMetadata {
+    return this[$table].meta
+  }
+
+  set meta(meta: TableMetadata) {
+    this[$table].meta = meta
   }
 
   build<

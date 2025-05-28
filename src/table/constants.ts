@@ -9,6 +9,3 @@ export type $sentArgs = typeof $sentArgs
 
 export const $accessPatterns = Symbol('$accessPatterns')
 export type $accessPatterns = typeof $accessPatterns
-
-export const $meta = Symbol('$meta')
-export type $meta = typeof $meta
