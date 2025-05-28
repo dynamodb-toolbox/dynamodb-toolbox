@@ -5,7 +5,7 @@ import type { Table } from '~/table/index.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { If } from '~/types/if.js'
 
-import { $interceptor, $meta, $sentArgs } from './constants.js'
+import { $interceptor, $sentArgs } from './constants.js'
 import type { EntityMetadata } from './types/index.js'
 import type {
   BuildEntitySchema,
@@ -51,8 +51,9 @@ export class Entity<
       : ValidValue<ItemSchema<ATTRIBUTES>, { mode: 'key' }>
   ) => PrimaryKey<TABLE>;
 
-  [$interceptor]?: (action: EntitySendableAction) => any;
-  [$meta]: EntityMetadata
+  [$interceptor]?: (action: EntitySendableAction) => any
+
+  public meta: EntityMetadata
 
   constructor({
     name,
@@ -60,13 +61,15 @@ export class Entity<
     schema,
     computeKey,
     entityAttribute = true as ENTITY_ATTR_OPTIONS,
-    timestamps = true as NarrowOptions<TIMESTAMPS_OPTIONS>
+    timestamps = true as NarrowOptions<TIMESTAMPS_OPTIONS>,
+    meta = {}
   }: {
     name: NAME
     table: TABLE
     schema: SchemaOf<ATTRIBUTES>
     entityAttribute?: ENTITY_ATTR_OPTIONS
     timestamps?: NarrowOptions<TIMESTAMPS_OPTIONS>
+    meta?: EntityMetadata
   } & If<
     NeedsKeyCompute<ATTRIBUTES, TABLE>,
     {
@@ -94,7 +97,7 @@ export class Entity<
 
     this.computeKey = computeKey as any
 
-    this[$meta] = {}
+    this.meta = meta
   }
 
   build<ACTION extends EntityAction<this> = EntityAction<this>>(
@@ -102,17 +105,12 @@ export class Entity<
   ): ACTION {
     return new Action(this)
   }
-
-  meta(nextMetadata: EntityMetadata): this {
-    this[$meta] = nextMetadata
-    return this
-  }
 }
 
 export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string
 
-  constructor(public entity: ENTITY) {}
+  constructor(readonly entity: ENTITY) {}
 }
 
 export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {

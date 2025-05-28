@@ -1,10 +1,9 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 
-import { $entity } from '~/database/constants.js'
-import type { DB as DBEntity } from '~/database/utils/dbEntity.js'
 import { DeleteItemCommand } from '~/entity/actions/delete/index.js'
 import { deleteItemCommandReturnValuesOptions } from '~/entity/actions/delete/options.js'
+import type { Entity } from '~/entity/entity.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
@@ -23,10 +22,10 @@ const defaultDeleteOptionsSchema = z
 
 export const addDeleteEntityItemTool = (
   server: McpServer,
-  dbEntity: DBEntity,
+  entity: Entity,
   options: AddEntityToolsOptions
 ) => {
-  const { entityName, table } = dbEntity
+  const { entityName, table } = entity
   const { dbTableKey } = options
 
   const tableName = table.tableName !== undefined ? table.getName() : undefined
@@ -42,7 +41,7 @@ export const addDeleteEntityItemTool = (
   )
   let deleteToolDescription = `Delete a '${entityName}' Item from the ${tableName ?? dbTableKey} Table.`
 
-  const { title, description } = dbEntity.meta
+  const { title, description } = entity.meta
   if (title !== undefined) {
     deleteToolDescription += `\n# ${title}`
   }
@@ -54,7 +53,7 @@ export const addDeleteEntityItemTool = (
     deleteToolName,
     deleteToolDescription,
     {
-      key: new ZodSchemer(dbEntity.schema).parser({
+      key: new ZodSchemer(entity.schema).parser({
         mode: 'key',
         transform: false
       }) as z.ZodTypeAny,
@@ -63,7 +62,7 @@ export const addDeleteEntityItemTool = (
     { title: deleteToolDescription, readOnlyHint: false, destructiveHint: true },
     async ({ key, options }) => {
       try {
-        const Response = await new DeleteItemCommand(dbEntity[$entity], key, options).send()
+        const Response = await new DeleteItemCommand(entity, key, options).send()
 
         return {
           content: [{ type: 'text', text: JSON.stringify(Response) }]

@@ -15,12 +15,16 @@ export interface AWSAccount extends AWSConfig {
 }
 
 export interface SyncedTableMetadata extends TableMetadata {
-  icon?: string
-  accessRole?: AccessRole
+  _ddbToolshack?: {
+    icon?: string
+    accessRole?: AccessRole
+  }
 }
 
 export interface SyncedEntityMetadata extends EntityMetadata {
-  icon?: string
+  _ddbToolshack?: {
+    icon?: string
+  }
 }
 
 export interface FetchOpts {

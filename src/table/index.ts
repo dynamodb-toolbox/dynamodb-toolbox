@@ -1,4 +1,5 @@
-export { Table, Table_, TableAction } from './table.js'
+export { Table, TableAction } from './table.js'
+export type { TableSendableAction } from './table.js'
 export { $entities } from './constants.js'
 export type {
   IndexableKeyType,

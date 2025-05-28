@@ -1,10 +1,9 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 
-import { $entity } from '~/database/constants.js'
-import type { DB as DBEntity } from '~/database/utils/dbEntity.js'
 import { PutItemCommand } from '~/entity/actions/put/index.js'
 import { putItemCommandReturnValuesOptions } from '~/entity/actions/put/options.js'
+import type { Entity } from '~/entity/entity.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
@@ -23,10 +22,10 @@ const defaultPutOptionsSchema = z
 
 export const addPutEntityItemTool = (
   server: McpServer,
-  dbEntity: DBEntity,
+  entity: Entity,
   options: AddEntityToolsOptions
 ) => {
-  const { entityName, table } = dbEntity
+  const { entityName, table } = entity
   const { dbTableKey } = options
 
   const tableName = table.tableName !== undefined ? table.getName() : undefined
@@ -39,7 +38,7 @@ export const addPutEntityItemTool = (
   const putToolName = `ddb-tb_put-${entityName}-item-in-${dbTableKey}-table`.substring(0, 64)
   let putToolDescription = `Put a '${entityName}' Item in the ${tableName ?? dbTableKey} Table.`
 
-  const { title, description } = dbEntity.meta
+  const { title, description } = entity.meta
   if (title !== undefined) {
     putToolDescription += `\n# ${title}`
   }
@@ -51,13 +50,13 @@ export const addPutEntityItemTool = (
     putToolName,
     putToolDescription,
     {
-      item: new ZodSchemer(dbEntity.schema).parser({ transform: false }) as z.ZodTypeAny,
+      item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodTypeAny,
       options: putOptionsSchema
     },
     { title: putToolDescription, readOnlyHint: false, destructiveHint: false },
     async ({ item, options }) => {
       try {
-        const Response = await new PutItemCommand(dbEntity[$entity], item, options).send()
+        const Response = await new PutItemCommand(entity, item, options).send()
 
         return {
           content: [{ type: 'text', text: JSON.stringify(Response) }]
