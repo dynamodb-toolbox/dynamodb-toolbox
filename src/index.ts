@@ -60,7 +60,8 @@ export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 export { Finder, SubSchema } from './schema/actions/finder/index.js'
 
 // tables
-export { Table, TableAction, $entities } from './table/index.js'
+export { Table, Table_, TableAction } from './table/index.js'
+export type { Index, LocalIndex, GlobalIndex, Key, TableMetadata } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
 export { IQueryCommand, QueryCommand } from './table/actions/query/index.js'
@@ -114,7 +115,8 @@ export type {
   WriteItemOptions,
   DecodedItem,
   FormattedItem,
-  ReadItemOptions
+  ReadItemOptions,
+  EntityMetadata
 } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'

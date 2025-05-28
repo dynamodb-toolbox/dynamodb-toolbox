@@ -440,16 +440,6 @@
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
-    "./table/actions/synchronize": {
-      "import": {
-        "types": "./dist/esm/table/actions/synchronize/index.d.ts",
-        "default": "./dist/esm/table/actions/synchronize/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/table/actions/synchronize/index.d.ts",
-        "default": "./dist/cjs/table/actions/synchronize/index.js"
-      }
-    },
     "./entity": {
       "import": {
         "types": "./dist/esm/entity/index.d.ts",
@@ -718,6 +708,16 @@
       "require": {
         "types": "./dist/cjs/database/actions/mcpToolkit/index.d.ts",
         "default": "./dist/cjs/database/actions/mcpToolkit/index.js"
+      }
+    },
+    "./database/actions/synchronize": {
+      "import": {
+        "types": "./dist/esm/database/actions/synchronize/index.d.ts",
+        "default": "./dist/esm/database/actions/synchronize/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/database/actions/synchronize/index.d.ts",
+        "default": "./dist/cjs/database/actions/synchronize/index.js"
       }
     },
     "./errors": {

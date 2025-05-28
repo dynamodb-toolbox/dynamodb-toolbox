@@ -1,8 +1,9 @@
 import type { A } from 'ts-toolbelt'
 
-import { $entities, Entity, QueryCommand, Table, item, map, number, string } from '~/index.js'
+import { Entity, QueryCommand, Table, item, map, number, string } from '~/index.js'
 import { $options, $query } from '~/table/actions/query/constants.js'
 import type { Query } from '~/table/actions/query/index.js'
+import { $entities } from '~/table/constants.js'
 
 import { AccessPattern } from './accessPattern.js'
 import type { IAccessPattern } from './accessPattern.js'
