@@ -111,6 +111,42 @@ export class Table<
       nextEntities
     )
   }
+
+  accessPatterns<
+    NEXT_ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern>
+  >(
+    nextAccessPatterns: NEXT_ACCESS_PATTERNS
+  ): Table_<
+    PARTITION_KEY,
+    SORT_KEY,
+    INDEXES,
+    ENTITY_ATTRIBUTE_SAVED_AS,
+    Entity[],
+    NEXT_ACCESS_PATTERNS
+  > {
+    return new Table_<
+      PARTITION_KEY,
+      SORT_KEY,
+      INDEXES,
+      ENTITY_ATTRIBUTE_SAVED_AS,
+      Entity[],
+      NEXT_ACCESS_PATTERNS
+    >(
+      /**
+       * @debt v3 "Just provide `this` once name is renamed to tableName"
+       */
+      {
+        documentClient: this.documentClient,
+        name: this.tableName,
+        partitionKey: this.partitionKey,
+        sortKey: this.sortKey,
+        indexes: this.indexes,
+        entityAttributeSavedAs: this.entityAttributeSavedAs
+      },
+      this[$entities],
+      nextAccessPatterns
+    )
+  }
 }
 
 // NOTE: Need to be kept in the same file as Table to avoid circular dep
@@ -180,7 +216,7 @@ export class Table_<
     )
   }
 
-  accessPatterns<
+  override accessPatterns<
     NEXT_ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern>
   >(
     nextAccessPatterns: NEXT_ACCESS_PATTERNS
