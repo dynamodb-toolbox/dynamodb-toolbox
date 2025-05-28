@@ -1,19 +1,22 @@
 import type { Table } from '~/table/index.js'
 import type { Table_ } from '~/table/index.js'
 
+import type { DatabaseMetadata } from './types.js'
 import { DB as DBTable } from './utils/dbTable/index.js'
 
 export class Database<
   TABLES extends Record<string, Table | Table_> = Record<string, Table | Table_>
 > {
-  public tables: {
+  readonly tables: {
     [KEY in keyof TABLES]: DBTable<TABLES[KEY]>
   }
+  public meta: DatabaseMetadata
 
-  constructor(tables = {} as TABLES) {
+  constructor(tables: TABLES, { meta = {} }: { meta?: DatabaseMetadata } = {}) {
     this.tables = Object.fromEntries(
       Object.entries(tables).map(([key, table]) => [key, new DBTable(table)])
     ) as { [KEY in keyof TABLES]: DBTable<TABLES[KEY]> }
+    this.meta = meta
   }
 
   build<ACTION extends DatabaseAction<this> = DatabaseAction<this>>(
@@ -26,5 +29,5 @@ export class Database<
 export class DatabaseAction<DATABASE extends Database = Database> {
   static actionName: string
 
-  constructor(public database: DATABASE) {}
+  constructor(readonly database: DATABASE) {}
 }

@@ -110,7 +110,7 @@ export class Entity<
 export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string
 
-  constructor(public entity: ENTITY) {}
+  constructor(readonly entity: ENTITY) {}
 }
 
 export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {

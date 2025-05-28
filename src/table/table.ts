@@ -223,7 +223,7 @@ export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] 
   [$entities]: ENTITIES
 
   constructor(
-    public table: TABLE,
+    readonly table: TABLE,
     entities = [] as unknown as ENTITIES
   ) {
     this[$entities] = entities
