@@ -1,39 +1,18 @@
-import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
-
 import type { IAccessPattern as IEntityAccessPattern } from '~/entity/actions/accessPattern/index.js'
 import type { Entity } from '~/entity/index.js'
 import type { IAccessPattern as ITableAccessPattern } from '~/table/actions/accessPattern/index.js'
-import { $interceptor } from '~/table/constants.js'
-import type { Table, TableMetadata, TableSendableAction } from '~/table/index.js'
+import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 
 export class Registry<
-    TABLE extends Table = Table,
-    ENTITIES extends Entity[] = Entity[],
-    ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern> = Record<
-      string,
-      ITableAccessPattern | IEntityAccessPattern
-    >
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern> = Record<
+    string,
+    ITableAccessPattern | IEntityAccessPattern
   >
-  extends TableAction<TABLE, ENTITIES>
-  implements
-    Table<
-      TABLE['partitionKey'],
-      NonNullable<TABLE['sortKey']>,
-      TABLE['indexes'],
-      TABLE['entityAttributeSavedAs']
-    >
-{
-  static override actionName = 'registered-table' as const
-
-  readonly partitionKey: TABLE['partitionKey']
-  readonly sortKey?: TABLE['sortKey']
-  readonly indexes: TABLE['indexes']
-  readonly entityAttributeSavedAs: TABLE['entityAttributeSavedAs']
-  readonly getName: TABLE['getName']
-  readonly getDocumentClient: TABLE['getDocumentClient'];
-
-  [$interceptor]?: (action: TableSendableAction) => any
+> extends TableAction<TABLE, ENTITIES> {
+  static override actionName = 'registry' as const
 
   readonly entities: RegistryEntities<ENTITIES>
   readonly accessPatterns: ACCESS_PATTERNS
@@ -41,43 +20,27 @@ export class Registry<
 
   constructor(
     table: TABLE,
-    entities = [] as unknown as ENTITIES,
-    accessPatterns = {} as ACCESS_PATTERNS
+    _entities = [] as unknown as ENTITIES,
+    accessPatterns = {} as ACCESS_PATTERNS,
+    {
+      entities = registryEntities(_entities),
+      query = registryQueries(accessPatterns)
+    }: { entities?: RegistryEntities<ENTITIES>; query?: RegistryQueries<ACCESS_PATTERNS> } = {}
   ) {
-    super(table, entities)
+    super(table, _entities)
 
-    this.partitionKey = table.partitionKey
-    this.sortKey = table.sortKey
-    this.indexes = table.indexes
-    this.entityAttributeSavedAs = table.entityAttributeSavedAs
-    this.getName = table.getName
-    this.getDocumentClient = table.getDocumentClient
-
-    this.entities = registryEntities(entities)
+    this.entities = entities
     this.accessPatterns = accessPatterns
-    this.query = registryQueries(accessPatterns)
-  }
-
-  get documentClient(): DynamoDBDocumentClient | undefined {
-    return this.table.documentClient
-  }
-
-  set documentClient(documentClient: DynamoDBDocumentClient | undefined) {
-    this.table.documentClient = documentClient
-  }
-
-  get meta(): TableMetadata {
-    return this.table.meta
-  }
-
-  set meta(meta: TableMetadata) {
-    this.table.meta = meta
+    this.query = query
   }
 
   registerEntities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): Registry<TABLE, NEXT_ENTITIES> {
-    return new Registry(this.table, nextEntities)
+    return new Registry(this.table, nextEntities, this.accessPatterns, {
+      entities: registryEntities(nextEntities),
+      query: this.query
+    })
   }
 
   registerAccessPatterns<
@@ -86,15 +49,15 @@ export class Registry<
     return new Registry<TABLE, ENTITIES, NEXT_ACCESS_PATTERNS>(
       this.table,
       this[$entities],
-      nextAccessPatterns
+      nextAccessPatterns,
+      { entities: this.entities, query: registryQueries(nextAccessPatterns) }
     )
   }
 
-  // @ts-ignore
-  build<ACTION extends TableAction<this, this[$entities]> = TableAction<this, this[$entities]>>(
-    Action: new (table: this, entities?: this[$entities]) => ACTION
+  build<ACTION extends TableAction<TABLE, ENTITIES> = TableAction<TABLE, ENTITIES>>(
+    Action: new (table: TABLE, entities?: ENTITIES) => ACTION
   ): ACTION {
-    return new Action(this, this[$entities])
+    return new Action(this.table, this[$entities])
   }
 }
 
