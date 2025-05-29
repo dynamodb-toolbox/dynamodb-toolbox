@@ -63,13 +63,13 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
       fetchOpts
     )
 
-    for (const table of Object.values(this.database.tables)) {
-      const { tableName, ...tableDTO } = table.build(TableDTO).toJSON()
+    for (const registry of Object.values(this.database.tables)) {
+      const { tableName, ...tableDTO } = registry.build(TableDTO).toJSON()
       if (tableName === undefined) {
         throw new Error('tableName should be provided')
       }
 
-      const tableMetadata = table.meta as SyncedTableMetadata
+      const tableMetadata = registry.table.meta as SyncedTableMetadata
 
       await putTable(
         {
@@ -102,7 +102,7 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
         unknownEntityNames = new Set(tableEntityNames)
       }
 
-      for (const entity of Object.values(table.entities)) {
+      for (const entity of Object.values(registry.entities)) {
         const entityDTO = entity.build(EntityDTO).toJSON()
 
         const entityMetadata = entity.meta as SyncedEntityMetadata
