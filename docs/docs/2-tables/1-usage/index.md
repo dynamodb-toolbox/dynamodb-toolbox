@@ -9,8 +9,6 @@ import TabItem from '@theme/TabItem';
 
 Each **Table** instance describes the configuration of a deployed DynamoDB Table: Its **name**, **primary key**, **secondary indexes**, and more.
 
-<!-- _They are also used to organize and coordinate operations between **entities**. Tables support a number of actions that allow you to interact with your entities including performing **queries**, **scans**, **batch gets** and **batch writes**._ -->
-
 ```typescript
 import { Table } from 'dynamodb-toolbox/table'
 
@@ -281,6 +279,29 @@ const MyTable = new Table({
 ☝️ This property **cannot be updated** once your Table has its first item (at least not without a data migration first), so choose wisely!
 
 :::
+
+### `meta`
+
+Attaches metadata to the `Table` (as an object property).
+
+The `meta` object can include a `title` and `description`, both of which must be strings. Additional fields can be of any type:
+
+```ts
+const MyTable = new Table({
+  ...
+  meta: {
+    title: 'Pokedex',
+    description: 'An Awesome Table for development use',
+    other: { field: 'of any type' }
+  }
+})
+
+// 👇 Directly access/modify metadata
+console.log(MyTable.meta)
+MyTable.meta.foo = 'A new field'
+```
+
+Although optional, the meta property can be helpful in scenarios like [describing a MCP Server](../../5-databases/2-actions/1-mcp-toolkit/index.md) or [synchronizing with DynamoDB-Toolshack](../../5-databases//2-actions/2-synchronize/index.md).
 
 ## Building Table Actions
 
