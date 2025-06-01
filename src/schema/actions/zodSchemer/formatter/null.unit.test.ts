@@ -60,6 +60,23 @@ describe('zodSchemer > formatter > nul', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNull = (input: null): boolean => input === null
+      const schema = nul().validate(isNull)
+      const output = schemaZodFormatter(schema)
+      const expected = z.null().refine(isNull)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodNull)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodNull)
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effect if transform is set', () => {
       const transformer = {

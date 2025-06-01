@@ -108,8 +108,8 @@ Allows modifying schema values during the [transformation step](../17-actions/1-
 
 ```ts
 const addOne = {
-  parse: (input: number) => input + 1,
-  format: (saved: number) => saved - 1
+  encode: (input: number) => input + 1,
+  decode: (saved: number) => saved - 1
 }
 
 // Saves the value plus one

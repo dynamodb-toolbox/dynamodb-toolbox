@@ -11,12 +11,13 @@ export type SelectOption =
   | CountSelectOption
   | SpecificAttributesSelectOption
 
-export const selectOptionsSet = new Set<SelectOption>([
+export const selectOptions = [
   'ALL_ATTRIBUTES',
   'ALL_PROJECTED_ATTRIBUTES',
   'COUNT',
   'SPECIFIC_ATTRIBUTES'
-])
+] as const satisfies readonly SelectOption[]
+export const selectOptionsSet = new Set<SelectOption>(selectOptions)
 
 export const parseSelectOption = (
   select: SelectOption,

@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
@@ -18,11 +20,14 @@ export type StringZodParser<
     WithOptional<
       SCHEMA,
       OPTIONS,
-      SCHEMA['props'] extends { enum: [ResolvedStringSchema] }
-        ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
-        : SCHEMA['props'] extends { enum: [ResolvedStringSchema, ...ResolvedStringSchema[]] }
-          ? z.ZodEnum<SCHEMA['props']['enum']>
-          : z.ZodString
+      WithValidate<
+        SCHEMA,
+        SCHEMA['props'] extends { enum: [ResolvedStringSchema] }
+          ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+          : SCHEMA['props'] extends { enum: [ResolvedStringSchema, ...ResolvedStringSchema[]] }
+            ? z.ZodEnum<SCHEMA['props']['enum']>
+            : z.ZodString
+      >
     >
   >
 >
@@ -45,6 +50,6 @@ export const getStringZodParser = (
   return withEncoding(
     schema,
     options,
-    withDefault(schema, options, withOptional(schema, options, zodFormatter))
+    withDefault(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
   )
 }

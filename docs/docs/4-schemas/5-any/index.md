@@ -99,8 +99,8 @@ Allows modifying schema values during the [transformation step](../17-actions/1-
 
 ```ts
 const jsonStringify = {
-  parse: JSON.stringify,
-  format: JSON.parse
+  encode: JSON.stringify,
+  decode: JSON.parse
 }
 
 // JSON stringifies the value

@@ -33,6 +33,7 @@
     "@arethetypeswrong/cli": "^0.15.4",
     "@aws-sdk/client-dynamodb": "^3.687.0",
     "@aws-sdk/lib-dynamodb": "^3.687.0",
+    "@modelcontextprotocol/sdk": "^1.12.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
@@ -59,8 +60,7 @@
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0",
-    "zod": "^3.0.0"
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
   },
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json && echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",
@@ -380,6 +380,16 @@
         "default": "./dist/cjs/table/actions/batchWrite/index.js"
       }
     },
+    "./table/actions/accessPattern": {
+      "import": {
+        "types": "./dist/esm/table/actions/accessPattern/index.d.ts",
+        "default": "./dist/esm/table/actions/accessPattern/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/accessPattern/index.d.ts",
+        "default": "./dist/cjs/table/actions/accessPattern/index.js"
+      }
+    },
     "./table/actions/parsePrimaryKey": {
       "import": {
         "types": "./dist/esm/table/actions/parsePrimaryKey/index.d.ts",
@@ -428,16 +438,6 @@
       "require": {
         "types": "./dist/cjs/table/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
-      }
-    },
-    "./table/actions/synchronize": {
-      "import": {
-        "types": "./dist/esm/table/actions/synchronize/index.d.ts",
-        "default": "./dist/esm/table/actions/synchronize/index.js"
-      },
-      "require": {
-        "types": "./dist/cjs/table/actions/synchronize/index.d.ts",
-        "default": "./dist/cjs/table/actions/synchronize/index.js"
       }
     },
     "./entity": {
@@ -600,6 +600,16 @@
         "default": "./dist/cjs/entity/actions/transactCheck/index.js"
       }
     },
+    "./entity/actions/accessPattern": {
+      "import": {
+        "types": "./dist/esm/entity/actions/accessPattern/index.d.ts",
+        "default": "./dist/esm/entity/actions/accessPattern/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/entity/actions/accessPattern/index.d.ts",
+        "default": "./dist/cjs/entity/actions/accessPattern/index.js"
+      }
+    },
     "./entity/actions/parse": {
       "import": {
         "types": "./dist/esm/entity/actions/parse/index.d.ts",
@@ -678,6 +688,36 @@
       "require": {
         "types": "./dist/cjs/entity/actions/fromDTO/index.d.ts",
         "default": "./dist/cjs/entity/actions/fromDTO/index.js"
+      }
+    },
+    "./database": {
+      "import": {
+        "types": "./dist/esm/database/index.d.ts",
+        "default": "./dist/esm/database/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/database/index.d.ts",
+        "default": "./dist/cjs/database/index.js"
+      }
+    },
+    "./database/actions/mcpToolkit": {
+      "import": {
+        "types": "./dist/esm/database/actions/mcpToolkit/index.d.ts",
+        "default": "./dist/esm/database/actions/mcpToolkit/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/database/actions/mcpToolkit/index.d.ts",
+        "default": "./dist/cjs/database/actions/mcpToolkit/index.js"
+      }
+    },
+    "./database/actions/synchronize": {
+      "import": {
+        "types": "./dist/esm/database/actions/synchronize/index.d.ts",
+        "default": "./dist/esm/database/actions/synchronize/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/database/actions/synchronize/index.d.ts",
+        "default": "./dist/cjs/database/actions/synchronize/index.js"
       }
     },
     "./errors": {

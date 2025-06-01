@@ -6,6 +6,8 @@ import type { Cast } from '~/types/cast.js'
 import type { Extends, If } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -58,30 +60,33 @@ export type RecordZodFormatter<
   : WithOptional<
       SCHEMA,
       OPTIONS,
-      /**
-       * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
-       */
-      SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
-        ? WithDecodedKeys<
-            SCHEMA,
-            OPTIONS,
-            z.ZodObject<
-              {
-                [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodFormatter<
-                  SCHEMA['elements'],
-                  Overwrite<OPTIONS, { defined: false }>
-                >
-              },
-              'strip'
+      WithValidate<
+        SCHEMA,
+        /**
+         * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
+         */
+        SCHEMA extends { keys: { props: { enum: string[] } }; props: { partial?: false } }
+          ? WithDecodedKeys<
+              SCHEMA,
+              OPTIONS,
+              z.ZodObject<
+                {
+                  [KEY in SCHEMA['keys']['props']['enum'][number]]: SchemaZodFormatter<
+                    SCHEMA['elements'],
+                    Overwrite<OPTIONS, { defined: false }>
+                  >
+                },
+                'strip'
+              >
             >
-          >
-        : z.ZodRecord<
-            Cast<
-              SchemaZodFormatter<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
-              z.KeySchema
-            >,
-            SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-          >
+          : z.ZodRecord<
+              Cast<
+                SchemaZodFormatter<SCHEMA['keys'], Overwrite<OPTIONS, { defined: true }>>,
+                z.KeySchema
+              >,
+              SchemaZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+            >
+      >
     >
 
 export const recordZodFormatter = (
@@ -108,5 +113,5 @@ export const recordZodFormatter = (
     )
   }
 
-  return withOptional(schema, options, zodFormatter)
+  return withOptional(schema, options, withValidate(schema, zodFormatter))
 }

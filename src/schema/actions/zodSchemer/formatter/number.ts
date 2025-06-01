@@ -3,6 +3,8 @@ import { z } from 'zod'
 import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
@@ -16,16 +18,19 @@ export type NumberZodFormatter<
   WithOptional<
     SCHEMA,
     OPTIONS,
-    SCHEMA['props'] extends { enum: [ResolvedNumberSchema] }
-      ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
-      : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
-        ? // NOTE: Could be a single Literal with v4: https://v4.zod.dev/v4#multiple-values-in-zliteral
-          z.ZodUnion<
-            Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>
-          >
-        : SCHEMA['props'] extends { big: true }
-          ? z.ZodUnion<[z.ZodNumber, z.ZodBigInt]>
-          : z.ZodNumber
+    WithValidate<
+      SCHEMA,
+      SCHEMA['props'] extends { enum: [ResolvedNumberSchema] }
+        ? z.ZodLiteral<SCHEMA['props']['enum'][0]>
+        : SCHEMA['props'] extends { enum: [ResolvedNumberSchema, ...ResolvedNumberSchema[]] }
+          ? // NOTE: Could be a single Literal with v4: https://v4.zod.dev/v4#multiple-values-in-zliteral
+            z.ZodUnion<
+              Cast<ZodLiteralMap<SCHEMA['props']['enum']>, [z.ZodTypeAny, ...z.ZodTypeAny[]]>
+            >
+          : SCHEMA['props'] extends { big: true }
+            ? z.ZodUnion<[z.ZodNumber, z.ZodBigInt]>
+            : z.ZodNumber
+    >
   >
 >
 
@@ -54,5 +59,9 @@ export const numberZodFormatter = (
     zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
-  return withDecoding(schema, options, withOptional(schema, options, zodFormatter))
+  return withDecoding(
+    schema,
+    options,
+    withOptional(schema, options, withValidate(schema, zodFormatter))
+  )
 }

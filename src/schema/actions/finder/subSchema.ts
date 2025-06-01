@@ -3,8 +3,8 @@ import type { Schema } from '~/schema/index.js'
 import { SchemaAction } from '~/schema/index.js'
 
 export class SubSchema<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
-  public formattedPath: Path
-  public transformedPath: Path
+  readonly formattedPath: Path
+  readonly transformedPath: Path
 
   constructor({
     schema,

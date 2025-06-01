@@ -8,8 +8,8 @@ All schema types support adding custom validation during the **parsing step** (s
 
 There are three kinds of validators:
 
-- `putValidate`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/2-put-item/index.md))
-- `updateValidate`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/3-update-item/index.md))
+- `putValidate`: Applied on put actions (e.g. [`PutItemCommand`](../../3-entities/4-actions/3-put-item/index.md))
+- `updateValidate`: Applied on update actions (e.g. [`UpdateItemCommand`](../../3-entities/4-actions/4-update-item/index.md))
 - `keyValidate`: Overrides other validators on key schemas (ignored otherwise)
 
 The `validate` method is a shorthand that acts as `keyValidate` on key schemas and `putValidate` otherwise.

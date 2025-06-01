@@ -5,6 +5,8 @@ import { BatchGetRequest } from '~/entity/actions/batchGet/batchGetRequest.js'
 import { BatchPutRequest } from '~/entity/actions/batchPut/batchPutRequest.js'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { Schema, TransformedValue } from '~/schema/index.js'
+import { AccessPattern } from '~/table/actions/accessPattern/index.js'
 import type { RequestEntities as BatchGetRequestEntities } from '~/table/actions/batchGet/batchGetCommand.js'
 import type {
   BatchGetCommandOptions,
@@ -16,13 +18,13 @@ import { BatchGetCommand, execute as executeBatchGet } from '~/table/actions/bat
 import type {
   BatchWriteCommandOptions,
   RequestEntities as BatchWriteRequestEntities,
+  ExecuteBatchWriteInput,
   IBatchWriteRequest
 } from '~/table/actions/batchWrite/index.js'
 import {
   BatchWriteCommand,
   execute as executeBatchWrite
 } from '~/table/actions/batchWrite/index.js'
-import type { ExecuteBatchWriteInput } from '~/table/actions/batchWrite/index.js'
 import type {
   DeletePartitionOptions,
   DeletePartitionResponse
@@ -196,7 +198,20 @@ export class TableRepository<
       options
     )
   }
+
+  accessPattern<
+    SCHEMA extends Schema,
+    QUERY extends Query<TABLE>,
+    OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+  >(
+    schema: SCHEMA,
+    pattern: (input: TransformedValue<SCHEMA>) => QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
+    return new AccessPattern(this.table, this[$entities], schema, pattern, options)
+  }
 }
+
 const isBatchGetRequest = (
   input: BatchGetCommandOptions | IBatchWriteRequest
 ): input is IBatchGetRequest => input instanceof BatchGetRequest

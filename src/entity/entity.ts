@@ -6,6 +6,7 @@ import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { If } from '~/types/if.js'
 
 import { $interceptor, $sentArgs } from './constants.js'
+import type { EntityMetadata } from './types/index.js'
 import type {
   BuildEntitySchema,
   EntityAttrDefaultOptions,
@@ -30,15 +31,21 @@ export class Entity<
     ? TimestampsOptions
     : TimestampsDefaultOptions
 > {
-  public type: 'entity'
-  public entityName: NAME
-  public table: TABLE
-  public attributes: ATTRIBUTES
-  public schema: BuildEntitySchema<ATTRIBUTES, TABLE, NAME, ENTITY_ATTR_OPTIONS, TIMESTAMPS_OPTIONS>
-  public entityAttribute: ENTITY_ATTR_OPTIONS
-  public timestamps: TIMESTAMPS_OPTIONS
+  readonly type: 'entity'
+  readonly entityName: NAME
+  readonly table: TABLE
+  readonly attributes: ATTRIBUTES
+  readonly schema: BuildEntitySchema<
+    ATTRIBUTES,
+    TABLE,
+    NAME,
+    ENTITY_ATTR_OPTIONS,
+    TIMESTAMPS_OPTIONS
+  >
+  readonly entityAttribute: ENTITY_ATTR_OPTIONS
+  readonly timestamps: TIMESTAMPS_OPTIONS
   // any is needed for contravariance
-  public computeKey?: (
+  readonly computeKey?: (
     keyInput: EntityAttributes extends ATTRIBUTES
       ? any
       : ValidValue<ItemSchema<ATTRIBUTES>, { mode: 'key' }>
@@ -46,19 +53,23 @@ export class Entity<
 
   [$interceptor]?: (action: EntitySendableAction) => any
 
+  public meta: EntityMetadata
+
   constructor({
     name,
     table,
     schema,
     computeKey,
     entityAttribute = true as ENTITY_ATTR_OPTIONS,
-    timestamps = true as NarrowOptions<TIMESTAMPS_OPTIONS>
+    timestamps = true as NarrowOptions<TIMESTAMPS_OPTIONS>,
+    meta = {}
   }: {
     name: NAME
     table: TABLE
     schema: SchemaOf<ATTRIBUTES>
     entityAttribute?: ENTITY_ATTR_OPTIONS
     timestamps?: NarrowOptions<TIMESTAMPS_OPTIONS>
+    meta?: EntityMetadata
   } & If<
     NeedsKeyCompute<ATTRIBUTES, TABLE>,
     {
@@ -85,6 +96,8 @@ export class Entity<
     this.schema.check()
 
     this.computeKey = computeKey as any
+
+    this.meta = meta
   }
 
   build<ACTION extends EntityAction<this> = EntityAction<this>>(
@@ -97,7 +110,7 @@ export class Entity<
 export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string
 
-  constructor(public entity: ENTITY) {}
+  constructor(readonly entity: ENTITY) {}
 }
 
 export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {

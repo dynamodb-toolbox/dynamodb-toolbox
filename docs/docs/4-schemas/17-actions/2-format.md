@@ -84,7 +84,7 @@ You can provide **formatting options** as a second argument. Available options:
 | `transform`  |    `boolean`     | `true`  | Whether to transform back the input (with `savedAs` and `transform`) prior to formatting or not.                                                                                                                       |
 | `format`     |    `boolean`     | `true`  | Whether to format the input (hide `hidden` attributes) after transformation.<br/><br/>No effect if `transform` is set to `false`.                                                                                      |
 | `partial`    |    `boolean`     | `false` | Allow every attribute (flat or deep) to be optional while formatting.                                                                                                                                                  |
-| `attributes` | `Path<Schema>[]` |    -    | To specify a list of attributes to format (other attributes are omitted).<br/><br/>See the [`PathParser`](../../3-entities/4-actions/19-parse-paths/index.md) action for more details on how to write attribute paths. |
+| `attributes` | `Path<Schema>[]` |    -    | To specify a list of attributes to format (other attributes are omitted).<br/><br/>See the [`PathParser`](../../3-entities/4-actions/20-parse-paths/index.md) action for more details on how to write attribute paths. |
 
 :::note[Examples]
 

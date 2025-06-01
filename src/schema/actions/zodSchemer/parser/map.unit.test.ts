@@ -161,6 +161,30 @@ describe('zodSchemer > parser > map', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNonEmpty = (input: Record<string, unknown>): boolean => Object.keys(input).length > 0
+      const schema = map({ str: string().optional() }).validate(isNonEmpty)
+      const output = schemaZodParser(schema)
+      const expected = z.object({ str: z.string().optional() }).refine(isNonEmpty)
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodObject)
+      expect(expected.innerType().shape.str).toBeInstanceOf(z.ZodOptional)
+      expect(expected.innerType().shape.str.unwrap()).toBeInstanceOf(z.ZodString)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodObject)
+      expect(output.innerType().shape.str).toBeInstanceOf(z.ZodOptional)
+      expect(output.innerType().shape.str.unwrap()).toBeInstanceOf(z.ZodString)
+
+      expect(() => expected.parse({})).toThrow()
+      expect(() => output.parse({})).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns a zod effect if an attribute is renamed', () => {
       const schema = map({ str: string(), num: number().savedAs('_n') })

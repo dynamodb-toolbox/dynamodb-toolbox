@@ -3,6 +3,8 @@ import { z } from 'zod'
 import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import type { WithValidate } from '../utils.js'
+import { withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -17,23 +19,26 @@ export type AnyOfZodFormatter<
   : WithOptional<
       SCHEMA,
       OPTIONS,
-      SCHEMA['props'] extends { discriminator: string }
-        ? z.ZodDiscriminatedUnion<
-            SCHEMA['props']['discriminator'],
-            MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
-          >
-        : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-          ? SCHEMAS_HEAD extends Schema
-            ? SCHEMAS_TAIL extends Schema[]
-              ? z.ZodUnion<
-                  [
-                    SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
-                    ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
-                  ]
-                >
+      WithValidate<
+        SCHEMA,
+        SCHEMA['props'] extends { discriminator: string }
+          ? z.ZodDiscriminatedUnion<
+              SCHEMA['props']['discriminator'],
+              MapAnyOfZodFormatter<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+            >
+          : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+            ? SCHEMAS_HEAD extends Schema
+              ? SCHEMAS_TAIL extends Schema[]
+                ? z.ZodUnion<
+                    [
+                      SchemaZodFormatter<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
+                      ...MapAnyOfZodFormatter<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
+                    ]
+                  >
+                : never
               : never
-            : never
-          : z.ZodTypeAny
+            : z.ZodTypeAny
+      >
     >
 
 type MapAnyOfZodFormatter<
@@ -76,5 +81,5 @@ export const anyOfZodFormatter = (
     )
   }
 
-  return withOptional(schema, options, zodFormatter)
+  return withOptional(schema, options, withValidate(schema, zodFormatter))
 }

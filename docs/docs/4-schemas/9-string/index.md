@@ -110,8 +110,8 @@ Allows modifying schema values during the [transformation step](../17-actions/1-
 const PREFIX = 'PREFIX#'
 
 const prefix = {
-  parse: (input: string) => [PREFIX, input].join(''),
-  format: (saved: string) => saved.slice(PREFIX.length)
+  encode: (input: string) => [PREFIX, input].join(''),
+  decode: (saved: string) => saved.slice(PREFIX.length)
 }
 
 // Prefixes the value

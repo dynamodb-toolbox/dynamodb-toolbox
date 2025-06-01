@@ -60,12 +60,13 @@ export { fromSchemaDTO } from './schema/actions/fromDTO/index.js'
 export { Finder, SubSchema } from './schema/actions/finder/index.js'
 
 // tables
-export { Table, TableAction, $entities } from './table/index.js'
+export { Table, TableAction } from './table/index.js'
+export type { Index, LocalIndex, GlobalIndex, Key, TableMetadata } from './table/index.js'
 export { PrimaryKeyParser } from './table/actions/parsePrimaryKey/index.js'
 export type { PrimaryKey } from './table/actions/parsePrimaryKey/index.js'
-export { QueryCommand } from './table/actions/query/index.js'
+export { IQueryCommand, QueryCommand } from './table/actions/query/index.js'
 export type { Query, QueryOptions, QueryResponse } from './table/actions/query/index.js'
-export { ScanCommand } from './table/actions/scan/index.js'
+export { IScanCommand, ScanCommand } from './table/actions/scan/index.js'
 export type { ScanOptions, ScanResponse } from './table/actions/scan/index.js'
 export { DeletePartitionCommand } from './table/actions/deletePartition/index.js'
 export type {
@@ -88,12 +89,17 @@ export type {
   ExecuteBatchWriteInput,
   ExecuteBatchWriteOptions
 } from './table/actions/batchWrite/index.js'
+export {
+  IAccessPattern as ITableAccessPattern,
+  AccessPattern as TableAccessPattern
+} from './table/actions/accessPattern/index.js'
 export { TableSpy } from './table/actions/spy/index.js'
 export type { IndexNames, IndexSchema } from './table/actions/indexes.js'
 export { TableDTO } from './table/actions/dto/index.js'
 export type { ITableDTO } from './table/actions/dto/index.js'
 export { fromTableDTO } from './table/actions/fromDTO/index.js'
 export { TableRepository } from './table/actions/repository/index.js'
+export { Registry } from './table/actions/registry/index.js'
 
 // entities
 export { Entity, EntityAction } from './entity/index.js'
@@ -110,7 +116,8 @@ export type {
   WriteItemOptions,
   DecodedItem,
   FormattedItem,
-  ReadItemOptions
+  ReadItemOptions,
+  EntityMetadata
 } from './entity/index.js'
 export { GetItemCommand } from './entity/actions/get/index.js'
 export type { GetItemOptions, GetItemResponse } from './entity/actions/get/index.js'
@@ -191,19 +198,23 @@ export { DeleteTransaction } from './entity/actions/transactDelete/index.js'
 export type { DeleteTransactionOptions } from './entity/actions/transactDelete/index.js'
 export { ConditionCheck } from './entity/actions/transactCheck/index.js'
 export type { ConditionCheckOptions } from './entity/actions/transactCheck/index.js'
-export { EntityPathParser } from './entity/actions/parsePaths/index.js'
-export type { EntityPaths } from './entity/actions/parsePaths/index.js'
-export { EntityFormatter } from './entity/actions/format/index.js'
-export type { FormatItemOptions, InferReadItemOptions } from './entity/actions/format/index.js'
+export {
+  IAccessPattern as IEntityAccessPattern,
+  AccessPattern as EntityAccessPattern
+} from './entity/actions/accessPattern/index.js'
 export { EntityParser } from './entity/actions/parse/index.js'
 export type { ParseItemOptions, InferWriteItemOptions } from './entity/actions/parse/index.js'
 export { EntityConditionParser } from './entity/actions/parseCondition/index.js'
 export type { Condition } from './entity/actions/parseCondition/index.js'
+export { EntityPathParser } from './entity/actions/parsePaths/index.js'
+export type { EntityPaths } from './entity/actions/parsePaths/index.js'
+export { EntityFormatter } from './entity/actions/format/index.js'
+export type { FormatItemOptions, InferReadItemOptions } from './entity/actions/format/index.js'
 export { EntitySpy } from './entity/actions/spy/index.js'
+export { EntityRepository } from './entity/actions/repository/index.js'
 export { EntityDTO } from './entity/actions/dto/index.js'
 export type { IEntityDTO } from './entity/actions/dto/index.js'
 export { fromEntityDTO } from './entity/actions/fromDTO/index.js'
-export { EntityRepository } from './entity/actions/repository/index.js'
 
 // errors
 export { DynamoDBToolboxError } from './errors/index.js'

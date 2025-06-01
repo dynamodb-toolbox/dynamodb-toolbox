@@ -12,7 +12,7 @@ export type IndexableKeyType = 'string' | 'binary' | 'number'
 export type ResolveIndexableKeyType<KEY_TYPE extends IndexableKeyType> = KEY_TYPE extends 'string'
   ? string
   : KEY_TYPE extends 'number'
-    ? number
+    ? number | bigint
     : KEY_TYPE extends 'binary'
       ? Uint8Array
       : never

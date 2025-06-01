@@ -1,3 +1,4 @@
+import { AccessPattern } from '~/entity/actions/accessPattern/accessPattern.js'
 import { BatchDeleteRequest } from '~/entity/actions/batchDelete/index.js'
 import { BatchGetRequest } from '~/entity/actions/batchGet/index.js'
 import { BatchPutRequest } from '~/entity/actions/batchPut/index.js'
@@ -19,12 +20,14 @@ import type { ConditionCheckOptions } from '~/entity/actions/transactCheck/index
 import { ConditionCheck } from '~/entity/actions/transactCheck/index.js'
 import type { DeleteTransactionOptions } from '~/entity/actions/transactDelete/index.js'
 import { DeleteTransaction } from '~/entity/actions/transactDelete/index.js'
-import type { GetTransactionOptions } from '~/entity/actions/transactGet/index.js'
-import { GetTransaction } from '~/entity/actions/transactGet/index.js'
-import { execute as executeTransactGet } from '~/entity/actions/transactGet/index.js'
 import type {
   ExecuteTransactGetInput,
-  ExecuteTransactGetResponses
+  ExecuteTransactGetResponses,
+  GetTransactionOptions
+} from '~/entity/actions/transactGet/index.js'
+import {
+  GetTransaction,
+  execute as executeTransactGet
 } from '~/entity/actions/transactGet/index.js'
 import type { PutTransactionOptions } from '~/entity/actions/transactPut/index.js'
 import { PutTransaction } from '~/entity/actions/transactPut/index.js'
@@ -61,7 +64,12 @@ import type {
   ParseConditionOptions
 } from '~/schema/actions/parseCondition/index.js'
 import type { ParsePathsOptions, ProjectionExpression } from '~/schema/actions/parsePaths/index.js'
+import type { Schema, TransformedValue } from '~/schema/index.js'
 import type { PrimaryKey } from '~/table/actions/parsePrimaryKey/index.js'
+import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/index.js'
+import { QueryCommand } from '~/table/actions/query/index.js'
+import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
+import { ScanCommand } from '~/table/actions/scan/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
@@ -101,6 +109,35 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     options: OPTIONS = {} as OPTIONS
   ): Promise<DeleteItemResponse<ENTITY, OPTIONS>> {
     return new DeleteItemCommand(this.entity, key, options).send()
+  }
+
+  async scan<
+    OPTIONS extends ScanOptions<ENTITY['table'], [ENTITY]> = ScanOptions<ENTITY['table'], [ENTITY]>
+  >(options: OPTIONS = {} as OPTIONS): Promise<ScanResponse<ENTITY['table'], [ENTITY], OPTIONS>> {
+    return new ScanCommand<ENTITY['table'], [ENTITY], OPTIONS>(
+      this.entity.table,
+      [this.entity],
+      options
+    ).send()
+  }
+
+  async query<
+    QUERY extends Query<ENTITY['table']>,
+    OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY> = QueryOptions<
+      ENTITY['table'],
+      [ENTITY],
+      QUERY
+    >
+  >(
+    query: QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ): Promise<QueryResponse<ENTITY['table'], QUERY, [ENTITY], OPTIONS>> {
+    return new QueryCommand<ENTITY['table'], [ENTITY], QUERY, OPTIONS>(
+      this.entity.table,
+      [this.entity],
+      query,
+      options
+    ).send()
   }
 
   batchGet(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {
@@ -165,6 +202,21 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     options: ConditionCheckOptions = {}
   ): ConditionCheck<ENTITY> {
     return new ConditionCheck(this.entity, key, condition, options)
+  }
+
+  accessPattern<
+    SCHEMA extends Schema,
+    QUERY extends Query<ENTITY['table']>,
+    OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY]> = QueryOptions<
+      ENTITY['table'],
+      [ENTITY]
+    >
+  >(
+    schema: SCHEMA,
+    pattern: (input: TransformedValue<SCHEMA>) => QUERY,
+    options: OPTIONS = {} as OPTIONS
+  ): AccessPattern<ENTITY, SCHEMA, QUERY, OPTIONS> {
+    return new AccessPattern(this.entity, schema, pattern, options)
   }
 
   parse<OPTIONS extends ParseItemOptions = {}>(

@@ -118,6 +118,27 @@ describe('zodSchemer > parser > binary', () => {
     })
   })
 
+  describe('validation', () => {
+    test('returns zod effect if validate is set', () => {
+      const isNotEmpty = (input: Uint8Array): boolean => input.length > 0
+      const schema = binary().validate(isNotEmpty)
+      const output = schemaZodParser(schema)
+      const expected = z.instanceof(Uint8Array).refine(isNotEmpty)
+
+      // NOTE: Cannot use A.Equals this because of divergence between Uint8Array & Uint8ArrayConstructor types in latest TS versions
+      const assert: A.Contains<typeof expected, typeof output> = 1
+      assert
+
+      expect(expected).toBeInstanceOf(z.ZodEffects)
+      expect(expected.innerType()).toBeInstanceOf(z.ZodType)
+      expect(output).toBeInstanceOf(z.ZodEffects)
+      expect(output.innerType()).toBeInstanceOf(z.ZodType)
+
+      expect(() => expected.parse(new Uint8Array())).toThrow()
+      expect(() => output.parse(new Uint8Array())).toThrow()
+    })
+  })
+
   describe('encoding/decoding', () => {
     test('returns zod effect if transform is set', () => {
       const transformer = {
