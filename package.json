@@ -440,6 +440,16 @@
         "default": "./dist/cjs/table/actions/fromDTO/index.js"
       }
     },
+    "./table/actions/registry": {
+      "import": {
+        "types": "./dist/esm/table/actions/registry/index.d.ts",
+        "default": "./dist/esm/table/actions/registry/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/registry/index.d.ts",
+        "default": "./dist/cjs/table/actions/registry/index.js"
+      }
+    },
     "./entity": {
       "import": {
         "types": "./dist/esm/entity/index.d.ts",

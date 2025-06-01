@@ -255,6 +255,29 @@ A `boolean` or `object` to customize the internal `entity` attributes (see [Inte
 
 A `boolean` or `object` to customize the internal `created` and `modified` attributes (see [Internal Attributes](../2-internal-attributes/index.md#timestamp-attributes)).
 
+### `meta`
+
+Attaches metadata to the `Entity` (as an object property).
+
+The `meta` object can include a `title` and `description`, both of which must be strings. Additional fields can be of any type:
+
+```ts
+const PokemonEntity = new Entity({
+  ...
+  meta: {
+    title: 'Pokemon',
+    description: 'An Awesome Entity for development use',
+    other: { field: 'of any type' }
+  }
+})
+
+// 👇 Directly access/modify metadata
+console.log(PokemonEntity.meta)
+PokemonEntity.meta.foo = 'A new field'
+```
+
+Although optional, the meta property can be helpful in scenarios like [describing a MCP Server](../../5-databases/2-actions/1-mcp-toolkit/index.md) or [synchronizing with DynamoDB-Toolshack](../../5-databases//2-actions/2-synchronize/index.md).
+
 ## Building Entity Actions
 
 To allow for **extensibility**, **better code-splitting** and **lighter bundles**, `Entities` only expose a `.build(...)` method which acts as a gateway to perform Entity [Actions](../../1-getting-started/3-usage/index.md#how-do-actions-work):

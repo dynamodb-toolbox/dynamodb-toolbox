@@ -22,7 +22,7 @@ await pokeTableRepository.scan()
 
 :::note
 
-Note that [`Spies`](../10-spy/index.md) can still be used in cunjunction with `Repositories` as commands are still sent under the hood.
+Note that [`Spies`](../11-spy/index.md) can still be used in cunjunction with `Repositories` as commands are still sent under the hood.
 
 :::
 
@@ -356,7 +356,7 @@ const { Items } = await accessPattern
 
 <p style={{ marginTop: '-15px' }}><i><code>(input: unknown) => PrimaryKey&lt;TABLE&gt;</code></i></p>
 
-Parses a [Primary Key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey). See [`ParsePrimaryKey`](../9-parse-primary-key/index.md) for more details:
+Parses a [Primary Key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey). See [`ParsePrimaryKey`](../10-parse-primary-key/index.md) for more details:
 
 ```ts
 const primaryKey = pokeTableRepository.parsePrimaryKey({

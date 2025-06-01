@@ -99,6 +99,29 @@ const projectedPattern = PokemonEntity
   .options({ attributes: ['name', 'trainerId'] })
 ```
 
+### `.meta(...)`
+
+Adds metadata to the `AccessPattern`.
+
+The `meta` object can include a `title` and `description`, both of which must be strings. Additional fields can be of any type:
+
+<!-- prettier-ignore -->
+```ts
+const pokemonsByLevelPattern = PokemonEntity.build(AccessPattern)
+  .meta({
+    title: 'Trainer Pokémons by Level',
+    description:
+      'Returns the pokemons of a trainer (`trainerId`) above a given level (`minLevel`)',
+    other: { field: 'of any type' }
+  })
+```
+
+:::info
+
+Metadata is especially useful when building [`MCPToolkit`](../../../5-databases/2-actions/1-mcp-toolkit/index.md) Actions.
+
+:::
+
 ### `.query(...)`
 
 Produces a [`QueryCommand`](../../../2-tables/2-actions/2-query/index.md) from valid pattern inputs:

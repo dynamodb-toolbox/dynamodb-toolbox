@@ -117,7 +117,7 @@ The syntax is a bit more verbose than a simple `PokemonEntity.get(key)`, but it 
 
 :::info
 
-If you don't mind large bundle sizes, you can still use the [`TableRepository`](../../2-tables/2-actions/11-repository/index.md) and [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) actions that expose all the others as methods.
+If you don't mind large bundle sizes, you can still use the [`TableRepository`](../../2-tables/2-actions/12-repository/index.md) and [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) actions that expose all the others as methods.
 
 :::
 
