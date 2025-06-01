@@ -80,7 +80,8 @@ export const addAccessPatternTool = (
     ? defaultQueryOptionsSchema
     : defaultQueryOptionsSchema.removeDefault().required({ tableName: true })
 
-  const queryToolName = `ddb-tb_use-${dbAccessPatternKey}-access-pattern`.substring(0, 64)
+  const queryToolName =
+    `ddb-tb_use-${dbAccessPatternKey}-access-pattern-on-${dbTableKey}-table`.substring(0, 64)
   let queryToolDescription = `Query multiple ${entity !== undefined ? `'${entity.entityName}' ` : ''} Items from the ${tableName ?? dbTableKey} Table using the ${dbAccessPatternKey} AccessPattern.`
 
   const { title, description } = meta

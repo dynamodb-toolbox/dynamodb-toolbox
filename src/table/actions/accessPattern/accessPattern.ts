@@ -12,6 +12,7 @@ import { $meta, $options, $pattern, $schema } from './constants.js'
 interface AccessPatternMetadata {
   title?: string
   description?: string
+  [x: string]: unknown
 }
 
 export class IAccessPattern<

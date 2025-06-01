@@ -9,6 +9,16 @@ import TabItem from '@theme/TabItem';
 
 # ZodSchemer
 
+:::note
+
+`ZodSchemer` requires the `zod` dependency to be installed first:
+
+```bash
+npm install zod
+```
+
+:::
+
 Transpiles DynamoDB-Toolbox schemas to [Zod Schemas](https://github.com/colinhacks/zod). Note that the **transpilation itself is type-safe**, which means that **resulting schema types can be introspected** and **type inference is preserved**:
 
 ```ts
