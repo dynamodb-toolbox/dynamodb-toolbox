@@ -2,6 +2,7 @@
 title: Synchronize
 sidebar_custom_props:
   sidebarActionType: pro
+  new: true
 ---
 
 # Synchronizer
