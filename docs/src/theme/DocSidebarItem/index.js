@@ -34,6 +34,17 @@ export default function DocSidebarItemWrapper({
     label = <code>{label}</code>
   }
 
+  if (item.customProps?.new) {
+    label = (
+      <div className="sidebar-action-new-item-container">
+        {label}
+        <span className="sidebar-action-new-item">
+          New!
+        </span>
+      </div>
+    )
+  }
+
   return (
     <DocSidebarItem
       item={{

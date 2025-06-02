@@ -1,4 +1,7 @@
 {
   "label": "🗺️ Databases",
-  "position": 5
+  "position": 5,
+  "customProps": {
+    "new": true
+  }
 }

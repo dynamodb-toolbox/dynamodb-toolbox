@@ -548,6 +548,24 @@ a:hover,
   color: #876e8b;
 }
 
+.sidebar-action-new-item-container {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sidebar-action-new-item {
+  background-image: linear-gradient(
+    to top right,
+    #3b82f6,
+    #7e22ce
+  );
+  color: white;
+  font-size: 10px;
+  padding: 3px;
+  border-radius: 6px;
+}
+
 div.theme-admonition details {
   background: #fff6;
 }
