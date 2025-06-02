@@ -93,7 +93,7 @@ Enables retrieving an entity item from the database.
 
 <p style={{ marginTop: '-15px' }}><i>(Unavailable in <code>readonly</code> mode)</i></p>
 
-Enables deleting an entity item from the database.
+Enables inserting an entity item in the database.
 
 #### `ddb-tb_delete-${entityName}-item-from-${dbTableKey}-table`
 
