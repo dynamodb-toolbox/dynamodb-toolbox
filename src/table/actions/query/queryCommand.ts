@@ -179,10 +179,12 @@ export class IQueryCommand<
           continue
         }
 
-        const itemEntityName = item[entityAttrSavedAs] as unknown
-        const itemEntityFormatter = formattersByName[String(itemEntityName)]
+        const itemEntityName = item[entityAttrSavedAs]
+        const itemEntityFormatter = isString(itemEntityName)
+          ? formattersByName[itemEntityName]
+          : undefined
 
-        if (!isString(itemEntityName) || itemEntityFormatter === undefined) {
+        if (itemEntityFormatter === undefined) {
           let hasEntityMatch: boolean = false
 
           // If data doesn't contain entity name (e.g. migrating to DynamoDB-Toolbox), we try all formatters
