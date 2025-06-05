@@ -69,7 +69,7 @@ Additional DynamoDB-Toolshack metadata—such as Table and Entity titles, descri
 Use the standard [metadata fields](../../../2-tables/1-usage/index.md#meta) to define a Table’s `title` and `description`. You can customize the `icon` and `accessRole` attributes under the `_ddbToolshack` key:
 
 ```ts
-export const AwsMpSubscriptionsTable = new Table({
+export const PokeTable = new Table({
   ...
   meta: {
     title: 'Pokedex',
@@ -91,7 +91,7 @@ export const AwsMpSubscriptionsTable = new Table({
 Use the standard [metadata fields](../../../3-entities/1-usage/index.md#meta) to define an Entity's `title` and `description`. You can customize the `icon` attribute under the `_ddbToolshack` key:
 
 ```ts
-export const UserEntityEntity = new Entity({
+export const PokemonEntity = new Entity({
   ...
   meta: {
     title: 'Pokemon',
