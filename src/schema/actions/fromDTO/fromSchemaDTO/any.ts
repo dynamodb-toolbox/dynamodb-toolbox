@@ -52,14 +52,17 @@ const fromAnySchemaTransformerDTO = (
         return jsonStringify({ space })
       }
       case 'pipe': {
-        const { transformers: _transformers } = transformerDTO
+        const { transformers: transformerDTOs } = transformerDTO
+        const transformers: Transformer[] = []
 
-        const transformers = _transformers
-          .map(transformer => fromAnySchemaTransformerDTO(transformer))
-          .filter(transformer => transformer !== undefined)
+        for (const transformerDTO of transformerDTOs) {
+          const transformer = fromAnySchemaTransformerDTO(transformerDTO)
 
-        if (transformers.length === 0) {
-          return undefined
+          if (transformer === undefined) {
+            return undefined
+          }
+
+          transformers.push(transformer)
         }
 
         return pipe(...transformers)
