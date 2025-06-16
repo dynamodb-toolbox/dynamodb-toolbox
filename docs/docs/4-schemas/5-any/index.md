@@ -108,7 +108,7 @@ const stringifiedSchema = any().transform(jsonStringify)
 const stringifiedSchema = any({ transform: jsonStringify })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md) (including [`jsonStringify`](../18-transformers/3-json-stringify.md)), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md) (including [`jsonStringify`](../18-transformers/4-json-stringify.md)), so feel free to use them!
 
 ### `.default(...)`
 

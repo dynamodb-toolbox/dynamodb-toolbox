@@ -1,6 +1,8 @@
 import type { Strings } from 'hotscript'
 
-import type { SerializableTransformer } from './transformer.js'
+import type { Piped } from './pipe.js'
+import { pipe } from './pipe.js'
+import type { SerializableTransformer, Transformer } from './transformer.js'
 
 interface PrefixerOptions<DELIMITER extends string> {
   delimiter?: DELIMITER
@@ -34,14 +36,14 @@ export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
     this.delimiter = delimiter
   }
 
-  encode(formatted: string): string {
-    return [this.prefix, formatted].join(this.delimiter)
+  encode(decoded: string): string {
+    return [this.prefix, decoded].join(this.delimiter)
   }
 
-  decode(transformed: string): string {
-    return transformed.startsWith([this.prefix, ''].join(this.delimiter))
-      ? transformed.slice(this.prefix.length + this.delimiter.length)
-      : transformed
+  decode(encoded: string): string {
+    return encoded.startsWith(`${this.prefix}${this.delimiter}`)
+      ? encoded.slice(this.prefix.length + this.delimiter.length)
+      : encoded
   }
 
   toJSON() {
@@ -50,6 +52,12 @@ export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
       prefix: this.prefix,
       delimiter: this.delimiter
     }
+  }
+
+  pipe<TRANSFORMER extends Transformer<string>>(
+    transformer: TRANSFORMER
+  ): Piped<[this, TRANSFORMER]> {
+    return pipe(this, transformer)
   }
 }
 

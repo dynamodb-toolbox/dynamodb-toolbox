@@ -1,8 +1,9 @@
 import type { PrimitiveSchema } from '~/schema/index.js'
+import { isSerializableTransformer } from '~/transformers/index.js'
 import { isBigInt } from '~/utils/validation/isBigInt.js'
 
 import type { PrimitiveSchemaDTO } from '../types.js'
-import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
+import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
@@ -21,7 +22,7 @@ export const getPrimitiveSchemaDTO = (schema: PrimitiveSchema): PrimitiveSchemaD
     ...(savedAs !== undefined ? { savedAs } : {}),
     ...(transform !== undefined
       ? {
-          transform: isTransformerWithDTO(transform)
+          transform: isSerializableTransformer(transform)
             ? transform.toJSON()
             : { transformerId: 'custom' }
         }

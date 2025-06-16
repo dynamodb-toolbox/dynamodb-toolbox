@@ -1,4 +1,4 @@
-import type { Constant, Fn, Identity } from 'hotscript'
+import type { Fn } from 'hotscript'
 
 export interface Transformer<
   DECODED_CONSTRAINT = any,
@@ -13,21 +13,19 @@ export interface TypedTransformer<
   DECODED_CONSTRAINT = any,
   DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
   ENCODED = any,
-  TYPE_MODIFIER extends Fn = Identity
+  TYPE_MODIFIER extends Fn = Fn
 > extends Transformer<DECODED_CONSTRAINT, DECODED, ENCODED> {
   _typeModifier: TYPE_MODIFIER
 }
 
-export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends TypedTransformer
-  ? TRANSFORMER['_typeModifier']
-  : Constant<ReturnType<TRANSFORMER['encode']>>
+export type ITransformerDTO = { transformerId: string } & object
 
 export interface SerializableTransformer<
   DECODED_CONSTRAINT = any,
   DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
   ENCODED = any,
   TYPE_MODIFIER extends Fn = Fn,
-  DTO extends { transformerId: string } & object = { transformerId: string } & object
+  DTO extends ITransformerDTO = ITransformerDTO
 > extends TypedTransformer<DECODED_CONSTRAINT, DECODED, ENCODED, TYPE_MODIFIER> {
   transformerId: DTO['transformerId']
   toJSON: () => DTO

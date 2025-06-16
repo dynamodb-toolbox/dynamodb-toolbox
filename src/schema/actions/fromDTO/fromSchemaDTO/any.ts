@@ -1,6 +1,9 @@
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
-import { any } from '~/schema/any/index.js'
+import type { AnySchemaTransformerDTO, ISchemaDTO } from '~/schema/actions/dto/index.js'
 import type { AnySchema } from '~/schema/any/index.js'
+import { any } from '~/schema/any/index.js'
+import { jsonStringify } from '~/transformers/jsonStringify.js'
+import { pipe } from '~/transformers/pipe.js'
+import type { Transformer } from '~/transformers/transformer.js'
 
 type AnySchemaDTO = Extract<ISchemaDTO, { type: 'any' }>
 
@@ -15,7 +18,7 @@ export const fromAnySchemaDTO = ({
   putLink,
   updateLink,
   transform,
-  ...props
+  ...dto
 }: AnySchemaDTO): AnySchema => {
   keyDefault
   putDefault
@@ -25,5 +28,49 @@ export const fromAnySchemaDTO = ({
   updateLink
   transform
 
-  return any(props)
+  let schema = any(dto)
+
+  if (transform !== undefined) {
+    const transformer = fromAnySchemaTransformerDTO(transform)
+
+    if (transformer !== undefined) {
+      schema = schema.transform(transformer)
+    }
+  }
+
+  return schema
+}
+
+const fromAnySchemaTransformerDTO = (
+  transformerDTO: AnySchemaTransformerDTO
+): Transformer<unknown> | undefined => {
+  try {
+    switch (transformerDTO.transformerId) {
+      case 'jsonStringify': {
+        const { space } = transformerDTO
+
+        return jsonStringify({ space })
+      }
+      case 'pipe': {
+        const { transformers: transformerDTOs } = transformerDTO
+        const transformers: Transformer[] = []
+
+        for (const transformerDTO of transformerDTOs) {
+          const transformer = fromAnySchemaTransformerDTO(transformerDTO)
+
+          if (transformer === undefined) {
+            return undefined
+          }
+
+          transformers.push(transformer)
+        }
+
+        return pipe(...transformers)
+      }
+      default:
+        return undefined
+    }
+  } catch {
+    return undefined
+  }
 }

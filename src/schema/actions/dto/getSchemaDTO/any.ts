@@ -1,7 +1,8 @@
 import type { AnySchema } from '~/schema/any/index.js'
+import { isSerializableTransformer } from '~/transformers/index.js'
 
-import type { AnySchemaDTO, AnyTransformerDTO } from '../types.js'
-import { getDefaultsDTO, isTransformerWithDTO } from './utils.js'
+import type { AnySchemaDTO, AnySchemaTransformerDTO } from '../types.js'
+import { getDefaultsDTO } from './utils.js'
 
 /**
  * @debt feature "handle defaults, links & validators DTOs"
@@ -18,9 +19,9 @@ export const getAnySchemaDTO = (schema: AnySchema): AnySchemaDTO => {
     ...(savedAs !== undefined ? { savedAs } : {}),
     ...(transform !== undefined
       ? {
-          transform: (isTransformerWithDTO(transform)
+          transform: (isSerializableTransformer(transform)
             ? transform.toJSON()
-            : { transformerId: 'custom' }) as AnyTransformerDTO
+            : { transformerId: 'custom' }) as AnySchemaTransformerDTO
         }
       : {}),
     ...defaultsDTO

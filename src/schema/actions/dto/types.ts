@@ -1,6 +1,8 @@
 import type { AtLeastOnce, SchemaRequiredProp } from '~/schema/index.js'
 import type { JSONStringifyDTO } from '~/transformers/jsonStringify.js'
+import type { PipeDTO } from '~/transformers/pipe.js'
 import type { PrefixerDTO } from '~/transformers/prefix.js'
+import type { SuffixerDTO } from '~/transformers/suffix.js'
 
 // TODO: Infer from actual list of defaulters
 type DefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
@@ -27,11 +29,14 @@ interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
   savedAs?: string
 }
 
-export type AnyTransformerDTO = JSONStringifyDTO | { transformerId: 'custom' }
+export type AnySchemaTransformerDTO =
+  | JSONStringifyDTO
+  | PipeDTO<AnySchemaTransformerDTO[]>
+  | { transformerId: 'custom' }
 
 export interface AnySchemaDTO extends SchemaPropsDTO {
   type: 'any'
-  transform?: AnyTransformerDTO
+  transform?: AnySchemaTransformerDTO
 }
 
 export interface NullSchemaDTO extends SchemaPropsDTO {
@@ -49,12 +54,16 @@ export interface NumberSchemaDTO extends SchemaPropsDTO {
   enum?: (number | string)[]
 }
 
-type StringTransformerDTO = PrefixerDTO | { transformerId: 'custom' }
+export type StringSchemaTransformerDTO =
+  | PrefixerDTO
+  | SuffixerDTO
+  | PipeDTO<StringSchemaTransformerDTO[]>
+  | { transformerId: 'custom' }
 
 export interface StringSchemaDTO extends SchemaPropsDTO {
   type: 'string'
   enum?: string[]
-  transform?: StringTransformerDTO
+  transform?: StringSchemaTransformerDTO
 }
 
 export interface BinarySchemaDTO extends SchemaPropsDTO {

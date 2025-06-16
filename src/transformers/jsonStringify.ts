@@ -1,6 +1,8 @@
 import type { Constant } from 'hotscript'
 
-import type { SerializableTransformer } from './transformer.js'
+import type { Piped } from './pipe.js'
+import { pipe } from './pipe.js'
+import type { SerializableTransformer, Transformer } from './transformer.js'
 
 interface JSONStringifierOptions {
   space?: string | number
@@ -49,6 +51,12 @@ export class JSONStringifier
       transformerId: this.transformerId,
       ...(this.space !== undefined ? { space: this.space } : {})
     }
+  }
+
+  pipe<TRANSFORMER extends Transformer<string>>(
+    transformer: TRANSFORMER
+  ): Piped<[this, TRANSFORMER]> {
+    return pipe(this, transformer)
   }
 }
 

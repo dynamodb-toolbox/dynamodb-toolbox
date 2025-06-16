@@ -310,6 +310,26 @@
         "default": "./dist/cjs/transformers/prefix.js"
       }
     },
+    "./transformers/suffix": {
+      "import": {
+        "types": "./dist/esm/transformers/suffix.d.ts",
+        "default": "./dist/esm/transformers/suffix.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/suffix.d.ts",
+        "default": "./dist/cjs/transformers/suffix.js"
+      }
+    },
+    "./transformers/pipe": {
+      "import": {
+        "types": "./dist/esm/transformers/pipe.d.ts",
+        "default": "./dist/esm/transformers/pipe.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/pipe.d.ts",
+        "default": "./dist/cjs/transformers/pipe.js"
+      }
+    },
     "./transformers/jsonStringify": {
       "import": {
         "types": "./dist/esm/transformers/jsonStringify.d.ts",

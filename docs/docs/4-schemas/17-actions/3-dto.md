@@ -42,6 +42,6 @@ Note that **functions are not serializable**, so parts of the schema may be lost
 - **Getters defaults** are not serialized.
 - **Links** are not serialized.
 - **Validators** are not serialized.
-- On-the-shelf **transformers** like [`prefix`](../18-transformers/2-prefix.md) and [`jsonStringify`](../18-transformers/3-json-stringify.md) are **correctly serialized**, but **custom transformers** are not.
+- On-the-shelf **transformers** like [`prefix`](../18-transformers/2-prefix.md) and [`jsonStringify`](../18-transformers/4-json-stringify.md) are **correctly serialized**, but **custom transformers** are not.
 
 :::
