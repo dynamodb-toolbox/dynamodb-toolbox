@@ -1,10 +1,14 @@
-import type { ISchemaDTO } from '~/schema/actions/dto/index.js'
+import type { ISchemaDTO, StringSchemaTransformerDTO } from '~/schema/actions/dto/index.js'
 import { binary } from '~/schema/binary/index.js'
 import { boolean } from '~/schema/boolean/index.js'
 import type { PrimitiveSchema } from '~/schema/index.js'
 import { nul } from '~/schema/null/index.js'
 import { number } from '~/schema/number/index.js'
 import { string } from '~/schema/string/index.js'
+import { pipe } from '~/transformers/pipe.js'
+import { prefix } from '~/transformers/prefix.js'
+import { suffix } from '~/transformers/suffix.js'
+import type { Transformer } from '~/transformers/transformer.js'
 import { isString } from '~/utils/validation/isString.js'
 
 type PrimitiveSchemaDTO = Extract<
@@ -17,8 +21,8 @@ const charCodeAt0 = (str: string): number => str.charCodeAt(0)
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromPrimitiveSchemaDTO = (schema: PrimitiveSchemaDTO): PrimitiveSchema => {
-  const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = schema
+export const fromPrimitiveSchemaDTO = (dto: PrimitiveSchemaDTO): PrimitiveSchema => {
+  const { keyDefault, putDefault, updateDefault, keyLink, putLink, updateLink, ...props } = dto
   keyDefault
   putDefault
   updateDefault
@@ -35,30 +39,74 @@ export const fromPrimitiveSchemaDTO = (schema: PrimitiveSchemaDTO): PrimitiveSch
     }
     case 'number': {
       const { enum: _enum, ...rest } = props
-      const $attr = number(rest)
+      const schema = number(rest)
 
       return _enum
-        ? $attr.enum(..._enum.map(value => (isString(value) ? BigInt(value) : value)))
-        : $attr
+        ? schema.enum(..._enum.map(value => (isString(value) ? BigInt(value) : value)))
+        : schema
     }
     case 'string': {
       const { enum: _enum, transform, ...rest } = props
-      transform
-      const $attr = string(rest)
+      let schema = string(rest)
 
-      return _enum ? $attr.enum(..._enum) : $attr
+      if (transform !== undefined) {
+        const transformer = fromStringSchemaTransformerDTO(transform)
+
+        if (transformer !== undefined) {
+          schema = schema.transform(transformer)
+        }
+      }
+
+      return _enum ? schema.enum(..._enum) : schema
     }
     case 'binary': {
       const { enum: _enum, ...rest } = props
-      const $attr = binary(rest)
+      const schema = binary(rest)
 
       if (!_enum) {
-        return $attr
+        return schema
       }
 
-      return $attr.enum(
+      return schema.enum(
         ..._enum.map(value => new Uint8Array(atob(value).split('').map(charCodeAt0)))
       )
     }
+  }
+}
+
+const fromStringSchemaTransformerDTO = (
+  transformerDTO: StringSchemaTransformerDTO
+): Transformer<string> | undefined => {
+  try {
+    switch (transformerDTO.transformerId) {
+      case 'prefix': {
+        const { prefix: _prefix, delimiter } = transformerDTO
+        return prefix(_prefix, { delimiter })
+      }
+      case 'suffix': {
+        const { suffix: _suffix, delimiter } = transformerDTO
+        return suffix(_suffix, { delimiter })
+      }
+      case 'pipe': {
+        const { transformers: transformerDTOs } = transformerDTO
+        const transformers: Transformer<string>[] = []
+
+        for (const transformerDTO of transformerDTOs) {
+          const transformer = fromStringSchemaTransformerDTO(transformerDTO)
+
+          if (transformer === undefined) {
+            return undefined
+          }
+
+          transformers.push(transformer)
+        }
+
+        return pipe(...transformers)
+      }
+      default:
+        return undefined
+    }
+  } catch {
+    return undefined
   }
 }

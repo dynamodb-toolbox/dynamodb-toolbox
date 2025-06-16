@@ -224,7 +224,11 @@ export type {
   Transformer,
   TypedTransformer,
   SerializableTransformer,
-  TypeModifier
+  TypeModifier,
+  TransformerDTO
 } from './transformers/index.js'
+export { isSerializableTransformer } from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'
+export { suffix } from './transformers/suffix.js'
+export { pipe } from './transformers/pipe.js'
 export { jsonStringify } from './transformers/jsonStringify.js'
