@@ -4,7 +4,7 @@ title: Usage
 
 # Transformers
 
-Transformers allow modifying a primitive or `any` attribute value during the [transformation step](../17-actions/1-parse.md):
+Transformers allow modifying a primitive ([`string`](../9-string/index.md), [`number`](../8-number/index.md) etc.) or [`any`](../5-any/index.md) attribute value during the [transformation step](../17-actions/1-parse.md):
 
 ```ts
 const PREFIX = 'POKEMON#'
@@ -21,9 +21,25 @@ const pokemonIdSchema = string().transform(prefix)
 const pokemonIdSchema = string({ transform: prefix })
 ```
 
-For the moment, there's only two available off-the-shelf transformers, but we hope there will be more in the future:
+Some transformers are available off-the-shelf:
 
 - [`prefix`](./2-prefix.md): Prefixes a `string` value
-- [`jsonStringify`](./3-json-stringify.md): Applies `JSON.stringify` to any value
+- [`suffix`](./3-suffix.md): Suffixes a `string` value
+- [`jsonStringify`](./4-json-stringify.md): Applies `JSON.stringify` to any value
+- [`pipe`](./5-pipe.md): Merge multiple transformers into a single transformer
 
-If you think of a transformer that you'd like to see open-sourced, feel free to open an issue or submit a PR 🤗
+When applicable, **we strongly recommend using those** instead of custom transformers as they are **type-safe** (using [`hotscript`](https://github.com/gvergnaud/hotscript)), [**serializable**](../17-actions/3-dto.md) and **chainable** using the `pipe(...)` method:
+
+```ts
+const transformer = jsonStringify()
+  .pipe(prefix('PREFIX'))
+  .pipe(suffix('SUFFIX'))
+
+transformer.encode({ foo: 'bar' }) // => 'PREFIX#{"foo":"bar"}#SUFFIX'
+```
+
+:::note
+
+If you need a new transformer, feel free to [open an issue](https://github.com/dynamodb-toolbox/dynamodb-toolbox/issues) or [submit a PR](https://github.com/dynamodb-toolbox/dynamodb-toolbox/pulls) 🤗
+
+:::
