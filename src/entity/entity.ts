@@ -60,14 +60,14 @@ export class Entity<
     table,
     schema,
     computeKey,
-    entityAttribute = true as ENTITY_ATTR_OPTIONS,
+    entityAttribute = true as NarrowOptions<ENTITY_ATTR_OPTIONS>,
     timestamps = true as NarrowOptions<TIMESTAMPS_OPTIONS>,
     meta = {}
   }: {
     name: NAME
     table: TABLE
     schema: SchemaOf<ATTRIBUTES>
-    entityAttribute?: ENTITY_ATTR_OPTIONS
+    entityAttribute?: NarrowOptions<ENTITY_ATTR_OPTIONS>
     timestamps?: NarrowOptions<TIMESTAMPS_OPTIONS>
     meta?: EntityMetadata
   } & If<
@@ -82,7 +82,7 @@ export class Entity<
     this.type = 'entity'
     this.entityName = name
     this.table = table
-    this.entityAttribute = entityAttribute
+    this.entityAttribute = entityAttribute as ENTITY_ATTR_OPTIONS
     this.timestamps = timestamps as TIMESTAMPS_OPTIONS
 
     if (computeKey === undefined && !doesSchemaValidateTableSchema(schema, table)) {
