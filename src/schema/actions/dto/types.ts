@@ -1,8 +1,19 @@
 import type { AtLeastOnce, SchemaRequiredProp } from '~/schema/index.js'
-import type { JSONStringifyDTO } from '~/transformers/jsonStringify.js'
+import type { JSONStringifierDTO } from '~/transformers/jsonStringify.js'
 import type { PipeDTO } from '~/transformers/pipe.js'
 import type { PrefixerDTO } from '~/transformers/prefix.js'
 import type { SuffixerDTO } from '~/transformers/suffix.js'
+
+interface CustomTransformerDTO {
+  transformerId: 'custom'
+}
+
+export type TransformerDTO =
+  | CustomTransformerDTO
+  | JSONStringifierDTO
+  | PrefixerDTO
+  | SuffixerDTO
+  | PipeDTO<TransformerDTO[]>
 
 // TODO: Infer from actual list of defaulters
 type DefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
@@ -30,35 +41,44 @@ interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
 }
 
 export type AnySchemaTransformerDTO =
-  | JSONStringifyDTO
-  | PipeDTO<AnySchemaTransformerDTO[]>
-  | { transformerId: 'custom' }
+  | CustomTransformerDTO
+  | JSONStringifierDTO
+  | PipeDTO<TransformerDTO[]>
 
 export interface AnySchemaDTO extends SchemaPropsDTO {
   type: 'any'
   transform?: AnySchemaTransformerDTO
 }
 
+export type NullSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
+
 export interface NullSchemaDTO extends SchemaPropsDTO {
   type: 'null'
+  transform?: NullSchemaTransformerDTO
 }
+
+export type BooleanSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
 export interface BooleanSchemaDTO extends SchemaPropsDTO {
   type: 'boolean'
   enum?: boolean[]
+  transform?: BooleanSchemaTransformerDTO
 }
+
+export type NumberSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
 export interface NumberSchemaDTO extends SchemaPropsDTO {
   type: 'number'
   big?: boolean
   enum?: (number | string)[]
+  transform?: NumberSchemaTransformerDTO
 }
 
 export type StringSchemaTransformerDTO =
+  | CustomTransformerDTO
   | PrefixerDTO
   | SuffixerDTO
-  | PipeDTO<StringSchemaTransformerDTO[]>
-  | { transformerId: 'custom' }
+  | PipeDTO<TransformerDTO[]>
 
 export interface StringSchemaDTO extends SchemaPropsDTO {
   type: 'string'
@@ -66,9 +86,12 @@ export interface StringSchemaDTO extends SchemaPropsDTO {
   transform?: StringSchemaTransformerDTO
 }
 
+export type BinarySchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
+
 export interface BinarySchemaDTO extends SchemaPropsDTO {
   type: 'binary'
   enum?: string[]
+  transform?: BinarySchemaTransformerDTO
 }
 
 export type PrimitiveSchemaDTO =

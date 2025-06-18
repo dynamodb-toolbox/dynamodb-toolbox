@@ -5,6 +5,8 @@ import { jsonStringify } from '~/transformers/jsonStringify.js'
 import { pipe } from '~/transformers/pipe.js'
 import type { Transformer } from '~/transformers/transformer.js'
 
+import { fromTransformerDTO } from './transformer.js'
+
 type AnySchemaDTO = Extract<ISchemaDTO, { type: 'any' }>
 
 /**
@@ -33,7 +35,7 @@ export const fromAnySchemaDTO = ({
   if (transform !== undefined) {
     const transformer = fromAnySchemaTransformerDTO(transform)
 
-    if (transformer !== undefined) {
+    if (transformer !== null) {
       schema = schema.transform(transformer)
     }
   }
@@ -43,9 +45,11 @@ export const fromAnySchemaDTO = ({
 
 const fromAnySchemaTransformerDTO = (
   transformerDTO: AnySchemaTransformerDTO
-): Transformer<unknown> | undefined => {
+): Transformer<unknown> | null => {
   try {
     switch (transformerDTO.transformerId) {
+      case 'custom':
+        return null
       case 'jsonStringify': {
         const { space } = transformerDTO
 
@@ -56,10 +60,10 @@ const fromAnySchemaTransformerDTO = (
         const transformers: Transformer[] = []
 
         for (const transformerDTO of transformerDTOs) {
-          const transformer = fromAnySchemaTransformerDTO(transformerDTO)
+          const transformer = fromTransformerDTO(transformerDTO)
 
-          if (transformer === undefined) {
-            return undefined
+          if (transformer === null) {
+            return null
           }
 
           transformers.push(transformer)
@@ -67,10 +71,8 @@ const fromAnySchemaTransformerDTO = (
 
         return pipe(...transformers)
       }
-      default:
-        return undefined
     }
   } catch {
-    return undefined
+    return null
   }
 }
