@@ -10,13 +10,14 @@ interface JSONStringifierOptions {
   reviver?: (this: any, key: string, value: any) => any
 }
 
-export interface JSONStringifyDTO {
+export interface JSONStringifierDTO {
   transformerId: 'jsonStringify'
   space?: string | number
 }
 
 export class JSONStringifier
-  implements SerializableTransformer<unknown, unknown, string, Constant<string>, JSONStringifyDTO>
+  implements
+    SerializableTransformer<unknown, unknown, string, Constant<string>, JSONStringifierDTO>
 {
   // @ts-expect-error
   _typeModifier: Constant<string>

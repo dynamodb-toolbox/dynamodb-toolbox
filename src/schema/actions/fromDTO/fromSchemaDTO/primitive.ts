@@ -11,6 +11,8 @@ import { suffix } from '~/transformers/suffix.js'
 import type { Transformer } from '~/transformers/transformer.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { fromTransformerDTO } from './transformer.js'
+
 type PrimitiveSchemaDTO = Extract<
   ISchemaDTO,
   { type: 'null' | 'boolean' | 'number' | 'string' | 'binary' }
@@ -52,7 +54,7 @@ export const fromPrimitiveSchemaDTO = (dto: PrimitiveSchemaDTO): PrimitiveSchema
       if (transform !== undefined) {
         const transformer = fromStringSchemaTransformerDTO(transform)
 
-        if (transformer !== undefined) {
+        if (transformer !== null) {
           schema = schema.transform(transformer)
         }
       }
@@ -76,9 +78,11 @@ export const fromPrimitiveSchemaDTO = (dto: PrimitiveSchemaDTO): PrimitiveSchema
 
 const fromStringSchemaTransformerDTO = (
   transformerDTO: StringSchemaTransformerDTO
-): Transformer<string> | undefined => {
+): Transformer<string> | null => {
   try {
     switch (transformerDTO.transformerId) {
+      case 'custom':
+        return null
       case 'prefix': {
         const { prefix: _prefix, delimiter } = transformerDTO
         return prefix(_prefix, { delimiter })
@@ -92,10 +96,10 @@ const fromStringSchemaTransformerDTO = (
         const transformers: Transformer<string>[] = []
 
         for (const transformerDTO of transformerDTOs) {
-          const transformer = fromStringSchemaTransformerDTO(transformerDTO)
+          const transformer = fromTransformerDTO(transformerDTO)
 
-          if (transformer === undefined) {
-            return undefined
+          if (transformer === null) {
+            return null
           }
 
           transformers.push(transformer)
@@ -103,10 +107,8 @@ const fromStringSchemaTransformerDTO = (
 
         return pipe(...transformers)
       }
-      default:
-        return undefined
     }
   } catch {
-    return undefined
+    return null
   }
 }
