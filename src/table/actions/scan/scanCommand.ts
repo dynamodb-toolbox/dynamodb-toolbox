@@ -206,11 +206,8 @@ export class IScanCommand<
           continue
         }
 
-        console.log('Formatting item:', item)
-        console.log('Formatting w. attributes:', attributes)
         const formattedItem = itemEntityFormatter.format(item, { attributes })
 
-        console.log('Not reaching here')
         const { entityAttribute, entityName } = itemEntityFormatter.entity
         const entityAttrName = getEntityAttrOptionValue(entityAttribute, 'name')
         const addEntityAttr = showEntityAttr && isEntityAttrEnabled(entityAttribute)
