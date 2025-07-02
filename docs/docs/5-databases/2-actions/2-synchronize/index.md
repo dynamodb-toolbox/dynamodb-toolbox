@@ -38,7 +38,7 @@ await PokeTable.build(Synchronizer)
     title: 'Dev',
     description: 'Development environment account',
     // 👇 https://ui.shadcn.com/colors
-    awsAccountColor: 'blue'
+    color: 'blue'
   })
   .sync(...)
 ```
