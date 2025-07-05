@@ -89,6 +89,20 @@ describe('accessPattern', () => {
     expect(command[$options]).toStrictEqual({ attributes: ['age'] })
   })
 
+  test('builds query w. options and merge new options', () => {
+    const pk = TestEntity.build(AccessPattern)
+      .schema(string())
+      .pattern(partition => ({ partition }))
+      .options({ attributes: ['age'] })
+
+    const mergedPk = pk.options({ reverse: true }, { merge: true })
+
+    const command = mergedPk.query('123')
+
+    expect(command).toBeInstanceOf(QueryCommand)
+    expect(command[$options]).toStrictEqual({ attributes: ['age'], reverse: true })
+  })
+
   test('builds more complex query', () => {
     const eq = TestEntity.build(AccessPattern)
       .schema(map({ partition: string(), eq: string() }))

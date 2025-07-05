@@ -146,14 +146,19 @@ export class AccessPattern<
   }
 
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS,
+    options?: { merge?: boolean }
   ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS> {
+    const potentiallyMergedOptions = options?.merge
+      ? { ...this[$options], ...nextOptions }
+      : nextOptions
+
     return new AccessPattern(
       this.table,
       this[$entities],
       this[$schema],
       this[$pattern],
-      nextOptions
+      potentiallyMergedOptions
     )
   }
 

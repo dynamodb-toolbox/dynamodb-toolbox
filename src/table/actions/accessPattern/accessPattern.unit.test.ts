@@ -103,6 +103,21 @@ describe('accessPattern', () => {
     expect(command[$options]).toStrictEqual({ attributes: ['age', 'price'] })
   })
 
+  test('builds query w. options and merge new options', () => {
+    const pk = TestTable.build(AccessPattern)
+      .entities(Entity1, Entity2)
+      .schema(string())
+      .pattern(partition => ({ partition }))
+      .options({ attributes: ['age', 'price'] })
+
+    const mergedPk = pk.options({ reverse: true }, { merge: true })
+
+    const command = mergedPk.query('123')
+
+    expect(command).toBeInstanceOf(QueryCommand)
+    expect(command[$options]).toStrictEqual({ attributes: ['age', 'price'], reverse: true })
+  })
+
   test('builds more complex query', () => {
     const eq = TestTable.build(AccessPattern)
       .schema(map({ partition: string(), eq: string() }))

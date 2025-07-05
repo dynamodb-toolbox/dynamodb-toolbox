@@ -105,6 +105,42 @@ const projectedPattern = PokeTable.build(AccessPattern)
   .options({ attributes: ['name', 'trainerId'] })
 ```
 
+:::note[Examples]
+
+<Tabs>
+<TabItem value="replace" label="Replace Options">
+
+```ts
+const pattern = PokeTable.build(AccessPattern)
+  .entities(TrainerEntity, PokemonEntity)
+  .options({ attributes: ['name', 'trainerId'] })
+
+// Replace existing options
+const newPattern = pattern.options({ reverse: true })
+// Result: { reverse: true } (attributes are lost)
+```
+
+</TabItem>
+<TabItem value="merge" label="Merge Options">
+
+```ts
+const pattern = PokeTable.build(AccessPattern)
+  .entities(TrainerEntity, PokemonEntity)
+  .options({ attributes: ['name', 'trainerId'] })
+
+// Merge with existing options
+const mergedPattern = pattern.options(
+  { reverse: true },
+  { merge: true }
+)
+// Result: { attributes: ['name', 'trainerId'], reverse: true }
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
 :::info
 
 It is advised to provide `entities` first as it constrains the `options` type.

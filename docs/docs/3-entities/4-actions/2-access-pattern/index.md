@@ -100,6 +100,42 @@ const projectedPattern = PokemonEntity
   .options({ attributes: ['name', 'trainerId'] })
 ```
 
+:::note[Examples]
+
+<Tabs>
+<TabItem value="replace" label="Replace Options">
+
+```ts
+const pattern = PokemonEntity.build(AccessPattern).options({
+  attributes: ['name', 'trainerId']
+})
+
+// Replace existing options
+const newPattern = pattern.options({ reverse: true })
+// Result: { reverse: true } (attributes are lost)
+```
+
+</TabItem>
+<TabItem value="merge" label="Merge Options">
+
+```ts
+const pattern = PokemonEntity.build(AccessPattern).options({
+  attributes: ['name', 'trainerId']
+})
+
+// Merge with existing options
+const mergedPattern = pattern.options(
+  { reverse: true },
+  { merge: true }
+)
+// Result: { attributes: ['name', 'trainerId'], reverse: true }
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
 ### `.meta(...)`
 
 Adds metadata to the `AccessPattern`.
