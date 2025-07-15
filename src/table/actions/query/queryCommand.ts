@@ -321,8 +321,13 @@ export class QueryCommand<
   }
 
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {
-    return new QueryCommand(this.table, this[$entities], this[$query], nextOptions)
+    return new QueryCommand(
+      this.table,
+      this[$entities],
+      this[$query],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 }

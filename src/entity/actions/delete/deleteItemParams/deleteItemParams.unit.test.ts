@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   DeleteItemCommand,
   DynamoDBToolboxError,
@@ -145,6 +147,24 @@ describe('delete', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const { ReturnConsumedCapacity, ReturnItemCollectionMetrics } = TestEntity.build(
+      DeleteItemCommand
+    )
+      .key({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, metrics: 'SIZE' }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
   test('sets returnValues options', () => {

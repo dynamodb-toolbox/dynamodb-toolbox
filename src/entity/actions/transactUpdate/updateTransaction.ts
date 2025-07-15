@@ -40,9 +40,13 @@ export class UpdateTransaction<
   }
 
   options<NEXT_OPTIONS extends UpdateTransactionOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): UpdateTransaction<ENTITY, NEXT_OPTIONS> {
-    return new UpdateTransaction(this.entity, this[$item], nextOptions)
+    return new UpdateTransaction(
+      this.entity,
+      this[$item],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): Require<TransactWriteItem, 'Update'> & {

@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   DynamoDBToolboxError,
   Entity,
@@ -403,7 +405,7 @@ describe('put', () => {
     expect(Item).toMatchObject({ pk: '3', sk: '3' })
   })
 
-  // Options
+  // --- OPTIONS ---
   test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(PutItemCommand)
       .item({ email: 'x', sort: 'y' })
@@ -448,6 +450,22 @@ describe('put', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const { ReturnConsumedCapacity, ReturnItemCollectionMetrics } = TestEntity.build(PutItemCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, metrics: 'SIZE' }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
   })
 
   test('sets returnValues options', () => {

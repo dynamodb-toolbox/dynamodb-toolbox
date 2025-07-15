@@ -122,9 +122,15 @@ export class AccessPattern<
   }
 
   options<NEXT_OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): AccessPattern<ENTITY, SCHEMA, QUERY, NEXT_OPTIONS> {
-    return new AccessPattern(this.entity, this[$schema], this[$pattern], nextOptions, this[$meta])
+    return new AccessPattern(
+      this.entity,
+      this[$schema],
+      this[$pattern],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions,
+      this[$meta]
+    )
   }
 
   meta(nextMeta: AccessPatternMetadata): AccessPattern<ENTITY, SCHEMA, QUERY, OPTIONS> {

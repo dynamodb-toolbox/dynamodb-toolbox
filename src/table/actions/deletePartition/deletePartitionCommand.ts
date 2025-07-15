@@ -72,9 +72,18 @@ export class DeletePartitionCommand<
   }
 
   options(
-    nextOptions: DeletePartitionOptions<TABLE, ENTITIES, QUERY>
+    nextOptions:
+      | DeletePartitionOptions<TABLE, ENTITIES, QUERY>
+      | ((
+          prevOptions: DeletePartitionOptions<TABLE, ENTITIES, QUERY>
+        ) => DeletePartitionOptions<TABLE, ENTITIES, QUERY>)
   ): DeletePartitionCommand<TABLE, ENTITIES, QUERY> {
-    return new DeletePartitionCommand(this.table, this[$entities], this[$query], nextOptions)
+    return new DeletePartitionCommand(
+      this.table,
+      this[$entities],
+      this[$query],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   [$sentArgs](): [Entity[], Query<TABLE>, DeletePartitionOptions<TABLE, Entity[], Query<TABLE>>] {

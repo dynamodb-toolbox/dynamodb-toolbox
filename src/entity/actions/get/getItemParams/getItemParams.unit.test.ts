@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   DynamoDBToolboxError,
   Entity,
@@ -116,7 +118,7 @@ describe('get', () => {
     ).toThrow(DynamoDBToolboxError)
   })
 
-  // Options
+  // --- OPTIONS ---
   test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(GetItemCommand)
       .key({ email: 'x', sort: 'y' })
@@ -163,6 +165,22 @@ describe('get', () => {
     expect(invalidCall).toThrow(
       expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
+  })
+
+  test('builds command w. options callback', () => {
+    const { ReturnConsumedCapacity, ConsistentRead } = TestEntity.build(GetItemCommand)
+      .key({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, consistent: true }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ConsistentRead).toBe(true)
   })
 
   test('overrides tableName', () => {

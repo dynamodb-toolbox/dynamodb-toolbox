@@ -43,8 +43,17 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     return new ConditionCheck(this.entity, this[$key], nextCondition, this[$options])
   }
 
-  options(nextOptions: ConditionCheckOptions): ConditionCheck<ENTITY> {
-    return new ConditionCheck(this.entity, this[$key], this[$condition], nextOptions)
+  options(
+    nextOptions:
+      | ConditionCheckOptions
+      | ((prevOptions: ConditionCheckOptions) => ConditionCheckOptions)
+  ): ConditionCheck<ENTITY> {
+    return new ConditionCheck(
+      this.entity,
+      this[$key],
+      this[$condition],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): Require<TransactWriteItem, 'ConditionCheck'> {

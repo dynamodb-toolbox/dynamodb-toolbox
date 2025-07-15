@@ -57,9 +57,13 @@ export class DeleteItemCommand<
   }
 
   options<NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): DeleteItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new DeleteItemCommand(this.entity, this[$key], nextOptions)
+    return new DeleteItemCommand(
+      this.entity,
+      this[$key],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   [$sentArgs](): [KeyInputItem<ENTITY>, DeleteItemOptions<ENTITY>] {

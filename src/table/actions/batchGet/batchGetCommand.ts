@@ -100,9 +100,14 @@ export class BatchGetCommand<
   }
 
   options<NEXT_OPTIONS extends BatchGetCommandOptions<ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): BatchGetCommand<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
-    return new BatchGetCommand(this.table, this[$entities], this[$requests], nextOptions)
+    return new BatchGetCommand(
+      this.table,
+      this[$entities],
+      this[$requests],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): NonNullable<BatchGetCommandInput['RequestItems']> {

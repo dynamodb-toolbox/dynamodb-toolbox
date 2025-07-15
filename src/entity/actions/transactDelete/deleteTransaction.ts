@@ -35,9 +35,13 @@ export class DeleteTransaction<
   }
 
   options<NEXT_OPTIONS extends DeleteTransactionOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): DeleteTransaction<ENTITY, NEXT_OPTIONS> {
-    return new DeleteTransaction(this.entity, this[$key], nextOptions)
+    return new DeleteTransaction(
+      this.entity,
+      this[$key],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): Require<TransactWriteItem, 'Delete'> {

@@ -14,7 +14,7 @@ import { $options, $requests } from './constants.js'
 
 export type IBatchWriteRequest = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
 
-export type BatchWriteCommandOptions = {
+export interface BatchWriteCommandOptions {
   tableName?: string
 }
 
@@ -73,8 +73,17 @@ export class BatchWriteCommand<
     return new BatchWriteCommand(this.table, entities as RequestEntities<NEXT_REQUESTS>, requests)
   }
 
-  options(nextOptions: BatchWriteCommandOptions): BatchWriteCommand<TABLE, ENTITIES, REQUESTS> {
-    return new BatchWriteCommand(this.table, this[$entities], this[$requests], nextOptions)
+  options(
+    nextOptions:
+      | BatchWriteCommandOptions
+      | ((prevOptions: BatchWriteCommandOptions) => BatchWriteCommandOptions)
+  ): BatchWriteCommand<TABLE, ENTITIES, REQUESTS> {
+    return new BatchWriteCommand(
+      this.table,
+      this[$entities],
+      this[$requests],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']> {

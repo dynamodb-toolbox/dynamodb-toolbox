@@ -12,6 +12,7 @@ import {
 } from '~/index.js'
 import { $entities } from '~/table/index.js'
 
+import type { BatchWriteCommandOptions } from './batchWriteCommand.js'
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
 const TestTable = new Table({
@@ -140,5 +141,20 @@ describe('BatchWriteCommand', () => {
 
     const input = command.options({ tableName: 'tableName' }).params()
     expect(input).toMatchObject({ tableName: [{ DeleteRequest: { Key: { pk: 'b', sk: 'b' } } }] })
+  })
+
+  test('builds command w. options callback', () => {
+    const input = TestTable.build(BatchWriteCommand)
+      .requests(EntityB.build(BatchDeleteRequest).key({ pkB: 'b', skB: 'b' }))
+      .options({ tableName: 'tableName' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, BatchWriteCommandOptions> = 1
+        assertOptions
+
+        return { tableName: 'tableName2' }
+      })
+      .params()
+
+    expect(input).toMatchObject({ tableName2: [{ DeleteRequest: expect.any(Object) }] })
   })
 })
