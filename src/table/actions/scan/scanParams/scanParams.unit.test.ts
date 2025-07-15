@@ -149,8 +149,9 @@ describe('scan', () => {
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
         .options({
+          // @ts-ignore (Error varies between TS versions)
           index: 'gsi',
-          // @ts-expect-error
+          // @ts-ignore (Error varies between TS versions)
           consistent: true
         })
         .params()
