@@ -59,6 +59,14 @@ const command = PokeTable.build(BatchWriteCommand).options({
 })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const multiTenantCommand = batchWriteCommand.options(
+  prevOptions => ({ ...prevOptions, tableName: 'my-table' })
+)
+```
+
 You can use the `BatchWriteCommandOptions` type to explicitly type an object as a `BatchWriteCommand` options object:
 
 ```ts

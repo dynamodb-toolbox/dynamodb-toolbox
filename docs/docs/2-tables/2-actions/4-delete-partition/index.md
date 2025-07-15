@@ -82,6 +82,17 @@ await PokeTable.build(DeletePartitionCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+await deletePartitionCommand
+  .options(prevOptions => ({
+    ...prevOptions,
+    consistent: true
+  }))
+  .send()
+```
+
 You can use the `DeletePartitionOptions` type to explicitly type an object as a `DeletePartitionCommand` options object:
 
 ```ts

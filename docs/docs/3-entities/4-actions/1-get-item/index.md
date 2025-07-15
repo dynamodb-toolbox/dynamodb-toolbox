@@ -63,6 +63,17 @@ const { Item } = await PokemonEntity.build(GetItemCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const { Item } = await getItemCommand
+  .options(prevOptions => ({
+    ...prevOptions,
+    consistent: true
+  }))
+  .send()
+```
+
 You can use the `GetItemOptions` type to explicitly type an object as a `GetItemCommand` options object:
 
 ```ts

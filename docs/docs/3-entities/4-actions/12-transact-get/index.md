@@ -76,6 +76,17 @@ const transaction = PokemonEntity.build(GetTransaction)
   })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const projectedTransaction = getTransaction.options(
+  prevOptions => ({
+    ...prevOptions,
+    attributes: ['name', 'level']
+  })
+)
+```
+
 You can use the `GetTransactionOptions` type to explicitly type an object as a `GetTransaction` options object:
 
 ```ts

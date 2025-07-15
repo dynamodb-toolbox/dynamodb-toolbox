@@ -82,6 +82,14 @@ const { Items } = await PokeTable.build(QueryCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const { Items } = await queryCommand
+  .options(prevOptions => ({ ...prevOptions, limit: 10 }))
+  .send()
+```
+
 You can use the `QueryOptions` type to explicitly type an object as a `QueryCommand` options object:
 
 ```ts

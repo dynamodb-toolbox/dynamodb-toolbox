@@ -47,6 +47,14 @@ const { Items } = await PokeTable.build(ScanCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const { Items } = await scanCommand
+  .options(prevOptions => ({ ...prevOptions, limit: 10 }))
+  .send()
+```
+
 You can use the `ScanOptions` type to explicitly type an object as a `ScanCommand` options object:
 
 ```ts

@@ -100,6 +100,14 @@ const projectedPattern = PokemonEntity
   .options({ attributes: ['name', 'trainerId'] })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const consistentAccessPattern = accessPattern.options(
+  prevOptions => ({ ...prevOptions, consistent: true })
+)
+```
+
 ### `.meta(...)`
 
 Adds metadata to the `AccessPattern`.

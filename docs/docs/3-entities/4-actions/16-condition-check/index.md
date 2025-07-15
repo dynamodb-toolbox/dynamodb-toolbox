@@ -85,6 +85,14 @@ const transaction = PokemonEntity.build(ConditionCheck)
   .options({ ... })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const multiTenantTransaction = conditionCheck.options(
+  prevOptions => ({ ...prevOptions, tableName: 'my-table' })
+)
+```
+
 You can use the `ConditionCheckOptions` type to explicitly type an object as a `ConditionCheck` options object:
 
 ```ts

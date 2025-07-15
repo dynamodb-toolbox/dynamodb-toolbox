@@ -76,6 +76,17 @@ const transaction = PokemonEntity.build(PutTransaction)
   })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const conditionedTransaction = putTransaction.options(
+  prevOptions => ({
+    ...prevOptions,
+    condition: { attr: 'pokemonId', exists: false }
+  })
+)
+```
+
 You can use the `PutTransactionOptions` type to explicitly type an object as a `PutTransaction` options object:
 
 ```ts
