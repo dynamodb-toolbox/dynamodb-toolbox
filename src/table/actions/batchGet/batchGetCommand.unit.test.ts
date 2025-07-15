@@ -234,4 +234,19 @@ describe('BatchGetCommand', () => {
     const input = command.options({ tableName: 'tableName' }).params()
     expect(input).toMatchObject({ tableName: { Keys: [{ pk: 'a', sk: 'a' }] } })
   })
+
+  test('updates options when using callback', () => {
+    const input = TestTable.build(BatchGetCommand)
+      .requests(EntityA.build(BatchGetRequest).key({ pkA: 'a', skA: 'a' }))
+      .options({ consistent: true })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { consistent: true }> = 1
+        assertOptions
+
+        return { ...prevOptions, tableName: 'tableName' }
+      })
+      .params()
+
+    expect(input).toMatchObject({ tableName: { ConsistentRead: true } })
+  })
 })

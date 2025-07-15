@@ -81,6 +81,17 @@ const transaction = PokemonEntity.build(UpdateTransaction)
   })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const conditionedTransaction = updateTransaction.options(
+  prevOptions => ({
+    ...prevOptions,
+    condition: { attr: 'level', lt: 99 }
+  })
+)
+```
+
 You can use the `UpdateTransactionOptions` type to explicitly type an object as a `UpdateTransaction` options object:
 
 ```ts

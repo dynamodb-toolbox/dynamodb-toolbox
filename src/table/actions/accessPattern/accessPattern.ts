@@ -48,10 +48,10 @@ export class IAccessPattern<
   // IQueryCommand is needed for contravariance
   query(
     input: InputValue<SCHEMA>
-  ): Table extends TABLE ? IQueryCommand : QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS> {
+  ): Table extends TABLE ? IQueryCommand : QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS> {
     type QUERY_COMMAND = Table extends TABLE
       ? IQueryCommand
-      : QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS>
+      : QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS>
 
     const schema = this[$schema]
     if (schema === undefined) {
@@ -72,7 +72,7 @@ export class IAccessPattern<
     const query = pattern(transformedInput)
     const options = this[$options]
 
-    return new QueryCommand<TABLE, ENTITIES, Query<TABLE>, OPTIONS>(
+    return new QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS>(
       this.table,
       this[$entities],
       query,
@@ -146,14 +146,14 @@ export class AccessPattern<
   }
 
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS> {
     return new AccessPattern(
       this.table,
       this[$entities],
       this[$schema],
       this[$pattern],
-      nextOptions
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
     )
   }
 

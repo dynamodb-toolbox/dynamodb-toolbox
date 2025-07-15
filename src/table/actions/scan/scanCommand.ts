@@ -273,8 +273,12 @@ export class ScanCommand<
   }
 
   options<NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS> {
-    return new ScanCommand(this.table, this[$entities], nextOptions)
+    return new ScanCommand(
+      this.table,
+      this[$entities],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 }

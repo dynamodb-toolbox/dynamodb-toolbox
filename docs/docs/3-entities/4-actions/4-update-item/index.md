@@ -277,6 +277,17 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+await updateItemCommand
+  .options(prevOptions => ({
+    ...prevOptions,
+    returnValues: 'UPDATED_OLD'
+  }))
+  .send()
+```
+
 You can use the `UpdateItemOptions` type to explicitly type an object as an `UpdateItemCommand` options object:
 
 ```ts

@@ -61,9 +61,13 @@ export class PutItemCommand<
   }
 
   options<NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): PutItemCommand<ENTITY, NEXT_OPTIONS> {
-    return new PutItemCommand(this.entity, this[$item], nextOptions)
+    return new PutItemCommand(
+      this.entity,
+      this[$item],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   [$sentArgs](): [PutItemInput<ENTITY>, PutItemOptions<ENTITY>] {

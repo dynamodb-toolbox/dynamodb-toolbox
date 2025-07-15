@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { A } from 'ts-toolbelt'
 
 import {
   ConditionCheck,
@@ -16,6 +17,8 @@ import {
   set,
   string
 } from '~/index.js'
+
+import type { ConditionCheckOptions } from './options.js'
 
 const dynamoDbClient = new DynamoDBClient({})
 
@@ -147,6 +150,25 @@ describe('condition check transaction', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const {
+      ConditionCheck: { TableName, ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(ConditionCheck)
+      .key({ email: 'x', sort: 'y' })
+      .condition({ attr: 'email', gt: 'test' })
+      .options({ tableName: 'tableName' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, ConditionCheckOptions> = 1
+        assertOptions
+
+        return { ...prevOptions, returnValuesOnConditionFalse: 'ALL_OLD' }
+      })
+      .params()
+
+    expect(TableName).toBe('tableName')
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
   })
 
   test('fails on extra options', () => {

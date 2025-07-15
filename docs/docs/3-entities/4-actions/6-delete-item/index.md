@@ -63,6 +63,17 @@ await PokemonEntity.build(DeleteItemCommand)
   .send()
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+await deleteItemCommand
+  .options(prevOptions => ({
+    ...prevOptions,
+    returnValues: 'ALL_OLD'
+  }))
+  .send()
+```
+
 You can use the `DeleteItemOptions` type to explicitly type an object as `DeleteItemCommand` options object:
 
 ```ts

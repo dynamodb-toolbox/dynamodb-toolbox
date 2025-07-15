@@ -89,6 +89,35 @@ describe('accessPattern', () => {
     expect(command[$options]).toStrictEqual({ attributes: ['age'] })
   })
 
+  test('builds query w. options callback', () => {
+    const pk = TestEntity.build(AccessPattern)
+      .schema(string())
+      .pattern(partition => ({ partition }))
+      .options({ consistent: true })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { consistent: true }> = 1
+        assertOptions
+
+        return { ...prevOptions, reverse: true }
+      })
+
+    const command = pk.query('123')
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof TestEntity],
+        { partition: string },
+        { consistent: true; reverse: true }
+      >
+    > = 1
+    assert
+
+    expect(command).toBeInstanceOf(QueryCommand)
+    expect(command[$options]).toStrictEqual({ consistent: true, reverse: true })
+  })
+
   test('builds more complex query', () => {
     const eq = TestEntity.build(AccessPattern)
       .schema(map({ partition: string(), eq: string() }))

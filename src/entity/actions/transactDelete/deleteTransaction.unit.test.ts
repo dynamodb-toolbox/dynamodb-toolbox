@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import { DeleteTransaction, DynamoDBToolboxError, Entity, Table, item, string } from '~/index.js'
 
 const TestTable = new Table({
@@ -128,7 +130,7 @@ describe('delete transaction', () => {
     )
   })
 
-  // Options
+  // --- OPTIONS ---
   test('overrides tableName', () => {
     const {
       Delete: { TableName }
@@ -152,6 +154,24 @@ describe('delete transaction', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const {
+      Delete: { TableName, ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(DeleteTransaction)
+      .key({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { tableName: string }> = 1
+        assertOptions
+
+        return { ...prevOptions, returnValuesOnConditionFalse: 'ALL_OLD' }
+      })
+      .params()
+
+    expect(TableName).toBe('tableName')
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
   })
 
   test('fails on extra options', () => {

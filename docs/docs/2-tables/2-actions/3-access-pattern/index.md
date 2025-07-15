@@ -105,6 +105,14 @@ const projectedPattern = PokeTable.build(AccessPattern)
   .options({ attributes: ['name', 'trainerId'] })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const limitedPattern = accessPattern.options(
+  prevOptions => ({ ...prevOptions, limit: 10 })
+)
+```
+
 :::info
 
 It is advised to provide `entities` first as it constrains the `options` type.

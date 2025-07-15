@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
+import type { A } from 'ts-toolbelt'
 
 import { DynamoDBToolboxError, Entity, GetTransaction, Table, item, string } from '~/index.js'
 
@@ -111,7 +112,7 @@ describe('Get transaction', () => {
     ).toThrow("Attribute 'sk' is required")
   })
 
-  // Options
+  // --- OPTIONS ---
   test('overrides tableName', () => {
     const {
       Get: { TableName }
@@ -159,6 +160,25 @@ describe('Get transaction', () => {
       .options({ attributes: ['test', 'sort'] })
       .params()
 
+    expect(ExpressionAttributeNames).toEqual({ '#p_1': 'test', '#p_2': 'sk' })
+    expect(ProjectionExpression).toBe('#p_1, #p_2')
+  })
+
+  test('builds command w. options callback', () => {
+    const {
+      Get: { TableName, ExpressionAttributeNames, ProjectionExpression }
+    } = TestEntity.build(GetTransaction)
+      .key({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { tableName: string }> = 1
+        assertOptions
+
+        return { ...prevOptions, attributes: ['test', 'sort'] }
+      })
+      .params()
+
+    expect(TableName).toBe('tableName')
     expect(ExpressionAttributeNames).toEqual({ '#p_1': 'test', '#p_2': 'sk' })
     expect(ProjectionExpression).toBe('#p_1, #p_2')
   })

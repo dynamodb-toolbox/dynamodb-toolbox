@@ -96,6 +96,14 @@ const command = PokeTable.build(BatchGetCommand).options({
 })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const consistentCommand = batchGetCommand.options(
+  prevOptions => ({ ...prevOptions, consistent: true })
+)
+```
+
 You can use the `BatchGetCommandOptions` type to explicitly type an object as a `BatchGetCommand` options object:
 
 ```ts

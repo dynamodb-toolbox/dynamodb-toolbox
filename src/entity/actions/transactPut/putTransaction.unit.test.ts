@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   DynamoDBToolboxError,
   Entity,
@@ -424,7 +426,7 @@ describe('put transaction', () => {
     )
   })
 
-  // Options
+  // --- OPTIONS ---
   test('overrides tableName', () => {
     const {
       Put: { TableName }
@@ -448,6 +450,24 @@ describe('put transaction', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidTableNameOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const {
+      Put: { TableName, ReturnValuesOnConditionCheckFailure }
+    } = TestEntity.build(PutTransaction)
+      .item({ email: 'x', sort: 'y' })
+      .options({ tableName: 'tableName' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { tableName: string }> = 1
+        assertOptions
+
+        return { ...prevOptions, returnValuesOnConditionFalse: 'ALL_OLD' }
+      })
+      .params()
+
+    expect(TableName).toBe('tableName')
+    expect(ReturnValuesOnConditionCheckFailure).toBe('ALL_OLD')
   })
 
   test('fails on extra options', () => {

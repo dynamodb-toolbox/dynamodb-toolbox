@@ -2,11 +2,10 @@ import type { A } from 'ts-toolbelt'
 
 import { Entity, QueryCommand, Table, item, map, number, string } from '~/index.js'
 import { $options, $query } from '~/table/actions/query/constants.js'
-import type { Query } from '~/table/actions/query/index.js'
 import { $entities } from '~/table/constants.js'
 
-import { AccessPattern } from './accessPattern.js'
 import type { IAccessPattern } from './accessPattern.js'
+import { AccessPattern } from './accessPattern.js'
 import { $meta } from './constants.js'
 
 const TestTable = new Table({
@@ -57,7 +56,7 @@ describe('accessPattern', () => {
 
     const assert: A.Equals<
       typeof command,
-      QueryCommand<typeof TestTable, [typeof Entity1, typeof Entity2]>
+      QueryCommand<typeof TestTable, [typeof Entity1, typeof Entity2], { partition: string }>
     > = 1
     assert
 
@@ -93,7 +92,7 @@ describe('accessPattern', () => {
       QueryCommand<
         typeof TestTable,
         [typeof Entity1, typeof Entity2],
-        Query<typeof TestTable>,
+        { partition: string },
         { attributes: ('age' | 'price')[] }
       >
     > = 1
@@ -101,6 +100,36 @@ describe('accessPattern', () => {
 
     expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$options]).toStrictEqual({ attributes: ['age', 'price'] })
+  })
+
+  test('builds query w. options callback', () => {
+    const pk = TestTable.build(AccessPattern)
+      .entities(Entity1, Entity2)
+      .schema(string())
+      .pattern(partition => ({ partition }))
+      .options({ consistent: true })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { consistent: true }> = 1
+        assertOptions
+
+        return { ...prevOptions, reverse: true }
+      })
+
+    const command = pk.query('123')
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof Entity1, typeof Entity2],
+        { partition: string },
+        { consistent: true; reverse: true }
+      >
+    > = 1
+    assert
+
+    expect(command).toBeInstanceOf(QueryCommand)
+    expect(command[$options]).toStrictEqual({ consistent: true, reverse: true })
   })
 
   test('builds more complex query', () => {

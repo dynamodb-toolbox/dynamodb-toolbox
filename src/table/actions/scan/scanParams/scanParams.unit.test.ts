@@ -148,9 +148,10 @@ describe('scan', () => {
 
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
-        // @ts-expect-error
         .options({
+          // @ts-ignore (Error varies between TS versions)
           index: 'gsi',
+          // @ts-ignore (Error varies between TS versions)
           consistent: true
         })
         .params()
@@ -159,6 +160,21 @@ describe('scan', () => {
     expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
+  })
+
+  test('updates options when using callback', () => {
+    const { ReturnConsumedCapacity, ConsistentRead } = TestTable.build(ScanCommand)
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, consistent: true }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ConsistentRead).toBe(true)
   })
 
   test('sets exclusiveStartKey option', () => {

@@ -71,6 +71,17 @@ const transaction = PokemonEntity.build(
   })
 ```
 
+You can **provide a callback** to partially update previous options:
+
+```ts
+const conditionedTransaction = deleteTransaction.options(
+  prevOptions => ({
+    ...prevOptions,
+    condition: { attr: 'archived', eq: true }
+  })
+)
+```
+
 You can use the `DeleteTransactionOptions` type to explicitly type an object as a `DeleteTransaction` options object:
 
 ```ts

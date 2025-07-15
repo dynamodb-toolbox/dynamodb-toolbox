@@ -54,9 +54,13 @@ export class UpdateAttributesCommand<
   }
 
   options<NEXT_OPTIONS extends UpdateAttributesOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): UpdateAttributesCommand<ENTITY, NEXT_OPTIONS> {
-    return new UpdateAttributesCommand(this.entity, this[$item], nextOptions)
+    return new UpdateAttributesCommand(
+      this.entity,
+      this[$item],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   [$sentArgs](): [UpdateAttributesInput<ENTITY>, UpdateAttributesOptions<ENTITY>] {

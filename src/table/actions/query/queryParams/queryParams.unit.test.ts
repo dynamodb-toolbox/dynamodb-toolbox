@@ -546,6 +546,38 @@ describe('query', () => {
     expect(ConsistentRead).toBe(true)
   })
 
+  test('throws on invalid consistent option', () => {
+    const invalidCall = () =>
+      TestTable.build(QueryCommand)
+        .query({ partition: 'foo' })
+        .options({
+          // @ts-expect-error
+          consistent: 'true'
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'options.invalidConsistentOption' })
+    )
+  })
+
+  test('updates options when using callback', () => {
+    const { ReturnConsumedCapacity, ConsistentRead } = TestTable.build(QueryCommand)
+      .query({ partition: 'foo' })
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, consistent: true }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ConsistentRead).toBe(true)
+  })
+
   test('sets exclusiveStartKey option', () => {
     const { ExclusiveStartKey } = TestTable.build(QueryCommand)
       .query({ partition: 'foo' })

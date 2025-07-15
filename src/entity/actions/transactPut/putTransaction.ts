@@ -38,9 +38,13 @@ export class PutTransaction<
   }
 
   options<NEXT_OPTIONS extends PutTransactionOptions<ENTITY>>(
-    nextOptions: NEXT_OPTIONS
+    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): PutTransaction<ENTITY, NEXT_OPTIONS> {
-    return new PutTransaction(this.entity, this[$item], nextOptions)
+    return new PutTransaction(
+      this.entity,
+      this[$item],
+      typeof nextOptions === 'function' ? nextOptions(this[$options]) : nextOptions
+    )
   }
 
   params(): Require<TransactWriteItem, 'Put'> & {

@@ -1,3 +1,5 @@
+import type { A } from 'ts-toolbelt'
+
 import {
   $ADD,
   $GET,
@@ -14,6 +16,7 @@ import {
   Entity,
   Table,
   UpdateAttributesCommand,
+  UpdateItemCommand,
   any,
   anyOf,
   binary,
@@ -1283,6 +1286,7 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
   })
 
+  // --- OPTIONS ---
   test('sets capacity options', () => {
     const { ReturnConsumedCapacity } = TestEntity.build(UpdateAttributesCommand)
       .item({ email: 'x', sort: 'y' })
@@ -1290,24 +1294,6 @@ describe('update', () => {
       .params()
 
     expect(ReturnConsumedCapacity).toBe('NONE')
-  })
-
-  test('sets metrics options', () => {
-    const { ReturnItemCollectionMetrics } = TestEntity.build(UpdateAttributesCommand)
-      .item({ email: 'x', sort: 'y' })
-      .options({ metrics: 'SIZE' })
-      .params()
-
-    expect(ReturnItemCollectionMetrics).toBe('SIZE')
-  })
-
-  test('sets returnValues options', () => {
-    const { ReturnValues } = TestEntity.build(UpdateAttributesCommand)
-      .item({ email: 'x', sort: 'y' })
-      .options({ returnValues: 'ALL_OLD' })
-      .params()
-
-    expect(ReturnValues).toBe('ALL_OLD')
   })
 
   test('fails on invalid capacity option', () => {
@@ -1324,6 +1310,15 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidCapacityOption' }))
   })
 
+  test('sets metrics options', () => {
+    const { ReturnItemCollectionMetrics } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ metrics: 'SIZE' })
+      .params()
+
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
   test('fails on invalid metrics option', () => {
     const invalidCall = () =>
       TestEntity.build(UpdateAttributesCommand)
@@ -1336,6 +1331,33 @@ describe('update', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'options.invalidMetricsOption' }))
+  })
+
+  test('builds command w. options callback', () => {
+    const { ReturnConsumedCapacity, ReturnItemCollectionMetrics } = TestEntity.build(
+      UpdateItemCommand
+    )
+      .item({ email: 'x', sort: 'y' })
+      .options({ capacity: 'NONE' })
+      .options(prevOptions => {
+        const assertOptions: A.Equals<typeof prevOptions, { capacity: 'NONE' }> = 1
+        assertOptions
+
+        return { ...prevOptions, metrics: 'SIZE' }
+      })
+      .params()
+
+    expect(ReturnConsumedCapacity).toBe('NONE')
+    expect(ReturnItemCollectionMetrics).toBe('SIZE')
+  })
+
+  test('sets returnValues options', () => {
+    const { ReturnValues } = TestEntity.build(UpdateAttributesCommand)
+      .item({ email: 'x', sort: 'y' })
+      .options({ returnValues: 'ALL_OLD' })
+      .params()
+
+    expect(ReturnValues).toBe('ALL_OLD')
   })
 
   test('fails on invalid returnValues option', () => {
