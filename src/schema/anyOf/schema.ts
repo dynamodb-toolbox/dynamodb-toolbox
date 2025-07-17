@@ -4,7 +4,7 @@ import { isArray } from '~/utils/validation/isArray.js'
 import type { Schema } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
-import { $discriminations_, $discriminators, $discriminators_ } from './constants.js'
+import { $computed, $discriminations_, $discriminators, $discriminators_ } from './constants.js'
 import type { AnyOfSchemaProps } from './types.js'
 
 export class AnyOfSchema<
@@ -16,13 +16,16 @@ export class AnyOfSchema<
   props: PROPS;
 
   // Lazily computed discriminators (attrName to attrSavedAs mapping) & element schema matches
-  [$discriminators_]?: Record<string, string>;
-  [$discriminations_]?: Record<string, Schema>
+  [$discriminators_]: Record<string, string> & { [$computed]: boolean };
+  [$discriminations_]: Record<string, Schema> & { [$computed]: boolean }
 
   constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'anyOf'
     this.elements = elements
     this.props = props
+
+    this[$discriminators_] = { [$computed]: false }
+    this[$discriminations_] = { [$computed]: false }
   }
 
   get checked(): boolean {
@@ -116,18 +119,19 @@ export class AnyOfSchema<
   }
 
   get [$discriminators](): Record<string, string> {
-    if (this[$discriminators_] === undefined) {
-      this[$discriminators_] =
-        this.elements.map(getDiscriminators).reduce(intersectDiscriminators, undefined) ?? {}
+    if (!this[$discriminators_][$computed]) {
+      Object.assign(
+        this[$discriminators_],
+        this.elements.map(getDiscriminators).reduce(intersectDiscriminators, undefined) ?? {},
+        { [$computed]: true }
+      )
     }
 
     return this[$discriminators_]
   }
 
   match(value: string): Schema | undefined {
-    if (this[$discriminations_] === undefined) {
-      this[$discriminations_] = {}
-
+    if (!this[$discriminations_][$computed]) {
       const { discriminator } = this.props
 
       if (discriminator === undefined) {
@@ -135,11 +139,10 @@ export class AnyOfSchema<
       }
 
       for (const elementSchema of this.elements) {
-        this[$discriminations_] = {
-          ...this[$discriminations_],
-          ...getDiscriminations(elementSchema, discriminator)
-        }
+        Object.assign(this[$discriminations_], getDiscriminations(elementSchema, discriminator))
       }
+
+      Object.assign(this[$discriminations_], { [$computed]: true })
     }
 
     return this[$discriminations_][value]
