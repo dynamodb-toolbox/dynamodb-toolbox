@@ -5,7 +5,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
-import { matchProjection, sanitize } from './utils.js'
+import { matchItemProjection } from './utils.js'
 
 export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
   schema: ItemSchema,
@@ -25,12 +25,7 @@ export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = 
   for (const [attributeName, attribute] of Object.entries(schema.attributes)) {
     const { savedAs } = attribute.props
 
-    const sanitizedAttributeName = sanitize(attributeName)
-    const { isProjected, childrenAttributes } = matchProjection(
-      new RegExp(`^${sanitizedAttributeName}|^\\['${sanitizedAttributeName}']`),
-      attributes
-    )
-
+    const { isProjected, childrenAttributes } = matchItemProjection(attributeName, attributes)
     if (!isProjected) {
       continue
     }

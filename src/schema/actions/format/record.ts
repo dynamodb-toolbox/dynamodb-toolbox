@@ -7,7 +7,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import { Formatter, type FormatterReturn, type FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
-import { matchProjection, sanitize } from './utils.js'
+import { matchMapProjection } from './utils.js'
 
 export function* recordSchemaFormatter(
   schema: RecordSchema,
@@ -51,12 +51,7 @@ export function* recordSchemaFormatter(
     })!
     missingEnumKeys.delete(formattedKey)
 
-    const sanitizedKey = sanitize(formattedKey)
-    const { isProjected, childrenAttributes } = matchProjection(
-      new RegExp(`^\\.${sanitizedKey}|^\\['${sanitizedKey}']`),
-      attributes
-    )
-
+    const { isProjected, childrenAttributes } = matchMapProjection(formattedKey, attributes)
     if (!isProjected) {
       continue
     }
@@ -73,12 +68,7 @@ export function* recordSchemaFormatter(
 
   if (!schema.props.partial && !partial) {
     for (const missingKey of missingEnumKeys) {
-      const sanitizedKey = sanitize(missingKey)
-      const { isProjected, childrenAttributes } = matchProjection(
-        new RegExp(`^\\.${sanitizedKey}|^\\['${sanitizedKey}']`),
-        attributes
-      )
-
+      const { isProjected, childrenAttributes } = matchMapProjection(missingKey, attributes)
       if (!isProjected) {
         continue
       }

@@ -1,4 +1,4 @@
-import { matchProjection, sanitize } from './utils.js'
+import { matchItemProjection, matchListProjection, matchMapProjection, sanitize } from './utils.js'
 
 describe('sanitizes', () => {
   test('sanitizes str with special chars', () => {
@@ -9,58 +9,60 @@ describe('sanitizes', () => {
 })
 
 describe('matchProjection', () => {
-  test('list', () => {
-    expect(matchProjection(/\[\d+\]/, ['foo', 'bar'])).toStrictEqual({ isProjected: false })
-    expect(matchProjection(/\[\d+\]/, ['[1]', '[2].bar'])).toStrictEqual({ isProjected: true })
-    expect(matchProjection(/\[\d+\]/, ['[1].foo', '[2].bar'])).toStrictEqual({
+  test('matchListProjection', () => {
+    expect(matchListProjection(['foo', 'bar'])).toStrictEqual({ isProjected: false })
+    expect(matchListProjection(['[1]', '[2].bar'])).toStrictEqual({ isProjected: true })
+    expect(matchListProjection(['[1].foo', '[2].bar'])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
     })
   })
 
   test('map/record', () => {
-    expect(matchProjection(new RegExp("^\\.key|^\\['key']"), ['.foo', '.bar'])).toStrictEqual({
+    expect(matchMapProjection('key', ['.foo', '.bar'])).toStrictEqual({
       isProjected: false
     })
 
-    expect(matchProjection(new RegExp("^\\.key|^\\['key']"), ['.key', '.bar'])).toStrictEqual({
+    expect(matchMapProjection('key', ['.key', '.bar'])).toStrictEqual({
       isProjected: true
     })
 
-    expect(
-      matchProjection(new RegExp("^\\.key|^\\['key']"), ['.key.foo', '.key.bar'])
-    ).toStrictEqual({
+    expect(matchMapProjection('key', ['.key.foo', '.key.bar'])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
     })
 
-    expect(
-      matchProjection(new RegExp("^\\.key|^\\['key']"), [`['key'].foo`, `['key'].bar`])
-    ).toStrictEqual({
+    expect(matchMapProjection('key', [`['key'].foo`, `['key'].bar`])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
+    })
+
+    expect(matchMapProjection('key', ['.keyWithSuffix'])).toStrictEqual({
+      isProjected: false
     })
   })
 
-  test('schema', () => {
-    expect(matchProjection(new RegExp("^key|^\\['key']"), ['foo', 'bar'])).toStrictEqual({
+  test('item', () => {
+    expect(matchItemProjection('key', ['foo', 'bar'])).toStrictEqual({
       isProjected: false
     })
 
-    expect(matchProjection(new RegExp("^key|^\\['key']"), ['key', 'bar'])).toStrictEqual({
+    expect(matchItemProjection('key', ['key', 'bar'])).toStrictEqual({
       isProjected: true
     })
 
-    expect(matchProjection(new RegExp("^key|^\\['key']"), ['key.foo', 'key.bar'])).toStrictEqual({
+    expect(matchItemProjection('key', ['key.foo', 'key.bar'])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
     })
 
-    expect(
-      matchProjection(new RegExp("^key|^\\['key']"), [`['key'].foo`, `['key'].bar`])
-    ).toStrictEqual({
+    expect(matchItemProjection('key', [`['key'].foo`, `['key'].bar`])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
+    })
+
+    expect(matchItemProjection('key', ['keyWithSuffix'])).toStrictEqual({
+      isProjected: false
     })
   })
 })

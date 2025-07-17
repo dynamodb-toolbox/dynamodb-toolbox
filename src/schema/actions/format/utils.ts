@@ -1,12 +1,41 @@
 export const sanitize = (str: string): string =>
   str.replace(/\\/g, '\\\\').replace(/[-[\]/{}()*+?.^$|]/g, '\\$&')
 
-export const matchProjection = (
+type ProjectionMatch =
+  | { isProjected: false; childrenAttributes?: never }
+  | { isProjected: true; childrenAttributes?: string[] }
+
+export const matchItemProjection = (
+  attributeName: string,
+  projectedAttributes?: string[]
+): ProjectionMatch => {
+  const sanitizedAttributeName = sanitize(attributeName)
+
+  return matchProjection(
+    new RegExp(`^(${sanitizedAttributeName}|\\['${sanitizedAttributeName}'\\])(?=\\.|\\[|$)`),
+    projectedAttributes
+  )
+}
+
+export const matchMapProjection = (
+  attributeName: string,
+  projectedAttributes?: string[]
+): ProjectionMatch => {
+  const sanitizedAttributeName = sanitize(attributeName)
+
+  return matchProjection(
+    new RegExp(`^(\\.${sanitizedAttributeName}|\\['${sanitizedAttributeName}'])(?=\\.|\\[|$)`),
+    projectedAttributes
+  )
+}
+
+export const matchListProjection = (projectedAttributes?: string[]): ProjectionMatch =>
+  matchProjection(/\[\d+\]/, projectedAttributes)
+
+const matchProjection = (
   attributeNameRegex: RegExp,
   projectedAttributes?: string[]
-):
-  | { isProjected: false; childrenAttributes?: never }
-  | { isProjected: true; childrenAttributes?: string[] } => {
+): ProjectionMatch => {
   if (projectedAttributes === undefined) {
     return { isProjected: true }
   }

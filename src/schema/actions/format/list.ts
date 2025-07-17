@@ -6,7 +6,7 @@ import { isArray } from '~/utils/validation/isArray.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
-import { matchProjection } from './utils.js'
+import { matchListProjection } from './utils.js'
 
 export function* listSchemaFormatter(
   schema: ListSchema,
@@ -35,7 +35,7 @@ export function* listSchemaFormatter(
   // - Either whole list is projected and we already know => projectedAttributes undefined
   // - Either some elements are projected => childrenAttributes undefined
   // - Either projection is deep => childrenAttributes defined
-  const { childrenAttributes } = matchProjection(/\[\d+\]/, attributes)
+  const { childrenAttributes } = matchListProjection(attributes)
 
   const formatters = rawValue.map((element, index) =>
     schemaFormatter(schema.elements, element, {

@@ -6,7 +6,7 @@ import { isObject } from '~/utils/validation/isObject.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
-import { matchProjection, sanitize } from './utils.js'
+import { matchMapProjection } from './utils.js'
 
 export function* mapSchemaFormatter(
   schema: MapSchema,
@@ -36,12 +36,7 @@ export function* mapSchemaFormatter(
     const { props } = attribute
     const { savedAs } = props
 
-    const sanitizedAttributeName = sanitize(attributeName)
-    const { isProjected, childrenAttributes } = matchProjection(
-      new RegExp(`^\\.${sanitizedAttributeName}|^\\['${sanitizedAttributeName}']`),
-      attributes
-    )
-
+    const { isProjected, childrenAttributes } = matchMapProjection(attributeName, attributes)
     if (!isProjected) {
       continue
     }
