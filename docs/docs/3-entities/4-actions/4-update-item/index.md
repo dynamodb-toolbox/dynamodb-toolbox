@@ -99,7 +99,7 @@ await PokemonEntity.build(UpdateItemCommand)
   .send()
 ```
 
-Self-references are possible. You can also **provide a fallback** as a second argument (which can also be a reference) in case the specified attribute path misses from the item:
+You can also **provide a fallback** as a second argument (which can also be a reference) in case the specified attribute path misses from the item:
 
 ```ts
 await PokemonEntity.build(UpdateItemCommand)
@@ -111,6 +111,17 @@ await PokemonEntity.build(UpdateItemCommand)
       'firstRef',
       $get('secondRef', 'Sky is the limit!')
     )
+  })
+  .send()
+```
+
+**Self-references are possible**. This is useful to update an attribute value only when it is missing:
+
+```ts
+await PokemonEntity.build(UpdateItemCommand)
+  .item({
+    ...
+    optionalAttribute: $get('optionalAttribute', 'fallback'),
   })
   .send()
 ```
