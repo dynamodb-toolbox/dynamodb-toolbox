@@ -6,6 +6,7 @@ import type { IQueryCommand, Query, QueryOptions } from '~/table/actions/query/i
 import { QueryCommand } from '~/table/actions/query/queryCommand.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
+import type { Cast, _Omit } from '~/types/index.js'
 
 import { $meta, $options, $pattern, $schema } from './constants.js'
 
@@ -15,27 +16,51 @@ interface AccessPatternMetadata {
   [x: string]: unknown
 }
 
+type MergeOptions<
+  TABLE extends Table,
+  ENTITIES extends Entity[],
+  QUERY extends Query<TABLE>,
+  DEFAULT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>,
+  CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>
+> =
+  QueryOptions<TABLE, ENTITIES, QUERY> extends DEFAULT_OPTIONS
+    ? CONTEXT_OPTIONS
+    : QueryOptions<TABLE, ENTITIES, QUERY> extends CONTEXT_OPTIONS
+      ? DEFAULT_OPTIONS
+      : DEFAULT_OPTIONS & CONTEXT_OPTIONS
+
 export class IAccessPattern<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
   SCHEMA extends Schema = Schema,
   QUERY extends Query<TABLE> = Query<TABLE>,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+  DEFAULT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+    TABLE,
+    ENTITIES,
+    QUERY
+  >,
+  CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+    TABLE,
+    ENTITIES,
+    QUERY
+  >
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'access-pattern' as const;
 
   [$schema]?: SCHEMA;
   // any is needed for contravariance
-  [$pattern]?: (input: Schema extends SCHEMA ? any : TransformedValue<SCHEMA>) => QUERY;
-  [$options]: OPTIONS;
+  [$pattern]?: (
+    input: Schema extends SCHEMA ? any : TransformedValue<SCHEMA>
+  ) => QUERY & { options?: CONTEXT_OPTIONS };
+  [$options]: DEFAULT_OPTIONS;
   [$meta]: AccessPatternMetadata
 
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
     schema?: SCHEMA,
-    pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS,
+    pattern?: (input: TransformedValue<SCHEMA>) => QUERY & { options?: CONTEXT_OPTIONS },
+    options: DEFAULT_OPTIONS = {} as DEFAULT_OPTIONS,
     meta: AccessPatternMetadata = {}
   ) {
     super(table, entities)
@@ -48,17 +73,24 @@ export class IAccessPattern<
   // IQueryCommand is needed for contravariance
   query(
     input: InputValue<SCHEMA>
-  ): Table extends TABLE ? IQueryCommand : QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS> {
+  ): Table extends TABLE
+    ? IQueryCommand
+    : QueryCommand<
+        TABLE,
+        ENTITIES,
+        QUERY,
+        MergeOptions<TABLE, ENTITIES, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS>
+      > {
+    type MERGED_OPTIONS = MergeOptions<TABLE, ENTITIES, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS>
     type QUERY_COMMAND = Table extends TABLE
       ? IQueryCommand
-      : QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS>
+      : QueryCommand<TABLE, ENTITIES, QUERY, MERGED_OPTIONS>
 
     const schema = this[$schema]
-    if (schema === undefined) {
-      throw new DynamoDBToolboxError('actions.incompleteAction', {
-        message: 'AccessPattern incomplete: Missing "schema" property'
-      })
-    }
+    const transformedInput =
+      schema !== undefined
+        ? new Parser(schema).parse(input)
+        : (undefined as TransformedValue<SCHEMA>)
 
     const pattern = this[$pattern]
     if (pattern === undefined) {
@@ -67,16 +99,14 @@ export class IAccessPattern<
       })
     }
 
-    const parser = new Parser(schema)
-    const transformedInput = parser.parse(input)
-    const query = pattern(transformedInput)
-    const options = this[$options]
+    const defaultOptions = this[$options]
+    const { options: contextOptions, ...query } = pattern(transformedInput)
 
-    return new QueryCommand<TABLE, ENTITIES, QUERY, OPTIONS>(
+    return new QueryCommand<TABLE, ENTITIES, QUERY, MERGED_OPTIONS>(
       this.table,
       this[$entities],
-      query,
-      options
+      query as QUERY,
+      { ...defaultOptions, ...contextOptions } as MERGED_OPTIONS
     ) as QUERY_COMMAND
   }
 }
@@ -86,14 +116,23 @@ export class AccessPattern<
   ENTITIES extends Entity[] = Entity[],
   SCHEMA extends Schema = Schema,
   QUERY extends Query<TABLE> = Query<TABLE>,
-  OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
-> extends IAccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
+  DEFAULT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+    TABLE,
+    ENTITIES,
+    QUERY
+  >,
+  CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+    TABLE,
+    ENTITIES,
+    QUERY
+  >
+> extends IAccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
     schema?: SCHEMA,
-    pattern?: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS,
+    pattern?: (input: TransformedValue<SCHEMA>) => QUERY & { options?: CONTEXT_OPTIONS },
+    options: DEFAULT_OPTIONS = {} as DEFAULT_OPTIONS,
     meta: AccessPatternMetadata = {}
   ) {
     super(table, entities, schema, pattern, options, meta)
@@ -106,48 +145,72 @@ export class AccessPattern<
     NEXT_ENTITIES,
     SCHEMA,
     QUERY,
-    OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-      ? OPTIONS
-      : QueryOptions<TABLE, NEXT_ENTITIES>
+    DEFAULT_OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+      ? DEFAULT_OPTIONS
+      : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>,
+    CONTEXT_OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+      ? CONTEXT_OPTIONS
+      : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
   > {
     return new AccessPattern(
       this.table,
       nextEntities,
       this[$schema],
-      this[$pattern],
-      this[$options] as OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES>
-        ? OPTIONS
-        : QueryOptions<TABLE, NEXT_ENTITIES>
+      this[$pattern] as (input: TransformedValue<SCHEMA>) => QUERY & {
+        options: CONTEXT_OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+          ? CONTEXT_OPTIONS
+          : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+      },
+      this[$options] as DEFAULT_OPTIONS extends QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
+        ? DEFAULT_OPTIONS
+        : QueryOptions<TABLE, NEXT_ENTITIES, QUERY>
     )
   }
 
   schema<NEXT_SCHEMA extends Schema>(
     nextSchema: NEXT_SCHEMA
-  ): AccessPattern<TABLE, ENTITIES, NEXT_SCHEMA, QUERY, OPTIONS> {
+  ): AccessPattern<TABLE, ENTITIES, NEXT_SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {
     return new AccessPattern(
       this.table,
       this[$entities],
       nextSchema,
-      this[$pattern] as (input: TransformedValue<NEXT_SCHEMA>) => QUERY,
+      this[$pattern] as (
+        input: TransformedValue<NEXT_SCHEMA>
+      ) => QUERY & { options?: CONTEXT_OPTIONS },
       this[$options]
     )
   }
 
-  pattern<NEXT_QUERY extends Query<TABLE>>(
-    nextPattern: (input: TransformedValue<SCHEMA>) => NEXT_QUERY
-  ): AccessPattern<TABLE, ENTITIES, SCHEMA, NEXT_QUERY, OPTIONS> {
+  pattern<
+    NEXT_QUERY extends Query<TABLE>,
+    NEXT_CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
+  >(
+    nextPattern: (
+      input: TransformedValue<SCHEMA>
+    ) => NEXT_QUERY & { options?: NEXT_CONTEXT_OPTIONS }
+  ): AccessPattern<
+    TABLE,
+    ENTITIES,
+    SCHEMA,
+    Cast<_Omit<NEXT_QUERY, 'options'>, Query<TABLE>>,
+    DEFAULT_OPTIONS,
+    NEXT_CONTEXT_OPTIONS
+  > {
     return new AccessPattern(
       this.table,
       this[$entities],
       this[$schema],
-      nextPattern,
+      /**
+       * @debt v3 "put query in a 'query' key so it's not polluted by the options"
+       */
+      nextPattern as any,
       this[$options]
     )
   }
 
-  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES>>(
-    nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
-  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS> {
+  options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
+    nextOptions: NEXT_OPTIONS | ((prevOptions: DEFAULT_OPTIONS) => NEXT_OPTIONS)
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS, CONTEXT_OPTIONS> {
     return new AccessPattern(
       this.table,
       this[$entities],
@@ -157,7 +220,9 @@ export class AccessPattern<
     )
   }
 
-  meta(nextMeta: AccessPatternMetadata): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
+  meta(
+    nextMeta: AccessPatternMetadata
+  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {
     return new AccessPattern(
       this.table,
       this[$entities],

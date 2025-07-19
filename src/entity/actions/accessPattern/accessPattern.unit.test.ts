@@ -55,6 +55,29 @@ describe('accessPattern', () => {
     expect(command[$query]).toStrictEqual({ partition: '123' })
   })
 
+  test('provides no input if no schema is provided', () => {
+    const pk = TestEntity.build(AccessPattern).pattern(input => {
+      // @ts-expect-error TODO
+      const assert: A.Equals<typeof input, undefined> = 1
+      assert
+
+      expect(input).toBeUndefined()
+
+      return { partition: '123' }
+    })
+
+    // @ts-expect-error TODO
+    const command = pk.query()
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<typeof TestTable, [typeof TestEntity], { partition: string }>
+    > = 1
+    assert
+
+    expect(command[$query]).toStrictEqual({ partition: '123' })
+  })
+
   test('builds secondary index query', () => {
     const lsi = TestEntity.build(AccessPattern)
       .schema(string())
@@ -62,7 +85,6 @@ describe('accessPattern', () => {
 
     const command = lsi.query('123')
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$query]).toStrictEqual({ index: 'lsi', partition: '123' })
   })
 
@@ -85,7 +107,6 @@ describe('accessPattern', () => {
     > = 1
     assert
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$options]).toStrictEqual({ attributes: ['age'] })
   })
 
@@ -114,8 +135,35 @@ describe('accessPattern', () => {
     > = 1
     assert
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$options]).toStrictEqual({ consistent: true, reverse: true })
+  })
+
+  test('builds query w. context options', () => {
+    const pk = TestEntity.build(AccessPattern)
+      .schema(string())
+      .pattern(partition => ({
+        partition,
+        options: partition === '123' ? { attributes: ['age'] } : {}
+      }))
+      .options({ reverse: true })
+
+    const command = pk.query('123')
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof TestEntity],
+        { partition: string },
+        { reverse: true } & ({ attributes: 'age'[] } | { attributes?: undefined })
+      >
+    > = 1
+    assert
+
+    expect(command[$options]).toStrictEqual({ reverse: true, attributes: ['age'] })
+
+    const command2 = pk.query('321')
+    expect(command2[$options]).toStrictEqual({ reverse: true })
   })
 
   test('builds more complex query', () => {
