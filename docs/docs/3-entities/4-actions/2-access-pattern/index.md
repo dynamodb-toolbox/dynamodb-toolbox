@@ -2,7 +2,6 @@
 title: AccessPattern
 sidebar_custom_props:
   sidebarActionType: util
-  new: true
 ---
 
 # AccessPattern
@@ -74,13 +73,17 @@ Defines how pattern inputs (parsed by the [`schema`](#schema)) are translated in
 - `partition`: The partition key to query
 - <code>index <i>(optional)</i></code>: The name of a secondary index to query
 - <code>range <i>(optional)</i></code>: If the table or index has a sort key, an additional <a href="../../entities/actions/parse-condition#range-conditions">Range or Equality Condition</a>
+- <code>options <i>(optional)</i></code>: Provide additional **context options** (merged with default [`options`](#options) during [`query`](#query))
 
 <!-- prettier-ignore -->
 ```ts
 const stringAccessPattern = PokemonEntity
   .build(AccessPattern)
   .schema(string())
-  .pattern(str => ({ partition: str }))
+  .pattern(str => ({
+    partition: str,
+    options: { reverse: true }
+  }))
 ```
 
 :::info
@@ -91,7 +94,7 @@ It is advised to provide `schema` first as it constrains the `pattern` type.
 
 ### `.options(...)`
 
-Provides additional options to the resulting `QueryCommands` (see [`QueryCommands`](../../../2-tables/2-actions/2-query/index.md#options) for more details):
+Provides additional **default options** to the resulting `QueryCommands` (see [`QueryCommands`](../../../2-tables/2-actions/2-query/index.md#options) for more details):
 
 <!-- prettier-ignore -->
 ```ts
@@ -107,6 +110,8 @@ const consistentAccessPattern = accessPattern.options(
   prevOptions => ({ ...prevOptions, consistent: true })
 )
 ```
+
+To make options dynamic based on the input, provide them via the **context options** in the [`pattern`](#pattern) method.
 
 ### `.meta(...)`
 

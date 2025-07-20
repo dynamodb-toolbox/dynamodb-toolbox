@@ -38,6 +38,7 @@ import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
 import { ScanCommand } from '~/table/actions/scan/index.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
+import type { Cast, _Omit } from '~/types/index.js'
 
 export class TableRepository<
   TABLE extends Table = Table,
@@ -202,13 +203,38 @@ export class TableRepository<
   accessPattern<
     SCHEMA extends Schema,
     QUERY extends Query<TABLE>,
-    OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
+    DEFAULT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+      TABLE,
+      ENTITIES,
+      QUERY
+    >,
+    CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<
+      TABLE,
+      ENTITIES,
+      QUERY
+    >
   >(
     schema: SCHEMA,
-    pattern: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
-  ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, OPTIONS> {
-    return new AccessPattern(this.table, this[$entities], schema, pattern, options)
+    pattern: (input: TransformedValue<SCHEMA>) => QUERY & { options?: CONTEXT_OPTIONS },
+    options: DEFAULT_OPTIONS = {} as DEFAULT_OPTIONS
+  ): AccessPattern<
+    TABLE,
+    ENTITIES,
+    SCHEMA,
+    Cast<_Omit<QUERY, 'options'>, Query<TABLE>>,
+    DEFAULT_OPTIONS,
+    CONTEXT_OPTIONS
+  > {
+    return new AccessPattern(
+      this.table,
+      this[$entities],
+      schema,
+      /**
+       * @debt v3 "put query in a 'query' key so it's not polluted by the options"
+       */
+      pattern as any,
+      options
+    )
   }
 }
 

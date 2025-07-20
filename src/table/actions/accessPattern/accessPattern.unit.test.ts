@@ -66,6 +66,31 @@ describe('accessPattern', () => {
     expect(command[$query]).toStrictEqual({ partition: '123' })
   })
 
+  test('provides no input if no schema is provided', () => {
+    const pk = TestTable.build(AccessPattern)
+      .entities(Entity1, Entity2)
+      .pattern(input => {
+        // @ts-expect-error TODO
+        const assert: A.Equals<typeof input, undefined> = 1
+        assert
+
+        expect(input).toBeUndefined()
+
+        return { partition: '123' }
+      })
+
+    // @ts-expect-error TODO
+    const command = pk.query()
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<typeof TestTable, [typeof Entity1, typeof Entity2], { partition: string }>
+    > = 1
+    assert
+
+    expect(command[$query]).toStrictEqual({ partition: '123' })
+  })
+
   test('builds secondary index query', () => {
     const lsi = TestTable.build(AccessPattern)
       .entities(Entity1, Entity2)
@@ -74,7 +99,6 @@ describe('accessPattern', () => {
 
     const command = lsi.query('123')
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$query]).toStrictEqual({ index: 'lsi', partition: '123' })
   })
 
@@ -98,7 +122,6 @@ describe('accessPattern', () => {
     > = 1
     assert
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$options]).toStrictEqual({ attributes: ['age', 'price'] })
   })
 
@@ -128,8 +151,36 @@ describe('accessPattern', () => {
     > = 1
     assert
 
-    expect(command).toBeInstanceOf(QueryCommand)
     expect(command[$options]).toStrictEqual({ consistent: true, reverse: true })
+  })
+
+  test('builds query w. context options', () => {
+    const pk = TestTable.build(AccessPattern)
+      .entities(Entity1, Entity2)
+      .schema(string())
+      .pattern(partition => ({
+        partition,
+        options: partition === '123' ? { attributes: ['age', 'price'] } : {}
+      }))
+      .options({ reverse: true })
+
+    const command = pk.query('123')
+
+    const assert: A.Equals<
+      typeof command,
+      QueryCommand<
+        typeof TestTable,
+        [typeof Entity1, typeof Entity2],
+        { partition: string },
+        { reverse: true } & ({ attributes: ('age' | 'price')[] } | { attributes?: undefined })
+      >
+    > = 1
+    assert
+
+    expect(command[$options]).toStrictEqual({ reverse: true, attributes: ['age', 'price'] })
+
+    const command2 = pk.query('321')
+    expect(command2[$options]).toStrictEqual({ reverse: true })
   })
 
   test('builds more complex query', () => {

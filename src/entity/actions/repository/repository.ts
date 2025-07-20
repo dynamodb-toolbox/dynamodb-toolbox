@@ -70,6 +70,7 @@ import type { Query, QueryOptions, QueryResponse } from '~/table/actions/query/i
 import { QueryCommand } from '~/table/actions/query/index.js'
 import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
 import { ScanCommand } from '~/table/actions/scan/index.js'
+import type { Cast, _Omit } from '~/types/index.js'
 
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
@@ -207,16 +208,36 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
   accessPattern<
     SCHEMA extends Schema,
     QUERY extends Query<ENTITY['table']>,
-    OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY]> = QueryOptions<
+    DEFAULT_OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY> = QueryOptions<
       ENTITY['table'],
-      [ENTITY]
+      [ENTITY],
+      QUERY
+    >,
+    CONTEXT_OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY> = QueryOptions<
+      ENTITY['table'],
+      [ENTITY],
+      QUERY
     >
   >(
     schema: SCHEMA,
-    pattern: (input: TransformedValue<SCHEMA>) => QUERY,
-    options: OPTIONS = {} as OPTIONS
-  ): AccessPattern<ENTITY, SCHEMA, QUERY, OPTIONS> {
-    return new AccessPattern(this.entity, schema, pattern, options)
+    pattern: (input: TransformedValue<SCHEMA>) => QUERY & { options?: CONTEXT_OPTIONS },
+    options: DEFAULT_OPTIONS = {} as DEFAULT_OPTIONS
+  ): AccessPattern<
+    ENTITY,
+    SCHEMA,
+    Cast<_Omit<QUERY, 'options'>, Query<ENTITY['table']>>,
+    DEFAULT_OPTIONS,
+    CONTEXT_OPTIONS
+  > {
+    return new AccessPattern(
+      this.entity,
+      schema,
+      /**
+       * @debt v3 "put query in a 'query' key so it's not polluted by the options"
+       */
+      pattern as any,
+      options
+    )
   }
 
   parse<OPTIONS extends ParseItemOptions = {}>(
