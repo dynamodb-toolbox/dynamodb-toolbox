@@ -2,7 +2,6 @@
 title: MCPToolkit
 sidebar_custom_props:
   sidebarActionType: util
-  new: true
 ---
 
 import Tabs from '@theme/Tabs';

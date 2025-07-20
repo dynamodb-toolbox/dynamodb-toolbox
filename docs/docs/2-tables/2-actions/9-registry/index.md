@@ -2,7 +2,6 @@
 title: Registry
 sidebar_custom_props:
   sidebarActionType: util
-  new: true
 ---
 
 # Registry
