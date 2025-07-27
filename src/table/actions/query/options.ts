@@ -31,19 +31,21 @@ export type QueryOptions<
   showEntityAttr?: boolean
   tagEntities?: boolean
   tableName?: string
-} & (QUERY['index'] extends keyof TABLE['indexes']
-  ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
-    ? {
-        // consistent must be false if a global secondary index is queried
-        consistent?: false
-        select?: SelectOption
-      }
-    : { consistent?: boolean; select?: SelectOption }
-  : {
-      consistent?: boolean
-      // "ALL_PROJECTED_ATTRIBUTES" is only available if a secondary index is queried
-      select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
-    }) &
+} & (Table extends TABLE
+  ? { consistent?: boolean; select?: SelectOption }
+  : QUERY['index'] extends keyof TABLE['indexes']
+    ? TABLE['indexes'][QUERY['index']]['type'] extends 'global'
+      ? {
+          // consistent must be false if a global secondary index is queried
+          consistent?: false
+          select?: SelectOption
+        }
+      : { consistent?: boolean; select?: SelectOption }
+    : {
+        consistent?: boolean
+        // "ALL_PROJECTED_ATTRIBUTES" is only available if a secondary index is queried
+        select?: Exclude<SelectOption, AllProjectedAttributesSelectOption>
+      }) &
   (
     | { attributes?: undefined; select?: SelectOption }
     | {

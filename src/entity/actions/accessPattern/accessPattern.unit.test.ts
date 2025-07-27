@@ -83,6 +83,9 @@ describe('accessPattern', () => {
       .schema(string())
       .pattern(partition => ({ index: 'lsi', partition }))
 
+    const assertExtends: A.Extends<typeof lsi, IAccessPattern> = 1
+    assertExtends
+
     const command = lsi.query('123')
 
     expect(command[$query]).toStrictEqual({ index: 'lsi', partition: '123' })
