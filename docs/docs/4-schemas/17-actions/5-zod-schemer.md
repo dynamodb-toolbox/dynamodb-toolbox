@@ -249,13 +249,13 @@ const zodFormatter = nameSchema
   .formatter()
 
 // ❌ `_f` missing
-zodParser.parse({ lastName: 'Dow' })
+zodFormatter.parse({ lastName: 'Dow' })
 // ❌ `lastName` too short
-zodParser.parse({ _f: 'John', lastName: '' })
+zodFormatter.parse({ _f: 'John', lastName: '' })
 // ✅  Success
-zodParser.parse({ _f: 'John', lastName: 'Dow' })
+zodFormatter.parse({ _f: 'John', lastName: 'Dow' })
 
-type ParsedName = z.infer<typeof zodParser>
+type FormattedName = z.infer<typeof zodFormatter>
 // => { firstName: string, lastName: string } 🙌
 ```
 
