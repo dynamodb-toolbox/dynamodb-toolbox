@@ -148,6 +148,7 @@ describe('scan', () => {
 
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
+        // @ts-ignore (Error varies between TS versions)
         .options({
           // @ts-ignore (Error varies between TS versions)
           index: 'gsi',
@@ -345,9 +346,10 @@ describe('scan', () => {
     // invalid totalSegments (non number)
     const invalidCallB = () =>
       TestTable.build(ScanCommand)
+        // @ts-ignore (Error varies between TS versions)
         .options({
           segment: 3,
-          // @ts-expect-error
+          // @ts-ignore (Error varies between TS versions)
           totalSegments: 'foo'
         })
         .params()
@@ -384,8 +386,9 @@ describe('scan', () => {
     // invalid segment (non-number)
     const invalidCallE = () =>
       TestTable.build(ScanCommand)
+        // @ts-ignore (Error varies between TS versions)
         .options({
-          // @ts-expect-error
+          // @ts-ignore (Error varies between TS versions)
           segment: 'foo',
           totalSegments: 4
         })
