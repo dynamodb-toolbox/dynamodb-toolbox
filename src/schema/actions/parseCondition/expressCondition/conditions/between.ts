@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressBetweenCondition = (
   condition: Extract<SchemaCondition, { between: unknown }>,
@@ -10,12 +10,14 @@ export const expressBetweenCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { between } = condition
-  const [left, right] = between
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
+  const [left, right] = condition.between
   ConditionExpression += ' BETWEEN '
   ConditionExpression += attrOrValueTokens(left, prefix, state)
   ConditionExpression += ' AND '

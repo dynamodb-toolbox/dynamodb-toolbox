@@ -49,8 +49,11 @@ export const valueToken = (value: unknown, prefix = '', state: ExpressionState):
   return token
 }
 
-// NOTE: Simple object check is enough as objects are not valid condition values
-const isAttr = (attrOrValue: unknown): attrOrValue is { attr: string } => isObject(attrOrValue)
+/**
+ * @debt v3 "Objects can be used as condition values. Rework syntax to { attr: 'path', eqAttr: 'otherPath' } to disambiguate"
+ */
+const isAttr = (attrOrValue: unknown): attrOrValue is { attr: string } =>
+  isObject(attrOrValue) && 'attr' in attrOrValue
 
 export const attrOrValueTokens = (
   attrOrValue: unknown,

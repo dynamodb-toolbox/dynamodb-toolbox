@@ -9,12 +9,12 @@ import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
 export const transformInCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { in: unknown }>
+  condition: Extract<SchemaCondition, { in: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)
 
-  const { in: formattedIns } = condition
+  const { in: formattedIn } = condition
   const size = 'size' in condition
   const attributePath = size ? condition.size : condition.attr
   const transform = size ? undefined : condition.transform
@@ -28,7 +28,7 @@ export const transformInCondition = (
     // Wrap value in object to avoid mixing str/number types
     const _in = new Deduper({ serializer: value => JSON.stringify({ _: value }) })
 
-    for (const formattedRangeValue of formattedIns) {
+    for (const formattedRangeValue of formattedIn) {
       const comparedSubSchemas = getComparedSubSchemas(schemaFinder, formattedRangeValue, transform)
 
       if (comparedSubSchemas !== undefined) {

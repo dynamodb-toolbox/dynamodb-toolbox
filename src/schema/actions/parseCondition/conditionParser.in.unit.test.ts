@@ -40,6 +40,16 @@ describe('parseCondition - in', () => {
     })
   })
 
+  test('in (free)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ value: 'foo', in: ['bar', 'baz'] })
+    ).toStrictEqual({
+      ConditionExpression: ':c_1 IN (:c_2, :c_3)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar', ':c_3': 'baz' }
+    })
+  })
+
   const deepSchema = item({
     map: map({
       deepA: map({

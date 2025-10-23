@@ -9,7 +9,7 @@ import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
 export const transformBetweenCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { between: unknown }>
+  condition: Extract<SchemaCondition, { between: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)

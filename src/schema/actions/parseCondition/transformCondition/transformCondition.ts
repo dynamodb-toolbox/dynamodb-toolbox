@@ -22,6 +22,10 @@ import {
 import { transformTypeCondition } from './conditions/type.js'
 
 export const transformCondition = (schema: Schema, condition: SchemaCondition): SchemaCondition => {
+  if ('value' in condition) {
+    return condition
+  }
+
   if ('or' in condition) {
     return transformOrCondition(schema, condition)
   }

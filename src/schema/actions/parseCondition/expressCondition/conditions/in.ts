@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressInCondition = (
   condition: Extract<SchemaCondition, { in: unknown }>,
@@ -10,14 +10,16 @@ export const expressInCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { in: range } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' IN ('
-  ConditionExpression += range
-    .map(rangeValue => attrOrValueTokens(rangeValue, prefix, state))
+  ConditionExpression += condition.in
+    .map(inValue => attrOrValueTokens(inValue, prefix, state))
     .join(', ')
   ConditionExpression += ')'
 

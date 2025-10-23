@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressContainsCondition = (
   condition: Extract<SchemaCondition, { contains: unknown }>,
@@ -10,12 +10,16 @@ export const expressContainsCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { attr, contains } = condition
-
   ConditionExpression += 'contains('
-  ConditionExpression += pathTokens(attr, prefix, state)
+
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    ConditionExpression += pathTokens(condition.attr, prefix, state)
+  }
+
   ConditionExpression += ', '
-  ConditionExpression += attrOrValueTokens(contains, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.contains, prefix, state)
   ConditionExpression += ')'
 
   return {

@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressBeginsWithCondition = (
   condition: Extract<SchemaCondition, { beginsWith: unknown }>,
@@ -10,12 +10,16 @@ export const expressBeginsWithCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { attr, beginsWith } = condition
-
   ConditionExpression += 'begins_with('
-  ConditionExpression += pathTokens(attr, prefix, state)
+
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    ConditionExpression += pathTokens(condition.attr, prefix, state)
+  }
+
   ConditionExpression += ', '
-  ConditionExpression += attrOrValueTokens(beginsWith, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.beginsWith, prefix, state)
   ConditionExpression += ')'
 
   return {

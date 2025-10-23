@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressEqCondition = (
   condition: Extract<SchemaCondition, { eq: unknown }>,
@@ -10,13 +10,15 @@ export const expressEqCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { eq } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' = '
-  ConditionExpression += attrOrValueTokens(eq, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.eq, prefix, state)
 
   return {
     ConditionExpression,
@@ -32,13 +34,15 @@ export const expressNeCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { ne } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' <> '
-  ConditionExpression += attrOrValueTokens(ne, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.ne, prefix, state)
 
   return {
     ConditionExpression,

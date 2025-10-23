@@ -11,7 +11,7 @@ describe('parseCondition - contains', () => {
     num: number()
   })
 
-  test('str - value', () => {
+  test('contains (str - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', contains: 'foo' })
     ).toStrictEqual({
@@ -21,7 +21,7 @@ describe('parseCondition - contains', () => {
     })
   })
 
-  test('str - reference', () => {
+  test('contains (str - reference)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', contains: { attr: 'otherStr' } })
     ).toStrictEqual({
@@ -31,7 +31,17 @@ describe('parseCondition - contains', () => {
     })
   })
 
-  test('list - value', () => {
+  test('contains (str - free)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ value: 'foo', contains: 'bar' })
+    ).toStrictEqual({
+      ConditionExpression: 'contains(:c_1, :c_2)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
+    })
+  })
+
+  test('contains (list - value)', () => {
     expect(simpleSchema.build(ConditionParser).parse({ attr: 'list', contains: 42 })).toStrictEqual(
       {
         ConditionExpression: 'contains(#c_1, :c_1)',
@@ -41,7 +51,7 @@ describe('parseCondition - contains', () => {
     )
   })
 
-  test('list - reference', () => {
+  test('contains (list - reference)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'list', contains: { attr: 'num' } })
     ).toStrictEqual({
@@ -51,7 +61,19 @@ describe('parseCondition - contains', () => {
     })
   })
 
-  test('set - value', () => {
+  test('contains (list - free)', () => {
+    expect(
+      simpleSchema
+        .build(ConditionParser)
+        .parse({ value: [{ foo: 'bar' }], contains: { foo: 'baz' } })
+    ).toStrictEqual({
+      ConditionExpression: 'contains(:c_1, :c_2)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': [{ foo: 'bar' }], ':c_2': { foo: 'baz' } }
+    })
+  })
+
+  test('contains (set - value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'set', contains: 'foo' })
     ).toStrictEqual({
@@ -61,13 +83,23 @@ describe('parseCondition - contains', () => {
     })
   })
 
-  test('set - reference', () => {
+  test('contains (set - reference)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'set', contains: { attr: 'str' } })
     ).toStrictEqual({
       ConditionExpression: 'contains(#c_1, #c_2)',
       ExpressionAttributeNames: { '#c_1': 'set', '#c_2': 'str' },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('contains (set - free)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ value: ['foo', 'bar'], contains: 'baz' })
+    ).toStrictEqual({
+      ConditionExpression: 'contains(:c_1, :c_2)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': ['foo', 'bar'], ':c_2': 'baz' }
     })
   })
 
