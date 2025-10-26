@@ -10,12 +10,16 @@ export const expressTypeCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { attr, type } = condition
-
   ConditionExpression += 'attribute_type('
-  ConditionExpression += pathTokens(attr, prefix, state)
+
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    ConditionExpression += pathTokens(condition.attr, prefix, state)
+  }
+
   ConditionExpression += ', '
-  ConditionExpression += valueToken(type, prefix, state)
+  ConditionExpression += valueToken(condition.type, prefix, state)
   ConditionExpression += ')'
 
   return {

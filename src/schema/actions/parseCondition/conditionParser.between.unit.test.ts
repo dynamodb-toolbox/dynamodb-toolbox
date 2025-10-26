@@ -45,6 +45,14 @@ describe('parseCondition - between', () => {
     })
   })
 
+  test('between (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 1, between: [2, 3] })).toStrictEqual({
+      ConditionExpression: ':c_1 BETWEEN :c_2 AND :c_3',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 1, ':c_2': 2, ':c_3': 3 }
+    })
+  })
+
   test('deep maps (values)', () => {
     const sch = item({
       map: map({

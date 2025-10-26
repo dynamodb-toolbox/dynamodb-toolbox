@@ -407,19 +407,101 @@ export type AnyOfSchemaCondition<
         : never)
 
 export type NonLogicalCondition<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
-  ? AnySchemaCondition<AnySchema, string, string>
-  : keyof SCHEMA['attributes'] extends infer ATTR_PATH
-    ? ATTR_PATH extends string
-      ? AttrCondition<
-          `['${ATTR_PATH}']` | If<Extends<ATTR_PATH, StringToEscape>, never, ATTR_PATH>,
-          SCHEMA['attributes'][ATTR_PATH],
-          Paths<SCHEMA>
-        >
-      : never
+  ? FreeCondition | AnySchemaCondition<AnySchema, string, string>
+  :
+      | FreeCondition
+      | (keyof SCHEMA['attributes'] extends infer ATTR_PATH
+          ? ATTR_PATH extends string
+            ? AttrCondition<
+                `['${ATTR_PATH}']` | If<Extends<ATTR_PATH, StringToEscape>, never, ATTR_PATH>,
+                SCHEMA['attributes'][ATTR_PATH],
+                Paths<SCHEMA>
+              >
+            : never
+          : never)
+
+type DdbAttributeValue =
+  | null
+  | boolean
+  | number
+  | string
+  | Uint8Array
+  | Set<string>
+  | Set<number>
+  | Set<Uint8Array>
+  | DdbAttributeValue[]
+  | { [key: string]: DdbAttributeValue }
+
+type ScalarAttributeValue = number | string | Uint8Array
+
+type ContainersAttributes =
+  | string
+  | Set<string>
+  | Set<number>
+  | Set<Uint8Array>
+  | DdbAttributeValue[]
+
+/**
+ * @debt v3 "Size conditions can be applied to free conditions as well: Rework { size: 'path', eq: 3 } to { attr: 'path', sizeEq: 3 } (=> { value: 3, sizeEq : 3 })"
+ */
+export type FreeCondition =
+  | FreeTypeCondition
+  | FreeEqCondition
+  | FreeNotEqCondition
+  | FreeInCondition
+  | FreeLessThanCondition
+  | FreeLessThanOrEqCondition
+  | FreeGreaterThanCondition
+  | FreeGreaterThanOrEqCondition
+  | FreeBetweenCondition
+  | FreeBeginsWithCondition
+  | FreeContainsCondition
+
+type FreeTypeCondition = { value: DdbAttributeValue; type: ConditionType }
+
+type FreeEqCondition<VALUE extends DdbAttributeValue = DdbAttributeValue> =
+  VALUE extends DdbAttributeValue ? { value: VALUE; eq: VALUE } : never
+
+type FreeNotEqCondition<VALUE extends DdbAttributeValue = DdbAttributeValue> =
+  VALUE extends DdbAttributeValue ? { value: VALUE; ne: VALUE } : never
+
+type FreeInCondition<VALUE extends DdbAttributeValue = DdbAttributeValue> =
+  VALUE extends DdbAttributeValue ? { value: VALUE; in: VALUE[] } : never
+
+type FreeLessThanCondition<VALUE extends ScalarAttributeValue = ScalarAttributeValue> =
+  VALUE extends ScalarAttributeValue ? { value: VALUE; lt: VALUE } : never
+
+type FreeLessThanOrEqCondition<VALUE extends ScalarAttributeValue = ScalarAttributeValue> =
+  VALUE extends ScalarAttributeValue ? { value: VALUE; lte: VALUE } : never
+
+type FreeGreaterThanCondition<VALUE extends ScalarAttributeValue = ScalarAttributeValue> =
+  VALUE extends ScalarAttributeValue ? { value: VALUE; gt: VALUE } : never
+
+type FreeGreaterThanOrEqCondition<VALUE extends ScalarAttributeValue = ScalarAttributeValue> =
+  VALUE extends ScalarAttributeValue ? { value: VALUE; gte: VALUE } : never
+
+type FreeBetweenCondition<VALUE extends ScalarAttributeValue = ScalarAttributeValue> =
+  VALUE extends ScalarAttributeValue ? { value: VALUE; between: [VALUE, VALUE] } : never
+
+type FreeBeginsWithCondition = { value: string; beginsWith: string }
+
+type FreeContainsCondition<VALUE extends ContainersAttributes = ContainersAttributes> =
+  VALUE extends ContainersAttributes
+    ? {
+        value: VALUE
+        contains: VALUE extends Set<infer ELEMENT>
+          ? ELEMENT
+          : VALUE extends (infer ELEMENT)[]
+            ? ELEMENT
+            : VALUE
+      }
     : never
 
-export type SchemaCondition<SCHEMA extends ItemSchema = ItemSchema> =
-  | NonLogicalCondition<SCHEMA>
+export type LogicalCondition<SCHEMA extends ItemSchema = ItemSchema> =
   | { and: SchemaCondition<SCHEMA>[] }
   | { or: SchemaCondition<SCHEMA>[] }
   | { not: SchemaCondition<SCHEMA> }
+
+export type SchemaCondition<SCHEMA extends ItemSchema = ItemSchema> =
+  | LogicalCondition<SCHEMA>
+  | NonLogicalCondition<SCHEMA>

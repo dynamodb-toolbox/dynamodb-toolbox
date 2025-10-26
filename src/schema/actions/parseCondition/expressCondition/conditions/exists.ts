@@ -10,10 +10,8 @@ export const expressExistsCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { attr, exists } = condition
-
-  ConditionExpression += exists ? 'attribute_exists(' : 'attribute_not_exists('
-  ConditionExpression += pathTokens(attr, prefix, state)
+  ConditionExpression += condition.exists ? 'attribute_exists(' : 'attribute_not_exists('
+  ConditionExpression += pathTokens(condition.attr, prefix, state)
   ConditionExpression += ')'
 
   return {

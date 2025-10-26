@@ -9,7 +9,7 @@ import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
 export const transformGteCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { gte: unknown }>
+  condition: Extract<SchemaCondition, { gte: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)
@@ -46,7 +46,7 @@ export const transformGteCondition = (
 
 export const transformGtCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { gt: unknown }>
+  condition: Extract<SchemaCondition, { gt: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)
@@ -83,7 +83,7 @@ export const transformGtCondition = (
 
 export const transformLteCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { lte: unknown }>
+  condition: Extract<SchemaCondition, { lte: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)
@@ -120,7 +120,7 @@ export const transformLteCondition = (
 
 export const transformLtCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { lt: unknown }>
+  condition: Extract<SchemaCondition, { lt: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)

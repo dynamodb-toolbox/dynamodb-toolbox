@@ -14,7 +14,7 @@ const typeParser = new Parser(typeSchema)
 
 export const transformTypeCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { type: unknown }>
+  condition: Extract<SchemaCondition, { type: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)

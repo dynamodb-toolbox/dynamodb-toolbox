@@ -9,7 +9,7 @@ import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
 export const transformContainsCondition = (
   schema: Schema,
-  condition: Extract<SchemaCondition, { contains: unknown }>
+  condition: Extract<SchemaCondition, { contains: unknown; value?: never }>
 ): SchemaCondition => {
   const conditions = new Deduper<SchemaCondition>()
   const schemaFinder = new Finder(schema)

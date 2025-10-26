@@ -1,7 +1,7 @@
 import type { SchemaCondition } from '../../condition.js'
 import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
-import { attrOrValueTokens, pathTokens } from './utils.js'
+import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
 export const expressGteCondition = (
   condition: Extract<SchemaCondition, { gte: unknown }>,
@@ -10,13 +10,15 @@ export const expressGteCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { gte } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' >= '
-  ConditionExpression += attrOrValueTokens(gte, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.gte, prefix, state)
 
   return {
     ConditionExpression,
@@ -32,13 +34,15 @@ export const expressGtCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { gt } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' > '
-  ConditionExpression += attrOrValueTokens(gt, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.gt, prefix, state)
 
   return {
     ConditionExpression,
@@ -54,13 +58,15 @@ export const expressLteCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { lte } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' <= '
-  ConditionExpression += attrOrValueTokens(lte, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.lte, prefix, state)
 
   return {
     ConditionExpression,
@@ -76,13 +82,15 @@ export const expressLtCondition = (
 ): ConditionExpression => {
   let ConditionExpression = ''
 
-  const { lt } = condition
-  const size = 'size' in condition
-  const attr = size ? condition.size : condition.attr
+  if ('value' in condition) {
+    ConditionExpression += valueToken(condition.value, prefix, state)
+  } else {
+    const size = 'size' in condition
+    ConditionExpression += pathTokens(size ? condition.size : condition.attr, prefix, state, size)
+  }
 
-  ConditionExpression += pathTokens(attr, prefix, state, size)
   ConditionExpression += ' < '
-  ConditionExpression += attrOrValueTokens(lt, prefix, state)
+  ConditionExpression += attrOrValueTokens(condition.lt, prefix, state)
 
   return {
     ConditionExpression,

@@ -15,7 +15,7 @@ export const getComparedSubSchemas = (
   'attr' in comparedValue &&
   isString(comparedValue.attr) &&
   /**
-   * @debt bug "Adding this check as syntax can conflict with `any` attribute w. object values. Use symbol instead"
+   * @debt v3 "Adding this check as syntax can conflict with `any` attribute w. object values. Rework syntax to { attr: 'path', eqAttr: 'otherPath' } to disambiguate"
    */
   transform !== true
     ? schemaFinder.search(comparedValue.attr)

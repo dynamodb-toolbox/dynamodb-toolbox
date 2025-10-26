@@ -11,11 +11,19 @@ describe('parseCondition - type', () => {
     num: number()
   })
 
-  test('root', () => {
+  test('type (attribute)', () => {
     expect(simpleSchema.build(ConditionParser).parse({ attr: 'list', type: 'L' })).toStrictEqual({
       ConditionExpression: 'attribute_type(#c_1, :c_1)',
       ExpressionAttributeNames: { '#c_1': 'list' },
       ExpressionAttributeValues: { ':c_1': 'L' }
+    })
+  })
+
+  test('type (value)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'str', type: 'S' })).toStrictEqual({
+      ConditionExpression: 'attribute_type(:c_1, :c_2)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'str', ':c_2': 'S' }
     })
   })
 
@@ -36,7 +44,7 @@ describe('parseCondition - type', () => {
     )
   })
 
-  test('deep maps and lists (value)', () => {
+  test('type (deep maps and lists)', () => {
     expect(
       mapAndList.build(ConditionParser).parse({
         attr: 'listA[1].deep.listB[2].value',

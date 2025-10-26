@@ -26,6 +26,14 @@ describe('parseCondition - comparison', () => {
     })
   })
 
+  test('equal to (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', eq: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 = :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
+    })
+  })
+
   test('not equal to (value)', () => {
     expect(simpleSchema.build(ConditionParser).parse({ attr: 'num', ne: 42 })).toStrictEqual({
       ConditionExpression: '#c_1 <> :c_1',
@@ -41,6 +49,14 @@ describe('parseCondition - comparison', () => {
       ConditionExpression: '#c_1 <> #c_2',
       ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum' },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('not equal to (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', ne: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 <> :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
     })
   })
 
@@ -62,6 +78,14 @@ describe('parseCondition - comparison', () => {
     })
   })
 
+  test('greater than (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', gt: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 > :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
+    })
+  })
+
   test('greater than or equal to (value)', () => {
     expect(simpleSchema.build(ConditionParser).parse({ attr: 'num', gte: 42 })).toStrictEqual({
       ConditionExpression: '#c_1 >= :c_1',
@@ -77,6 +101,14 @@ describe('parseCondition - comparison', () => {
       ConditionExpression: '#c_1 >= #c_2',
       ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum' },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('greater than or equal to (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', gte: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 >= :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
     })
   })
 
@@ -98,6 +130,14 @@ describe('parseCondition - comparison', () => {
     })
   })
 
+  test('less than (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', lt: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 < :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
+    })
+  })
+
   test('less than or equal to (value)', () => {
     expect(simpleSchema.build(ConditionParser).parse({ attr: 'num', lte: 42 })).toStrictEqual({
       ConditionExpression: '#c_1 <= :c_1',
@@ -113,6 +153,14 @@ describe('parseCondition - comparison', () => {
       ConditionExpression: '#c_1 <= #c_2',
       ExpressionAttributeNames: { '#c_1': 'num', '#c_2': 'otherNum' },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('less than or equal to (free)', () => {
+    expect(simpleSchema.build(ConditionParser).parse({ value: 'foo', lte: 'bar' })).toStrictEqual({
+      ConditionExpression: ':c_1 <= :c_2',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
     })
   })
 

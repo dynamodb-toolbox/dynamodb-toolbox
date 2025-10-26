@@ -22,6 +22,7 @@ import type {
   BooleanSchemaCondition,
   ConditionType,
   ExistsCondition,
+  FreeCondition,
   ListSchemaCondition,
   MapSchemaCondition,
   NonLogicalCondition,
@@ -320,6 +321,7 @@ assertUnionCondition
 
 type NON_LOGICAL_CONDITION = NonLogicalCondition<typeof mySchema>
 const assertNonLogicalCondition: A.Equals<
+  | FreeCondition
   | ANY_CONDITION
   | NULL_CONDITION
   | BOOL_CONDITION

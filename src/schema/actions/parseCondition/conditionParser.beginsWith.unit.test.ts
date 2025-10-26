@@ -11,7 +11,7 @@ describe('parseCondition - beginsWith', () => {
     num: number()
   })
 
-  test('value', () => {
+  test('beginsWith (value)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', beginsWith: 'foo' })
     ).toStrictEqual({
@@ -21,13 +21,23 @@ describe('parseCondition - beginsWith', () => {
     })
   })
 
-  test('attribute', () => {
+  test('beginsWith (attribute)', () => {
     expect(
       simpleSchema.build(ConditionParser).parse({ attr: 'str', beginsWith: { attr: 'otherStr' } })
     ).toStrictEqual({
       ConditionExpression: 'begins_with(#c_1, #c_2)',
       ExpressionAttributeNames: { '#c_1': 'str', '#c_2': 'otherStr' },
       ExpressionAttributeValues: {}
+    })
+  })
+
+  test('beginsWith (free)', () => {
+    expect(
+      simpleSchema.build(ConditionParser).parse({ value: 'foo', beginsWith: 'bar' })
+    ).toStrictEqual({
+      ConditionExpression: 'begins_with(:c_1, :c_2)',
+      ExpressionAttributeNames: {},
+      ExpressionAttributeValues: { ':c_1': 'foo', ':c_2': 'bar' }
     })
   })
 
