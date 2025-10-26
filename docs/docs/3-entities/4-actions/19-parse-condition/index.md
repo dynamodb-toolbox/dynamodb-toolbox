@@ -514,6 +514,45 @@ const invalidCondition: Condition<typeof PokemonEntity> = {
 
 :::
 
+## Comparing Values
+
+You can also **compare values to other values** by providing `value` instead of `attr`:
+
+```ts
+const valueToValueCondition: Condition = {
+  value: 1,
+  between: [0, 2]
+}
+```
+
+Although you could evaluate them locally, value-to-value conditions can become useful when **combined with other conditions**:
+
+```ts
+// Positive/negative transaction
+const transaction: number
+
+const accountPositiveCondition: Condition<
+  typeof BankAccountEntity
+> = {
+  or: [
+    {
+      // 'account' stays positive if it exists
+      and: [
+        { attr: 'account', exists: true },
+        { attr: 'account', gte: -transaction }
+      ]
+    },
+    {
+      // 'account' is positive when created
+      and: [
+        { attr: 'account', exists: false },
+        { value: transaction, gte: 0 }
+      ]
+    }
+  ]
+}
+```
+
 ## Examples
 
 :::note[Paths]
