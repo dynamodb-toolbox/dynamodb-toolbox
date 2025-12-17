@@ -36,7 +36,7 @@ const queryOperatorSet = new Set<QueryOperator>([
 const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Schema => {
   switch (key.type) {
     case 'number':
-      return new NumberSchema({ required: 'never' })
+      return new NumberSchema({ required: 'never', big: true })
     case 'string':
       return new StringSchema({ required: 'never' })
     case 'binary':
