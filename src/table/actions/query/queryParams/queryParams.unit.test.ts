@@ -34,6 +34,10 @@ const TestTable = new Table({
     gsiType: {
       type: 'global',
       partitionKey: { name: '_et', type: 'string' }
+    },
+    gsiNum: {
+      type: 'global',
+      partitionKey: { name: 'bigNum', type: 'number' }
     }
   }
 })
@@ -139,10 +143,8 @@ describe('query', () => {
   test('throws on invalid simple query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
-        .query({
-          // @ts-expect-error
-          partition: 42
-        })
+        // @ts-expect-error
+        .query({ partition: 42 })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -251,11 +253,8 @@ describe('query', () => {
   test('throws on invalid LSI query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
-        .query({
-          index: 'lsi',
-          // @ts-expect-error
-          partition: 42
-        })
+        // @ts-expect-error
+        .query({ index: 'lsi', partition: 42 })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -360,11 +359,8 @@ describe('query', () => {
   test('throws on invalid GSI query (simple)', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
-        .query({
-          index: 'gsiSimple',
-          // @ts-expect-error
-          partition: 42
-        })
+        // @ts-expect-error
+        .query({ index: 'gsiSimple', partition: 42 })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
@@ -429,16 +425,27 @@ describe('query', () => {
       '#c0_2': TestTable.indexes.gsiComposite.sortKey.name
     })
     expect(ExpressionAttributeValuesC).toMatchObject({ ':c0_1': 'foo', ':c0_2': 'bar' })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionD,
+      ExpressionAttributeNames: ExpressionAttributeNamesD,
+      ExpressionAttributeValues: ExpressionAttributeValuesD
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'gsiNum', partition: BigInt(42) })
+      .params()
+
+    expect(KeyConditionExpressionD).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNamesD).toMatchObject({
+      '#c0_1': TestTable.indexes.gsiNum.partitionKey.name
+    })
+    expect(ExpressionAttributeValuesD).toMatchObject({ ':c0_1': BigInt(42) })
   })
 
   test('throws on invalid GSI query', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
-        .query({
-          index: 'gsiComposite',
-          // @ts-expect-error
-          partition: 42
-        })
+        // @ts-expect-error
+        .query({ index: 'gsiComposite', partition: 42 })
         .params()
 
     expect(invalidCallA).toThrow(DynamoDBToolboxError)
