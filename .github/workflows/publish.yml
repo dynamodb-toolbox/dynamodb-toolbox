@@ -5,6 +5,10 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -15,7 +19,7 @@ jobs:
       - name: 🏗️ Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
           registry-url: https://registry.npmjs.org
 
       # Store the name of the release
@@ -27,5 +31,3 @@ jobs:
       - run: npm version $RELEASE_VERSION --no-git-tag-version
       - run: npm run build
       - run: npm publish --access public --tag $RELEASE_NPM_TAG
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
