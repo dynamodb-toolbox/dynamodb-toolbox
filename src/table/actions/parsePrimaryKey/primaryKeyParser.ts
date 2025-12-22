@@ -2,9 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { BinarySchema } from '~/schema/binary/schema.js'
 import { NumberSchema } from '~/schema/number/schema.js'
 import { StringSchema } from '~/schema/string/schema.js'
-import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
-import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
+import { TableAction } from '~/table/index.js'
+import type { Key, KeyValue } from '~/table/types/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 /**
@@ -14,21 +14,19 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
  * @return Object
  */
 export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
-  ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
+  ? Record<string, KeyValue<Key>>
   : Key extends TABLE['sortKey']
     ? {
-        [KEY in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<
-          TABLE['partitionKey']['type']
-        >
+        [KEY in TABLE['partitionKey']['name']]: KeyValue<TABLE['partitionKey']>
       }
     : NonNullable<TABLE['sortKey']> extends Key
       ? {
           [KEY in
             | TABLE['partitionKey']['name']
             | NonNullable<TABLE['sortKey']>['name']]: KEY extends TABLE['partitionKey']['name']
-            ? ResolveIndexableKeyType<TABLE['partitionKey']['type']>
+            ? KeyValue<TABLE['partitionKey']>
             : KEY extends NonNullable<TABLE['sortKey']>['name']
-              ? ResolveIndexableKeyType<NonNullable<TABLE['sortKey']>['type']>
+              ? KeyValue<NonNullable<TABLE['sortKey']>>
               : never
         }
       : never

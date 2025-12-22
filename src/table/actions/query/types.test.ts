@@ -1,6 +1,12 @@
 import type { A } from 'ts-toolbelt'
 
-import type { PrimaryIndexQuery, Query, SecondaryIndexQueries } from './types.js'
+import type {
+  GlobalSecondaryIndexQuery,
+  LocalSecondaryIndexQuery,
+  PrimaryIndexQuery,
+  Query,
+  SecondaryIndexQueries
+} from './types.js'
 
 type AnyRange =
   | { beginsWith: string }
@@ -32,19 +38,23 @@ type ExpectedPrimaryIndexQuery = {
 const assertPrimaryIndex: A.Equals<PrimaryIndexQuery, ExpectedPrimaryIndexQuery> = 1
 assertPrimaryIndex
 
-type ExpectedSecondaryIndexQuery =
-  | {
-      index: string
-      partition: string | number | bigint | Uint8Array
-      range?: AnyRange
-    }
-  | {
-      index: string
-      partition: string | number | bigint | Uint8Array
-      range?: undefined
-    }
+type ExpectedSecondaryIndexQuery = {
+  index: string
+  partition: string | number | bigint | Uint8Array
+  range?: AnyRange
+}
 
-const assertSecondaryIndex: A.Equals<SecondaryIndexQueries, ExpectedSecondaryIndexQuery> = 1
+const assertLocalSecondaryIndex: A.Equals<LocalSecondaryIndexQuery, ExpectedSecondaryIndexQuery> = 1
+assertLocalSecondaryIndex
+
+const assertGlobalSecondaryIndex: A.Equals<GlobalSecondaryIndexQuery, ExpectedSecondaryIndexQuery> =
+  1
+assertGlobalSecondaryIndex
+
+const assertSecondaryIndex: A.Equals<
+  SecondaryIndexQueries,
+  LocalSecondaryIndexQuery | GlobalSecondaryIndexQuery
+> = 1
 assertSecondaryIndex
 
 const assertQuery: A.Equals<Query, ExpectedPrimaryIndexQuery | ExpectedSecondaryIndexQuery> = 1
