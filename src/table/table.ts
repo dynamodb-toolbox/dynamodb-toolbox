@@ -3,7 +3,7 @@ import type { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb'
 import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
-import type { NarrowObject, NarrowObjectRec } from '~/types/narrowObject.js'
+import type { Narrow, NarrowObject } from '~/types/narrow.js'
 import { isString } from '~/utils/validation/isString.js'
 
 import { $entities, $interceptor, $sentArgs } from './constants.js'
@@ -43,7 +43,7 @@ export class Table<
     name?: string | (() => string)
     partitionKey: NarrowObject<PARTITION_KEY>
     sortKey?: NarrowObject<SORT_KEY>
-    indexes?: NarrowObjectRec<INDEXES>
+    indexes?: Narrow<INDEXES>
     entityAttributeSavedAs?: ENTITY_ATTRIBUTE_SAVED_AS
     meta?: TableMetadata
   }) {
