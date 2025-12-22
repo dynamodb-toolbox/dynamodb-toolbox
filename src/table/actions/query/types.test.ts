@@ -5,7 +5,7 @@ import type {
   LocalSecondaryIndexQuery,
   PrimaryIndexQuery,
   Query,
-  SecondaryIndexQueries
+  SecondaryIndexQuery
 } from './types.js'
 
 type AnyRange =
@@ -38,24 +38,31 @@ type ExpectedPrimaryIndexQuery = {
 const assertPrimaryIndex: A.Equals<PrimaryIndexQuery, ExpectedPrimaryIndexQuery> = 1
 assertPrimaryIndex
 
-type ExpectedSecondaryIndexQuery = {
+type KeyValue = string | number | bigint | Uint8Array
+
+type ExpectedLocalSecondaryIndexQuery = {
   index: string
-  partition: string | number | bigint | Uint8Array
+  partition: KeyValue
   range?: AnyRange
 }
 
-const assertLocalSecondaryIndex: A.Equals<LocalSecondaryIndexQuery, ExpectedSecondaryIndexQuery> = 1
+const assertLocalSecondaryIndex: A.Equals<
+  LocalSecondaryIndexQuery,
+  ExpectedLocalSecondaryIndexQuery
+> = 1
 assertLocalSecondaryIndex
 
-const assertGlobalSecondaryIndex: A.Equals<GlobalSecondaryIndexQuery, ExpectedSecondaryIndexQuery> =
-  1
+type ExpectedGlobalSecondaryIndexQuery = {
+  index: string
+  partition: KeyValue | KeyValue[]
+  range?: AnyRange | (KeyValue | AnyRange)[]
+}
+
+const assertGlobalSecondaryIndex: A.Equals<
+  GlobalSecondaryIndexQuery,
+  ExpectedGlobalSecondaryIndexQuery
+> = 1
 assertGlobalSecondaryIndex
 
-const assertSecondaryIndex: A.Equals<
-  SecondaryIndexQueries,
-  LocalSecondaryIndexQuery | GlobalSecondaryIndexQuery
-> = 1
-assertSecondaryIndex
-
-const assertQuery: A.Equals<Query, ExpectedPrimaryIndexQuery | ExpectedSecondaryIndexQuery> = 1
+const assertQuery: A.Equals<Query, PrimaryIndexQuery | SecondaryIndexQuery> = 1
 assertQuery

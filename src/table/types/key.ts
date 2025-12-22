@@ -20,4 +20,4 @@ export type KeyTypeValue<KEY_TYPE extends KeyType> =
   | (KEY_TYPE extends 'number' ? number | bigint : never)
   | (KEY_TYPE extends 'binary' ? Uint8Array : never)
 
-export type KeyValue<KEY extends Key> = KeyTypeValue<KEY['type']>
+export type KeyValue<KEY extends Key = Key> = KeyTypeValue<KEY['type']>

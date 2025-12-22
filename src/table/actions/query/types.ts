@@ -55,7 +55,7 @@ type QueryTypeRange<KEY_TYPE extends KeyType> =
   | (KEY_TYPE extends 'number' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)
   | (KEY_TYPE extends 'binary' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)
 
-export type QueryRange<KEY extends Key> = QueryTypeRange<KEY['type']>
+export type QueryRange<KEY extends Key = Key> = QueryTypeRange<KEY['type']>
 
 // --- SECONDARY ---
 export type SecondaryIndexQueries<TABLE extends Table = Table> = {
@@ -63,8 +63,8 @@ export type SecondaryIndexQueries<TABLE extends Table = Table> = {
 }[IndexNames<TABLE>]
 
 export type SecondaryIndexQuery<
-  TABLE extends Table,
-  INDEX_NAME extends IndexNames<TABLE>,
+  TABLE extends Table = Table,
+  INDEX_NAME extends IndexNames<TABLE> = IndexNames<TABLE>,
   INDEX_SCHEMA extends IndexSchema<TABLE, INDEX_NAME> = IndexSchema<TABLE, INDEX_NAME>
 > =
   | (INDEX_SCHEMA extends LocalSecondaryIndex
@@ -91,6 +91,49 @@ export type GlobalSecondaryIndexQuery<
   INDEX_SCHEMA extends GlobalSecondaryIndex = GlobalSecondaryIndex
 > = {
   index: INDEX_NAME
-  partition: KeyValue<INDEX_SCHEMA['partitionKey']>
-  range?: QueryRange<NonNullable<INDEX_SCHEMA['sortKey']>>
+  partition:
+    | (INDEX_SCHEMA extends { readonly partitionKey: Key }
+        ? KeyValue<INDEX_SCHEMA['partitionKey']>
+        : never)
+    | (INDEX_SCHEMA extends { readonly partitionKeys: readonly Key[] }
+        ? KeyValueRec<INDEX_SCHEMA['partitionKeys']>
+        : never)
+  range?:
+    | (INDEX_SCHEMA extends { readonly sortKey?: Key }
+        ? QueryRange<NonNullable<INDEX_SCHEMA['sortKey']>>
+        : never)
+    | (INDEX_SCHEMA extends { readonly sortKeys?: readonly Key[] }
+        ? QueryRangeRec<NonNullable<INDEX_SCHEMA['sortKeys']>>
+        : never)
 }
+
+type KeyValueRec<KEYS extends readonly Key[], KEY_VALUES extends KeyValue[] = []> = KEYS extends [
+  infer KEYS_HEAD,
+  ...infer KEYS_TAIL
+]
+  ? KEYS_TAIL extends readonly Key[]
+    ? KEYS_HEAD extends Key
+      ? KeyValueRec<KEYS_TAIL, [...KEY_VALUES, KeyValue<KEYS_HEAD>]>
+      : never
+    : never
+  : number extends KEYS['length']
+    ? KeyValue<KEYS[number]>[]
+    : KEY_VALUES
+
+type QueryRangeRec<
+  KEYS extends readonly Key[],
+  PREV_KEY_VALUES extends KeyValue[] = [],
+  QUERY_RANGES extends (KeyValue | QueryRange<Key>)[] = never
+> = KEYS extends [infer KEYS_HEAD, ...infer KEYS_TAIL]
+  ? KEYS_TAIL extends readonly Key[]
+    ? KEYS_HEAD extends Key
+      ? QueryRangeRec<
+          KEYS_TAIL,
+          [...PREV_KEY_VALUES, KeyValue<KEYS_HEAD>],
+          QUERY_RANGES | [...PREV_KEY_VALUES, QueryRange<KEYS_HEAD>]
+        >
+      : never
+    : never
+  : number extends KEYS['length']
+    ? (KeyValue<KEYS[number]> | QueryRange<KEYS[number]>)[]
+    : QUERY_RANGES
