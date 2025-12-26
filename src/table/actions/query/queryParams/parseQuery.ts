@@ -1,19 +1,18 @@
 import type { QueryCommandInput } from '@aws-sdk/lib-dynamodb'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import type { SchemaCondition } from '~/schema/actions/parseCondition/index.js'
+import { ConditionParser } from '~/schema/actions/parseCondition/index.js'
 import { BinarySchema } from '~/schema/binary/schema.js'
 import type { Schema } from '~/schema/index.js'
 import { ItemSchema } from '~/schema/item/schema.js'
 import { NumberSchema } from '~/schema/number/schema.js'
 import { StringSchema } from '~/schema/string/schema.js'
 import type { Table } from '~/table/index.js'
-import type { Index, IndexableKeyType, Key } from '~/table/types/index.js'
+import type { Index, Key } from '~/table/types/index.js'
 import { pick } from '~/utils/pick.js'
 
-import type { QueryOperator } from '../types.js'
-import type { Query } from '../types.js'
+import type { Query, QueryOperator } from '../types.js'
 
 type QueryParser = <TABLE extends Table, QUERY extends Query<TABLE>>(
   table: TABLE,
@@ -33,7 +32,7 @@ const queryOperatorSet = new Set<QueryOperator>([
   'beginsWith'
 ])
 
-const getIndexKeySchema = (key: Key<string, IndexableKeyType>): Schema => {
+const getIndexKeySchema = (key: Key): Schema => {
   switch (key.type) {
     case 'number':
       return new NumberSchema({ required: 'never', big: true })

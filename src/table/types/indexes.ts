@@ -1,16 +1,20 @@
 import type { Key } from './key.js'
 
 export interface LocalIndex {
-  type: 'local'
-  partitionKey?: undefined
-  sortKey: Key
+  readonly type: 'local'
+  readonly partitionKey?: undefined
+  readonly sortKey: Key
 }
 
-export interface GlobalIndex {
-  type: 'global'
-  partitionKey: Key
-  sortKey?: Key
-}
+type GlobalIndexPartitionKey =
+  | { readonly partitionKey: Key; readonly partitionKeys?: never }
+  | { readonly partitionKey?: never; readonly partitionKeys: readonly Key[] }
+
+type GlobalIndexSortKey =
+  | { readonly sortKey?: Key; readonly sortKeys?: never }
+  | { readonly sortKey?: never; readonly sortKeys?: readonly Key[] }
+
+export type GlobalIndex = { readonly type: 'global' } & GlobalIndexPartitionKey & GlobalIndexSortKey
 
 /**
  * Define an index of a Table

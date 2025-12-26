@@ -10,10 +10,15 @@ describe('fromDTO - table', () => {
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'number' },
       indexes: {
-        global: {
+        globalSingle: {
           type: 'global',
           partitionKey: { name: 'gsipk', type: 'string' },
           sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        globalMulti: {
+          type: 'global',
+          partitionKeys: [{ name: 'gsipk', type: 'string' }],
+          sortKeys: [{ name: 'gsisk', type: 'binary' }]
         },
         local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
       },
@@ -31,10 +36,15 @@ describe('fromDTO - table', () => {
     expect(table.entityAttributeSavedAs).toBe('__entity__')
 
     expect(table.indexes).toStrictEqual({
-      global: {
+      globalSingle: {
         type: 'global',
         partitionKey: { name: 'gsipk', type: 'string' },
         sortKey: { name: 'gsisk', type: 'binary' }
+      },
+      globalMulti: {
+        type: 'global',
+        partitionKeys: [{ name: 'gsipk', type: 'string' }],
+        sortKeys: [{ name: 'gsisk', type: 'binary' }]
       },
       local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
     })

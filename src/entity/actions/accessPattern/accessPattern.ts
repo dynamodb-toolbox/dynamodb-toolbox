@@ -5,7 +5,7 @@ import { Parser } from '~/schema/actions/parse/parser.js'
 import type { InputValue, Schema, TransformedValue } from '~/schema/index.js'
 import type { IQueryCommand, Query, QueryOptions } from '~/table/actions/query/index.js'
 import { QueryCommand } from '~/table/actions/query/queryCommand.js'
-import type { Cast, _Omit } from '~/types/index.js'
+import type { Overwrite } from '~/types/index.js'
 
 import { $meta, $options, $pattern, $schema } from './constants.js'
 
@@ -24,7 +24,7 @@ type MergeOptions<
     ? CONTEXT_OPTIONS
     : QueryOptions<ENTITY['table'], [ENTITY], QUERY> extends CONTEXT_OPTIONS
       ? DEFAULT_OPTIONS
-      : DEFAULT_OPTIONS & CONTEXT_OPTIONS
+      : Overwrite<DEFAULT_OPTIONS, CONTEXT_OPTIONS> & CONTEXT_OPTIONS
 
 export class IAccessPattern<
   ENTITY extends Entity = Entity,
@@ -152,13 +152,7 @@ export class AccessPattern<
     nextPattern: (
       input: TransformedValue<SCHEMA>
     ) => NEXT_QUERY & { options?: NEXT_CONTEXT_OPTIONS }
-  ): AccessPattern<
-    ENTITY,
-    SCHEMA,
-    Cast<_Omit<NEXT_QUERY, 'options'>, Query<ENTITY['table']>>,
-    DEFAULT_OPTIONS,
-    NEXT_CONTEXT_OPTIONS
-  > {
+  ): AccessPattern<ENTITY, SCHEMA, NEXT_QUERY, DEFAULT_OPTIONS, NEXT_CONTEXT_OPTIONS> {
     return new AccessPattern(
       this.entity,
       this[$schema],
