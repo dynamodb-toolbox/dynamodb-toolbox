@@ -13,23 +13,13 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
  * @param TABLE Table
  * @return Object
  */
-export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
-  ? Record<string, KeyValue<Key>>
-  : Key extends TABLE['sortKey']
-    ? {
-        [KEY in TABLE['partitionKey']['name']]: KeyValue<TABLE['partitionKey']>
-      }
-    : NonNullable<TABLE['sortKey']> extends Key
-      ? {
-          [KEY in
-            | TABLE['partitionKey']['name']
-            | NonNullable<TABLE['sortKey']>['name']]: KEY extends TABLE['partitionKey']['name']
-            ? KeyValue<TABLE['partitionKey']>
-            : KEY extends NonNullable<TABLE['sortKey']>['name']
-              ? KeyValue<NonNullable<TABLE['sortKey']>>
-              : never
-        }
-      : never
+export type PrimaryKey<TABLE extends Table = Table> = {
+  [KEY in
+    | TABLE['partitionKey']
+    | (TABLE extends { sortKey?: Key }
+        ? NonNullable<TABLE['sortKey']>
+        : never) as KEY['name']]: KeyValue<KEY>
+}
 
 export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<TABLE> {
   static override actionName = 'parsePrimaryKey' as const
