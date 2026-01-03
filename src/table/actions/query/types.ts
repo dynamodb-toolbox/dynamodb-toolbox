@@ -123,14 +123,14 @@ type KeyValueRec<KEYS extends readonly Key[], KEY_VALUES extends KeyValue[] = []
 type QueryRangeRec<
   KEYS extends readonly Key[],
   PREV_KEY_VALUES extends KeyValue[] = [],
-  QUERY_RANGES extends (KeyValue | QueryRange<Key>)[] = never
+  QUERY_RANGES extends (KeyValue | QueryRange)[] = []
 > = KEYS extends [infer KEYS_HEAD, ...infer KEYS_TAIL]
   ? KEYS_TAIL extends readonly Key[]
     ? KEYS_HEAD extends Key
       ? QueryRangeRec<
           KEYS_TAIL,
           [...PREV_KEY_VALUES, KeyValue<KEYS_HEAD>],
-          QUERY_RANGES | [...PREV_KEY_VALUES, QueryRange<KEYS_HEAD>]
+          QUERY_RANGES | [...PREV_KEY_VALUES, KeyValue<KEYS_HEAD> | QueryRange<KEYS_HEAD>]
         >
       : never
     : never
