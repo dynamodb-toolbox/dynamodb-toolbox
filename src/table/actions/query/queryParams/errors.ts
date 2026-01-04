@@ -26,8 +26,14 @@ type InvalidIndexErrorBlueprint = ErrorBlueprint<{
 
 type InvalidPartitionErrorBlueprint = ErrorBlueprint<{
   code: 'queryCommand.invalidPartition'
-  hasPath: true
+  hasPath: false
   payload: { partition?: unknown }
+}>
+
+type InvalidRangeErrorBlueprint = ErrorBlueprint<{
+  code: 'queryCommand.invalidRange'
+  hasPath: false
+  payload: { range?: unknown }
 }>
 
 export type QueryCommandParamsErrorBlueprints =
@@ -36,3 +42,4 @@ export type QueryCommandParamsErrorBlueprints =
   | InvalidProjectionExpressionErrorBlueprint
   | InvalidIndexErrorBlueprint
   | InvalidPartitionErrorBlueprint
+  | InvalidRangeErrorBlueprint

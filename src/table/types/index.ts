@@ -1,4 +1,3 @@
-export type { Key } from './key.js'
-export type { IndexableKeyType, ResolveIndexableKeyType } from './keyType.js'
+export type { Key, KeyType, KeyTypeValue, KeyValue } from './key.js'
 export type { Index, LocalIndex, GlobalIndex } from './indexes.js'
 export type { TableMetadata } from './metadata.js'

@@ -2,9 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { BinarySchema } from '~/schema/binary/schema.js'
 import { NumberSchema } from '~/schema/number/schema.js'
 import { StringSchema } from '~/schema/string/schema.js'
-import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/index.js'
-import type { IndexableKeyType, Key, ResolveIndexableKeyType } from '~/table/types/index.js'
+import { TableAction } from '~/table/index.js'
+import type { Key, KeyValue } from '~/table/types/index.js'
 import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 
 /**
@@ -13,25 +13,13 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
  * @param TABLE Table
  * @return Object
  */
-export type PrimaryKey<TABLE extends Table = Table> = Table extends TABLE
-  ? Record<string, ResolveIndexableKeyType<IndexableKeyType>>
-  : Key extends TABLE['sortKey']
-    ? {
-        [KEY in TABLE['partitionKey']['name']]: ResolveIndexableKeyType<
-          TABLE['partitionKey']['type']
-        >
-      }
-    : NonNullable<TABLE['sortKey']> extends Key
-      ? {
-          [KEY in
-            | TABLE['partitionKey']['name']
-            | NonNullable<TABLE['sortKey']>['name']]: KEY extends TABLE['partitionKey']['name']
-            ? ResolveIndexableKeyType<TABLE['partitionKey']['type']>
-            : KEY extends NonNullable<TABLE['sortKey']>['name']
-              ? ResolveIndexableKeyType<NonNullable<TABLE['sortKey']>['type']>
-              : never
-        }
-      : never
+export type PrimaryKey<TABLE extends Table = Table> = {
+  [KEY in
+    | TABLE['partitionKey']
+    | (TABLE extends { sortKey?: Key }
+        ? NonNullable<TABLE['sortKey']>
+        : never) as KEY['name']]: KeyValue<KEY>
+}
 
 export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<TABLE> {
   static override actionName = 'parsePrimaryKey' as const

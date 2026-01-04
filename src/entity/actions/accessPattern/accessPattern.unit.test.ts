@@ -157,8 +157,14 @@ describe('accessPattern', () => {
       QueryCommand<
         typeof TestTable,
         [typeof TestEntity],
-        { partition: string },
-        { reverse: true } & ({ attributes: 'age'[] } | { attributes?: undefined })
+        {
+          partition: string
+          options: { attributes: 'age'[] } | { attributes?: undefined }
+        },
+        { attributes: 'age'[] | undefined; reverse: true } & (
+          | { attributes: 'age'[] }
+          | { attributes?: undefined }
+        )
       >
     > = 1
     assert

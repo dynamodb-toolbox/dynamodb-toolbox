@@ -18,6 +18,17 @@ const TestTable = new Table({
   partitionKey: { type: 'string', name: 'pk' },
   sortKey: { type: 'string', name: 'sk' },
   indexes: {
+    multiGsi: {
+      type: 'global',
+      partitionKeys: [
+        { name: 'gsiMultiPK1', type: 'string' },
+        { name: 'gsiMultiPK2', type: 'number' }
+      ],
+      sortKeys: [
+        { name: 'gsiMultiSK1', type: 'string' },
+        { name: 'gsiMultiSK2', type: 'number' }
+      ]
+    },
     lsi: {
       type: 'local',
       sortKey: { name: 'lsiSK', type: 'number' }
@@ -170,8 +181,8 @@ describe('query', () => {
       TestTable.build(QueryCommand)
         .query({
           partition: 'foo',
+          // @ts-expect-error
           range: {
-            // @ts-expect-error
             gt: { foo: 'bar' }
           }
         })
@@ -282,8 +293,8 @@ describe('query', () => {
         .query({
           index: 'lsi',
           partition: 'foo',
+          // @ts-expect-error
           range: {
-            // @ts-expect-error
             gt: { foo: 'bar' }
           }
         })
@@ -327,33 +338,15 @@ describe('query', () => {
   test('creates query on GSI (simple)', () => {
     const {
       IndexName,
-      KeyConditionExpression: KeyConditionExpressionA,
-      ExpressionAttributeNames: ExpressionAttributeNamesA,
-      ExpressionAttributeValues: ExpressionAttributeValuesA
+      KeyConditionExpression,
+      ExpressionAttributeNames,
+      ExpressionAttributeValues
     } = TestTable.build(QueryCommand).query({ index: 'gsiSimple', partition: 'foo' }).params()
 
     expect(IndexName).toBe('gsiSimple')
-    expect(KeyConditionExpressionA).toBe('#c0_1 = :c0_1')
-    expect(ExpressionAttributeNamesA).toStrictEqual({ '#c0_1': 'gsiSimplePK' })
-    expect(ExpressionAttributeValuesA).toStrictEqual({ ':c0_1': 'foo' })
-
-    // range is simply ignored
-    const {
-      KeyConditionExpression: KeyConditionExpressionB,
-      ExpressionAttributeNames: ExpressionAttributeNamesB,
-      ExpressionAttributeValues: ExpressionAttributeValuesB
-    } = TestTable.build(QueryCommand)
-      // @ts-expect-error
-      .query({
-        index: 'gsiSimple',
-        partition: 'foo',
-        range: { beginsWith: 'bar' }
-      })
-      .params()
-
-    expect(KeyConditionExpressionB).toBe('#c0_1 = :c0_1')
-    expect(ExpressionAttributeNamesB).toStrictEqual({ '#c0_1': 'gsiSimplePK' })
-    expect(ExpressionAttributeValuesB).toStrictEqual({ ':c0_1': 'foo' })
+    expect(KeyConditionExpression).toBe('#c0_1 = :c0_1')
+    expect(ExpressionAttributeNames).toStrictEqual({ '#c0_1': 'gsiSimplePK' })
+    expect(ExpressionAttributeValues).toStrictEqual({ ':c0_1': 'foo' })
   })
 
   test('throws on invalid GSI query (simple)', () => {
@@ -381,6 +374,15 @@ describe('query', () => {
     expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        // @ts-expect-error
+        .query({ index: 'gsiSimple', partition: 'foo', range: { beginsWith: 'bar' } })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'queryCommand.invalidRange' }))
   })
 
   test('creates query on GSI (composite)', () => {
@@ -441,7 +443,7 @@ describe('query', () => {
     expect(ExpressionAttributeValuesD).toMatchObject({ ':c0_1': BigInt(42) })
   })
 
-  test('throws on invalid GSI query', () => {
+  test('throws on invalid GSI query (composite)', () => {
     const invalidCallA = () =>
       TestTable.build(QueryCommand)
         // @ts-expect-error
@@ -473,8 +475,8 @@ describe('query', () => {
         .query({
           index: 'gsiComposite',
           partition: 'foo',
+          // @ts-expect-error
           range: {
-            // @ts-expect-error
             gt: { foo: 'bar' }
           }
         })
@@ -517,6 +519,231 @@ describe('query', () => {
     expect(invalidCallE).toThrow(
       expect.objectContaining({ code: 'options.invalidConsistentOption' })
     )
+  })
+
+  test('creates query on GSI (multiple)', () => {
+    const {
+      IndexName,
+      KeyConditionExpression: KeyConditionExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'multiGsi', partition: ['foo', 42] })
+      .params()
+
+    expect(IndexName).toBe('multiGsi')
+    expect(KeyConditionExpressionA).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2)')
+    expect(ExpressionAttributeNamesA).toMatchObject({
+      '#c0_1': 'gsiMultiPK1',
+      '#c0_2': 'gsiMultiPK2'
+    })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':c0_1': 'foo', ':c0_2': 42 })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'multiGsi', partition: ['foo', 42], range: [] })
+      .params()
+
+    expect(IndexName).toBe('multiGsi')
+    expect(KeyConditionExpressionB).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2)')
+    expect(ExpressionAttributeNamesB).toMatchObject({
+      '#c0_1': 'gsiMultiPK1',
+      '#c0_2': 'gsiMultiPK2'
+    })
+    expect(ExpressionAttributeValuesB).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42
+    })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionC,
+      ExpressionAttributeNames: ExpressionAttributeNamesC,
+      ExpressionAttributeValues: ExpressionAttributeValuesC
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'multiGsi', partition: ['foo', 42], range: [{ gte: 'bar' }] })
+      .params()
+
+    expect(IndexName).toBe('multiGsi')
+    expect(KeyConditionExpressionC).toBe('(#c0_1 = :c0_1) AND (#c0_2 = :c0_2) AND (#c0_3 >= :c0_3)')
+    expect(ExpressionAttributeNamesC).toMatchObject({
+      '#c0_1': 'gsiMultiPK1',
+      '#c0_2': 'gsiMultiPK2',
+      '#c0_3': 'gsiMultiSK1'
+    })
+    expect(ExpressionAttributeValuesC).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42,
+      ':c0_3': 'bar'
+    })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionD,
+      ExpressionAttributeNames: ExpressionAttributeNamesD,
+      ExpressionAttributeValues: ExpressionAttributeValuesD
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'multiGsi', partition: ['foo', 42], range: ['bar', { gte: 42 }] })
+      .params()
+
+    expect(IndexName).toBe('multiGsi')
+    expect(KeyConditionExpressionD).toBe(
+      '(#c0_1 = :c0_1) AND (#c0_2 = :c0_2) AND (#c0_3 = :c0_3) AND (#c0_4 >= :c0_4)'
+    )
+    expect(ExpressionAttributeNamesD).toMatchObject({
+      '#c0_1': 'gsiMultiPK1',
+      '#c0_2': 'gsiMultiPK2',
+      '#c0_3': 'gsiMultiSK1',
+      '#c0_4': 'gsiMultiSK2'
+    })
+    expect(ExpressionAttributeValuesD).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42,
+      ':c0_3': 'bar',
+      ':c0_4': 42
+    })
+
+    const {
+      KeyConditionExpression: KeyConditionExpressionE,
+      ExpressionAttributeNames: ExpressionAttributeNamesE,
+      ExpressionAttributeValues: ExpressionAttributeValuesE
+    } = TestTable.build(QueryCommand)
+      .query({ index: 'multiGsi', partition: ['foo', 42], range: ['bar', 42] })
+      .params()
+
+    expect(IndexName).toBe('multiGsi')
+    expect(KeyConditionExpressionE).toBe(
+      '(#c0_1 = :c0_1) AND (#c0_2 = :c0_2) AND (#c0_3 = :c0_3) AND (#c0_4 = :c0_4)'
+    )
+    expect(ExpressionAttributeNamesE).toMatchObject({
+      '#c0_1': 'gsiMultiPK1',
+      '#c0_2': 'gsiMultiPK2',
+      '#c0_3': 'gsiMultiSK1',
+      '#c0_4': 'gsiMultiSK2'
+    })
+    expect(ExpressionAttributeValuesE).toMatchObject({
+      ':c0_1': 'foo',
+      ':c0_2': 42,
+      ':c0_3': 'bar',
+      ':c0_4': 42
+    })
+  })
+
+  test('throws on invalid GSI query (multiple)', () => {
+    const invalidCallA = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          // @ts-expect-error
+          partition: ['foo']
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'queryCommand.invalidPartition' }))
+
+    const invalidCallB = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: [
+            // @ts-expect-error
+            41, 42
+          ]
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
+
+    const invalidCallC = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: [
+            'foo',
+            42,
+            // @ts-expect-error
+            'bar'
+          ]
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'queryCommand.invalidPartition' }))
+
+    const invalidCallD = () =>
+      TestTable.build(QueryCommand)
+        // @ts-ignore (Error varies between TS versions)
+        .query({
+          index: 'multiGsi',
+          partition: ['foo', 42],
+          range: {
+            // @ts-ignore (Error varies between TS versions)
+            gt: 'bar'
+          }
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(expect.objectContaining({ code: 'queryCommand.invalidRange' }))
+
+    const invalidCallE = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: ['foo', 42],
+          // @ts-expect-error
+          range: [{ gt: 42 }]
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
+
+    const invalidCallF = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: ['foo', 42],
+          // @ts-expect-error
+          range: [{ gt: 'bar' }, 42]
+        })
+        .params()
+
+    expect(invalidCallF).toThrow(DynamoDBToolboxError)
+    expect(invalidCallF).toThrow(expect.objectContaining({ code: 'queryCommand.invalidRange' }))
+
+    const invalidCallG = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: ['foo', 42],
+          // @ts-expect-error
+          range: [{ gt: 'bar' }, { gt: 42 }]
+        })
+        .params()
+
+    expect(invalidCallG).toThrow(DynamoDBToolboxError)
+    expect(invalidCallG).toThrow(expect.objectContaining({ code: 'queryCommand.invalidRange' }))
+
+    const invalidCallH = () =>
+      TestTable.build(QueryCommand)
+        .query({
+          index: 'multiGsi',
+          partition: ['foo', 42],
+          // @ts-expect-error
+          range: ['bar', { gt: 42 }, { gte: 'baz' }]
+        })
+        .params()
+
+    expect(invalidCallH).toThrow(DynamoDBToolboxError)
+    expect(invalidCallH).toThrow(expect.objectContaining({ code: 'queryCommand.invalidRange' }))
   })
 
   // --- OPTIONS ---
