@@ -51,6 +51,18 @@ await PokeTable.build(DeletePartitionCommand)
 
 :::info
 
+When working with a global secondary index with **multi-attribute keys**, you must supply an array containing the corresponding value/range for each attribute:
+
+```ts
+await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearPokeTypeAndLevel',
+    partition: ['ashKetchum', 2022], // trainerId > captureYear
+    range: ['fire', { gte: 50 }] // type > level (range must be last)
+  })
+  .send()
+```
+
 See the [`QueryCommand`](../2-query/index.md#query) documentation for more details.
 
 :::

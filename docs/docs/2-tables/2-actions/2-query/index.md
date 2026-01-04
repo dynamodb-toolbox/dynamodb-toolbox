@@ -39,6 +39,22 @@ await PokeTable.build(QueryCommand)
   .send()
 ```
 
+:::info
+
+When working with a global secondary index with **multi-attribute keys**, you must supply an array containing the corresponding value/range for each attribute:
+
+```ts
+await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearPokeTypeAndLevel',
+    partition: ['ashKetchum', 2022], // trainerId > captureYear
+    range: ['fire', { gte: 50 }] // type > level (range must be last)
+  })
+  .send()
+```
+
+:::
+
 You can use the `Query` type to explicitly type an object as a `QueryCommand` query object:
 
 ```ts
@@ -266,7 +282,7 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
 
 ## Examples
 
-:::note[Examples]
+:::note[Queries]
 
 <Tabs>
 <TabItem value="basic" label="Basic">
@@ -288,16 +304,6 @@ const { Items } = await PokeTable.build(QueryCommand)
 ```
 
 </TabItem>
-<TabItem value="consistent" label="Consistent">
-
-```ts
-const { Items } = await PokeTable.build(QueryCommand)
-  .query({ partition: 'ashKetchum' })
-  .options({ consistent: true })
-  .send()
-```
-
-</TabItem>
 <TabItem value="indexed" label="Index">
 
 ```ts
@@ -307,6 +313,103 @@ const { Items } = await PokeTable.build(QueryCommand)
     partition: 'ashKetchum',
     range: { gte: 50 }
   })
+  .send()
+```
+
+</TabItem>
+<TabItem value="multi-gsi-partition" label="Multi-attr. GSI (partition)">
+
+```ts
+const PokeTable = new Table({
+  ...
+  indexes: {
+    byTrainerIdAndCaptureYear: {
+      type: 'global',
+      partitionKeys: [
+        { name: 'trainerId', type: 'string' },
+        { name: 'captureYear', type: 'number' }
+      ]
+    }
+  }
+})
+
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdAndCaptureYear',
+    partition: ['ashKetchum', 2022]
+  })
+  .send()
+```
+
+</TabItem>
+<TabItem value="multi-gsi-sort" label="Multi-attr. GSI (sort)">
+
+```ts
+const PokeTable = new Table({
+  ...
+  indexes: {
+    byTrainerIdCaptureYearAndLevel: {
+      type: 'global',
+      partitionKey: { name: 'trainerId', type: 'string' },
+      sortKeys: [
+        { name: 'captureYear', type: 'number' },
+        { name: 'level', type: 'number' }
+      ]
+    }
+  }
+})
+
+// 👇 All Ash pokemons
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearAndLevel',
+    partition: 'ashKetchum',
+    range: []
+  })
+  .send()
+
+// 👇 ...captured after 2022
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearAndLevel',
+    partition: 'ashKetchum',
+    range: [{ gte: 2022 }]
+  })
+  .send()
+
+// 👇 ...captured in 2022 and level ≥ 50
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearAndLevel',
+    partition: 'ashKetchum',
+    range: [2022, { gte: 50 }]
+  })
+  .send()
+
+// 👇 ...captured in 2022 and level = 50
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({
+    index: 'byTrainerIdCaptureYearAndLevel',
+    partition: 'ashKetchum',
+    range: [2022, 50] // Equivalent to [2022, { eq: 50 }]
+  })
+  .send()
+```
+
+</TabItem>
+</Tabs>
+
+:::
+
+:::note[Options]
+
+<Tabs>
+<TabItem value="consistent" label="Consistent">
+
+```ts
+const { Items } = await PokeTable.build(QueryCommand)
+  .query({ partition: 'ashKetchum' })
+  .options({ consistent: true })
   .send()
 ```
 

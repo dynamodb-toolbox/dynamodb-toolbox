@@ -12,10 +12,15 @@ describe('DTO', () => {
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'string' },
       indexes: {
-        global: {
+        globalSingle: {
           type: 'global',
           partitionKey: { name: 'gsipk', type: 'string' },
           sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        globalMulti: {
+          type: 'global',
+          partitionKeys: [{ name: 'gsipk', type: 'string' }],
+          sortKeys: [{ name: 'gsisk', type: 'binary' }]
         },
         local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
       },
@@ -33,10 +38,15 @@ describe('DTO', () => {
       partitionKey: { name: 'pk', type: 'string' },
       sortKey: { name: 'sk', type: 'string' },
       indexes: {
-        global: {
+        globalSingle: {
           type: 'global',
           partitionKey: { name: 'gsipk', type: 'string' },
           sortKey: { name: 'gsisk', type: 'binary' }
+        },
+        globalMulti: {
+          type: 'global',
+          partitionKeys: [{ name: 'gsipk', type: 'string' }],
+          sortKeys: [{ name: 'gsisk', type: 'binary' }]
         },
         local: { type: 'local', sortKey: { name: 'lsi', type: 'number' } }
       },

@@ -1,6 +1,6 @@
 import type { Always } from '~/schema/index.js'
 import type { Table } from '~/table/index.js'
-import type { IndexableKeyType, Key } from '~/table/types/index.js'
+import type { Key, KeyType } from '~/table/types/index.js'
 import type { Or } from '~/types/or.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
 
@@ -9,7 +9,7 @@ import type { EntityAttributes } from './entityAttributes.js'
 type NeedsKeyPartCompute<
   ATTRIBUTES extends EntityAttributes,
   KEY_PART_NAME extends string,
-  KEY_PART_TYPE extends IndexableKeyType
+  KEY_PART_TYPE extends KeyType
 > =
   // TODO: Use TransformedValue instead
   ATTRIBUTES extends Record<
