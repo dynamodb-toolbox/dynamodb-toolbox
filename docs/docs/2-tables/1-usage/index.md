@@ -196,13 +196,31 @@ An object that lists the [secondary indexes](https://docs.aws.amazon.com/amazond
 Secondary indexes are represented as key-value pairs, keys being the index names, and values containing:
 
 - The `type` of the secondary index (`"local"` or `"global"`)
-- For global secondary indexes, the `partitionKey` of the index (similar to the main [`partitionKey`](#partitionkey))
-- If present, the `sortKey` of the index (similar to the main [`sortKey`](#sortkey))
+- For local secondary indexes:
+  - The `sortKey` of the index (similar to the primary [`sortKey`](#sortkey))
+- For global secondary indexes:
+  - The `partitionKey` or `partitionKeys` of the index (similar to the primary [`partitionKey`](#partitionkey))
+  - If present, the `sortKey` or `sortKeys` of the index (similar to the primary [`sortKey`](#sortkey))
 
 :::note[Examples]
 
 <Tabs>
-<TabItem value="gsi" label="Global Index">
+<TabItem value="lsi" label="LSI">
+
+```ts
+const MyTable = new Table({
+  ...,
+  indexes: {
+    byLevel: {
+      type: 'local',
+      sortKey: { name: 'level', type: 'number' }
+    }
+  }
+})
+```
+
+</TabItem>
+<TabItem value="gsi" label="GSI">
 
 ```ts
 const MyTable = new Table({
@@ -217,7 +235,7 @@ const MyTable = new Table({
 ```
 
 </TabItem>
-<TabItem value="gsi-sort-key" label="Global Index (+ sort key)">
+<TabItem value="gsi-sk" label="GSI (sort key)">
 
 ```ts
 const MyTable = new Table({
@@ -233,15 +251,37 @@ const MyTable = new Table({
 ```
 
 </TabItem>
-<TabItem value="lsi" label="Local Index">
+<TabItem value="multi-attr-gsi" label="Multi-attr. GSI">
 
 ```ts
 const MyTable = new Table({
   ...,
   indexes: {
-    byLevel: {
-      type: 'local',
-      sortKey: { name: 'level', type: 'number' }
+    byTrainerIdAndCaptureYear: {
+      type: 'global',
+      partitionKeys: [
+        { name: 'trainerId', type: 'string' },
+        { name: 'captureYear', type: 'number' }
+      ]
+    }
+  }
+})
+```
+
+</TabItem>
+<TabItem value="multi-attr-gsi-sk" label="Multi-attr. GSI (sort key)">
+
+```ts
+const MyTable = new Table({
+  ...,
+  indexes: {
+    byTrainerIdCaptureYearAndLevel: {
+      type: 'global',
+      partitionKey: { name: 'trainerId', type: 'string' },
+      sortKeys: [
+        { name: 'captureYear', type: 'number' },
+        { name: 'level', type: 'number' }
+      ]
     }
   }
 })
@@ -315,6 +355,6 @@ const { Items } = await PokeTable.build(ScanCommand).send()
 
 :::info
 
-If you don't mind large bundle sizes, you can still use the [`EntityRepository`](../../3-entities/4-actions/23-repository/index.md) actions that expose all the others as methods.
+If you don't mind large bundle sizes, you can still use the [`TableRepository`](../2-actions/12-repository/index.md) action that exposes all the others as methods.
 
 :::
