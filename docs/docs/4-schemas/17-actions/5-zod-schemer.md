@@ -31,7 +31,7 @@ const parsed = zodParser.parse(input)
 // => TransformedValue<typeof pokemonSchema>
 
 const zodFormatter = zodSchemer.formatter()
-const formatted = zodFormatter.format(parsed)
+const formatted = zodFormatter.parse(parsed)
 // => FormattedValue<typeof pokemonSchema>
 ```
 
@@ -72,7 +72,7 @@ const schema = map({
 
 const zodSchema = schema.build(ZodSchemer).formatter()
 // ⚠️ Does not throw even if `hidden` is required
-zodSchema.format({})
+zodSchema.parse({})
 ```
 
 Due to some discrepancies between schema systems, [discriminated unions](../16-anyOf/index.md#discriminate) also suffer from some minor limitations:
