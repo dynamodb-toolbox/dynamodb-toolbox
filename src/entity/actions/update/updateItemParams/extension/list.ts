@@ -28,7 +28,7 @@ import { parseUpdateExtension } from './attribute.js'
 import { parseReferenceExtension } from './reference.js'
 
 function* listElementParser(
-  schema: ListSchema,
+  elementsSchema: Schema,
   inputValue: unknown,
   { transform = true, valuePath }: ExtensionParserOptions
 ): Generator<
@@ -60,7 +60,7 @@ function* listElementParser(
     return transformedValue
   }
 
-  return yield* new Parser(schema.elements).start(inputValue, {
+  return yield* new Parser(elementsSchema).start(inputValue, {
     mode: 'update',
     fill: false,
     transform,
@@ -216,7 +216,7 @@ export const parseListExtension = (
         } = Object.fromEntries(
           Object.entries(input).map(([index, element]) => [
             index,
-            listElementParser(schema, element, {
+            listElementParser(schema.elements, element, {
               transform,
               valuePath: [...(valuePath ?? []), index]
             })
@@ -225,13 +225,14 @@ export const parseListExtension = (
 
         for (const inputKey of Object.keys(parsers)) {
           const parsedInputKey = parseFloat(inputKey)
-          const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
-          if (!isInteger(parsedInputKey)) {
+          if (!isInteger(parsedInputKey) || parsedInputKey < 0) {
+            const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
+
             throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
               message: `Index of array attribute ${
                 path !== undefined ? `'${path}' ` : ''
-              }is not a valid integer`,
+              }is not a valid positive integer`,
               path,
               payload: { received: inputKey }
             })

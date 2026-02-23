@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
-import { any, anyOf, item, list, map, number, record, string } from '~/schema/index.js'
+import { any, anyOf, item, list, map, number, record, string, tuple } from '~/schema/index.js'
 import { jsonStringify } from '~/transformers/jsonStringify.js'
 
 import { ConditionParser } from './conditionParser.js'
@@ -19,7 +19,12 @@ describe('parseCondition', () => {
         map({
           savedAs: string().savedAs('_s')
         })
-      ).savedAs('_l')
+      ).savedAs('_l'),
+      tupled: tuple(
+        map({
+          savedAs: string().savedAs('_s')
+        })
+      ).savedAs('_t')
     })
 
     test('correctly parses condition (root)', () => {
@@ -62,6 +67,18 @@ describe('parseCondition', () => {
       ).toStrictEqual({
         ConditionExpression: 'begins_with(#c_1[4].#c_2, :c_1)',
         ExpressionAttributeNames: { '#c_1': '_l', '#c_2': '_s' },
+        ExpressionAttributeValues: { ':c_1': 'foo' }
+      })
+    })
+
+    test('correctly parses condition (tupled)', () => {
+      expect(
+        schemaWithSavedAs
+          .build(ConditionParser)
+          .parse({ attr: 'tupled[0].savedAs', beginsWith: 'foo' })
+      ).toStrictEqual({
+        ConditionExpression: 'begins_with(#c_1[0].#c_2, :c_1)',
+        ExpressionAttributeNames: { '#c_1': '_t', '#c_2': '_s' },
         ExpressionAttributeValues: { ':c_1': 'foo' }
       })
     })

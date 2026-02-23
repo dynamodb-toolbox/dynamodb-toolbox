@@ -9,6 +9,7 @@ import { fromMapSchemaDTO } from './map.js'
 import { fromPrimitiveSchemaDTO } from './primitive.js'
 import { fromRecordSchemaDTO } from './record.js'
 import { fromSetSchemaDTO } from './set.js'
+import { fromTupleSchemaDTO } from './tuple.js'
 
 export const fromSchemaDTO = (schemaDTO: ISchemaDTO): Schema => {
   switch (schemaDTO.type) {
@@ -24,6 +25,8 @@ export const fromSchemaDTO = (schemaDTO: ISchemaDTO): Schema => {
       return fromSetSchemaDTO(schemaDTO)
     case 'list':
       return fromListSchemaDTO(schemaDTO)
+    case 'tuple':
+      return fromTupleSchemaDTO(schemaDTO)
     case 'map':
       return fromMapSchemaDTO(schemaDTO)
     case 'record':

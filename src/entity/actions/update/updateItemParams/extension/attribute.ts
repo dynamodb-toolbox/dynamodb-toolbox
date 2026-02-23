@@ -15,6 +15,7 @@ import { parseNumberExtension } from './number.js'
 import { parseRecordExtension } from './record.js'
 import { parseReferenceExtension } from './reference.js'
 import { parseSetExtension } from './set.js'
+import { parseTupleExtension } from './tuple.js'
 
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   schema: Schema,
@@ -29,9 +30,10 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       *extensionParser() {
         const { props } = schema
         const { required } = props
-        const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
         if (required !== 'never') {
+          const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
+
           throw new DynamoDBToolboxError('parsing.attributeRequired', {
             message: `Attribute ${
               path !== undefined ? `'${path}' ` : ''
@@ -64,6 +66,8 @@ export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
       return parseSetExtension(schema, input, options)
     case 'list':
       return parseListExtension(schema, input, options)
+    case 'tuple':
+      return parseTupleExtension(schema, input, options)
     case 'map':
       return parseMapExtension(schema, input, options)
     case 'record':

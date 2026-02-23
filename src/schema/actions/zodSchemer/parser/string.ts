@@ -32,7 +32,7 @@ export type StringZodParser<
   >
 >
 
-export const getStringZodParser = (
+export const stringZodParser = (
   schema: StringSchema,
   options: ZodParserOptions = {}
 ): z.ZodTypeAny => {

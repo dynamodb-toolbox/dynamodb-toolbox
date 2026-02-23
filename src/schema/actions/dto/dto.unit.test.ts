@@ -12,6 +12,7 @@ import { number } from '~/schema/number/index.js'
 import { record } from '~/schema/record/index.js'
 import { set } from '~/schema/set/index.js'
 import { string } from '~/schema/string/index.js'
+import { tuple } from '~/schema/tuple/index.js'
 
 import { SchemaDTO } from './dto.js'
 import type { ItemSchemaDTO } from './types.js'
@@ -27,6 +28,7 @@ describe('dto', () => {
       bin: binary(),
       st: set(string()),
       lst: list(string()),
+      tpl: tuple(string(), number()),
       mp: map({
         str: string(),
         num: number()
@@ -53,6 +55,10 @@ describe('dto', () => {
         lst: {
           type: 'list',
           elements: { type: 'string' }
+        },
+        tpl: {
+          type: 'tuple',
+          elements: [{ type: 'string' }, { type: 'number' }]
         },
         mp: {
           type: 'map',
@@ -84,7 +90,8 @@ describe('dto', () => {
       null: nul().hidden(),
       bool: boolean().required('always'),
       num: number().enum(1, 2, 3),
-      str: string().savedAs('_st')
+      str: string().savedAs('_st'),
+      tpl: tuple(string(), number()).optional()
     })
 
     const dto = richSchema.build(SchemaDTO)
@@ -100,7 +107,12 @@ describe('dto', () => {
         null: { type: 'null', hidden: true },
         bool: { type: 'boolean', required: 'always' },
         num: { type: 'number', enum: [1, 2, 3] },
-        str: { type: 'string', savedAs: '_st' }
+        str: { type: 'string', savedAs: '_st' },
+        tpl: {
+          type: 'tuple',
+          elements: [{ type: 'string' }, { type: 'number' }],
+          required: 'never'
+        }
       }
     })
   })

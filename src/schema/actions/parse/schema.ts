@@ -13,6 +13,7 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { primitiveSchemaParser } from './primitive.js'
 import { recordSchemaParser } from './record.js'
 import { setSchemaParser } from './set.js'
+import { tupleSchemaParser } from './tuple.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
 export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
@@ -115,6 +116,8 @@ export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
       return yield* setSchemaParser(schema, unextendedInput, nextOpts)
     case 'list':
       return yield* listSchemaParser(schema, unextendedInput, nextOpts)
+    case 'tuple':
+      return yield* tupleSchemaParser(schema, unextendedInput, nextOpts)
     case 'map':
       return yield* mapSchemaParser(schema, unextendedInput, nextOpts)
     case 'record':

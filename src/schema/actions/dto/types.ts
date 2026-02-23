@@ -131,6 +131,21 @@ export interface ListSchemaDTO extends SchemaPropsDTO {
   }
 }
 
+export interface TupleSchemaDTO extends SchemaPropsDTO {
+  type: 'tuple'
+  elements: (ISchemaDTO & {
+    required?: AtLeastOnce
+    hidden?: false
+    savedAs?: undefined
+    keyDefault?: undefined
+    putDefault?: undefined
+    updateDefault?: undefined
+    keyLink?: undefined
+    putLink?: undefined
+    updateLink?: undefined
+  })[]
+}
+
 export interface MapSchemaDTO extends SchemaPropsDTO {
   type: 'map'
   attributes: { [name: string]: ISchemaDTO }
@@ -207,6 +222,7 @@ export type ISchemaDTO =
   | BinarySchemaDTO
   | SetSchemaDTO
   | ListSchemaDTO
+  | TupleSchemaDTO
   | MapSchemaDTO
   | RecordSchemaDTO
   | AnyOfSchemaDTO

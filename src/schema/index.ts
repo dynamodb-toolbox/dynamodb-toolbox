@@ -10,6 +10,7 @@ import { number } from './number/index.js'
 import { record } from './record/index.js'
 import { set } from './set/index.js'
 import { string } from './string/index.js'
+import { tuple } from './tuple/index.js'
 
 export * from './types/index.js'
 
@@ -22,6 +23,7 @@ export * from './binary/index.js'
 export * from './primitive/index.js'
 export * from './set/index.js'
 export * from './list/index.js'
+export * from './tuple/index.js'
 export * from './map/index.js'
 export * from './record/index.js'
 export * from './anyOf/index.js'
@@ -38,6 +40,7 @@ export const schema: {
   binary: typeof binary
   set: typeof set
   list: typeof list
+  tuple: typeof tuple
   map: typeof map
   record: typeof record
   anyOf: typeof anyOf
@@ -51,6 +54,7 @@ export const schema: {
   binary,
   set,
   list,
+  tuple,
   map,
   record,
   anyOf,

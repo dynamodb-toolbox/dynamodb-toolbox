@@ -5,7 +5,24 @@ import type { Transformer } from '~/transformers/transformer.js'
 import type { Extends, If, Or } from '~/types/index.js'
 
 import type { SavedAsAttributes } from '../utils.js'
+import type { SchemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
+
+export type SchemaZodParserRec<
+  SCHEMAS extends Schema[],
+  OPTIONS extends ZodParserOptions = {},
+  RESULTS extends z.ZodTypeAny[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? SchemaZodParserRec<
+          SCHEMAS_TAIL,
+          OPTIONS,
+          [...RESULTS, SchemaZodParser<SCHEMAS_HEAD, OPTIONS>]
+        >
+      : never
+    : never
+  : RESULTS
 
 export type ZodLiteralMap<
   LITERALS extends z.Primitive[],

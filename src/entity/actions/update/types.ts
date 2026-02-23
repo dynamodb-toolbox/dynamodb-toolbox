@@ -23,7 +23,10 @@ import type {
   SchemaExtendedValue,
   SetExtendedValue,
   SetSchema,
-  ValidValue
+  TupleExtendedValue,
+  TupleSchema,
+  ValidValue,
+  ValidValueRec
 } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
@@ -89,8 +92,18 @@ export type UpdateItemInputExtension =
         | Extended<
             | { [$APPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
             | { [$PREPEND]: SchemaExtendedValue<ReferenceExtension> | SchemaExtendedValue[] }
-            // TODO: CONCAT to join two unrelated lists
+            /**
+             * @debt feature "CONCAT to join two unrelated lists"
+             */
           >
+    }
+  | {
+      type: 'tuple'
+      value:
+        | Unextended<{
+            [INDEX in number]: SchemaExtendedValue<UpdateItemInputExtension> | undefined
+          }>
+        | Extended<{ [$SET]: TupleExtendedValue }>
     }
   | {
       type: 'map'
@@ -298,6 +311,24 @@ export type UpdateValueInput<
                       >
                   >
             : never)
+        | (SCHEMA extends TupleSchema
+            ?
+                | Unextended<
+                    UpdateValueInputRec<
+                      SCHEMA['elements'],
+                      Overwrite<OPTIONS, { defined: false; extended: true }>,
+                      AVAILABLE_PATHS
+                    >
+                  >
+                | Unextended<{
+                    [ELEMENT_ENTRY in UpdateValueInputRecEntries<
+                      SCHEMA['elements'],
+                      Overwrite<OPTIONS, { defined: false; extended: true }>,
+                      AVAILABLE_PATHS
+                    > as ELEMENT_ENTRY[0]]?: ELEMENT_ENTRY[1]
+                  }>
+                | If<IsExtended<OPTIONS>, SET<ValidValueRec<SCHEMA['elements'], { defined: true }>>>
+            : never)
         | (SCHEMA extends MapSchema
             ?
                 | Unextended<
@@ -330,3 +361,40 @@ export type UpdateValueInput<
         | (SCHEMA extends AnyOfSchema
             ? UpdateValueInput<SCHEMA['elements'][number], OPTIONS, AVAILABLE_PATHS>
             : never)
+
+export type UpdateValueInputRec<
+  SCHEMAS extends Schema[] = Schema[],
+  OPTIONS extends UpdateInputOptions = {},
+  AVAILABLE_PATHS extends string = string,
+  RESULTS extends unknown[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? UpdateValueInputRec<
+          SCHEMAS_TAIL,
+          OPTIONS,
+          AVAILABLE_PATHS,
+          [...RESULTS, UpdateValueInput<SCHEMAS_HEAD, OPTIONS, AVAILABLE_PATHS>]
+        >
+      : never
+    : never
+  : RESULTS
+
+export type UpdateValueInputRecEntries<
+  SCHEMAS extends Schema[] = Schema[],
+  OPTIONS extends UpdateInputOptions = {},
+  AVAILABLE_PATHS extends string = string,
+  ENTRIES extends [number, unknown] = never
+> = SCHEMAS extends [...infer SCHEMAS_INIT, infer SCHEMAS_LAST]
+  ? SCHEMAS_LAST extends Schema
+    ? SCHEMAS_INIT extends Schema[]
+      ? UpdateValueInputRecEntries<
+          SCHEMAS_INIT,
+          OPTIONS,
+          AVAILABLE_PATHS,
+          | ENTRIES
+          | [SCHEMAS_INIT['length'], UpdateValueInput<SCHEMAS_LAST, OPTIONS, AVAILABLE_PATHS>]
+        >
+      : never
+    : never
+  : ENTRIES

@@ -9,7 +9,9 @@ import { isInteger } from '~/utils/validation/isInteger.js'
 
 import { SubSchema } from './subSchema.js'
 
-// TO IMPROVE: Type path as Path<SCHEMA> and return typed SubSchema
+/**
+ * @debt type "Type path as Path<SCHEMA> and return typed SubSchema"
+ */
 export class Finder<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'finder' as const
 
@@ -43,14 +45,8 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
     case 'binary':
     case 'set':
       return []
-
-    case 'record': {
-      const keyAttribute = schema.keys
-
-      let parsedKey: string
-      try {
-        parsedKey = new Parser(keyAttribute).parse(pathHead)
-      } catch {
+    case 'list': {
+      if (!isInteger(pathHead)) {
         return []
       }
 
@@ -59,7 +55,21 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
           new SubSchema({
             schema,
             formattedPath: formattedPath.prepend(pathHead),
-            transformedPath: transformedPath.prepend(parsedKey)
+            transformedPath: transformedPath.prepend(pathHead)
+          })
+      )
+    }
+    case 'tuple': {
+      if (!isInteger(pathHead) || schema.elements[pathHead] === undefined) {
+        return []
+      }
+
+      return findSubSchemas(schema.elements[pathHead], pathTail).map(
+        ({ schema, formattedPath, transformedPath }) =>
+          new SubSchema({
+            schema,
+            formattedPath: formattedPath.prepend(pathHead),
+            transformedPath: transformedPath.prepend(pathHead)
           })
       )
     }
@@ -81,8 +91,13 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
           })
       )
     }
-    case 'list': {
-      if (!isInteger(pathHead)) {
+    case 'record': {
+      const keyAttribute = schema.keys
+
+      let parsedKey: string
+      try {
+        parsedKey = new Parser(keyAttribute).parse(pathHead)
+      } catch {
         return []
       }
 
@@ -91,7 +106,7 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
           new SubSchema({
             schema,
             formattedPath: formattedPath.prepend(pathHead),
-            transformedPath: transformedPath.prepend(pathHead)
+            transformedPath: transformedPath.prepend(parsedKey)
           })
       )
     }

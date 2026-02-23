@@ -8,7 +8,7 @@ import { withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
-import type { WithDefault, WithOptional } from './utils.js'
+import type { SchemaZodParserRec, WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
 export type AnyOfZodParser<
@@ -27,7 +27,7 @@ export type AnyOfZodParser<
           SCHEMA['props'] extends { discriminator: string }
             ? z.ZodDiscriminatedUnion<
                 SCHEMA['props']['discriminator'],
-                MapAnyOfZodParser<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
+                SchemaZodParserRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: true }>>
               >
             : SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
               ? SCHEMAS_HEAD extends Schema
@@ -35,7 +35,7 @@ export type AnyOfZodParser<
                   ? z.ZodUnion<
                       [
                         SchemaZodParser<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
-                        ...MapAnyOfZodParser<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
+                        ...SchemaZodParserRec<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
                       ]
                     >
                   : never
@@ -44,22 +44,6 @@ export type AnyOfZodParser<
         >
       >
     >
-
-type MapAnyOfZodParser<
-  SCHEMAS extends Schema[],
-  OPTIONS extends ZodParserOptions = {},
-  RESULTS extends z.ZodTypeAny[] = []
-> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
-  ? SCHEMAS_HEAD extends Schema
-    ? SCHEMAS_TAIL extends Schema[]
-      ? MapAnyOfZodParser<
-          SCHEMAS_TAIL,
-          OPTIONS,
-          [...RESULTS, SchemaZodParser<SCHEMAS_HEAD, OPTIONS>]
-        >
-      : never
-    : never
-  : RESULTS
 
 export const anyOfZodParser = (
   schema: AnyOfSchema,

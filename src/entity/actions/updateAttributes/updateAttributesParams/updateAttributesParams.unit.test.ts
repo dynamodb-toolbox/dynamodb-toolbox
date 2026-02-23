@@ -29,7 +29,8 @@ import {
   prefix,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/index.js'
 
 const TestTable = new Table({
@@ -53,6 +54,7 @@ const TestEntity = new Entity({
     test_list_deep: list(map({ value: string().enum('foo', 'bar') })).optional(),
     test_list_coerce: list(any()).optional(),
     test_list_required: list(any()),
+    test_tuple: tuple(string(), number()).optional(),
     contents: map({ test: string(), optional: string().optional() }).savedAs('_c'),
     test_map: map({ optional: number().enum(1, 2).optional() }),
     test_string_set: set(string()).optional(),
@@ -1126,6 +1128,65 @@ describe('update', () => {
     expect(invalidCallB).toThrow(
       expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
     )
+  })
+
+  test('overrides existing tuple', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple: ['test1', 42]
+        })
+        .params()
+
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_tuple' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': ['test1', 42] })
+
+    const invalidCall = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: $set(['test1', 42])
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('rejects updating specific items in a tuple', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple: [
+            // @ts-expect-error
+            undefined,
+            42
+          ]
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.attributeRequired' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateAttributesCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: { 1: 42 }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
   test('overrides whole map', () => {

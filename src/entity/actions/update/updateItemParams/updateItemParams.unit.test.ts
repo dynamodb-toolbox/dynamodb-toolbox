@@ -28,7 +28,8 @@ import {
   prefix,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/index.js'
 
 const TestTable = new Table({
@@ -59,6 +60,7 @@ const TestEntity = new Entity({
     test_list_required: list(any()),
     contents: map({ test: string() }).savedAs('_c'),
     test_map: map({ optional: number().enum(1, 2).optional() }),
+    test_tuple: tuple(string(), number().enum(1, 2)).optional(),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional(),
@@ -879,7 +881,7 @@ describe('update', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
   })
 
-  test('overrides existing list', () => {
+  test('overrides existing list if $set is used', () => {
     const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.build(UpdateItemCommand)
         .item({
@@ -1258,6 +1260,260 @@ describe('update', () => {
     )
   })
 
+  test('updates deep data in a tuple', () => {
+    const {
+      UpdateExpression: UpdateExpressionA,
+      ExpressionAttributeNames: ExpressionAttributeNamesA,
+      ExpressionAttributeValues: ExpressionAttributeValuesA
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_tuple: ['foo', 2]
+      })
+      .params()
+
+    expect(UpdateExpressionA).toContain('SET #s_1[0] = :s_1, #s_1[1] = :s_2')
+    expect(ExpressionAttributeNamesA).toMatchObject({
+      '#s_1': 'test_tuple'
+    })
+    expect(ExpressionAttributeValuesA).toMatchObject({ ':s_1': 'foo', ':s_2': 2 })
+
+    const {
+      UpdateExpression: UpdateExpressionB,
+      ExpressionAttributeNames: ExpressionAttributeNamesB,
+      ExpressionAttributeValues: ExpressionAttributeValuesB
+    } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_tuple: ['foo']
+      })
+      .params()
+
+    expect(UpdateExpressionB).toContain('SET #s_1[0] = :s_1')
+    expect(ExpressionAttributeNamesB).toMatchObject({ '#s_1': 'test_tuple' })
+    expect(ExpressionAttributeValuesB).toMatchObject({ ':s_1': 'foo' })
+  })
+
+  test('ignores undefined values', () => {
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_tuple: [undefined, 2]
+      })
+      .params()
+
+    expect(UpdateExpression).not.toContain('[0]')
+  })
+
+  test('updates specific items in a tuple', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple: { 1: 2 }
+        })
+        .params()
+
+    expect(UpdateExpression).toContain('SET #s_1[1] = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_tuple' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': 2 })
+  })
+
+  test('rejects invalid key while updating tuple element', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple: {
+            // @ts-expect-error
+            foo: 'Test2'
+          }
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: {
+            1.5: 'Test2'
+          }
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: {
+            3: 'Test3'
+          }
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('accepts references when updating tuple element', () => {
+    const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        test_tuple: [$get('test_string')]
+      })
+      .params()
+
+    expect(UpdateExpression).toContain('SET #s_1[0] = #s_2')
+    expect(ExpressionAttributeNames).toMatchObject({
+      '#s_1': 'test_tuple',
+      '#s_2': 'test_string'
+    })
+  })
+
+  test('rejects invalid reference when updating tuple element', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error invalid_attribute_name is not an existing attribute name
+          test_tuple: [$get('invalid_attribute_name')]
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_tuple: [
+            'foo',
+            // @ts-expect-error 42 is not assignable to 1 | 2
+            $get('test_number_default', 42)
+          ]
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(DynamoDBToolboxError)
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallC = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_tuple: [
+            'foo',
+            // @ts-expect-error fallback must be basic value or reference
+            $get('test_number_default', $add(42))
+          ]
+        })
+        .params()
+
+    expect(invalidCallC).toThrow(DynamoDBToolboxError)
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+
+    const invalidCallD = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_tuple: [
+            'foo',
+            // @ts-expect-error invalid_attribute_name is not an existing attribute name
+            $get('test_number_default', $get('invalid_attribute_name'))
+          ]
+        })
+        .params()
+
+    expect(invalidCallD).toThrow(DynamoDBToolboxError)
+    expect(invalidCallD).toThrow(
+      expect.objectContaining({ code: 'actions.invalidExpressionAttributePath' })
+    )
+
+    const invalidCallE = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-pk',
+          test_tuple: [
+            'foo',
+            // @ts-expect-error 42 is not assignable to 1 | 2
+            $get('test_number_default', $get('test_number_default', 42))
+          ]
+        })
+        .params()
+
+    expect(invalidCallE).toThrow(DynamoDBToolboxError)
+    expect(invalidCallE).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('override existing tuple if set is used', () => {
+    const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple: $set(['foo', 2])
+        })
+        .params()
+
+    expect(UpdateExpression).toContain('SET #s_1 = :s_1')
+    expect(ExpressionAttributeNames).toMatchObject({ '#s_1': 'test_tuple' })
+    expect(ExpressionAttributeValues).toMatchObject({ ':s_1': ['foo', 2] })
+  })
+
+  test('rejects references when setting whole tuple', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: $set(['foo', $get('test_number_default')])
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('rejects invalid set tuple', () => {
+    const invalidCall = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple: $set(['foo', $add(1)])
+        })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
   test('updates deep data in a map', () => {
     const { UpdateExpression, ExpressionAttributeNames, ExpressionAttributeValues } =
       TestEntity.build(UpdateItemCommand)
@@ -1304,7 +1560,7 @@ describe('update', () => {
     expect(Object.values(ExpressionAttributeNames)).not.toContain('test_map')
   })
 
-  test('accepts references', () => {
+  test('accepts references when updating map attribute', () => {
     const { UpdateExpression, ExpressionAttributeNames } = TestEntity.build(UpdateItemCommand)
       .item({
         email: 'test-pk',
@@ -1321,7 +1577,7 @@ describe('update', () => {
     })
   })
 
-  test('rejects invalid reference', () => {
+  test('rejects invalid reference when updating map attribute', () => {
     const invalidCallA = () =>
       TestEntity.build(UpdateItemCommand)
         .item({

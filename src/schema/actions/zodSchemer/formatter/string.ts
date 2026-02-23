@@ -28,7 +28,7 @@ export type StringZodFormatter<
   >
 >
 
-export const getStringZodFormatter = (
+export const stringZodFormatter = (
   schema: StringSchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny => {

@@ -12,7 +12,8 @@ import {
   number,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/schema/index.js'
 import { prefix } from '~/transformers/prefix.js'
 
@@ -72,11 +73,13 @@ describe('finder', () => {
       savedAs: strSchema,
       ['escaped.[']: escapedStrSchema,
       deep: map({ savedAs: strSchema }).savedAs('_n'),
-      listed: list(map({ savedAs: strSchema })).savedAs('_l')
+      listed: list(map({ savedAs: strSchema })).savedAs('_l'),
+      tuple: tuple(map({ savedAs: strSchema })).savedAs('_t')
     })
 
     test('returns nothing if path does not match', () => {
       expect(schema.build(Finder).search('foo')).toStrictEqual([])
+      expect(schema.build(Finder).search('tuple[1]')).toStrictEqual([])
     })
 
     test('correctly find schema & transformed path (root)', () => {
@@ -121,6 +124,18 @@ describe('finder', () => {
           schema: strSchema,
           formattedPath: new Path(path),
           transformedPath: Path.fromArray(['_l', 4, '_s'])
+        })
+      ])
+    })
+
+    test('correctly find schema & transformed path (deep within tuple)', () => {
+      const path = "tuple[0]['savedAs']"
+
+      expect(schema.build(Finder).search(path)).toStrictEqual([
+        new SubSchema({
+          schema: strSchema,
+          formattedPath: new Path(path),
+          transformedPath: Path.fromArray(['_t', 0, '_s'])
         })
       ])
     })

@@ -29,7 +29,7 @@ export type SetZodParser<
       >
     >
 
-export const getSetZodParser = (schema: SetSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
+export const setZodParser = (schema: SetSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
   withDefault(
     schema,
     options,

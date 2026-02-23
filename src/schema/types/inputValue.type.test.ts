@@ -18,6 +18,7 @@ const assertPut: A.Equals<
     savedAsBin: Uint8Array
     set: Set<string>
     list: { num: number; str: string }[]
+    tuple: [{ str: string }, number]
     map: { num: number; str: string }
     record: Record<'foo' | 'bar', { num: number; str: string }>
     partialRecord: Partial<Record<'foo' | 'bar', string>>
@@ -46,6 +47,7 @@ const assertUpdate: A.Equals<
     savedAsBin?: Uint8Array
     set?: Set<string>
     list?: ({ num?: number; str?: string } | undefined)[]
+    tuple?: [{ str?: string | undefined } | undefined, number | undefined]
     map?: { num?: number; str?: string }
     record?: Partial<Record<'foo' | 'bar', { num?: number; str?: string }>>
     partialRecord?: Partial<Record<'foo' | 'bar', string>>

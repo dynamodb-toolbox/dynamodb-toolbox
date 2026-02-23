@@ -11,7 +11,8 @@ import {
   prefix,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/index.js'
 
 export const testSchema = item({
@@ -26,6 +27,7 @@ export const testSchema = item({
   savedAsBin: binary().savedAs('_b'),
   set: set(string()),
   list: list(map({ num: number(), str: string() })),
+  tuple: tuple(map({ str: string() }), number()),
   map: map({ num: number(), str: string() }),
   record: record(string().enum('foo', 'bar'), map({ num: number(), str: string() })),
   partialRecord: record(string().enum('foo', 'bar'), string()).partial(),

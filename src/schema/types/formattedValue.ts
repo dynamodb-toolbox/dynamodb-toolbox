@@ -18,12 +18,13 @@ import type {
   ResolvedNullSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If, Not, OmitKeys, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
-import type { ChildPaths, MatchKeys } from './pathUtils.js'
+import type { ChildPaths, ElementPaths, MatchIndexes, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 export type FormattedValue<
@@ -99,6 +100,7 @@ type SchemaFormattedValue<
           : never)
       | (SCHEMA extends SetSchema ? SetSchemaFormattedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListSchemaFormattedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleSchemaFormattedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapSchemaFormattedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordSchemaFormattedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfSchemaFormattedValue<SCHEMA, OPTIONS> : never)
@@ -116,12 +118,6 @@ type SetSchemaFormattedValue<
       | If<MustBeDefined<SCHEMA>, never, undefined>
       | Set<SchemaFormattedValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
 
-type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
-  ? undefined
-  : PATHS extends `[${number}]${infer CHILD_ELEMENT_PATHS}`
-    ? CHILD_ELEMENT_PATHS
-    : never
-
 type ListSchemaFormattedValue<
   SCHEMA extends ListSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
@@ -133,10 +129,7 @@ type ListSchemaFormattedValue<
           OPTIONS,
           {
             attributes: OPTIONS extends { attributes: string }
-              ? Extract<
-                  ChildElementPaths<OPTIONS['attributes']>,
-                  Paths<SCHEMA['elements']> | undefined
-                >
+              ? Extract<ElementPaths<OPTIONS['attributes']>, Paths<SCHEMA['elements']> | undefined>
               : undefined
           }
         >
@@ -147,6 +140,64 @@ type ListSchemaFormattedValue<
   : [FORMATTED_ELEMENTS] extends [never]
     ? never
     : If<MustBeDefined<SCHEMA>, never, undefined> | FORMATTED_ELEMENTS[]
+
+type TupleSchemaFormattedValue<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  DECODED_ELEMENTS = ListSchema extends SCHEMA
+    ? unknown
+    : TupleSchemaFormattedValueRec<SCHEMA, OPTIONS>
+> = TupleSchema extends SCHEMA
+  ? unknown[]
+  : [DECODED_ELEMENTS] extends [never]
+    ? never
+    : If<MustBeDefined<SCHEMA>, never, undefined> | DECODED_ELEMENTS
+
+/**
+ * @debt type "TOFIX: Element is SKIPPED if index is not matched"
+ */
+type TupleSchemaFormattedValueRec<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  MATCHING_INDEXES extends number = OPTIONS extends { attributes: string }
+    ? MatchIndexes<SCHEMA['elements'], OPTIONS['attributes']>
+    : number,
+  ELEMENTS extends Schema[] = SCHEMA['elements'],
+  RESULTS extends unknown[] = []
+> = ELEMENTS extends [...infer ELEMENTS_INIT, infer ELEMENTS_LAST]
+  ? ELEMENTS_LAST extends Schema
+    ? ELEMENTS_INIT extends Schema[]
+      ? TupleSchemaFormattedValueRec<
+          SCHEMA,
+          OPTIONS,
+          MATCHING_INDEXES,
+          ELEMENTS_INIT,
+          ELEMENTS_INIT['length'] extends MATCHING_INDEXES
+            ? [
+                (
+                  | SchemaFormattedValue<
+                      ELEMENTS_LAST,
+                      Overwrite<
+                        OPTIONS,
+                        {
+                          attributes: OPTIONS extends { attributes: string }
+                            ? Extract<
+                                ElementPaths<OPTIONS['attributes'], ELEMENTS_INIT['length']>,
+                                Paths<ELEMENTS_LAST> | undefined
+                              >
+                            : undefined
+                        }
+                      >
+                    >
+                  | (OPTIONS extends { partial: true } ? undefined : never)
+                ),
+                ...RESULTS
+              ]
+            : RESULTS
+        >
+      : never
+    : never
+  : RESULTS
 
 type MapSchemaFormattedValue<
   SCHEMA extends MapSchema,
@@ -249,9 +300,9 @@ type AnyOfSchemaFormattedValue<
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = AnyOfSchema extends SCHEMA
   ? unknown
-  : If<MustBeDefined<SCHEMA>, never, undefined> | MapAnyOfSchemaFormattedValue<SCHEMA, OPTIONS>
+  : If<MustBeDefined<SCHEMA>, never, undefined> | AnyOfSchemaFormattedValueRec<SCHEMA, OPTIONS>
 
-type MapAnyOfSchemaFormattedValue<
+type AnyOfSchemaFormattedValueRec<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
   ELEMENTS extends Schema[] = SCHEMA['elements'],
@@ -259,7 +310,7 @@ type MapAnyOfSchemaFormattedValue<
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Schema
     ? ELEMENTS_TAIL extends Schema[]
-      ? MapAnyOfSchemaFormattedValue<
+      ? AnyOfSchemaFormattedValueRec<
           SCHEMA,
           OPTIONS,
           ELEMENTS_TAIL,

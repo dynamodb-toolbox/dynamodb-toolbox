@@ -13,7 +13,8 @@ import type {
   ResolveStringSchema,
   ResolvedPrimitiveSchema,
   Schema,
-  SetSchema
+  SetSchema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
@@ -27,6 +28,18 @@ export type InputValue<
   : SCHEMA extends Schema
     ? SchemaInputValue<SCHEMA, OPTIONS>
     : never
+
+export type InputValueRec<
+  SCHEMAS extends Schema[],
+  OPTIONS extends WriteValueOptions = {},
+  RESULTS extends unknown[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? InputValueRec<SCHEMAS_TAIL, OPTIONS, [...RESULTS, InputValue<SCHEMAS_HEAD, OPTIONS>]>
+      : never
+    : never
+  : RESULTS
 
 type MustBeProvided<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
   Extends<OPTIONS, { defined: true }>,
@@ -89,6 +102,7 @@ type SchemaInputValue<
       | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaInputValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends SetSchema ? SetSchemaInputValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListSchemaInputValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleSchemaInputValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapSchemaInputValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordSchemaInputValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfSchemaInputValue<SCHEMA, OPTIONS> : never)
@@ -142,6 +156,19 @@ type ListSchemaInputValue<
       | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+
+type TupleSchemaInputValue<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends WriteValueOptions = {}
+> = TupleSchema extends SCHEMA
+  ?
+      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | unknown[]
+  :
+      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | InputValueRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
 
 type MapSchemaInputValue<
   SCHEMA extends MapSchema,
