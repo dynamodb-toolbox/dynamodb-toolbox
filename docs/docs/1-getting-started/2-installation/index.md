@@ -4,7 +4,7 @@ title: Installation
 
 # Installation
 
-Requires Node.js 18 or later (ESM-only).
+Requires Node.js 18 or later.
 
 ```bash
 # npm
