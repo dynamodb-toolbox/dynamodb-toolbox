@@ -9,8 +9,7 @@ jobs:
     strategy:
       matrix:
         node: [18, 20, 22, 24]
-        typescript:
-          [
+        typescript: [
             '~5.0.4',
             '~5.1.6',
             '~5.2.2',
@@ -20,7 +19,8 @@ jobs:
             '~5.6.3',
             '~5.7.3',
             '~5.8.3',
-            'latest'
+            '~5.9.3'
+            # 'latest' to reintroduce once TS6 is supported
           ]
     name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
