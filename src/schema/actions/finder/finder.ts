@@ -60,11 +60,16 @@ export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => 
       )
     }
     case 'tuple': {
-      if (!isInteger(pathHead) || schema.elements[pathHead] === undefined) {
+      if (!isInteger(pathHead)) {
         return []
       }
 
-      return findSubSchemas(schema.elements[pathHead], pathTail).map(
+      const elementSchema = schema.elements[pathHead]
+      if (elementSchema === undefined) {
+        return []
+      }
+
+      return findSubSchemas(elementSchema, pathTail).map(
         ({ schema, formattedPath, transformedPath }) =>
           new SubSchema({
             schema,
