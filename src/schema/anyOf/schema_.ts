@@ -15,20 +15,20 @@ import type {
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
-import type { LightTuple } from '../utils/light.js'
-import { lightTuple } from '../utils/light.js'
+import type { LightRec } from '../utils/light.js'
+import { lightRec } from '../utils/light.js'
 import { AnyOfSchema } from './schema.js'
 import type { AnyOfElementSchema, AnyOfSchemaProps, Discriminator } from './types.js'
 
 type AnyOfSchemer = <ELEMENTS extends AnyOfElementSchema[]>(
   ...elements: ELEMENTS
-) => AnyOfSchema_<LightTuple<ELEMENTS>, {}>
+) => AnyOfSchema_<LightRec<ELEMENTS>, {}>
 
 /**
  * Define a new anyOf attribute
  * @param elements Attribute[]
  */
-export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_(lightTuple(...elements), {})
+export const anyOf: AnyOfSchemer = (...elements) => new AnyOfSchema_(lightRec(...elements), {})
 
 /**
  * AnyOf attribute interface

@@ -12,7 +12,8 @@ import type {
   ResolvePrimitiveSchema,
   ResolvedPrimitiveSchema,
   Schema,
-  SetSchema
+  SetSchema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
@@ -26,6 +27,18 @@ export type ValidValue<
   : SCHEMA extends Schema
     ? SchemaValidValue<SCHEMA, OPTIONS>
     : never
+
+export type ValidValueRec<
+  SCHEMAS extends Schema[],
+  OPTIONS extends WriteValueOptions = {},
+  RESULTS extends unknown[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? ValidValueRec<SCHEMAS_TAIL, OPTIONS, [...RESULTS, ValidValue<SCHEMAS_HEAD, OPTIONS>]>
+      : never
+    : never
+  : RESULTS
 
 type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions> = If<
   Extends<OPTIONS, { defined: true }>,
@@ -72,6 +85,7 @@ type SchemaValidValue<
       | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaValidValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends SetSchema ? SetSchemaValidValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListSchemaValidValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleSchemaValidValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapSchemaValidValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordSchemaValidValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfSchemaValidValue<SCHEMA, OPTIONS> : never)
@@ -126,6 +140,19 @@ type ListSchemaValidValue<
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | SchemaValidValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
+type TupleSchemaValidValue<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends WriteValueOptions = {}
+> = TupleSchema extends SCHEMA
+  ?
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | unknown[]
+  :
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | ValidValueRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+
 type MapSchemaValidValue<
   SCHEMA extends MapSchema,
   OPTIONS extends WriteValueOptions = {}
@@ -171,22 +198,4 @@ type AnyOfSchemaValidValue<
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | MapAnyOfSchemaValidValue<SCHEMA['elements'], OPTIONS>
-
-type MapAnyOfSchemaValidValue<
-  ELEMENTS extends Schema[],
-  OPTIONS extends WriteValueOptions = {},
-  RESULTS = never
-> = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Schema
-    ? ELEMENTS_TAIL extends Schema[]
-      ? MapAnyOfSchemaValidValue<
-          ELEMENTS_TAIL,
-          OPTIONS,
-          RESULTS | SchemaValidValue<ELEMENTS_HEAD, OPTIONS>
-        >
-      : never
-    : never
-  : [RESULTS] extends [never]
-    ? unknown
-    : RESULTS
+      | ValidValue<SCHEMA['elements'][number], OPTIONS>

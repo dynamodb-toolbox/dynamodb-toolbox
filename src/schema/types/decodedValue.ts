@@ -18,12 +18,13 @@ import type {
   ResolvedNullSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If, Not, Optional, Overwrite } from '~/types/index.js'
 
 import type { ReadValueOptions } from './options.js'
-import type { ChildPaths, MatchKeys } from './pathUtils.js'
+import type { ChildPaths, ElementPaths, MatchIndexes, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
 /**
@@ -102,6 +103,7 @@ type SchemaDecodedValue<
           : never)
       | (SCHEMA extends SetSchema ? SetSchemaDecodedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListSchemaDecodedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleSchemaDecodedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapSchemaDecodedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordSchemaDecodedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfSchemaDecodedValue<SCHEMA, OPTIONS> : never)
@@ -119,16 +121,10 @@ type SetSchemaDecodedValue<
       | If<MustBeDefined<SCHEMA>, never, undefined>
       | Set<SchemaDecodedValue<SCHEMA['elements'], Omit<OPTIONS, 'attributes'>>>
 
-type ChildElementPaths<PATHS extends string> = PATHS extends `[${number}]`
-  ? undefined
-  : PATHS extends `[${number}]${infer CHILD_ELEMENT_PATHS}`
-    ? CHILD_ELEMENT_PATHS
-    : never
-
 type ListSchemaDecodedValue<
   SCHEMA extends ListSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
-  READ_ELEMENTS = ListSchema extends SCHEMA
+  DECODED_ELEMENTS = ListSchema extends SCHEMA
     ? unknown
     : SchemaDecodedValue<
         SCHEMA['elements'],
@@ -136,20 +132,71 @@ type ListSchemaDecodedValue<
           OPTIONS,
           {
             attributes: OPTIONS extends { attributes: string }
-              ? Extract<
-                  ChildElementPaths<OPTIONS['attributes']>,
-                  Paths<SCHEMA['elements']> | undefined
-                >
+              ? Extract<ElementPaths<OPTIONS['attributes']>, Paths<SCHEMA['elements']> | undefined>
               : undefined
           }
         >
       >
-  // Possible in case of anyOf subSchema
 > = ListSchema extends SCHEMA
   ? undefined | unknown[]
-  : [READ_ELEMENTS] extends [never]
+  : [DECODED_ELEMENTS] extends [never]
     ? never
-    : If<MustBeDefined<SCHEMA>, never, undefined> | READ_ELEMENTS[]
+    : If<MustBeDefined<SCHEMA>, never, undefined> | DECODED_ELEMENTS[]
+
+type TupleSchemaDecodedValue<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  DECODED_ELEMENTS = TupleSchema extends SCHEMA
+    ? unknown
+    : TupleSchemaDecodedValueRec<SCHEMA, OPTIONS>
+> = TupleSchema extends SCHEMA
+  ? unknown[]
+  : [DECODED_ELEMENTS] extends [never]
+    ? never
+    : If<MustBeDefined<SCHEMA>, never, undefined> | DECODED_ELEMENTS
+
+type TupleSchemaDecodedValueRec<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends ReadValueOptions<SCHEMA> = {},
+  MATCHING_INDEXES extends number = OPTIONS extends { attributes: string }
+    ? MatchIndexes<SCHEMA['elements'], OPTIONS['attributes']>
+    : number,
+  ELEMENTS extends Schema[] = SCHEMA['elements'],
+  RESULTS extends unknown[] = []
+> = ELEMENTS extends [...infer ELEMENTS_INIT, infer ELEMENTS_LAST]
+  ? ELEMENTS_LAST extends Schema
+    ? ELEMENTS_INIT extends Schema[]
+      ? TupleSchemaDecodedValueRec<
+          SCHEMA,
+          OPTIONS,
+          MATCHING_INDEXES,
+          ELEMENTS_INIT,
+          ELEMENTS_INIT['length'] extends MATCHING_INDEXES
+            ? [
+                (
+                  | SchemaDecodedValue<
+                      ELEMENTS_LAST,
+                      Overwrite<
+                        OPTIONS,
+                        {
+                          attributes: OPTIONS extends { attributes: string }
+                            ? Extract<
+                                ElementPaths<OPTIONS['attributes'], ELEMENTS_INIT['length']>,
+                                Paths<ELEMENTS_LAST> | undefined
+                              >
+                            : undefined
+                        }
+                      >
+                    >
+                  | (OPTIONS extends { partial: true } ? undefined : never)
+                ),
+                ...RESULTS
+              ]
+            : RESULTS
+        >
+      : never
+    : never
+  : RESULTS
 
 type MapSchemaDecodedValue<
   SCHEMA extends MapSchema,
@@ -247,9 +294,9 @@ type AnyOfSchemaDecodedValue<
   OPTIONS extends ReadValueOptions<SCHEMA> = {}
 > = AnyOfSchema extends SCHEMA
   ? unknown
-  : If<MustBeDefined<SCHEMA>, never, undefined> | MapAnyOfSchemaDecodedValue<SCHEMA, OPTIONS>
+  : If<MustBeDefined<SCHEMA>, never, undefined> | AnyOfSchemaDecodedValueRec<SCHEMA, OPTIONS>
 
-type MapAnyOfSchemaDecodedValue<
+type AnyOfSchemaDecodedValueRec<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {},
   ELEMENTS extends Schema[] = SCHEMA['elements'],
@@ -257,7 +304,7 @@ type MapAnyOfSchemaDecodedValue<
 > = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
   ? ELEMENTS_HEAD extends Schema
     ? ELEMENTS_TAIL extends Schema[]
-      ? MapAnyOfSchemaDecodedValue<
+      ? AnyOfSchemaDecodedValueRec<
           SCHEMA,
           OPTIONS,
           ELEMENTS_TAIL,

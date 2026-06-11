@@ -23,13 +23,17 @@ import type {
   ResolvedPrimitiveSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Transformer, TypeModifier } from '~/transformers/index.js'
 import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/index.js'
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
+/**
+ * @debt naming "To rename EncodedValue"
+ */
 export type TransformedValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
@@ -38,6 +42,22 @@ export type TransformedValue<
   : SCHEMA extends Schema
     ? SchemaTransformedValue<SCHEMA, OPTIONS>
     : never
+
+export type TransformedValueRec<
+  SCHEMAS extends Schema[],
+  OPTIONS extends WriteValueOptions = {},
+  RESULTS extends unknown[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? TransformedValueRec<
+          SCHEMAS_TAIL,
+          OPTIONS,
+          [...RESULTS, TransformedValue<SCHEMAS_HEAD, OPTIONS>]
+        >
+      : never
+    : never
+  : RESULTS
 
 type MustBeDefined<SCHEMA extends Schema, OPTIONS extends WriteValueOptions = {}> = If<
   Extends<OPTIONS, { defined: true }>,
@@ -91,6 +111,7 @@ type SchemaTransformedValue<
       | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaTransformedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends SetSchema ? SetSchemaTransformedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListSchemaTransformedValue<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleSchemaTransformedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapSchemaTransformedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordSchemaTransformedValue<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfSchemaTransformedValue<SCHEMA, OPTIONS> : never)
@@ -177,6 +198,19 @@ type ListSchemaTransformedValue<
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
       | SchemaTransformedValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
+type TupleSchemaTransformedValue<
+  SCHEMA extends TupleSchema,
+  OPTIONS extends WriteValueOptions = {}
+> = TupleSchema extends SCHEMA
+  ?
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | unknown[]
+  :
+      | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+      | TransformedValueRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+
 type MapSchemaTransformedValue<
   SCHEMA extends MapSchema,
   OPTIONS extends WriteValueOptions = {}
@@ -232,22 +266,4 @@ type AnyOfSchemaTransformedValue<
   :
       | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
       | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | MapAnyOfSchemaTransformedValue<SCHEMA['elements'], OPTIONS>
-
-type MapAnyOfSchemaTransformedValue<
-  ELEMENTS extends Schema[],
-  OPTIONS extends WriteValueOptions = {},
-  RESULTS = never
-> = ELEMENTS extends [infer ELEMENTS_HEAD, ...infer ELEMENTS_TAIL]
-  ? ELEMENTS_HEAD extends Schema
-    ? ELEMENTS_TAIL extends Schema[]
-      ? MapAnyOfSchemaTransformedValue<
-          ELEMENTS_TAIL,
-          OPTIONS,
-          RESULTS | SchemaTransformedValue<ELEMENTS_HEAD, OPTIONS>
-        >
-      : never
-    : never
-  : [RESULTS] extends [never]
-    ? unknown
-    : RESULTS
+      | TransformedValue<SCHEMA['elements'][number], OPTIONS>

@@ -9,6 +9,7 @@ import { getMapSchemaDTO } from './map.js'
 import { getPrimitiveSchemaDTO } from './primitive.js'
 import { getRecordSchemaDTO } from './record.js'
 import { getSetSchemaDTO } from './set.js'
+import { getTupleSchemaDTO } from './tuple.js'
 
 export const getSchemaDTO = (schema: Schema): ISchemaDTO => {
   /**
@@ -27,6 +28,8 @@ export const getSchemaDTO = (schema: Schema): ISchemaDTO => {
       return getSetSchemaDTO(schema)
     case 'list':
       return getListSchemaDTO(schema)
+    case 'tuple':
+      return getTupleSchemaDTO(schema)
     case 'map':
       return getMapSchemaDTO(schema)
     case 'record':

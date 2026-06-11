@@ -6,6 +6,7 @@ import type { MapSchema, MapSchema_ } from '../map/index.js'
 import type { PrimitiveSchema, PrimitiveSchema_ } from '../primitive/index.js'
 import type { RecordSchema, RecordSchema_ } from '../record/index.js'
 import type { SetSchema, SetSchema_ } from '../set/index.js'
+import type { TupleSchema, TupleSchema_ } from '../tuple/index.js'
 
 export type Schema =
   | AnySchema
@@ -13,6 +14,7 @@ export type Schema =
   | SetSchema
   | ListSchema
   | MapSchema
+  | TupleSchema
   | RecordSchema
   | AnyOfSchema
   | ItemSchema
@@ -23,6 +25,7 @@ export type Schema_ =
   | SetSchema_
   | ListSchema_
   | MapSchema_
+  | TupleSchema_
   | RecordSchema_
   | AnyOfSchema_
   | ItemSchema_

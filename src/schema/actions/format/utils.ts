@@ -32,6 +32,12 @@ export const matchMapProjection = (
 export const matchListProjection = (projectedAttributes?: string[]): ProjectionMatch =>
   matchProjection(/\[\d+\]/, projectedAttributes)
 
+export const matchTupleProjection = (
+  elementIndex: number,
+  projectedAttributes?: string[]
+): ProjectionMatch =>
+  matchProjection(new RegExp(`^\\[${elementIndex}](?=\\.|\\[|$)`), projectedAttributes)
+
 const matchProjection = (
   attributeNameRegex: RegExp,
   projectedAttributes?: string[]

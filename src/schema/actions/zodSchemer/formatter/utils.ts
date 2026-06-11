@@ -5,7 +5,24 @@ import type { Transformer } from '~/transformers/transformer.js'
 import type { Extends, If, Or } from '~/types/index.js'
 
 import type { SavedAsAttributes } from '../utils.js'
+import type { SchemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
+
+export type SchemaZodFormatterRec<
+  SCHEMAS extends Schema[],
+  OPTIONS extends ZodFormatterOptions = {},
+  RESULTS extends z.ZodTypeAny[] = []
+> = SCHEMAS extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
+  ? SCHEMAS_HEAD extends Schema
+    ? SCHEMAS_TAIL extends Schema[]
+      ? SchemaZodFormatterRec<
+          SCHEMAS_TAIL,
+          OPTIONS,
+          [...RESULTS, SchemaZodFormatter<SCHEMAS_HEAD, OPTIONS>]
+        >
+      : never
+    : never
+  : RESULTS
 
 export type ZodLiteralMap<
   LITERALS extends z.Primitive[],

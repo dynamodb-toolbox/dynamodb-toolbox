@@ -10,7 +10,8 @@ import {
   number,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/schema/index.js'
 
 export const mySchema = item({
@@ -22,6 +23,7 @@ export const mySchema = item({
   bin: binary(),
   stringSet: set(string()),
   stringList: list(string()),
+  tuple: tuple(string(), number()),
   mapList: list(map({ num: number() })),
   map: map({
     num: number(),

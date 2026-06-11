@@ -63,6 +63,12 @@ export type ListExtendedValue<EXTENSION extends Extension = never> =
   | ExtendedValue<EXTENSION, 'list'>
   | ListUnextendedValue<EXTENSION>
 
+export type TupleUnextendedValue<EXTENSION extends Extension = never> =
+  SchemaExtendedValue<EXTENSION>[]
+export type TupleExtendedValue<EXTENSION extends Extension = never> =
+  | ExtendedValue<EXTENSION, 'tuple'>
+  | TupleUnextendedValue<EXTENSION>
+
 export type MapUnextendedValue<EXTENSION extends Extension = never> = {
   [key: string]: SchemaExtendedValue<EXTENSION>
 }
@@ -92,6 +98,7 @@ export type SchemaUnextendedValue<EXTENSION extends Extension = never> =
   | BinaryUnextendedValue
   | SetUnextendedValue<EXTENSION>
   | ListUnextendedValue<EXTENSION>
+  | TupleUnextendedValue<EXTENSION>
   | MapUnextendedValue<EXTENSION>
   | RecordUnextendedValue<EXTENSION>
   | ItemUnextendedValue<EXTENSION>
@@ -104,6 +111,7 @@ export type SchemaExtendedValue<EXTENSION extends Extension = never> =
   | BinaryExtendedAttributeValue<EXTENSION>
   | SetExtendedValue<EXTENSION>
   | ListExtendedValue<EXTENSION>
+  | TupleExtendedValue<EXTENSION>
   | MapExtendedValue<EXTENSION>
   | RecordExtendedValue<EXTENSION>
   | ItemExtendedValue<EXTENSION>

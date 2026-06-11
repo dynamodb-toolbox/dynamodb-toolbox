@@ -9,51 +9,38 @@ type AnyOfSchemaDTO = Extract<ISchemaDTO, { type: 'anyOf' }>
 /**
  * @debt feature "handle defaults, links & validators"
  */
-export const fromAnyOfSchemaDTO = ({ elements, ...props }: AnyOfSchemaDTO): AnyOfSchema => {
+export const fromAnyOfSchemaDTO = ({
+  elements,
+  required,
+  hidden,
+  key,
+  savedAs,
+  discriminator
+}: AnyOfSchemaDTO): AnyOfSchema => {
   /**
    * @debt types "fix those casts"
    */
-  let $attr = anyOf(...(elements.map(fromSchemaDTO) as AnyOfElementSchema[]))
-
-  const {
-    required,
-    hidden,
-    key,
-    savedAs,
-    discriminator,
-    keyDefault,
-    putDefault,
-    updateDefault,
-    keyLink,
-    putLink,
-    updateLink
-  } = props
-  keyDefault
-  putDefault
-  updateDefault
-  keyLink
-  putLink
-  updateLink
+  let anyOf_ = anyOf(...(elements.map(fromSchemaDTO) as AnyOfElementSchema[]))
 
   if (required !== undefined && required !== 'atLeastOnce') {
-    $attr = $attr.required(required)
+    anyOf_ = anyOf_.required(required)
   }
 
   if (hidden !== undefined && hidden) {
-    $attr = $attr.hidden(hidden)
+    anyOf_ = anyOf_.hidden(hidden)
   }
 
   if (key !== undefined && key) {
-    $attr = $attr.key(key)
+    anyOf_ = anyOf_.key(key)
   }
 
   if (savedAs !== undefined) {
-    $attr = $attr.savedAs(savedAs)
+    anyOf_ = anyOf_.savedAs(savedAs)
   }
 
   if (discriminator !== undefined) {
-    $attr = $attr.discriminate(discriminator)
+    anyOf_ = anyOf_.discriminate(discriminator)
   }
 
-  return $attr
+  return anyOf_
 }

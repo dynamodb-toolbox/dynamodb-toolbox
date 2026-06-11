@@ -13,7 +13,8 @@ import type {
   RecordSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 
 import type { AnyZodFormatter } from './any.js'
@@ -37,9 +38,11 @@ import { numberZodFormatter } from './number.js'
 import type { RecordZodFormatter } from './record.js'
 import { recordZodFormatter } from './record.js'
 import type { SetZodFormatter } from './set.js'
-import { getSetZodFormatter } from './set.js'
+import { setZodFormatter } from './set.js'
 import type { StringZodFormatter } from './string.js'
-import { getStringZodFormatter } from './string.js'
+import { stringZodFormatter } from './string.js'
+import type { TupleZodFormatter } from './tuple.js'
+import { tupleZodFormatter } from './tuple.js'
 import type { ZodFormatterOptions } from './types.js'
 
 export type ZodFormatter<
@@ -65,6 +68,7 @@ export type SchemaZodFormatter<
       | (SCHEMA extends BinarySchema ? BinaryZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends SetSchema ? SetZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListZodFormatter<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA, OPTIONS> : never)
@@ -85,13 +89,15 @@ export const schemaZodFormatter = <SCHEMA extends Schema, OPTIONS extends ZodFor
     case 'number':
       return numberZodFormatter(schema, options) as ZOD_FORMATTER
     case 'string':
-      return getStringZodFormatter(schema, options) as ZOD_FORMATTER
+      return stringZodFormatter(schema, options) as ZOD_FORMATTER
     case 'binary':
       return binaryZodFormatter(schema, options) as ZOD_FORMATTER
     case 'set':
-      return getSetZodFormatter(schema, options) as ZOD_FORMATTER
+      return setZodFormatter(schema, options) as ZOD_FORMATTER
     case 'list':
       return listZodFormatter(schema, options) as ZOD_FORMATTER
+    case 'tuple':
+      return tupleZodFormatter(schema, options) as ZOD_FORMATTER
     case 'map':
       return mapZodFormatter(schema, options) as ZOD_FORMATTER
     case 'record':

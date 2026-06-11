@@ -370,10 +370,10 @@ describe('anyOf', () => {
   })
 
   test('anyOf of anyOfs', () => {
-    const deepAnyOff = anyOf(str)
-    const anyOfSchema = anyOf(deepAnyOff)
+    const deepAnyOf = anyOf(str)
+    const anyOfSchema = anyOf(deepAnyOf)
 
-    const assertAnyOf: A.Equals<(typeof anyOfSchema)['elements'], [Light<typeof deepAnyOff>]> = 1
+    const assertAnyOf: A.Equals<(typeof anyOfSchema)['elements'], [Light<typeof deepAnyOf>]> = 1
     assertAnyOf
   })
 })

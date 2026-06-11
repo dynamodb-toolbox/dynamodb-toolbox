@@ -30,6 +30,7 @@ import type {
   Never,
   NumberExtendedValue,
   NumberSchema,
+  Paths,
   PrimitiveSchema,
   RecordSchema,
   ResolveAnySchema,
@@ -37,9 +38,11 @@ import type {
   Schema,
   SchemaExtendedValue,
   SetExtendedValue,
-  SetSchema
+  SetSchema,
+  TupleSchema,
+  ValidValue,
+  ValidValueRec
 } from '~/schema/index.js'
-import type { Paths, ValidValue } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
 export type UpdateAttributesInputExtension =
@@ -129,10 +132,6 @@ type NumberUpdate<SCHEMA extends NumberSchema> =
 
 /**
  * User input of an UPDATE command for a given Schema
- *
- * @param Schema Schema
- * @param RequireDefaults Boolean
- * @return Any
  */
 export type UpdateAttributeInput<
   SCHEMA extends Schema = Schema,
@@ -225,6 +224,7 @@ export type UpdateAttributeInput<
                   | ValidValue<SCHEMA['elements']>[]
                 >
           : never)
+      | (SCHEMA extends TupleSchema ? Unextended<ValidValueRec<SCHEMA['elements']>> : never)
       | (SCHEMA extends MapSchema ? Unextended<ValidValue<SCHEMA>> : never)
       | (SCHEMA extends RecordSchema ? Unextended<ValidValue<SCHEMA>> : never)
       | (SCHEMA extends AnyOfSchema

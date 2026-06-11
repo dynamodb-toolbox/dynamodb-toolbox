@@ -11,7 +11,8 @@ import type {
   Paths,
   RecordSchema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 
 import type { mySchema } from './condition.fixture.test.js'
@@ -33,6 +34,7 @@ import type {
   SetSchemaCondition,
   SizeCondition,
   StringSchemaCondition,
+  TupleSchemaCondition,
   TypeCondition
 } from './condition.js'
 
@@ -54,6 +56,7 @@ const anyCondition: A.Equals<
   | BinarySchemaCondition<ANY_ATTR_PATH, BinarySchema, ALL_PATHS, { foo: 'bar' }>
   | SetSchemaCondition<ANY_ATTR_PATH, SetSchema, ALL_PATHS>
   | ListSchemaCondition<ANY_ATTR_PATH, ListSchema, ALL_PATHS>
+  | TupleSchemaCondition<ANY_ATTR_PATH, TupleSchema, ALL_PATHS>
   | MapSchemaCondition<ANY_ATTR_PATH, MapSchema, ALL_PATHS>
   | RecordSchemaCondition<ANY_ATTR_PATH, RecordSchema, ALL_PATHS>
   | AnyOfSchemaCondition<ANY_ATTR_PATH, AnyOfSchema, ALL_PATHS>
@@ -67,6 +70,7 @@ const anyCondition: A.Equals<
   | BinarySchemaCondition<`${ANY_ATTR_PATH}${string}`, BinarySchema, ALL_PATHS>
   | SetSchemaCondition<`${ANY_ATTR_PATH}${string}`, SetSchema, ALL_PATHS>
   | ListSchemaCondition<`${ANY_ATTR_PATH}${string}`, ListSchema, ALL_PATHS>
+  | TupleSchemaCondition<`${ANY_ATTR_PATH}${string}`, TupleSchema, ALL_PATHS>
   | MapSchemaCondition<`${ANY_ATTR_PATH}${string}`, MapSchema, ALL_PATHS>
   | RecordSchemaCondition<`${ANY_ATTR_PATH}${string}`, RecordSchema, ALL_PATHS>
   | AnyOfSchemaCondition<`${ANY_ATTR_PATH}${string}`, AnyOfSchema, ALL_PATHS>
@@ -234,6 +238,22 @@ const assertStringListCondition: A.Equals<
 > = 1
 assertStringListCondition
 
+type TUPLE_ATTR_PATH = 'tuple' | "['tuple']"
+type TUPLE_CONDITION = AttrCondition<TUPLE_ATTR_PATH, ATTRIBUTES['tuple'], ALL_PATHS>
+const assertTupleCondition: A.Equals<
+  TUPLE_CONDITION,
+  | { attr: TUPLE_ATTR_PATH; exists: boolean }
+  | { attr: TUPLE_ATTR_PATH; type: ConditionType }
+  | { attr: TUPLE_ATTR_PATH; contains: string | { attr: ALL_PATHS }; transform?: boolean }
+  | { attr: TUPLE_ATTR_PATH; contains: number | { attr: ALL_PATHS }; transform?: boolean }
+  // Already tested above
+  | StringSchemaCondition<`${TUPLE_ATTR_PATH}[0]`, ATTRIBUTES['tuple']['elements'][0], ALL_PATHS>
+  | NumberSchemaCondition<`${TUPLE_ATTR_PATH}[1]`, ATTRIBUTES['tuple']['elements'][1], ALL_PATHS>
+  // Already tested above
+  | SizeCondition<TUPLE_ATTR_PATH, ALL_PATHS>
+> = 1
+assertTupleCondition
+
 type MAP_LIST_ATTR_PATH = 'mapList' | "['mapList']"
 type MAP_LIST_CONDITION = AttrCondition<MAP_LIST_ATTR_PATH, ATTRIBUTES['mapList'], ALL_PATHS>
 const assertMapListCondition: A.Equals<
@@ -330,6 +350,7 @@ const assertNonLogicalCondition: A.Equals<
   | BIN_CONDITION
   | STRING_SET_CONDITION
   | STRING_LIST_CONDITION
+  | TUPLE_CONDITION
   | MAP_LIST_CONDITION
   | MAP_CONDITION
   | RECORD_CONDITION

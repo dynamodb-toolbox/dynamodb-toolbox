@@ -13,7 +13,8 @@ import type {
   RecordSchema,
   Schema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 
 import type { AnyZodParser } from './any.js'
@@ -37,9 +38,11 @@ import { numberZodParser } from './number.js'
 import type { RecordZodParser } from './record.js'
 import { recordZodParser } from './record.js'
 import type { SetZodParser } from './set.js'
-import { getSetZodParser } from './set.js'
+import { setZodParser } from './set.js'
 import type { StringZodParser } from './string.js'
-import { getStringZodParser } from './string.js'
+import { stringZodParser } from './string.js'
+import type { TupleZodParser } from './tuple.js'
+import { tupleZodParser } from './tuple.js'
 import type { ZodParserOptions } from './types.js'
 
 export type ZodParser<
@@ -65,6 +68,7 @@ export type SchemaZodParser<
       | (SCHEMA extends BinarySchema ? BinaryZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends SetSchema ? SetZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends ListSchema ? ListZodParser<SCHEMA, OPTIONS> : never)
+      | (SCHEMA extends TupleSchema ? TupleZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends MapSchema ? MapZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends RecordSchema ? RecordZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfZodParser<SCHEMA, OPTIONS> : never)
@@ -85,13 +89,15 @@ export const schemaZodParser = <SCHEMA extends Schema, OPTIONS extends ZodParser
     case 'number':
       return numberZodParser(schema, options) as ZOD_PARSER
     case 'string':
-      return getStringZodParser(schema, options) as ZOD_PARSER
+      return stringZodParser(schema, options) as ZOD_PARSER
     case 'binary':
       return binaryZodParser(schema, options) as ZOD_PARSER
     case 'set':
-      return getSetZodParser(schema, options) as ZOD_PARSER
+      return setZodParser(schema, options) as ZOD_PARSER
     case 'list':
       return listZodParser(schema, options) as ZOD_PARSER
+    case 'tuple':
+      return tupleZodParser(schema, options) as ZOD_PARSER
     case 'map':
       return mapZodParser(schema, options) as ZOD_PARSER
     case 'record':

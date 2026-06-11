@@ -11,6 +11,7 @@ import type { FormatAttrValueOptions } from './options.js'
 import { primitiveSchemaFormatter } from './primitive.js'
 import { recordSchemaFormatter } from './record.js'
 import { setSchemaFormatter } from './set.js'
+import { tupleSchemaFormatter } from './tuple.js'
 
 export const requiringOptions = new Set<SchemaRequiredProp>(['always', 'atLeastOnce'])
 
@@ -70,6 +71,8 @@ export function* schemaFormatter<
       return yield* setSchemaFormatter(schema, rawValue, { ...options, attributes: undefined })
     case 'list':
       return yield* listSchemaFormatter(schema, rawValue, options)
+    case 'tuple':
+      return yield* tupleSchemaFormatter(schema, rawValue, options)
     case 'map':
       return yield* mapSchemaFormatter(schema, rawValue, options)
     case 'record':

@@ -6,7 +6,8 @@ import type {
   MapSchema,
   RecordSchema,
   ResolveStringSchema,
-  Schema
+  Schema,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
@@ -28,6 +29,7 @@ export type Paths<SCHEMA extends Schema = Schema> = string &
 export type SchemaPaths<SCHEMA extends Schema, SCHEMA_PATH extends string = ''> =
   | (SCHEMA extends AnySchema ? AnySchemaPaths<SCHEMA_PATH> : never)
   | (SCHEMA extends ListSchema ? ListSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
+  | (SCHEMA extends TupleSchema ? TupleSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
   | (SCHEMA extends MapSchema ? MapSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
   | (SCHEMA extends RecordSchema ? RecordSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
   | (SCHEMA extends AnyOfSchema ? AnyOfSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
@@ -56,6 +58,29 @@ type ListSchemaPaths<
 > = ListSchema extends SCHEMA
   ? string
   : `${SCHEMA_PATH}[${number}]` | SchemaPaths<SCHEMA['elements'], `${SCHEMA_PATH}[${number}]`>
+
+type TupleSchemaPaths<
+  SCHEMA extends TupleSchema,
+  SCHEMA_PATH extends string = ''
+> = TupleSchema extends SCHEMA ? string : TupleSchemaPathsRec<SCHEMA['elements'], SCHEMA_PATH>
+
+type TupleSchemaPathsRec<
+  ELEMENTS extends Schema[],
+  SCHEMA_PATH extends string = '',
+  RESULTS = never
+> = ELEMENTS extends [...infer ELEMENTS_INIT, infer ELEMENTS_LAST]
+  ? ELEMENTS_LAST extends Schema
+    ? ELEMENTS_INIT extends Schema[]
+      ? TupleSchemaPathsRec<
+          ELEMENTS_INIT,
+          SCHEMA_PATH,
+          | RESULTS
+          | `${SCHEMA_PATH}[${ELEMENTS_INIT['length']}]`
+          | SchemaPaths<ELEMENTS_LAST, `${SCHEMA_PATH}[${ELEMENTS_INIT['length']}]`>
+        >
+      : never
+    : never
+  : RESULTS
 
 type MapSchemaPaths<
   SCHEMA extends MapSchema,

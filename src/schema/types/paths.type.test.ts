@@ -11,7 +11,8 @@ import {
   number,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/index.js'
 
 import type { Paths } from './paths.js'
@@ -27,6 +28,7 @@ export const mySchema = item({
   stringSet: set(string()),
   stringList: list(string()),
   mapList: list(map({ num: number() })),
+  tuple: tuple(map({ str: string() }), number()),
   map: map({
     num: number(),
     stringList: list(string()),
@@ -65,6 +67,10 @@ const assertAttributePaths: A.Equals<
   | `${'map' | `['map']`}${'' | '.num' | `['num']`}`
   | `${'map' | `['map']`}${'.stringList' | `['stringList']`}${'' | `[${number}]`}`
   | `${'map' | `['map']`}${'.map' | `['map']`}${'' | '.num' | `['num']`}`
+  | 'tuple'
+  | `['tuple']`
+  | `${'tuple' | `['tuple']`}[0]${'' | '.str' | `['str']`}`
+  | `${'tuple' | `['tuple']`}[1]`
   | 'record'
   | `['record']`
   | `${'record' | `['record']`}${'.foo' | '.bar' | `['foo']` | `['bar']`}${'' | '.num' | `['num']`}`

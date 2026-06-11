@@ -24,7 +24,8 @@ import type {
   Schema,
   SetSchema,
   StringSchema,
-  StringToEscape
+  StringToEscape,
+  TupleSchema
 } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
@@ -52,21 +53,16 @@ export type AttrCondition<
   | (SCHEMA extends NumberSchema
       ? NumberSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
       : never)
-  // Size ok
   | (SCHEMA extends StringSchema
       ? StringSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
       : never)
-  // Size ok
   | (SCHEMA extends BinarySchema
       ? BinarySchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS, CUSTOM_VALUE>
       : never)
-  // Size ok
   | (SCHEMA extends SetSchema ? SetSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
-  // Size ok
   | (SCHEMA extends ListSchema ? ListSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
-  // Size ok
+  | (SCHEMA extends TupleSchema ? TupleSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
   | (SCHEMA extends MapSchema ? MapSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
-  // Size ok
   | (SCHEMA extends RecordSchema ? RecordSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
   | (SCHEMA extends AnyOfSchema ? AnyOfSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
 
@@ -351,6 +347,44 @@ export type ListSchemaCondition<
       : AttrCondition<`${ATTR_PATH}[${number}]`, SCHEMA['elements'], ALL_PATHS>)
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTR_PATH, ALL_PATHS>
+
+export type TupleSchemaCondition<
+  ATTR_PATH extends string,
+  SCHEMA extends TupleSchema,
+  ALL_PATHS extends string
+> =
+  | ExistsCondition<ATTR_PATH>
+  | TypeCondition<ATTR_PATH>
+  | (SCHEMA['elements'][number] extends infer ELEMENT
+      ? ELEMENT extends PrimitiveSchema
+        ? ContainsCondition<ATTR_PATH, ResolvePrimitiveSchema<ELEMENT>, ALL_PATHS>
+        : never
+      : never)
+  // Stops recursion on general case
+  | (TupleSchema extends SCHEMA ? never : TupleSchemaConditionRec<ATTR_PATH, SCHEMA, ALL_PATHS>)
+  // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements."
+  | SizeCondition<ATTR_PATH, ALL_PATHS>
+
+type TupleSchemaConditionRec<
+  ATTR_PATH extends string,
+  SCHEMA extends TupleSchema,
+  ALL_PATHS extends string,
+  ELEMENTS extends Schema[] = SCHEMA['elements'],
+  RESULTS = never
+> = ELEMENTS extends [...infer ELEMENTS_INIT, infer ELEMENTS_LAST]
+  ? ELEMENTS_LAST extends Schema
+    ? ELEMENTS_INIT extends Schema[]
+      ? TupleSchemaConditionRec<
+          ATTR_PATH,
+          SCHEMA,
+          ALL_PATHS,
+          ELEMENTS_INIT,
+          | RESULTS
+          | AttrCondition<`${ATTR_PATH}[${ELEMENTS_INIT['length']}]`, ELEMENTS_LAST, ALL_PATHS>
+        >
+      : never
+    : never
+  : RESULTS
 
 export type MapSchemaCondition<
   ATTR_PATH extends string,

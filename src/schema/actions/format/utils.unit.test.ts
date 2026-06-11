@@ -1,4 +1,10 @@
-import { matchItemProjection, matchListProjection, matchMapProjection, sanitize } from './utils.js'
+import {
+  matchItemProjection,
+  matchListProjection,
+  matchMapProjection,
+  matchTupleProjection,
+  sanitize
+} from './utils.js'
 
 describe('sanitizes', () => {
   test('sanitizes str with special chars', () => {
@@ -15,6 +21,15 @@ describe('matchProjection', () => {
     expect(matchListProjection(['[1].foo', '[2].bar'])).toStrictEqual({
       isProjected: true,
       childrenAttributes: ['.foo', '.bar']
+    })
+  })
+
+  test('matchTupleProjection', () => {
+    expect(matchTupleProjection(1, ['foo', 'bar'])).toStrictEqual({ isProjected: false })
+    expect(matchTupleProjection(1, ['[1]', '[2].bar'])).toStrictEqual({ isProjected: true })
+    expect(matchTupleProjection(1, ['[1].foo', '[2].bar'])).toStrictEqual({
+      isProjected: true,
+      childrenAttributes: ['.foo']
     })
   })
 

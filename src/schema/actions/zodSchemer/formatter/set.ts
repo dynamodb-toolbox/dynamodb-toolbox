@@ -25,7 +25,7 @@ export type SetZodFormatter<
       >
     >
 
-export const getSetZodFormatter = (
+export const setZodFormatter = (
   schema: SetSchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny =>

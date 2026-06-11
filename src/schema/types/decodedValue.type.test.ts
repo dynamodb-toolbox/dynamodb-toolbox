@@ -18,6 +18,7 @@ const assertDecoded: A.Equals<
     savedAsBin: Uint8Array
     set: Set<string>
     list: { num: number; str: string }[]
+    tuple: [{ str: string }, number]
     map: { num: number; str: string }
     record: Record<'foo' | 'bar', { num: number; str: string }>
     partialRecord: Partial<Record<'foo' | 'bar', string>>
@@ -29,7 +30,7 @@ assertDecoded
 
 type WhiteListedA = DecodedValue<
   typeof testSchema,
-  { attributes: 'any' | 'nul' | 'list' | 'map' | 'record' }
+  { attributes: 'any' | 'nul' | 'list' | 'tuple' | 'map' | 'record' }
 >
 const assertWhiteListedA: A.Equals<
   WhiteListedA,
@@ -37,6 +38,7 @@ const assertWhiteListedA: A.Equals<
     any: unknown
     nul?: null | undefined
     list: { num: number; str: string }[]
+    tuple: [{ str: string }, number]
     map: { num: number; str: string }
     record: Record<'foo' | 'bar', { num: number; str: string }>
   }
@@ -45,7 +47,7 @@ assertWhiteListedA
 
 type WhiteListedB = DecodedValue<
   typeof testSchema,
-  { attributes: "['any']" | "['nul']" | "['list']" | "['map']" | "['record']" }
+  { attributes: "['any']" | "['nul']" | "['list']" | "['tuple']" | "['map']" | "['record']" }
 >
 const assertWhiteListedB: A.Equals<
   WhiteListedB,
@@ -53,6 +55,7 @@ const assertWhiteListedB: A.Equals<
     any: unknown
     nul?: null | undefined
     list: { num: number; str: string }[]
+    tuple: [{ str: string }, number]
     map: { num: number; str: string }
     record: Record<'foo' | 'bar', { num: number; str: string }>
   }
@@ -61,26 +64,32 @@ assertWhiteListedB
 
 type WhiteListedC = DecodedValue<
   typeof testSchema,
-  { attributes: 'list[0].num' | 'map.num' | 'record.foo' }
+  { attributes: 'list[0].num' | 'tuple[0].str' | 'map.num' | 'record.foo' }
 >
 const assertWhiteListedC: A.Equals<
   WhiteListedC,
   {
     list: { num: number }[]
+    tuple: [{ str: string }]
     map: { num: number }
     record: Record<'foo', { num: number; str: string }>
   }
 > = 1
 assertWhiteListedC
 
+type WhiteListedTupleJump = DecodedValue<typeof testSchema, { attributes: 'tuple[1]' }>
+const assertWhiteListedTuple: A.Equals<WhiteListedTupleJump, { tuple: [number] }> = 1
+assertWhiteListedTuple
+
 type WhiteListedD = DecodedValue<
   typeof testSchema,
-  { attributes: "['list'][0].num" | "['map'].num" | "['record'].foo" }
+  { attributes: "['list'][0].num" | "['tuple'][0].str" | "['map'].num" | "['record'].foo" }
 >
 const assertWhiteListedD: A.Equals<
   WhiteListedD,
   {
     list: { num: number }[]
+    tuple: [{ str: string }]
     map: { num: number }
     record: Record<'foo', { num: number; str: string }>
   }
@@ -89,12 +98,20 @@ assertWhiteListedD
 
 type WhiteListedE = DecodedValue<
   typeof testSchema,
-  { attributes: "list[0]['num']" | "map['num']" | "record['foo']" | "record['foo'].num" }
+  {
+    attributes:
+      | "list[0]['num']"
+      | "tuple[0]['str']"
+      | "map['num']"
+      | "record['foo']"
+      | "record['foo'].num"
+  }
 >
 const assertWhiteListedE: A.Equals<
   WhiteListedE,
   {
     list: { num: number }[]
+    tuple: [{ str: string }]
     map: { num: number }
     record: Record<'foo', { num: number; str: string }>
   }
@@ -103,12 +120,19 @@ assertWhiteListedE
 
 type WhiteListedF = DecodedValue<
   typeof testSchema,
-  { attributes: "['list'][0]['num']" | "['map']['num']" | "['record']['foo']" }
+  {
+    attributes:
+      | "['list'][0]['num']"
+      | "['tuple'][0]['str']"
+      | "['map']['num']"
+      | "['record']['foo']"
+  }
 >
 const assertWhiteListedF: A.Equals<
   WhiteListedF,
   {
     list: { num: number }[]
+    tuple: [{ str: string }]
     map: { num: number }
     record: Record<'foo', { num: number; str: string }>
   }
@@ -138,6 +162,7 @@ const assertPartial: A.Equals<
     savedAsBin?: Uint8Array
     set?: Set<string>
     list?: { num?: number; str?: string }[]
+    tuple?: [{ str?: string } | undefined, number | undefined]
     map?: { num?: number; str?: string }
     record?: Partial<Record<'foo' | 'bar', { num?: number; str?: string }>>
     partialRecord?: Partial<Record<'foo' | 'bar', string>>

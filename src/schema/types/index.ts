@@ -1,6 +1,6 @@
-export type { InputValue } from './inputValue.js'
-export type { ValidValue } from './validValue.js'
-export type { TransformedValue } from './transformedValue.js'
+export type { InputValue, InputValueRec } from './inputValue.js'
+export type { ValidValue, ValidValueRec } from './validValue.js'
+export type { TransformedValue, TransformedValueRec } from './transformedValue.js'
 export type { WriteMode, WriteValueOptions, ReadValueOptions } from './options.js'
 export type {
   $contextExtension,
