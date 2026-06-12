@@ -4,6 +4,8 @@ title: Installation
 
 # Installation
 
+Requires Node.js 18 or later.
+
 ```bash
 # npm
 npm install dynamodb-toolbox
