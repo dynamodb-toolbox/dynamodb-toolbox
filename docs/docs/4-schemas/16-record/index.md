@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Record
 
-Describes a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../14-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
+Describes a different kind of [**map attribute**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes). Records differ from [`maps`](../15-map/index.md) as they can have a non-explicit (and potentially infinite) range of keys, but have a single value type:
 
 ```ts
 import { record } from 'dynamodb-toolbox/schema/record'
@@ -25,6 +25,7 @@ Record elements can have any type. However, they must respect some constraints:
 
 - They cannot be `optional` or always required
 - They cannot be `hidden` or `key` (tagging the `record` itself as `key` is enough)
+- They cannot be renamed (with `savedAs`)
 - They cannot have `default` or `links`
 
 ```ts
@@ -32,6 +33,7 @@ Record elements can have any type. However, they must respect some constraints:
 const strRecord = record(string(), string().optional())
 const strRecord = record(string(), string().hidden())
 const strRecord = record(string(), string().key())
+const strRecord = record(string(), string().savedAs('foo'))
 const strRecord = record(string(), string().default('foo'))
 ```
 
@@ -43,7 +45,7 @@ Record keys share the same constraints and must be of type [`string`](../9-strin
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -75,7 +77,7 @@ const weaknessesSchema = record(..., { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const weaknessesSchema = record(
@@ -105,7 +107,7 @@ const idsSchema = record(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const weaknessesSchema = record(

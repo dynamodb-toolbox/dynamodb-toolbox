@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Item
 
-Describes [**items**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) with a finite list of attributes, i.e. key-schema pairs. Items differ from [`maps`](../14-map/index.md) as they **don't have any property** and are not meant to be nested within other schemas:
+Describes [**items**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) with a finite list of attributes, i.e. key-schema pairs. Items differ from [`maps`](../15-map/index.md) as they **don't have any property** and are not meant to be nested within other schemas:
 
 ```ts
 import { item } from 'dynamodb-toolbox/schema/item'

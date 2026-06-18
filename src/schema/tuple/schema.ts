@@ -3,7 +3,6 @@ import { isArray } from '~/utils/validation/isArray.js'
 
 import type { SchemaProps } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
-import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 import type { TupleElementSchema } from './types.js'
 
 export class TupleSchema<
@@ -44,7 +43,7 @@ export class TupleSchema<
       throw new DynamoDBToolboxError('schema.tuple.missingElements', {
         message: `Invalid tuple elements${
           path !== undefined ? ` at path '${path}'` : ''
-        }: Tuple attributes must have at least one element.`,
+        }: Tuple elements must have at least one element.`,
         path
       })
     }
@@ -75,15 +74,6 @@ export class TupleSchema<
           message: `Invalid tuple elements${
             path !== undefined ? ` at path '${path}'` : ''
           }: Tuple elements cannot be renamed (have savedAs prop).`,
-          path
-        })
-      }
-
-      if (hasDefinedDefault(element)) {
-        throw new DynamoDBToolboxError('schema.tuple.defaultedElements', {
-          message: `Invalid tuple elements${
-            path !== undefined ? ` at path '${path}'` : ''
-          }: Tuple elements cannot have default or linked values.`,
           path
         })
       }

@@ -28,7 +28,7 @@ const PokemonEntity = new Entity({
 
 :::info
 
-Note that you can provide a [`map`](../../4-schemas/14-map/index.md) schema to the `Entity` constructor:
+Note that you can provide a [`map`](../../4-schemas/15-map/index.md) schema to the `Entity` constructor:
 
 ```ts
 import { Entity } from 'dynamodb-toolbox/entity'
@@ -70,7 +70,7 @@ const PokemonEntity = new Entity({
 
 DynamoDB-Toolbox automatically tags your items with their respective entity names (see [Internal Attributes](../2-internal-attributes/index.md#entity)). While this can be opted out of, we strongly recommend keeping it enabled if you use Single Table Design.
 
-☝️ A consequence is that `name` **cannot be updated** once your `Entity` has its first items\* (at least not without a data migration first), so choose wisely!
+☝️ A consequence is that `name` **cannot be updated** once your `Entity` has its first items (at least not without a data migration first), so choose wisely!
 
 :::
 
@@ -157,7 +157,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-👉 See the [transformers section](../../4-schemas/18-transformers/1-usage.md) for more details on transformers.
+👉 See the [transformers section](../../4-schemas/19-transformers/1-usage.md) for more details on transformers.
 
 </TabItem>
 <TabItem value="linked" label="Linked">

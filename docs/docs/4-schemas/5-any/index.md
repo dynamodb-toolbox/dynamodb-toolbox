@@ -26,7 +26,7 @@ type Metadata = FormattedValue<typeof metadataSchema>
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -47,7 +47,7 @@ const metadataSchema = any({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const metadataSchema = any().hidden()
@@ -74,7 +74,7 @@ const metadataSchema = any({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const metadataSchema = any().savedAs('meta')
@@ -95,7 +95,7 @@ const metadataSchema = any().castAs<{ foo: 'bar' }>()
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;unknown&gt;</code></i></p>
 
-Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../18-actions/1-parse.md):
 
 ```ts
 const jsonStringify = {
@@ -108,7 +108,7 @@ const stringifiedSchema = any().transform(jsonStringify)
 const stringifiedSchema = any({ transform: jsonStringify })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md) (including [`jsonStringify`](../18-transformers/4-json-stringify.md)), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../19-transformers/1-usage.md) (including [`jsonStringify`](../19-transformers/4-json-stringify.md)), so feel free to use them!
 
 ### `.default(...)`
 

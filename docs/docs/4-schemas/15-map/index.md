@@ -24,15 +24,6 @@ type FullName = FormattedValue<typeof fullNameSchema>
 //  firstName: string
 //  lastName: string
 // }
-
-const deepMagic = map({
-  does: map({
-    work: string().const('!')
-  })
-})
-
-type DeepMagic = FormattedValue<typeof deepMagic>
-// => { does: { work: "!" } }
 ```
 
 ## Properties
@@ -69,7 +60,7 @@ const nameSchema = map({ ... }, { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const nameSchema = map({
@@ -113,7 +104,7 @@ const nameSchema = map({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (at root level or within other Maps):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (at root level or within other Maps):
 
 ```ts
 const nameSchema = map({

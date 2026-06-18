@@ -163,7 +163,7 @@ await PokemonEntity.build(UpdateAttributesCommand)
 
 ### Deep attributes
 
-In the case of deep attributes (e.g. `lists`, `maps`, `records` and potentially `any`), updates are **complete by default**:
+In the case of deep attributes (e.g. `lists`, `tuples`, `maps`, `records` and potentially `any`), updates are **complete by default**:
 
 ```ts
 // 👇 Complete overrides

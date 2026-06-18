@@ -75,7 +75,7 @@ const zodSchema = schema.build(ZodSchemer).formatter()
 zodSchema.parse({})
 ```
 
-Due to some discrepancies between schema systems, [discriminated unions](../16-anyOf/index.md#discriminate) also suffer from some minor limitations:
+Due to some discrepancies between schema systems, [discriminated unions](../17-anyOf/index.md#discriminate) also suffer from some minor limitations:
 
 - **Discriminated AND remapped** `maps` cannot be transpiled:
 

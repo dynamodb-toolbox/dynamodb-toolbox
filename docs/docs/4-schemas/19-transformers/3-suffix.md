@@ -2,7 +2,6 @@
 title: suffix
 sidebar_custom_props:
   code: true
-  new: true
 ---
 
 # Suffix

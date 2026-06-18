@@ -34,7 +34,7 @@ The path formalism is the same as within [`Conditions`](../../3-entities/4-actio
 
 :::
 
-The `.search()` method may return **an empty array** if no subschema is found for the provided path. It may also return **several subschemas** if several options of an [`anyOf`](../16-anyOf/index.md) attribute match the provided path.
+The `.search()` method may return **an empty array** if no subschema is found for the provided path. It may also return **several subschemas** if several options of an [`anyOf`](../17-anyOf/index.md) attribute match the provided path.
 
 ## SubSchemas
 

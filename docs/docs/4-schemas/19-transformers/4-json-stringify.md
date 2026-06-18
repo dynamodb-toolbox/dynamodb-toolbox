@@ -38,7 +38,7 @@ const priceJSONStringifier = jsonStringify({
 
 :::info
 
-The `replacer` and `reviver` options are not serialized when building a [`DTO`](../17-actions/3-dto.md).
+The `replacer` and `reviver` options are not serialized when building a [`DTO`](../18-actions/3-dto.md).
 
 :::
 

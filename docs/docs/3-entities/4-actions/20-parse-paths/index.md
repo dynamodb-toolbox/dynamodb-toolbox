@@ -53,7 +53,7 @@ PokemonEntity.build(PathParser).transform(
 
 :::info
 
-Note that the `transform(...)` method **may add paths** if several options of an [`anyOf`](../../../4-schemas/16-anyOf/index.md) attribute match a provided path:
+Note that the `transform(...)` method **may add paths** if several options of an [`anyOf`](../../../4-schemas/17-anyOf/index.md) attribute match a provided path:
 
 <details className="details-in-admonition">
 <summary>🔎 <b>Show example</b></summary>
@@ -127,7 +127,7 @@ type PokemonPath = EntityPaths<typeof PokemonEntity>
 
 const namePath: PokemonPath = 'name'
 
-const deepListPath: PokemonPath = 'pokeTypes[0]'
+const deepListOrTuplePath: PokemonPath = 'pokeTypes[0]'
 
 const deepMapOrRecordPath: PokemonPath = 'weaknesses.fire'
 // 👇 Similar to
