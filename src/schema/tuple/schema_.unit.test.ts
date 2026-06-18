@@ -69,36 +69,6 @@ describe('tuple', () => {
     )
   })
 
-  test('rejects elements with default values', () => {
-    const invalidTuple = tuple(
-      str,
-      // @ts-expect-error
-      str.putDefault('foo')
-    )
-
-    const invalidCall = () => invalidTuple.check(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.tuple.defaultedElements', path })
-    )
-  })
-
-  test('rejects elements with linked values', () => {
-    const invalidTuple = tuple(
-      str,
-      // @ts-expect-error
-      str.putLink(() => 'foo')
-    )
-
-    const invalidCall = () => invalidTuple.check(path)
-
-    expect(invalidCall).toThrow(DynamoDBToolboxError)
-    expect(invalidCall).toThrow(
-      expect.objectContaining({ code: 'schema.tuple.defaultedElements', path })
-    )
-  })
-
   test('returns default tuple', () => {
     const tupleSchema = tuple(str)
 

@@ -22,10 +22,11 @@ type PokemonType = FormattedValue<typeof pokemonTypesSchema>;
 // => ('fire' | ...)[]
 ```
 
-List elements must respect some constraints:
+List elements can have any type. However, they must respect some constraints:
 
 - They cannot be `optional` or always required
 - They cannot be `hidden` or `key` (tagging the `list` itself as `key` is enough)
+- They cannot be renamed (with `savedAs`)
 - They cannot have `default` or `links`
 
 ```ts
@@ -33,6 +34,7 @@ List elements must respect some constraints:
 const strList = list(string().optional())
 const strList = list(string().hidden())
 const strList = list(string().key())
+const strList = list(string().savedAs('foo'))
 const strList = list(string().default('foo'))
 ```
 
@@ -42,7 +44,7 @@ const strList = list(string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -67,7 +69,7 @@ const pokeTypesSchema = list(..., { required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).hidden()
@@ -94,7 +96,7 @@ const pokeTypesSchema = list(..., {
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const pokeTypesSchema = list(pokeTypeSchema).savedAs('pt')

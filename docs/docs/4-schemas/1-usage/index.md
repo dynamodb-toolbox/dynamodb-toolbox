@@ -27,7 +27,7 @@ const PokemonEntity = new Entity({
 
 :::info
 
-Note that you can provide a [`map`](../../4-schemas/14-map/index.md) schema to the `Entity` constructor, although only its attributes are kept (not its props):
+Note that you can provide a [`map`](../../4-schemas/15-map/index.md) schema to the `Entity` constructor, although only its attributes are kept (not its props):
 
 ```ts
 import { map } from 'dynamodb-toolbox/schema/map'
@@ -43,7 +43,7 @@ const PokemonEntity = new Entity({
 })
 ```
 
-See the [`map`](../14-map/index.md) documentation for more details.
+See the [`map`](../15-map/index.md) documentation for more details.
 
 :::
 
@@ -73,10 +73,11 @@ Available schema types are:
 - [**`string`**](../9-string/index.md): Describes [strings](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
 - [**`binary`**](../10-binary/index.md): Describes [binaries](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes)
 - [**`set`**](../11-set/index.md): Describes [sets](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of either `number`, `string`, or `binary` elements
-- [**`list`**](../12-list/index.md): Describes [lists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of elements
-- [**`item`**](../13-item/index.md): Describes [items](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) with a finite list of attributes, i.e. key-schema pairs - Should be at the root of `Entity` schemas
-- [**`map`**](../14-map/index.md): Describes [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Similar to [`items`](../13-item/index.md), but can be nested within other schemas
-- [**`record`**](../15-record/index.md): Describes a different kind of [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Records differ from `maps` as they have a non-explicit (potentially infinite) range of keys, but with a single value type
+- [**`list`**](../12-list/index.md): Describes [lists](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) of elements of the same type
+- [**`tuple`**](../13-tuple/index.md): Describes [tuples](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) with a given list of elements (finite index-schema pairs)
+- [**`item`**](../14-item/index.md): Describes [items](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html) with a given list of attributes (finite key-schema pairs) - Should be at the root of `Entity` schemas
+- [**`map`**](../15-map/index.md): Describes [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Similar to [`items`](../14-item/index.md), but can be nested within other schemas
+- [**`record`**](../16-record/index.md): Describes a different kind of [maps](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) - Records differ from `maps` as they have a non-explicit (potentially infinite) range of keys, but with a single value type
 - [**`anyOf`**](../5-any/index.md): Describes a finite **union** of possible schemas
 
 :::info
@@ -94,7 +95,7 @@ const namesSchema = list(nameAttr)
 
 :::info
 
-Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../17-actions/1-parse.md) and [format](../17-actions/2-format.md) data for instance) and might even be moved into a separate library one day.
+Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separately to [parse](../18-actions/1-parse.md) and [format](../18-actions/2-format.md) data for instance) and might even be moved into a separate library one day.
 
 :::
 

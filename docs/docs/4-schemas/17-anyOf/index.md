@@ -64,6 +64,7 @@ AnyOf elements can have any type. However, they must respect some constraints:
 
 - They cannot be `optional` or always required
 - They cannot be `hidden` or `key` (tagging the `anyOf` itself as `key` is enough)
+- They cannot be renamed (with `savedAs`)
 - They cannot have `default` or `links`
 
 ```ts
@@ -71,6 +72,7 @@ AnyOf elements can have any type. However, they must respect some constraints:
 const union = anyOf(number(), string().optional())
 const union = anyOf(number(), string().hidden())
 const union = anyOf(number(), string().key())
+const union = anyOf(number(), string().savedAs('foo'))
 const union = anyOf(number(), string().default('foo'))
 ```
 
@@ -80,7 +82,7 @@ const union = anyOf(number(), string().default('foo'))
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -101,7 +103,7 @@ const pokeTypeSchema = anyOf(...).optional()
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const pokeTypeSchema = anyOf(
@@ -131,7 +133,7 @@ const pokeTypeSchema = anyOf(
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const pokeTypeSchema = anyOf(
@@ -145,7 +147,7 @@ const pokeTypeSchema = anyOf(
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-**Leverages a specific attribute as a discriminator** to efficiently match between different schema options. Optimizes performance during [`Parsing`](../17-actions/1-parse.md) and [`Formatting`](../17-actions/2-format.md):
+**Leverages a specific attribute as a discriminator** to efficiently match between different schema options. Optimizes performance during [`Parsing`](../18-actions/1-parse.md) and [`Formatting`](../18-actions/2-format.md):
 
 ```ts
 const catSchema = map({
@@ -170,7 +172,7 @@ const matchingSchema = petSchema.match('dog') // => dogSchema
 
 To be used as a discriminator, an attribute **must meet all of the following conditions**:
 
-- ✅ It must be present within a [`map`](../14-map/index.md) attribute, either directly or as part of another `anyOf` schema.
+- ✅ It must be present within a [`map`](../15-map/index.md) attribute, either directly or as part of another `anyOf` schema.
 - ✅ It must be **present in every schema option**.
 - ✅ It must be of type [`string`](../9-string/index.md) and use the [`enum`](../9-string/index.md#enum) property.
 - ✅ If renamed, the same `savedAs` value must be used **across all options**.

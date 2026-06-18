@@ -30,16 +30,9 @@ type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
-type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
-  code: 'schema.tuple.defaultedElements'
-  hasPath: true
-  payload: undefined
-}>
-
 export type TupleSchemaErrorBlueprint =
   | InvalidElementsErrorBlueprint
   | MissingElementsErrorBlueprint
   | OptionalElementsErrorBlueprint
   | HiddenElementsErrorBlueprint
   | SavedAsElementsErrorBlueprint
-  | DefaultedElementsErrorBlueprint

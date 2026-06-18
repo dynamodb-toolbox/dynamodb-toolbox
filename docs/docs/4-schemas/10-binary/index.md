@@ -26,7 +26,7 @@ type Hash = FormattedValue<typeof hashSchema>
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -47,7 +47,7 @@ const hashSchema = binary({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const hashSchema = binary().hidden()
@@ -80,7 +80,7 @@ const hashSchema = binary({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const hashSchema = binary().savedAs('h')
@@ -113,7 +113,7 @@ For type inference reasons, the `enum` option is only available as a method and 
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;Uint8Array&gt;</code></i></p>
 
-Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../18-actions/1-parse.md):
 
 ```ts
 const PREFIX = new Uint8Array([1, 2, 3])
@@ -136,7 +136,7 @@ const hashSchema = binary().transform(prefix)
 const hashSchema = binary({ transform: prefix })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../19-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 

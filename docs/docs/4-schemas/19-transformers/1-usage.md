@@ -4,7 +4,7 @@ title: Usage
 
 # Transformers
 
-Transformers allow modifying a primitive ([`string`](../9-string/index.md), [`number`](../8-number/index.md) etc.) or [`any`](../5-any/index.md) attribute value during the [transformation step](../17-actions/1-parse.md):
+Transformers allow modifying a primitive ([`string`](../9-string/index.md), [`number`](../8-number/index.md) etc.) or [`any`](../5-any/index.md) attribute value during the [transformation step](../18-actions/1-parse.md):
 
 ```ts
 const PREFIX = 'POKEMON#'
@@ -28,7 +28,7 @@ Some transformers are available off-the-shelf:
 - [`jsonStringify`](./4-json-stringify.md): Applies `JSON.stringify` to any value
 - [`pipe`](./5-pipe.md): Merge multiple transformers into a single transformer
 
-When applicable, **we strongly recommend using those** instead of custom transformers as they are **type-safe** (using [`hotscript`](https://github.com/gvergnaud/hotscript)), [**serializable**](../17-actions/3-dto.md) and **chainable** using the `pipe(...)` method:
+When applicable, **we strongly recommend using those** instead of custom transformers as they are **type-safe** (using [`hotscript`](https://github.com/gvergnaud/hotscript)), [**serializable**](../18-actions/3-dto.md) and **chainable** using the `pipe(...)` method:
 
 ```ts
 const transformer = jsonStringify()

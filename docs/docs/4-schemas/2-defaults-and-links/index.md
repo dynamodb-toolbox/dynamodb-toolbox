@@ -52,7 +52,7 @@ const pokemonSchema = item({
 })
 ```
 
-The solution is to make good use of the `.and(...)` method (see [`item`](../13-item/index.md) and [`maps`](../14-map/index.md) for more details) and build the schema **in two steps**:
+The solution is to make good use of the `.and(...)` method (see [`item`](../14-item/index.md) and [`maps`](../15-map/index.md) for more details) and build the schema **in two steps**:
 
 ```ts
 const basePokemonSchema = item({
@@ -116,11 +116,11 @@ const schema = item({
 
 :::
 
-Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../17-actions/1-parse.md) action for more details).
+Note that **defaults are computed before links**, so you can safely use defaults within links (see the [`Parser`](../18-actions/1-parse.md) action for more details).
 
 ### Update Syntax
 
-If you use TypeScript, you may notice that the `updateLink` input type can be quite complex. This is to reflect that **extended syntax** (e.g. `$add`, `$get` etc.) is also passed to `updateLink`:
+If you use TypeScript, you may notice that the `updateLink` input type can be quite complex. This is to reflect that **extended syntax** from the DynamoDB API (e.g. `$add`, `$get` etc.) is also passed to `updateLink`:
 
 ```ts
 const pokemonSchema = item({

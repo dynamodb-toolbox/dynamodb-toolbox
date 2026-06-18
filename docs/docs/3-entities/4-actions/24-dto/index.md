@@ -39,6 +39,6 @@ All TS types are lost in the process.
 
 Note that **functions are not serializable** so, if present, the `computeKey` function is lost in the process: We recommend using [links](../../../4-schemas/2-defaults-and-links/index.md#links) instead.
 
-For the same reason, parts of the `Entity` schema may be lost in the process. See [`SchemaDTO`](../../../4-schemas/17-actions/3-dto.md) for more details.
+For the same reason, parts of the `Entity` schema may be lost in the process. See [`SchemaDTO`](../../../4-schemas/18-actions/3-dto.md) for more details.
 
 :::

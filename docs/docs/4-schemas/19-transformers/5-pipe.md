@@ -2,7 +2,6 @@
 title: pipe
 sidebar_custom_props:
   code: true
-  new: true
 ---
 
 # Pipe

@@ -26,7 +26,7 @@ type IsLegendary = FormattedValue<typeof isLegendarySchema>
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -49,7 +49,7 @@ const isLegendarySchema = boolean({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const isLegendarySchema = boolean().hidden()
@@ -76,7 +76,7 @@ const isLegendarySchema = boolean({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const isLegendarySchema = boolean().savedAs('isLeg')
@@ -112,7 +112,7 @@ Although it is not very useful, `boolean` is a primitive, and as such inherits f
 
 <p style={{ marginTop: '-15px' }}><i><code>Transformer&lt;boolean&gt;</code></i></p>
 
-Allows modifying schema values during the [transformation step](../17-actions/1-parse.md):
+Allows modifying schema values during the [transformation step](../18-actions/1-parse.md):
 
 ```ts
 const negate = {
@@ -125,7 +125,7 @@ const isLegendarySchema = boolean().transform(negate)
 const isLegendarySchema = boolean({ transform: negate })
 ```
 
-DynamoDB-Toolbox exposes [on-the-shelf transformers](../18-transformers/1-usage.md), so feel free to use them!
+DynamoDB-Toolbox exposes [on-the-shelf transformers](../19-transformers/1-usage.md), so feel free to use them!
 
 ### `.default(...)`
 

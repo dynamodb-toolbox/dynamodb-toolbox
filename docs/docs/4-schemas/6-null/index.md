@@ -23,7 +23,7 @@ type Null = FormattedValue<typeof nullSchema>
 
 :::info
 
-Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../16-anyOf/index.md) to define **nullable** schemas:
+Not very useful on itself, `nul` is more likely to be used in conjunction with [`anyOf`](../17-anyOf/index.md) to define **nullable** schemas:
 
 ```ts
 const nullableString = anyOf(string(), nul())
@@ -40,7 +40,7 @@ type NullableString = FormattedValue<typeof nullableString>
 
 <p style={{ marginTop: '-15px' }}><i><code>string | undefined</code></i></p>
 
-Tags schema values as **required** (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)). Possible values are:
+Tags schema values as **required** (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)). Possible values are:
 
 - <code>'atLeastOnce' <i>(default)</i></code>: Required (starting value)
 - `'always'`: Always required (including updates)
@@ -61,7 +61,7 @@ const nullSchema = nul({ required: 'never' })
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
 
-Omits schema values during [formatting](../17-actions/2-format.md):
+Omits schema values during [formatting](../18-actions/2-format.md):
 
 ```ts
 const nullSchema = nul().hidden()
@@ -88,7 +88,7 @@ const nullSchema = nul({
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
 
-Renames schema values during the [transformation step](../17-actions/1-parse.md) (within [`items`](../13-item/index.md) or [`maps`](../14-map/index.md)):
+Renames schema values during the [transformation step](../18-actions/1-parse.md) (within [`items`](../14-item/index.md) or [`maps`](../15-map/index.md)):
 
 ```ts
 const nullSchema = nul().savedAs('_n')

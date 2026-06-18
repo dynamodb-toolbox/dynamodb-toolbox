@@ -72,7 +72,7 @@ PokemonEntity.build(ConditionParser).transform({
 
 :::info
 
-Note that the `transform(...)` method **may alter the condition** if several options of an [`anyOf`](../../../4-schemas/16-anyOf/index.md) attribute match a provided path or reference:
+Note that the `transform(...)` method **may alter the condition** if several options of an [`anyOf`](../../../4-schemas/17-anyOf/index.md) attribute match a provided path or reference:
 
 <details className="details-in-admonition">
 <summary>🔎 <b>Show example</b></summary>
