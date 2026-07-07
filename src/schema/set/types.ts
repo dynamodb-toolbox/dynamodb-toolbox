@@ -6,7 +6,7 @@ import type { StringSchema } from '../string/index.js'
 import type { StringSchemaProps } from '../string/types.js'
 import type { AtLeastOnce } from '../types/index.js'
 
-interface SetElementProps {
+export interface SetElementProps {
   required?: AtLeastOnce
   hidden?: false
   key?: boolean
