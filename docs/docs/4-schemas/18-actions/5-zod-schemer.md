@@ -11,10 +11,10 @@ import TabItem from '@theme/TabItem';
 
 :::note
 
-`ZodSchemer` requires the `zod` dependency to be installed first:
+`ZodSchemer` requires the `zod` dependency (v3) to be installed as peer dependency:
 
 ```bash
-npm install zod
+npm install zod@v3
 ```
 
 :::
@@ -37,11 +37,28 @@ const formatted = zodFormatter.parse(parsed)
 
 :::note
 
-Because DynamoDB-Toolbox schema are more flexible than Zod Schemas ([Parsing](./1-parse.md) vs [Formatting](./2-format.md), Item vs Keys etc.), you may need to transpile **several Zod Schemas** for different contexts.
+Because DynamoDB-Toolbox schema are more flexible than Zod Schemas ([Parsing](./1-parse.md) vs [Formatting](./2-format.md), Item vs Keys, Updates syntax etc.), you may need to transpile **several Zod Schemas** for different contexts.
 
 :::
 
+You can also derive schemas from Zod schemas with the [`fromZodSchema`] util:
+
+```ts
+import { z } from 'zod'
+import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema'
+
+const zodSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string()
+})
+const ddbToolboxSchema = fromZodSchema(zodSchema)
+```
+
+Again the **transpilation itself is type-safe** and **type inference is preserved**, although the resulting schema may have to be tweaked to introduce DynamoDB related features (keys, links, transforms etc.).
+
 ## ⚠️ Known Limitations
+
+### ZodSchemer
 
 The most important limitation at the moment is that **[`links`](../2-defaults-and-links/index.md#links) are not transpiled** (but [`defaults`](../2-defaults-and-links/index.md#defaults) are):
 
@@ -118,6 +135,28 @@ const zodSchema = schema.build(ZodSchemer).parser()
 // ❌ Fails: `ZodDiscriminatedUnion` does not support `ZodDiscriminatedUnion` options
 zodSchema.parse(input)
 ```
+
+### fromZodSchema
+
+Binary schemas (`Uint8Array`) do not exist in `zod` and are cannot be transpiled (see [this issue](https://github.com/colinhacks/zod/issues/2597)).
+
+Refinments are transpiled but `transforms` are not (should be fixed with [Zod v4 codecs](https://zod.dev/codecs)):
+
+```ts
+const zodSchema = z
+  .string()
+  .validate(value => value.length > 0)
+
+const schema = fromZodSchema(zodSchema)
+schema.build(Parser).parse('') // ❌ Fails
+
+const zodSchema = z.transform(value => value.trim())
+
+const schema = fromZodSchema(zodSchema)
+schema.build(Parser).parse(' foo ') // => ' foo '
+```
+
+Preprocessed schemas and intersections are not supported, as well as types that are not natively available in DynamoDB are (`Dates`, `NaNs`, `InstanceOf` etc.).
 
 ## Methods
 

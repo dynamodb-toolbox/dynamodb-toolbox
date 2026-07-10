@@ -2,6 +2,7 @@
 export { SchemaAction, schema, s } from './schema/index.js'
 export type {
   Schema,
+  Schema_,
   Validator,
   InputValue,
   ValidValue,
