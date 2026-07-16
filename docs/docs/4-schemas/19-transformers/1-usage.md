@@ -25,8 +25,9 @@ Some transformers are available off-the-shelf:
 
 - [`prefix`](./2-prefix.md): Prefixes a `string` value
 - [`suffix`](./3-suffix.md): Suffixes a `string` value
-- [`jsonStringify`](./4-json-stringify.md): Applies `JSON.stringify` to any value
-- [`pipe`](./5-pipe.md): Merge multiple transformers into a single transformer
+- [`trim`](./4-suffix.md): Trims a `string` value
+- [`jsonStringify`](./5-json-stringify.md): Applies `JSON.stringify` to any value
+- [`pipe`](./6-pipe.md): Merge multiple transformers into a single transformer
 
 When applicable, **we strongly recommend using those** instead of custom transformers as they are **type-safe** (using [`hotscript`](https://github.com/gvergnaud/hotscript)), [**serializable**](../18-actions/3-dto.md) and **chainable** using the `pipe(...)` method:
 

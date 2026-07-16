@@ -50,7 +50,7 @@ const notTypeSafe = pipe(prefixer, addOne)
 const typeSafe = prefix('PREFIX').pipe(addOne)
 ```
 
-You can [pipe](./5-pipe.md) any transformer matching the end of the current pipe with the `.pipe(...)` method:
+You can [pipe](./6-pipe.md) any transformer matching the end of the current pipe with the `.pipe(...)` method:
 
 ```ts
 const transformer = jsonStringify()
