@@ -42,7 +42,7 @@ The `replacer` and `reviver` options are not serialized when building a [`DTO`](
 
 :::
 
-You can [pipe](./5-pipe.md) a `string` transformer with the `.pipe(...)` method:
+You can [pipe](./6-pipe.md) a `string` transformer with the `.pipe(...)` method:
 
 ```ts
 import { prefix } from 'dynamodb-toolbox/transformers/prefix'

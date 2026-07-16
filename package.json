@@ -330,14 +330,14 @@
         "default": "./dist/cjs/transformers/suffix.js"
       }
     },
-    "./transformers/pipe": {
+    "./transformers/trim": {
       "import": {
-        "types": "./dist/esm/transformers/pipe.d.ts",
-        "default": "./dist/esm/transformers/pipe.js"
+        "types": "./dist/esm/transformers/trim.d.ts",
+        "default": "./dist/esm/transformers/trim.js"
       },
       "require": {
-        "types": "./dist/cjs/transformers/pipe.d.ts",
-        "default": "./dist/cjs/transformers/pipe.js"
+        "types": "./dist/cjs/transformers/trim.d.ts",
+        "default": "./dist/cjs/transformers/trim.js"
       }
     },
     "./transformers/jsonStringify": {
@@ -348,6 +348,16 @@
       "require": {
         "types": "./dist/cjs/transformers/jsonStringify.d.ts",
         "default": "./dist/cjs/transformers/jsonStringify.js"
+      }
+    },
+    "./transformers/pipe": {
+      "import": {
+        "types": "./dist/esm/transformers/pipe.d.ts",
+        "default": "./dist/esm/transformers/pipe.js"
+      },
+      "require": {
+        "types": "./dist/cjs/transformers/pipe.d.ts",
+        "default": "./dist/cjs/transformers/pipe.js"
       }
     },
     "./table": {

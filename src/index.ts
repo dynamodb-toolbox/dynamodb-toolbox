@@ -233,5 +233,6 @@ export type {
 export { isSerializableTransformer } from './transformers/index.js'
 export { prefix } from './transformers/prefix.js'
 export { suffix } from './transformers/suffix.js'
-export { pipe } from './transformers/pipe.js'
+export { trim } from './transformers/trim.js'
 export { jsonStringify } from './transformers/jsonStringify.js'
+export { pipe } from './transformers/pipe.js'

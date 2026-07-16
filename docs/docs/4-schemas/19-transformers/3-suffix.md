@@ -28,7 +28,7 @@ const suffixer = suffix('SUFFIX', { delimiter: '/' })
 suffixer.encode('foo') // => 'foo/SUFFIX'
 ```
 
-You can [pipe](./5-pipe.md) a `string` transformer with the `.pipe(...)` method:
+You can [pipe](./6-pipe.md) a `string` transformer with the `.pipe(...)` method:
 
 ```ts
 import { prefix } from 'dynamodb-toolbox/transformers/prefix'
