@@ -22,7 +22,7 @@ If you need to handle them, TypeScript is your best friend, as the `code` proper
 import { DynamoDBToolboxError } from 'dynamodb-toolbox';
 
 const handleError = (error: Error) => {
-  if (!error instanceof DynamoDBToolboxError) throw error;
+  if (!(error instanceof DynamoDBToolboxError)) throw error;
 
   switch (error.code) {
     case 'parsing.invalidAttributeInput':

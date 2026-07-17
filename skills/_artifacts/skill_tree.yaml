@@ -1,0 +1,163 @@
+library:
+  name: 'dynamodb-toolbox'
+  version: 'local'
+  repository: 'https://github.com/dynamodb-toolbox/dynamodb-toolbox'
+  description: 'Type-safe DynamoDB workflow layer for modeling tables, entities, schemas, and request builders on top of the AWS SDK DocumentClient.'
+generated_from:
+  domain_map: 'skills/_artifacts/domain_map.yaml'
+  skill_spec: 'skills/_artifacts/skill_spec.md'
+generated_at: '2026-03-19T00:00:00Z'
+
+skills:
+  - name: 'First Working Setup'
+    slug: 'first-working-setup'
+    type: 'lifecycle'
+    domain: 'bootstrapping-and-data-modeling'
+    path: 'skills/first-working-setup/SKILL.md'
+    description: 'Load this when installing DynamoDB-Toolbox, wiring the AWS SDK DocumentClient, setting strict TypeScript defaults, and getting the first command to send successfully.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/1-getting-started/2-installation/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/1-getting-started/3-usage/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/table/table.ts'
+
+  - name: 'Single-Table Modeling From Scratch'
+    slug: 'single-table-modeling-from-scratch'
+    type: 'core'
+    domain: 'bootstrapping-and-data-modeling'
+    path: 'skills/single-table-modeling-from-scratch/SKILL.md'
+    description: 'Load this when defining one table with multiple entities, configuring internal entity and timestamp attributes, choosing key mappings, and deciding when computeKey or multi-attribute indexes are needed.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/1-usage/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/1-usage/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/2-internal-attributes/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/entity.ts'
+    references:
+      - 'references/table-entity-options.md'
+
+  - name: 'Schema and Data-Shaping Design'
+    slug: 'schema-and-data-shaping-design'
+    type: 'core'
+    domain: 'shaping-and-mutating-data'
+    path: 'skills/schema-and-data-shaping-design/SKILL.md'
+    description: 'Load this when defining item, map, list, set, record, or union schemas and when validating savedAs, hidden, enum, required, and nested schema rules.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/4-schemas/1-usage/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/schema/item/schema.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/schema/map/schema.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/schema/record/schema.ts'
+    references:
+      - 'references/schema-property-rules.md'
+
+  - name: 'Defaults, Links, and Derived Attributes'
+    slug: 'defaults-links-and-derived-attributes'
+    type: 'core'
+    domain: 'shaping-and-mutating-data'
+    path: 'skills/defaults-links-and-derived-attributes/SKILL.md'
+    description: 'Load this when using putDefault, updateDefault, keyDefault, putLink, updateLink, or keyLink to derive keys and denormalized attributes safely under put and update semantics.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/4-schemas/2-defaults-and-links/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/schema/actions/parse/schema.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/actions/parse/entityParser.ts'
+    references:
+      - 'references/default-link-modes.md'
+
+  - name: 'Basic Reads and Writes'
+    slug: 'basic-reads-and-writes'
+    type: 'core'
+    domain: 'shaping-and-mutating-data'
+    path: 'skills/basic-reads-and-writes/SKILL.md'
+    description: 'Load this when performing get, put, update, and delete flows with the correct key or item inputs, condition options, return values, and consistent-read behavior.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/1-get-item/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/3-put-item/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/4-update-item/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/actions/get/getItemCommand.ts'
+
+  - name: 'Update Semantics and State Transitions'
+    slug: 'update-semantics-and-state-transitions'
+    type: 'core'
+    domain: 'shaping-and-mutating-data'
+    path: 'skills/update-semantics-and-state-transitions/SKILL.md'
+    description: 'Load this when using UpdateItem or UpdateAttributes with nested updates, counters, list and set mutation operators, references, and condition-aware state transitions.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/4-update-item/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/actions/update/updateItemCommand.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/actions/updateAttributes/updateAttributesCommand.ts'
+    references:
+      - 'references/update-extensions.md'
+
+  - name: 'Queries, Scans, and Access Patterns'
+    slug: 'queries-scans-and-access-patterns'
+    type: 'core'
+    domain: 'reading-and-interpreting-data'
+    path: 'skills/queries-scans-and-access-patterns/SKILL.md'
+    description: 'Load this when turning read requirements into QueryCommand, ScanCommand, or AccessPattern usage with correct partition and range setup, projections, pagination, and bounded page limits.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/2-actions/1-scan/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/2-actions/2-query/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/2-access-pattern/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/table/actions/query/queryParams/parseQuery.ts'
+    references:
+      - 'references/query-scan-options.md'
+
+  - name: 'Mixed-Entity Querying and Formatting'
+    slug: 'mixed-entity-querying-and-formatting'
+    type: 'core'
+    domain: 'reading-and-interpreting-data'
+    path: 'skills/mixed-entity-querying-and-formatting/SKILL.md'
+    description: 'Load this when querying or scanning multiple entity types in one table and deciding how entityAttrFilter, noEntityMatchBehavior, projections, and formatter fallback should interact.'
+    requires:
+      - 'single-table-modeling-from-scratch'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/2-internal-attributes/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/versioned_docs/version-v1/6-migration-guide/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/options/entityAttrFilter.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/table/actions/query/queryCommand.ts'
+
+  - name: 'Batch and Transaction Orchestration'
+    slug: 'batch-and-transaction-orchestration'
+    type: 'core'
+    domain: 'coordinating-multi-item-workflows'
+    path: 'skills/batch-and-transaction-orchestration/SKILL.md'
+    description: 'Load this when coordinating batch get or write, transact-get, or transact-write flows and when handling unprocessed items, idempotency tokens, and one-operation-per-item transaction rules.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/2-actions/6-batch-get/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/2-actions/7-batch-write/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/11-transactions/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/actions/transactWrite/execute.ts'
+
+  - name: 'Repositories and Database Entry Points'
+    slug: 'repositories-and-database-entry-points'
+    type: 'core'
+    domain: 'coordinating-multi-item-workflows'
+    path: 'skills/repositories-and-database-entry-points/SKILL.md'
+    description: 'Load this when choosing between command builders, EntityRepository, TableRepository, Registry, and Database, especially for repetitive CRUD, table-scoped reads, MCP tooling, and sync entry points.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/2-tables/2-actions/12-repository/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/4-actions/23-repository/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/5-databases/1-usage/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/table/actions/repository/repository.ts'
+
+  - name: 'TypeScript Integration and Error Management'
+    slug: 'typescript-integration-and-error-management'
+    type: 'core'
+    domain: 'maintaining-correctness-over-time'
+    path: 'skills/typescript-integration-and-error-management/SKILL.md'
+    description: 'Load this when using Toolbox helper types, distinguishing saved and formatted shapes, and handling DynamoDBToolboxError codes, paths, and payloads correctly in TypeScript.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/3-entities/3-type-inference/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/docs/6-error-management/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/errors/dynamoDBToolboxError.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/entity/index.ts'
+
+  - name: 'Adopting, Migrating, and Reviewing Toolbox Architecture'
+    slug: 'adopting-migrating-and-reviewing-toolbox-architecture'
+    type: 'lifecycle'
+    domain: 'maintaining-correctness-over-time'
+    path: 'skills/adopting-migrating-and-reviewing-toolbox-architecture/SKILL.md'
+    description: 'Load this when migrating from older Toolbox patterns, reviewing whether a codebase is using the right abstraction level, and catching legacy API usage that agents still hallucinate.'
+    sources:
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/versioned_docs/version-v1/6-migration-guide/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:docs/versioned_docs/version-v0.9/9-migration-guide/index.md'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/transformers/index.ts'
+      - 'dynamodb-toolbox/dynamodb-toolbox:src/schema/index.ts'

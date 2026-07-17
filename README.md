@@ -52,6 +52,9 @@ DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **tur
 
 ## Visit the 👉 [official documentation](https://dynamodbtoolbox.com/) 👈 to get started! <!-- omit in toc -->
 
+> [!NOTE]
+> If you use an AI agent, run `npx @tanstack/intent@latest install`.
+
 > [!TIP]  
 > Want to get more our of your code? Try [DynamoDB-Toolshack](https://dynamodb-toolshack.com/) 🙌
 >
