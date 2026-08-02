@@ -149,6 +149,7 @@ export interface TupleSchemaDTO extends SchemaPropsDTO {
 export interface MapSchemaDTO extends SchemaPropsDTO {
   type: 'map'
   attributes: { [name: string]: ISchemaDTO }
+  strict?: boolean
 }
 
 export interface RecordSchemaDTO extends SchemaPropsDTO {
@@ -211,6 +212,7 @@ export interface ItemSchemaDTO extends SchemaPropsDTO {
       | RecordSchemaDTO
       | AnyOfSchemaDTO
   }
+  strict?: boolean
 }
 
 export type ISchemaDTO =

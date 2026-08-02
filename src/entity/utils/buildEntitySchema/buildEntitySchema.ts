@@ -104,11 +104,8 @@ export const buildEntitySchema: EntitySchemaBuilder = <
     }
   }
 
-  return new ItemSchema({ ...schema.attributes, ...internalAttributes }) as BuildEntitySchema<
-    ATTRIBUTES,
-    TABLE,
-    ENTITY_NAME,
-    ENTITY_ATTR_OPTIONS,
-    TIMESTAMP_OPTIONS
-  >
+  return new ItemSchema(
+    { ...schema.attributes, ...internalAttributes },
+    schema.props
+  ) as BuildEntitySchema<ATTRIBUTES, TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS, TIMESTAMP_OPTIONS>
 }

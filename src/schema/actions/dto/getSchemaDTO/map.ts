@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getMapSchemaDTO = (schema: MapSchema): MapSchemaDTO => {
   const defaultsDTO = getDefaultsDTO(schema)
-  const { required, hidden, key, savedAs } = schema.props
+  const { required, hidden, key, strict, savedAs } = schema.props
 
   return {
     type: 'map',
@@ -22,6 +22,7 @@ export const getMapSchemaDTO = (schema: MapSchema): MapSchemaDTO => {
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),
+    ...(strict !== undefined && strict ? { strict } : {}),
     ...(savedAs !== undefined ? { savedAs } : {}),
     ...defaultsDTO
   }

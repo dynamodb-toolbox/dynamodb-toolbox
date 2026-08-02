@@ -14,16 +14,15 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
-  SchemaProps,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
 import type { Light, LightObj } from '../utils/light.js'
 import { lightObj } from '../utils/light.js'
 import { MapSchema } from './schema.js'
-import type { MapAttributes } from './types.js'
+import type { MapAttributes, MapSchemaProps } from './types.js'
 
-type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
+type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends MapSchemaProps = {}>(
   attributes: NarrowObject<ATTRIBUTES>,
   props?: NarrowObject<PROPS>
 ) => MapSchema_<LightObj<ATTRIBUTES>, PROPS>
@@ -34,7 +33,10 @@ type MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps =
  * @param attributes Dictionary of attributes
  * @param props _(optional)_ Map Props
  */
-export const map: MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends SchemaProps = {}>(
+export const map: MapSchemer = <
+  ATTRIBUTES extends MapAttributes,
+  PROPS extends MapSchemaProps = {}
+>(
   attributes: NarrowObject<ATTRIBUTES>,
   props: PROPS = {} as PROPS
 ) => new MapSchema_(lightObj(attributes), props)
@@ -44,7 +46,7 @@ export const map: MapSchemer = <ATTRIBUTES extends MapAttributes, PROPS extends 
  */
 export class MapSchema_<
   ATTRIBUTES extends MapAttributes = MapAttributes,
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends MapSchemaProps = MapSchemaProps
 > extends MapSchema<ATTRIBUTES, PROPS> {
   /**
    * Tag schema values as required. Possible values are:
@@ -86,6 +88,15 @@ export class MapSchema_<
       this.attributes,
       overwrite(this.props, { key: nextKey, required: 'always' })
     )
+  }
+
+  /**
+   * Reject additional (undeclared) attributes when parsing input values
+   */
+  strict<NEXT_STRICT extends boolean = true>(
+    nextStrict: NEXT_STRICT = true as NEXT_STRICT
+  ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, { strict: NEXT_STRICT }>> {
+    return new MapSchema_(this.attributes, overwrite(this.props, { strict: nextStrict }))
   }
 
   /**
@@ -389,7 +400,7 @@ export class MapSchema_<
     )
   }
 
-  clone<NEXT_PROPS extends SchemaProps = {}>(
+  clone<NEXT_PROPS extends MapSchemaProps = {}>(
     nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
   ): MapSchema_<ATTRIBUTES, Overwrite<PROPS, NEXT_PROPS>> {
     return new MapSchema_(this.attributes, overwrite(this.props, nextProps))

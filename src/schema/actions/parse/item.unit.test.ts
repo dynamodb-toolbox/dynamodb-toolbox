@@ -21,6 +21,63 @@ describe('itemParser', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidItem' }))
   })
 
+  test('silently drops additional keys on a non-strict map', () => {
+    const schema = item({ foo: string() })
+    const parser = itemParser(schema, { foo: 'foo', extra: 'extra' })
+
+    const { value: defaultedValue } = parser.next()
+    expect(defaultedValue).toStrictEqual({ foo: 'foo', extra: 'extra' })
+
+    const { value: linkedValue } = parser.next()
+    expect(linkedValue).toStrictEqual({ foo: 'foo', extra: 'extra' })
+
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual({ foo: 'foo' })
+
+    const { value: transformedValue } = parser.next()
+    expect(transformedValue).toStrictEqual({ foo: 'foo' })
+  })
+
+  test('throws on a strict map (put mode) naming the offending path', () => {
+    const schema = item({ foo: string() }).strict()
+    const invalidCall = () =>
+      itemParser(schema, { foo: 'foo', extra: 'extra' }, { fill: false }).next()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.additionalProperty' }))
+  })
+
+  describe('all modes', () => {
+    test('throws in update mode on an undeclared key', () => {
+      const schema = item({ foo: string() }).strict()
+      const invalidCall = () =>
+        itemParser(schema, { foo: 'foo', extra: 'extra' }, { mode: 'update', fill: false }).next()
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'parsing.additionalProperty', path: 'extra' })
+      )
+    })
+
+    test('throws in key mode on an undeclared key', () => {
+      const schema = item({ foo: string().key(), bar: string() }).strict()
+      const invalidCall = () =>
+        itemParser(schema, { foo: 'foo', extra: 'extra' }, { mode: 'key', fill: false }).next()
+
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'parsing.additionalProperty', path: 'extra' })
+      )
+    })
+
+    test('does not throw in key mode on a declared-but-non-key attribute', () => {
+      const schema = item({ foo: string().key(), bar: string() }).strict()
+      const validCall = () =>
+        itemParser(schema, { foo: 'foo', bar: 'bar' }, { mode: 'key', fill: false }).next()
+
+      expect(validCall).not.toThrow()
+    })
+  })
+
   test('applies schemaParser on input properties otherwise (and pass options)', () => {
     const options = { some: 'options' }
     const parser = itemParser(

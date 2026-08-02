@@ -33,6 +33,33 @@ describe('zodSchemer > parser > item', () => {
     expect(() => output.parse(undefined)).toThrow()
   })
 
+  describe('strictness', () => {
+    test('emits a lenient (strip) Zod object for a non-strict item', () => {
+      const schema = item({ str: string() })
+      const output = itemZodParser(schema)
+      const expected = z.object({ str: z.string() })
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(output._def.unknownKeys).toBe('strip')
+      expect(output.parse({ str: 'foo', extra: 'extra' })).toStrictEqual({ str: 'foo' })
+    })
+
+    test('emits a strict Zod object for a strict item', () => {
+      const schema = item({ str: string() }).strict()
+      const output = itemZodParser(schema)
+      const expected = z.object({ str: z.string() }).strict()
+
+      const assert: A.Equals<typeof output, typeof expected> = 1
+      assert
+
+      expect(output).toBeInstanceOf(z.ZodObject)
+      expect(output._def.unknownKeys).toBe('strict')
+      expect(() => output.parse({ str: 'foo', extra: 'extra' })).toThrow()
+    })
+  })
+
   describe('mode', () => {
     test('shows keys attributes if mode is key', () => {
       const schema = item({ str: string().key(), num: number() })

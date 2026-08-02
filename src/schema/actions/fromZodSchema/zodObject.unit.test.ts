@@ -18,4 +18,16 @@ describe('fromZodSchema > zodObject', () => {
     expect(output.attributes.str).toBeInstanceOf(StringSchema_)
     expect(output.attributes.num).toBeInstanceOf(NumberSchema_)
   })
+
+  test('returns strict map schema from a strict zod object', () => {
+    const schema = z.object({ str: z.string() }).strict()
+    const output = fromZodSchema(schema)
+    const expected = map({ str: string() }).strict()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output).toBeInstanceOf(MapSchema_)
+    expect(output.props.strict).toBe(true)
+  })
 })

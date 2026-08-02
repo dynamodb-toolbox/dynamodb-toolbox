@@ -174,4 +174,13 @@ describe('item', () => {
     // doesn't mute original sch
     expect(sch.attributes).toHaveProperty('reqStr')
   })
+
+  test('strict', () => {
+    const schema = item({ reqStr }).strict()
+
+    const assertItemSchema: A.Contains<(typeof schema)['props'], { strict: true }> = 1
+    assertItemSchema
+
+    expect(schema.props.strict).toBe(true)
+  })
 })

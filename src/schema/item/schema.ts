@@ -1,22 +1,26 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
 
-import type { SchemaProps, SchemaRequiredProp } from '../types/index.js'
+import type { SchemaRequiredProp } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
-import type { ItemAttributes } from './types.js'
+import type { ItemAttributes, ItemSchemaProps } from './types.js'
 
-export class ItemSchema<ATTRIBUTES extends ItemAttributes = ItemAttributes> {
+export class ItemSchema<
+  ATTRIBUTES extends ItemAttributes = ItemAttributes,
+  PROPS extends ItemSchemaProps = ItemSchemaProps
+> {
   type: 'item'
   attributes: ATTRIBUTES
-  props: SchemaProps
+  props: PROPS
 
   savedAttributeNames: Set<string>
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>
 
-  constructor(attributes: ATTRIBUTES) {
+  constructor(attributes: ATTRIBUTES, props: PROPS = {} as PROPS) {
     this.type = 'item'
     this.attributes = attributes
-    this.props = {}
+    this.props = props
 
     this.savedAttributeNames = new Set<string>()
     this.keyAttributeNames = new Set<string>()
@@ -47,6 +51,18 @@ export class ItemSchema<ATTRIBUTES extends ItemAttributes = ItemAttributes> {
     }
 
     checkSchemaProps(this.props, path)
+
+    const { strict } = this.props
+
+    if (strict !== undefined && !isBoolean(strict)) {
+      throw new DynamoDBToolboxError('schema.invalidProp', {
+        message: `Invalid prop type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Property: 'strict'. Expected: boolean. Received: ${String(strict)}.`,
+        path,
+        payload: { propName: 'strict', received: strict }
+      })
+    }
 
     const attributesSavedAs = new Set<string>()
     const keyAttributeNames = new Set<string>()

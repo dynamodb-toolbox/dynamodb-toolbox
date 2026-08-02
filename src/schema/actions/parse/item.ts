@@ -72,11 +72,22 @@ export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValu
   if (!isInputValueObject) {
     throw new DynamoDBToolboxError('parsing.invalidItem', {
       message: 'Items should be objects',
-      payload: {
-        received: inputValue,
-        expected: 'object'
-      }
+      payload: { received: inputValue, expected: 'object' }
     })
+  }
+
+  if (schema.props.strict && restEntries.length > 0) {
+    for (const [additionalPropertyKey, additionalProperty] of restEntries) {
+      if (!(additionalPropertyKey in schema.attributes)) {
+        const path = additionalPropertyKey
+
+        throw new DynamoDBToolboxError('parsing.additionalProperty', {
+          message: `Attribute '${additionalPropertyKey}' is not defined and the schema is strict.`,
+          path,
+          payload: { received: additionalProperty }
+        })
+      }
+    }
   }
 
   const parsedValue = Object.fromEntries(

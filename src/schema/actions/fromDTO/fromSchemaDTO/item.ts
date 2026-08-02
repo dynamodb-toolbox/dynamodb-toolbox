@@ -16,6 +16,7 @@ export const fromItemSchemaDTO = ({
   keyLink,
   putLink,
   updateLink,
+  strict,
   attributes
 }: ItemSchemaDTO): ItemSchema => {
   keyDefault
@@ -25,7 +26,7 @@ export const fromItemSchemaDTO = ({
   putLink
   updateLink
 
-  return item(
+  const schema = item(
     Object.fromEntries(
       Object.entries(attributes).map(([attributeName, attribute]) => [
         attributeName,
@@ -33,4 +34,6 @@ export const fromItemSchemaDTO = ({
       ])
     )
   )
+
+  return strict ? schema.strict() : schema
 }

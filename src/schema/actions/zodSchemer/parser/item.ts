@@ -27,7 +27,7 @@ export type ItemZodParser<
             Overwrite<OPTIONS, { defined: false }>
           >
         },
-        'strip'
+        SCHEMA['props'] extends { strict: true } ? 'strict' : 'strip'
       >
     >
 
@@ -42,16 +42,18 @@ export const itemZodParser = <SCHEMA extends ItemSchema, OPTIONS extends ZodPars
       ? Object.entries(schema.attributes).filter(([, { props }]) => props.key)
       : Object.entries(schema.attributes)
 
+  const zodObject = z.object(
+    Object.fromEntries(
+      displayedAttrEntries.map(([attributeName, attribute]) => [
+        attributeName,
+        schemaZodParser(attribute, { ...options, defined: false })
+      ])
+    )
+  )
+
   return withAttributeNameEncoding(
     schema,
     options,
-    z.object(
-      Object.fromEntries(
-        displayedAttrEntries.map(([attributeName, attribute]) => [
-          attributeName,
-          schemaZodParser(attribute, { ...options, defined: false })
-        ])
-      )
-    )
+    schema.props.strict ? zodObject.strict() : zodObject
   ) as ItemZodParser<SCHEMA, OPTIONS>
 }

@@ -20,6 +20,19 @@ describe('map properties check', () => {
     checkSchemaPropsMock.mockClear()
   })
 
+  test('rejects a non-boolean strict prop on check', () => {
+    const schema = map({ foo: string() }).strict('yes' as unknown as boolean)
+    const invalidCall = () => schema.check()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({
+        code: 'schema.invalidProp',
+        payload: { propName: 'strict', received: 'yes' }
+      })
+    )
+  })
+
   test('applies checkSchemaProps on mapInstance', () => {
     map({ string1: string(), string2: string() }).check()
 

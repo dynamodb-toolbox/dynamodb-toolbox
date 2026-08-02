@@ -133,6 +133,24 @@ describe('map', () => {
     expect(mapped.props.savedAs).toBe('foo')
   })
 
+  test('returns strict map (props)', () => {
+    const mapped = map({ str }, { strict: true })
+
+    const assertMapSchema: A.Contains<(typeof mapped)['props'], { strict: true }> = 1
+    assertMapSchema
+
+    expect(mapped.props.strict).toBe(true)
+  })
+
+  test('returns strict map (method)', () => {
+    const mapped = map({ str }).strict()
+
+    const assertMapSchema: A.Contains<(typeof mapped)['props'], { strict: true }> = 1
+    assertMapSchema
+
+    expect(mapped.props.strict).toBe(true)
+  })
+
   test('returns defaulted map (props)', () => {
     const mapA = map(
       { str },
