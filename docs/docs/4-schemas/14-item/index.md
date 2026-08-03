@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Item
 
-Describes [**items**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) with a finite list of attributes, i.e. key-schema pairs. Items differ from [`maps`](../15-map/index.md) as they **don't have any property** and are not meant to be nested within other schemas:
+Describes [**items**](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.NamingRulesDataTypes.html#HowItWorks.DataTypes) with a finite list of attributes, i.e. key-schema pairs. Items differ from [`maps`](../15-map/index.md) as they are meant to be used as the root schema of an `Entity` (and not to be nested within other schemas):
 
 ```ts
 import { item } from 'dynamodb-toolbox/schema/item'
@@ -25,6 +25,28 @@ type FullName = FormattedValue<typeof fullNameSchema>
 //  lastName: string
 // }
 ```
+
+## Properties
+
+### `.strict()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Rejects **additional (undeclared) attributes** when parsing input values:
+
+```ts
+const pokemonSchema = item({
+  name: string()
+}).strict()
+
+// ❌ Throws `parsing.additionalProperty`
+pokemonSchema.build(Parser).parse({
+  name: 'Pikachu',
+  level: 42
+})
+```
+
+Enforcement happens on **writes** only and on all modes.
 
 ## Methods
 

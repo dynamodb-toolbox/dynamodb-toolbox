@@ -116,4 +116,14 @@ describe('dto', () => {
       }
     })
   })
+
+  test('emits `strict: true` for a strict item', () => {
+    const strictSchema = item({ foo: string() }).strict()
+    const dto = strictSchema.build(SchemaDTO).toJSON()
+
+    expect(dto).toMatchObject({
+      attributes: { foo: { type: 'string' } },
+      strict: true
+    })
+  })
 })

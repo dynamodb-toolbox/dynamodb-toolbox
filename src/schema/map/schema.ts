@@ -1,12 +1,13 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
 
-import type { SchemaProps, SchemaRequiredProp } from '../types/index.js'
+import type { SchemaRequiredProp } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
-import type { MapAttributes } from './types.js'
+import type { MapAttributes, MapSchemaProps } from './types.js'
 
 export class MapSchema<
   ATTRIBUTES extends MapAttributes = MapAttributes,
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends MapSchemaProps = MapSchemaProps
 > {
   type: 'map'
   attributes: ATTRIBUTES
@@ -50,6 +51,18 @@ export class MapSchema<
     }
 
     checkSchemaProps(this.props, path)
+
+    const { strict } = this.props
+
+    if (strict !== undefined && !isBoolean(strict)) {
+      throw new DynamoDBToolboxError('schema.invalidProp', {
+        message: `Invalid prop type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Property: 'strict'. Expected: boolean. Received: ${String(strict)}.`,
+        path,
+        payload: { propName: 'strict', received: strict }
+      })
+    }
 
     const attributesSavedAs = new Set<string>()
     const keyAttributeNames = new Set<string>()

@@ -78,6 +78,20 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     })
   }
 
+  if (schema.props.strict && restEntries.length > 0) {
+    for (const [additionalPropertyKey, additionalProperty] of restEntries) {
+      if (!(additionalPropertyKey in schema.attributes)) {
+        const path = formatArrayPath([...(valuePath ?? []), additionalPropertyKey])
+
+        throw new DynamoDBToolboxError('parsing.additionalProperty', {
+          message: `Attribute '${path}' is not defined and the schema is strict.`,
+          path,
+          payload: { received: additionalProperty }
+        })
+      }
+    }
+  }
+
   const parsedValue = Object.fromEntries(
     Object.entries(parsers)
       .map(([attrName, schemaParser]) => [attrName, schemaParser.next().value])

@@ -37,7 +37,7 @@ export type { ListElementSchema } from './schema/list/index.js'
 export { tuple, TupleSchema, TupleSchema_ } from './schema/tuple/index.js'
 export type { TupleElementSchema } from './schema/tuple/index.js'
 export { map, MapSchema, MapSchema_ } from './schema/map/index.js'
-export type { MapAttributes } from './schema/map/index.js'
+export type { MapAttributes, MapSchemaProps } from './schema/map/index.js'
 export { record, RecordSchema, RecordSchema_ } from './schema/record/index.js'
 export type {
   RecordSchemaProps,
@@ -47,7 +47,7 @@ export type {
 export { anyOf, AnyOfSchema, AnyOfSchema_ } from './schema/anyOf/index.js'
 export type { AnyOfSchemaProps, AnyOfElementSchema } from './schema/anyOf/index.js'
 export { item, ItemSchema, ItemSchema_ } from './schema/item/index.js'
-export type { ItemAttributes } from './schema/item/index.js'
+export type { ItemAttributes, ItemSchemaProps } from './schema/item/index.js'
 export { Parser } from './schema/actions/parse/index.js'
 export type { ParseValueOptions, InferWriteValueOptions } from './schema/actions/parse/index.js'
 export { Formatter } from './schema/actions/format/index.js'

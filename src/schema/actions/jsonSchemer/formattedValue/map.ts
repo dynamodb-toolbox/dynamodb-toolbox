@@ -18,7 +18,8 @@ export type FormattedMapJSONSchema<
         { props: { hidden: true } }
       >]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
     }
-  } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
+  } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] }) &
+    (SCHEMA['props'] extends { strict: true } ? { additionalProperties: false } : {})
 >
 
 export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
@@ -40,6 +41,7 @@ export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
         getFormattedValueJSONSchema(attribute)
       ])
     ),
-    ...(requiredProperties.length > 0 ? { required: requiredProperties } : {})
+    ...(requiredProperties.length > 0 ? { required: requiredProperties } : {}),
+    ...(schema.props.strict ? { additionalProperties: false } : {})
   } as FormattedMapJSONSchema<SCHEMA>
 }

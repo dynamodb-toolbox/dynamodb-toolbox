@@ -18,7 +18,8 @@ export type FormattedItemJSONSchema<
         { props: { hidden: true } }
       >]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
     }
-  } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] })
+  } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] }) &
+    (SCHEMA['props'] extends { strict: true } ? { additionalProperties: false } : {})
 >
 
 export const getFormattedItemJSONSchema = <SCHEMA extends ItemSchema>(
@@ -40,6 +41,7 @@ export const getFormattedItemJSONSchema = <SCHEMA extends ItemSchema>(
         getFormattedValueJSONSchema(attribute)
       ])
     ),
-    ...(requiredProperties.length > 0 ? { required: requiredProperties } : {})
+    ...(requiredProperties.length > 0 ? { required: requiredProperties } : {}),
+    ...(schema.props.strict ? { additionalProperties: false } : {})
   } as FormattedItemJSONSchema<SCHEMA>
 }

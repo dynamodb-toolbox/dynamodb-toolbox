@@ -37,7 +37,7 @@ export type MapZodParser<
                   Overwrite<OPTIONS, { defined: false }>
                 >
               },
-              'strip'
+              SCHEMA['props'] extends { strict: true } ? 'strict' : 'strip'
             >
           >
         >
@@ -52,6 +52,15 @@ export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}):
       ? Object.entries(schema.attributes).filter(([, { props }]) => props.key)
       : Object.entries(schema.attributes)
 
+  const zodObject = z.object(
+    Object.fromEntries(
+      displayedAttrEntries.map(([attributeName, attribute]) => [
+        attributeName,
+        schemaZodParser(attribute, { ...options, defined: false })
+      ])
+    )
+  )
+
   return withAttributeNameEncoding(
     schema,
     options,
@@ -61,17 +70,7 @@ export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}):
       withOptional(
         schema,
         options,
-        withValidate(
-          schema,
-          z.object(
-            Object.fromEntries(
-              displayedAttrEntries.map(([attributeName, attribute]) => [
-                attributeName,
-                schemaZodParser(attribute, { ...options, defined: false })
-              ])
-            )
-          )
-        )
+        withValidate(schema, schema.props.strict ? zodObject.strict() : zodObject)
       )
     )
   )

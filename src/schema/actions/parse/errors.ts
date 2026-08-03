@@ -33,8 +33,17 @@ type CustomValidationFAiledErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+type AdditionalPropertyErrorBlueprint = ErrorBlueprint<{
+  code: 'parsing.additionalProperty'
+  hasPath: true
+  payload: {
+    received: unknown
+  }
+}>
+
 export type ParserErrorBlueprints =
   | InvalidItemErrorBlueprint
   | AttributeRequiredErrorBlueprint
   | InvalidAttributeInputErrorBlueprint
   | CustomValidationFAiledErrorBlueprint
+  | AdditionalPropertyErrorBlueprint

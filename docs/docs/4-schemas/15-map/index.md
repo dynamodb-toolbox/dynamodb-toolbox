@@ -100,6 +100,29 @@ const nameSchema = map({
 }).key()
 ```
 
+### `.strict()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Rejects **additional (undeclared) attributes** when parsing input values:
+
+```ts
+const nameSchema = map({
+  firstName: string(),
+  lastName: string()
+}).strict()
+const nameSchema = map({ ... }, { strict: true })
+
+// ❌ Throws `parsing.additionalProperty`
+nameSchema.build(Parser).parse({
+  firstName: 'John',
+  lastName: 'Doe',
+  age: 42
+})
+```
+
+Enforcement happens on **writes** only and on all modes.
+
 ### `.savedAs(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>
