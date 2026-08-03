@@ -25,7 +25,7 @@ Some transformers are available off-the-shelf:
 
 - [`prefix`](./2-prefix.md): Prefixes a `string` value
 - [`suffix`](./3-suffix.md): Suffixes a `string` value
-- [`trim`](./4-suffix.md): Trims a `string` value
+- [`trim`](./4-trim.md): Trims a `string` value
 - [`jsonStringify`](./5-json-stringify.md): Applies `JSON.stringify` to any value
 - [`pipe`](./6-pipe.md): Merge multiple transformers into a single transformer
 
