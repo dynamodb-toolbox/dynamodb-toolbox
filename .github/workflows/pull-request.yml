@@ -4,7 +4,8 @@ on:
     types: [opened, reopened, synchronize]
 
 jobs:
-  build:
+  run-tests:
+    name: 🎯 Run Tests (Node ${{ matrix.node }} / TS ${{ matrix.typescript }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,7 +23,6 @@ jobs:
             '~5.9.3'
             # 'latest' to reintroduce once TS6 is supported
           ]
-    name: Node ${{ matrix.node }} / TS ${{ matrix.typescript }}
     steps:
       - name: ♻️ Checkout
         uses: actions/checkout@v4
@@ -42,3 +42,25 @@ jobs:
 
       - name: 🎯 Run tests
         run: npm test
+
+  build-docs:
+    name: 🏗️ Build Docs
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./docs
+    steps:
+      - name: ♻️ Checkout
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build website
+        run: npm run build
