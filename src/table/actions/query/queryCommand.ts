@@ -263,6 +263,26 @@ export class IQueryCommand<
         : {})
     }
   }
+
+  async *paginate(
+    documentClientOptions?: DocumentClientOptions
+  ): AsyncIterableIterator<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
+    let page = await this.send(documentClientOptions)
+    yield page
+
+    let exclusiveStartKey = page.LastEvaluatedKey
+    while (exclusiveStartKey !== undefined) {
+      const command = new IQueryCommand(this.table, this[$entities], this[$query], {
+        ...this[$options],
+        exclusiveStartKey
+      } as OPTIONS)
+
+      page = await command.send(documentClientOptions)
+      yield page
+
+      exclusiveStartKey = page.LastEvaluatedKey
+    }
+  }
 }
 
 export class QueryCommand<
