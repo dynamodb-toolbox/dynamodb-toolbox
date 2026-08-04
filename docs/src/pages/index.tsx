@@ -356,6 +356,26 @@ const Home = (): JSX.Element => (
                 <b>composition</b>, <b>transformations</b>{' '}
                 and <b>polymorphism</b>.
               </p>
+              <p className="text-sm dark:text-gray-200 leading-6">
+                Schemas are also <b>portable</b>: Import
+                them from or export them to{' '}
+                <a
+                  href="https://zod.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Zod
+                </a>{' '}
+                and{' '}
+                <a
+                  href="https://json-schema.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  JSON Schema
+                </a>{' '}
+                with <b>type-inference preserved</b>.
+              </p>
             </div>
           </div>
           <div className="flex-1 flex flex-col gap-8 items-center max-w-[400px]">

@@ -42,6 +42,8 @@ DynamoDB-Toolbox is a light abstraction layer over the DocumentClient that **tur
 
 ✨ **A rich schema syntax** that supports a broad range of edge cases like **defaults**, **composition**, **transformation** and **polymorphism**.
 
+🔄 **Portability**: Schemas can be imported from or exported to [Zod](https://zod.dev) and [JSON Schema](https://json-schema.org) with **type-inference preserved**.
+
 🌈 **Type-safety pushed to the limit**: Increase your development velocity with **instantaneous feedbacks** and **slick auto-completion**.
 
 🌴 **Tree-shakable**: Only import what you need.

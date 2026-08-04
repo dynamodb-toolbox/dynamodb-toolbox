@@ -15,6 +15,7 @@ It provides as a light abstraction layer over the SDK that **turns your DynamoDB
 - 🤗 **Simpler queries**: DynamoDB-Toolbox does all the heavy-lifting of crafting those **complex DynamoDB requests**. It makes your code **clearer**, **more concise** and **easier to maintain**.
 - 📐 **Data validation**: Both pushed and fetched items are **validated** against your schemas, which guarantees the **consistency** of your data and the **reliability** of your code.
 - ✨ **A rich schema syntax** that supports a broad range of edge cases like **defaults**, **composition**, **transformation** and **polymorphism**.
+- 🔄 **Portability**: Schemas can be imported from or exported to [Zod](https://zod.dev) and [JSON Schema](https://json-schema.org) with **type-inference preserved**.
 - 🌈 **Type-safety pushed to the limit**: Increase your development velocity with **instantaneous feedbacks** and **slick auto-completion**.
 - 🌴 **Tree-shakable**: Only import what you need.
 - ☝️ **Single-table designs**: DynamoDB-Toolbox makes **querying multiple entities within the same table extremely simple**, although it works just as well with multiple tables.
