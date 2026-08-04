@@ -7,7 +7,7 @@ import MockDate from 'mockdate'
 import type { A } from 'ts-toolbelt'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, Table, TableSpy, item, number, string } from '~/index.js'
 
 import { $entity } from './constants.js'
 import { QueryCommand } from './queryCommand.js'
@@ -182,5 +182,110 @@ describe('queryCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
+  })
+
+  describe('paginate', () => {
+    const key1 = { pk: 'a', sk: 'a' }
+    const key2 = { pk: 'b', sk: 'b' }
+
+    test('yields one batch per DDB page until LastEvaluatedKey is exhausted (last batch included)', async () => {
+      documentClientMock
+        .on(_QueryCommand)
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemB], LastEvaluatedKey: key2 })
+        .resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(QueryCommand).entities(EntityA, EntityB).query({ partition: 'a' })
+
+      const batches = []
+      for await (const page of cmd.paginate()) {
+        const assertPage: A.Equals<typeof page, Awaited<ReturnType<typeof cmd.send>>> = 1
+        assertPage
+
+        batches.push(page)
+      }
+
+      expect(batches).toHaveLength(3)
+      expect(batches).toStrictEqual([
+        { Items: [formattedItemA], LastEvaluatedKey: key1 },
+        { Items: [formattedItemB], LastEvaluatedKey: key2 },
+        { Items: [formattedItemA] }
+      ])
+
+      const calls = documentClientMock.commandCalls(_QueryCommand)
+      expect(calls).toHaveLength(3)
+      expect(calls[0]?.args[0].input.ExclusiveStartKey).toBeUndefined()
+      expect(calls[1]?.args[0].input.ExclusiveStartKey).toStrictEqual(key1)
+      expect(calls[2]?.args[0].input.ExclusiveStartKey).toStrictEqual(key2)
+    })
+
+    test('accumulates maxPages DDB pages per yielded batch (two-level pagination)', async () => {
+      documentClientMock
+        .on(_QueryCommand)
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key2 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key2 })
+        .resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(QueryCommand)
+        .entities(EntityA, EntityB)
+        .query({ partition: 'a' })
+        .options({ maxPages: 2 })
+
+      const batches = []
+      for await (const page of cmd.paginate()) {
+        batches.push(page)
+      }
+
+      expect(batches).toHaveLength(3)
+      expect(batches).toStrictEqual([
+        { Items: [formattedItemA, formattedItemA], LastEvaluatedKey: key1 },
+        { Items: [formattedItemA, formattedItemA], LastEvaluatedKey: key2 },
+        { Items: [formattedItemA] }
+      ])
+
+      expect(documentClientMock.commandCalls(_QueryCommand)).toHaveLength(5)
+    })
+
+    test('honors an initial exclusiveStartKey (resume) on the first batch', async () => {
+      documentClientMock.on(_QueryCommand).resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(QueryCommand)
+        .entities(EntityA, EntityB)
+        .query({ partition: 'a' })
+        .options({ exclusiveStartKey: key1 })
+
+      for await (const page of cmd.paginate()) {
+        expect(page.Items).toStrictEqual([formattedItemA])
+      }
+
+      const calls = documentClientMock.commandCalls(_QueryCommand)
+      expect(calls[0]?.args[0].input.ExclusiveStartKey).toStrictEqual(key1)
+    })
+
+    test('reuses the spy path (one intercepted send per yielded batch)', async () => {
+      const spy = TestTable.build(TableSpy)
+      spy.on(QueryCommand).resolve({ Items: [formattedItemA] })
+
+      try {
+        const cmd = TestTable.build(QueryCommand)
+          .entities(EntityA, EntityB)
+          .query({ partition: 'a' })
+
+        const batches = []
+        for await (const page of cmd.paginate()) {
+          batches.push(page)
+        }
+
+        expect(batches).toHaveLength(1)
+        expect(batches[0]?.Items).toStrictEqual([formattedItemA])
+        expect(spy.sent(QueryCommand).count()).toBe(1)
+        // Spy short-circuits send, so no DDB call is made
+        expect(documentClientMock.commandCalls(_QueryCommand)).toHaveLength(0)
+      } finally {
+        spy.restore()
+      }
+    })
   })
 })

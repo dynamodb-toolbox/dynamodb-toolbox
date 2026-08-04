@@ -2,6 +2,8 @@
 
 Scans the entire table (or a secondary index) and formats items per matching entity. Sendable, paginated, supports parallel segments.
 
+`.paginate(documentClientOptions?)` (on `IScanCommand`) returns a lazy `AsyncIterableIterator<ScanResponse>` that loops `.send()` internally, rolling each response's `LastEvaluatedKey` into the next `exclusiveStartKey` — yields ≥1 batch, reuses the spy/abort path, and is compatible with parallel `segment` / `totalSegments`. In this mode `maxPages` is the DDB-pages-per-yielded-batch size (not a global cap).
+
 ```ts
 const { Items } = await table
   .build(ScanCommand)

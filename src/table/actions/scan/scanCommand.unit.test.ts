@@ -7,10 +7,10 @@ import MockDate from 'mockdate'
 import type { A } from 'ts-toolbelt'
 
 import type { FormattedItem, SavedItem } from '~/index.js'
-import { DynamoDBToolboxError, Entity, Table, item, number, string } from '~/index.js'
+import { DynamoDBToolboxError, Entity, Table, TableSpy, item, number, string } from '~/index.js'
 
-import { ScanCommand } from './scanCommand.js'
 import type { IScanCommand } from './scanCommand.js'
+import { ScanCommand } from './scanCommand.js'
 
 const dynamoDbClient = new DynamoDBClient({ region: 'eu-west-1' })
 const documentClient = DynamoDBDocumentClient.from(dynamoDbClient)
@@ -170,5 +170,124 @@ describe('scanCommand', () => {
       .send()
 
     expect(Items).toStrictEqual([formattedItemA, formattedItemB])
+  })
+
+  describe('paginate', () => {
+    const key1 = { pk: 'a', sk: 'a' }
+    const key2 = { pk: 'b', sk: 'b' }
+
+    test('yields all DDB pages in order until exhausted (last batch included)', async () => {
+      documentClientMock
+        .on(_ScanCommand)
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemB], LastEvaluatedKey: key2 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemB], LastEvaluatedKey: key2 })
+        .resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(ScanCommand).entities(EntityA, EntityB)
+
+      const batches = []
+      for await (const page of cmd.paginate()) {
+        const assertPage: A.Equals<typeof page, Awaited<ReturnType<typeof cmd.send>>> = 1
+        assertPage
+
+        batches.push(page)
+      }
+
+      expect(batches).toStrictEqual([
+        { Items: [formattedItemA], LastEvaluatedKey: key1 },
+        { Items: [formattedItemB], LastEvaluatedKey: key2 },
+        { Items: [formattedItemA], LastEvaluatedKey: key1 },
+        { Items: [formattedItemB], LastEvaluatedKey: key2 },
+        { Items: [formattedItemA] }
+      ])
+
+      const calls = documentClientMock.commandCalls(_ScanCommand)
+      expect(calls).toHaveLength(5)
+      expect(calls[0]?.args[0].input.ExclusiveStartKey).toBeUndefined()
+      expect(calls[1]?.args[0].input.ExclusiveStartKey).toStrictEqual(key1)
+      expect(calls[2]?.args[0].input.ExclusiveStartKey).toStrictEqual(key2)
+      expect(calls[3]?.args[0].input.ExclusiveStartKey).toStrictEqual(key1)
+      expect(calls[4]?.args[0].input.ExclusiveStartKey).toStrictEqual(key2)
+    })
+
+    test('accumulates maxPages DDB pages per yielded batch (two-level pagination)', async () => {
+      documentClientMock
+        .on(_ScanCommand)
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key1 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key2 })
+        .resolvesOnce({ Items: [completeSavedItemA], LastEvaluatedKey: key2 })
+        .resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(ScanCommand).entities(EntityA, EntityB).options({ maxPages: 2 })
+
+      const batches = []
+      for await (const page of cmd.paginate()) {
+        batches.push(page)
+      }
+
+      expect(batches).toStrictEqual([
+        { Items: [formattedItemA, formattedItemA], LastEvaluatedKey: key1 },
+        { Items: [formattedItemA, formattedItemA], LastEvaluatedKey: key2 },
+        { Items: [formattedItemA] }
+      ])
+
+      expect(documentClientMock.commandCalls(_ScanCommand)).toHaveLength(5)
+    })
+
+    test('honors an initial exclusiveStartKey (resume) on the first batch', async () => {
+      documentClientMock.on(_ScanCommand).resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(ScanCommand)
+        .entities(EntityA, EntityB)
+        .options({ exclusiveStartKey: key1 })
+
+      for await (const page of cmd.paginate()) {
+        expect(page.Items).toStrictEqual([formattedItemA])
+      }
+
+      const calls = documentClientMock.commandCalls(_ScanCommand)
+      expect(calls[0]?.args[0].input.ExclusiveStartKey).toStrictEqual(key1)
+    })
+
+    test('is compatible with parallel segments', async () => {
+      documentClientMock.on(_ScanCommand).resolves({ Items: [completeSavedItemA] })
+
+      const cmd = TestTable.build(ScanCommand)
+        .entities(EntityA, EntityB)
+        .options({ segment: 0, totalSegments: 2 })
+
+      const batches = []
+      for await (const page of cmd.paginate()) {
+        batches.push(page)
+      }
+
+      expect(batches).toHaveLength(1)
+
+      const calls = documentClientMock.commandCalls(_ScanCommand)
+      expect(calls[0]?.args[0].input).toMatchObject({ Segment: 0, TotalSegments: 2 })
+    })
+
+    test('reuses the spy path (one intercepted send per yielded batch)', async () => {
+      const testTableSpy = TestTable.build(TableSpy)
+      testTableSpy.on(ScanCommand).resolve({ Items: [formattedItemA] })
+
+      try {
+        const cmd = TestTable.build(ScanCommand).entities(EntityA, EntityB)
+
+        const batches = []
+        for await (const page of cmd.paginate()) {
+          batches.push(page)
+        }
+
+        expect(batches).toHaveLength(1)
+        expect(testTableSpy.sent(ScanCommand).count()).toBe(1)
+        expect(documentClientMock.commandCalls(_ScanCommand)).toHaveLength(0)
+      } finally {
+        testTableSpy.restore()
+      }
+    })
   })
 })

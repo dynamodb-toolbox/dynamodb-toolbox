@@ -160,4 +160,6 @@ const { Items } = await queryCommand
   // Optional: Refine queryCommand
   .options({ consistent: true })
   .send()
+
+const iterator = queryCommand.paginate()
 ```

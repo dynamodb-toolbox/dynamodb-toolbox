@@ -2,6 +2,8 @@
 
 Queries a partition on the table's primary key or a secondary index, then formats matched items per the entity each belongs to. Sendable (`.send()`), paginated.
 
+`.paginate(documentClientOptions?)` (defined on `IQueryCommand`, so `AccessPattern` inherits it) returns a lazy `AsyncIterableIterator<QueryResponse>` that loops `.send()` internally, rolling each response's `LastEvaluatedKey` into the next `exclusiveStartKey` — yields ≥1 batch and reuses the spy/abort path for free. In this mode `maxPages` is the DDB-pages-per-yielded-batch size (not a global cap).
+
 ```ts
 const { Items } = await table
   .build(QueryCommand)

@@ -32,7 +32,15 @@ Scanning is slow and expensive at scale. Use it sparingly.
 
 ## Handling Pagination
 
-DynamoDB paginates results. To process the full dataset, loop through pages using `LastEvaluatedKey`:
+DynamoDB paginates results. The simplest way to process a full dataset is to `.paginate()` over it: this returns a **lazy async-iterable** that walks every page for you, without loading all items into memory at once:
+
+```ts
+for await (const page of command.paginate()) {
+  // ...do something with page.Items here...
+}
+```
+
+Pagination is available on both `ScanCommand` and `QueryCommand`. Under the hood, it threads each response's `LastEvaluatedKey` into the next request's `exclusiveStartKey` — the same loop you'd otherwise write by hand:
 
 ```ts
 let lastEvaluatedKey: Record<string, unknown> | undefined

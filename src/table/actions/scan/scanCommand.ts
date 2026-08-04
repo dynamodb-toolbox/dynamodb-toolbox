@@ -246,6 +246,26 @@ export class IScanCommand<
         : {})
     }
   }
+
+  async *paginate(
+    documentClientOptions?: DocumentClientOptions
+  ): AsyncIterableIterator<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
+    let page = await this.send(documentClientOptions)
+    yield page
+
+    let exclusiveStartKey = page.LastEvaluatedKey
+    while (exclusiveStartKey !== undefined) {
+      const command = new IScanCommand(this.table, this[$entities], {
+        ...this[$options],
+        exclusiveStartKey
+      } as OPTIONS)
+
+      page = await command.send(documentClientOptions)
+      yield page
+
+      exclusiveStartKey = page.LastEvaluatedKey
+    }
+  }
 }
 
 export class ScanCommand<

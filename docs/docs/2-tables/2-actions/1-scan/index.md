@@ -18,6 +18,10 @@ const scanCommand = PokeTable.build(ScanCommand)
 
 const params = scanCommand.params()
 const { Items } = await scanCommand.send()
+
+for await (const page of scanCommand.paginate()) {
+  const { Items } = page
+}
 ```
 
 ## Request
@@ -245,6 +249,34 @@ Available options (see the [DynamoDB documentation](https://docs.aws.amazon.com/
     </tbody>
 </table>
 
+## Pagination
+
+The `.paginate()` method returns a **lazy async-iterable** that walks every page of the table for you — rolling each response's `LastEvaluatedKey` into the next request's `exclusiveStartKey` — without loading all items into memory at once:
+
+```ts
+const command = PokeTable.build(ScanCommand)
+
+for await (const page of command.paginate()) {
+  const { Items, LastEvaluatedKey } = page
+}
+```
+
+Each yielded `page` has the **exact same shape** as a [`.send()` response](#response) (`ScanResponse`).
+
+:::note[Compatibility]
+
+Pagination is compatible with parallel scans: Set the [`segment` / `totalSegments`](#options) options and iterate each segment independently.
+
+It is also compatible with the [`maxPages`](#options) option: The latter controls how many DynamoDB pages are accumulated into **each** yielded batch, while the iterator keeps yielding batches until the whole table is exhausted.
+
+:::
+
+:::warning
+
+Note that `maxPages: Infinity` is an anti-pattern with `.paginate()`: The first batch would load everything into memory, defeating the point of iterating.
+
+:::
+
 ## Examples
 
 :::note[Examples]
@@ -320,11 +352,12 @@ for (const item of Items) {
 const abortController = new AbortController()
 const abortSignal = abortController.signal
 
-const { Items } = await PokeTable.build(ScanCommand).send({
-  abortSignal
-})
+const command = PokeTable.build(ScanCommand)
 
-// 👇 Aborts the command
+command.send({ abortSignal })
+command.paginate({ abortSignal })
+
+// 👇 Aborts the command(s)
 abortController.abort()
 ```
 
@@ -336,7 +369,18 @@ abortController.abort()
 :::note[Paginated]
 
 <Tabs>
-<TabItem value="paginated" label="Paginated">
+<TabItem value="iterator" label="Iterator">
+
+```ts
+const command = PokeTable.build(ScanCommand)
+
+for await (const page of command.paginate()) {
+  const { Items, LastEvaluatedKey } = page
+}
+```
+
+</TabItem>
+<TabItem value="paginated" label="Manual">
 
 ```ts
 let lastEvaluatedKey: Record<string, unknown> | undefined
