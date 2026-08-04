@@ -164,3 +164,59 @@ import { Parser } from 'dynamodb-toolbox/schema/actions/parse'
 
 const pokeType = pokeTypeSchema.build(Parser).parse(string)
 ```
+
+## Portability
+
+Schemas are **portable**: They can be imported from or exported to [Zod](https://zod.dev) and [JSON Schema](https://json-schema.org) with **type-inference preserved**. The transpilation itself is type-safe, so type inference holds in both directions.
+
+### Zod
+
+The [`ZodSchemer`](../18-actions/5-zod-schemer.md) action transpiles a DynamoDB-Toolbox schema into a [Zod](https://zod.dev) schema (for [parsing](../18-actions/1-parse.md) or [formatting](../18-actions/2-format.md)):
+
+```ts
+import { ZodSchemer } from 'dynamodb-toolbox/schema/actions/zodSchemer'
+
+const zodParser = pokemonSchema.build(ZodSchemer).parser()
+
+const parsed = zodParser.parse(input)
+// => TransformedValue<typeof pokemonSchema>
+```
+
+Conversely, the [`fromZodSchema`](../18-actions/5-zod-schemer.md#fromzodschema) util derives a DynamoDB-Toolbox schema from a Zod schema:
+
+```ts
+import { z } from 'zod'
+import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema'
+
+const zodSchema = z.object({
+  pokemonId: z.string(),
+  level: z.number()
+})
+
+const pokemonSchema = fromZodSchema(zodSchema)
+```
+
+### JSON Schema
+
+The [`JSONSchemer`](../18-actions/6-json-schemer.md) action transpiles a DynamoDB-Toolbox schema into a standard [JSON Schema](https://json-schema.org) (of its formatted value) — useful for OpenAPI specs, form generation or LLM/MCP tool definitions:
+
+```ts
+import { JSONSchemer } from 'dynamodb-toolbox/schema/actions/jsonSchemer'
+
+const jsonSchema = pokemonSchema
+  .build(JSONSchemer)
+  .formattedValueSchema()
+// =>
+// {
+//   type: 'object',
+//   properties: {
+//     pokemonId: { type: 'string' },
+//     level: { type: 'number' }
+//   },
+//   required: ['pokemonId', 'level']
+// }
+```
+
+### DTO
+
+You can also serialize a schema to a portable [`SchemaDTO`](../18-actions/3-dto.md) and rebuild it later with [`fromDTO`](../18-actions/3-dto.md).
