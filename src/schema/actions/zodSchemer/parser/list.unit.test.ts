@@ -143,4 +143,11 @@ describe('zodSchemer > parser > list', () => {
       expect(() => output.parse([])).toThrow()
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = list(string()).meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

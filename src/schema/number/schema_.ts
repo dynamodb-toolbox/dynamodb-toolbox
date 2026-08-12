@@ -14,6 +14,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
@@ -86,6 +87,15 @@ export class NumberSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): NumberSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new NumberSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): NumberSchema_<Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new NumberSchema_(overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

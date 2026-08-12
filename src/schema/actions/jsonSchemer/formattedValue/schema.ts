@@ -11,6 +11,8 @@ import type {
   TupleSchema
 } from '~/schema/index.js'
 
+import type { FormattedAnyJSONSchema } from './any.js'
+import { getFormattedAnyJSONSchema } from './any.js'
 import type { FormattedAnyOfJSONSchema } from './anyOf.js'
 import { getFormattedAnyOfJSONSchema } from './anyOf.js'
 import type { FormattedItemJSONSchema } from './item.js'
@@ -35,7 +37,7 @@ export const getFormattedValueJSONSchema = <SCHEMA extends Schema>(
 
   switch (schema.type) {
     case 'any':
-      return {} as RESPONSE
+      return getFormattedAnyJSONSchema(schema) as RESPONSE
     case 'null':
     case 'boolean':
     case 'number':
@@ -62,7 +64,7 @@ export const getFormattedValueJSONSchema = <SCHEMA extends Schema>(
 export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCHEMA
   ? Record<string, unknown>
   :
-      | (SCHEMA extends AnySchema ? {} : never)
+      | (SCHEMA extends AnySchema ? FormattedAnyJSONSchema<SCHEMA> : never)
       | (SCHEMA extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<SCHEMA> : never)
       | (SCHEMA extends SetSchema ? FormattedSetJSONSchema<SCHEMA> : never)
       | (SCHEMA extends ListSchema ? FormattedListJSONSchema<SCHEMA> : never)

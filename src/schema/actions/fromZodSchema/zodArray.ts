@@ -6,6 +6,7 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodArrayAny = ZodArray<ZodTypeAny, ArrayCardinality>
 
@@ -21,4 +22,4 @@ export type FromZodArray<
     : never
 
 export const fromZodArray = (zodArray: ZodArrayAny): ListSchema =>
-  list(fromZodSchema(zodArray.element))
+  withMeta(list(fromZodSchema(zodArray.element)), zodArray)

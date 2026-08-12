@@ -5,7 +5,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 import type { SelectKeys } from '~/types/selectKeys.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -61,16 +61,19 @@ export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}):
     )
   )
 
-  return withAttributeNameEncoding(
+  return withDescribe(
     schema,
-    options,
-    withDefault(
+    withAttributeNameEncoding(
       schema,
       options,
-      withOptional(
+      withDefault(
         schema,
         options,
-        withValidate(schema, schema.props.strict ? zodObject.strict() : zodObject)
+        withOptional(
+          schema,
+          options,
+          withValidate(schema, schema.props.strict ? zodObject.strict() : zodObject)
+        )
       )
     )
   )

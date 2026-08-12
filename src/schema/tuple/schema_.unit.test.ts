@@ -145,6 +145,19 @@ describe('tuple', () => {
   })
 
   // TODO: Reimplement props as potential first argument
+  test('returns tuple with meta (method)', () => {
+    const withMeta = tuple(str).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  // TODO: Reimplement props as potential first argument
   test('returns defaulted tuple (method)', () => {
     const tupleSchema = tuple(str).updateDefault(['bar'])
 

@@ -4,7 +4,7 @@ import type { ListSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -30,12 +30,18 @@ export type ListZodParser<
     >
 
 export const listZodParser = (schema: ListSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
-  withDefault(
+  withDescribe(
     schema,
-    options,
-    withOptional(
+    withDefault(
       schema,
       options,
-      withValidate(schema, z.array(schemaZodParser(schema.elements, { ...options, defined: true })))
+      withOptional(
+        schema,
+        options,
+        withValidate(
+          schema,
+          z.array(schemaZodParser(schema.elements, { ...options, defined: true }))
+        )
+      )
     )
   )

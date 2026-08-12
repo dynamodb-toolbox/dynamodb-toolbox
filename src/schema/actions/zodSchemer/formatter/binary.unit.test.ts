@@ -171,4 +171,11 @@ describe('zodSchemer > formatter > binary', () => {
       expect(() => output.parse(undefined)).toThrow()
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = binary().meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

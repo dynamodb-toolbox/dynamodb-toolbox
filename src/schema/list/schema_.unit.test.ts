@@ -181,6 +181,30 @@ describe('list', () => {
     expect(lst.props.required).toBe('always')
   })
 
+  test('returns list with meta (prop)', () => {
+    const withMeta = list(strElement, { meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns list with meta (method)', () => {
+    const withMeta = list(strElement).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs list (prop)', () => {
     const lst = list(strElement, { savedAs: 'foo' })
 

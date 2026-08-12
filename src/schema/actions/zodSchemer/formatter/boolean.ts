@@ -4,7 +4,7 @@ import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
@@ -56,9 +56,8 @@ export const booleanZodFormatter = (
     zodFormatter = z.boolean()
   }
 
-  return withDecoding(
+  return withDescribe(
     schema,
-    options,
-    withOptional(schema, options, withValidate(schema, zodFormatter))
+    withDecoding(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
   )
 }

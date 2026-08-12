@@ -4,6 +4,7 @@ export type {
   Schema,
   Schema_,
   Validator,
+  SchemaMeta,
   InputValue,
   ValidValue,
   TransformedValue,

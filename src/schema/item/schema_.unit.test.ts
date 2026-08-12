@@ -175,6 +175,18 @@ describe('item', () => {
     expect(sch.attributes).toHaveProperty('reqStr')
   })
 
+  test('returns item with meta (method)', () => {
+    const withMeta = item({ reqStr }).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('strict', () => {
     const schema = item({ reqStr }).strict()
 

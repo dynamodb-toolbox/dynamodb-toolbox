@@ -7,6 +7,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodObjectAny = ZodObject<ZodRawShape, UnknownKeysParam>
 
@@ -32,7 +33,8 @@ export const fromZodObject = (zodObject: ZodObjectAny): MapSchema => {
     Object.entries(zodObject.shape).map(([key, value]) => [key, fromZodSchema(value)])
   )
 
-  return zodObject._def.unknownKeys === 'strict'
-    ? map(attributes, { strict: true })
-    : map(attributes)
+  return withMeta(
+    zodObject._def.unknownKeys === 'strict' ? map(attributes, { strict: true }) : map(attributes),
+    zodObject
+  )
 }

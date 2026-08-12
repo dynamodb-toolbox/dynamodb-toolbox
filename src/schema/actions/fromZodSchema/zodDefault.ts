@@ -6,6 +6,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodDefaultAny = ZodDefault<ZodTypeAny>
 
@@ -19,4 +20,7 @@ export type FromZodDefault<
     : never
 
 export const fromZodDefault = (zodSchema: ZodDefaultAny): Schema =>
-  fromZodSchema(zodSchema.removeDefault()).default(zodSchema._def.defaultValue())
+  withMeta(
+    fromZodSchema(zodSchema.removeDefault()).default(zodSchema._def.defaultValue()),
+    zodSchema
+  )

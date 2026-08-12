@@ -34,11 +34,14 @@ describe('jsonSchemer - formattedItem', () => {
       }),
       record: record(string(), string()),
       anyOf: anyOf(nul(), string())
-    })
+    }).meta({ title: 'Title', description: 'Desc', examples: ['ex'], custom: 'prop' })
 
     const JSONSchema = mySchema.build(JSONSchemer).formattedValueSchema()
 
     type ExpectedJSONSchema = {
+      title: 'Title'
+      description: 'Desc'
+      examples: string[]
       type: 'object'
       properties: {
         string: { type: 'string' }
@@ -86,6 +89,9 @@ describe('jsonSchemer - formattedItem', () => {
     }
 
     const expectedJSONSchema: ExpectedJSONSchema = {
+      title: 'Title',
+      description: 'Desc',
+      examples: ['ex'],
       type: 'object',
       properties: {
         string: { type: 'string' },

@@ -4,6 +4,7 @@ import type { ItemSchema } from '~/schema/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import { withDescribe } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -44,15 +45,18 @@ export const itemZodFormatter = <
     ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
     : Object.entries(schema.attributes)
 
-  return withAttributeNameDecoding(
+  return withDescribe(
     schema,
-    options,
-    z.object(
-      Object.fromEntries(
-        displayedAttrEntries.map(([attributeName, attribute]) => [
-          attributeName,
-          schemaZodFormatter(attribute, { ...options, defined: false })
-        ])
+    withAttributeNameDecoding(
+      schema,
+      options,
+      z.object(
+        Object.fromEntries(
+          displayedAttrEntries.map(([attributeName, attribute]) => [
+            attributeName,
+            schemaZodFormatter(attribute, { ...options, defined: false })
+          ])
+        )
       )
     )
   ) as ItemZodFormatter<SCHEMA, OPTIONS>

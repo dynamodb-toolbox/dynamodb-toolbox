@@ -19,4 +19,10 @@ describe('fromZodSchema > zodDefault', () => {
     expect(output).toBeInstanceOf(AnySchema_)
     expect(output.props.putDefault).toStrictEqual(VALUE)
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.string().default('x').describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

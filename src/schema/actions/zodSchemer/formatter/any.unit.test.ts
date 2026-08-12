@@ -160,4 +160,11 @@ describe('zodSchemer > formatter > any', () => {
       expect(output).toBeInstanceOf(z.ZodType)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = any().meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

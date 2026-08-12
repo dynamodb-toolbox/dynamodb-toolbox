@@ -5,6 +5,8 @@ import { string } from '~/schema/string/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import { withMeta } from './utils.js'
+
 export type ZodEnumAny = ZodEnum<[string, ...string[]]>
 
 export type FromZodEnum<
@@ -18,4 +20,5 @@ export type FromZodEnum<
       : StringSchema<Overwrite<PROPS, { enum: ZOD_SCHEMA_ENUM }>>
     : never
 
-export const fromZodEnum = (zodEnum: ZodEnumAny): StringSchema => string().enum(...zodEnum.options)
+export const fromZodEnum = (zodEnum: ZodEnumAny): StringSchema =>
+  withMeta(string().enum(...zodEnum.options), zodEnum)

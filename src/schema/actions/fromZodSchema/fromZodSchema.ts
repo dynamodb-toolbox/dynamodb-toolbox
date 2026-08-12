@@ -147,23 +147,23 @@ export const fromZodSchema = <ZOD_SCHEMA extends ZodSchema>(
   zodSchema: ZOD_SCHEMA
 ): FromZodSchema<ZOD_SCHEMA> => {
   if (zodSchema instanceof ZodNull) {
-    return fromZodNull() as FromZodSchema<ZOD_SCHEMA>
+    return fromZodNull(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
   if (zodSchema instanceof ZodBoolean) {
-    return fromZodBoolean() as FromZodSchema<ZOD_SCHEMA>
+    return fromZodBoolean(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
   if (zodSchema instanceof ZodNumber) {
-    return fromZodNumber() as FromZodSchema<ZOD_SCHEMA>
+    return fromZodNumber(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
   if (zodSchema instanceof ZodBigInt) {
-    return fromZodBigInt() as FromZodSchema<ZOD_SCHEMA>
+    return fromZodBigInt(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
   if (zodSchema instanceof ZodString) {
-    return fromZodString() as FromZodSchema<ZOD_SCHEMA>
+    return fromZodString(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
   if (zodSchema instanceof ZodLiteral) {
@@ -215,5 +215,5 @@ export const fromZodSchema = <ZOD_SCHEMA extends ZodSchema>(
     return fromZodEffects(zodSchema) as FromZodSchema<ZOD_SCHEMA>
   }
 
-  return fromZodCustom() as FromZodSchema<ZOD_SCHEMA>
+  return fromZodCustom(zodSchema) as FromZodSchema<ZOD_SCHEMA>
 }

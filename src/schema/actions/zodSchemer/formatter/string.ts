@@ -3,7 +3,7 @@ import { z } from 'zod'
 import type { ResolvedStringSchema, StringSchema } from '~/schema/index.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
@@ -43,9 +43,8 @@ export const stringZodFormatter = (
     zodFormatter = z.string()
   }
 
-  return withDecoding(
+  return withDescribe(
     schema,
-    options,
-    withOptional(schema, options, withValidate(schema, zodFormatter))
+    withDecoding(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
   )
 }

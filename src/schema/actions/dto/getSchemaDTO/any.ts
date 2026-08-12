@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getAnySchemaDTO = (schema: AnySchema): AnySchemaDTO => {
   const defaultsDTO = getDefaultsDTO(schema)
-  const { required, hidden, key, savedAs, transform } = schema.props
+  const { required, hidden, key, savedAs, meta, transform } = schema.props
 
   return {
     type: 'any',
@@ -17,6 +17,7 @@ export const getAnySchemaDTO = (schema: AnySchema): AnySchemaDTO => {
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),
     ...(savedAs !== undefined ? { savedAs } : {}),
+    ...(meta !== undefined ? { meta } : {}),
     ...(transform !== undefined
       ? {
           transform: (isSerializableTransformer(transform)

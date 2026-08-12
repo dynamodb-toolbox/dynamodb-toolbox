@@ -81,4 +81,10 @@ describe('fromZodSchema > zodLiteral', () => {
     expect(output.props.enum).toStrictEqual(['foo'])
     expect(output.props.putDefault).toBe('foo')
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.literal('foo').describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

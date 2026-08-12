@@ -6,6 +6,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodOptionalAny = ZodOptional<ZodTypeAny>
 
@@ -19,4 +20,4 @@ export type FromZodOptional<
     : never
 
 export const fromZodOptional = (zodSchema: ZodOptionalAny): Schema =>
-  fromZodSchema(zodSchema.unwrap()).optional()
+  withMeta(fromZodSchema(zodSchema.unwrap()).optional(), zodSchema)

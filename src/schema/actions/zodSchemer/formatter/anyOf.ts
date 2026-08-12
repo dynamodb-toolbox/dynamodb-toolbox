@@ -4,7 +4,7 @@ import type { AnyOfSchema, Schema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -65,5 +65,5 @@ export const anyOfZodFormatter = (
     )
   }
 
-  return withOptional(schema, options, withValidate(schema, zodFormatter))
+  return withDescribe(schema, withOptional(schema, options, withValidate(schema, zodFormatter)))
 }

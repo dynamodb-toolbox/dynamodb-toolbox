@@ -26,4 +26,10 @@ describe('fromZodSchema > union', () => {
     expect(output.elements[0]).toBeInstanceOf(StringSchema_)
     expect(output.elements[1]).toBeInstanceOf(NumberSchema_)
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.union([z.string(), z.number()]).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

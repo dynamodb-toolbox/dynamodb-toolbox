@@ -158,4 +158,11 @@ describe('zodSchemer > parser > tuple', () => {
       expect(() => output.parse([''])).toThrow()
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = tuple(string()).meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

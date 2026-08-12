@@ -4,13 +4,14 @@ import type { OmitKeys } from '~/types/omitKeys.js'
 
 import type { FormattedValueJSONSchema } from './schema.js'
 import { getFormattedValueJSONSchema } from './schema.js'
-import type { RequiredProperties } from './shared.js'
+import type { JSONSchemaMeta, RequiredProperties } from './utils.js'
+import { getJSONSchemaMeta } from './utils.js'
 
 export type FormattedItemJSONSchema<
   SCHEMA extends ItemSchema,
   REQUIRED_PROPERTIES extends string = RequiredProperties<SCHEMA>
 > = ComputeObject<
-  {
+  JSONSchemaMeta<SCHEMA> & {
     type: 'object'
     properties: {
       [KEY in OmitKeys<
@@ -34,6 +35,7 @@ export const getFormattedItemJSONSchema = <SCHEMA extends ItemSchema>(
     .map(([attributeName]) => attributeName)
 
   return {
+    ...getJSONSchemaMeta(schema),
     type: 'object',
     properties: Object.fromEntries(
       displayedAttrEntries.map(([attributeName, attribute]) => [

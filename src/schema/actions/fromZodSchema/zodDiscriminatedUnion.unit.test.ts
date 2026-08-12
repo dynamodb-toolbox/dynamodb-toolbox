@@ -29,4 +29,17 @@ describe('fromZodSchema > discriminatedUnion', () => {
     expect(output.elements[1].attributes.type).toBeInstanceOf(StringSchema_)
     expect(output.elements[1].attributes.type.props.enum).toStrictEqual(['b', 'c'])
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(
+      z
+        .discriminatedUnion('type', [
+          z.object({ type: z.literal('a') }),
+          z.object({ type: z.literal('b') })
+        ])
+        .describe('Desc')
+    )
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

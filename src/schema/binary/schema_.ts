@@ -14,6 +14,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
@@ -86,6 +87,15 @@ export class BinarySchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): BinarySchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new BinarySchema_(overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): BinarySchema_<Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new BinarySchema_(overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

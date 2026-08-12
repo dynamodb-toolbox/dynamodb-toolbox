@@ -5,7 +5,7 @@ import type { OmitKeys } from '~/types/omitKeys.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -50,20 +50,23 @@ export const mapZodFormatter = (
     ? Object.entries(schema.attributes).filter(([, { props }]) => !props.hidden)
     : Object.entries(schema.attributes)
 
-  return withAttributeNameDecoding(
+  return withDescribe(
     schema,
-    options,
-    withOptional(
+    withAttributeNameDecoding(
       schema,
       options,
-      withValidate(
+      withOptional(
         schema,
-        z.object(
-          Object.fromEntries(
-            displayedAttrEntries.map(([attributeName, attribute]) => [
-              attributeName,
-              schemaZodFormatter(attribute, { ...options, defined: false })
-            ])
+        options,
+        withValidate(
+          schema,
+          z.object(
+            Object.fromEntries(
+              displayedAttrEntries.map(([attributeName, attribute]) => [
+                attributeName,
+                schemaZodFormatter(attribute, { ...options, defined: false })
+              ])
+            )
           )
         )
       )

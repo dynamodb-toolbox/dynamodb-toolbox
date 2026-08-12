@@ -176,4 +176,11 @@ describe('zodSchemer > formatter > nul', () => {
       expect(output.parse(NULL)).toBe(NULL)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = nul().meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

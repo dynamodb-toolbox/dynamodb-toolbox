@@ -132,4 +132,11 @@ describe('zodSchemer > parser > item', () => {
       expect(output.shape.num).toBeInstanceOf(z.ZodNumber)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = item({ str: string() }).meta({ description: 'Desc' })
+    const output = itemZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

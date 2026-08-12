@@ -25,12 +25,13 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   }
 
   toJSON(): ItemSchemaDTO {
-    const { strict } = this.schema.props
+    const { strict, meta } = this.schema.props
 
     return {
       type: this.type,
       attributes: this.attributes,
-      ...(strict !== undefined && strict ? { strict } : {})
+      ...(strict !== undefined && strict ? { strict } : {}),
+      ...(meta !== undefined ? { meta } : {})
     }
   }
 }

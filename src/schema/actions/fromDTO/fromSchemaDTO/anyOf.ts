@@ -15,6 +15,7 @@ export const fromAnyOfSchemaDTO = ({
   hidden,
   key,
   savedAs,
+  meta,
   discriminator
 }: AnyOfSchemaDTO): AnyOfSchema => {
   /**
@@ -36,6 +37,10 @@ export const fromAnyOfSchemaDTO = ({
 
   if (savedAs !== undefined) {
     anyOf_ = anyOf_.savedAs(savedAs)
+  }
+
+  if (meta !== undefined) {
+    anyOf_ = anyOf_.meta(meta)
   }
 
   if (discriminator !== undefined) {

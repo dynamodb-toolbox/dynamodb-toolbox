@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getListSchemaDTO = (schema: ListSchema): ListSchemaDTO => {
   const defaultsDTO = getDefaultsDTO(schema)
-  const { required, hidden, key, savedAs } = schema.props
+  const { required, hidden, key, savedAs, meta } = schema.props
 
   return {
     type: 'list',
@@ -18,6 +18,7 @@ export const getListSchemaDTO = (schema: ListSchema): ListSchemaDTO => {
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),
     ...(savedAs !== undefined ? { savedAs } : {}),
+    ...(meta !== undefined ? { meta } : {}),
     ...defaultsDTO
   }
 }

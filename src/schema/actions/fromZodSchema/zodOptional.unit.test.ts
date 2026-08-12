@@ -17,4 +17,10 @@ describe('fromZodSchema > zodOptional', () => {
     expect(output).toBeInstanceOf(AnySchema_)
     expect(output.props.required).toBe('never')
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.string().optional().describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

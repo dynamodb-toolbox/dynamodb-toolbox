@@ -261,4 +261,11 @@ describe('zodSchemer > parser > map', () => {
       expect(output.shape.num).toBeInstanceOf(z.ZodNumber)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = map({ str: string() }).meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

@@ -12,6 +12,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
@@ -86,6 +87,15 @@ export class AnyOfSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new AnyOfSchema_(this.elements, overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): AnyOfSchema_<ELEMENTS, Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new AnyOfSchema_(this.elements, overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

@@ -12,6 +12,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaProps,
   SchemaRequiredProp,
   Validator
@@ -101,6 +102,15 @@ export class ListSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): ListSchema_<ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new ListSchema_(this.elements, overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): ListSchema_<ELEMENTS, Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new ListSchema_(this.elements, overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

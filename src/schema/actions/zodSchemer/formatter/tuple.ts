@@ -4,7 +4,7 @@ import type { Schema, TupleSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -40,15 +40,18 @@ export const tupleZodFormatter = (
   schema: TupleSchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny =>
-  withOptional(
+  withDescribe(
     schema,
-    options,
-    withValidate(
+    withOptional(
       schema,
-      z.tuple(
-        schema.elements.map(element =>
-          schemaZodFormatter(element, { ...options, defined: false })
-        ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
+      options,
+      withValidate(
+        schema,
+        z.tuple(
+          schema.elements.map(element =>
+            schemaZodFormatter(element, { ...options, defined: false })
+          ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
+        )
       )
     )
   )

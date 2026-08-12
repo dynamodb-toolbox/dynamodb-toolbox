@@ -1,4 +1,4 @@
-import type { AtLeastOnce, SchemaRequiredProp } from '~/schema/index.js'
+import type { AtLeastOnce, SchemaMeta, SchemaRequiredProp } from '~/schema/index.js'
 import type { JSONStringifierDTO } from '~/transformers/jsonStringify.js'
 import type { PipeDTO } from '~/transformers/pipe.js'
 import type { PrefixerDTO } from '~/transformers/prefix.js'
@@ -38,6 +38,7 @@ interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
   hidden?: boolean
   key?: boolean
   savedAs?: string
+  meta?: SchemaMeta
 }
 
 export type AnySchemaTransformerDTO =

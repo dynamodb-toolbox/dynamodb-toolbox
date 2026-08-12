@@ -14,6 +14,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaProps,
   SchemaRequiredProp,
   Validator
@@ -87,6 +88,15 @@ export class NullSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): NullSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new NullSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): NullSchema_<Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new NullSchema_(overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

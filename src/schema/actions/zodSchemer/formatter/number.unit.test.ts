@@ -230,4 +230,11 @@ describe('zodSchemer > formatter > number', () => {
       expect(output.options[1].value).toBe(NUM_2)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = number().meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

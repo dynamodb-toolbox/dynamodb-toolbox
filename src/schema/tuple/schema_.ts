@@ -12,6 +12,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaProps,
   SchemaRequiredProp,
   Validator
@@ -89,6 +90,15 @@ export class TupleSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): TupleSchema_<ELEMENTS, Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new TupleSchema_(this.elements, overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): TupleSchema_<ELEMENTS, Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new TupleSchema_(this.elements, overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

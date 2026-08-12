@@ -7,7 +7,7 @@ import type { Extends, If } from '~/types/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -117,9 +117,8 @@ export const recordZodParser = (
     )
   }
 
-  return withDefault(
+  return withDescribe(
     schema,
-    options,
-    withOptional(schema, options, withValidate(schema, zodFormatter))
+    withDefault(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
   )
 }

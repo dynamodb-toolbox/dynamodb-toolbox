@@ -3,17 +3,22 @@ import type { ComputeObject } from '~/types/computeObject.js'
 
 import type { FormattedValueJSONSchemaRec } from './schema.js'
 import { getFormattedValueJSONSchema } from './schema.js'
+import type { JSONSchemaMeta } from './utils.js'
+import { getJSONSchemaMeta } from './utils.js'
 
-export type FormattedTupleJSONSchema<SCHEMA extends TupleSchema> = ComputeObject<{
-  type: 'array'
-  items: FormattedValueJSONSchemaRec<SCHEMA['elements']>
-  minLength: SCHEMA['elements']['length']
-  maxLength: SCHEMA['elements']['length']
-}>
+export type FormattedTupleJSONSchema<SCHEMA extends TupleSchema> = ComputeObject<
+  JSONSchemaMeta<SCHEMA> & {
+    type: 'array'
+    items: FormattedValueJSONSchemaRec<SCHEMA['elements']>
+    minLength: SCHEMA['elements']['length']
+    maxLength: SCHEMA['elements']['length']
+  }
+>
 
 export const getFormattedTupleJSONSchema = <SCHEMA extends TupleSchema>(
   schema: SCHEMA
 ): FormattedTupleJSONSchema<SCHEMA> => ({
+  ...getJSONSchemaMeta(schema),
   type: 'array',
   items: schema.elements.map(element =>
     getFormattedValueJSONSchema(element)

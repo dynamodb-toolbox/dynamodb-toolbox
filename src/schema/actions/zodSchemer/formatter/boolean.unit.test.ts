@@ -202,4 +202,11 @@ describe('zodSchemer > formatter > boolean', () => {
       expect(output.options[1].value).toBe(FALSE)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = boolean().meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })
