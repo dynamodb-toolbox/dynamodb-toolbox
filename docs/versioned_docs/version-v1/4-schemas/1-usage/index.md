@@ -84,7 +84,7 @@ Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separatel
 
 You can update attribute properties by using **dedicated methods** or by providing **option objects**.
 
-The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage** (although it should be negligible):
+The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage** (although it is negligible):
 
 ```ts
 // Using methods

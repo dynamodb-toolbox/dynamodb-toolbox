@@ -83,6 +83,27 @@ const isLegendarySchema = boolean().savedAs('isLeg')
 const isLegendarySchema = boolean({ savedAs: 'isLeg' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const isLegendarySchema = boolean().meta({
+  title: 'Is Legendary',
+  description: 'Whether the Pokémon is legendary',
+  examples: [true]
+})
+const isLegendarySchema = boolean({
+  meta: {
+    title: 'Is Legendary',
+    description: 'Whether the Pokémon is legendary',
+    examples: [true]
+  }
+})
+```
+
 ### `.enum(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean[]</code></i></p>

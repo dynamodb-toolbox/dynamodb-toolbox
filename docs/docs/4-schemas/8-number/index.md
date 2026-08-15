@@ -81,6 +81,27 @@ const levelSchema = number().savedAs('lvl')
 const levelSchema = number({ savedAs: 'lvl' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const levelSchema = number().meta({
+  title: 'Level',
+  description: 'The Pokémon level',
+  examples: [42]
+})
+const levelSchema = number({
+  meta: {
+    title: 'Level',
+    description: 'The Pokémon level',
+    examples: [42]
+  }
+})
+```
+
 ### `.enum(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>number[]</code></i></p>

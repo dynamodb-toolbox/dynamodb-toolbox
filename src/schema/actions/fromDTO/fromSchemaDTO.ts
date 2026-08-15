@@ -14,9 +14,13 @@ export const fromSchemaDTO = (schemaDTO: ItemSchemaDTO): ItemSchema => {
     )
   )
 
+  if (schemaDTO.strict) {
+    schema = schema.strict()
+  }
+
   if (schemaDTO.meta !== undefined) {
     schema = schema.meta(schemaDTO.meta)
   }
 
-  return schemaDTO.strict ? schema.strict() : schema
+  return schema
 }

@@ -143,6 +143,23 @@ const pokeTypeSchema = anyOf(
 ).savedAs('pkt')
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const pokeTypeSchema = anyOf(
+  string().const('fire'),
+  string().const('grass'),
+  string().const('water')
+).meta({
+  title: 'Poke Type',
+  description: 'A Pokémon type'
+})
+```
+
 ### `.discriminate(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>

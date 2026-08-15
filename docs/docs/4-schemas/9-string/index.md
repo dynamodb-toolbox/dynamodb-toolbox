@@ -81,6 +81,27 @@ const nameSchema = string().savedAs('n')
 const nameSchema = string({ savedAs: 'n' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const nameSchema = string().meta({
+  title: 'Name',
+  description: 'The Pokémon name',
+  examples: ['Pikachu']
+})
+const nameSchema = string({
+  meta: {
+    title: 'Name',
+    description: 'The Pokémon name',
+    examples: ['Pikachu']
+  }
+})
+```
+
 ### `.enum(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>string[]</code></i></p>

@@ -117,6 +117,28 @@ const weaknessesSchema = record(
 const weaknessesSchema = record(..., { savedAs: 'w' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const weaknessesSchema = record(
+  string().enum('fire', ...),
+  number()
+).meta({
+  title: 'Weaknesses',
+  description: 'Damage multiplier per Pokémon type'
+})
+const weaknessesSchema = record(..., {
+  meta: {
+    title: 'Weaknesses',
+    description: 'Damage multiplier per Pokémon type'
+  }
+})
+```
+
 ### `.partial()`
 
 <p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>

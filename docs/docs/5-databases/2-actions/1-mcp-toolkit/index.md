@@ -40,6 +40,7 @@ We highly recommend adding `title` and `description` metadata to your models for
 - For Entities: The [`meta`](../../../3-entities/1-usage/index.md#meta) property
 - For Table Access Patterns: The [`meta`](../../../2-tables/2-actions/3-access-pattern/index.md#meta) method
 - For Entity Access Patterns: The [`meta`](../../../3-entities/4-actions/2-access-pattern/index.md#meta) method
+- For individual attributes: The schema-level [`meta`](../../../4-schemas/1-usage/index.md#schemas-props) method — its `description` enriches the generated tool input schemas (through the [`ZodSchemer`](../../../4-schemas/18-actions/5-zod-schemer.md)), so each field is documented for the LLM
 
 :::
 

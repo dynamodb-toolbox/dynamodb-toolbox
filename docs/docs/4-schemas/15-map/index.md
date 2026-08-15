@@ -137,6 +137,28 @@ const nameSchema = map({
 const nameSchema = map({ ... }, { savedAs: 'pt' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const nameSchema = map({
+  firstName: string(),
+  lastName: string()
+}).meta({
+  title: 'Name',
+  description: 'The trainer full name'
+})
+const nameSchema = map({ ... }, {
+  meta: {
+    title: 'Name',
+    description: 'The trainer full name'
+  }
+})
+```
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;CHILD_ATTRIBUTES&gt;</code></i></p>
