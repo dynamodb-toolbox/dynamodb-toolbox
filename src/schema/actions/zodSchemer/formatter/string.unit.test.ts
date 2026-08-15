@@ -195,4 +195,11 @@ describe('zodSchemer > formatter > string', () => {
       expect(output.options).toStrictEqual([FOO, BAR])
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = string().meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

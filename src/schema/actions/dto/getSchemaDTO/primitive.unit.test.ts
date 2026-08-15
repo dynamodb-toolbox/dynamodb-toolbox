@@ -82,4 +82,18 @@ describe('getPrimitiveSchemaDTO', () => {
       putDefault: { defaulterId: 'custom' }
     })
   })
+
+  test('correctly exports meta attribute', () => {
+    const attr = string().meta({
+      title: 'Title',
+      description: 'Desc',
+      examples: ['foo'],
+      other: 'field'
+    })
+
+    expect(getPrimitiveSchemaDTO(attr)).toStrictEqual({
+      type: 'string',
+      meta: { title: 'Title', description: 'Desc', examples: ['foo'], other: 'field' }
+    })
+  })
 })

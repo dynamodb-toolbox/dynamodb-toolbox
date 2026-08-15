@@ -4,7 +4,7 @@ import type { ItemSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'
 
 export const getItemSchemaDTO = (schema: ItemSchema): ItemSchemaDTO => {
-  const { strict } = schema.props
+  const { strict, meta } = schema.props
 
   return {
     type: 'item',
@@ -14,6 +14,7 @@ export const getItemSchemaDTO = (schema: ItemSchema): ItemSchemaDTO => {
         getSchemaDTO(attribute)
       ])
     ) as ItemSchemaDTO['attributes'],
-    ...(strict !== undefined && strict ? { strict } : {})
+    ...(strict !== undefined && strict ? { strict } : {}),
+    ...(meta !== undefined ? { meta } : {})
   }
 }

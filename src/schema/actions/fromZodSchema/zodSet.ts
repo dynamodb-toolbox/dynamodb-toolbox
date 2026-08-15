@@ -16,6 +16,7 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type FromZodSet<
   ZOD_SCHEMA extends ZodSet,
@@ -56,5 +57,5 @@ export const fromZodSet = (zodSet: ZodSet): SetSchema => {
     })
   }
 
-  return set(fromZodSchema(valueType))
+  return withMeta(set(fromZodSchema(valueType)), zodSet)
 }

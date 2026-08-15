@@ -168,6 +168,19 @@ describe('anyOf', () => {
   })
 
   // TODO: Reimplement props as potential first argument
+  test('returns anyOf with meta (method)', () => {
+    const withMeta = anyOf(str).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  // TODO: Reimplement props as potential first argument
   test('returns savedAs anyOf (method)', () => {
     const anyOfSchema = anyOf(str).savedAs('foo')
 

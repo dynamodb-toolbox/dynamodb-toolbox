@@ -14,6 +14,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
@@ -86,6 +87,15 @@ export class BooleanSchema_<
     nextSavedAs: NEXT_SAVED_AS
   ): BooleanSchema_<Overwrite<PROPS, { savedAs: NEXT_SAVED_AS }>> {
     return new BooleanSchema_(overwrite(this.props, { savedAs: nextSavedAs }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): BooleanSchema_<Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new BooleanSchema_(overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

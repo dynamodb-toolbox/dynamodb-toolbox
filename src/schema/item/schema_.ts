@@ -1,4 +1,4 @@
-import type { SchemaAction } from '~/schema/index.js'
+import type { SchemaAction, SchemaMeta } from '~/schema/index.js'
 import type { ResetLinks } from '~/schema/utils/resetLinks.js'
 import { resetLinks } from '~/schema/utils/resetLinks.js'
 import type { NarrowObject, Overwrite } from '~/types/index.js'
@@ -33,6 +33,15 @@ export class ItemSchema_<
     nextStrict: NEXT_STRICT = true as NEXT_STRICT
   ): ItemSchema_<ATTRIBUTES, Overwrite<PROPS, { strict: NEXT_STRICT }>> {
     return new ItemSchema_(this.attributes, overwrite(this.props, { strict: nextStrict }))
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): ItemSchema_<ATTRIBUTES, Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new ItemSchema_(this.attributes, overwrite(this.props, { meta: nextMeta }))
   }
 
   pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(

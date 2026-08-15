@@ -4,7 +4,7 @@ import type { SetSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import { schemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
@@ -29,8 +29,14 @@ export const setZodFormatter = (
   schema: SetSchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny =>
-  withOptional(
+  withDescribe(
     schema,
-    options,
-    withValidate(schema, z.set(schemaZodFormatter(schema.elements, { ...options, defined: true })))
+    withOptional(
+      schema,
+      options,
+      withValidate(
+        schema,
+        z.set(schemaZodFormatter(schema.elements, { ...options, defined: true }))
+      )
+    )
   )

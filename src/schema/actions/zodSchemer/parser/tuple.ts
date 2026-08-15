@@ -4,7 +4,7 @@ import type { Schema, TupleSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -41,18 +41,21 @@ export type TupleZodParser<
     >
 
 export const tupleZodParser = (schema: TupleSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
-  withDefault(
+  withDescribe(
     schema,
-    options,
-    withOptional(
+    withDefault(
       schema,
       options,
-      withValidate(
+      withOptional(
         schema,
-        z.tuple(
-          schema.elements.map(element =>
-            schemaZodParser(element, { ...options, defined: true })
-          ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
+        options,
+        withValidate(
+          schema,
+          z.tuple(
+            schema.elements.map(element =>
+              schemaZodParser(element, { ...options, defined: true })
+            ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
+          )
         )
       )
     )

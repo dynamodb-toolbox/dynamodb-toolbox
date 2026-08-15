@@ -33,3 +33,13 @@ export const withValidate = (schema: Schema, zodSchema: z.ZodTypeAny): z.ZodType
 
   return zodSchema
 }
+
+export const withDescribe = (schema: Schema, zodSchema: z.ZodTypeAny): z.ZodTypeAny => {
+  const { meta } = schema.props
+
+  if (meta?.description !== undefined) {
+    return zodSchema.describe(meta.description)
+  }
+
+  return zodSchema
+}

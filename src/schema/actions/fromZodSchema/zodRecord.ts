@@ -7,6 +7,7 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodRecordAny = ZodRecord<KeySchema>
 
@@ -38,5 +39,5 @@ export const fromZodRecord = (zodRecord: ZodRecordAny): RecordSchema => {
     throw new Error()
   }
 
-  return record(fromZodSchema(keySchema), fromZodSchema(valueSchema))
+  return withMeta(record(fromZodSchema(keySchema), fromZodSchema(valueSchema)), zodRecord)
 }

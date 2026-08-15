@@ -115,6 +115,30 @@ describe('map', () => {
     expect(mapped.props.required).toBe('always')
   })
 
+  test('returns map with meta (prop)', () => {
+    const withMeta = map({ str }, { meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns map with meta (method)', () => {
+    const withMeta = map({ str }).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs map (props)', () => {
     const mapped = map({ str }, { savedAs: 'foo' })
 

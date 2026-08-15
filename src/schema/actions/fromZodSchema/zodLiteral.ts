@@ -23,6 +23,8 @@ import { isNull } from '~/utils/validation/isNull.js'
 import { isNumber } from '~/utils/validation/isNumber.js'
 import { isString } from '~/utils/validation/isString.js'
 
+import { withMeta } from './utils.js'
+
 export type ZodLiteralAny = ZodLiteral<any>
 
 export type FromZodLiteral<
@@ -69,23 +71,23 @@ export const fromZodLiteral = (
   zodLiteral: ZodLiteralAny
 ): NullSchema | BooleanSchema | NumberSchema | StringSchema => {
   if (isNull(zodLiteral.value)) {
-    return nul().const(null)
+    return withMeta(nul().const(null), zodLiteral)
   }
 
   if (isBoolean(zodLiteral.value)) {
-    return boolean().const(zodLiteral.value)
+    return withMeta(boolean().const(zodLiteral.value), zodLiteral)
   }
 
   if (isNumber(zodLiteral.value)) {
-    return number().const(zodLiteral.value)
+    return withMeta(number().const(zodLiteral.value), zodLiteral)
   }
 
   if (isBigInt(zodLiteral.value)) {
-    return number().big().const(zodLiteral.value)
+    return withMeta(number().big().const(zodLiteral.value), zodLiteral)
   }
 
   if (isString(zodLiteral.value)) {
-    return string().const(zodLiteral.value)
+    return withMeta(string().const(zodLiteral.value), zodLiteral)
   }
 
   throw new DynamoDBToolboxError('fromZodSchema.unrecognizedLiteral', {

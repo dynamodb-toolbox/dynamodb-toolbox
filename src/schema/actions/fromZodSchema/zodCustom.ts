@@ -5,6 +5,8 @@ import { any } from '~/schema/any/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
+import { withMeta } from './utils.js'
+
 export type FromZodCustom<
   ZOD_SCHEMA extends ZodType,
   ROOT extends boolean = true,
@@ -21,4 +23,4 @@ export type FromZodCustom<
         : Overwrite<PROPS, { castAs: ZOD_SCHEMA['_output'] }>
     >
 
-export const fromZodCustom = (): AnySchema => any()
+export const fromZodCustom = (zodSchema: ZodType): AnySchema => withMeta(any(), zodSchema)

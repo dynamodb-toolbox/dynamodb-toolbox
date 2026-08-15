@@ -41,4 +41,10 @@ describe('fromZodSchema > zodSet', () => {
     expect(output).toBeInstanceOf(SetSchema_)
     expect(output.elements).toBeInstanceOf(NumberSchema_)
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.set(z.string()).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

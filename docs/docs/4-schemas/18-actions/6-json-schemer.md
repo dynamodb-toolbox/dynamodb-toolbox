@@ -59,3 +59,26 @@ const jsonSchema = pokemonSchema
 ```
 
 Only attributes that appear in the formatted value are included. `item` and `map` schemas produce `type: 'object'` (with `additionalProperties: false` when [`strict`](../14-item/index.md#strict)), `list`/`set`/`tuple` produce `type: 'array'`, `record` produces `type: 'object'` with `propertyNames`/`additionalProperties`, and [`anyOf`](../17-anyOf/index.md) produces an `anyOf` union.
+
+## Metadata
+
+The [`meta`](../9-string/index.md#meta) `title`, `description` and `examples` keys are emitted as the corresponding JSON Schema keywords:
+
+```ts
+const levelSchema = number().meta({
+  title: 'Level',
+  description: 'The Pokémon level',
+  examples: [42]
+})
+
+const jsonSchema = levelSchema
+  .build(JSONSchemer)
+  .formattedValueSchema()
+// =>
+// {
+//   type: 'number',
+//   title: 'Level',
+//   description: 'The Pokémon level',
+//   examples: [42]
+// }
+```

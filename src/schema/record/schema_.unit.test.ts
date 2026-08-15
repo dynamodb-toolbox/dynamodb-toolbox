@@ -308,6 +308,30 @@ describe('record', () => {
     expect(rec.props.required).toBe('always')
   })
 
+  test('returns record with meta (prop)', () => {
+    const withMeta = record(fooBar, str, { meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns record with meta (method)', () => {
+    const withMeta = record(fooBar, str).meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs record (prop)', () => {
     const rec = record(fooBar, str, { savedAs: 'foo' })
 

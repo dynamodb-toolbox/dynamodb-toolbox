@@ -103,6 +103,30 @@ describe('any', () => {
     expect(anyInstance.props.required).toBe('always')
   })
 
+  test('returns any with meta (prop)', () => {
+    const withMeta = any({ meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns any with meta (method)', () => {
+    const withMeta = any().meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs any (prop)', () => {
     const anyInstance = any({ savedAs: 'foo' })
 

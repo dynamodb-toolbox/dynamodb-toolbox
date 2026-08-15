@@ -105,6 +105,30 @@ describe('number', () => {
     expect(num.props.required).toBe('always')
   })
 
+  test('returns number with meta (prop)', () => {
+    const withMeta = number({ meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns number with meta (method)', () => {
+    const withMeta = number().meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs number (prop)', () => {
     const num = number({ savedAs: 'foo' })
 

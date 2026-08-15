@@ -217,4 +217,11 @@ describe('zodSchemer > parser > anyOf', () => {
       expect(() => output.parse(0)).toThrow()
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = anyOf(string(), number()).meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

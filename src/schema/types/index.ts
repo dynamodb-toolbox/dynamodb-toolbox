@@ -14,4 +14,11 @@ export type { Paths, SchemaPaths, ItemSchemaPaths, StringToEscape, AppendKey } f
 export * from './schema.js'
 export * from './attribute.js'
 export type { Validator } from './validator.js'
-export type { SchemaProps, AtLeastOnce, Always, Never, SchemaRequiredProp } from './schemaProps.js'
+export type {
+  SchemaProps,
+  AtLeastOnce,
+  Always,
+  Never,
+  SchemaRequiredProp,
+  SchemaMeta
+} from './schemaProps.js'

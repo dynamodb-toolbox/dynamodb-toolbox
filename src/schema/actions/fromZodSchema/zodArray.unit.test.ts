@@ -17,4 +17,10 @@ describe('fromZodSchema > zodArray', () => {
     expect(output).toBeInstanceOf(ListSchema_)
     expect(output.elements).toBeInstanceOf(StringSchema)
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.array(z.string()).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

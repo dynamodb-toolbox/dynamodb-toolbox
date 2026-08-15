@@ -81,6 +81,27 @@ const metadataSchema = any().savedAs('meta')
 const metadataSchema = any({ savedAs: 'meta' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const metadataSchema = any().meta({
+  title: 'Metadata',
+  description: 'Free-form metadata',
+  examples: [{ foo: 'bar' }]
+})
+const metadataSchema = any({
+  meta: {
+    title: 'Metadata',
+    description: 'Free-form metadata',
+    examples: [{ foo: 'bar' }]
+  }
+})
+```
+
 ### `.castAs<TYPE>()`
 
 <p style={{ marginTop: '-15px' }}><i>(TypeScript only)</i></p>

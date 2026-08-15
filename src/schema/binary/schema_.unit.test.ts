@@ -105,6 +105,30 @@ describe('binary', () => {
     expect(bin.props.required).toBe('always')
   })
 
+  test('returns binary with meta (prop)', () => {
+    const withMeta = binary({ meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns binary with meta (method)', () => {
+    const withMeta = binary().meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs binary (prop)', () => {
     const bin = binary({ savedAs: 'foo' })
 

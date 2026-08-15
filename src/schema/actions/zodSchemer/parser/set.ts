@@ -4,7 +4,7 @@ import type { SetSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import { schemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
@@ -30,12 +30,15 @@ export type SetZodParser<
     >
 
 export const setZodParser = (schema: SetSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
-  withDefault(
+  withDescribe(
     schema,
-    options,
-    withOptional(
+    withDefault(
       schema,
       options,
-      withValidate(schema, z.set(schemaZodParser(schema.elements, { ...options, defined: true })))
+      withOptional(
+        schema,
+        options,
+        withValidate(schema, z.set(schemaZodParser(schema.elements, { ...options, defined: true })))
+      )
     )
   )

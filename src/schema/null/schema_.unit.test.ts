@@ -105,6 +105,30 @@ describe('null', () => {
     expect(nil.props.required).toBe('always')
   })
 
+  test('returns null with meta (prop)', () => {
+    const withMeta = nul({ meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns null with meta (method)', () => {
+    const withMeta = nul().meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs null (prop)', () => {
     const nil = nul({ savedAs: 'foo' })
 

@@ -7,6 +7,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodDiscriminatedUnionAny = ZodDiscriminatedUnion<
   string,
@@ -33,6 +34,9 @@ export type FromZodDiscriminatedUnion<
 export const fromZodDiscriminatedUnion = (
   zodDiscriminatedUnion: ZodDiscriminatedUnionAny
 ): AnyOfSchema =>
-  anyOf(...zodDiscriminatedUnion.options.map(option => fromZodSchema(option))).discriminate(
-    zodDiscriminatedUnion._def.discriminator
+  withMeta(
+    anyOf(...zodDiscriminatedUnion.options.map(option => fromZodSchema(option))).discriminate(
+      zodDiscriminatedUnion._def.discriminator
+    ),
+    zodDiscriminatedUnion
   )

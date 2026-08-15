@@ -300,4 +300,11 @@ describe('zodSchemer > parser > record', () => {
       expect(output.parse(VALUE)).toStrictEqual(VALUE)
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = record(string(), string()).meta({ description: 'Desc' })
+    const output = schemaZodParser(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

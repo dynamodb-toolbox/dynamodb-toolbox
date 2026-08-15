@@ -87,6 +87,25 @@ const hashSchema = binary().savedAs('h')
 const hashSchema = binary({ savedAs: 'h' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const hashSchema = binary().meta({
+  title: 'Hash',
+  description: 'A binary hash'
+})
+const hashSchema = binary({
+  meta: {
+    title: 'Hash',
+    description: 'A binary hash'
+  }
+})
+```
+
 ### `.enum(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>Uint8Array[]</code></i></p>

@@ -94,6 +94,21 @@ const dateRangeSchema = tuple(string(), string())
   .savedAs('d')
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+<!-- prettier-ignore -->
+```ts
+const dateRangeSchema = tuple(string(), string())
+  .meta({
+    title: 'Date Range',
+    description: 'A [start, end] date range'
+  })
+```
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;CHILD_ATTRIBUTES&gt;</code></i></p>

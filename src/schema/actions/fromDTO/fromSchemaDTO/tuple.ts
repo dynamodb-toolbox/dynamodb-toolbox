@@ -15,7 +15,8 @@ export const fromTupleSchemaDTO = ({
   required,
   hidden,
   key,
-  savedAs
+  savedAs,
+  meta
 }: TupleSchemaDTO): TupleSchema => {
   /**
    * @debt types "fix those casts"
@@ -36,6 +37,10 @@ export const fromTupleSchemaDTO = ({
 
   if (savedAs !== undefined) {
     tuple_ = tuple_.savedAs(savedAs)
+  }
+
+  if (meta !== undefined) {
+    tuple_ = tuple_.meta(meta)
   }
 
   return tuple_

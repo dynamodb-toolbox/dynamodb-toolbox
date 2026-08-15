@@ -3,7 +3,7 @@ import { z } from 'zod'
 import type { BinarySchema } from '~/schema/index.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
@@ -22,8 +22,11 @@ export const binaryZodFormatter = (
   schema: BinarySchema,
   options: ZodFormatterOptions = {}
 ): z.ZodTypeAny =>
-  withDecoding(
+  withDescribe(
     schema,
-    options,
-    withOptional(schema, options, withValidate(schema, z.instanceof(Uint8Array)))
+    withDecoding(
+      schema,
+      options,
+      withOptional(schema, options, withValidate(schema, z.instanceof(Uint8Array)))
+    )
   )

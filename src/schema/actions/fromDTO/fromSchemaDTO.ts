@@ -5,7 +5,7 @@ import type { ItemSchema } from '~/schema/item/index.js'
 import { fromSchemaDTO as _fromSchemaDTO } from './fromSchemaDTO/index.js'
 
 export const fromSchemaDTO = (schemaDTO: ItemSchemaDTO): ItemSchema => {
-  const schema = item(
+  let schema = item(
     Object.fromEntries(
       Object.entries(schemaDTO.attributes).map(([attributeName, attributeDTO]) => [
         attributeName,
@@ -14,5 +14,13 @@ export const fromSchemaDTO = (schemaDTO: ItemSchemaDTO): ItemSchema => {
     )
   )
 
-  return schemaDTO.strict ? schema.strict() : schema
+  if (schemaDTO.strict) {
+    schema = schema.strict()
+  }
+
+  if (schemaDTO.meta !== undefined) {
+    schema = schema.meta(schemaDTO.meta)
+  }
+
+  return schema
 }

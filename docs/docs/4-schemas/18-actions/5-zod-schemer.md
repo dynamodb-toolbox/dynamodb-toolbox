@@ -158,6 +158,27 @@ schema.build(Parser).parse(' foo ') // => ' foo '
 
 Preprocessed schemas and intersections are not supported, as well as types that are not natively available in DynamoDB are (`Dates`, `NaNs`, `InstanceOf` etc.).
 
+## Metadata
+
+The [`meta`](../1-usage/index.md#schemas-props) `description` is applied to the resulting Zod schema through [`.describe()`](https://zod.dev/?id=describe), on both the `parser` and the `formatter`:
+
+```ts
+const levelSchema = number().meta({
+  description: 'The Pokémon level'
+})
+
+const zodSchema = levelSchema.build(ZodSchemer).parser()
+
+zodSchema.description
+// => 'The Pokémon level'
+```
+
+:::warning
+
+`zod` v3 only supports `.describe()`, so other keys (including `meta.title` and `meta.examples`) are silently dropped.
+
+:::
+
 ## Methods
 
 ### `parser(...)`

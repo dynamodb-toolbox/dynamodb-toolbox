@@ -4,7 +4,7 @@ import type { BooleanSchema, ResolvedBooleanSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'
 
 import type { WithValidate } from '../utils.js'
-import { withValidate } from '../utils.js'
+import { withDescribe, withValidate } from '../utils.js'
 import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
@@ -60,9 +60,16 @@ export const booleanZodParser = (
     zodFormatter = z.boolean()
   }
 
-  return withEncoding(
+  return withDescribe(
     schema,
-    options,
-    withDefault(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
+    withEncoding(
+      schema,
+      options,
+      withDefault(
+        schema,
+        options,
+        withOptional(schema, options, withValidate(schema, zodFormatter))
+      )
+    )
   )
 }

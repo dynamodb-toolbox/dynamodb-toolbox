@@ -95,6 +95,25 @@ const nullSchema = nul().savedAs('_n')
 const nullSchema = nul({ savedAs: '_n' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const nullSchema = nul().meta({
+  title: 'Null',
+  description: 'A null value'
+})
+const nullSchema = nul({
+  meta: {
+    title: 'Null',
+    description: 'A null value'
+  }
+})
+```
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;null&gt;</code></i></p>

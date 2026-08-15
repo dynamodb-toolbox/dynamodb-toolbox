@@ -48,6 +48,19 @@ pokemonSchema.build(Parser).parse({
 
 Enforcement happens on **writes** only and on all modes.
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const pokemonSchema = item({ name: string() }).meta({
+  title: 'Pokémon',
+  description: 'A Pokémon item'
+})
+```
+
 ## Methods
 
 Item schemas can be used to build **new schemas** with the following methods:

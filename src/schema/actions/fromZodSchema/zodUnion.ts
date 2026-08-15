@@ -6,6 +6,7 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodUnionAny = ZodUnion<ZodUnionOptions>
 
@@ -21,4 +22,4 @@ export type FromZodUnion<
     : never
 
 export const fromZodUnion = (zodUnion: ZodUnionAny): AnyOfSchema =>
-  anyOf(...zodUnion.options.map(option => fromZodSchema(option)))
+  withMeta(anyOf(...zodUnion.options.map(option => fromZodSchema(option))), zodUnion)

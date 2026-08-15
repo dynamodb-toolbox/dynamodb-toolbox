@@ -6,6 +6,7 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodEffectsAny = ZodEffects<ZodTypeAny>
 
@@ -23,10 +24,13 @@ export const fromZodEffects = (zodSchema: ZodEffectsAny): Schema => {
   const effect = zodSchema._def.effect
 
   if (effect.type === 'refinement') {
-    return schema.validate(candidate =>
-      effect.refinement(candidate, { path: [], addIssue: () => undefined })
+    return withMeta(
+      schema.validate(candidate =>
+        effect.refinement(candidate, { path: [], addIssue: () => undefined })
+      ),
+      zodSchema
     )
   }
 
-  return schema
+  return withMeta(schema, zodSchema)
 }

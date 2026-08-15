@@ -281,4 +281,11 @@ describe('zodSchemer > formatter > record', () => {
       expect(() => output.parse(undefined)).toThrow()
     })
   })
+
+  test('applies meta.description', () => {
+    const schema = record(string(), string()).meta({ description: 'Desc' })
+    const output = schemaZodFormatter(schema)
+
+    expect(output.description).toBe('Desc')
+  })
 })

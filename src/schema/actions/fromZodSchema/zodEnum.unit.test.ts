@@ -17,4 +17,10 @@ describe('fromZodSchema > zodEnum', () => {
     expect(output).toBeInstanceOf(StringSchema_)
     expect(output.props.enum).toStrictEqual(['foo', 'bar'])
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.enum(['foo', 'bar']).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

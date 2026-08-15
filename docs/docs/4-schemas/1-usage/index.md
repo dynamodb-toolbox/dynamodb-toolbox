@@ -103,7 +103,7 @@ Schemas are a standalone feature of DynamoDB-Toolbox (you can use them separatel
 
 You can update schema properties by using **dedicated methods** or by providing **input props**.
 
-The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage** (although it should be negligible):
+The former provides a **slick devX** with autocomplete and shorthands, while the latter theoretically requires **less compute time and memory usage** (although it is negligible):
 
 ```ts
 // Using methods
@@ -127,6 +127,15 @@ const pokeTypeSchema = string()
   .savedAs('t')
 ```
 
+All schema types also accept a `meta` object carrying documentation (`title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const levelSchema = number().meta({
+  title: 'Level',
+  description: 'The Pokémon level'
+})
+```
+
 ## Validating Schemas
 
 You can inspect a schema's properties at runtime and through its types via the `props` attribute:
@@ -136,7 +145,11 @@ const props = pokeTypeSchema.props
 // => {
 //  required: 'always',
 //  enum: ['fire', 'water', 'grass'],
-//  savedAs: 't'
+//  savedAs: 't',
+//  meta: {
+//    title: 'Level',
+//    description: 'The Pokémon level'
+//  }
 // }
 ```
 

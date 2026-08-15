@@ -25,4 +25,10 @@ describe('fromZodSchema > zodTuple', () => {
     expect(output.elements[0]).toBeInstanceOf(StringSchema_)
     expect(output.elements[1]).toBeInstanceOf(NumberSchema_)
   })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.tuple([z.string()]).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
 })

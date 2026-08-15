@@ -103,6 +103,25 @@ const pokeTypesSchema = set(pokeTypeSchema).savedAs('pt')
 const pokeTypesSchema = set(..., { savedAs: 'pt' })
 ```
 
+### `.meta(...)`
+
+<p style={{ marginTop: '-15px' }}><i><code>SchemaMeta</code></i></p>
+
+Attaches documentation metadata to the schema (e.g. `title`, `description`, `examples` or arbitrary custom keys):
+
+```ts
+const pokeTypesSchema = set(pokeTypeSchema).meta({
+  title: 'Poke Types',
+  description: 'The set of Pokémon types'
+})
+const pokeTypesSchema = set(pokeTypeSchema, {
+  meta: {
+    title: 'Poke Types',
+    description: 'The set of Pokémon types'
+  }
+})
+```
+
 ### `.default(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>ValueOrGetter&lt;Set&lt;ELEMENTS&gt;&gt;</code></i></p>

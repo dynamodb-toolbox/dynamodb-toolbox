@@ -6,6 +6,7 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import { withMeta } from './utils.js'
 
 export type ZodTupleAny = ZodTuple<[ZodTypeAny, ...ZodTypeAny[]], ZodTypeAny | null>
 
@@ -21,4 +22,4 @@ export type FromZodTuple<
     : never
 
 export const fromZodTuple = (zodTuple: ZodTupleAny): TupleSchema =>
-  tuple(...zodTuple.items.map(item => fromZodSchema(item)))
+  withMeta(tuple(...zodTuple.items.map(item => fromZodSchema(item))), zodTuple)

@@ -20,11 +20,22 @@ export type Always = 'always'
  */
 export type SchemaRequiredProp = Never | AtLeastOnce | Always
 
+/**
+ * Optional documentation attached to a schema (title, description, examples etc.).
+ */
+export interface SchemaMeta {
+  title?: string
+  description?: string
+  examples?: unknown[]
+  [key: string]: unknown
+}
+
 export interface SchemaProps {
   required?: SchemaRequiredProp
   hidden?: boolean
   key?: boolean
   savedAs?: string
+  meta?: SchemaMeta
   keyDefault?: unknown
   putDefault?: unknown
   updateDefault?: unknown

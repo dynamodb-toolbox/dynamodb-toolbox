@@ -73,4 +73,18 @@ describe('getAnySchemaDTO', () => {
       putDefault: { defaulterId: 'custom' }
     })
   })
+
+  test('correctly exports meta attribute', () => {
+    const attr = any().meta({
+      title: 'Title',
+      description: 'Desc',
+      examples: ['foo'],
+      other: 'field'
+    })
+
+    expect(getAnySchemaDTO(attr)).toStrictEqual({
+      type: 'any',
+      meta: { title: 'Title', description: 'Desc', examples: ['foo'], other: 'field' }
+    })
+  })
 })

@@ -29,6 +29,25 @@ const pokemonSchemaDTO = JSON.parse(pokemonSchemaJSON)
 const pokemonSchema = fromDTO(pokemonSchemaDTO)
 ```
 
+The whole [`meta`](../1-usage/index.md#schemas-props) property (including JSON-safe custom keys) is serialized and rebuilt:
+
+```ts
+const levelSchema = number().meta({
+  title: 'Level',
+  description: 'The Pokémon level',
+  deprecated: true
+})
+
+const rebuilt = fromDTO(levelSchema.build(SchemaDTO))
+
+rebuilt.props.meta
+// => {
+//  title: 'Level',
+//  description: 'The Pokémon level',
+//  deprecated: true
+// }
+```
+
 :::note
 
 All TS types are lost in the process.

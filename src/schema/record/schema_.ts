@@ -13,6 +13,7 @@ import type {
   AtLeastOnce,
   Never,
   Schema,
+  SchemaMeta,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
@@ -124,6 +125,15 @@ export class RecordSchema_<
       this.elements,
       overwrite(this.props, { savedAs: nextSavedAs })
     )
+  }
+
+  /**
+   * Attach metadata (title, description, examples, ...) to the schema
+   */
+  meta<NEXT_META extends SchemaMeta>(
+    nextMeta: NarrowObject<NEXT_META>
+  ): RecordSchema_<KEYS, ELEMENTS, Overwrite<PROPS, { meta: NEXT_META }>> {
+    return new RecordSchema_(this.keys, this.elements, overwrite(this.props, { meta: nextMeta }))
   }
 
   /**

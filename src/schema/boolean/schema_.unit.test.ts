@@ -105,6 +105,30 @@ describe('boolean', () => {
     expect(bool.props.required).toBe('always')
   })
 
+  test('returns boolean with meta (prop)', () => {
+    const withMeta = boolean({ meta: { title: 'Title', description: 'Desc' } })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: string; description: string } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
+  test('returns boolean with meta (method)', () => {
+    const withMeta = boolean().meta({ title: 'Title', description: 'Desc' })
+
+    const assertMeta: A.Contains<
+      (typeof withMeta)['props'],
+      { meta: { title: 'Title'; description: 'Desc' } }
+    > = 1
+    assertMeta
+
+    expect(withMeta.props.meta).toStrictEqual({ title: 'Title', description: 'Desc' })
+  })
+
   test('returns savedAs boolean (prop)', () => {
     const bool = boolean({ savedAs: 'foo' })
 
