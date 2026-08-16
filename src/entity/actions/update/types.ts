@@ -219,7 +219,7 @@ export type UpdateValueInput<
                 ]
               >
           >
-        | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> | unknown : never)
+        | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> : never)
         | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
         | (SCHEMA extends NumberSchema
             ? If<
