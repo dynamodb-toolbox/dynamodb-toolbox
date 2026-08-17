@@ -160,3 +160,9 @@ const transac = PokemonEntity.build(PutTransaction)
 Contrary to [`PutItemCommands`](../3-put-item/index.md), put transactions cannot return the previous values of the written items.
 
 :::
+
+:::tip
+
+When the transaction is cancelled, the previous item can be exposed on the thrown `TransactionCanceledException` (see [Error handling](../11-transactions/index.md#error-handling)).
+
+:::

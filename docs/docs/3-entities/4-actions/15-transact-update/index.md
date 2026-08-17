@@ -165,3 +165,9 @@ const transac = PokemonEntity.build(UpdateTransaction)
 Contrary to [`UpdateItemCommands`](../4-update-item/index.md), update transactions cannot return the previous or new values of the written items.
 
 :::
+
+:::tip
+
+When the transaction is cancelled, the previous item can be exposed on the thrown `TransactionCanceledException` (see [Error handling](../11-transactions/index.md#error-handling)).
+
+:::

@@ -347,3 +347,41 @@ const response: UpdateAttributesResponse<
   // 👇 Typed as Pokemon | undefined
 > = { Attributes: ... }
 ```
+
+## Error handling
+
+If a `condition` is provided **and** `returnValuesOnConditionFalse` is set to `"ALL_OLD"`, a failing condition makes DynamoDB throw a `ConditionalCheckFailedException` carrying the item that was **not** deleted.
+
+DynamoDB-Toolbox can enrich this exception with a `FormattedItem` property, containing the formatted item. Use the `assertConditionCheckFailed` assertion or the `isConditionCheckFailed` type guard to read it in a type-safe way:
+
+```ts
+import {
+  assertConditionCheckFailed,
+  isConditionCheckFailed
+} from 'dynamodb-toolbox/entity/actions/updateAttributes'
+
+try {
+  await PokemonEntity.build(UpdateAttributesCommand)
+    .item({ pokemonId: 'pikachu1', level: 60 })
+    .options({
+      condition: { attr: 'level', lt: 60 },
+      returnValuesOnConditionFalse: 'ALL_OLD'
+    })
+    .send()
+} catch (error) {
+  // 👇 Rethrow other error classes + narrow `error` type
+  assertConditionCheckFailed(error, PokemonEntity)
+  const prevPikachu = error.FormattedItem // 🙌 Correctly typed
+
+  // ...OR use a type guard
+  if (isConditionCheckFailed(error, PokemonEntity)) {
+    const prevPikachu = error.FormattedItem // 🙌 Correctly typed
+  }
+}
+```
+
+:::note
+
+`FormattedItem` is always **optional**: Formatting is best-effort, so an exception whose item cannot be formatted by its entity (e.g. an invalid item) is left with no `FormattedItem` property.
+
+:::

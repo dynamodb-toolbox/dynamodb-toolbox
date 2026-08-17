@@ -14,3 +14,5 @@ export {
 export type { UpdateItemOptions } from './options.js'
 export type { UpdateItemInput, UpdateValueInput } from './types.js'
 export { parseUpdateExtension } from './updateItemParams/index.js'
+export type { ConditionCheckFailedError } from '~/entity/actions/utils/index.js'
+export { isConditionCheckFailed, assertConditionCheckFailed } from '~/entity/actions/utils/index.js'

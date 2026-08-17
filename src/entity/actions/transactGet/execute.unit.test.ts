@@ -117,14 +117,15 @@ describe('execute', () => {
   })
 
   test('should send a transaction from a tuple of GetTransaction', async () => {
-    const { Responses: responses } = await execute(
-      { documentClient },
+    const transactions = [
       TestEntity.build(GetTransaction)
         .key({ email: 'toto@example.com', sort: 'toto' })
         .options({ attributes: ['test_string'] }),
       TestEntity2.build(GetTransaction).key({ email: 'tata@example.com' }),
       TestEntity2.build(GetTransaction).key({ email: 'titi@example.com' }).options({})
-    )
+    ] as const
+
+    const { Responses: responses } = await execute({ documentClient }, ...transactions)
 
     expect(responses).toHaveLength(3)
 
