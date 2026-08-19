@@ -1,3 +1,5 @@
 export { DeleteItemCommand } from './deleteItemCommand.js'
 export type { DeleteItemResponse } from './deleteItemCommand.js'
 export type { DeleteItemOptions } from './options.js'
+export type { ConditionCheckFailedError } from '~/entity/actions/utils/index.js'
+export { isConditionCheckFailed, assertConditionCheckFailed } from '~/entity/actions/utils/index.js'

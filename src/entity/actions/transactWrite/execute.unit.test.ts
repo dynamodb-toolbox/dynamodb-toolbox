@@ -116,8 +116,7 @@ describe('execute', () => {
   })
 
   test('should send a transaction from a tuple of WriteTransaction', async () => {
-    const { ToolboxItems: toolboxItems } = await execute(
-      { documentClient },
+    const transactions = [
       TestEntity.build(PutTransaction).item({ email: 'titi@example.com', sort: 'titi' }),
       TestEntity.build(DeleteTransaction).key({ email: 'titi@example.com', sort: 'titi' }),
       TestEntity2.build(PutTransaction).item({ email: 'toto@example.com' }),
@@ -125,7 +124,9 @@ describe('execute', () => {
         .key({ email: 'titi@example.com' })
         .condition({ attr: 'email', exists: true }),
       TestEntity.build(UpdateTransaction).item({ email: 'tutu@example.com', sort: 'titi' })
-    )
+    ] as const
+
+    const { ToolboxItems: toolboxItems } = await execute({ documentClient }, ...transactions)
 
     expect(toolboxItems).toHaveLength(5)
 

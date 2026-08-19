@@ -12,7 +12,7 @@ await executeTransactWrite(
 
 ## Files
 
-- `execute.ts` — `execute` / `executeTransactWrite`; `ExecuteTransactWriteInput/Options/Responses` types.
+- `execute.ts` — `execute` / `executeTransactWrite`; `ExecuteTransactWriteInput/Options/Responses` types. Options include `clientRequestToken` (idempotency), `capacity`, `metrics`. This is the executor; the per-item entries live in the sibling `transact*` folders.
 - `transaction.ts` — shared write-transaction typing.
-
-Options include `clientRequestToken` (idempotency), `capacity`, `metrics`. This is the executor; the per-item entries live in the sibling `transact*` folders.
+- `isTransactionCancelled.ts` — root-exported type-guard narrowing a caught `unknown` to a `TransactionCanceledException` whose `CancellationReasons` are a positional tuple aligned with `transactions`. Augments each reason in place (best-effort `unmarshall` + format with the positional entity), lazily, on call. `+ TransactionCancelledError` type.
+- `assertTransactionCancelled.ts` — assertion counterpart: re-throws non-transaction errors, otherwise augments (via the guard) + narrows.

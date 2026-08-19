@@ -33,6 +33,10 @@ const del = PokemonEntity.build(DeleteTransaction).key(...)
 const check = PokemonEntity.build(ConditionCheck).key(...).condition(...)
 
 await execute(put, update, del, check, ...otherTransactions)
+
+// Using the `as const` statement also works
+const transactions = [put, update, del, ...] as const
+await execute(...transactions)
 ```
 
 :::warning
@@ -146,3 +150,54 @@ const [
 const createdTimestamp = putPokemon.created
 const modifiedTimestamp = updatedPokemon.modified
 ```
+
+### Error handling
+
+If a transaction is rejected because one of its conditions failed, DynamoDB throws a `TransactionCanceledException` with a `CancellationReasons` array, **positionally aligned** with the transactions you provided. Any reason whose transaction was set with `returnValuesOnConditionFalse: 'ALL_OLD'` carries the offending item.
+
+DynamoDB-Toolbox can enrich each such reason with a `FormattedItem` property, containing the formatted item of the transaction's entity. Use the `assertTransactionCancelled` assertion or the `isTransactionCancelled` type guard to read them in a type-safe way:
+
+```ts
+import {
+  execute,
+  isTransactionCancelled,
+  assertTransactionCancelled
+} from 'dynamodb-toolbox/entity/actions/transactWrite'
+
+const transactions = [
+  PokemonEntity.build(PutTransaction)
+    .item(pikachu)
+    .options({
+      condition: { attr: 'pokemonId', exists: false },
+      returnValuesOnConditionFalse: 'ALL_OLD'
+    }),
+  TrainerEntity.build(UpdateTransaction).item(ash)
+] as const // 👈 Type transactions as tuples
+
+try {
+  await execute(...transactions)
+} catch (error) {
+  // 👇 Rethrow other error classes + narrow `error` type
+  assertTransactionCancelled(error, ...transactions)
+  const reasons = error.CancellationReasons
+  const prevPikachu = reasons?.[0]?.FormattedItem // 🙌 Correctly typed
+
+  // ...OR use a type guard
+  if (isTransactionCancelled(error, ...transactions)) {
+    const reasons = error.CancellationReasons
+    const prevPikachu = reasons?.[0]?.FormattedItem // 🙌 Correctly typed
+  }
+}
+```
+
+:::warning
+
+`CancellationReasons` are matched to `transactions` **by position**. Make sure to pass `assertTransactionCancelled` or `isTransactionCancelled` the same array/tuple you passed to `execute`, otherwise the positional typing will be incorrect.
+
+:::
+
+:::note
+
+`FormattedItem` is always **optional**: Formatting is best-effort and applied per-reason, so a reason whose item cannot be formatted by its entity (e.g. an invalid item) is left with no `FormattedItem` property.
+
+:::

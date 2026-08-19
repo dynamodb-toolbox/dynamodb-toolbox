@@ -33,6 +33,7 @@
     "@arethetypeswrong/cli": "^0.15.4",
     "@aws-sdk/client-dynamodb": "^3.687.0",
     "@aws-sdk/lib-dynamodb": "^3.687.0",
+    "@aws-sdk/util-dynamodb": "^3.687.0",
     "@modelcontextprotocol/sdk": "^1.12.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/node": "^18.0.0",
@@ -60,7 +61,8 @@
   },
   "peerDependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
-    "@aws-sdk/lib-dynamodb": "^3.0.0"
+    "@aws-sdk/lib-dynamodb": "^3.0.0",
+    "@aws-sdk/util-dynamodb": "^3.0.0"
   },
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json && echo '{ \"type\": \"commonjs\" }' > dist/cjs/package.json",

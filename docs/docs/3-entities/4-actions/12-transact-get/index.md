@@ -164,20 +164,31 @@ await execute(
   TrainerEntity.build(GetTransaction).key(ashKey),
   ...
 )
+
+// Using the `as const` statement also works
+const transactions = [
+  PokemonEntity.build(GetTransaction).key(pikachuKey),
+  TrainerEntity.build(GetTransaction).key(ashKey),
+  ...
+] as const
+await execute(...transactions)
 ```
 
 </TabItem>
 <TabItem value="array" label="Array">
 
 ```ts
-const commands: (
-  | GetTransaction<typeof PokemonEntity>
-  | GetTransaction<typeof TrainerEntity>
-)[] = [
+const commands = [
   PokemonEntity.build(GetTransaction).key(pikachuKey),
   TrainerEntity.build(GetTransaction).key(ashKey),
   ...
 ]
+
+// Equivalent to:
+const commands: (
+  | GetTransaction<typeof PokemonEntity>
+  | GetTransaction<typeof TrainerEntity>
+)[] = [...]
 
 await execute(...commands)
 ```

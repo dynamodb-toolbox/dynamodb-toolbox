@@ -154,3 +154,9 @@ const transac = PokemonEntity.build(DeleteTransaction)
 Contrary to [`DeleteItemCommand`](../6-delete-item/index.md), delete transactions cannot return the values of the deleted items.
 
 :::
+
+:::tip
+
+When the transaction is cancelled, the previous item can be exposed on the thrown `TransactionCanceledException` (see [Error handling](../11-transactions/index.md#error-handling)).
+
+:::
