@@ -49,17 +49,19 @@ export const addDeleteEntityItemTool = (
     deleteToolDescription += `\n\n${description}.`
   }
 
-  server.tool(
+  server.registerTool(
     deleteToolName,
-    deleteToolDescription,
     {
-      key: new ZodSchemer(entity.schema).parser({
-        mode: 'key',
-        transform: false
-      }) as z.ZodTypeAny,
-      options: deleteOptionsSchema
+      description: deleteToolDescription,
+      inputSchema: {
+        key: new ZodSchemer(entity.schema).parser({
+          mode: 'key',
+          transform: false
+        }) as z.ZodTypeAny,
+        options: deleteOptionsSchema as z.ZodTypeAny
+      },
+      annotations: { title: deleteToolDescription, readOnlyHint: false, destructiveHint: true }
     },
-    { title: deleteToolDescription, readOnlyHint: false, destructiveHint: true },
     async ({ key, options }) => {
       try {
         const Response = await new DeleteItemCommand(entity, key, options).send()

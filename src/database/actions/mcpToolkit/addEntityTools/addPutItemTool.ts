@@ -46,14 +46,16 @@ export const addPutEntityItemTool = (
     putToolDescription += `\n\n${description}.`
   }
 
-  server.tool(
+  server.registerTool(
     putToolName,
-    putToolDescription,
     {
-      item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodTypeAny,
-      options: putOptionsSchema
+      description: putToolDescription,
+      inputSchema: {
+        item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodTypeAny,
+        options: putOptionsSchema as z.ZodTypeAny
+      },
+      annotations: { title: putToolDescription, readOnlyHint: false, destructiveHint: false }
     },
-    { title: putToolDescription, readOnlyHint: false, destructiveHint: false },
     async ({ item, options }) => {
       try {
         const Response = await new PutItemCommand(entity, item, options).send()

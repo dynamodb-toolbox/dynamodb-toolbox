@@ -44,17 +44,19 @@ export const addGetEntityItemTool = (
     getToolDescription += `\n\n${description}.`
   }
 
-  server.tool(
+  server.registerTool(
     getToolName,
-    getToolDescription,
     {
-      key: new ZodSchemer(entity.schema).parser({
-        mode: 'key',
-        transform: false
-      }) as z.ZodTypeAny,
-      options: getOptionsSchema
+      description: getToolDescription,
+      inputSchema: {
+        key: new ZodSchemer(entity.schema).parser({
+          mode: 'key',
+          transform: false
+        }) as z.ZodTypeAny,
+        options: getOptionsSchema as z.ZodTypeAny
+      },
+      annotations: { title: getToolDescription, readOnlyHint: true }
     },
-    { title: getToolDescription, readOnlyHint: true },
     async ({ key, options }) => {
       try {
         const Response = await new GetItemCommand(entity, key, options).send()

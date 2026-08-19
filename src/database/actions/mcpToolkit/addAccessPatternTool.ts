@@ -10,7 +10,7 @@ import type { Entity } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { selectOptions } from '~/options/select.js'
 import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
-import type { Schema } from '~/schema/index.js'
+import type { ItemSchema, Schema } from '~/schema/index.js'
 import {
   $meta as $tableMeta,
   $schema as $tableSchema
@@ -92,14 +92,16 @@ export const addAccessPatternTool = (
     queryToolDescription += `\n\n${description}.`
   }
 
-  server.tool(
+  server.registerTool(
     queryToolName,
-    queryToolDescription,
     {
-      query: new ZodSchemer(schema).parser({ transform: false }),
-      options: queryOptionsSchema
+      description: queryToolDescription,
+      inputSchema: {
+        query: new ZodSchemer(schema as ItemSchema).parser({ transform: false }) as z.ZodTypeAny,
+        options: queryOptionsSchema as z.ZodTypeAny
+      },
+      annotations: { title: queryToolDescription, readOnlyHint: true, destructiveHint: false }
     },
-    { title: queryToolDescription, readOnlyHint: true, destructiveHint: false },
     async ({ query, options }) => {
       try {
         let command = accessPattern.query(query) as QueryCommand
