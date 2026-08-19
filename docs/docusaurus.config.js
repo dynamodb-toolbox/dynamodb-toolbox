@@ -1,13 +1,16 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-// @ts-expect-error
-const lightCodeTheme = require('prism-react-renderer/themes/vsLight')
-// @ts-expect-error
-const darkCodeTheme = require('prism-react-renderer/themes/vsDark')
+const { themes } = require('prism-react-renderer')
 
-lightCodeTheme.plain.backgroundColor = '#f8f8f8'
-darkCodeTheme.plain.backgroundColor = '#242424'
+const lightCodeTheme = {
+  ...themes.vsLight,
+  plain: { ...themes.vsLight.plain, backgroundColor: '#f8f8f8' }
+}
+const darkCodeTheme = {
+  ...themes.vsDark,
+  plain: { ...themes.vsDark.plain, backgroundColor: '#242424' }
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -16,7 +19,6 @@ const config = {
   url: 'https://www.dynamodbtoolbox.com',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
 
   // GitHub pages deployment config.
@@ -34,7 +36,10 @@ const config = {
   },
 
   markdown: {
-    mermaid: true
+    mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn'
+    }
   },
   themes: ['@docusaurus/theme-mermaid'],
 
