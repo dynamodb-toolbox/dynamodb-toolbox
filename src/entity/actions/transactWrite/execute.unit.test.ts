@@ -105,7 +105,10 @@ describe('execute', () => {
   })
 
   afterEach(() => {
-    documentClientSpy.mockReset()
+    // `mockClear` (not `mockReset`): reset call history between tests while
+    // keeping the mocked implementation. As of Vitest 3, `mockReset` on a
+    // `vi.spyOn` restores the original method, which would un-mock `send`.
+    documentClientSpy.mockClear()
   })
 
   test('should throw an error if dynamoDBDocumentClient is not found', async () => {
