@@ -53,9 +53,9 @@
     "tsd": "^0.23.0",
     "tsx": "^4.16.5",
     "typescript": "^5.9.2",
-    "vite": "^5.3.1",
+    "vite": "^8.2.2",
     "vite-tsconfig-paths": "^4.3.2",
-    "vitest": "^1.6.0",
+    "vitest": "^4.1.11",
     "zod": "^3.24.4"
   },
   "overrides": {
