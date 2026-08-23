@@ -20,8 +20,9 @@ jobs:
             '~5.6.3',
             '~5.7.3',
             '~5.8.3',
-            '~5.9.3'
-            # 'latest' to reintroduce once TS6 is supported
+            '~5.9.3',
+            '~6.0.3'
+            # 'latest' now resolves to TS7 (7.0.2) — reintroducing it is tracked as a separate follow-up
           ]
     steps:
       - name: ♻️ Checkout

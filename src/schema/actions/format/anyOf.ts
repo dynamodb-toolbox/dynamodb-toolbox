@@ -63,7 +63,7 @@ export function* anyOfSchemaFormatter(
           _formattedValue = formatter.next().value
         }
         break
-      } catch (error) {
+      } catch {
         continue
       }
     }

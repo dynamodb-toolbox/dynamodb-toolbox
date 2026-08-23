@@ -33,10 +33,24 @@
     "@typescript-eslint/ban-ts-comment": "off",
     // TODO: remove this rule when all the code is fully migrated to TS, atm it just produces a lot of noise
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/ban-types": "off",
+    // typescript-eslint v8 split the former `ban-types` rule into these; keep them off as before
+    "@typescript-eslint/no-empty-object-type": "off",
+    "@typescript-eslint/no-unsafe-function-type": "off",
+    "@typescript-eslint/no-wrapper-object-types": "error",
+    "@typescript-eslint/no-unused-expressions": "off",
+    // v8 flipped the `caughtErrors` default to "all"; keep ignoring unused catch bindings as before
+    "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/consistent-type-imports": "error"
   },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ],
   "globals": {
     "expect": true,
     "it": true

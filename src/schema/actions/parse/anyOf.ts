@@ -50,7 +50,7 @@ export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
         }
         _parsedValue = parser.next().value
         break
-      } catch (error) {
+      } catch {
         parser = undefined
         _defaultedValue = undefined
         _linkedValue = undefined
