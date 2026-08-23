@@ -1,5 +1,4 @@
 export type { Cast } from './cast.js'
-export type { Compute, ComputeDeep } from './compute.js'
 export type { ComputeObject } from './computeObject.js'
 export type { Extends } from './extends.js'
 export type { If } from './if.js'

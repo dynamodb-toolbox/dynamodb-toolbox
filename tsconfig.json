@@ -20,7 +20,6 @@
     "isolatedModules": true,
     "sourceMap": false,
     "declaration": false,
-    "baseUrl": "src",
     "experimentalDecorators": true,
     "inlineSourceMap": false,
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
@@ -30,12 +29,9 @@
     "pretty": true /* Stylize errors and messages using color and context. */,
     "types": ["node", "vitest/globals"],
     "paths": {
-      "~/*": ["*"]
+      "~/*": ["./src/*"]
     }
   },
   "compileOnSave": false,
-  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "coverage"],
-  "ts-node": {
-    "require": ["tsconfig-paths/register"]
-  }
+  "exclude": ["node_modules", "dist", "docs", "vitest.config.ts", "coverage"]
 }

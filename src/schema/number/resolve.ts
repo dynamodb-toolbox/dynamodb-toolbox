@@ -5,8 +5,8 @@ export type ResolveNumberSchema<SCHEMA extends NumberSchema> = SCHEMA['props']['
   | bigint
 )[]
   ? SCHEMA['props']['enum'][number]
-  : number | BigInt<SCHEMA['props']['big']>
+  : number | WithBigInt<SCHEMA['props']['big']>
 
-type BigInt<BIG extends boolean | undefined> = BIG extends true ? bigint : never
+type WithBigInt<BIG extends boolean | undefined> = BIG extends true ? bigint : never
 
 export type ResolvedNumberSchema = ResolveNumberSchema<NumberSchema>
