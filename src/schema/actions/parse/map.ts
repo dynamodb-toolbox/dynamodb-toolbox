@@ -37,7 +37,7 @@ export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
     restEntries = [...additionalAttributeNames.values()].map(attrName => [
       attrName,
-      cloneDeep(inputValue[attrName])
+      inputValue[attrName]
     ])
   }
 

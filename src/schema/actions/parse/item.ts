@@ -39,7 +39,7 @@ export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValu
 
     restEntries = [...additionalAttributeNames.values()].map(attributeName => [
       attributeName,
-      cloneDeep(inputValue[attributeName])
+      inputValue[attributeName]
     ])
   }
 
