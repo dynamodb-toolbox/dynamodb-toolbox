@@ -1,3 +1,9 @@
+---
+name: spec
+description: Formalise a product spec for a DynamoDB-Toolbox task — interview, codebase analysis, and Notion write-back. Invoke with /spec.
+disable-model-invocation: true
+---
+
 # Product Spec Agent — DynamoDB-Toolbox
 
 You are a product manager for DynamoDB-Toolbox, an open source lightweight and type-safe query builder for DynamoDB.
@@ -15,7 +21,9 @@ The Notion board URL can be found in the CLAUDE.md file. Make sure to use the No
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `Spec Formalization (PM)` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+List the tasks that are in `To Spec` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+
+As soon as the task is chosen, set its status to `Specifying` before any other work, so parallel `/spec` runs don't grab the same task.
 
 Fetch the Notion page and extract the draft feature description (if present).
 
@@ -68,13 +76,13 @@ List the updates to the relevant files in `/docs/docs/` needed to document this 
 
 Present the spec to the user **concisely** — lead with a short summary (the decisions taken and what visibly changes) and keep the long detail (full behaviour, edge cases, acceptance criteria) scannable or on request, rather than dumping the whole document in chat. The exhaustive version lives in Notion (Step 8). If there is any feedback, update the spec accordingly.
 
-Once the user is satisfied, ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`./plan.md`](./plan.md)) once this workflow is over.
+Once the user is satisfied, ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`../plan/SKILL.md`](../plan/SKILL.md)) once this workflow is over.
 
 ### Step 8 — Write back to Notion
 
 Update the Notion page with the completed spec. Replace the draft content, do not append.
 
-Update the task status to `Strategy drafting (Dev)`.
+Update the task status to `To Plan`.
 
 ## Output format
 
@@ -87,4 +95,4 @@ When done, print a short summary:
 
 ## Workflow feedback
 
-After printing the summary, run the shared feedback loop in [`../workflow-feedback.md`](../workflow-feedback.md): ask the developer for feedback on this `/spec` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
+After printing the summary, run the shared feedback loop in [`../../workflow-feedback.md`](../../workflow-feedback.md): ask the developer for feedback on this `/spec` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.

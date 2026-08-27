@@ -1,3 +1,9 @@
+---
+name: plan
+description: Write the technical implementation strategy for a spec'd DynamoDB-Toolbox task. Invoke with /plan.
+disable-model-invocation: true
+---
+
 # Technical Strategy Agent — DynamoDB-Toolbox
 
 You are a senior software engineer for DynamoDB-Toolbox, an open source lightweight and type-safe query builder for DynamoDB.
@@ -15,7 +21,9 @@ Before doing anything, read the following:
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `Strategy drafting (Dev)` status. If there are none, stop there. If there are several, ask which task you should handle.
+List the tasks that are in `To Plan` status. If there are none, stop there. If there are several, ask which task you should handle.
+
+As soon as the task is chosen, set its status to `Planning` before any other work, so parallel `/plan` runs don't grab the same task.
 
 Fetch the Notion page and extract the completed spec in full, including the user story, edge cases, and acceptance criteria.
 
@@ -92,13 +100,13 @@ Give a rough complexity rating: S / M / L / XL. Justify it in one sentence based
 
 Display the strategy to the user — lead with the TL;DR (overview + complexity) and keep it skimmable; show the full detail only if they ask. If there is feedback, update it.
 
-Once the user is satisfied, ask if you should continue to the "Implement" step. If they agree, execute the "Implement" command (in [`./implement.md`](./implement.md)) once this workflow is over.
+Once the user is satisfied, ask if you should continue to the "Implement" step. If they agree, execute the "Implement" command (in [`../implement/SKILL.md`](../implement/SKILL.md)) once this workflow is over.
 
 ### Step 7 — Update Notion
 
 Append a `# Strategy` section to the Notion task below the existing spec. If one already exists, override it. Do not modify any content above it.
 
-Update the task status to `Implementation (Dev)`.
+Update the task status to `To Implement`.
 
 ## Output format
 
@@ -111,4 +119,4 @@ When done, print a short summary:
 
 ## Workflow feedback
 
-After printing the summary, run the shared feedback loop in [`../workflow-feedback.md`](../workflow-feedback.md): ask the developer for feedback on this `/plan` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
+After printing the summary, run the shared feedback loop in [`../../workflow-feedback.md`](../../workflow-feedback.md): ask the developer for feedback on this `/plan` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
