@@ -20,6 +20,12 @@ type Metadata = FormattedValue<typeof metadataSchema>
 // => unknown
 ```
 
+:::info
+
+`any` values are **not deep-cloned** during [parsing](../18-actions/1-parse.md): they are passed through **by reference**. This makes `any` safe for class instances and non-plain objects (e.g. `Date` or `Object.create(null)`), but means you should not mutate the input after parsing.
+
+:::
+
 ## Properties
 
 ### `.required()`

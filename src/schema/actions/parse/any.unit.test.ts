@@ -25,6 +25,17 @@ describe('anySchemaParser', () => {
     expect(done).toBe(true)
   })
 
+  test('preserves class instances by reference (does not deep-clone)', () => {
+    class Foo {
+      constructor(readonly bar: string) {}
+    }
+    const instance = new Foo('baz')
+
+    const { value } = anySchemaParser(any(), instance).next()
+    expect(value).toBe(instance)
+    expect(value).toBeInstanceOf(Foo)
+  })
+
   test('applies validation if any', () => {
     const anyA = any().validate(input => input === 'foo')
 

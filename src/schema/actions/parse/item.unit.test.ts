@@ -1,5 +1,5 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
-import { item, string } from '~/schema/index.js'
+import { any, item, string } from '~/schema/index.js'
 
 import * as schemaParserModule from './schema.js'
 import { itemParser } from './item.js'
@@ -45,6 +45,19 @@ describe('itemParser', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.additionalProperty' }))
+  })
+
+  test('preserves additional attributes by reference (does not deep-clone)', () => {
+    class Foo {
+      constructor(readonly bar: string) {}
+    }
+    const instance = new Foo('baz')
+    const schema = item({ foo: string() })
+
+    const { value } = itemParser(schema, { foo: 'foo', extra: instance }).next()
+    const { extra } = value as { extra: unknown }
+    expect(extra).toBe(instance)
+    expect(extra).toBeInstanceOf(Foo)
   })
 
   describe('all modes', () => {

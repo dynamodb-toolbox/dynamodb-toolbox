@@ -1,6 +1,5 @@
 import type { AnySchema } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/index.js'
-import { cloneDeep } from '~/utils/cloneDeep.js'
 
 import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
@@ -15,14 +14,14 @@ export function* anySchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
 
   let linkedValue = undefined
   if (fill) {
-    const defaultedValue = cloneDeep(inputValue)
+    const defaultedValue = inputValue
     yield defaultedValue
 
     linkedValue = defaultedValue
     yield linkedValue
   }
 
-  const parsedValue = linkedValue ?? cloneDeep(inputValue)
+  const parsedValue = linkedValue ?? inputValue
   if (parsedValue !== undefined) {
     applyCustomValidation(schema, parsedValue, options)
   }

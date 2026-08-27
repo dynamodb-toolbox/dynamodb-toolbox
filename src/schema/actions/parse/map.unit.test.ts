@@ -47,6 +47,19 @@ describe('mapSchemaParser', () => {
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.additionalProperty' }))
   })
 
+  test('preserves additional attributes by reference (does not deep-clone)', () => {
+    class Foo {
+      constructor(readonly bar: string) {}
+    }
+    const instance = new Foo('baz')
+    const schema = map({ foo: string() })
+
+    const { value } = mapSchemaParser(schema, { foo: 'foo', extra: instance }).next()
+    const { extra } = value as { extra: unknown }
+    expect(extra).toBe(instance)
+    expect(extra).toBeInstanceOf(Foo)
+  })
+
   describe('all modes', () => {
     test('throws in update mode on an undeclared key', () => {
       const schema = map({ foo: string() }).strict()
