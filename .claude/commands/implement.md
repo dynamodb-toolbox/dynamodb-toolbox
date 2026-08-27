@@ -14,7 +14,9 @@ Before writing any code, read the following:
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `Implementation (Dev)` status. If there are none, stop there. If there are several, ask which task you should handle.
+List the tasks that are in `To Implement` status. If there are none, stop there. If there are several, ask which task you should handle.
+
+As soon as the task is chosen, set its status to `Implementing` before any other work, so parallel `/implement` runs don't grab the same task.
 
 Fetch the full Notion task, read both the spec and the Strategy section. Extract:
 
@@ -107,7 +109,7 @@ Once the developer explicitly asks you to commit and open the PR:
 Update the Notion task:
 
 - Fill the `GitHub PR` property with the PR URL
-- Update the status to `Code review (Dev)`.
+- Update the status to `Reviewing`.
 
 ## Workflow feedback
 

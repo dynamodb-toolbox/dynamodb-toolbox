@@ -15,7 +15,9 @@ The Notion board URL can be found in the CLAUDE.md file. Make sure to use the No
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `Spec Formalization (PM)` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+List the tasks that are in `To Spec` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+
+As soon as the task is chosen, set its status to `Specifying` before any other work, so parallel `/spec` runs don't grab the same task.
 
 Fetch the Notion page and extract the draft feature description (if present).
 
@@ -74,7 +76,7 @@ Once the user is satisfied, ask if you should continue to the "Plan" step. If th
 
 Update the Notion page with the completed spec. Replace the draft content, do not append.
 
-Update the task status to `Strategy drafting (Dev)`.
+Update the task status to `To Plan`.
 
 ## Output format
 

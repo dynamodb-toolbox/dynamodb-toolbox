@@ -15,7 +15,9 @@ Before doing anything, read the following:
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `Strategy drafting (Dev)` status. If there are none, stop there. If there are several, ask which task you should handle.
+List the tasks that are in `To Plan` status. If there are none, stop there. If there are several, ask which task you should handle.
+
+As soon as the task is chosen, set its status to `Planning` before any other work, so parallel `/plan` runs don't grab the same task.
 
 Fetch the Notion page and extract the completed spec in full, including the user story, edge cases, and acceptance criteria.
 
@@ -98,7 +100,7 @@ Once the user is satisfied, ask if you should continue to the "Implement" step. 
 
 Append a `# Strategy` section to the Notion task below the existing spec. If one already exists, override it. Do not modify any content above it.
 
-Update the task status to `Implementation (Dev)`.
+Update the task status to `To Implement`.
 
 ## Output format
 
