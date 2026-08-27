@@ -16,7 +16,7 @@ Use the `AskUserQuestion` tool, e.g. "No, all good" / "Yes, I have some feedback
 
 If they do have feedback:
 
-- Identify which file(s) it affects: `.claude/commands/spec.md`, `plan.md`, `implement.md`, this file (`.claude/workflow-feedback.md`), or `/CLAUDE.md`.
+- Identify which file(s) it affects: `.claude/skills/spec/SKILL.md`, `.claude/skills/plan/SKILL.md`, `.claude/skills/implement/SKILL.md`, this file (`.claude/workflow-feedback.md`), or `/CLAUDE.md`.
 - Draft the **smallest** edit that captures the feedback. Preserve the existing tone and structure — make surgical changes, do not rewrite whole sections.
 - Show the proposed diff and explain each change in one line.
 - Iterate with the developer until they are happy. If a piece of feedback is ambiguous, ask rather than guess.

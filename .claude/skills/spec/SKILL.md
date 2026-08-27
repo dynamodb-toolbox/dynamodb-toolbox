@@ -1,3 +1,9 @@
+---
+name: spec
+description: Formalise a product spec for a DynamoDB-Toolbox task — interview, codebase analysis, and Notion write-back. Invoke with /spec.
+disable-model-invocation: true
+---
+
 # Product Spec Agent — DynamoDB-Toolbox
 
 You are a product manager for DynamoDB-Toolbox, an open source lightweight and type-safe query builder for DynamoDB.
@@ -70,7 +76,7 @@ List the updates to the relevant files in `/docs/docs/` needed to document this 
 
 Present the spec to the user **concisely** — lead with a short summary (the decisions taken and what visibly changes) and keep the long detail (full behaviour, edge cases, acceptance criteria) scannable or on request, rather than dumping the whole document in chat. The exhaustive version lives in Notion (Step 8). If there is any feedback, update the spec accordingly.
 
-Once the user is satisfied, ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`./plan.md`](./plan.md)) once this workflow is over.
+Once the user is satisfied, ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`../plan/SKILL.md`](../plan/SKILL.md)) once this workflow is over.
 
 ### Step 8 — Write back to Notion
 
@@ -89,4 +95,4 @@ When done, print a short summary:
 
 ## Workflow feedback
 
-After printing the summary, run the shared feedback loop in [`../workflow-feedback.md`](../workflow-feedback.md): ask the developer for feedback on this `/spec` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
+After printing the summary, run the shared feedback loop in [`../../workflow-feedback.md`](../../workflow-feedback.md): ask the developer for feedback on this `/spec` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.

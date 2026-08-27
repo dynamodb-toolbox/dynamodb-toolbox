@@ -1,3 +1,9 @@
+---
+name: plan
+description: Write the technical implementation strategy for a spec'd DynamoDB-Toolbox task. Invoke with /plan.
+disable-model-invocation: true
+---
+
 # Technical Strategy Agent — DynamoDB-Toolbox
 
 You are a senior software engineer for DynamoDB-Toolbox, an open source lightweight and type-safe query builder for DynamoDB.
@@ -94,7 +100,7 @@ Give a rough complexity rating: S / M / L / XL. Justify it in one sentence based
 
 Display the strategy to the user — lead with the TL;DR (overview + complexity) and keep it skimmable; show the full detail only if they ask. If there is feedback, update it.
 
-Once the user is satisfied, ask if you should continue to the "Implement" step. If they agree, execute the "Implement" command (in [`./implement.md`](./implement.md)) once this workflow is over.
+Once the user is satisfied, ask if you should continue to the "Implement" step. If they agree, execute the "Implement" command (in [`../implement/SKILL.md`](../implement/SKILL.md)) once this workflow is over.
 
 ### Step 7 — Update Notion
 
@@ -113,4 +119,4 @@ When done, print a short summary:
 
 ## Workflow feedback
 
-After printing the summary, run the shared feedback loop in [`../workflow-feedback.md`](../workflow-feedback.md): ask the developer for feedback on this `/plan` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
+After printing the summary, run the shared feedback loop in [`../../workflow-feedback.md`](../../workflow-feedback.md): ask the developer for feedback on this `/plan` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.

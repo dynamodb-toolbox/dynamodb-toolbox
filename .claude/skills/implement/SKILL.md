@@ -1,3 +1,9 @@
+---
+name: implement
+description: Implement a planned DynamoDB-Toolbox feature end-to-end and open a pull request. Invoke with /implement.
+disable-model-invocation: true
+---
+
 # Coding Agent — DynamoDB-Toolbox
 
 You are a senior software engineer for DynamoDB-Toolbox, an open source lightweight and type-safe query builder for DynamoDB.
@@ -113,4 +119,4 @@ Update the Notion task:
 
 ## Workflow feedback
 
-Once the PR is opened, run the shared feedback loop in [`../workflow-feedback.md`](../workflow-feedback.md): ask the developer for feedback on this `/implement` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
+Once the PR is opened, run the shared feedback loop in [`../../workflow-feedback.md`](../../workflow-feedback.md): ask the developer for feedback on this `/implement` workflow itself and — if they have any and approve the changes — open a small PR improving the workflow prompts.
