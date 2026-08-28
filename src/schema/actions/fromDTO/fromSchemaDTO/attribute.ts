@@ -11,6 +11,9 @@ import { fromRecordSchemaDTO } from './record.js'
 import { fromSetSchemaDTO } from './set.js'
 import { fromTupleSchemaDTO } from './tuple.js'
 
+/**
+ * Dispatch a DTO to the schema builder of its type.
+ */
 export const fromSchemaDTO = (schemaDTO: ISchemaDTO): Schema => {
   switch (schemaDTO.type) {
     case 'any':

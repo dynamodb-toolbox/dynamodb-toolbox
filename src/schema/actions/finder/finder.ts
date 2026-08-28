@@ -20,6 +20,9 @@ export class Finder<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA>
   }
 }
 
+/**
+ * Recursively collect the sub-schemas found at a path within a schema.
+ */
 export const findSubSchemas = (schema: Schema, path: ArrayPath): SubSchema[] => {
   const [pathHead, ...pathTail] = path
 

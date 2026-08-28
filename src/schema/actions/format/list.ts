@@ -8,6 +8,9 @@ import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 import { matchListProjection } from './utils.js'
 
+/**
+ * Format a saved value against a `list` schema.
+ */
 export function* listSchemaFormatter(
   schema: ListSchema,
   rawValue: unknown,

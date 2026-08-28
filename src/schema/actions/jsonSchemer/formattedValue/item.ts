@@ -7,6 +7,9 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta, RequiredProperties } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `item` value.
+ */
 export type FormattedItemJSONSchema<
   SCHEMA extends ItemSchema,
   REQUIRED_PROPERTIES extends string = RequiredProperties<SCHEMA>
@@ -23,6 +26,9 @@ export type FormattedItemJSONSchema<
     (SCHEMA['props'] extends { strict: true } ? { additionalProperties: false } : {})
 >
 
+/**
+ * Build the JSON Schema of a formatted `item` value.
+ */
 export const getFormattedItemJSONSchema = <SCHEMA extends ItemSchema>(
   schema: SCHEMA
 ): FormattedItemJSONSchema<SCHEMA> => {

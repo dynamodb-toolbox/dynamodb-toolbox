@@ -5,6 +5,9 @@ import { prefix } from '~/transformers/prefix.js'
 import { suffix } from '~/transformers/suffix.js'
 import type { Transformer } from '~/transformers/transformer.js'
 
+/**
+ * Rehydrate a serializable transformer from its DTO.
+ */
 export const fromTransformerDTO = (transformerDTO: TransformerDTO): Transformer | null => {
   try {
     switch (transformerDTO.transformerId) {

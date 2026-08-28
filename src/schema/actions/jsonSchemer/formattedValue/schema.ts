@@ -30,37 +30,41 @@ import { getFormattedSetJSONSchema } from './set.js'
 import type { FormattedTupleJSONSchema } from './tuple.js'
 import { getFormattedTupleJSONSchema } from './tuple.js'
 
+/**
+ * Dispatch a schema to the JSON Schema builder of its type.
+ */
 export const getFormattedValueJSONSchema = <SCHEMA extends Schema>(
   schema: SCHEMA
 ): FormattedValueJSONSchema<SCHEMA> => {
-  type RESPONSE = FormattedValueJSONSchema<SCHEMA>
-
   switch (schema.type) {
     case 'any':
-      return getFormattedAnyJSONSchema(schema) as RESPONSE
+      return getFormattedAnyJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'null':
     case 'boolean':
     case 'number':
     case 'string':
     case 'binary':
-      return getFormattedPrimitiveJSONSchema(schema) as RESPONSE
+      return getFormattedPrimitiveJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'set':
-      return getFormattedSetJSONSchema(schema) as RESPONSE
+      return getFormattedSetJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'list':
-      return getFormattedListJSONSchema(schema) as RESPONSE
+      return getFormattedListJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'tuple':
-      return getFormattedTupleJSONSchema(schema) as RESPONSE
+      return getFormattedTupleJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'map':
-      return getFormattedMapJSONSchema(schema) as RESPONSE
+      return getFormattedMapJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'record':
-      return getFormattedRecordJSONSchema(schema) as RESPONSE
+      return getFormattedRecordJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'anyOf':
-      return getFormattedAnyOfJSONSchema(schema) as RESPONSE
+      return getFormattedAnyOfJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
     case 'item':
-      return getFormattedItemJSONSchema(schema) as RESPONSE
+      return getFormattedItemJSONSchema(schema) as FormattedValueJSONSchema<SCHEMA>
   }
 }
 
+/**
+ * JSON Schema of a formatted value, for any schema type.
+ */
 export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCHEMA
   ? Record<string, unknown>
   :
@@ -74,6 +78,9 @@ export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCH
       | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
       | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
+/**
+ * JSON Schemas of a tuple of formatted values, preserving positions.
+ */
 export type FormattedValueJSONSchemaRec<
   SCHEMAS extends Schema[],
   RESULTS extends unknown[] = []

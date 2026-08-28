@@ -4,6 +4,9 @@ import type { ItemSchema } from '~/schema/item/index.js'
 
 import { fromSchemaDTO as _fromSchemaDTO } from './fromSchemaDTO/index.js'
 
+/**
+ * Rebuild an `item` schema from its DTO.
+ */
 export const fromSchemaDTO = (schemaDTO: ItemSchemaDTO): ItemSchema => {
   let schema = item(
     Object.fromEntries(

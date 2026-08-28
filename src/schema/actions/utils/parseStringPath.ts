@@ -10,6 +10,9 @@ const pathRegex = combineRegExp(listIndexRegex, escapedStrRegex, regularStrRegex
 
 type MatchType = 'regularStr' | 'escapedStr' | 'listIndex'
 
+/**
+ * Split a string path into its array-path parts (keys and list indexes).
+ */
 export const parseStringPath = (strPath: StrPath): ArrayPath => {
   if (strPath === '') {
     return []

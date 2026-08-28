@@ -6,12 +6,18 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `anyOf` value.
+ */
 export type FormattedAnyOfJSONSchema<SCHEMA extends AnyOfSchema> = ComputeObject<
   JSONSchemaMeta<SCHEMA> & {
     anyOf: FormattedValueJSONSchemaRec<SCHEMA['elements']>
   }
 >
 
+/**
+ * Build the JSON Schema of a formatted `anyOf` value.
+ */
 export const getFormattedAnyOfJSONSchema = <SCHEMA extends AnyOfSchema>(
   schema: SCHEMA
 ): FormattedAnyOfJSONSchema<SCHEMA> => ({

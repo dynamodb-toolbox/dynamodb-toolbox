@@ -8,4 +8,7 @@ type InvalidExpressionAttributePathErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of error blueprints raised by shared schema-action utils.
+ */
 export type SchemaActionUtilsErrorBlueprints = InvalidExpressionAttributePathErrorBlueprint

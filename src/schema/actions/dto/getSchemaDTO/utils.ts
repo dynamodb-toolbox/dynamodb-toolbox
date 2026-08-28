@@ -3,6 +3,9 @@ import { isFunction } from '~/utils/validation/isFunction.js'
 
 import type { ISchemaDTO } from '../types.js'
 
+/**
+ * Extract a schema's key/put/update defaults into their DTO form.
+ */
 export const getDefaultsDTO = (
   schema: Schema
 ): Pick<ISchemaDTO, 'keyDefault' | 'putDefault' | 'updateDefault'> => {

@@ -6,6 +6,9 @@ import type { ArrayPath, StrPath } from './types.js'
 
 const charsToEscape: CharsToEscape[] = ['[', ']', '.']
 
+/**
+ * Render an array path into its string form, escaping special chars.
+ */
 export const formatArrayPath = (arrayPath: ArrayPath): StrPath => {
   let path = ''
   let isRoot = true

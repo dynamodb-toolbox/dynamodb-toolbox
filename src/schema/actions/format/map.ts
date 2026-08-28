@@ -8,6 +8,9 @@ import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 import { matchMapProjection } from './utils.js'
 
+/**
+ * Format a saved value against a `map` schema.
+ */
 export function* mapSchemaFormatter(
   schema: MapSchema,
   rawValue: unknown,

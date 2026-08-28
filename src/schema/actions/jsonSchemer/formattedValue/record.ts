@@ -6,6 +6,9 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `record` value.
+ */
 export type FormattedRecordJSONSchema<SCHEMA extends RecordSchema> = ComputeObject<
   JSONSchemaMeta<SCHEMA> & {
     type: 'object'
@@ -14,6 +17,9 @@ export type FormattedRecordJSONSchema<SCHEMA extends RecordSchema> = ComputeObje
   }
 >
 
+/**
+ * Build the JSON Schema of a formatted `record` value.
+ */
 export const getFormattedRecordJSONSchema = <SCHEMA extends RecordSchema>(
   schema: SCHEMA
 ): FormattedRecordJSONSchema<SCHEMA> => ({
