@@ -9,6 +9,9 @@ import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
 // LIMITATION: Binary enums are not supported
+/**
+ * Zod schema validating a formatted `binary` value.
+ */
 export type BinaryZodFormatter<
   SCHEMA extends BinarySchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -18,6 +21,9 @@ export type BinaryZodFormatter<
   WithOptional<SCHEMA, OPTIONS, WithValidate<SCHEMA, z.ZodType<Uint8Array>>>
 >
 
+/**
+ * Build a Zod schema validating a formatted `binary` value.
+ */
 export const binaryZodFormatter = (
   schema: BinarySchema,
   options: ZodFormatterOptions = {}

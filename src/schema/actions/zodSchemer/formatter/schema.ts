@@ -45,6 +45,9 @@ import type { TupleZodFormatter } from './tuple.js'
 import { tupleZodFormatter } from './tuple.js'
 import type { ZodFormatterOptions } from './types.js'
 
+/**
+ * Zod schema validating a formatted value, for any schema.
+ */
 export type ZodFormatter<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -54,6 +57,9 @@ export type ZodFormatter<
     ? SchemaZodFormatter<SCHEMA, OPTIONS>
     : never
 
+/**
+ * Zod schema validating a formatted non-item value.
+ */
 export type SchemaZodFormatter<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -73,39 +79,40 @@ export type SchemaZodFormatter<
       | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA, OPTIONS> : never)
 
+/**
+ * Dispatch a schema to the Zod formatter of its type.
+ */
 export const schemaZodFormatter = <SCHEMA extends Schema, OPTIONS extends ZodFormatterOptions = {}>(
   schema: SCHEMA,
   options: OPTIONS = {} as OPTIONS
 ): SchemaZodFormatter<SCHEMA, OPTIONS> => {
-  type ZOD_FORMATTER = SchemaZodFormatter<SCHEMA, OPTIONS>
-
   switch (schema.type) {
     case 'any':
-      return anyZodFormatter(schema, options) as ZOD_FORMATTER
+      return anyZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'null':
-      return nullZodFormatter(schema, options) as ZOD_FORMATTER
+      return nullZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'boolean':
-      return booleanZodFormatter(schema, options) as ZOD_FORMATTER
+      return booleanZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'number':
-      return numberZodFormatter(schema, options) as ZOD_FORMATTER
+      return numberZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'string':
-      return stringZodFormatter(schema, options) as ZOD_FORMATTER
+      return stringZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'binary':
-      return binaryZodFormatter(schema, options) as ZOD_FORMATTER
+      return binaryZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'set':
-      return setZodFormatter(schema, options) as ZOD_FORMATTER
+      return setZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'list':
-      return listZodFormatter(schema, options) as ZOD_FORMATTER
+      return listZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'tuple':
-      return tupleZodFormatter(schema, options) as ZOD_FORMATTER
+      return tupleZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'map':
-      return mapZodFormatter(schema, options) as ZOD_FORMATTER
+      return mapZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'record':
-      return recordZodFormatter(schema, options) as ZOD_FORMATTER
+      return recordZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'anyOf':
-      return anyOfZodFormatter(schema, options) as ZOD_FORMATTER
+      return anyOfZodFormatter(schema, options) as SchemaZodFormatter<SCHEMA, OPTIONS>
     case 'item':
       // NOTE: Should not happen
-      return itemZodFormatter(schema, options) as unknown as ZOD_FORMATTER
+      return itemZodFormatter(schema, options) as unknown as SchemaZodFormatter<SCHEMA, OPTIONS>
   }
 }

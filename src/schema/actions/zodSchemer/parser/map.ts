@@ -12,6 +12,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithAttributeNameEncoding, WithDefault, WithOptional } from './utils.js'
 import { withAttributeNameEncoding, withDefault, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `map` value.
+ */
 export type MapZodParser<
   SCHEMA extends MapSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -44,6 +47,9 @@ export type MapZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `map` value.
+ */
 export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}): z.ZodTypeAny => {
   const { mode = 'put' } = options
 

@@ -9,6 +9,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `number` value.
+ */
 export type NumberZodParser<
   SCHEMA extends NumberSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -38,6 +41,9 @@ export type NumberZodParser<
   >
 >
 
+/**
+ * Build a Zod schema validating an input `number` value.
+ */
 export const numberZodParser = (
   schema: NumberSchema,
   options: ZodParserOptions = {}

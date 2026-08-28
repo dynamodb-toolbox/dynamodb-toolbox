@@ -9,6 +9,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `boolean` value.
+ */
 export type BooleanZodFormatter<
   SCHEMA extends BooleanSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -32,6 +35,9 @@ export type BooleanZodFormatter<
   >
 >
 
+/**
+ * Build a Zod schema validating a formatted `boolean` value.
+ */
 export const booleanZodFormatter = (
   schema: BooleanSchema,
   options: ZodFormatterOptions

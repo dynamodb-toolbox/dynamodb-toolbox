@@ -8,6 +8,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `binary` value.
+ */
 export type BinaryZodParser<
   SCHEMA extends BinarySchema,
   OPTIONS extends ZodParserOptions = {}
@@ -21,6 +24,9 @@ export type BinaryZodParser<
   >
 >
 
+/**
+ * Build a Zod schema validating an input `binary` value.
+ */
 export const binaryZodParser = (
   schema: BinarySchema,
   options: ZodParserOptions = {}

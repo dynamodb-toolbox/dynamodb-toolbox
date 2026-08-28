@@ -11,6 +11,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { SchemaZodFormatterRec, WithOptional } from './utils.js'
 import { withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `tuple` value.
+ */
 export type TupleZodFormatter<
   SCHEMA extends TupleSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -36,6 +39,9 @@ export type TupleZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `tuple` value.
+ */
 export const tupleZodFormatter = (
   schema: TupleSchema,
   options: ZodFormatterOptions = {}

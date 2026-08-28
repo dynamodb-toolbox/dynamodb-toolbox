@@ -8,6 +8,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `any` value.
+ */
 export type AnyZodFormatter<
   SCHEMA extends AnySchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -17,6 +20,9 @@ export type AnyZodFormatter<
   WithOptional<SCHEMA, OPTIONS, WithValidate<SCHEMA, z.ZodType<SCHEMA['props']['castAs']>>>
 >
 
+/**
+ * Build a Zod schema validating a formatted `any` value.
+ */
 export const anyZodFormatter = (schema: AnySchema, options: ZodFormatterOptions): z.ZodTypeAny =>
   withDescribe(
     schema,

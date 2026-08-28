@@ -8,6 +8,9 @@ import type { SavedAsAttributes } from '../utils.js'
 import type { SchemaZodFormatter } from './schema.js'
 import type { ZodFormatterOptions } from './types.js'
 
+/**
+ * Zod formatters of a tuple of schemas, preserving positions.
+ */
 export type SchemaZodFormatterRec<
   SCHEMAS extends Schema[],
   OPTIONS extends ZodFormatterOptions = {},
@@ -24,6 +27,9 @@ export type SchemaZodFormatterRec<
     : never
   : RESULTS
 
+/**
+ * Zod literals of a tuple of primitives, preserving positions.
+ */
 export type ZodLiteralMap<
   LITERALS extends z.Primitive[],
   RESULTS extends z.ZodLiteral<z.Primitive>[] = []
@@ -35,6 +41,9 @@ export type ZodLiteralMap<
     : never
   : RESULTS
 
+/**
+ * Wrap a Zod schema as optional unless the value is always defined.
+ */
 export type WithOptional<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions,
@@ -49,6 +58,9 @@ export type WithOptional<
   >
 >
 
+/**
+ * Make a Zod schema optional unless the value is always defined.
+ */
 export const withOptional = (
   schema: Schema,
   { partial, defined }: ZodFormatterOptions,
@@ -60,6 +72,9 @@ export const withOptional = (
       ? z.optional(zodSchema)
       : zodSchema
 
+/**
+ * Wrap a Zod schema to reverse the attribute's transformer on read.
+ */
 export type WithDecoding<
   SCHEMA extends Schema,
   OPTIONS extends ZodFormatterOptions,
@@ -74,6 +89,9 @@ export type WithDecoding<
   >
 >
 
+/**
+ * Preprocess a Zod schema to reverse the attribute's transformer on read.
+ */
 export const withDecoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
   { transform }: ZodFormatterOptions,
@@ -85,6 +103,9 @@ export const withDecoding = (
       ? z.preprocess(encoded => (schema.props.transform as Transformer).decode(encoded), zodSchema)
       : zodSchema
 
+/**
+ * Wrap a Zod schema to map saved attribute names back to their keys.
+ */
 export type WithAttributeNameDecoding<
   SCHEMA extends MapSchema | ItemSchema,
   OPTIONS extends ZodFormatterOptions,
@@ -95,6 +116,9 @@ export type WithAttributeNameDecoding<
   z.ZodEffects<ZOD_SCHEMA, z.output<ZOD_SCHEMA>, TransformedValue<SCHEMA>>
 >
 
+/**
+ * Preprocess a Zod schema to map saved attribute names back to their keys.
+ */
 export const withAttributeNameDecoding = (
   schema: MapSchema | ItemSchema,
   { transform }: ZodFormatterOptions,
@@ -105,6 +129,9 @@ export const withAttributeNameDecoding = (
     ? zodSchema
     : z.preprocess(compileAttributeNameDecoder(schema), zodSchema)
 
+/**
+ * Build a decoder mapping saved attribute names back to their keys.
+ */
 export const compileAttributeNameDecoder =
   (schema: MapSchema | ItemSchema) =>
   (encoded: unknown): Record<string, unknown> => {

@@ -8,6 +8,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `string` value.
+ */
 export type StringZodParser<
   SCHEMA extends StringSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -32,6 +35,9 @@ export type StringZodParser<
   >
 >
 
+/**
+ * Build a Zod schema validating an input `string` value.
+ */
 export const stringZodParser = (
   schema: StringSchema,
   options: ZodParserOptions = {}

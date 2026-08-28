@@ -11,6 +11,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { SchemaZodFormatterRec, WithOptional } from './utils.js'
 import { withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `anyOf` value.
+ */
 export type AnyOfZodFormatter<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -41,6 +44,9 @@ export type AnyOfZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `anyOf` value.
+ */
 export const anyOfZodFormatter = (
   schema: AnyOfSchema,
   options: ZodFormatterOptions = {}

@@ -8,6 +8,9 @@ import type { SavedAsAttributes } from '../utils.js'
 import type { SchemaZodParser } from './schema.js'
 import type { ZodParserOptions } from './types.js'
 
+/**
+ * Zod parsers of a tuple of schemas, preserving positions.
+ */
 export type SchemaZodParserRec<
   SCHEMAS extends Schema[],
   OPTIONS extends ZodParserOptions = {},
@@ -24,6 +27,9 @@ export type SchemaZodParserRec<
     : never
   : RESULTS
 
+/**
+ * Zod literals of a tuple of primitives, preserving positions.
+ */
 export type ZodLiteralMap<
   LITERALS extends z.Primitive[],
   RESULTS extends z.ZodLiteral<z.Primitive>[] = []
@@ -35,6 +41,9 @@ export type ZodLiteralMap<
     : never
   : RESULTS
 
+/**
+ * Wrap a Zod schema with the schema's default value, if any.
+ */
 export type WithDefault<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,
@@ -52,6 +61,9 @@ export type WithDefault<
   >
 >
 
+/**
+ * Apply the schema's default value to a Zod schema.
+ */
 export const withDefault = (
   schema: Schema,
   { fill }: ZodParserOptions,
@@ -65,6 +77,9 @@ export const withDefault = (
         ? zodSchema.default(schema.props.putDefault)
         : zodSchema
 
+/**
+ * Wrap a Zod schema as optional unless the value is always defined.
+ */
 export type WithOptional<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,
@@ -75,6 +90,9 @@ export type WithOptional<
   If<Extends<SCHEMA['props'], { required: 'never' }>, z.ZodOptional<ZOD_SCHEMA>, ZOD_SCHEMA>
 >
 
+/**
+ * Make a Zod schema optional unless the value is always defined.
+ */
 export const withOptional = (
   schema: Schema,
   { defined }: ZodParserOptions,
@@ -86,6 +104,9 @@ export const withOptional = (
       ? z.optional(zodSchema)
       : zodSchema
 
+/**
+ * Wrap a Zod schema to apply the attribute's transformer on write.
+ */
 export type WithEncoding<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions,
@@ -100,6 +121,9 @@ export type WithEncoding<
   >
 >
 
+/**
+ * Transform a Zod schema to apply the attribute's transformer on write.
+ */
 export const withEncoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
   { transform }: ZodParserOptions,
@@ -111,6 +135,9 @@ export const withEncoding = (
       ? zodSchema.transform(decoded => (schema.props.transform as Transformer).encode(decoded))
       : zodSchema
 
+/**
+ * Wrap a Zod schema to map attribute keys to their saved names.
+ */
 export type WithAttributeNameEncoding<
   SCHEMA extends MapSchema | ItemSchema,
   OPTIONS extends ZodParserOptions,
@@ -121,6 +148,9 @@ export type WithAttributeNameEncoding<
   z.ZodEffects<ZOD_SCHEMA, TransformedValue<SCHEMA>, z.input<ZOD_SCHEMA>>
 >
 
+/**
+ * Transform a Zod schema to map attribute keys to their saved names.
+ */
 export const withAttributeNameEncoding = (
   schema: MapSchema | ItemSchema,
   { transform }: ZodParserOptions,
@@ -131,6 +161,9 @@ export const withAttributeNameEncoding = (
     ? zodSchema
     : zodSchema.transform(compileAttributeNameEncoder(schema))
 
+/**
+ * Build an encoder mapping attribute keys to their saved names.
+ */
 export const compileAttributeNameEncoder =
   (schema: MapSchema | ItemSchema) =>
   (decoded: unknown): Record<string, unknown> => {

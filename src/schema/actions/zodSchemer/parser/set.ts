@@ -11,6 +11,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `set` value.
+ */
 export type SetZodParser<
   SCHEMA extends SetSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -29,6 +32,9 @@ export type SetZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `set` value.
+ */
 export const setZodParser = (schema: SetSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
   withDescribe(
     schema,
