@@ -25,8 +25,14 @@ import { isString } from '~/utils/validation/isString.js'
 
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` literal schema.
+ */
 export type ZodLiteralAny = ZodLiteral<any>
 
+/**
+ * DDB-TB schema derived from a `zod` literal schema.
+ */
 export type FromZodLiteral<
   ZOD_SCHEMA extends ZodLiteralAny,
   ROOT extends boolean = true,
@@ -67,6 +73,9 @@ export type FromZodLiteral<
             : never)
     : never
 
+/**
+ * Convert a `zod` literal schema to a DDB-TB schema.
+ */
 export const fromZodLiteral = (
   zodLiteral: ZodLiteralAny
 ): NullSchema | BooleanSchema | NumberSchema | StringSchema => {

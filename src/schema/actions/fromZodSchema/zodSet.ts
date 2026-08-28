@@ -18,6 +18,9 @@ import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * DDB-TB schema derived from a `zod` set schema.
+ */
 export type FromZodSet<
   ZOD_SCHEMA extends ZodSet,
   ROOT extends boolean = true,
@@ -41,6 +44,9 @@ export type FromZodSet<
             : never)
     : never
 
+/**
+ * Convert a `zod` set schema to a DDB-TB schema.
+ */
 export const fromZodSet = (zodSet: ZodSet): SetSchema => {
   const { valueType } = zodSet._def
 

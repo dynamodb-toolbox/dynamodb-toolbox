@@ -8,8 +8,14 @@ import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` tuple schema.
+ */
 export type ZodTupleAny = ZodTuple<[ZodTypeAny, ...ZodTypeAny[]], ZodTypeAny | null>
 
+/**
+ * DDB-TB schema derived from a `zod` tuple schema.
+ */
 export type FromZodTuple<
   ZOD_SCHEMA extends ZodTupleAny,
   ROOT extends boolean = true,
@@ -21,5 +27,8 @@ export type FromZodTuple<
       : TupleSchema<FromZodSchemaRec<ELEMENT_ZOD_SCHEMAS, false>, PROPS>
     : never
 
+/**
+ * Convert a `zod` tuple schema to a DDB-TB schema.
+ */
 export const fromZodTuple = (zodTuple: ZodTupleAny): TupleSchema =>
   withMeta(tuple(...zodTuple.items.map(item => fromZodSchema(item))), zodTuple)

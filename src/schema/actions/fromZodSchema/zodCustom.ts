@@ -7,6 +7,9 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import { withMeta } from './utils.js'
 
+/**
+ * DDB-TB `any` schema derived from an arbitrary `zod` schema.
+ */
 export type FromZodCustom<
   ZOD_SCHEMA extends ZodType,
   ROOT extends boolean = true,
@@ -23,4 +26,7 @@ export type FromZodCustom<
         : Overwrite<PROPS, { castAs: ZOD_SCHEMA['_output'] }>
     >
 
+/**
+ * Convert an arbitrary `zod` schema to a DDB-TB `any` schema.
+ */
 export const fromZodCustom = (zodSchema: ZodType): AnySchema => withMeta(any(), zodSchema)

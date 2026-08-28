@@ -8,8 +8,14 @@ import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` effects schema.
+ */
 export type ZodEffectsAny = ZodEffects<ZodTypeAny>
 
+/**
+ * DDB-TB schema derived from a `zod` effects schema.
+ */
 export type FromZodEffects<
   ZOD_SCHEMA extends ZodEffectsAny,
   ROOT extends boolean = true,
@@ -19,6 +25,9 @@ export type FromZodEffects<
     ? FromZodSchema<UNWRAPPED_ZOD_SCHEMA, ROOT, Overwrite<PROPS, { putValidator: Validator }>>
     : never
 
+/**
+ * Convert a `zod` effects schema to a DDB-TB schema.
+ */
 export const fromZodEffects = (zodSchema: ZodEffectsAny): Schema => {
   const schema = fromZodSchema(zodSchema._def.schema)
   const effect = zodSchema._def.effect

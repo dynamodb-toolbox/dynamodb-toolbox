@@ -6,9 +6,15 @@ import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
 import { withMeta } from './utils.js'
 
+/**
+ * DDB-TB schema derived from a `zod` number schema.
+ */
 export type FromZodNumber<
   ROOT extends boolean = true,
   PROPS extends SchemaProps = {}
 > = ROOT extends true ? NumberSchema_<PROPS> : NumberSchema<PROPS>
 
+/**
+ * Convert a `zod` number schema to a DDB-TB schema.
+ */
 export const fromZodNumber = (zodSchema: ZodNumber): NumberSchema => withMeta(number(), zodSchema)

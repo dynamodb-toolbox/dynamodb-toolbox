@@ -116,6 +116,9 @@ type FromZodGeneralSchema<
   PROPS extends SchemaProps = {}
 > = FromZodCustom<ZOD_SCHEMA, ROOT, PROPS>
 
+/**
+ * DDB-TB schema derived from a `zod` schema.
+ */
 export type FromZodSchema<
   ZOD_SCHEMA extends ZodSchema,
   ROOT extends boolean = true,
@@ -126,6 +129,9 @@ export type FromZodSchema<
     ? FromZodGeneralSchema<ZOD_SCHEMA, ROOT, PROPS>
     : never
 
+/**
+ * DDB-TB schemas derived from a tuple of `zod` schemas.
+ */
 export type FromZodSchemaRec<
   ZOD_SCHEMAS extends readonly ZodSchema[],
   ROOT extends boolean = true,
@@ -143,6 +149,9 @@ export type FromZodSchemaRec<
     >
   : RESULT_SCHEMAS
 
+/**
+ * Convert a `zod` schema to a DDB-TB schema.
+ */
 export const fromZodSchema = <ZOD_SCHEMA extends ZodSchema>(
   zodSchema: ZOD_SCHEMA
 ): FromZodSchema<ZOD_SCHEMA> => {

@@ -9,11 +9,17 @@ import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` discriminated union schema.
+ */
 export type ZodDiscriminatedUnionAny = ZodDiscriminatedUnion<
   string,
   ZodDiscriminatedUnionOption<string>[]
 >
 
+/**
+ * DDB-TB schema derived from a `zod` discriminated union schema.
+ */
 export type FromZodDiscriminatedUnion<
   ZOD_SCHEMA extends ZodDiscriminatedUnionAny,
   ROOT extends boolean = true,
@@ -31,6 +37,9 @@ export type FromZodDiscriminatedUnion<
         >
     : never
 
+/**
+ * Convert a `zod` discriminated union schema to a DDB-TB schema.
+ */
 export const fromZodDiscriminatedUnion = (
   zodDiscriminatedUnion: ZodDiscriminatedUnionAny
 ): AnyOfSchema =>

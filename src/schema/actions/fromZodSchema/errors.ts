@@ -16,6 +16,9 @@ type UnsupportedSetValueTypeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of error blueprints raised when converting a `zod` schema.
+ */
 export type FromZodSchemaErrorBlueprints =
   | UnrecognizedLiteralErrorBlueprint
   | UnsupportedSetValueTypeErrorBlueprint
