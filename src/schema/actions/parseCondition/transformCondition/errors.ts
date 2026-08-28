@@ -6,4 +6,7 @@ type InvalidConditionErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/**
+ * Error blueprint raised while transforming a condition.
+ */
 export type TransformConditionErrorBlueprints = InvalidConditionErrorBlueprint

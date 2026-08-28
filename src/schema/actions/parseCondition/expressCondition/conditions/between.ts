@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render a `between` condition.
+ */
 export const expressBetweenCondition = (
   condition: Extract<SchemaCondition, { between: unknown }>,
   prefix = '',

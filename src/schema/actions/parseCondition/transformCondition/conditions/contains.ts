@@ -7,6 +7,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operand of a `contains` condition.
+ */
 export const transformContainsCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { contains: unknown; value?: never }>

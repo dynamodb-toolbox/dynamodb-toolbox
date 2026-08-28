@@ -6,6 +6,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operand of a `beginsWith` condition.
+ */
 export const transformBeginsWithCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { beginsWith: unknown; value?: never }>

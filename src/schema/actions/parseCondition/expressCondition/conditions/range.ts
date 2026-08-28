@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render a `gte` condition.
+ */
 export const expressGteCondition = (
   condition: Extract<SchemaCondition, { gte: unknown }>,
   prefix = '',
@@ -27,6 +30,9 @@ export const expressGteCondition = (
   }
 }
 
+/**
+ * Render a `gt` condition.
+ */
 export const expressGtCondition = (
   condition: Extract<SchemaCondition, { gt: unknown }>,
   prefix = '',
@@ -51,6 +57,9 @@ export const expressGtCondition = (
   }
 }
 
+/**
+ * Render a `lte` condition.
+ */
 export const expressLteCondition = (
   condition: Extract<SchemaCondition, { lte: unknown }>,
   prefix = '',
@@ -75,6 +84,9 @@ export const expressLteCondition = (
   }
 }
 
+/**
+ * Render a `lt` condition.
+ */
 export const expressLtCondition = (
   condition: Extract<SchemaCondition, { lt: unknown }>,
   prefix = '',

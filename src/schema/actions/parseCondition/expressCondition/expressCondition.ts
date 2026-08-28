@@ -22,6 +22,9 @@ import {
 import { expressTypeCondition } from './conditions/type.js'
 import type { ExpressionState } from './types.js'
 
+/**
+ * Render a condition into a DynamoDB condition expression.
+ */
 export const expressCondition = (
   condition: SchemaCondition,
   prefix = '',

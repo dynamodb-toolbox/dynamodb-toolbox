@@ -4,6 +4,9 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { ExpressionState } from '../types.js'
 
+/**
+ * Render an attribute path into expression tokens.
+ */
 export const pathTokens = (
   attr: string,
   prefix = '',
@@ -41,6 +44,9 @@ export const pathTokens = (
   return tokens
 }
 
+/**
+ * Register a value and return its expression token.
+ */
 export const valueToken = (value: unknown, prefix = '', state: ExpressionState): string => {
   const token = `:c${prefix}_${state.valuesCursor}`
   state.ExpressionAttributeValues[token] = value
@@ -55,6 +61,9 @@ export const valueToken = (value: unknown, prefix = '', state: ExpressionState):
 const isAttr = (attrOrValue: unknown): attrOrValue is { attr: string } =>
   isObject(attrOrValue) && 'attr' in attrOrValue
 
+/**
+ * Render an attribute reference or a literal value into tokens.
+ */
 export const attrOrValueTokens = (
   attrOrValue: unknown,
   prefix = '',

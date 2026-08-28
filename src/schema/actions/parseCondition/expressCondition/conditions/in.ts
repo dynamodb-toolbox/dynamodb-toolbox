@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render an `in` condition.
+ */
 export const expressInCondition = (
   condition: Extract<SchemaCondition, { in: unknown }>,
   prefix = '',

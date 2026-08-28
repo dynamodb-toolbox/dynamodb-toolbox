@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render a `beginsWith` condition.
+ */
 export const expressBeginsWithCondition = (
   condition: Extract<SchemaCondition, { beginsWith: unknown }>,
   prefix = '',

@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render a `contains` condition.
+ */
 export const expressContainsCondition = (
   condition: Extract<SchemaCondition, { contains: unknown }>,
   prefix = '',

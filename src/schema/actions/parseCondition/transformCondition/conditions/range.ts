@@ -7,6 +7,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operand of a `gte` condition.
+ */
 export const transformGteCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { gte: unknown; value?: never }>
@@ -44,6 +47,9 @@ export const transformGteCondition = (
   return joinDedupedConditions(conditions, attributePath)
 }
 
+/**
+ * Transform the operand of a `gt` condition.
+ */
 export const transformGtCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { gt: unknown; value?: never }>
@@ -81,6 +87,9 @@ export const transformGtCondition = (
   return joinDedupedConditions(conditions, attributePath)
 }
 
+/**
+ * Transform the operand of a `lte` condition.
+ */
 export const transformLteCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { lte: unknown; value?: never }>
@@ -118,6 +127,9 @@ export const transformLteCondition = (
   return joinDedupedConditions(conditions, attributePath)
 }
 
+/**
+ * Transform the operand of a `lt` condition.
+ */
 export const transformLtCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { lt: unknown; value?: never }>
