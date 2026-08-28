@@ -4,6 +4,9 @@ import type { ParserErrorBlueprints } from './parse/errors.js'
 import type { ConditionParserErrorBlueprints } from './parseCondition/errors.js'
 import type { SchemaActionUtilsErrorBlueprints } from './utils/errors.js'
 
+/**
+ * Union of error blueprints raised by schema actions.
+ */
 export type ActionErrorBlueprints =
   | FormatterErrorBlueprints
   | ParserErrorBlueprints
