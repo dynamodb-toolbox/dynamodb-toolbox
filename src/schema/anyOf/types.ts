@@ -26,6 +26,9 @@ type ElementDiscriminator<ELEMENT extends Schema> = Schema extends ELEMENT
             }[keyof ELEMENT['attributes']]
           : never)
 
+/**
+ * Valid discriminator keys shared by a list of element schemas.
+ */
 export type Discriminator<
   ELEMENTS extends Schema[],
   RESULTS extends [string, string] = [string, string]
@@ -39,6 +42,9 @@ export type Discriminator<
       : never
     : RESULTS[0]
 
+/**
+ * Props accepted by an anyOf schema.
+ */
 export interface AnyOfSchemaProps extends SchemaProps {
   discriminator?: string
 }
@@ -56,4 +62,7 @@ interface AnyOfElementProps extends SchemaProps {
 }
 
 // TODO: Re-introduce constraint in interface (not only in typer)
+/**
+ * Schema allowed as an anyOf element.
+ */
 export type AnyOfElementSchema = Schema & { props: AnyOfElementProps }

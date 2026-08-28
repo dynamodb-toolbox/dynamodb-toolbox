@@ -7,6 +7,9 @@ import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 import { $computed, $discriminations_, $discriminators, $discriminators_ } from './constants.js'
 import type { AnyOfSchemaProps } from './types.js'
 
+/**
+ * Schema for an anyOf (union) attribute.
+ */
 export class AnyOfSchema<
   ELEMENTS extends Schema[] = Schema[],
   PROPS extends AnyOfSchemaProps = AnyOfSchemaProps
@@ -19,6 +22,9 @@ export class AnyOfSchema<
   [$discriminators_]: Record<string, string> & { [$computed]: boolean };
   [$discriminations_]: Record<string, Schema> & { [$computed]: boolean }
 
+  /**
+   * Instantiate the schema from its elements and props.
+   */
   constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'anyOf'
     this.elements = elements
@@ -28,10 +34,16 @@ export class AnyOfSchema<
     this[$discriminations_] = { [$computed]: false }
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props and elements, then freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return
@@ -118,6 +130,9 @@ export class AnyOfSchema<
     Object.freeze(this.elements)
   }
 
+  /**
+   * Discriminator attributes shared by all elements (name to savedAs).
+   */
   get [$discriminators](): Record<string, string> {
     if (!this[$discriminators_][$computed]) {
       Object.assign(
@@ -130,6 +145,9 @@ export class AnyOfSchema<
     return this[$discriminators_]
   }
 
+  /**
+   * Find the element schema matching a discriminator value.
+   */
   match(value: string): Schema | undefined {
     if (!this[$discriminations_][$computed]) {
       const { discriminator } = this.props
