@@ -6,4 +6,7 @@ type DuplicateSavedAsErrorBlueprint = ErrorBlueprint<{
   payload: { savedAs: string }
 }>
 
+/**
+ * Error blueprint raised when validating a map schema.
+ */
 export type MapSchemaErrorBlueprint = DuplicateSavedAsErrorBlueprint

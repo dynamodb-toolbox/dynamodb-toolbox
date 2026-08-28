@@ -7,6 +7,9 @@ import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 import type { RecordSchemaProps } from './types.js'
 
+/**
+ * Schema for a record attribute.
+ */
 export class RecordSchema<
   KEYS extends StringSchema = StringSchema,
   ELEMENTS extends Schema = Schema,
@@ -17,6 +20,9 @@ export class RecordSchema<
   elements: ELEMENTS
   props: PROPS
 
+  /**
+   * Instantiate the schema from its keys, elements and props.
+   */
   constructor(keys: KEYS, elements: ELEMENTS, props: PROPS) {
     this.type = 'record'
     this.keys = keys
@@ -24,10 +30,16 @@ export class RecordSchema<
     this.props = props
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props, keys and elements, then freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return

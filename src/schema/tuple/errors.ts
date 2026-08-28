@@ -30,6 +30,9 @@ type SavedAsElementsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/**
+ * Union of the error blueprints raised when validating a tuple schema.
+ */
 export type TupleSchemaErrorBlueprint =
   | InvalidElementsErrorBlueprint
   | MissingElementsErrorBlueprint

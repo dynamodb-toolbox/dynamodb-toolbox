@@ -6,4 +6,7 @@ interface TupleElementProps extends SchemaProps {
   savedAs?: undefined
 }
 
+/**
+ * Schema allowed as a tuple element.
+ */
 export type TupleElementSchema = Schema & { props: TupleElementProps }

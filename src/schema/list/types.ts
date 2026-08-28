@@ -13,4 +13,7 @@ interface ListElementProps extends SchemaProps {
 }
 
 // TODO: Re-introduce constraint in interface (not only in typer)
+/**
+ * Schema allowed as a list element.
+ */
 export type ListElementSchema = Schema & { props: ListElementProps }

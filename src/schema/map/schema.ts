@@ -5,6 +5,9 @@ import type { SchemaRequiredProp } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { MapAttributes, MapSchemaProps } from './types.js'
 
+/**
+ * Schema for a map attribute.
+ */
 export class MapSchema<
   ATTRIBUTES extends MapAttributes = MapAttributes,
   PROPS extends MapSchemaProps = MapSchemaProps
@@ -17,6 +20,9 @@ export class MapSchema<
   savedAttributeNames: Set<string>
   requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>
 
+  /**
+   * Instantiate the schema from its attributes and props.
+   */
   constructor(attributes: ATTRIBUTES, props: PROPS) {
     this.type = 'map'
     this.attributes = attributes
@@ -41,10 +47,16 @@ export class MapSchema<
     }
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props and attributes, then freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return

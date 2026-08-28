@@ -5,6 +5,9 @@ import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { hasDefinedDefault } from '../utils/hasDefinedDefault.js'
 import type { SetElementSchema } from './types.js'
 
+/**
+ * Schema for a set attribute.
+ */
 export class SetSchema<
   ELEMENTS extends SetElementSchema = SetElementSchema,
   PROPS extends SchemaProps = SchemaProps
@@ -13,16 +16,25 @@ export class SetSchema<
   elements: ELEMENTS
   props: PROPS
 
+  /**
+   * Instantiate the schema from its elements and props.
+   */
   constructor(elements: ELEMENTS, props: PROPS) {
     this.type = 'set'
     this.elements = elements
     this.props = props
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props and elements, then freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return
