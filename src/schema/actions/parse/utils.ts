@@ -5,11 +5,17 @@ import { isString } from '~/utils/validation/isString.js'
 
 import type { ParseAttrValueOptions } from './options.js'
 
+/**
+ * Extension parser that treats every value as unextended.
+ */
 export const defaultParseExtension: ExtensionParser<never> = (_, input) => ({
   isExtension: false,
   unextendedInput: input as SchemaUnextendedValue<never> | undefined
 })
 
+/**
+ * Whether a schema must be provided in a given write mode.
+ */
 export const isRequired = (schema: Schema, mode: WriteMode): boolean => {
   switch (mode) {
     case 'put':
@@ -35,6 +41,9 @@ const getValidator = (schema: Schema, mode: WriteMode) => {
   }
 }
 
+/**
+ * Run a schema's custom validator and throw on failure.
+ */
 export const applyCustomValidation = (
   schema: Schema,
   inputValue: unknown,

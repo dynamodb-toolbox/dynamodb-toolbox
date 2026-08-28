@@ -3,6 +3,9 @@ import { isNumber } from '~/utils/validation/isNumber.js'
 import { Path } from '../utils/path.js'
 import type { ProjectionExpression } from './types.js'
 
+/**
+ * Render paths into a projection expression and name map.
+ */
 export const expressPaths = (paths: string[]): ProjectionExpression => {
   let ProjectionExpression = ''
   const ExpressionAttributeNames: Record<string, string> = {}

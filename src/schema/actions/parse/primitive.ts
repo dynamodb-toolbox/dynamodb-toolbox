@@ -9,6 +9,9 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against a primitive schema.
+ */
 export function* primitiveSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: PrimitiveSchema,
   inputValue: unknown,

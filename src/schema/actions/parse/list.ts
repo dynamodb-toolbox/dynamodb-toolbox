@@ -9,6 +9,9 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against a `list` schema.
+ */
 export function* listSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: ListSchema,
   inputValue: unknown,

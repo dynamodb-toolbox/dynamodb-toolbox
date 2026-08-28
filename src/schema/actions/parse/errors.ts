@@ -41,6 +41,9 @@ type AdditionalPropertyErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of the error blueprints raised while parsing a value.
+ */
 export type ParserErrorBlueprints =
   | InvalidItemErrorBlueprint
   | AttributeRequiredErrorBlueprint

@@ -1,6 +1,9 @@
 import type { ArrayPath } from '~/schema/actions/utils/types.js'
 import type { $contextExtension, $extension, ExtensionParser, WriteMode } from '~/schema/index.js'
 
+/**
+ * Options accepted by the parser.
+ */
 export interface ParseValueOptions {
   mode?: WriteMode
   fill?: boolean
@@ -9,10 +12,16 @@ export interface ParseValueOptions {
   parseExtension?: ExtensionParser
 }
 
+/**
+ * Parser options extended with the value's array path.
+ */
 export interface ParseAttrValueOptions extends ParseValueOptions {
   valuePath?: ArrayPath
 }
 
+/**
+ * Derives write value options from parser options.
+ */
 export interface InferWriteValueOptions<
   OPTIONS extends ParseValueOptions,
   USE_CONTEXT_EXTENSION extends boolean = false
