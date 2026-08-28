@@ -9,14 +9,28 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier", "import"],
+  "plugins": [
+    "@typescript-eslint",
+    "prefer-arrow",
+    "unused-imports",
+    "prettier",
+    "import",
+    "jsdoc"
+  ],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript",
+      "definedTags": ["debt", "interceptable"]
+    }
+  },
   "rules": {
+    "jsdoc/require-jsdoc": "off",
     "import/extensions": ["error", "always"],
     "prettier/prettier": "error",
     "linebreak-style": ["error", "unix"],
@@ -47,7 +61,8 @@
     {
       "files": ["**/*.test.ts"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "jsdoc/require-jsdoc": "off"
       }
     }
   ],
