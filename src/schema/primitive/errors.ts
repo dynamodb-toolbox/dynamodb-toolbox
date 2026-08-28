@@ -36,6 +36,9 @@ type InvalidDefaultValueRangeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of the error blueprints raised when validating a primitive schema's enum and default props.
+ */
 export type PrimitiveSchemaErrorBlueprint =
   | InvalidEnumValueTypeErrorBlueprint
   | InvalidDefaultValueTypeErrorBlueprint

@@ -4,19 +4,31 @@ import { isBoolean } from '~/utils/validation/isBoolean.js'
 import { checkPrimitiveSchema } from '../primitive/check.js'
 import type { NumberSchemaProps } from './types.js'
 
+/**
+ * Schema for a number attribute.
+ */
 export class NumberSchema<PROPS extends NumberSchemaProps = NumberSchemaProps> {
   type: 'number'
   props: PROPS
 
+  /**
+   * Instantiate the schema from its props.
+   */
   constructor(props: PROPS) {
     this.type = 'number'
     this.props = props
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props and freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return
