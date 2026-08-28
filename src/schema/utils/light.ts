@@ -14,8 +14,12 @@ import type { StringSchema } from '../string/index.js'
 import type { TupleSchema } from '../tuple/index.js'
 import type { Schema } from '../types/index.js'
 
+/**
+ * Schema type stripped of its builder methods to speed up type computes.
+ */
 // Required to support big schemas: We "strip" schema methods when calling a typer to avoid type computes (.required, .hidden etc.)
 // NOTE: We don't need to be recursive as every typer lightens its output
+// TODO: De-nestify
 export type Light<SCHEMA extends Schema> = SCHEMA extends AnySchema
   ? AnySchema<SCHEMA['props']>
   : SCHEMA extends NullSchema
@@ -44,9 +48,15 @@ export type Light<SCHEMA extends Schema> = SCHEMA extends AnySchema
 
 type Lightener = <SCHEMA extends Schema>(schema: SCHEMA) => Light<SCHEMA>
 
+/**
+ * Strip a schema's builder methods to speed up type computes.
+ */
 export const light: Lightener = <SCHEMA extends Schema>(schema: SCHEMA) =>
   schema as unknown as Light<SCHEMA>
 
+/**
+ * Lightened types of a tuple of schemas.
+ */
 export type LightRec<SCHEMAS extends Schema[], RESULTS extends Schema[] = []> = SCHEMAS extends [
   infer SCHEMAS_HEAD extends Schema,
   ...infer SCHEMAS_TAIL extends Schema[]
@@ -56,9 +66,15 @@ export type LightRec<SCHEMAS extends Schema[], RESULTS extends Schema[] = []> = 
 
 type LightenerRec = <SCHEMAS extends Schema[]>(...schemas: SCHEMAS) => LightRec<SCHEMAS>
 
+/**
+ * Strip the builder methods of a tuple of schemas.
+ */
 export const lightRec: LightenerRec = <SCHEMAS extends Schema[]>(...schemas: SCHEMAS) =>
   schemas as unknown as LightRec<SCHEMAS>
 
+/**
+ * Lightened types of a record of schemas.
+ */
 export type LightObj<SCHEMAS extends { [KEY in string]: Schema }> = ComputeObject<{
   [KEY in keyof SCHEMAS]: Light<SCHEMAS[KEY]>
 }>
@@ -67,6 +83,9 @@ type LightenerObj = <SCHEMAS extends { [KEY in string]: Schema }>(
   schemas: SCHEMAS
 ) => LightObj<SCHEMAS>
 
+/**
+ * Strip the builder methods of a record of schemas.
+ */
 export const lightObj: LightenerObj = <SCHEMAS extends { [KEY in string]: Schema }>(
   schemas: SCHEMAS
 ) => schemas as unknown as LightObj<SCHEMAS>

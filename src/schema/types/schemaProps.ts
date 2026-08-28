@@ -30,6 +30,9 @@ export interface SchemaMeta {
   [key: string]: unknown
 }
 
+/**
+ * Common props shared by every schema.
+ */
 export interface SchemaProps {
   required?: SchemaRequiredProp
   hidden?: boolean

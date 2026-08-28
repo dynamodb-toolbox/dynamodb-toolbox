@@ -27,6 +27,9 @@ import type { ReadValueOptions } from './options.js'
 import type { ChildPaths, ElementPaths, MatchIndexes, MatchKeys } from './pathUtils.js'
 import type { Paths } from './paths.js'
 
+/**
+ * App-facing value of a schema after reads are projected and formatted.
+ */
 export type FormattedValue<
   SCHEMA extends Schema,
   OPTIONS extends ReadValueOptions<SCHEMA> = {}

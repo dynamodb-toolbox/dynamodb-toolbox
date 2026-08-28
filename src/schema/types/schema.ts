@@ -8,6 +8,9 @@ import type { RecordSchema, RecordSchema_ } from '../record/index.js'
 import type { SetSchema, SetSchema_ } from '../set/index.js'
 import type { TupleSchema, TupleSchema_ } from '../tuple/index.js'
 
+/**
+ * Union of every resolved schema type.
+ */
 export type Schema =
   | AnySchema
   | PrimitiveSchema
@@ -19,6 +22,9 @@ export type Schema =
   | AnyOfSchema
   | ItemSchema
 
+/**
+ * Union of every builder (warm) schema type.
+ */
 export type Schema_ =
   | AnySchema_
   | PrimitiveSchema_

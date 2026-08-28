@@ -11,13 +11,26 @@ import type {
 } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
+/**
+ * Characters that must be escaped within a path segment.
+ */
 export type CharsToEscape = '[' | ']' | '.'
+
+/**
+ * A string containing a character that must be escaped.
+ */
 export type StringToEscape = `${string}${CharsToEscape}${string}`
 
+/**
+ * Appends a key to a path, escaping it when needed.
+ */
 export type AppendKey<PATH extends string, KEY extends string> =
-  | `${PATH}['${KEY}']`
   | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
+  | `${PATH}['${KEY}']`
 
+/**
+ * Union of every valid attribute path of a schema.
+ */
 // string is there to simplify type-constraint checks when using Paths
 export type Paths<SCHEMA extends Schema = Schema> = string &
   (SCHEMA extends ItemSchema
@@ -26,6 +39,9 @@ export type Paths<SCHEMA extends Schema = Schema> = string &
       ? SchemaPaths<SCHEMA>
       : never)
 
+/**
+ * Union of the paths of a non-item schema.
+ */
 export type SchemaPaths<SCHEMA extends Schema, SCHEMA_PATH extends string = ''> =
   | (SCHEMA extends AnySchema ? AnySchemaPaths<SCHEMA_PATH> : never)
   | (SCHEMA extends ListSchema ? ListSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
@@ -34,6 +50,9 @@ export type SchemaPaths<SCHEMA extends Schema, SCHEMA_PATH extends string = ''> 
   | (SCHEMA extends RecordSchema ? RecordSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
   | (SCHEMA extends AnyOfSchema ? AnyOfSchemaPaths<SCHEMA, SCHEMA_PATH> : never)
 
+/**
+ * Union of the paths of an item schema.
+ */
 export type ItemSchemaPaths<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? string
   : keyof SCHEMA['attributes'] extends infer SCHEMA_PATH
