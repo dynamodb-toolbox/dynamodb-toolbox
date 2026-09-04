@@ -1,5 +1,8 @@
 import type { Fn } from 'hotscript'
 
+/**
+ * Reversible codec that encodes a decoded value toward DynamoDB and decodes it back.
+ */
 export interface Transformer<
   DECODED_CONSTRAINT = any,
   DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
@@ -9,6 +12,9 @@ export interface Transformer<
   decode: (encoded: ENCODED) => DECODED_CONSTRAINT
 }
 
+/**
+ * `Transformer` that also carries a type-level modifier describing its encoding.
+ */
 export interface TypedTransformer<
   DECODED_CONSTRAINT = any,
   DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
@@ -18,8 +24,14 @@ export interface TypedTransformer<
   _typeModifier: TYPE_MODIFIER
 }
 
+/**
+ * Base shape of a transformer DTO, identified by its `transformerId`.
+ */
 export type ITransformerDTO = { transformerId: string } & object
 
+/**
+ * `TypedTransformer` that can be serialized to and from a DTO.
+ */
 export interface SerializableTransformer<
   DECODED_CONSTRAINT = any,
   DECODED extends DECODED_CONSTRAINT = DECODED_CONSTRAINT,
