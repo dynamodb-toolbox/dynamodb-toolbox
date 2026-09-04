@@ -16,6 +16,9 @@ import { setSchemaParser } from './set.js'
 import { tupleSchemaParser } from './tuple.js'
 import { defaultParseExtension, isRequired } from './utils.js'
 
+/**
+ * Parse a value against any non-item schema.
+ */
 export function* schemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: Schema,
   inputValue: unknown,

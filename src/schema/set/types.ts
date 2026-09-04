@@ -6,6 +6,9 @@ import type { StringSchema } from '../string/index.js'
 import type { StringSchemaProps } from '../string/types.js'
 import type { AtLeastOnce } from '../types/index.js'
 
+/**
+ * Props enforced on a set's element schema.
+ */
 export interface SetElementProps {
   required?: AtLeastOnce
   hidden?: false
@@ -19,6 +22,9 @@ export interface SetElementProps {
   updateLink?: undefined
 }
 
+/**
+ * Schema allowed as a set element (number, string or binary).
+ */
 export type SetElementSchema =
   | NumberSchema<NumberSchemaProps & SetElementProps>
   | StringSchema<StringSchemaProps & SetElementProps>

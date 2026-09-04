@@ -8,6 +8,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `any` value.
+ */
 export type AnyZodParser<
   SCHEMA extends AnySchema,
   OPTIONS extends ZodParserOptions = {}
@@ -21,6 +24,9 @@ export type AnyZodParser<
   >
 >
 
+/**
+ * Build a Zod schema validating an input `any` value.
+ */
 export const anyZodParser = (schema: AnySchema, options: ZodParserOptions): z.ZodTypeAny =>
   withDescribe(
     schema,

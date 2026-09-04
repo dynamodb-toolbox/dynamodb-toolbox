@@ -5,6 +5,9 @@ import type { ParseAttrValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against an `any` schema.
+ */
 export function* anySchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: AnySchema,
   inputValue: unknown,

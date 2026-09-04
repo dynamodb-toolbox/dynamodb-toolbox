@@ -7,6 +7,9 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 
+/**
+ * Format a saved value against a `set` schema.
+ */
 export function* setSchemaFormatter(
   schema: SetSchema,
   rawValue: unknown,

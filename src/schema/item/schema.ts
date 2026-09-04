@@ -5,6 +5,9 @@ import type { SchemaRequiredProp } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { ItemAttributes, ItemSchemaProps } from './types.js'
 
+/**
+ * Schema for an item, the root object an entity is built from.
+ */
 export class ItemSchema<
   ATTRIBUTES extends ItemAttributes = ItemAttributes,
   PROPS extends ItemSchemaProps = ItemSchemaProps
@@ -17,6 +20,9 @@ export class ItemSchema<
   keyAttributeNames: Set<string>
   requiredAttributeNames: Record<SchemaRequiredProp, Set<string>>
 
+  /**
+   * Instantiate the schema from its attributes and props.
+   */
   constructor(attributes: ATTRIBUTES, props: PROPS = {} as PROPS) {
     this.type = 'item'
     this.attributes = attributes
@@ -41,10 +47,16 @@ export class ItemSchema<
     }
   }
 
+  /**
+   * Whether the schema's props have been validated and frozen.
+   */
   get checked(): boolean {
     return Object.isFrozen(this.props)
   }
 
+  /**
+   * Validate the schema's props and attributes, then freeze them.
+   */
   check(path?: string): void {
     if (this.checked) {
       return

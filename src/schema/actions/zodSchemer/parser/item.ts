@@ -11,6 +11,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithAttributeNameEncoding } from './utils.js'
 import { withAttributeNameEncoding } from './utils.js'
 
+/**
+ * Zod schema validating an input `item` value.
+ */
 export type ItemZodParser<
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -32,6 +35,9 @@ export type ItemZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `item` value.
+ */
 export const itemZodParser = <SCHEMA extends ItemSchema, OPTIONS extends ZodParserOptions = {}>(
   schema: SCHEMA,
   options: OPTIONS = {} as OPTIONS

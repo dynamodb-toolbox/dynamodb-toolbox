@@ -39,6 +39,9 @@ const withDecodedKeys = (
       ? z.preprocess(compileKeysDecoder(schema), zodSchema)
       : zodSchema
 
+/**
+ * Build a decoder mapping saved record keys back to their app form.
+ */
 export const compileKeysDecoder =
   (schema: RecordSchema) =>
   (encoded: unknown): Record<string, unknown> => {
@@ -52,6 +55,9 @@ export const compileKeysDecoder =
     return decoded
   }
 
+/**
+ * Zod schema validating a formatted `record` value.
+ */
 export type RecordZodFormatter<
   SCHEMA extends RecordSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -89,6 +95,9 @@ export type RecordZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `record` value.
+ */
 export const recordZodFormatter = (
   schema: RecordSchema,
   options: ZodFormatterOptions = {}

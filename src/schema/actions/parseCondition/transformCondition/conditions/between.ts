@@ -7,6 +7,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operands of a `between` condition.
+ */
 export const transformBetweenCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { between: unknown; value?: never }>

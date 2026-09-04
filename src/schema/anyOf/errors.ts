@@ -44,6 +44,9 @@ type InvalidDiscriminatorErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of the error blueprints raised when validating an anyOf schema.
+ */
 export type AnyOfSchemaErrorBlueprint =
   | InvalidElementsErrorBlueprint
   | MissingElementsErrorBlueprint

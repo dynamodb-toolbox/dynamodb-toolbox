@@ -5,13 +5,21 @@ import type { TransformedValue } from './transformedValue.js'
 import type { ValidValue } from './validValue.js'
 
 export const $extension = Symbol('$extension')
+/** Key branding an extension parser with its extension type. */
 export type $extension = typeof $extension
 
 export const $contextExtension = Symbol('$contextExtension')
+/** Key branding an extension parser with its context extension type. */
 export type $contextExtension = typeof $contextExtension
 
+/**
+ * Options accepted by an extension parser.
+ */
 export type ExtensionParserOptions = { transform?: boolean; valuePath?: ArrayPath }
 
+/**
+ * Function that parses extension values within a schema.
+ */
 export type ExtensionParser<
   EXTENSION extends Extension = Extension,
   CONTEXT_EXTENSION extends Extension = EXTENSION

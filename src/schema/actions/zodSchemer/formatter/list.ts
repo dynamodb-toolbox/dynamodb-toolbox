@@ -11,6 +11,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithOptional } from './utils.js'
 import { withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `list` value.
+ */
 export type ListZodFormatter<
   SCHEMA extends ListSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -25,6 +28,9 @@ export type ListZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `list` value.
+ */
 export const listZodFormatter = (
   schema: ListSchema,
   options: ZodFormatterOptions = {}

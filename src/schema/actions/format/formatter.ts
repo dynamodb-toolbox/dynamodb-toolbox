@@ -12,6 +12,9 @@ import { itemFormatter } from './item.js'
 import type { FormatValueOptions, InferReadValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 
+/**
+ * Values yielded by the formatter at each pipeline step.
+ */
 export type FormatterYield<
   SCHEMA extends Schema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
@@ -20,6 +23,9 @@ export type FormatterYield<
   ? never
   : DecodedValue<SCHEMA, READ_VALUE_OPTIONS>
 
+/**
+ * Final value returned by the formatter.
+ */
 export type FormatterReturn<
   SCHEMA extends Schema,
   OPTIONS extends FormatValueOptions<SCHEMA> = {},
@@ -28,9 +34,15 @@ export type FormatterReturn<
   ? DecodedValue<SCHEMA, READ_VALUE_OPTIONS>
   : FormattedValue<SCHEMA, READ_VALUE_OPTIONS>
 
+/**
+ * Decodes and formats a saved value back to its app-facing shape.
+ */
 export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'format' as const
 
+  /**
+   * Run the format pipeline lazily, yielding each intermediate step.
+   */
   start<OPTIONS extends FormatValueOptions<SCHEMA> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
@@ -48,6 +60,9 @@ export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHE
     }
   }
 
+  /**
+   * Format a saved value into its app-facing shape.
+   */
   format<OPTIONS extends FormatValueOptions<SCHEMA> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
@@ -66,6 +81,9 @@ export class Formatter<SCHEMA extends Schema = Schema> extends SchemaAction<SCHE
     return value
   }
 
+  /**
+   * Whether a value matches the schema's transformed (saved) form.
+   */
   validate(inputValue: unknown): inputValue is TransformedValue<SCHEMA> {
     try {
       this.format(inputValue, { format: false })

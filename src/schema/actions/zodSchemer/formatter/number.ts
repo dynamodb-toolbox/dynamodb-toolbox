@@ -9,6 +9,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `number` value.
+ */
 export type NumberZodFormatter<
   SCHEMA extends NumberSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -34,6 +37,9 @@ export type NumberZodFormatter<
   >
 >
 
+/**
+ * Build a Zod schema validating a formatted `number` value.
+ */
 export const numberZodFormatter = (
   schema: NumberSchema,
   options: ZodFormatterOptions = {}

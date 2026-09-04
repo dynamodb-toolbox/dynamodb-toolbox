@@ -39,6 +39,9 @@ const withEncodedKeys = (
       ? zodSchema.transform(compileKeysEncoder(schema))
       : zodSchema
 
+/**
+ * Build an encoder mapping record keys to their saved form.
+ */
 export const compileKeysEncoder =
   (schema: RecordSchema) =>
   (decoded: unknown): Record<string, unknown> => {
@@ -52,6 +55,9 @@ export const compileKeysEncoder =
     return encoded
   }
 
+/**
+ * Zod schema validating an input `record` value.
+ */
 export type RecordZodParser<
   SCHEMA extends RecordSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -93,6 +99,9 @@ export type RecordZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `record` value.
+ */
 export const recordZodParser = (
   schema: RecordSchema,
   options: ZodParserOptions = {}

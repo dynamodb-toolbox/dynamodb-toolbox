@@ -8,6 +8,9 @@ interface CustomTransformerDTO {
   transformerId: 'custom'
 }
 
+/**
+ * Serialized form of a transformer.
+ */
 export type TransformerDTO =
   | CustomTransformerDTO
   | JSONStringifierDTO
@@ -41,33 +44,57 @@ interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
   meta?: SchemaMeta
 }
 
+/**
+ * Transformers serializable on an `any` schema.
+ */
 export type AnySchemaTransformerDTO =
   | CustomTransformerDTO
   | JSONStringifierDTO
   | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of an `any` schema.
+ */
 export interface AnySchemaDTO extends SchemaPropsDTO {
   type: 'any'
   transform?: AnySchemaTransformerDTO
 }
 
+/**
+ * Transformers serializable on a `null` schema.
+ */
 export type NullSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of a `null` schema.
+ */
 export interface NullSchemaDTO extends SchemaPropsDTO {
   type: 'null'
   transform?: NullSchemaTransformerDTO
 }
 
+/**
+ * Transformers serializable on a `boolean` schema.
+ */
 export type BooleanSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of a `boolean` schema.
+ */
 export interface BooleanSchemaDTO extends SchemaPropsDTO {
   type: 'boolean'
   enum?: boolean[]
   transform?: BooleanSchemaTransformerDTO
 }
 
+/**
+ * Transformers serializable on a `number` schema.
+ */
 export type NumberSchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of a `number` schema.
+ */
 export interface NumberSchemaDTO extends SchemaPropsDTO {
   type: 'number'
   big?: boolean
@@ -75,26 +102,41 @@ export interface NumberSchemaDTO extends SchemaPropsDTO {
   transform?: NumberSchemaTransformerDTO
 }
 
+/**
+ * Transformers serializable on a `string` schema.
+ */
 export type StringSchemaTransformerDTO =
   | CustomTransformerDTO
   | PrefixerDTO
   | SuffixerDTO
   | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of a `string` schema.
+ */
 export interface StringSchemaDTO extends SchemaPropsDTO {
   type: 'string'
   enum?: string[]
   transform?: StringSchemaTransformerDTO
 }
 
+/**
+ * Transformers serializable on a `binary` schema.
+ */
 export type BinarySchemaTransformerDTO = CustomTransformerDTO | PipeDTO<TransformerDTO[]>
 
+/**
+ * DTO of a `binary` schema.
+ */
 export interface BinarySchemaDTO extends SchemaPropsDTO {
   type: 'binary'
   enum?: string[]
   transform?: BinarySchemaTransformerDTO
 }
 
+/**
+ * DTO of a primitive schema.
+ */
 export type PrimitiveSchemaDTO =
   | NullSchemaDTO
   | BooleanSchemaDTO
@@ -102,6 +144,9 @@ export type PrimitiveSchemaDTO =
   | StringSchemaDTO
   | BinarySchemaDTO
 
+/**
+ * DTO of a `set` schema.
+ */
 export interface SetSchemaDTO extends SchemaPropsDTO {
   type: 'set'
   elements: (NumberSchemaDTO | StringSchemaDTO | BinarySchemaDTO) & {
@@ -117,6 +162,9 @@ export interface SetSchemaDTO extends SchemaPropsDTO {
   }
 }
 
+/**
+ * DTO of a `list` schema.
+ */
 export interface ListSchemaDTO extends SchemaPropsDTO {
   type: 'list'
   elements: ISchemaDTO & {
@@ -132,6 +180,9 @@ export interface ListSchemaDTO extends SchemaPropsDTO {
   }
 }
 
+/**
+ * DTO of a `tuple` schema.
+ */
 export interface TupleSchemaDTO extends SchemaPropsDTO {
   type: 'tuple'
   elements: (ISchemaDTO & {
@@ -147,12 +198,18 @@ export interface TupleSchemaDTO extends SchemaPropsDTO {
   })[]
 }
 
+/**
+ * DTO of a `map` schema.
+ */
 export interface MapSchemaDTO extends SchemaPropsDTO {
   type: 'map'
   attributes: { [name: string]: ISchemaDTO }
   strict?: boolean
 }
 
+/**
+ * DTO of a `record` schema.
+ */
 export interface RecordSchemaDTO extends SchemaPropsDTO {
   type: 'record'
   keys: StringSchemaDTO & {
@@ -181,6 +238,9 @@ export interface RecordSchemaDTO extends SchemaPropsDTO {
   }
 }
 
+/**
+ * DTO of an `anyOf` schema.
+ */
 export interface AnyOfSchemaDTO extends SchemaPropsDTO {
   type: 'anyOf'
   elements: (ISchemaDTO & {
@@ -197,6 +257,9 @@ export interface AnyOfSchemaDTO extends SchemaPropsDTO {
   discriminator?: string
 }
 
+/**
+ * DTO of an `item` schema.
+ */
 export interface ItemSchemaDTO extends SchemaPropsDTO {
   type: 'item'
   attributes: {
@@ -216,6 +279,9 @@ export interface ItemSchemaDTO extends SchemaPropsDTO {
   strict?: boolean
 }
 
+/**
+ * DTO of any schema type.
+ */
 export type ISchemaDTO =
   | AnySchemaDTO
   | NullSchemaDTO

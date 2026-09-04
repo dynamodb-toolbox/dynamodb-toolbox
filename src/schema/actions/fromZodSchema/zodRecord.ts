@@ -9,8 +9,14 @@ import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` record schema.
+ */
 export type ZodRecordAny = ZodRecord<KeySchema>
 
+/**
+ * DDB-TB schema derived from a `zod` record schema.
+ */
 export type FromZodRecord<
   ZOD_SCHEMA extends ZodRecordAny,
   ROOT extends boolean = true,
@@ -32,6 +38,9 @@ export type FromZodRecord<
       : never
     : never
 
+/**
+ * Convert a `zod` record schema to a DDB-TB schema.
+ */
 export const fromZodRecord = (zodRecord: ZodRecordAny): RecordSchema => {
   const { keySchema, valueSchema } = zodRecord
 

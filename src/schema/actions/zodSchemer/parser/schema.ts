@@ -45,6 +45,9 @@ import type { TupleZodParser } from './tuple.js'
 import { tupleZodParser } from './tuple.js'
 import type { ZodParserOptions } from './types.js'
 
+/**
+ * Zod schema validating an input value, for any schema.
+ */
 export type ZodParser<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions = {}
@@ -54,6 +57,9 @@ export type ZodParser<
     ? SchemaZodParser<SCHEMA, OPTIONS>
     : never
 
+/**
+ * Zod schema validating an input non-item value.
+ */
 export type SchemaZodParser<
   SCHEMA extends Schema,
   OPTIONS extends ZodParserOptions = {}
@@ -73,39 +79,40 @@ export type SchemaZodParser<
       | (SCHEMA extends RecordSchema ? RecordZodParser<SCHEMA, OPTIONS> : never)
       | (SCHEMA extends AnyOfSchema ? AnyOfZodParser<SCHEMA, OPTIONS> : never)
 
+/**
+ * Dispatch a schema to the Zod parser of its type.
+ */
 export const schemaZodParser = <SCHEMA extends Schema, OPTIONS extends ZodParserOptions = {}>(
   schema: SCHEMA,
   options: OPTIONS = {} as OPTIONS
 ): SchemaZodParser<SCHEMA, OPTIONS> => {
-  type ZOD_PARSER = SchemaZodParser<SCHEMA, OPTIONS>
-
   switch (schema.type) {
     case 'any':
-      return anyZodParser(schema, options) as ZOD_PARSER
+      return anyZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'null':
-      return nullZodParser(schema, options) as ZOD_PARSER
+      return nullZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'boolean':
-      return booleanZodParser(schema, options) as ZOD_PARSER
+      return booleanZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'number':
-      return numberZodParser(schema, options) as ZOD_PARSER
+      return numberZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'string':
-      return stringZodParser(schema, options) as ZOD_PARSER
+      return stringZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'binary':
-      return binaryZodParser(schema, options) as ZOD_PARSER
+      return binaryZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'set':
-      return setZodParser(schema, options) as ZOD_PARSER
+      return setZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'list':
-      return listZodParser(schema, options) as ZOD_PARSER
+      return listZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'tuple':
-      return tupleZodParser(schema, options) as ZOD_PARSER
+      return tupleZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'map':
-      return mapZodParser(schema, options) as ZOD_PARSER
+      return mapZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'record':
-      return recordZodParser(schema, options) as ZOD_PARSER
+      return recordZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'anyOf':
-      return anyOfZodParser(schema, options) as ZOD_PARSER
+      return anyOfZodParser(schema, options) as SchemaZodParser<SCHEMA, OPTIONS>
     case 'item':
       // NOTE: Should not happen
-      return itemZodParser(schema, options) as unknown as ZOD_PARSER
+      return itemZodParser(schema, options) as unknown as SchemaZodParser<SCHEMA, OPTIONS>
   }
 }

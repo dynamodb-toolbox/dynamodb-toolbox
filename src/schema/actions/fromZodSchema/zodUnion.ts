@@ -8,8 +8,14 @@ import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` union schema.
+ */
 export type ZodUnionAny = ZodUnion<ZodUnionOptions>
 
+/**
+ * DDB-TB schema derived from a `zod` union schema.
+ */
 export type FromZodUnion<
   ZOD_SCHEMA extends ZodUnionAny,
   ROOT extends boolean = true,
@@ -21,5 +27,8 @@ export type FromZodUnion<
       : AnyOfSchema<FromZodSchemaRec<ELEMENT_ZOD_SCHEMAS, false>, PROPS>
     : never
 
+/**
+ * Convert a `zod` union schema to a DDB-TB schema.
+ */
 export const fromZodUnion = (zodUnion: ZodUnionAny): AnyOfSchema =>
   withMeta(anyOf(...zodUnion.options.map(option => fromZodSchema(option))), zodUnion)

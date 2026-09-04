@@ -6,6 +6,9 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `tuple` value.
+ */
 export type FormattedTupleJSONSchema<SCHEMA extends TupleSchema> = ComputeObject<
   JSONSchemaMeta<SCHEMA> & {
     type: 'array'
@@ -15,6 +18,9 @@ export type FormattedTupleJSONSchema<SCHEMA extends TupleSchema> = ComputeObject
   }
 >
 
+/**
+ * Build the JSON Schema of a formatted `tuple` value.
+ */
 export const getFormattedTupleJSONSchema = <SCHEMA extends TupleSchema>(
   schema: SCHEMA
 ): FormattedTupleJSONSchema<SCHEMA> => ({

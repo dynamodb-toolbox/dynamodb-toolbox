@@ -11,6 +11,9 @@ import type { ZodParserOptions } from './types.js'
 import type { SchemaZodParserRec, WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `tuple` value.
+ */
 export type TupleZodParser<
   SCHEMA extends TupleSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -40,6 +43,9 @@ export type TupleZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `tuple` value.
+ */
 export const tupleZodParser = (schema: TupleSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
   withDescribe(
     schema,

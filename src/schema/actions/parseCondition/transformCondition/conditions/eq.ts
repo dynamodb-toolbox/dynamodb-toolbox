@@ -7,6 +7,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operand of an `eq` condition.
+ */
 export const transformEqCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { eq: unknown; value?: never }>
@@ -44,6 +47,9 @@ export const transformEqCondition = (
   return joinDedupedConditions(conditions, attributePath)
 }
 
+/**
+ * Transform the operand of a `ne` condition.
+ */
 export const transformNeCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { ne: unknown; value?: never }>

@@ -33,6 +33,11 @@ export type MatchIndexes<
     >
   : MATCHING_INDEXES
 
+/**
+ * Sub-paths of an attribute key within a set of paths.
+ *
+ * @example ChildPaths<"foo", ".foo.bar" | ".foo[0]" | ".baz"> => ".bar" | "[0]"
+ */
 export type ChildPaths<
   KEY extends string,
   PATHS extends string,
@@ -45,6 +50,11 @@ export type ChildPaths<
       ? CHILD_PATHS
       : never
 
+/**
+ * Sub-paths of an element index within a set of paths.
+ *
+ * @example ElementPaths<"[0].foo" | "[0][1]" | "[2].bar", 0> => ".foo" | "[1]"
+ */
 export type ElementPaths<
   PATHS extends string,
   INDEX extends number = number

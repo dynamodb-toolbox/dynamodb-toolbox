@@ -10,4 +10,7 @@ type InvalidPropErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Error blueprint raised when validating any schema prop.
+ */
 export type SharedSchemaErrorBlueprint = InvalidPropErrorBlueprint

@@ -7,6 +7,9 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta, RequiredProperties } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `map` value.
+ */
 export type FormattedMapJSONSchema<
   SCHEMA extends MapSchema,
   REQUIRED_PROPERTIES extends string = RequiredProperties<SCHEMA>
@@ -23,6 +26,9 @@ export type FormattedMapJSONSchema<
     (SCHEMA['props'] extends { strict: true } ? { additionalProperties: false } : {})
 >
 
+/**
+ * Build the JSON Schema of a formatted `map` value.
+ */
 export const getFormattedMapJSONSchema = <SCHEMA extends MapSchema>(
   schema: SCHEMA
 ): FormattedMapJSONSchema<SCHEMA> => {

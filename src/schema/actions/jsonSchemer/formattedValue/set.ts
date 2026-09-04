@@ -6,6 +6,9 @@ import { getFormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `set` value.
+ */
 export type FormattedSetJSONSchema<SCHEMA extends SetSchema> = ComputeObject<
   JSONSchemaMeta<SCHEMA> & {
     type: 'array'
@@ -14,6 +17,9 @@ export type FormattedSetJSONSchema<SCHEMA extends SetSchema> = ComputeObject<
   }
 >
 
+/**
+ * Build the JSON Schema of a formatted `set` value.
+ */
 export const getFormattedSetJSONSchema = <SCHEMA extends SetSchema>(
   schema: SCHEMA
 ): FormattedSetJSONSchema<SCHEMA> => ({

@@ -19,6 +19,9 @@ import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
+/**
+ * Value of a schema after validation, defaults and links are applied.
+ */
 export type ValidValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
@@ -28,6 +31,9 @@ export type ValidValue<
     ? SchemaValidValue<SCHEMA, OPTIONS>
     : never
 
+/**
+ * Valid values of a tuple of schemas.
+ */
 export type ValidValueRec<
   SCHEMAS extends Schema[],
   OPTIONS extends WriteValueOptions = {},

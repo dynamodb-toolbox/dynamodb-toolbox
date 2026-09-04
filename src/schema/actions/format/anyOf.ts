@@ -9,6 +9,9 @@ import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 
+/**
+ * Format a saved value against an `anyOf` schema.
+ */
 export function* anyOfSchemaFormatter(
   schema: AnyOfSchema,
   rawValue: unknown,

@@ -1,6 +1,9 @@
 import type { ItemSchema, MapSchema, Never, Schema } from '~/schema/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
 
+/**
+ * Names of the non-hidden, non-optional properties of a `map` or `item`.
+ */
 export type RequiredProperties<SCHEMA extends MapSchema | ItemSchema> = ItemSchema extends SCHEMA
   ? string
   : MapSchema extends SCHEMA
@@ -12,12 +15,18 @@ export type RequiredProperties<SCHEMA extends MapSchema | ItemSchema> = ItemSche
         >]: SCHEMA['attributes'][KEY]['props'] extends { required: Never } ? never : KEY
       }[OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]
 
+/**
+ * JSON Schema metadata (title, description, examples) carried by a schema.
+ */
 export type JSONSchemaMeta<SCHEMA extends Schema> = SCHEMA extends { props: { meta: infer META } }
   ? (META extends { title: infer TITLE } ? { title: TITLE } : unknown) &
       (META extends { description: infer DESCRIPTION } ? { description: DESCRIPTION } : unknown) &
       (META extends { examples: infer EXAMPLES } ? { examples: EXAMPLES } : unknown)
   : {}
 
+/**
+ * Extract a schema's JSON Schema metadata into a plain object.
+ */
 export const getJSONSchemaMeta = <SCHEMA extends Schema>({
   props: { meta }
 }: SCHEMA): JSONSchemaMeta<SCHEMA> => {

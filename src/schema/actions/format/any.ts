@@ -5,6 +5,9 @@ import { cloneDeep } from '~/utils/cloneDeep.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
+/**
+ * Format a saved value against an `any` schema.
+ */
 export function* anySchemaFormatter(
   schema: AnySchema,
   rawValue: unknown,

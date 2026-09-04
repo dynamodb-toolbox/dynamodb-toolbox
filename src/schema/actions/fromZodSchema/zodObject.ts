@@ -9,8 +9,14 @@ import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` object schema.
+ */
 export type ZodObjectAny = ZodObject<ZodRawShape, UnknownKeysParam>
 
+/**
+ * DDB-TB schema derived from a `zod` object schema.
+ */
 export type FromZodObject<
   ZOD_SCHEMA extends ZodObjectAny,
   ROOT extends boolean = true,
@@ -28,6 +34,9 @@ export type FromZodObject<
         >
     : never
 
+/**
+ * Convert a `zod` object schema to a DDB-TB schema.
+ */
 export const fromZodObject = (zodObject: ZodObjectAny): MapSchema => {
   const attributes = Object.fromEntries(
     Object.entries(zodObject.shape).map(([key, value]) => [key, fromZodSchema(value)])

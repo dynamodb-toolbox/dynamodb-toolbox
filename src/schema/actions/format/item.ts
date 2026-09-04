@@ -7,6 +7,9 @@ import type { FormatValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 import { matchItemProjection } from './utils.js'
 
+/**
+ * Format a saved value against an `item` schema.
+ */
 export function* itemFormatter<OPTIONS extends FormatValueOptions<ItemSchema> = {}>(
   schema: ItemSchema,
   rawValue: unknown,

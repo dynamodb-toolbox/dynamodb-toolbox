@@ -12,6 +12,9 @@ const typeSchema = new StringSchema({
 })
 const typeParser = new Parser(typeSchema)
 
+/**
+ * Transform a `type` condition to its saved attribute paths.
+ */
 export const transformTypeCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { type: unknown; value?: never }>

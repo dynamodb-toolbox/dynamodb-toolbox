@@ -7,8 +7,14 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import { withMeta } from './utils.js'
 
+/**
+ * Any `zod` enum schema.
+ */
 export type ZodEnumAny = ZodEnum<[string, ...string[]]>
 
+/**
+ * DDB-TB schema derived from a `zod` enum schema.
+ */
 export type FromZodEnum<
   ZOD_SCHEMA extends ZodEnumAny,
   ROOT extends boolean = true,
@@ -20,5 +26,8 @@ export type FromZodEnum<
       : StringSchema<Overwrite<PROPS, { enum: ZOD_SCHEMA_ENUM }>>
     : never
 
+/**
+ * Convert a `zod` enum schema to a DDB-TB schema.
+ */
 export const fromZodEnum = (zodEnum: ZodEnumAny): StringSchema =>
   withMeta(string().enum(...zodEnum.options), zodEnum)

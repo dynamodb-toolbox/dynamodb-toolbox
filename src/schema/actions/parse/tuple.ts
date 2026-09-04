@@ -9,6 +9,9 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against a `tuple` schema.
+ */
 export function* tupleSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: TupleSchema,
   inputValue: unknown,

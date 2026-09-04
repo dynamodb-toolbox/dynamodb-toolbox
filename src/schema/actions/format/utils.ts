@@ -1,3 +1,6 @@
+/**
+ * Escape a string for safe use inside a projection regex.
+ */
 export const sanitize = (str: string): string =>
   str.replace(/\\/g, '\\\\').replace(/[-[\]/{}()*+?.^$|]/g, '\\$&')
 
@@ -5,6 +8,9 @@ type ProjectionMatch =
   | { isProjected: false; childrenAttributes?: never }
   | { isProjected: true; childrenAttributes?: string[] }
 
+/**
+ * Match a root item attribute against the projected attributes.
+ */
 export const matchItemProjection = (
   attributeName: string,
   projectedAttributes?: string[]
@@ -17,6 +23,9 @@ export const matchItemProjection = (
   )
 }
 
+/**
+ * Match a `map` attribute against the projected attributes.
+ */
 export const matchMapProjection = (
   attributeName: string,
   projectedAttributes?: string[]
@@ -29,9 +38,15 @@ export const matchMapProjection = (
   )
 }
 
+/**
+ * Match a `list` element against the projected attributes.
+ */
 export const matchListProjection = (projectedAttributes?: string[]): ProjectionMatch =>
   matchProjection(/\[\d+\]/, projectedAttributes)
 
+/**
+ * Match a `tuple` element against the projected attributes.
+ */
 export const matchTupleProjection = (
   elementIndex: number,
   projectedAttributes?: string[]

@@ -29,6 +29,9 @@ import type {
 } from '~/schema/index.js'
 import type { Extends, If } from '~/types/index.js'
 
+/**
+ * Conditions available on an `any` attribute.
+ */
 export type AnySchemaCondition<
   SCHEMA extends AnySchema,
   ATTR_PATH extends string,
@@ -37,8 +40,14 @@ export type AnySchemaCondition<
   | AttrCondition<ATTR_PATH, Exclude<Schema, AnySchema>, ALL_PATHS, ResolveAnySchema<SCHEMA>>
   | AttrCondition<`${ATTR_PATH}${string}`, Exclude<Schema, AnySchema>, ALL_PATHS>
 
+/**
+ * DynamoDB attribute type codes usable in a `type` condition.
+ */
 export type ConditionType = 'S' | 'SS' | 'N' | 'NS' | 'B' | 'BS' | 'BOOL' | 'NULL' | 'L' | 'M'
 
+/**
+ * Condition on a single attribute, dispatched by its schema type.
+ */
 export type AttrCondition<
   ATTR_PATH extends string,
   SCHEMA extends Schema,
@@ -66,16 +75,25 @@ export type AttrCondition<
   | (SCHEMA extends RecordSchema ? RecordSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
   | (SCHEMA extends AnyOfSchema ? AnyOfSchemaCondition<ATTR_PATH, SCHEMA, ALL_PATHS> : never)
 
+/**
+ * Condition asserting an attribute exists or not.
+ */
 export type ExistsCondition<ATTR_PATH extends string> = {
   attr: ATTR_PATH
   exists: boolean
 }
 
+/**
+ * Condition asserting an attribute's DynamoDB type.
+ */
 export type TypeCondition<ATTR_PATH extends string> = {
   attr: ATTR_PATH
   type: ConditionType
 }
 
+/**
+ * Condition asserting an attribute equals a value.
+ */
 export type EqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -92,6 +110,9 @@ type SizeEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   eq: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute differs from a value.
+ */
 export type NotEqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -108,6 +129,9 @@ type SizeNotEqCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   ne: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute is one of several values.
+ */
 export type InCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -124,6 +148,9 @@ type SizeInCondition<ATTR_PATH extends string, ALL_PATHS extends string> = {
   in: (number | { attr: ALL_PATHS })[]
 }
 
+/**
+ * Equality conditions (`eq`, `ne`, `in`) on an attribute.
+ */
 export type ValueCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -139,6 +166,9 @@ type SizeValueCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   | SizeNotEqCondition<ATTR_PATH, ALL_PATHS>
   | SizeInCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Condition asserting an attribute is less than a value.
+ */
 export type LessThanCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -155,6 +185,9 @@ type SizeLessThanCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   lt: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute is less than or equal to a value.
+ */
 export type LessThanOrEqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -171,6 +204,9 @@ type SizeLessThanOrEqCondition<ATTR_PATH extends string, ALL_PATHS extends strin
   lte: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute is greater than a value.
+ */
 export type GreaterThanCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -187,6 +223,9 @@ type SizeGreaterThanCondition<ATTR_PATH extends string, ALL_PATHS extends string
   gt: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute is greater than or equal to a value.
+ */
 export type GreaterThanOrEqCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -203,6 +242,9 @@ type SizeGreaterThanOrEqCondition<ATTR_PATH extends string, ALL_PATHS extends st
   gte: number | { attr: ALL_PATHS }
 }
 
+/**
+ * Condition asserting an attribute is within a range.
+ */
 export type BetweenCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -222,6 +264,9 @@ type SizeBetweenCondition<ATTR_PATH extends string, ALL_PATHS extends string> = 
   between: [number | { attr: ALL_PATHS }, number | { attr: ALL_PATHS }]
 }
 
+/**
+ * Ordering conditions (`lt`, `lte`, `gt`, `gte`, `between`) on an attribute.
+ */
 export type RangeCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -241,14 +286,23 @@ type SizeRangeCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   | SizeGreaterThanOrEqCondition<ATTR_PATH, ALL_PATHS>
   | SizeBetweenCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Condition on the size of an attribute.
+ */
 export type SizeCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
   | SizeValueCondition<ATTR_PATH, ALL_PATHS>
   | SizeRangeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `null` attribute.
+ */
 export type NullSchemaCondition<ATTR_PATH extends string> =
   | ExistsCondition<ATTR_PATH>
   | TypeCondition<ATTR_PATH>
 
+/**
+ * Conditions available on a `boolean` attribute.
+ */
 export type BooleanSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends BooleanSchema,
@@ -259,6 +313,9 @@ export type BooleanSchemaCondition<
   | TypeCondition<ATTR_PATH>
   | ValueCondition<ATTR_PATH, ResolveBooleanSchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
 
+/**
+ * Conditions available on a `number` attribute.
+ */
 export type NumberSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends NumberSchema,
@@ -270,6 +327,9 @@ export type NumberSchemaCondition<
   | ValueCondition<ATTR_PATH, ResolveNumberSchema<SCHEMA>, ALL_PATHS, CUSTOM_VALUE>
   | RangeCondition<ATTR_PATH, ResolvedNumberSchema, ALL_PATHS, CUSTOM_VALUE>
 
+/**
+ * Condition asserting an attribute contains a value.
+ */
 export type ContainsCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -281,6 +341,9 @@ export type ContainsCondition<
   transform?: boolean
 }
 
+/**
+ * Condition asserting a string attribute begins with a value.
+ */
 export type BeginsWithCondition<
   ATTR_PATH extends string,
   ATTR_VALUE,
@@ -292,6 +355,9 @@ export type BeginsWithCondition<
   transform?: boolean
 }
 
+/**
+ * Conditions available on a `string` attribute.
+ */
 export type StringSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends StringSchema,
@@ -307,6 +373,9 @@ export type StringSchemaCondition<
   // "If the attribute is of type `String`, `size` returns the length of the string"
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `binary` attribute.
+ */
 export type BinarySchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends BinarySchema,
@@ -320,6 +389,9 @@ export type BinarySchemaCondition<
   // "If the attribute is of type `Binary`, `size` returns the number of bytes in the attribute value"
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `set` attribute.
+ */
 export type SetSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends SetSchema,
@@ -331,6 +403,9 @@ export type SetSchemaCondition<
   // "If the attribute is a `Set` data type, `size` returns the number of elements in the set"
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `list` attribute.
+ */
 export type ListSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends ListSchema,
@@ -348,6 +423,9 @@ export type ListSchemaCondition<
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `tuple` attribute.
+ */
 export type TupleSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends TupleSchema,
@@ -386,6 +464,9 @@ type TupleSchemaConditionRec<
     : never
   : RESULTS
 
+/**
+ * Conditions available on a `map` attribute.
+ */
 export type MapSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends MapSchema,
@@ -406,6 +487,9 @@ export type MapSchemaCondition<
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on a `record` attribute.
+ */
 export type RecordSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends RecordSchema,
@@ -424,6 +508,9 @@ export type RecordSchemaCondition<
   // "If the attribute is of type `List` or `Map`, `size` returns the number of child elements.""
   | SizeCondition<ATTR_PATH, ALL_PATHS>
 
+/**
+ * Conditions available on an `anyOf` attribute.
+ */
 export type AnyOfSchemaCondition<
   ATTR_PATH extends string,
   SCHEMA extends AnyOfSchema,
@@ -440,6 +527,9 @@ export type AnyOfSchemaCondition<
           : never
         : never)
 
+/**
+ * Any condition on a single attribute (no `and`/`or`/`not`).
+ */
 export type NonLogicalCondition<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? FreeCondition | AnySchemaCondition<AnySchema, string, string>
   :
@@ -531,11 +621,17 @@ type FreeContainsCondition<VALUE extends ContainersAttributes = ContainersAttrib
       }
     : never
 
+/**
+ * A combination of conditions via `and`, `or` or `not`.
+ */
 export type LogicalCondition<SCHEMA extends ItemSchema = ItemSchema> =
   | { and: SchemaCondition<SCHEMA>[] }
   | { or: SchemaCondition<SCHEMA>[] }
   | { not: SchemaCondition<SCHEMA> }
 
+/**
+ * A type-safe condition over a schema's attributes.
+ */
 export type SchemaCondition<SCHEMA extends ItemSchema = ItemSchema> =
   | LogicalCondition<SCHEMA>
   | NonLogicalCondition<SCHEMA>

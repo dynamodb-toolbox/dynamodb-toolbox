@@ -6,6 +6,9 @@ import type { FormattedValueJSONSchema } from './schema.js'
 import type { JSONSchemaMeta } from './utils.js'
 import { getJSONSchemaMeta } from './utils.js'
 
+/**
+ * JSON Schema of a formatted `list` value.
+ */
 export type FormattedListJSONSchema<SCHEMA extends ListSchema> = ComputeObject<
   JSONSchemaMeta<SCHEMA> & {
     type: 'array'
@@ -13,6 +16,9 @@ export type FormattedListJSONSchema<SCHEMA extends ListSchema> = ComputeObject<
   }
 >
 
+/**
+ * Build the JSON Schema of a formatted `list` value.
+ */
 export const getFormattedListJSONSchema = <SCHEMA extends ListSchema>(
   schema: SCHEMA
 ): FormattedListJSONSchema<SCHEMA> => ({

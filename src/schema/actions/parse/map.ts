@@ -9,6 +9,9 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against a `map` schema.
+ */
 export function* mapSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: MapSchema,
   inputValue: unknown,

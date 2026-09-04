@@ -9,14 +9,28 @@
     "plugin:prettier/recommended",
     "prettier"
   ],
-  "plugins": ["@typescript-eslint", "prefer-arrow", "unused-imports", "prettier", "import"],
+  "plugins": [
+    "@typescript-eslint",
+    "prefer-arrow",
+    "unused-imports",
+    "prettier",
+    "import",
+    "jsdoc"
+  ],
   "parser": "@typescript-eslint/parser",
   "root": true,
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
+  "settings": {
+    "jsdoc": {
+      "mode": "typescript",
+      "definedTags": ["debt", "interceptable"]
+    }
+  },
   "rules": {
+    "jsdoc/require-jsdoc": "off",
     "import/extensions": ["error", "always"],
     "prettier/prettier": "error",
     "linebreak-style": ["error", "unix"],
@@ -45,9 +59,36 @@
   },
   "overrides": [
     {
+      "files": ["src/schema/**/*.ts"],
+      "rules": {
+        "jsdoc/require-jsdoc": [
+          "error",
+          {
+            "publicOnly": { "esm": true },
+            "enableFixer": false,
+            "exemptEmptyConstructors": true,
+            "require": {
+              "FunctionDeclaration": true,
+              "FunctionExpression": true,
+              "ArrowFunctionExpression": true,
+              "ClassDeclaration": true,
+              "ClassExpression": true
+            },
+            "contexts": [
+              "MethodDefinition:not([accessibility=\"private\"]):not([key.type=\"PrivateIdentifier\"])",
+              "TSTypeAliasDeclaration",
+              "TSInterfaceDeclaration",
+              "TSEnumDeclaration"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["**/*.test.ts"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "@typescript-eslint/no-unused-vars": "off",
+        "jsdoc/require-jsdoc": "off"
       }
     }
   ],

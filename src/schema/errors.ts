@@ -9,6 +9,9 @@ import type { SetSchemaErrorBlueprint } from './set/errors.js'
 import type { TupleSchemaErrorBlueprint } from './tuple/errors.js'
 import type { SharedSchemaErrorBlueprint } from './utils/errors.js'
 
+/**
+ * Union of every error blueprint raised when validating a schema.
+ */
 export type SchemaErrorBlueprints =
   | PrimitiveSchemaErrorBlueprint
   | SetSchemaErrorBlueprint

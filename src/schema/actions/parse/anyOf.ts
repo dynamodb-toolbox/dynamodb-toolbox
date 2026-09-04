@@ -10,6 +10,9 @@ import type { ParserReturn, ParserYield } from './parser.js'
 import { schemaParser } from './schema.js'
 import { applyCustomValidation } from './utils.js'
 
+/**
+ * Parse a value against an `anyOf` schema.
+ */
 export function* anyOfSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
   schema: AnyOfSchema,
   inputValue: unknown,

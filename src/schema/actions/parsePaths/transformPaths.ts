@@ -3,10 +3,16 @@ import { Finder } from '~/schema/actions/finder/index.js'
 import { Deduper } from '~/schema/actions/utils/deduper.js'
 import type { Schema } from '~/schema/index.js'
 
+/**
+ * Options accepted when transforming paths.
+ */
 export interface TransformPathsOptions {
   strict?: boolean
 }
 
+/**
+ * Map app-level paths to their saved attribute names.
+ */
 export const transformPaths = (
   schema: Schema,
   paths: string[],

@@ -43,6 +43,9 @@ export type TransformedValue<
     ? SchemaTransformedValue<SCHEMA, OPTIONS>
     : never
 
+/**
+ * Transformed values of a tuple of schemas.
+ */
 export type TransformedValueRec<
   SCHEMAS extends Schema[],
   OPTIONS extends WriteValueOptions = {},

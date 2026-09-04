@@ -24,6 +24,9 @@ import type {
   StringSchema_
 } from '../string/index.js'
 
+/**
+ * Union of the primitive (non-collection) schema classes: `null`, `boolean`, `number`, `string` and `binary`.
+ */
 export type PrimitiveSchema =
   | NullSchema
   | BooleanSchema
@@ -31,6 +34,9 @@ export type PrimitiveSchema =
   | StringSchema
   | BinarySchema
 
+/**
+ * Union of the builder primitive schema classes.
+ */
 export type PrimitiveSchema_ =
   | NullSchema_
   | BooleanSchema_
@@ -38,6 +44,9 @@ export type PrimitiveSchema_ =
   | StringSchema_
   | BinarySchema_
 
+/**
+ * Runtime type of an unconstrained primitive schema — the union of every primitive's resolved type.
+ */
 export type ResolvedPrimitiveSchema =
   | ResolvedNullSchema
   | ResolvedBooleanSchema
@@ -45,6 +54,9 @@ export type ResolvedPrimitiveSchema =
   | ResolvedStringSchema
   | ResolvedBinarySchema
 
+/**
+ * Resolves a primitive schema to its runtime type by dispatching to the matching per-type resolver.
+ */
 export type ResolvePrimitiveSchema<SCHEMA extends PrimitiveSchema> = PrimitiveSchema extends SCHEMA
   ? ResolvedPrimitiveSchema
   :

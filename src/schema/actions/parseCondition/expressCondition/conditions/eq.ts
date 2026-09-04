@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { attrOrValueTokens, pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render an `eq` condition.
+ */
 export const expressEqCondition = (
   condition: Extract<SchemaCondition, { eq: unknown }>,
   prefix = '',
@@ -27,6 +30,9 @@ export const expressEqCondition = (
   }
 }
 
+/**
+ * Render a `ne` condition.
+ */
 export const expressNeCondition = (
   condition: Extract<SchemaCondition, { ne: unknown }>,
   prefix = '',

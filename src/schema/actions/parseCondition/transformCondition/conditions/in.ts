@@ -7,6 +7,9 @@ import { Parser } from '../../../parse/parser.js'
 import type { SchemaCondition } from '../../condition.js'
 import { getComparedSubSchemas, joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform the operands of an `in` condition.
+ */
 export const transformInCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { in: unknown; value?: never }>

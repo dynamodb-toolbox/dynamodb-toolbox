@@ -11,6 +11,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithAttributeNameDecoding } from './utils.js'
 import { withAttributeNameDecoding } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `item` value.
+ */
 export type ItemZodFormatter<
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -32,6 +35,9 @@ export type ItemZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `item` value.
+ */
 export const itemZodFormatter = <
   SCHEMA extends ItemSchema,
   OPTIONS extends ZodFormatterOptions = {}

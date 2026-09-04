@@ -5,6 +5,9 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import type { PrimitiveSchema } from './types.js'
 
+/**
+ * Validate the props of a primitive schema: enum value types, and static default value types and enum membership. Throws a `DynamoDBToolboxError` on the first invalid prop.
+ */
 export const checkPrimitiveSchema = (schema: PrimitiveSchema, path?: string): void => {
   checkSchemaProps(schema.props, path)
 

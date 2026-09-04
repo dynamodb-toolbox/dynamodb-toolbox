@@ -15,9 +15,15 @@ import { tupleSchemaFormatter } from './tuple.js'
 
 export const requiringOptions = new Set<SchemaRequiredProp>(['always', 'atLeastOnce'])
 
+/**
+ * Whether a schema must be present when formatting.
+ */
 export const isRequired = ({ props }: Schema): boolean =>
   requiringOptions.has(props.required ?? 'atLeastOnce')
 
+/**
+ * Dispatch a saved value to the formatter of its schema type.
+ */
 export function* schemaFormatter<
   SCHEMA extends Schema,
   OPTIONS extends FormatAttrValueOptions<SCHEMA> = {}

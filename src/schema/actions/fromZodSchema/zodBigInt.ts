@@ -7,6 +7,9 @@ import type { Overwrite } from '~/types/overwrite.js'
 
 import { withMeta } from './utils.js'
 
+/**
+ * DDB-TB schema derived from a `zod` bigint schema.
+ */
 export type FromZodBigInt<
   ROOT extends boolean = true,
   PROPS extends SchemaProps = {}
@@ -14,5 +17,8 @@ export type FromZodBigInt<
   ? NumberSchema_<Overwrite<PROPS, { big: true }>>
   : NumberSchema<Overwrite<PROPS, { big: true }>>
 
+/**
+ * Convert a `zod` bigint schema to a DDB-TB schema.
+ */
 export const fromZodBigInt = (zodSchema: ZodBigInt): NumberSchema =>
   withMeta(number({ big: true }), zodSchema)

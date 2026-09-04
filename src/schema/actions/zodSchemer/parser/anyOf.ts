@@ -11,6 +11,9 @@ import type { ZodParserOptions } from './types.js'
 import type { SchemaZodParserRec, WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `anyOf` value.
+ */
 export type AnyOfZodParser<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -45,6 +48,9 @@ export type AnyOfZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `anyOf` value.
+ */
 export const anyOfZodParser = (
   schema: AnyOfSchema,
   options: ZodParserOptions = {}

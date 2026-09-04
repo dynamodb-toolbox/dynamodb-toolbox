@@ -22,6 +22,9 @@ export const item: ItemSchemer = <ATTRIBUTES extends ItemAttributes>(
   attributes: NarrowObject<ATTRIBUTES>
 ) => new ItemSchema_(lightObj(attributes))
 
+/**
+ * Builder (warm) variant of an item schema.
+ */
 export class ItemSchema_<
   ATTRIBUTES extends ItemAttributes = ItemAttributes,
   PROPS extends ItemSchemaProps = ItemSchemaProps
@@ -44,6 +47,9 @@ export class ItemSchema_<
     return new ItemSchema_(this.attributes, overwrite(this.props, { meta: nextMeta }))
   }
 
+  /**
+   * Return a new schema with only the given attributes.
+   */
   pick<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
   ): ItemSchema_<{ [KEY in ATTRIBUTE_NAMES[number]]: ResetLinks<ATTRIBUTES[KEY]> }, PROPS> {
@@ -62,6 +68,9 @@ export class ItemSchema_<
     return new ItemSchema_(nextAttributes, this.props)
   }
 
+  /**
+   * Return a new schema without the given attributes.
+   */
   omit<ATTRIBUTE_NAMES extends (keyof ATTRIBUTES)[]>(
     ...attributeNames: ATTRIBUTE_NAMES
   ): ItemSchema_<
@@ -85,6 +94,9 @@ export class ItemSchema_<
     return new ItemSchema_(nextAttributes, this.props)
   }
 
+  /**
+   * Return a new schema with additional attributes merged in.
+   */
   and<ADDITIONAL_ATTRIBUTES extends ItemAttributes = ItemAttributes>(
     additionalAttr:
       | NarrowObject<ADDITIONAL_ATTRIBUTES>
@@ -125,6 +137,9 @@ export class ItemSchema_<
     )
   }
 
+  /**
+   * Build an action from this schema.
+   */
   build<ACTION extends SchemaAction<this> = SchemaAction<this>>(
     Action: new (schema: this) => ACTION
   ): ACTION {

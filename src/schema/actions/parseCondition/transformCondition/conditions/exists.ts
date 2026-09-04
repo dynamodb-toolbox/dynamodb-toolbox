@@ -5,6 +5,9 @@ import type { Schema } from '~/schema/index.js'
 import type { SchemaCondition } from '../../condition.js'
 import { joinDedupedConditions } from './utils.js'
 
+/**
+ * Transform an `exists` condition to its saved attribute paths.
+ */
 export const transformExistsCondition = (
   schema: Schema,
   condition: Extract<SchemaCondition, { exists: unknown }>

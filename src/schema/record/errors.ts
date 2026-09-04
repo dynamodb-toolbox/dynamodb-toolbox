@@ -66,6 +66,9 @@ type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/**
+ * Union of the error blueprints raised when validating a record schema.
+ */
 export type RecordSchemaErrorBlueprint =
   | InvalidKeysErrorBlueprint
   | OptionalKeysErrorBlueprint

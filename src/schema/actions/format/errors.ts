@@ -31,6 +31,9 @@ type InvalidRawItemErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/**
+ * Union of error blueprints raised by the formatter.
+ */
 export type FormatterErrorBlueprints =
   | RawAttributeRequiredErrorBlueprint
   | InvalidRawAttributeErrorBlueprint

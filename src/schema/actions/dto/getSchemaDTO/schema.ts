@@ -11,6 +11,9 @@ import { getRecordSchemaDTO } from './record.js'
 import { getSetSchemaDTO } from './set.js'
 import { getTupleSchemaDTO } from './tuple.js'
 
+/**
+ * Dispatch a schema to the DTO builder of its type.
+ */
 export const getSchemaDTO = (schema: Schema): ISchemaDTO => {
   /**
    * @debt feature "handle defaults, links & validators"

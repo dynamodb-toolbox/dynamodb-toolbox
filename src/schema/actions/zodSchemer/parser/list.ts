@@ -11,6 +11,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `list` value.
+ */
 export type ListZodParser<
   SCHEMA extends ListSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -29,6 +32,9 @@ export type ListZodParser<
       >
     >
 
+/**
+ * Build a Zod schema validating an input `list` value.
+ */
 export const listZodParser = (schema: ListSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
   withDescribe(
     schema,

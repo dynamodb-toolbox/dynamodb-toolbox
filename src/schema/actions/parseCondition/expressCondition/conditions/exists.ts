@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens } from './utils.js'
 
+/**
+ * Render an `exists` condition.
+ */
 export const expressExistsCondition = (
   condition: Extract<SchemaCondition, { exists: unknown }>,
   prefix = '',

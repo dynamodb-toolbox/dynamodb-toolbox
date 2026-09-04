@@ -24,6 +24,9 @@ type DefaultedElementsErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/**
+ * Union of the error blueprints raised when validating a list schema.
+ */
 export type ListSchemaErrorBlueprint =
   | OptionalElementsErrorBlueprint
   | HiddenElementsErrorBlueprint

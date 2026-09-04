@@ -9,6 +9,9 @@ import type { ZodParserOptions } from './types.js'
 import type { WithDefault, WithEncoding, WithOptional, ZodLiteralMap } from './utils.js'
 import { withDefault, withEncoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating an input `boolean` value.
+ */
 export type BooleanZodParser<
   SCHEMA extends BooleanSchema,
   OPTIONS extends ZodParserOptions = {}
@@ -36,6 +39,9 @@ export type BooleanZodParser<
   >
 >
 
+/**
+ * Build a Zod schema validating an input `boolean` value.
+ */
 export const booleanZodParser = (
   schema: BooleanSchema,
   options: ZodParserOptions

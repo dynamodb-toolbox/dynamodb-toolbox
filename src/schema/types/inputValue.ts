@@ -20,6 +20,9 @@ import type { Extends, If, Not, Optional, Overwrite, SelectKeys } from '~/types/
 
 import type { SchemaExtendedWriteValue, WriteValueOptions } from './options.js'
 
+/**
+ * Value accepted as input when writing a schema (before defaults and links).
+ */
 export type InputValue<
   SCHEMA extends Schema,
   OPTIONS extends WriteValueOptions = {}
@@ -29,6 +32,9 @@ export type InputValue<
     ? SchemaInputValue<SCHEMA, OPTIONS>
     : never
 
+/**
+ * Input values of a tuple of schemas.
+ */
 export type InputValueRec<
   SCHEMAS extends Schema[],
   OPTIONS extends WriteValueOptions = {},

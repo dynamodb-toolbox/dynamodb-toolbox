@@ -3,6 +3,9 @@ import type { ItemSchema } from '~/schema/item/index.js'
 import type { ItemSchemaDTO } from '../types.js'
 import { getSchemaDTO } from './schema.js'
 
+/**
+ * Build the DTO of an `item` schema.
+ */
 export const getItemSchemaDTO = (schema: ItemSchema): ItemSchemaDTO => {
   const { strict, meta } = schema.props
 

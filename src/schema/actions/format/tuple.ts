@@ -8,6 +8,9 @@ import type { FormatAttrValueOptions } from './options.js'
 import { schemaFormatter } from './schema.js'
 import { matchTupleProjection } from './utils.js'
 
+/**
+ * Format a saved value against a `tuple` schema.
+ */
 export function* tupleSchemaFormatter(
   schema: TupleSchema,
   rawValue: unknown,

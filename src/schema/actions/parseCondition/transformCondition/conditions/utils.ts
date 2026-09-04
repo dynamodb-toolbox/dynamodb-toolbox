@@ -6,6 +6,9 @@ import { isString } from '~/utils/validation/isString.js'
 
 import type { SchemaCondition } from '../../condition.js'
 
+/**
+ * Resolve the sub-schemas referenced by a comparison operand.
+ */
 export const getComparedSubSchemas = (
   schemaFinder: Finder,
   comparedValue: unknown,
@@ -21,6 +24,9 @@ export const getComparedSubSchemas = (
     ? schemaFinder.search(comparedValue.attr)
     : undefined
 
+/**
+ * Combine deduplicated conditions into a single `or` condition.
+ */
 export const joinDedupedConditions = (
   dedupedConditions: Deduper<SchemaCondition>,
   attributePath: string

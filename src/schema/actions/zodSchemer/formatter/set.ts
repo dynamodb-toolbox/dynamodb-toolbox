@@ -11,6 +11,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithOptional } from './utils.js'
 import { withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `set` value.
+ */
 export type SetZodFormatter<
   SCHEMA extends SetSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -25,6 +28,9 @@ export type SetZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `set` value.
+ */
 export const setZodFormatter = (
   schema: SetSchema,
   options: ZodFormatterOptions = {}

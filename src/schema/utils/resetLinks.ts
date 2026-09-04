@@ -14,6 +14,9 @@ import type {
   StringSchema
 } from '~/schema/index.js'
 
+/**
+ * Schema type with its link props removed.
+ */
 export type ResetLinks<SCHEMA extends Schema> =
   | (SCHEMA extends AnySchema
       ? AnySchema<{
@@ -122,6 +125,9 @@ export type ResetLinks<SCHEMA extends Schema> =
 
 type LinksResetter = <SCHEMA extends Schema>(schema: SCHEMA) => ResetLinks<SCHEMA>
 
+/**
+ * Clone a schema with its link props cleared.
+ */
 export const resetLinks: LinksResetter = schema =>
   (schema as Schema_)
     // @ts-expect-error Signatures don't match but we don't care

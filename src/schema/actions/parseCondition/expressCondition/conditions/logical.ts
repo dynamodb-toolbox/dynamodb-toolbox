@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import { expressCondition } from '../expressCondition.js'
 import type { ExpressionState } from '../types.js'
 
+/**
+ * Render an `or` condition.
+ */
 export const expressOrCondition = (
   condition: Extract<SchemaCondition, { or: unknown }>,
   prefix = '',
@@ -30,6 +33,9 @@ export const expressOrCondition = (
   }
 }
 
+/**
+ * Render an `and` condition.
+ */
 export const expressAndCondition = (
   condition: Extract<SchemaCondition, { and: unknown }>,
   prefix = '',
@@ -57,6 +63,9 @@ export const expressAndCondition = (
   }
 }
 
+/**
+ * Render a `not` condition.
+ */
 export const expressNotCondition = (
   condition: Extract<SchemaCondition, { not: unknown }>,
   prefix = '',

@@ -7,6 +7,9 @@ import type { ParseValueOptions } from './options.js'
 import type { ParserReturn, ParserYield } from './parser.js'
 import { schemaParser } from './schema.js'
 
+/**
+ * Parse a value against an `item` schema.
+ */
 export function* itemParser<SCHEMA extends ItemSchema, OPTIONS extends ParseValueOptions = {}>(
   schema: SCHEMA,
   inputValue: unknown,

@@ -12,6 +12,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithAttributeNameDecoding, WithOptional } from './utils.js'
 import { withAttributeNameDecoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `map` value.
+ */
 export type MapZodFormatter<
   SCHEMA extends MapSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -40,6 +43,9 @@ export type MapZodFormatter<
       >
     >
 
+/**
+ * Build a Zod schema validating a formatted `map` value.
+ */
 export const mapZodFormatter = (
   schema: MapSchema,
   options: ZodFormatterOptions = {}

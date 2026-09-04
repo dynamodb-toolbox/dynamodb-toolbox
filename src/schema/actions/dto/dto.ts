@@ -4,6 +4,9 @@ import { SchemaAction } from '~/schema/index.js'
 import { getSchemaDTO } from './getSchemaDTO/index.js'
 import type { ItemSchemaDTO } from './types.js'
 
+/**
+ * Serialize an item schema into a portable JSON DTO.
+ */
 export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   extends SchemaAction<SCHEMA>
   implements ItemSchemaDTO
@@ -15,6 +18,9 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
   strict?: boolean | undefined
   meta?: SchemaMeta | undefined
 
+  /**
+   * Build the DTO from the item schema and its attributes.
+   */
   constructor(schema: SCHEMA) {
     super(schema)
     this.type = 'item'
@@ -28,6 +34,9 @@ export class SchemaDTO<SCHEMA extends ItemSchema = ItemSchema>
     this.meta = schema.props.meta
   }
 
+  /**
+   * Return the DTO as a plain JSON object.
+   */
   toJSON(): ItemSchemaDTO {
     const { strict, meta } = this
 

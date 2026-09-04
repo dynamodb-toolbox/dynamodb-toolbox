@@ -7,6 +7,9 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
 import type { FormatterReturn, FormatterYield } from './formatter.js'
 import type { FormatAttrValueOptions } from './options.js'
 
+/**
+ * Format a saved value against a primitive schema.
+ */
 export function* primitiveSchemaFormatter(
   schema: PrimitiveSchema,
   rawValue: unknown,

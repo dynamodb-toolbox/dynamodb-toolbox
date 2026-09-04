@@ -21,6 +21,9 @@ import {
 } from './conditions/range.js'
 import { transformTypeCondition } from './conditions/type.js'
 
+/**
+ * Apply schema transformers to a condition's operands.
+ */
 export const transformCondition = (schema: Schema, condition: SchemaCondition): SchemaCondition => {
   if ('value' in condition) {
     return condition

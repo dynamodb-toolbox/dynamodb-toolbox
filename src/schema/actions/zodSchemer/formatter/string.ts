@@ -8,6 +8,9 @@ import type { ZodFormatterOptions } from './types.js'
 import type { WithDecoding, WithOptional } from './utils.js'
 import { withDecoding, withOptional } from './utils.js'
 
+/**
+ * Zod schema validating a formatted `string` value.
+ */
 export type StringZodFormatter<
   SCHEMA extends StringSchema,
   OPTIONS extends ZodFormatterOptions = {}
@@ -28,6 +31,9 @@ export type StringZodFormatter<
   >
 >
 
+/**
+ * Build a Zod schema validating a formatted `string` value.
+ */
 export const stringZodFormatter = (
   schema: StringSchema,
   options: ZodFormatterOptions = {}

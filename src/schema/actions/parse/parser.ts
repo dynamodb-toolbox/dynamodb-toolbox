@@ -20,6 +20,9 @@ type ParserInput<
   ? ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
   : InputValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
+/**
+ * Values yielded by the parser at each pipeline step.
+ */
 export type ParserYield<
   SCHEMA extends Schema,
   OPTIONS extends ParseValueOptions = {},
@@ -28,6 +31,9 @@ export type ParserYield<
   | (OPTIONS extends { fill: false } ? never : InputValue<SCHEMA, WRITE_VALUE_OPTIONS>)
   | ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
+/**
+ * Final value returned by the parser.
+ */
 export type ParserReturn<
   SCHEMA extends Schema,
   OPTIONS extends ParseValueOptions = {},
@@ -36,9 +42,15 @@ export type ParserReturn<
   ? ValidValue<SCHEMA, WRITE_VALUE_OPTIONS>
   : TransformedValue<SCHEMA, WRITE_VALUE_OPTIONS>
 
+/**
+ * Validates and transforms an input value toward its saved form.
+ */
 export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
   static override actionName = 'parse' as const
 
+  /**
+   * Run the parse pipeline lazily, yielding each intermediate step.
+   */
   start<OPTIONS extends ParseValueOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
@@ -56,6 +68,9 @@ export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
     }
   }
 
+  /**
+   * Parse an input value into its transformed (saved) form.
+   */
   parse<OPTIONS extends ParseValueOptions = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS
@@ -74,6 +89,9 @@ export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
     return value
   }
 
+  /**
+   * Parse an already-typed input value.
+   */
   reparse<OPTIONS extends ParseValueOptions = {}>(
     inputValue: ParserInput<SCHEMA, OPTIONS>,
     options: OPTIONS = {} as OPTIONS
@@ -81,6 +99,9 @@ export class Parser<SCHEMA extends Schema> extends SchemaAction<SCHEMA> {
     return this.parse(inputValue, options)
   }
 
+  /**
+   * Whether an input value is valid against the schema.
+   */
   validate<OPTIONS extends Omit<ParseValueOptions, 'fill' | 'transform'> = {}>(
     inputValue: unknown,
     options: OPTIONS = {} as OPTIONS

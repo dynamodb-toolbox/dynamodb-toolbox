@@ -3,6 +3,9 @@ import type { ConditionExpression } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, valueToken } from './utils.js'
 
+/**
+ * Render a `type` condition.
+ */
 export const expressTypeCondition = (
   condition: Extract<SchemaCondition, { type: unknown }>,
   prefix = '',
