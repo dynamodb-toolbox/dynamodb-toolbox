@@ -7,6 +7,9 @@ interface AWSAccount extends Pick<AWSConfig, 'awsAccountId'> {
   description?: string
 }
 
+/**
+ * Create or update an AWS account entry in the synchronization registry.
+ */
 export const putAWSAccount = async (
   awsAccount: AWSAccount,
   { apiUrl, fetch: _fetch = fetch, apiKey }: FetchOpts

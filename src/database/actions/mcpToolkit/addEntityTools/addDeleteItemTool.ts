@@ -20,6 +20,9 @@ const defaultDeleteOptionsSchema = z
   .partial()
   .default({})
 
+/**
+ * Register an MCP tool that deletes an item of the given entity.
+ */
 export const addDeleteEntityItemTool = (
   server: McpServer,
   entity: Entity,

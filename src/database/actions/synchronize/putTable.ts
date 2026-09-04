@@ -10,6 +10,9 @@ interface Table extends AWSConfig, ITableDTO {
   description?: string
 }
 
+/**
+ * Create or update a table's schema in the synchronization registry.
+ */
 export const putTable = async (
   table: Table,
   { apiUrl, fetch: _fetch = fetch, apiKey }: FetchOpts

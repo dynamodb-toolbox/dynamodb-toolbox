@@ -1,10 +1,16 @@
 import type { AWSConfig, FetchOpts } from './types.js'
 
+/**
+ * An access role, identified by its name with an optional description.
+ */
 export interface AccessRole {
   roleName: string
   description?: string
 }
 
+/**
+ * Create an access role for an AWS account if it does not already exist.
+ */
 export const putAccessRole = async (
   accessRole: Pick<AWSConfig, 'awsAccountId'> & AccessRole,
   { apiUrl, fetch: _fetch = fetch, apiKey }: FetchOpts
@@ -41,6 +47,9 @@ export const putAccessRole = async (
   }
 }
 
+/**
+ * Assign an existing access role to a table.
+ */
 export const assignAccessRole = async (
   {
     awsAccountId,

@@ -18,6 +18,9 @@ const defaultGetOptionsSchema = z
   .partial()
   .default({})
 
+/**
+ * Register an MCP tool that gets an item of the given entity.
+ */
 export const addGetEntityItemTool = (
   server: McpServer,
   entity: Entity,

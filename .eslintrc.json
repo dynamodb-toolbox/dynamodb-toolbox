@@ -111,6 +111,32 @@
       }
     },
     {
+      "files": ["src/database/**/*.ts"],
+      "rules": {
+        "jsdoc/require-jsdoc": [
+          "error",
+          {
+            "publicOnly": { "esm": true },
+            "enableFixer": false,
+            "exemptEmptyConstructors": true,
+            "require": {
+              "FunctionDeclaration": true,
+              "FunctionExpression": true,
+              "ArrowFunctionExpression": true,
+              "ClassDeclaration": true,
+              "ClassExpression": true
+            },
+            "contexts": [
+              "MethodDefinition:not([accessibility=\"private\"]):not([key.type=\"PrivateIdentifier\"])",
+              "TSTypeAliasDeclaration",
+              "TSInterfaceDeclaration",
+              "TSEnumDeclaration"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "files": ["**/*.test.ts"],
       "rules": {
         "@typescript-eslint/no-unused-vars": "off",

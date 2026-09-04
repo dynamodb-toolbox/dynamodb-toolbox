@@ -20,6 +20,9 @@ const defaultPutOptionsSchema = z
   .partial()
   .default({})
 
+/**
+ * Register an MCP tool that puts an item of the given entity.
+ */
 export const addPutEntityItemTool = (
   server: McpServer,
   entity: Entity,

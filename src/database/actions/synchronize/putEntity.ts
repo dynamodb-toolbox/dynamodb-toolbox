@@ -8,6 +8,9 @@ interface Entity extends Omit<IEntityDTO, 'table'> {
   description?: string
 }
 
+/**
+ * Create or update an entity's schema in the synchronization registry.
+ */
 export const putEntity = async (
   { awsAccountId, awsRegion, tableName, ...entity }: AWSConfig & { tableName: string } & Entity,
   { apiUrl, fetch: _fetch = fetch, apiKey }: FetchOpts

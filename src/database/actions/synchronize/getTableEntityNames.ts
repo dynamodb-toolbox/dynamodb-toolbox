@@ -1,5 +1,8 @@
 import type { AWSConfig, FetchOpts } from './types.js'
 
+/**
+ * Fetch the names of the entities registered for a table.
+ */
 export const getTableEntityNames = async (
   { awsAccountId, awsRegion, tableName }: AWSConfig & { tableName: string },
   { apiUrl, fetch: _fetch = fetch, apiKey }: FetchOpts
