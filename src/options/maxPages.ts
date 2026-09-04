@@ -1,6 +1,9 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { isInteger } from '~/utils/validation/isInteger.js'
 
+/**
+ * Validate a `maxPages` option value, allowing `Infinity` or an integer greater than 0.
+ */
 export const parseMaxPagesOption = (maxPages: number): number => {
   if (maxPages === Infinity) {
     return maxPages

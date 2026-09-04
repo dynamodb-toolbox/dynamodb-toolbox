@@ -108,6 +108,9 @@ type MissingDocumentClientErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/**
+ * Union of error blueprints raised while parsing command options.
+ */
 export type OptionsErrorBlueprints =
   | IncompleteActionErrorBlueprint
   | InvalidActionErrorBlueprint

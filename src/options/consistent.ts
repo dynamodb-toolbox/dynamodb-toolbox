@@ -2,6 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import type { Index } from '~/table/index.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 
+/**
+ * Validate a `consistent` option value, rejecting consistent reads on global secondary indexes.
+ */
 export const parseConsistentOption = (consistent: boolean, index?: Index): boolean => {
   if (!isBoolean(consistent)) {
     throw new DynamoDBToolboxError('options.invalidConsistentOption', {
