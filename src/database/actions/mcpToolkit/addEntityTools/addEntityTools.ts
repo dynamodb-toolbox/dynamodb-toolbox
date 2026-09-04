@@ -7,6 +7,9 @@ import { addGetEntityItemTool } from './addGetItemTool.js'
 import { addPutEntityItemTool } from './addPutItemTool.js'
 import type { AddEntityToolsOptions } from './options.js'
 
+/**
+ * Register the get / put / delete MCP tools for a single entity.
+ */
 export const addEntityTools = (
   server: McpServer,
   entity: Entity,

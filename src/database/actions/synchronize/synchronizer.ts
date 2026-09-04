@@ -12,12 +12,18 @@ import { putEntity } from './putEntity.js'
 import { putTable } from './putTable.js'
 import type { AWSAccount, FetchOpts, SyncedEntityMetadata, SyncedTableMetadata } from './types.js'
 
+/**
+ * Database action that synchronizes table and entity schemas to a remote registry.
+ */
 export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATABASE> {
   static override actionName = 'synchronize' as const
 
   apiUrl: string;
   [$awsAccount]?: AWSAccount
 
+  /**
+   * Create a synchronizer for a database, optionally bound to an AWS account.
+   */
   constructor(database: DATABASE, awsAccount?: AWSAccount) {
     super(database)
 
@@ -25,10 +31,16 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
     this[$awsAccount] = awsAccount
   }
 
+  /**
+   * Return a new synchronizer bound to the given AWS account.
+   */
   awsAccount(awsAccount: AWSAccount): Synchronizer<DATABASE> {
     return new Synchronizer(this.database, awsAccount)
   }
 
+  /**
+   * Push the database's table and entity schemas to the remote registry.
+   */
   async sync({
     apiKey,
     deleteUnknownEntities = false,

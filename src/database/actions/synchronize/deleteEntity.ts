@@ -1,5 +1,8 @@
 import type { AWSConfig, FetchOpts } from './types.js'
 
+/**
+ * Delete an entity's schema from the synchronization registry.
+ */
 export const deleteEntity = async (
   {
     awsAccountId,

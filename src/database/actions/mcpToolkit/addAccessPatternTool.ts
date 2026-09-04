@@ -42,6 +42,9 @@ interface AddAccessPatternToolOptions {
   dbAccessPatternKey: string
 }
 
+/**
+ * Register an MCP tool that runs a given access pattern.
+ */
 export const addAccessPatternTool = (
   server: McpServer,
   accessPattern: IEntityAccessPattern | ITableAccessPattern,
