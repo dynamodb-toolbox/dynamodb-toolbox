@@ -7,10 +7,16 @@ import type {
   TypedTransformer
 } from './transformer.js'
 
+/**
+ * Extract the type-level modifier applied by a `Transformer` to its value.
+ */
 export type TypeModifier<TRANSFORMER extends Transformer> = TRANSFORMER extends TypedTransformer
   ? TRANSFORMER['_typeModifier']
   : Constant<ReturnType<TRANSFORMER['encode']>>
 
+/**
+ * Extract the type-level modifiers applied by a tuple of `Transformer`s.
+ */
 export type TypeModifiers<
   TRANSFORMERS extends Transformer[],
   FNS extends Fn[] = []
@@ -22,10 +28,16 @@ export type TypeModifiers<
     : never
   : FNS
 
+/**
+ * Extract the DTO type produced by a `SerializableTransformer`.
+ */
 export type TransformerDTO<TRANSFORMER extends SerializableTransformer> = ReturnType<
   TRANSFORMER['toJSON']
 >
 
+/**
+ * Extract the DTO types produced by a tuple of `SerializableTransformer`s.
+ */
 export type TransformerDTOs<
   TRANSFORMERS extends SerializableTransformer[],
   DTOS extends ITransformerDTO[] = []

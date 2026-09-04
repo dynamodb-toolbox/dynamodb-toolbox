@@ -23,6 +23,9 @@ const composeRight =
 
 const identity: Fn = arg => arg
 
+/**
+ * Transformer that composes a sequence of transformers, encoding left-to-right.
+ */
 export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
   implements
     TypedTransformer<
@@ -46,6 +49,9 @@ export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
     encoded: ReturnType<LastTransformer<TRANSFORMERS>['encode']>
   ) => ReturnType<TRANSFORMERS[0]['decode']>
 
+  /**
+   * Create a `Pipe` composing the given transformers in order.
+   */
   constructor(transformers: TRANSFORMERS) {
     this.transformerId = 'pipe'
     this.transformers = transformers
@@ -59,6 +65,9 @@ export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
       .reduce(composeRight, identity)
   }
 
+  /**
+   * Append another transformer to this pipe, applied after the existing ones.
+   */
   pipe<TRANSFORMER extends Transformer<ReturnType<LastTransformer<TRANSFORMERS>['encode']>>>(
     transformer: TRANSFORMER
   ): Piped<[...TRANSFORMERS, TRANSFORMER]> {
@@ -66,6 +75,9 @@ export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
   }
 }
 
+/**
+ * `Pipe` of serializable transformers that can itself be serialized to a DTO.
+ */
 export class SerializablePipe<
     TRANSFORMERS extends SerializableTransformer[] = SerializableTransformer[]
   >
@@ -79,10 +91,16 @@ export class SerializablePipe<
       PipeDTO<TransformerDTOs<TRANSFORMERS>>
     >
 {
+  /**
+   * Create a `SerializablePipe` composing the given serializable transformers.
+   */
   constructor(transformers: TRANSFORMERS) {
     super(transformers)
   }
 
+  /**
+   * Serialize this pipe and its transformers to a DTO.
+   */
   toJSON() {
     return {
       transformerId: this.transformerId,
@@ -91,6 +109,9 @@ export class SerializablePipe<
   }
 }
 
+/**
+ * DTO describing a `SerializablePipe`, holding its transformers' DTOs.
+ */
 export interface PipeDTO<TRANSFORMER_DTOS extends ITransformerDTO[] = ITransformerDTO[]> {
   transformerId: 'pipe'
   transformers: TRANSFORMER_DTOS
@@ -107,6 +128,9 @@ type LastTransformer<TRANSFORMERS extends Transformer[]> = TRANSFORMERS extends 
     : never
   : TRANSFORMERS[0]
 
+/**
+ * Resolve the pipe type for a tuple of transformers (`SerializablePipe` when all are serializable).
+ */
 export type Piped<TRANSFORMERS extends Transformer[]> =
   TRANSFORMERS extends SerializableTransformer[]
     ? SerializablePipe<TRANSFORMERS>
@@ -116,6 +140,9 @@ type Piper = <TRANSFORMERS extends Transformer[]>(
   ...transformers: TRANSFORMERS
 ) => Piped<TRANSFORMERS>
 
+/**
+ * Compose transformers into a single pipe applied left-to-right on encode.
+ */
 export const pipe: Piper = <TRANSFORMERS extends Transformer[]>(...transformers: TRANSFORMERS) =>
   (transformers.every(isSerializableTransformer)
     ? new SerializablePipe(transformers)
