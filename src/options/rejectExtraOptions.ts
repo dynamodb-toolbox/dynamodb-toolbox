@@ -1,5 +1,8 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 
+/**
+ * Throw if any unknown extra command option was provided.
+ */
 export const rejectExtraOptions = (extraOptions: {}): void => {
   const [extraOption] = Object.keys(extraOptions)
 

@@ -2,6 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from './returnValues.js'
 
+/**
+ * Accepted values for the `returnValuesOnConditionFalse` command option.
+ */
 export type ReturnValuesOnConditionFalseOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
 const returnValuesOnConditionFalseOptions = new Set<ReturnValuesOnConditionFalseOption>([
@@ -9,6 +12,9 @@ const returnValuesOnConditionFalseOptions = new Set<ReturnValuesOnConditionFalse
   'ALL_OLD'
 ])
 
+/**
+ * Validate a `returnValuesOnConditionFalse` option value, throwing on an unknown value.
+ */
 export const parseReturnValuesOnConditionFalseOption = (
   returnValues: ReturnValuesOnConditionFalseOption
 ): ReturnValuesOnConditionFalseOption => {

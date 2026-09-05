@@ -1,6 +1,9 @@
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 
+/**
+ * Validate a `showEntityAttr` option value, requiring a boolean.
+ */
 export const parseShowEntityAttrOption = (showEntityAttr: boolean): boolean => {
   if (!isBoolean(showEntityAttr)) {
     throw new DynamoDBToolboxError('options.invalidShowEntityAttrOption', {

@@ -2,6 +2,9 @@ import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import type { Table } from '~/table/index.js'
 import { isString } from '~/utils/validation/isString.js'
 
+/**
+ * Validate an `index` option value against the table's defined indexes.
+ */
 export const parseIndexOption = (table: Table, index: string): string => {
   if (!isString(index)) {
     throw new DynamoDBToolboxError('options.invalidIndexOption', {

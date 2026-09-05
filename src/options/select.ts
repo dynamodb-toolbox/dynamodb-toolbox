@@ -1,10 +1,25 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 
+/**
+ * `select` option requesting all item attributes.
+ */
 export type AllAttributesSelectOption = 'ALL_ATTRIBUTES'
+/**
+ * `select` option requesting all attributes projected into the queried index.
+ */
 export type AllProjectedAttributesSelectOption = 'ALL_PROJECTED_ATTRIBUTES'
+/**
+ * `select` option requesting only the matching item count.
+ */
 export type CountSelectOption = 'COUNT'
+/**
+ * `select` option requesting a specific set of attributes.
+ */
 export type SpecificAttributesSelectOption = 'SPECIFIC_ATTRIBUTES'
 
+/**
+ * Accepted values for the `select` command option.
+ */
 export type SelectOption =
   | AllAttributesSelectOption
   | AllProjectedAttributesSelectOption
@@ -19,6 +34,9 @@ export const selectOptions = [
 ] as const satisfies readonly SelectOption[]
 export const selectOptionsSet = new Set<SelectOption>(selectOptions)
 
+/**
+ * Validate a `select` option value against the queried index and requested attributes.
+ */
 export const parseSelectOption = (
   select: SelectOption,
   { index, attributes }: { index?: string; attributes?: string[] | undefined } = {}

@@ -3,6 +3,9 @@ import type { Entity } from '~/entity/index.js'
 import { DynamoDBToolboxError } from '~/errors/dynamoDBToolboxError.js'
 import { isBoolean } from '~/utils/validation/isBoolean.js'
 
+/**
+ * Validate an `entityAttrFilter` option value against the queried entities and filters.
+ */
 export const parseEntityAttrFilterOption = (
   entityAttrFilter: boolean,
   entities: Entity[],
