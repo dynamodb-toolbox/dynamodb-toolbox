@@ -4,6 +4,7 @@ import type { IAccessPattern as ITableAccessPattern } from '~/table/actions/acce
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 
+/** Registry of a table's entities and access patterns, keyed by name. */
 export class Registry<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
@@ -18,6 +19,7 @@ export class Registry<
   readonly accessPatterns: ACCESS_PATTERNS
   readonly query: RegistryQueries<ACCESS_PATTERNS>
 
+  /** Bind the registry to a table, entities and access patterns, indexing them by name. */
   constructor(
     table: TABLE,
     _entities = [] as unknown as ENTITIES,
@@ -34,6 +36,7 @@ export class Registry<
     this.query = query
   }
 
+  /** Set the entities the registry indexes. */
   registerEntities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): Registry<TABLE, NEXT_ENTITIES> {
@@ -43,6 +46,7 @@ export class Registry<
     })
   }
 
+  /** Set the access patterns the registry exposes under `query`. */
   registerAccessPatterns<
     NEXT_ACCESS_PATTERNS extends Record<string, ITableAccessPattern | IEntityAccessPattern>
   >(nextAccessPatterns: NEXT_ACCESS_PATTERNS): Registry<TABLE, ENTITIES, NEXT_ACCESS_PATTERNS> {
@@ -54,6 +58,7 @@ export class Registry<
     )
   }
 
+  /** Build a table action bound to the registry's table and entities. */
   build<ACTION extends TableAction<TABLE, ENTITIES> = TableAction<TABLE, ENTITIES>>(
     Action: new (table: TABLE, entities?: ENTITIES) => ACTION
   ): ACTION {

@@ -39,32 +39,38 @@ import { ScanCommand } from '~/table/actions/scan/index.js'
 import type { Table } from '~/table/index.js'
 import { $entities, TableAction } from '~/table/index.js'
 
+/** Convenience wrapper exposing a table's actions as plain methods. */
 export class TableRepository<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[]
 > extends TableAction<TABLE, ENTITIES> {
   static override actionName = 'repository' as const
 
+  /** Bind the repository to a table and entities. */
   constructor(table: TABLE, entities = [] as unknown as ENTITIES) {
     super(table, entities)
   }
 
+  /** Set the entities the repository spans. */
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): TableRepository<TABLE, NEXT_ENTITIES> {
     return new TableRepository<TABLE, NEXT_ENTITIES>(this.table, nextEntities)
   }
 
+  /** Validate and extract the table's primary key from a key input. */
   parsePrimaryKey(keyInput: { [KEY: string]: unknown }): PrimaryKey<TABLE> {
     return new PrimaryKeyParser(this.table).parse(keyInput)
   }
 
+  /** Scan the table (or an index) and return the formatted response. */
   async scan<OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>>(
     options: OPTIONS = {} as OPTIONS
   ): Promise<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
     return new ScanCommand(this.table, this[$entities], options).send()
   }
 
+  /** Query a partition (primary key or index) and return the formatted response. */
   async query<
     QUERY extends Query<TABLE> = Query<TABLE>,
     OPTIONS extends QueryOptions<TABLE, ENTITIES> = QueryOptions<TABLE, ENTITIES>
@@ -75,6 +81,7 @@ export class TableRepository<
     return new QueryCommand(this.table, this[$entities], query, options).send()
   }
 
+  /** Query a partition then batch-delete every matched item. */
   async deletePartition<QUERY extends Query<TABLE> = Query<TABLE>>(
     query: QUERY,
     options: DeletePartitionOptions<TABLE, ENTITIES, QUERY> = {}
@@ -82,12 +89,14 @@ export class TableRepository<
     return new DeletePartitionCommand(this.table, this[$entities], query, options).send()
   }
 
+  /** Run one or more `BatchGetCommand`s, paginating and retrying unprocessed keys. */
   static executeBatchGet<COMMANDS extends ExecuteBatchGetInput>(
     ...commands: COMMANDS
   ): Promise<ExecuteBatchGetResponses<COMMANDS>> {
     return executeBatchGet<COMMANDS>(...commands)
   }
 
+  /** Assemble entity `BatchGetRequest`s (optionally led by options) into a `BatchGetCommand`. */
   batchGet<
     REQUESTS_OR_OPTIONS extends
       | IBatchGetRequest[]
@@ -145,10 +154,12 @@ export class TableRepository<
     )
   }
 
+  /** Run one or more `BatchWriteCommand`s, paginating and retrying unprocessed items. */
   static executeBatchWrite(...commands: ExecuteBatchWriteInput): Promise<BatchWriteCommandOutput> {
     return executeBatchWrite(...commands)
   }
 
+  /** Assemble entity batch put/delete requests (optionally led by options) into a `BatchWriteCommand`. */
   batchWrite<
     REQUESTS_OR_OPTIONS extends
       | IBatchWriteRequest[]
@@ -199,6 +210,7 @@ export class TableRepository<
     )
   }
 
+  /** Build a reusable `AccessPattern` from an input schema and a `query` transform. */
   accessPattern<
     SCHEMA extends Schema,
     QUERY extends Query<TABLE>,
