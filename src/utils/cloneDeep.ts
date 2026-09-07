@@ -1,5 +1,6 @@
 type DeepCloner = <OBJ>(obj: OBJ) => OBJ
 
+/** Recursively clone a value, including dates, arrays, sets, binaries and symbol keys. */
 export const cloneDeep: DeepCloner = <OBJ>(obj: OBJ): OBJ => {
   if (typeof obj !== 'object' || obj === null) {
     return obj

@@ -3,6 +3,7 @@ type Picker = <OBJECT extends object, KEYS extends string[]>(
   ...keys: KEYS
 ) => Pick<OBJECT, Extract<KEYS[number], keyof OBJECT>>
 
+/** Return a shallow copy of `obj` keeping only the given `keys`. */
 export const pick: Picker = <OBJECT extends object, KEYS extends string[]>(
   obj: OBJECT,
   ...keys: KEYS

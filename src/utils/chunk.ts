@@ -1,3 +1,4 @@
+/** Split an array into consecutive sub-arrays of at most `chunkSize` items. */
 export const chunk = <ITEM>(items: ITEM[], chunkSize: number): ITEM[][] => {
   // important not to mute the original array
   const itemsClone: ITEM[] = [...items]
