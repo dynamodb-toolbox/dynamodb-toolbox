@@ -12,6 +12,7 @@ import type { Table } from '~/table/index.js'
 
 import type { Query } from './types.js'
 
+/** Options accepted by a `QueryCommand` (limit, index, consistent, select, filters, pagination, ...). */
 export type QueryOptions<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],

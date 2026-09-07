@@ -64,6 +64,7 @@ type ReturnedItems<
           : never
         : never)[]
 
+/** Response returned by a `ScanCommand`: the DynamoDB output with `Items` formatted per matching entity. */
 export type ScanResponse<
   TABLE extends Table,
   ENTITIES extends Entity[],
@@ -77,6 +78,7 @@ export type ScanResponse<
   }
 >
 
+/** Internal `ScanCommand` implementation exposing `send`, `params` and `paginate`. */
 export class IScanCommand<
     TABLE extends Table = Table,
     ENTITIES extends Entity[] = Entity[],
@@ -89,6 +91,7 @@ export class IScanCommand<
 
   [$options]: OPTIONS
 
+  /** Bind the command to a table, entities and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -98,6 +101,7 @@ export class IScanCommand<
     this[$options] = options
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [Entity[], ScanOptions<TABLE, Entity[]>] {
     return [
       this[$entities],
@@ -108,10 +112,12 @@ export class IScanCommand<
     ]
   }
 
+  /** Build the raw AWS SDK `ScanCommandInput`. */
   params(): ScanCommandInput {
     return scanParams(this.table, ...this[$sentArgs]())
   }
 
+  /** Run the scan, auto-paginating up to `maxPages`, and return items formatted per entity. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
@@ -247,6 +253,7 @@ export class IScanCommand<
     }
   }
 
+  /** Lazily yield scan response pages as an async iterator. */
   async *paginate(
     documentClientOptions?: DocumentClientOptions
   ): AsyncIterableIterator<ScanResponse<TABLE, ENTITIES, OPTIONS>> {
@@ -268,11 +275,13 @@ export class IScanCommand<
   }
 }
 
+/** Scan the whole table or a secondary index, formatting matched items per entity. */
 export class ScanCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
   OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
 > extends IScanCommand<TABLE, ENTITIES, OPTIONS> {
+  /** Bind the command to a table, entities and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -281,6 +290,7 @@ export class ScanCommand<
     super(table, entities, options)
   }
 
+  /** Set the entities the scan spans (narrows and types returned items). */
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): ScanCommand<TABLE, NEXT_ENTITIES, ScanOptions<TABLE, NEXT_ENTITIES>> {
@@ -292,6 +302,7 @@ export class ScanCommand<
     )
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends ScanOptions<TABLE, ENTITIES>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): ScanCommand<TABLE, ENTITIES, NEXT_OPTIONS> {

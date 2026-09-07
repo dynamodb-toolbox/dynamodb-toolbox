@@ -11,6 +11,7 @@ import type {
 import type { IndexNames } from '~/table/actions/indexes.js'
 import type { Table } from '~/table/index.js'
 
+/** Options accepted by a `ScanCommand` (limit, maxPages, index, consistent, select, filters, parallel segments, ...). */
 export type ScanOptions<TABLE extends Table = Table, ENTITIES extends Entity[] = Entity[]> = {
   capacity?: CapacityOption
   exclusiveStartKey?: Record<string, unknown>

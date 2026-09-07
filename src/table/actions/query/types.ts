@@ -14,11 +14,13 @@ import type {
   LocalIndex as LocalSecondaryIndex
 } from '~/table/types/index.js'
 
+/** A `QueryCommand` input: a query on the primary index or on a secondary index. */
 export type Query<TABLE extends Table = Table> =
   | PrimaryIndexQuery<TABLE>
   | SecondaryIndexQueries<TABLE>
 
 // --- PRIMARY ---
+/** A query on the table's primary index (partition value + optional range). */
 export type PrimaryIndexQuery<TABLE extends Table = Table> = {
   index?: undefined
   partition: KeyValue<TABLE['partitionKey']>
@@ -33,6 +35,7 @@ type BeginsWithOperator = 'beginsWith'
 type BetweenOperator = 'between'
 type RangeOperator = 'gt' | 'gte' | 'lt' | 'lte'
 type EqualityOperator = 'eq'
+/** Comparison operators available for a query range condition. */
 export type QueryOperator = EqualityOperator | RangeOperator | BeginsWithOperator | BetweenOperator
 
 type KeyRange<
@@ -55,13 +58,16 @@ type QueryTypeRange<KEY_TYPE extends KeyType> =
   | (KEY_TYPE extends 'number' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)
   | (KEY_TYPE extends 'binary' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)
 
+/** Range condition applied to a `Key` (equality, comparison, `between` or `beginsWith`). */
 export type QueryRange<KEY extends Key = Key> = QueryTypeRange<KEY['type']>
 
 // --- SECONDARY ---
+/** Union of the queries available for a table's secondary indexes. */
 export type SecondaryIndexQueries<TABLE extends Table = Table> = {
   [INDEX_NAME in IndexNames<TABLE>]: SecondaryIndexQuery<TABLE, INDEX_NAME>
 }[IndexNames<TABLE>]
 
+/** A query on a given secondary index (local or global). */
 export type SecondaryIndexQuery<
   TABLE extends Table = Table,
   INDEX_NAME extends IndexNames<TABLE> = IndexNames<TABLE>,
@@ -75,6 +81,7 @@ export type SecondaryIndexQuery<
       : never)
 
 // --- SECONDARY: LOCAL ---
+/** A query on a local secondary index (table partition + the index sort key). */
 export type LocalSecondaryIndexQuery<
   TABLE extends Table = Table,
   INDEX_NAME extends string = string,
@@ -86,6 +93,7 @@ export type LocalSecondaryIndexQuery<
 }
 
 // --- SECONDARY: GLOBAL ---
+/** A query on a global secondary index (its own partition value(s) + optional range). */
 export type GlobalSecondaryIndexQuery<
   INDEX_NAME extends string = string,
   INDEX_SCHEMA extends GlobalSecondaryIndex = GlobalSecondaryIndex

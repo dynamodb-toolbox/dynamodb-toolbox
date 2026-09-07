@@ -44,6 +44,7 @@ type QueryParamsGetter = <
 
 const defaultAnySchema = new AnySchema({ required: 'never' })
 
+/** Build the raw AWS SDK `QueryCommandInput` from a table, entities, query and options. */
 export const queryParams: QueryParamsGetter = <
   TABLE extends Table,
   ENTITIES extends Entity[],

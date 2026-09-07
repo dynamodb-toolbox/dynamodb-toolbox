@@ -36,6 +36,7 @@ type InvalidRangeErrorBlueprint = ErrorBlueprint<{
   payload: { range?: unknown }
 }>
 
+/** Union of error blueprints raised while building a `QueryCommand`'s DynamoDB params. */
 export type QueryCommandParamsErrorBlueprints =
   | InvalidReverseOptionErrorBlueprint
   | InvalidTagEntitiesOptionErrorBlueprint

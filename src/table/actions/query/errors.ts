@@ -8,6 +8,7 @@ type NoEntityMatchedErrorBlueprint = ErrorBlueprint<{
   payload: { item: unknown }
 }>
 
+/** Union of every error blueprint a `QueryCommand` can raise. */
 export type QueryCommandErrorBlueprints =
   | QueryCommandParamsErrorBlueprints
   | NoEntityMatchedErrorBlueprint
