@@ -15,6 +15,8 @@ type IndexErrors<ERROR_BLUEPRINTS extends ErrorBlueprint> = {
   [ERROR_BLUEPRINT in ERROR_BLUEPRINTS as ERROR_BLUEPRINT['code']]: ERROR_BLUEPRINT
 }
 
+/** Every DynamoDB-Toolbox error blueprint, indexed by its `code`. */
 export type IndexedErrors = IndexErrors<ErrorBlueprints>
 
+/** Union of every valid DynamoDB-Toolbox error `code`. */
 export type ErrorCodes = keyof IndexedErrors

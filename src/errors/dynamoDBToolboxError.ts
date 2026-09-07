@@ -9,6 +9,7 @@ type ErrorArgs<ERROR_CODE extends ErrorCodes> = (IndexedErrors[ERROR_CODE]['hasP
     message: string
   }
 
+/** The single error class thrown across DynamoDB-Toolbox, discriminated by its `code`. */
 export class DynamoDBToolboxError<ERROR_CODE extends ErrorCodes = ErrorCodes> extends Error {
   static match = <PREFIX extends string>(
     error: unknown,
@@ -20,6 +21,7 @@ export class DynamoDBToolboxError<ERROR_CODE extends ErrorCodes = ErrorCodes> ex
   path: IndexedErrors[ERROR_CODE]['hasPath'] extends false ? undefined : string | undefined
   payload: IndexedErrors[ERROR_CODE]['payload']
 
+  /** Build a `DynamoDBToolboxError` from its `code` and matching message, path and payload. */
   constructor(code: ERROR_CODE, { message, path, payload }: ErrorArgs<ERROR_CODE>) {
     super(message)
 

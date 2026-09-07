@@ -7,6 +7,7 @@ import { isNull } from './isNull.js'
 import { isNumber } from './isNumber.js'
 import { isString } from './isString.js'
 
+/** Type guard checking that `candidate` is a valid value for the given primitive `schema`. */
 export const isValidPrimitive = <SCHEMA extends PrimitiveSchema>(
   schema: SCHEMA,
   candidate: unknown

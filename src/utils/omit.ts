@@ -3,6 +3,7 @@ type Omitter = <OBJECT extends object, KEYS extends string[]>(
   ...keys: KEYS
 ) => Omit<OBJECT, KEYS[number]>
 
+/** Return a shallow copy of `obj` without the given `keys`. */
 export const omit: Omitter = <OBJECT extends object, KEYS extends string[]>(
   obj: OBJECT,
   ...keys: KEYS

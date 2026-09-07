@@ -1,5 +1,6 @@
 import type { ExtendsStr } from './extends.js'
 
+/** Extract the keys of `OBJECT` whose values extend `VALUE_CONSTRAINT`. */
 export type SelectKeys<OBJECT extends object, VALUE_CONSTRAINT> =
   // Important to spread unions
   OBJECT extends unknown
