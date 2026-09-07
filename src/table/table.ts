@@ -9,6 +9,9 @@ import { isString } from '~/utils/validation/isString.js'
 import { $entities, $interceptor, $sentArgs } from './constants.js'
 import type { Index, Key, TableMetadata } from './types/index.js'
 
+/**
+ * A DynamoDB table definition: its primary key, secondary indexes, `documentClient` and name. Entities are attached to it, and table actions operate across all of them.
+ */
 export class Table<
   PARTITION_KEY extends Key = Key,
   SORT_KEY extends Key = Key extends PARTITION_KEY ? Key : never,
@@ -27,6 +30,9 @@ export class Table<
 
   public meta: TableMetadata
 
+  /**
+   * Create a `Table` from its primary key, optional indexes, document client and name.
+   */
   constructor({
     documentClient,
     /**
@@ -59,6 +65,9 @@ export class Table<
     this.meta = meta
   }
 
+  /**
+   * Return the table name, resolving it if provided as a function. Throws if no name was set.
+   */
   getName(): string {
     if (this.tableName === undefined) {
       throw new DynamoDBToolboxError('table.missingTableName', {
@@ -83,6 +92,9 @@ export class Table<
     return this.documentClient
   }
 
+  /**
+   * Build a `TableAction` bound to this table and its entities.
+   */
   build<ACTION extends TableAction<this, this[$entities]> = TableAction<this, this[$entities]>>(
     Action: new (table: this, entities?: this[$entities]) => ACTION
   ): ACTION {
@@ -90,11 +102,17 @@ export class Table<
   }
 }
 
+/**
+ * Base class for actions run on a `Table` across the entities it spans.
+ */
 export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] = Entity[]> {
   static actionName: string;
 
   [$entities]: ENTITIES
 
+  /**
+   * Bind this action to a table and the entities it spans.
+   */
   constructor(
     readonly table: TABLE,
     entities = [] as unknown as ENTITIES
@@ -103,6 +121,7 @@ export class TableAction<TABLE extends Table = Table, ENTITIES extends Entity[] 
   }
 }
 
+/** A `TableAction` that can be sent to DynamoDB via `send`. */
 export interface TableSendableAction<TABLE extends Table = Table> extends TableAction<TABLE> {
   [$sentArgs](): any[]
   send(documentClientOptions?: DocumentClientOptions): Promise<any>

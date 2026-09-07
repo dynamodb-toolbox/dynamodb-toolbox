@@ -15,9 +15,11 @@ export interface Key<KEY_NAME extends string = string, KEY_TYPE extends KeyType 
   type: KEY_TYPE
 }
 
+/** Runtime value type accepted for a key of the given `KeyType`. */
 export type KeyTypeValue<KEY_TYPE extends KeyType> =
   | (KEY_TYPE extends 'string' ? string : never)
   | (KEY_TYPE extends 'number' ? number | bigint : never)
   | (KEY_TYPE extends 'binary' ? Uint8Array : never)
 
+/** Runtime value type of a `Key`. */
 export type KeyValue<KEY extends Key = Key> = KeyTypeValue<KEY['type']>
