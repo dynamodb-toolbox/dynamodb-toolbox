@@ -11,6 +11,7 @@ type MissingTableNameErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/** Union of every error blueprint a `Table` and its actions can raise. */
 export type TableErrorBlueprints =
   | MissingTableNameErrorBlueprint
   | PrimaryKeyParserErrorBlueprints

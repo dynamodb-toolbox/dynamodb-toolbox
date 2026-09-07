@@ -5,6 +5,7 @@ import type { NoEntityMatchBehavior } from '~/options/noEntityMatchBehavior.js'
 import type { Query } from '~/table/actions/query/index.js'
 import type { Table } from '~/table/index.js'
 
+/** Options accepted by a `DeletePartitionCommand` (query options + `consistent`, `capacity`, filters, table name). */
 export type DeletePartitionOptions<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],

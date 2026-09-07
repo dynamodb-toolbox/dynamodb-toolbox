@@ -16,8 +16,10 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import { $options, $requests } from './constants.js'
 
+/** A single entity `BatchGetRequest` reduced to its entity and key params. */
 export type IBatchGetRequest = Pick<BatchGetRequest, 'entity' | 'params'>
 
+/** Options accepted by a `BatchGetCommand` (`consistent`, `attributes`, table name). */
 export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   consistent?: boolean
   tableName?: string
@@ -29,6 +31,7 @@ export type BatchGetCommandOptions<ENTITIES extends Entity[] = Entity[]> = {
   | { attributes: Entity[] extends ENTITIES ? string[] : EntityPathsUnion<ENTITIES>[] }
 )
 
+/** Distinct entities referenced by a list of batch-get requests. */
 export type RequestEntities<
   REQUESTS extends IBatchGetRequest[],
   RESULTS extends Entity[] = []
@@ -46,6 +49,7 @@ export type RequestEntities<
       : never
     : RESULTS
 
+/** Group entity `BatchGetRequest`s into a single-table `BatchGetItem` call. */
 export class BatchGetCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
@@ -57,6 +61,7 @@ export class BatchGetCommand<
   [$requests]?: REQUESTS;
   [$options]: OPTIONS
 
+  /** Bind the command to a table, entities, requests and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -68,6 +73,7 @@ export class BatchGetCommand<
     this[$options] = options
   }
 
+  /** Set the requests to fetch (collects their distinct entities). */
   requests<NEXT_REQUESTS extends IBatchGetRequest[]>(
     ...requests: NEXT_REQUESTS
   ): BatchGetCommand<
@@ -99,6 +105,7 @@ export class BatchGetCommand<
     )
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends BatchGetCommandOptions<ENTITIES>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): BatchGetCommand<TABLE, ENTITIES, REQUESTS, NEXT_OPTIONS> {
@@ -110,6 +117,7 @@ export class BatchGetCommand<
     )
   }
 
+  /** Build the table's `RequestItems` entry (keys + projection expression). */
   params(): NonNullable<BatchGetCommandInput['RequestItems']> {
     const requests = this[$requests]
     if (requests === undefined || requests.length === 0) {

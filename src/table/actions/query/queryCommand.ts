@@ -65,6 +65,7 @@ type ReturnedItems<
           : never
         : never)[]
 
+/** Response returned by a `QueryCommand`: the DynamoDB output with `Items` formatted per matching entity. */
 export type QueryResponse<
   TABLE extends Table,
   QUERY extends Query<TABLE>,
@@ -79,6 +80,7 @@ export type QueryResponse<
   }
 >
 
+/** Internal `QueryCommand` implementation exposing `send`, `params` and `paginate`. */
 export class IQueryCommand<
     TABLE extends Table = Table,
     ENTITIES extends Entity[] = Entity[],
@@ -93,6 +95,7 @@ export class IQueryCommand<
   [$query]?: QUERY;
   [$options]: OPTIONS
 
+  /** Bind the command to a table, entities, query and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -104,6 +107,7 @@ export class IQueryCommand<
     this[$options] = options
   }
 
+  /** Return the arguments sent to DynamoDB. Throws if the query is missing. */
   [$sentArgs](): [Entity[], Query<TABLE>, QueryOptions<TABLE, Entity[], Query<TABLE>>] {
     if (!this[$query]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -125,6 +129,7 @@ export class IQueryCommand<
     return queryParams(this.table, ...this[$sentArgs]())
   }
 
+  /** Run the query, auto-paginating up to `maxPages`, and return items formatted per entity. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions
@@ -264,6 +269,7 @@ export class IQueryCommand<
     }
   }
 
+  /** Lazily yield query response pages as an async iterator. */
   async *paginate(
     documentClientOptions?: DocumentClientOptions
   ): AsyncIterableIterator<QueryResponse<TABLE, QUERY, ENTITIES, OPTIONS>> {
@@ -285,12 +291,14 @@ export class IQueryCommand<
   }
 }
 
+/** Query a partition on the table's primary key or a secondary index, formatting matched items per entity. */
 export class QueryCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
   QUERY extends Query<TABLE> = Query<TABLE>,
   OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
 > extends IQueryCommand<TABLE, ENTITIES, QUERY, OPTIONS> {
+  /** Bind the command to a table, entities, query and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -300,6 +308,7 @@ export class QueryCommand<
     super(table, entities, query, options)
   }
 
+  /** Set the entities the query spans (narrows and types returned items). */
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): QueryCommand<
@@ -320,6 +329,7 @@ export class QueryCommand<
     )
   }
 
+  /** Set the query input (partition value + optional range). */
   query<NEXT_QUERY extends Query<TABLE>>(
     nextQuery: NEXT_QUERY
   ): QueryCommand<
@@ -340,6 +350,7 @@ export class QueryCommand<
     )
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): QueryCommand<TABLE, ENTITIES, QUERY, NEXT_OPTIONS> {

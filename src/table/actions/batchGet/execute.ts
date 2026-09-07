@@ -18,12 +18,14 @@ import { BatchGetCommand } from './batchGetCommand.js'
 import type { BatchGetCommandOptions, IBatchGetRequest } from './batchGetCommand.js'
 import { $options, $requests } from './constants.js'
 
+/** Options for `executeBatchGet` (capacity, document client, retry attempts). */
 export interface ExecuteBatchGetOptions extends DocumentClientOptions {
   capacity?: CapacityOption
   documentClient?: DynamoDBDocumentClient
   maxAttempts?: number
 }
 
+/** Input to `executeBatchGet`: one or more `BatchGetCommand`s, optionally led by options. */
 export type ExecuteBatchGetInput =
   | BatchGetCommand[]
   | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
@@ -32,6 +34,7 @@ type ExecuteBatchGet = <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS
 ) => Promise<ExecuteBatchGetResponses<COMMANDS>>
 
+/** Responses returned by `executeBatchGet`, typed per command's entities. */
 export type ExecuteBatchGetResponses<COMMANDS extends ExecuteBatchGetInput> =
   COMMANDS extends BatchGetCommand[]
     ? ExecuteBatchGetResponse<COMMANDS>
@@ -128,6 +131,7 @@ type BatchGetRequestResponses<
       ]
     : ITEMS
 
+/** Run one or more `BatchGetCommand`s, paginating and retrying `UnprocessedKeys`. */
 export const execute: ExecuteBatchGet = async <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS
 ) => {
@@ -245,6 +249,7 @@ export const execute: ExecuteBatchGet = async <COMMANDS extends ExecuteBatchGetI
   } as ExecuteBatchGetResponses<COMMANDS>
 }
 
+/** Assemble the raw AWS SDK `BatchGetCommandInput` from a list of commands. */
 export const getCommandInput = (
   commands: BatchGetCommand[],
   options: ExecuteBatchGetOptions = {}

@@ -29,6 +29,7 @@ type MergeOptions<
       ? DEFAULT_OPTIONS
       : Overwrite<DEFAULT_OPTIONS, CONTEXT_OPTIONS> & CONTEXT_OPTIONS
 
+/** Internal `AccessPattern` that builds a `QueryCommand` from a parsed input. */
 export class IAccessPattern<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
@@ -55,6 +56,7 @@ export class IAccessPattern<
   [$options]: DEFAULT_OPTIONS;
   [$meta]: AccessPatternMetadata
 
+  /** Bind the pattern to a table, entities, schema, transform, options and metadata. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -70,6 +72,7 @@ export class IAccessPattern<
     this[$meta] = meta
   }
 
+  /** Parse an input against the schema, run the pattern transform and build the resulting `QueryCommand`. */
   // IQueryCommand is needed for contravariance
   query(
     input: InputValue<SCHEMA>
@@ -81,7 +84,9 @@ export class IAccessPattern<
         QUERY,
         MergeOptions<TABLE, ENTITIES, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS>
       > {
+    /** Query options merged from the pattern's default and context options. */
     type MERGED_OPTIONS = MergeOptions<TABLE, ENTITIES, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS>
+    /** `QueryCommand` type returned by `query`, widened to `IQueryCommand` for a base `Table`. */
     type QUERY_COMMAND = Table extends TABLE
       ? IQueryCommand
       : QueryCommand<TABLE, ENTITIES, QUERY, MERGED_OPTIONS>
@@ -111,6 +116,7 @@ export class IAccessPattern<
   }
 }
 
+/** A reusable, named query pattern binding a typed input schema to a `query` transform. */
 export class AccessPattern<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
@@ -127,6 +133,7 @@ export class AccessPattern<
     QUERY
   >
 > extends IAccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {
+  /** Bind the pattern to a table, entities, schema, transform, options and metadata. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -138,6 +145,7 @@ export class AccessPattern<
     super(table, entities, schema, pattern, options, meta)
   }
 
+  /** Set the entities the pattern spans. */
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): AccessPattern<
@@ -167,6 +175,7 @@ export class AccessPattern<
     )
   }
 
+  /** Set the input schema parsed before running the pattern. */
   schema<NEXT_SCHEMA extends Schema>(
     nextSchema: NEXT_SCHEMA
   ): AccessPattern<TABLE, ENTITIES, NEXT_SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {
@@ -181,6 +190,7 @@ export class AccessPattern<
     )
   }
 
+  /** Set the transform mapping a parsed input to a `query` (and optional context options). */
   pattern<
     NEXT_QUERY extends Query<TABLE>,
     NEXT_CONTEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, NEXT_QUERY>
@@ -201,6 +211,7 @@ export class AccessPattern<
     )
   }
 
+  /** Set the default query options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: DEFAULT_OPTIONS) => NEXT_OPTIONS)
   ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, NEXT_OPTIONS, CONTEXT_OPTIONS> {
@@ -213,6 +224,7 @@ export class AccessPattern<
     )
   }
 
+  /** Set the pattern's metadata (title, description, ...). */
   meta(
     nextMeta: AccessPatternMetadata
   ): AccessPattern<TABLE, ENTITIES, SCHEMA, QUERY, DEFAULT_OPTIONS, CONTEXT_OPTIONS> {

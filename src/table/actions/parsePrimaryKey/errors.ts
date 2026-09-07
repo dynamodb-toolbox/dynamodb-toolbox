@@ -10,4 +10,5 @@ type InvalidKeyPartErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+/** Union of error blueprints raised by `PrimaryKeyParser`. */
 export type PrimaryKeyParserErrorBlueprints = InvalidKeyPartErrorBlueprint

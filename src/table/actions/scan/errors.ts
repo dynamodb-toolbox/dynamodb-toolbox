@@ -8,6 +8,7 @@ type NoEntityMatchedErrorBlueprint = ErrorBlueprint<{
   payload: { item: unknown }
 }>
 
+/** Union of every error blueprint a `ScanCommand` can raise. */
 export type ScanCommandErrorBlueprints =
   | ScanCommandParamsErrorBlueprints
   | NoEntityMatchedErrorBlueprint

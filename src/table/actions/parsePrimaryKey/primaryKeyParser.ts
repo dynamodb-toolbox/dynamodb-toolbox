@@ -21,13 +21,16 @@ export type PrimaryKey<TABLE extends Table = Table> = {
         : never) as KEY['name']]: KeyValue<KEY>
 }
 
+/** Validate and extract a table's primary key from a key input. */
 export class PrimaryKeyParser<TABLE extends Table = Table> extends TableAction<TABLE> {
   static override actionName = 'parsePrimaryKey' as const
 
+  /** Bind the parser to a table. */
   constructor(table: TABLE) {
     super(table)
   }
 
+  /** Validate the partition (and sort) key value against the table's key types. */
   parse(keyInput: { [KEY: string]: unknown }): PrimaryKey<TABLE> {
     const table = this.table
     const { partitionKey, sortKey } = table

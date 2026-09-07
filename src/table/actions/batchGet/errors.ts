@@ -6,4 +6,5 @@ type InvalidProjectionExpressionErrorBlueprint = ErrorBlueprint<{
   payload: { entity: string }
 }>
 
+/** Union of every error blueprint a `BatchGetCommand` can raise. */
 export type BatchGetCommandErrorBlueprints = InvalidProjectionExpressionErrorBlueprint

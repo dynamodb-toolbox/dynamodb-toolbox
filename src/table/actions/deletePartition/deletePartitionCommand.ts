@@ -22,6 +22,7 @@ import { chunk } from '~/utils/chunk.js'
 import { $options, $query } from './constants.js'
 import type { DeletePartitionOptions } from './options.js'
 
+/** Response returned by a `DeletePartitionCommand`, splitting query and batch-write consumed capacity. */
 export type DeletePartitionResponse = Merge<
   Omit<QueryCommandOutput, 'Items' | '$metadata' | 'ConsumedCapacity'>,
   {
@@ -30,6 +31,7 @@ export type DeletePartitionResponse = Merge<
   }
 >
 
+/** Delete every item in a partition by querying it, then batch-deleting the matches. */
 export class DeletePartitionCommand<
     TABLE extends Table = Table,
     ENTITIES extends Entity[] = Entity[],
@@ -43,6 +45,7 @@ export class DeletePartitionCommand<
   [$query]?: QUERY;
   [$options]: DeletePartitionOptions<TABLE, ENTITIES, QUERY>
 
+  /** Bind the command to a table, entities, query and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -54,6 +57,7 @@ export class DeletePartitionCommand<
     this[$options] = options
   }
 
+  /** Set the entities the command spans. */
   entities<NEXT_ENTITIES extends Entity[]>(
     ...nextEntities: NEXT_ENTITIES
   ): DeletePartitionCommand<TABLE, NEXT_ENTITIES, QUERY> {
@@ -65,12 +69,14 @@ export class DeletePartitionCommand<
     )
   }
 
+  /** Set the partition query targeting the items to delete. */
   query<NEXT_QUERY extends Query<TABLE>>(
     nextQuery: NEXT_QUERY
   ): DeletePartitionCommand<TABLE, ENTITIES, NEXT_QUERY> {
     return new DeletePartitionCommand(this.table, this[$entities], nextQuery, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options(
     nextOptions:
       | DeletePartitionOptions<TABLE, ENTITIES, QUERY>
@@ -86,6 +92,7 @@ export class DeletePartitionCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. Throws if entities or query are missing. */
   [$sentArgs](): [Entity[], Query<TABLE>, DeletePartitionOptions<TABLE, Entity[], Query<TABLE>>] {
     if (this[$entities].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -109,6 +116,7 @@ export class DeletePartitionCommand<
     ]
   }
 
+  /** Build the internal `QueryCommand` used to page through the partition. */
   queryCommand({
     exclusiveStartKey
   }: {
@@ -129,10 +137,12 @@ export class DeletePartitionCommand<
     })
   }
 
+  /** Build the raw AWS SDK `QueryCommandInput` used to find items to delete. */
   params(): QueryCommandInput {
     return this.queryCommand().params()
   }
 
+  /** Query the partition and batch-delete every matched item, paginating until drained. */
   @interceptable()
   async send(documentClientOptions?: DocumentClientOptions): Promise<DeletePartitionResponse> {
     const entitiesByName: Record<string, Entity> = {}

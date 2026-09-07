@@ -45,6 +45,7 @@ const getIndexKeySchema = (key: Key): Schema => {
   }
 }
 
+/** Validate a `Query` against its table index and return the parsed partition and range values. */
 export const parseQuery: QueryParser = (table, query) => {
   const queryIndex = getQueryIndex(table, query)
   const { partitionKeys, sortKeys } = flattenQuerySchema(table, queryIndex)

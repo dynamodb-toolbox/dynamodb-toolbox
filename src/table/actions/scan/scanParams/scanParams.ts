@@ -40,6 +40,7 @@ type ScanParamsGetter = <
 
 const defaultAnySchema = new AnySchema({ required: 'never' })
 
+/** Build the raw AWS SDK `ScanCommandInput` from a table, entities and options. */
 export const scanParams: ScanParamsGetter = <
   TABLE extends Table,
   ENTITIES extends Entity[],

@@ -12,12 +12,15 @@ import type { ListOf } from '~/types/listOf.js'
 
 import { $options, $requests } from './constants.js'
 
+/** A single entity batch put/delete request reduced to its entity and params. */
 export type IBatchWriteRequest = Pick<BatchPutRequest | BatchDeleteRequest, 'entity' | 'params'>
 
+/** Options accepted by a `BatchWriteCommand` (table name). */
 export interface BatchWriteCommandOptions {
   tableName?: string
 }
 
+/** Distinct entities referenced by a list of batch-write requests. */
 export type RequestEntities<
   REQUESTS extends IBatchWriteRequest[],
   RESULTS extends Entity[] = []
@@ -35,6 +38,7 @@ export type RequestEntities<
       : never
     : RESULTS
 
+/** Group entity put/delete requests into a single-table `BatchWriteItem` call. */
 export class BatchWriteCommand<
   TABLE extends Table = Table,
   ENTITIES extends Entity[] = Entity[],
@@ -45,6 +49,7 @@ export class BatchWriteCommand<
   [$requests]?: REQUESTS;
   [$options]: BatchWriteCommandOptions
 
+  /** Bind the command to a table, entities, requests and options. */
   constructor(
     table: TABLE,
     entities = [] as unknown as ENTITIES,
@@ -56,6 +61,7 @@ export class BatchWriteCommand<
     this[$options] = options
   }
 
+  /** Set the put/delete requests to run (collects their distinct entities). */
   requests<NEXT_REQUESTS extends IBatchWriteRequest[]>(
     ...requests: NEXT_REQUESTS
   ): BatchWriteCommand<TABLE, RequestEntities<NEXT_REQUESTS>, NEXT_REQUESTS> {
@@ -73,6 +79,7 @@ export class BatchWriteCommand<
     return new BatchWriteCommand(this.table, entities as RequestEntities<NEXT_REQUESTS>, requests)
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options(
     nextOptions:
       | BatchWriteCommandOptions
@@ -86,6 +93,7 @@ export class BatchWriteCommand<
     )
   }
 
+  /** Build the table's `RequestItems` entry from the requests. */
   params(): NonNullable<NonNullable<BatchWriteCommandInput>['RequestItems']> {
     if (this[$requests] === undefined || this[$requests].length === 0) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {

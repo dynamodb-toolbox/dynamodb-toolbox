@@ -2,6 +2,7 @@ import type { Index, Key } from '~/table/index.js'
 import { TableAction } from '~/table/index.js'
 import type { Table } from '~/table/table.js'
 
+/** JSON representation of a `Table` definition (keys, indexes, entity-attribute config). */
 export interface ITableDTO {
   tableName?: string | undefined
   partitionKey: Key
@@ -10,6 +11,7 @@ export interface ITableDTO {
   entityAttributeSavedAs?: string
 }
 
+/** Serialize a `Table` definition into a plain JSON DTO. */
 export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> implements ITableDTO {
   static override actionName = 'dto' as const
 
@@ -19,6 +21,7 @@ export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> im
   indexes?: ITableDTO['indexes']
   entityAttributeSavedAs: string
 
+  /** Snapshot the table's name, keys, indexes and entity-attribute config. */
   constructor(table: TABLE) {
     super(table)
     this.tableName = this.table.tableName !== undefined ? this.table.getName() : undefined
@@ -28,6 +31,7 @@ export class TableDTO<TABLE extends Table = Table> extends TableAction<TABLE> im
     this.entityAttributeSavedAs = this.table.entityAttributeSavedAs
   }
 
+  /** Return the table definition as an `ITableDTO`. */
   toJSON(): ITableDTO {
     return {
       ...(this.tableName !== undefined ? { tableName: this.tableName } : {}),
