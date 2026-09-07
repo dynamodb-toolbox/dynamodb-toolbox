@@ -15,10 +15,12 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import { BatchWriteCommand } from './batchWriteCommand.js'
 
+/** Input to `executeBatchWrite`: one or more `BatchWriteCommand`s, optionally led by options. */
 export type ExecuteBatchWriteInput =
   | [ExecuteBatchWriteOptions, ...BatchWriteCommand[]]
   | BatchWriteCommand[]
 
+/** Options for `executeBatchWrite` (capacity, metrics, document client, retry attempts). */
 export interface ExecuteBatchWriteOptions extends DocumentClientOptions {
   capacity?: CapacityOption
   metrics?: MetricsOption
@@ -26,6 +28,7 @@ export interface ExecuteBatchWriteOptions extends DocumentClientOptions {
   maxAttempts?: number
 }
 
+/** Run one or more `BatchWriteCommand`s, paginating and retrying `UnprocessedItems`. */
 export const execute = async (
   ..._commands: ExecuteBatchWriteInput
 ): Promise<BatchWriteCommandOutput> => {
@@ -96,6 +99,7 @@ export const execute = async (
   }
 }
 
+/** Assemble the raw AWS SDK `BatchWriteCommandInput` from a list of commands. */
 export const getCommandInput = (
   commands: BatchWriteCommand[],
   options: ExecuteBatchWriteOptions = {}
