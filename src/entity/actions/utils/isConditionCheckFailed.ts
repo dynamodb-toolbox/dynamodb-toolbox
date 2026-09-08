@@ -4,14 +4,19 @@ import { unmarshall } from '@aws-sdk/util-dynamodb'
 import { EntityFormatter } from '~/entity/actions/format/index.js'
 import type { Entity, FormattedItem } from '~/entity/index.js'
 
+/** `ConditionalCheckFailedException` whose returned item is exposed formatted. */
 export type ConditionCheckFailedError<ENTITY extends Entity = Entity> =
   ConditionalCheckFailedException & { FormattedItem?: FormattedItem<ENTITY> }
 
+/** Signature of `isConditionCheckFailed`. */
 export type IsConditionCheckFailed = <ENTITY extends Entity = Entity>(
   error: unknown,
   entity?: ENTITY
 ) => error is ConditionCheckFailedError<ENTITY>
 
+/**
+ * Tell whether an error is a failed condition check, formatting its returned item.
+ */
 export const isConditionCheckFailed: IsConditionCheckFailed = <ENTITY extends Entity = Entity>(
   error: unknown,
   entity?: ENTITY
