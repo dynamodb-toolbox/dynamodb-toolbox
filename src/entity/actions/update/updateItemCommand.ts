@@ -23,6 +23,7 @@ import type { UpdateItemOptions } from './options.js'
 import type { UpdateItemInput } from './types.js'
 import { updateItemParams } from './updateItemParams/index.js'
 
+/** Attributes returned by an update, as dictated by its `returnValues` option. */
 export type ReturnedAttributes<
   ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY>
@@ -45,6 +46,7 @@ export type ReturnedAttributes<
       ? FormattedItem<ENTITY> | undefined
       : never
 
+/** Response returned by an `UpdateItemCommand`: the DynamoDB output with formatted `Attributes` and the update input. */
 export type UpdateItemResponse<
   ENTITY extends Entity,
   OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
@@ -56,6 +58,7 @@ export type UpdateItemResponse<
   }
 >
 
+/** Partially update an item of an entity, with support for update extensions. */
 export class UpdateItemCommand<
     ENTITY extends Entity = Entity,
     OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
@@ -68,16 +71,19 @@ export class UpdateItemCommand<
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the command to an entity, an update input and options. */
   constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
   }
 
+  /** Set the update input. */
   item(nextItem: UpdateItemInput<ENTITY>): UpdateItemCommand<ENTITY, OPTIONS> {
     return new UpdateItemCommand(this.entity, nextItem, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends UpdateItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): UpdateItemCommand<ENTITY, NEXT_OPTIONS> {
@@ -88,6 +94,7 @@ export class UpdateItemCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [UpdateItemInput<ENTITY>, UpdateItemOptions<ENTITY>] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -98,12 +105,14 @@ export class UpdateItemCommand<
     return [this[$item], this[$options]]
   }
 
+  /** Build the raw AWS SDK `UpdateCommandInput`. */
   params(): UpdateCommandInput & { ToolboxItem: UpdateItemInput<ENTITY, { filled: true }> } {
     const [item, options] = this[$sentArgs]()
 
     return updateItemParams(this.entity, item, options)
   }
 
+  /** Run the update and return the formatted returned attributes. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions

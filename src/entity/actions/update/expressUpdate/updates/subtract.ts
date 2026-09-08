@@ -6,6 +6,9 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append a `$subtract` extension to the `SET` clause of an update expression.
+ */
 export const expressSubtractUpdate = (
   value: unknown & { [$SUBTRACT]: unknown },
   path: Path,

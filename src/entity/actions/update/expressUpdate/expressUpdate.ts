@@ -28,6 +28,9 @@ import { expressSubtractUpdate } from './updates/subtract.js'
 import { expressSumUpdate } from './updates/sum.js'
 import { pathTokens, refOrValueTokens } from './updates/utils.js'
 
+/**
+ * Turn a transformed update input into a DynamoDB update expression and its attribute names and values.
+ */
 export const expressUpdate = (
   entity: Entity,
   input: TransformedItem<Entity, { mode: 'update'; extension: UpdateItemInputExtension }>

@@ -69,6 +69,9 @@ function* listElementParser(
   })
 }
 
+/**
+ * Parse the update extensions of a `list` attribute (`$set`, `$append`, `$prepend` and element updates).
+ */
 export const parseListExtension = (
   schema: ListSchema,
   input: unknown,

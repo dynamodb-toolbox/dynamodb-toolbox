@@ -6,6 +6,9 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append an `$append` extension to the `SET` clause of an update expression.
+ */
 export const expressAppendUpdate = (
   value: unknown & { [$APPEND]: unknown },
   path: Path,

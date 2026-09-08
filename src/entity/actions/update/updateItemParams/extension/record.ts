@@ -44,6 +44,9 @@ function* recordElementsParser(
   })
 }
 
+/**
+ * Parse the update extensions of a `record` attribute (`$set` and key updates).
+ */
 export const parseRecordExtension = (
   schema: RecordSchema,
   input: unknown,

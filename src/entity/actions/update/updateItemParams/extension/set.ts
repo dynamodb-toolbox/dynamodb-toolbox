@@ -9,6 +9,9 @@ import type {
 import { $ADD, $DELETE, isAddition, isDeletion } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
 
+/**
+ * Parse the update extensions of a `set` attribute (`$add` and `$delete`).
+ */
 export const parseSetExtension = (
   schema: SetSchema,
   input: unknown,

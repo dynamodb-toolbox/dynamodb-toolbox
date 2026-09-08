@@ -6,6 +6,9 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append a `$delete` extension to the `DELETE` clause of an update expression.
+ */
 export const expressDeleteUpdate = (
   value: unknown & { [$DELETE]: unknown },
   path: Path,

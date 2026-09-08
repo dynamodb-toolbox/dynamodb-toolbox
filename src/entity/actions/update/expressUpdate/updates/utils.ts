@@ -8,6 +8,9 @@ import { $GET, isGetting } from '../../symbols/index.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../../types.js'
 import type { ExpressionPrefix, ExpressionState } from '../types.js'
 
+/**
+ * Express an attribute path as expression name tokens, registering new ones as needed.
+ */
 export const pathTokens = (
   path: Path,
   prefix: ExpressionPrefix,
@@ -40,6 +43,9 @@ export const pathTokens = (
   return tokens
 }
 
+/**
+ * Register a value in the expression attribute values and return its token.
+ */
 export const valueToken = (
   value: TransformedValue<Schema, { mode: 'update' }>,
   prefix: ExpressionPrefix,
@@ -52,6 +58,9 @@ export const valueToken = (
   return token
 }
 
+/**
+ * Express a value, or a `$get` reference and its optional fallback, as expression tokens.
+ */
 export const refOrValueTokens = (
   refOrValue: TransformedValue<Schema, { mode: 'update'; extension: UpdateItemInputExtension }>,
   prefix: ExpressionPrefix,

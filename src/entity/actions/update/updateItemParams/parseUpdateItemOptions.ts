@@ -19,6 +19,9 @@ type UpdateItemOptionsParser = <ENTITY extends Entity>(
   updateItemOptions: UpdateItemOptions<ENTITY>
 ) => CommandOptions
 
+/**
+ * Turn `UpdateItemOptions` into their AWS SDK counterparts.
+ */
 export const parseUpdateItemOptions: UpdateItemOptionsParser = (entity, updateItemOptions) => {
   const commandOptions: CommandOptions = {}
 

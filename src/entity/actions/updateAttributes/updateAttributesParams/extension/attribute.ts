@@ -18,6 +18,9 @@ import { parseMapExtension } from './map.js'
 import { parseRecordExtension } from './record.js'
 import { parseTupleExtension } from './tuple.js'
 
+/**
+ * Parse the update extensions of an attribute, delegating to the parser of its type.
+ */
 export const parseUpdateAttributesExtension: ExtensionParser<UpdateAttributesInputExtension> = (
   schema: Schema,
   input: unknown,

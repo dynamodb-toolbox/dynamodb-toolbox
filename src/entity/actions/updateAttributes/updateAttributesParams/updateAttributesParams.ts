@@ -20,6 +20,9 @@ type UpdateAttributesParamsGetter = <
   updateItemOptions?: OPTIONS
 ) => UpdateCommandInput & { ToolboxItem: UpdateAttributesInput<ENTITY, true> }
 
+/**
+ * Build the raw AWS SDK `UpdateCommandInput` of an update attributes command, filled input included.
+ */
 export const updateAttributesParams: UpdateAttributesParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends UpdateAttributesOptions<ENTITY>

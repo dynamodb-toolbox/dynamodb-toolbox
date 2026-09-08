@@ -5,12 +5,14 @@ import type { MetricsOption } from '~/options/metrics.js'
 import type { ReturnValuesOption } from '~/options/returnValues.js'
 import type { ReturnValuesOnConditionFalseOption } from '~/options/returnValuesOnConditionFalse.js'
 
+/** `returnValues` options accepted by an `UpdateItemCommand`. */
 export type UpdateItemCommandReturnValuesOption = ReturnValuesOption
 
 export const updateItemCommandReturnValuesOptionsSet = new Set<UpdateItemCommandReturnValuesOption>(
   ['NONE', 'ALL_OLD', 'UPDATED_OLD', 'ALL_NEW', 'UPDATED_NEW']
 )
 
+/** Options accepted by an `UpdateItemCommand` (capacity, metrics, return values, condition, table name). */
 export interface UpdateItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   metrics?: MetricsOption

@@ -9,6 +9,9 @@ import type {
 import { $SET, isSetting } from '../../symbols/index.js'
 import type { UpdateItemInputExtension } from '../../types.js'
 
+/**
+ * Parse the update extensions of a `map` attribute (`$set`).
+ */
 export const parseMapExtension = (
   schema: MapSchema,
   input: unknown,

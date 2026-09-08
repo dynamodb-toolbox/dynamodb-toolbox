@@ -53,11 +53,13 @@ import type {
   Unextended
 } from './symbols/index.js'
 
+/** Update extension resolving an attribute value from another attribute. */
 export type ReferenceExtension = {
   type: '*'
   value: Extended<{ [$GET]: [ref: string, fallback?: SchemaExtendedValue<ReferenceExtension>] }>
 }
 
+/** Union of the update extensions accepted by each attribute type. */
 export type UpdateItemInputExtension =
   | ReferenceExtension
   | { type: '*'; value: Extended<{ [$REMOVE]: true }> }
@@ -169,6 +171,7 @@ type OptionalKeys<
 
 type CanBeRemoved<SCHEMA extends Schema> = Extends<SCHEMA['props'], { required: Never }>
 
+/** `$get` reference to another attribute, with an optional fallback. */
 export type Reference<SCHEMA extends Schema, AVAILABLE_PATHS extends string = string> = GET<
   [
     ref: AVAILABLE_PATHS,
@@ -362,6 +365,7 @@ export type UpdateValueInput<
             ? UpdateValueInput<SCHEMA['elements'][number], OPTIONS, AVAILABLE_PATHS>
             : never)
 
+/** Update inputs of a tuple of schemas. */
 export type UpdateValueInputRec<
   SCHEMAS extends Schema[] = Schema[],
   OPTIONS extends UpdateInputOptions = {},
@@ -380,6 +384,7 @@ export type UpdateValueInputRec<
     : never
   : RESULTS
 
+/** Indexed entries of the update inputs of a tuple of schemas. */
 export type UpdateValueInputRecEntries<
   SCHEMAS extends Schema[] = Schema[],
   OPTIONS extends UpdateInputOptions = {},

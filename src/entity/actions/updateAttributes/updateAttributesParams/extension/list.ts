@@ -18,6 +18,9 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
+/**
+ * Parse the update of a `list` attribute, overriding it as a whole unless `$append` or `$prepend` is used.
+ */
 export const parseListExtension = (
   schema: ListSchema,
   input: unknown,

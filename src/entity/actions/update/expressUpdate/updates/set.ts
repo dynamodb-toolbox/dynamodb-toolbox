@@ -4,6 +4,9 @@ import { $SET } from '../../symbols/index.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append a `$set` extension to the `SET` clause of an update expression.
+ */
 export const expressSetUpdate = (
   value: unknown & { [$SET]: unknown },
   path: Path,

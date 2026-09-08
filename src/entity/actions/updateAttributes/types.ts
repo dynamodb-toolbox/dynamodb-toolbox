@@ -45,6 +45,7 @@ import type {
 } from '~/schema/index.js'
 import type { Extends, If, Not, Optional } from '~/types/index.js'
 
+/** Union of the update extensions accepted by each attribute type, deep updates excluded. */
 export type UpdateAttributesInputExtension =
   | ReferenceExtension
   | { type: '*'; value: Extended<{ [$REMOVE]: true }> }
@@ -104,6 +105,7 @@ type CanBeRemoved<SCHEMA extends Schema> = SCHEMA['props'] extends { required: N
   ? true
   : false
 
+/** Input of an `UpdateAttributesCommand`: each provided attribute is overridden as a whole. */
 export type UpdateAttributesInput<
   SCHEMA extends Entity | ItemSchema = Entity,
   FILLED extends boolean = false

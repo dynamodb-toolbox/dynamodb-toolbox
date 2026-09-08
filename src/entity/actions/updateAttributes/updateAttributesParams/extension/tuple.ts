@@ -10,6 +10,9 @@ import { isArray } from '~/utils/validation/isArray.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
+/**
+ * Parse the update of a `tuple` attribute, overriding it as a whole.
+ */
 export const parseTupleExtension = (
   schema: TupleSchema,
   input: unknown,

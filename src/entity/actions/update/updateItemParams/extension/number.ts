@@ -13,6 +13,9 @@ import { $ADD, $SUBTRACT, $SUM, isAddition, isSubtraction, isSum } from '../../s
 import type { UpdateItemInputExtension } from '../../types.js'
 import { parseReferenceExtension } from './reference.js'
 
+/**
+ * Parse the update extensions of a `number` attribute (`$add`, `$sum` and `$subtract`).
+ */
 export const parseNumberExtension = (
   schema: NumberSchema,
   inputValue: unknown,

@@ -6,6 +6,9 @@ import type { UpdateItemInputExtension } from '../../types.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append a `$sum` extension to the `SET` clause of an update expression.
+ */
 export const expressSumUpdate = (
   value: unknown & { [$SUM]: unknown },
   path: Path,
