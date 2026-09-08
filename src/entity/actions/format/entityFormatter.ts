@@ -7,16 +7,19 @@ import { Formatter } from '~/schema/actions/format/index.js'
 import { $formatter } from './constants.js'
 import type { FormatItemOptions, InferReadItemOptions } from './options.js'
 
+/** Format a saved item into its app-facing shape, adding the entity attribute if missing. */
 export class EntityFormatter<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'format';
 
   [$formatter]: Formatter<ENTITY['schema']>
 
+  /** Bind the formatter to an entity. */
   constructor(entity: ENTITY) {
     super(entity)
     this[$formatter] = new Formatter(entity.schema)
   }
 
+  /** Format a saved item, enriching formatting errors with the item primary key. */
   format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
