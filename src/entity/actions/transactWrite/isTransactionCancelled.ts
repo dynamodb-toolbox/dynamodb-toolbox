@@ -34,17 +34,22 @@ type TransactionCancelledReasonRec<
       ? CancellationReason[]
       : REASONS
 
+/** `TransactionCanceledException` whose cancellation reasons expose formatted items. */
 export type TransactionCancelledError<
   TRANSACTIONS extends WriteTransactionImplementation[] = WriteTransactionImplementation[]
 > = Omit<TransactionCanceledException, 'CancellationReasons'> & {
   CancellationReasons?: TransactionCancelledReasonRec<TRANSACTIONS>
 }
 
+/** Signature of `isTransactionCancelled`. */
 export type IsTransactionCancelled = <TRANSACTIONS extends WriteTransactionImplementation[]>(
   error: unknown,
   ...transactions: TRANSACTIONS
 ) => error is TransactionCancelledError<TRANSACTIONS>
 
+/**
+ * Tell whether an error is a cancelled transaction, formatting the items of its cancellation reasons.
+ */
 export const isTransactionCancelled: IsTransactionCancelled = <
   TRANSACTIONS extends WriteTransactionImplementation[]
 >(

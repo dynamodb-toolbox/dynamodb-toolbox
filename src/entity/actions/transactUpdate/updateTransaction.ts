@@ -17,6 +17,7 @@ import { $item, $options } from './constants.js'
 import { parseOptions } from './options.js'
 import type { UpdateTransactionOptions } from './options.js'
 
+/** Partially update an entity item within a `TransactWriteItems` operation. */
 export class UpdateTransaction<
     ENTITY extends Entity = Entity,
     OPTIONS extends UpdateTransactionOptions<ENTITY> = UpdateTransactionOptions<ENTITY>
@@ -29,16 +30,19 @@ export class UpdateTransaction<
   [$item]?: UpdateItemInput<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the transaction to an entity, an update input and options. */
   constructor(entity: ENTITY, item?: UpdateItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
   }
 
+  /** Set the update input. */
   item(nextItem: UpdateItemInput<ENTITY>): UpdateTransaction<ENTITY> {
     return new UpdateTransaction(this.entity, nextItem, this[$options])
   }
 
+  /** Set the transaction options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends UpdateTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): UpdateTransaction<ENTITY, NEXT_OPTIONS> {
@@ -49,6 +53,7 @@ export class UpdateTransaction<
     )
   }
 
+  /** Build the raw AWS SDK `Update` entry of the transaction, filled input included. */
   params(): Require<TransactWriteItem, 'Update'> & {
     ToolboxItem: UpdateItemInput<ENTITY, { filled: true }>
   } {

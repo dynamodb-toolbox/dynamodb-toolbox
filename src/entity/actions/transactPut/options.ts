@@ -9,6 +9,7 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
+/** Options accepted by a `PutTransaction` (condition, return values on condition false, table name). */
 export interface PutTransactionOptions<ENTITY extends Entity = Entity> {
   condition?: Condition<ENTITY>
   returnValuesOnConditionFalse?: ReturnValuesOnConditionFalseOption
@@ -20,6 +21,9 @@ type OptionsParser = <ENTITY extends Entity>(
   options: PutTransactionOptions<ENTITY>
 ) => Omit<NonNullable<TransactWriteItem['Put']>, 'TableName' | 'Item'>
 
+/**
+ * Turn `PutTransactionOptions` into their AWS SDK counterparts.
+ */
 export const parseOptions: OptionsParser = (entity, options) => {
   const transactionOptions: ReturnType<OptionsParser> = {}
 

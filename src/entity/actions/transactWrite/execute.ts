@@ -18,6 +18,7 @@ import type { DocumentClientOptions } from '~/types/documentClientOptions.js'
 import type { WriteTransactionImplementation } from './transaction.js'
 import { isWriteTransactionImplementation } from './transaction.js'
 
+/** Options accepted when executing a `TransactWriteItems` operation (document client, capacity, metrics, idempotency token). */
 export interface ExecuteTransactWriteOptions extends DocumentClientOptions {
   documentClient?: DynamoDBDocumentClient
   capacity?: CapacityOption
@@ -25,6 +26,7 @@ export interface ExecuteTransactWriteOptions extends DocumentClientOptions {
   clientRequestToken?: ClientRequestToken
 }
 
+/** Arguments of `executeTransactWrite`: the transactions, optionally preceded by execution options. */
 export type ExecuteTransactWriteInput =
   | WriteTransactionImplementation[]
   | [ExecuteTransactWriteOptions, ...WriteTransactionImplementation[]]
@@ -33,6 +35,7 @@ type ExecuteTransactWrite = <TRANSACTIONS extends ExecuteTransactWriteInput>(
   ...transactions: TRANSACTIONS
 ) => Promise<ExecuteTransactWriteResponses<TRANSACTIONS>>
 
+/** Response of a `TransactWriteItems` operation, with the written items of each transaction. */
 export type ExecuteTransactWriteResponses<TRANSACTIONS extends ExecuteTransactWriteInput> =
   TRANSACTIONS extends WriteTransactionImplementation[]
     ? ExecuteTransactWriteResponse<TRANSACTIONS>
@@ -72,6 +75,9 @@ type ToolboxItem<
   PARAMS = ReturnType<TRANSACTION['params']>
 > = PARAMS extends { ToolboxItem: unknown } ? PARAMS['ToolboxItem'] : undefined
 
+/**
+ * Run a `TransactWriteItems` operation and return the written items.
+ */
 export const execute: ExecuteTransactWrite = async <
   TRANSACTIONS extends
     | WriteTransactionImplementation[]
@@ -146,6 +152,9 @@ const parseOptions = (
   return commandOptions
 }
 
+/**
+ * Build the raw AWS SDK `TransactWriteCommandInput` of a list of transactions.
+ */
 export const getCommandInput = (
   transactions: WriteTransactionImplementation[],
   options: ExecuteTransactWriteOptions = {}

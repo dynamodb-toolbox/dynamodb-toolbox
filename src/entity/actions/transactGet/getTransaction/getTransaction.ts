@@ -9,6 +9,7 @@ import { $key, $options } from './constants.js'
 import type { GetTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
 
+/** Read an entity item within a `TransactGetItems` operation. */
 export class GetTransaction<
   ENTITY extends Entity = Entity,
   OPTIONS extends GetTransactionOptions<ENTITY> = GetTransactionOptions<ENTITY>
@@ -18,16 +19,19 @@ export class GetTransaction<
   [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the transaction to an entity, a key and options. */
   constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
+  /** Set the key of the item to get. */
   key(nextKey: KeyInputItem<ENTITY>): GetTransaction<ENTITY> {
     return new GetTransaction(this.entity, nextKey, this[$options])
   }
 
+  /** Set the transaction options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends GetTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): GetTransaction<ENTITY, NEXT_OPTIONS> {
@@ -38,6 +42,7 @@ export class GetTransaction<
     )
   }
 
+  /** Build the raw AWS SDK `Get` entry of the transaction. */
   params(): NonNull<TransactGetItem, 'Get'> {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {

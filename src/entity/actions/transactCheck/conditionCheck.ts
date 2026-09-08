@@ -13,6 +13,7 @@ import { $condition, $key, $options } from './constants.js'
 import { parseOptions } from './options.js'
 import type { ConditionCheckOptions } from './options.js'
 
+/** Check a condition on an entity item within a `TransactWriteItems` operation. */
 export class ConditionCheck<ENTITY extends Entity = Entity>
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
@@ -23,6 +24,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
   private [$condition]?: Condition<ENTITY>
   private [$options]: ConditionCheckOptions
 
+  /** Bind the check to an entity, a key, a condition and options. */
   constructor(
     entity: ENTITY,
     key?: KeyInputItem<ENTITY>,
@@ -35,14 +37,17 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     this[$options] = options
   }
 
+  /** Set the key of the item to check. */
   key(nextKey: KeyInputItem<ENTITY>): ConditionCheck<ENTITY> {
     return new ConditionCheck(this.entity, nextKey, this[$condition], this[$options])
   }
 
+  /** Set the condition to check. */
   condition(nextCondition: Condition<ENTITY>): ConditionCheck<ENTITY> {
     return new ConditionCheck(this.entity, this[$key], nextCondition, this[$options])
   }
 
+  /** Set the check options. */
   options(
     nextOptions:
       | ConditionCheckOptions
@@ -56,6 +61,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
     )
   }
 
+  /** Build the raw AWS SDK `ConditionCheck` entry of the transaction. */
   params(): Require<TransactWriteItem, 'ConditionCheck'> {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {

@@ -7,20 +7,24 @@ import { DynamoDBToolboxError } from '~/errors/index.js'
 
 import { $item } from './constants.js'
 
+/** Build the request of an entity item within a `BatchWriteCommand`. */
 export class BatchPutRequest<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'batchPut' as const;
 
   [$item]?: InputItem<ENTITY>
 
+  /** Bind the request to an entity and an item. */
   constructor(entity: ENTITY, item?: InputItem<ENTITY>) {
     super(entity)
     this[$item] = item
   }
 
+  /** Set the item to write. */
   item(nextItem: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
     return new BatchPutRequest(this.entity, nextItem)
   }
 
+  /** Build the raw AWS SDK `PutRequest` of the batch write request. */
   params(): NonNullable<BatchWriteCommandInput['RequestItems']>[string][number] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
