@@ -18,6 +18,7 @@ type InvalidSchemaErrorBlueprint = ErrorBlueprint<{
   payload: undefined
 }>
 
+/** Union of every error blueprint raised while building an `Entity`. */
 export type EntityUtilsErrorBlueprints =
   | ReservedAttributeNameErrorBlueprint
   | ReservedAttributeSavedAsErrorBlueprint

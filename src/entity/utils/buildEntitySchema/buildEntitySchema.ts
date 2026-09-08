@@ -21,6 +21,9 @@ import {
   isTimestampEnabled
 } from './utils.js'
 
+/**
+ * Build the item schema of an `Entity` by adding its entity and timestamp attributes.
+ */
 export const buildEntitySchema: EntitySchemaBuilder = <
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
