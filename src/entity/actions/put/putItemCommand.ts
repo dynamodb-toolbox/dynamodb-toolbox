@@ -27,6 +27,7 @@ type ReturnedAttributes<
     ? FormattedItem<ENTITY> | undefined
     : never
 
+/** Response returned by a `PutItemCommand`: the DynamoDB output with formatted `Attributes` and the written item. */
 export type PutItemResponse<
   ENTITY extends Entity,
   OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
@@ -38,6 +39,7 @@ export type PutItemResponse<
   }
 >
 
+/** Write a complete item of an entity, applying defaults and links. */
 export class PutItemCommand<
     ENTITY extends Entity = Entity,
     OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
@@ -50,16 +52,19 @@ export class PutItemCommand<
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the command to an entity, an item and options. */
   constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
   }
 
+  /** Set the item to write. */
   item(nextItem: PutItemInput<ENTITY>): PutItemCommand<ENTITY, OPTIONS> {
     return new PutItemCommand(this.entity, nextItem, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends PutItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): PutItemCommand<ENTITY, NEXT_OPTIONS> {
@@ -70,6 +75,7 @@ export class PutItemCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [PutItemInput<ENTITY>, PutItemOptions<ENTITY>] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -80,6 +86,7 @@ export class PutItemCommand<
     return [this[$item], this[$options]]
   }
 
+  /** Build the raw AWS SDK `PutCommandInput`. */
   params(): PutCommandInput & {
     ToolboxItem: ValidItem<ENTITY>
   } {
@@ -88,6 +95,7 @@ export class PutItemCommand<
     return putItemParams(this.entity, item, options)
   }
 
+  /** Run the put and return the written item, along with the formatted returned attributes. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions

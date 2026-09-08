@@ -26,6 +26,7 @@ type ReturnedAttributes<
     ? FormattedItem<ENTITY> | undefined
     : never
 
+/** Response returned by a `DeleteItemCommand`: the DynamoDB output with formatted `Attributes`. */
 export type DeleteItemResponse<
   ENTITY extends Entity,
   OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
@@ -34,6 +35,7 @@ export type DeleteItemResponse<
   { Attributes?: ReturnedAttributes<ENTITY, OPTIONS> | undefined }
 >
 
+/** Delete a single item of an entity by its key. */
 export class DeleteItemCommand<
     ENTITY extends Entity = Entity,
     OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
@@ -46,16 +48,19 @@ export class DeleteItemCommand<
   [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the command to an entity, a key and options. */
   constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
+  /** Set the key of the item to delete. */
   key(nextKey: KeyInputItem<ENTITY>): DeleteItemCommand<ENTITY, OPTIONS> {
     return new DeleteItemCommand(this.entity, nextKey, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends DeleteItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): DeleteItemCommand<ENTITY, NEXT_OPTIONS> {
@@ -66,6 +71,7 @@ export class DeleteItemCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [KeyInputItem<ENTITY>, DeleteItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -76,10 +82,12 @@ export class DeleteItemCommand<
     return [this[$key], this[$options]]
   }
 
+  /** Build the raw AWS SDK `DeleteCommandInput`. */
   params(): DeleteCommandInput {
     return deleteItemParams(this.entity, ...this[$sentArgs]())
   }
 
+  /** Run the delete and return the formatted deleted attributes. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions

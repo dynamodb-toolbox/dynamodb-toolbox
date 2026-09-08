@@ -17,6 +17,9 @@ type GetItemOptionsParser = <ENTITY extends Entity>(
   getItemOptions: GetItemOptions<ENTITY>
 ) => CommandOptions
 
+/**
+ * Turn `GetItemOptions` into their AWS SDK counterparts.
+ */
 export const parseGetItemOptions: GetItemOptionsParser = (entity, getItemOptions) => {
   const commandOptions: CommandOptions = {}
 

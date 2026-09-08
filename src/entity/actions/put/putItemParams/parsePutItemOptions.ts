@@ -20,6 +20,9 @@ type PutItemOptionsParser = <ENTITY extends Entity>(
   putItemOptions: PutItemOptions<ENTITY>
 ) => CommandOptions
 
+/**
+ * Turn `PutItemOptions` into their AWS SDK counterparts.
+ */
 export const parsePutItemOptions: PutItemOptionsParser = (entity, putItemOptions) => {
   const commandOptions: CommandOptions = {}
 

@@ -20,6 +20,9 @@ type DeleteItemOptionsParser = <ENTITY extends Entity>(
   deleteItemOptions: DeleteItemOptions<ENTITY>
 ) => CommandOptions
 
+/**
+ * Turn `DeleteItemOptions` into their AWS SDK counterparts.
+ */
 export const parseDeleteItemOptions: DeleteItemOptionsParser = (entity, deleteItemOptions) => {
   const commandOptions: CommandOptions = {}
 

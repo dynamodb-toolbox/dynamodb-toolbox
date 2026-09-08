@@ -5,6 +5,7 @@ import type { MetricsOption } from '~/options/metrics.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { ReturnValuesOnConditionFalseOption } from '~/options/returnValuesOnConditionFalse.js'
 
+/** `returnValues` options accepted by a `DeleteItemCommand`. */
 export type DeleteItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
 export const deleteItemCommandReturnValuesOptions = [
@@ -15,6 +16,7 @@ export const deleteItemCommandReturnValuesOptionsSet = new Set<DeleteItemCommand
   deleteItemCommandReturnValuesOptions
 )
 
+/** Options accepted by a `DeleteItemCommand` (capacity, metrics, return values, condition, table name). */
 export interface DeleteItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   metrics?: MetricsOption
