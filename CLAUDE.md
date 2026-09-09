@@ -129,7 +129,7 @@ Reversible `{ encode, decode }` codecs applied to attribute values: `prefix`, `s
 - **Test files sit next to source:**
   - `*.unit.test.ts` — runtime unit tests (Vitest).
   - `*.type.test.ts` — type-level tests (`tsd` / `tsc`).
-- **JSDoc on public API.** `jsdoc/require-jsdoc` is enforced (`error`) for every `src/` folder (`schema`, `entity`, `table`, `database`, `transformers`, `options`, `errors`, `types`, `utils`) — every exported function, class, public method, type, interface and enum reachable from the barrel needs a `/** ... */` block. It's **presence-only**: a single short sentence is enough (e.g. `` Parse a value against a `set` schema. ``); wrap type/keyword names in backticks. Being rolled out folder-by-folder — only the root files (`src/index.ts` & co) are still `off`.
+- **JSDoc on public API.** `jsdoc/require-jsdoc` is enforced (`error`) across all of `src/` — every exported function, class, public method, type, interface and enum reachable from the barrel needs a `/** ... */` block. It's **presence-only**: a single short sentence is enough (e.g. `` Parse a value against a `set` schema. ``); wrap type/keyword names in backticks. Test files (`**/*.test.ts`) are exempt.
 
 ## Commands
 
