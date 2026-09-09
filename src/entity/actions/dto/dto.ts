@@ -12,6 +12,7 @@ type TimestampOption = boolean | { name?: string; savedAs?: string; hidden?: boo
 
 type TimestampOptions = boolean | { created: TimestampOption; modified: TimestampOption }
 
+/** JSON representation of an `Entity` definition (name, schema, table and internal attribute options). */
 export interface IEntityDTO {
   entityName: string
   entityAttribute?: EntityAttrOption
@@ -20,6 +21,7 @@ export interface IEntityDTO {
   table: ITableDTO
 }
 
+/** Serialize an `Entity` definition into a plain JSON DTO. */
 export class EntityDTO<ENTITY extends Entity = Entity>
   extends EntityAction<ENTITY>
   implements IEntityDTO
@@ -32,6 +34,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
   timestamps: IEntityDTO['timestamps']
   table: TableDTO
 
+  /** Snapshot the entity's name, schema, table and internal attribute options. */
   constructor(entity: ENTITY) {
     super(entity)
 
@@ -72,6 +75,7 @@ export class EntityDTO<ENTITY extends Entity = Entity>
     this.table = this.entity.table.build(TableDTO)
   }
 
+  /** Return the entity definition as an `IEntityDTO`. */
   toJSON(): IEntityDTO {
     return {
       entityName: this.entityName,

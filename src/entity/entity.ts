@@ -20,6 +20,9 @@ import type {
 } from './utils/index.js'
 import { buildEntitySchema, doesSchemaValidateTableSchema } from './utils/index.js'
 
+/**
+ * A typed item living in a `Table`: its name, attributes, entity-attribute and timestamps options.
+ */
 export class Entity<
   NAME extends string = string,
   TABLE extends Table = Table,
@@ -55,6 +58,9 @@ export class Entity<
 
   public meta: EntityMetadata
 
+  /**
+   * Create an `Entity` from its name, table, schema and options.
+   */
   constructor({
     name,
     table,
@@ -100,6 +106,9 @@ export class Entity<
     this.meta = meta
   }
 
+  /**
+   * Build an `EntityAction` bound to this entity.
+   */
   build<ACTION extends EntityAction<this> = EntityAction<this>>(
     Action: new (entity: this) => ACTION
   ): ACTION {
@@ -107,12 +116,19 @@ export class Entity<
   }
 }
 
+/**
+ * Base class for actions run on an `Entity`.
+ */
 export class EntityAction<ENTITY extends Entity = Entity> {
   static actionName: string
 
+  /**
+   * Bind this action to an entity.
+   */
   constructor(readonly entity: ENTITY) {}
 }
 
+/** An `EntityAction` that can be sent to DynamoDB via `send`. */
 export interface EntitySendableAction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   [$sentArgs](): any[]
   send(documentClientOptions?: DocumentClientOptions): Promise<any>

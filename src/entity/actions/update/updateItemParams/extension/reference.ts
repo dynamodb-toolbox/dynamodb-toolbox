@@ -13,6 +13,9 @@ import { isString } from '~/utils/validation/isString.js'
 import { $GET, isGetting } from '../../symbols/index.js'
 import type { ReferenceExtension, UpdateItemInputExtension } from '../../types.js'
 
+/**
+ * Parse the `$get` extension of an attribute.
+ */
 export const parseReferenceExtension: ExtensionParser<
   ReferenceExtension,
   UpdateItemInputExtension

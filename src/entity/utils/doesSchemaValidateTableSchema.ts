@@ -4,6 +4,9 @@ import type { Key } from '~/table/types/index.js'
 
 import type { EntityAttributes, SchemaOf } from './entityAttributes.js'
 
+/**
+ * Check that a schema exposes a required, correctly typed attribute for a given table key.
+ */
 export const doesSchemaValidateTableSchemaKey = (
   schema: SchemaOf<EntityAttributes>,
   key?: Key
@@ -31,6 +34,9 @@ export const doesSchemaValidateTableSchemaKey = (
   )
 }
 
+/**
+ * Check that a schema covers both the partition key and the sort key of a table.
+ */
 export const doesSchemaValidateTableSchema = (
   schema: SchemaOf<EntityAttributes>,
   table: Table

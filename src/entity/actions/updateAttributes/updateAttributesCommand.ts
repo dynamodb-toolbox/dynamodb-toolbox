@@ -16,6 +16,7 @@ import type { UpdateAttributesOptions } from './options.js'
 import type { UpdateAttributesInput } from './types.js'
 import { updateAttributesParams } from './updateAttributesParams/index.js'
 
+/** Response returned by an `UpdateAttributesCommand`: the DynamoDB output with formatted `Attributes` and the update input. */
 export type UpdateAttributesResponse<
   ENTITY extends Entity,
   OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
@@ -27,6 +28,7 @@ export type UpdateAttributesResponse<
   }
 >
 
+/** Update an item of an entity, overriding each provided attribute as a whole. */
 export class UpdateAttributesCommand<
     ENTITY extends Entity = Entity,
     OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
@@ -39,6 +41,7 @@ export class UpdateAttributesCommand<
   [$item]?: UpdateAttributesInput<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the command to an entity, an update input and options. */
   constructor(
     entity: ENTITY,
     item?: UpdateAttributesInput<ENTITY>,
@@ -49,10 +52,12 @@ export class UpdateAttributesCommand<
     this[$options] = options
   }
 
+  /** Set the update input. */
   item(nextItem: UpdateAttributesInput<ENTITY>): UpdateAttributesCommand<ENTITY, OPTIONS> {
     return new UpdateAttributesCommand(this.entity, nextItem, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends UpdateAttributesOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): UpdateAttributesCommand<ENTITY, NEXT_OPTIONS> {
@@ -63,6 +68,7 @@ export class UpdateAttributesCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [UpdateAttributesInput<ENTITY>, UpdateAttributesOptions<ENTITY>] {
     if (!this[$item]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -73,12 +79,14 @@ export class UpdateAttributesCommand<
     return [this[$item], this[$options]]
   }
 
+  /** Build the raw AWS SDK `UpdateCommandInput`. */
   params(): UpdateCommandInput & { ToolboxItem: UpdateAttributesInput<ENTITY, true> } {
     const [item, options] = this[$sentArgs]()
 
     return updateAttributesParams(this.entity, item, options)
   }
 
+  /** Run the update and return the formatted returned attributes. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions

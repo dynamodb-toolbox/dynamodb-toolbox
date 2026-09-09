@@ -12,6 +12,9 @@ type DeleteItemParamsGetter = <ENTITY extends Entity, OPTIONS extends DeleteItem
   deleteItemOptions?: OPTIONS
 ) => DeleteCommandInput
 
+/**
+ * Build the raw AWS SDK `DeleteCommandInput` of a delete command.
+ */
 export const deleteItemParams: DeleteItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends DeleteItemOptions<ENTITY>

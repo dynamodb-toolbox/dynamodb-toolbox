@@ -15,6 +15,9 @@ type PutItemParamsGetter = <ENTITY extends Entity, OPTIONS extends PutItemOption
   ToolboxItem: ValidItem<ENTITY>
 }
 
+/**
+ * Build the raw AWS SDK `PutCommandInput` of a put command, parsed item included.
+ */
 export const putItemParams: PutItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends PutItemOptions<ENTITY>

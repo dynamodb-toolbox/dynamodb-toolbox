@@ -4,6 +4,9 @@ import type { $GET } from '../../symbols/index.js'
 import type { ExpressionState } from '../types.js'
 import { pathTokens, refOrValueTokens } from './utils.js'
 
+/**
+ * Append a `$get` extension to the `SET` clause of an update expression.
+ */
 export const expressGetUpdate = (
   value: unknown & { [$GET]: unknown },
   path: Path,

@@ -19,11 +19,13 @@ import { GetTransaction } from './getTransaction/getTransaction.js'
 
 type GetTransactionProps = Pick<GetTransaction, 'entity' | $options | 'params'>
 
+/** Options accepted when executing a `TransactGetItems` operation (document client, capacity). */
 export interface ExecuteTransactGetOptions extends DocumentClientOptions {
   documentClient?: DynamoDBDocumentClient
   capacity?: CapacityOption
 }
 
+/** Arguments of `executeTransactGet`: the transactions, optionally preceded by execution options. */
 export type ExecuteTransactGetInput =
   | GetTransactionProps[]
   | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
@@ -32,6 +34,7 @@ type ExecuteTransactGet = <TRANSACTIONS extends ExecuteTransactGetInput>(
   ..._transactions: TRANSACTIONS
 ) => Promise<ExecuteTransactGetResponses<TRANSACTIONS>>
 
+/** Response of a `TransactGetItems` operation, with items formatted per transaction. */
 export type ExecuteTransactGetResponses<TRANSACTIONS extends ExecuteTransactGetInput> =
   TRANSACTIONS extends GetTransactionProps[]
     ? ExecuteTransactGetResponse<TRANSACTIONS>
@@ -85,6 +88,9 @@ type TransactGetResponseFormatter = <TRANSACTIONS extends GetTransactionProps[]>
   ...transactions: TRANSACTIONS
 ) => TransactGetResponses<TRANSACTIONS> | undefined
 
+/**
+ * Format the raw transaction responses with the entity of each transaction.
+ */
 export const formatResponses: TransactGetResponseFormatter = <
   TRANSACTIONS extends GetTransactionProps[]
 >(
@@ -104,6 +110,9 @@ export const formatResponses: TransactGetResponseFormatter = <
     }
   }) as TransactGetResponses<TRANSACTIONS>
 
+/**
+ * Run a `TransactGetItems` operation and format the returned items.
+ */
 export const execute: ExecuteTransactGet = async <
   TRANSACTIONS extends GetTransactionProps[] | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
 >(
@@ -145,6 +154,9 @@ export const execute: ExecuteTransactGet = async <
   } as ExecuteTransactGetResponses<TRANSACTIONS>
 }
 
+/**
+ * Build the raw AWS SDK `TransactGetCommandInput` of a list of transactions.
+ */
 export const getCommandInput = (
   transactions: GetTransactionProps[],
   options: ExecuteTransactGetOptions = {}

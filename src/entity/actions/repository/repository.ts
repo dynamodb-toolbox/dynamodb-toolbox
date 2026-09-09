@@ -71,9 +71,11 @@ import { QueryCommand } from '~/table/actions/query/index.js'
 import type { ScanOptions, ScanResponse } from '~/table/actions/scan/index.js'
 import { ScanCommand } from '~/table/actions/scan/index.js'
 
+/** Expose an entity's actions as plain methods. */
 export class EntityRepository<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName = 'repository' as const
 
+  /** Write a complete item and return the formatted response. */
   async put<OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>>(
     item: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -81,6 +83,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new PutItemCommand(this.entity, item, options).send()
   }
 
+  /** Get an item by its key and return the formatted response. */
   async get<OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>>(
     key: KeyInputItem<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -88,6 +91,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new GetItemCommand(this.entity, key, options).send()
   }
 
+  /** Partially update an item and return the formatted response. */
   async update<OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>>(
     item: UpdateItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -95,6 +99,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new UpdateItemCommand(this.entity, item, options).send()
   }
 
+  /** Update an item, overriding each provided attribute as a whole, and return the formatted response. */
   async updateAttributes<
     OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
   >(
@@ -104,6 +109,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new UpdateAttributesCommand(this.entity, item, options).send()
   }
 
+  /** Delete an item by its key and return the formatted response. */
   async delete<OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>>(
     key: KeyInputItem<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -111,6 +117,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new DeleteItemCommand(this.entity, key, options).send()
   }
 
+  /** Scan the entity's table (or an index) and return the formatted response. */
   async scan<
     OPTIONS extends ScanOptions<ENTITY['table'], [ENTITY]> = ScanOptions<ENTITY['table'], [ENTITY]>
   >(options: OPTIONS = {} as OPTIONS): Promise<ScanResponse<ENTITY['table'], [ENTITY], OPTIONS>> {
@@ -121,6 +128,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     ).send()
   }
 
+  /** Query a partition (primary key or index) and return the formatted response. */
   async query<
     QUERY extends Query<ENTITY['table']>,
     OPTIONS extends QueryOptions<ENTITY['table'], [ENTITY], QUERY> = QueryOptions<
@@ -140,24 +148,29 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     ).send()
   }
 
+  /** Build the `BatchGetRequest` of an item key. */
   batchGet(key: KeyInputItem<ENTITY>): BatchGetRequest<ENTITY> {
     return new BatchGetRequest(this.entity, key)
   }
 
+  /** Build the `BatchPutRequest` of an item. */
   batchPut(item: InputItem<ENTITY>): BatchPutRequest<ENTITY> {
     return new BatchPutRequest(this.entity, item)
   }
 
+  /** Build the `BatchDeleteRequest` of an item key. */
   batchDelete(key: KeyInputItem<ENTITY>): BatchDeleteRequest<ENTITY> {
     return new BatchDeleteRequest(this.entity, key)
   }
 
+  /** Run a `TransactGetItems` operation and format the returned items. */
   static executeTransactGet<TRANSACTIONS extends ExecuteTransactGetInput>(
     ...transactions: TRANSACTIONS
   ): Promise<ExecuteTransactGetResponses<TRANSACTIONS>> {
     return executeTransactGet<TRANSACTIONS>(...transactions)
   }
 
+  /** Build the `GetTransaction` of an item key. */
   transactGet<OPTIONS extends GetTransactionOptions<ENTITY> = GetTransactionOptions<ENTITY>>(
     key: KeyInputItem<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -165,12 +178,14 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new GetTransaction(this.entity, key, options)
   }
 
+  /** Run a `TransactWriteItems` operation and return the written items. */
   static executeTransactWrite<TRANSACTIONS extends ExecuteTransactWriteInput>(
     ...transactions: TRANSACTIONS
   ): Promise<ExecuteTransactWriteResponses<TRANSACTIONS>> {
     return executeTransactWrite<TRANSACTIONS>(...transactions)
   }
 
+  /** Build the `PutTransaction` of an item. */
   transactPut<OPTIONS extends PutTransactionOptions<ENTITY> = PutTransactionOptions<ENTITY>>(
     item: PutItemInput<ENTITY>,
     options: OPTIONS = {} as OPTIONS
@@ -178,6 +193,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new PutTransaction(this.entity, item, options)
   }
 
+  /** Build the `UpdateTransaction` of an update input. */
   transactUpdate<
     OPTIONS extends UpdateTransactionOptions<ENTITY> = UpdateTransactionOptions<ENTITY>
   >(
@@ -187,6 +203,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new UpdateTransaction(this.entity, item, options)
   }
 
+  /** Build the `DeleteTransaction` of an item key. */
   transactDelete<
     OPTIONS extends DeleteTransactionOptions<ENTITY> = DeleteTransactionOptions<ENTITY>
   >(
@@ -196,6 +213,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new DeleteTransaction(this.entity, key, options)
   }
 
+  /** Build the `ConditionCheck` of a condition on an item key. */
   transactCheck(
     key: KeyInputItem<ENTITY>,
     condition: Condition<ENTITY>,
@@ -204,6 +222,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new ConditionCheck(this.entity, key, condition, options)
   }
 
+  /** Build a reusable `AccessPattern` from an input schema and a `query` transform. */
   accessPattern<
     SCHEMA extends Schema,
     QUERY extends Query<ENTITY['table']>,
@@ -233,6 +252,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     )
   }
 
+  /** Validate and transform an input item toward DynamoDB, primary key included. */
   parse<OPTIONS extends ParseItemOptions = {}>(
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS
@@ -244,6 +264,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new EntityParser(this.entity).parse(item, options)
   }
 
+  /** Turn a condition into a DynamoDB condition expression. */
   parseCondition(
     condition: Condition<ENTITY>,
     options: ParseConditionOptions = {}
@@ -251,6 +272,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new EntityConditionParser(this.entity).parse(condition, options)
   }
 
+  /** Turn attribute paths into a DynamoDB projection expression. */
   parsePaths(
     attributes: EntityPaths<ENTITY>[],
     options: ParsePathsOptions = {}
@@ -258,6 +280,7 @@ export class EntityRepository<ENTITY extends Entity = Entity> extends EntityActi
     return new EntityPathParser(this.entity).parse(attributes, options)
   }
 
+  /** Format a saved item into its app-facing shape. */
   format<OPTIONS extends FormatItemOptions<ENTITY> = {}>(
     item: { [KEY: string]: unknown },
     options: OPTIONS = {} as OPTIONS

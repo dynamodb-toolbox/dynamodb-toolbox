@@ -7,6 +7,7 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { TransactGetItem } from '../transaction.js'
 
+/** Options accepted by a `GetTransaction` (projected attributes, table name). */
 export type GetTransactionOptions<ENTITY extends Entity = Entity> = {
   tableName?: string
 } & ({ attributes?: undefined } | { attributes: EntityPaths<ENTITY>[] })
@@ -16,6 +17,9 @@ type OptionsParser = <ENTITY extends Entity>(
   GetItemTransactionOptions: GetTransactionOptions<ENTITY>
 ) => Omit<NonNullable<TransactGetItem['Get']>, 'TableName' | 'Key'>
 
+/**
+ * Turn `GetTransactionOptions` into their AWS SDK counterparts.
+ */
 export const parseOptions: OptionsParser = (entity, options) => {
   const transactionOptions: ReturnType<OptionsParser> = {}
 

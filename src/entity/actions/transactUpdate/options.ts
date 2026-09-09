@@ -8,6 +8,7 @@ import { parseTableNameOption } from '~/options/tableName.js'
 
 import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
+/** Options accepted by an `UpdateTransaction` (condition, return values on condition false, table name). */
 export interface UpdateTransactionOptions<ENTITY extends Entity = Entity> {
   condition?: Condition<ENTITY>
   returnValuesOnConditionFalse?: ReturnValuesOnConditionFalseOption
@@ -19,6 +20,9 @@ type OptionsParser = <ENTITY extends Entity>(
   options: UpdateTransactionOptions<ENTITY>
 ) => Omit<NonNullable<TransactWriteItem['Update']>, 'TableName' | 'Key' | 'UpdateExpression'>
 
+/**
+ * Turn `UpdateTransactionOptions` into their AWS SDK counterparts.
+ */
 export const parseOptions: OptionsParser = (entity, options) => {
   const transactionOptions: ReturnType<OptionsParser> = {}
 

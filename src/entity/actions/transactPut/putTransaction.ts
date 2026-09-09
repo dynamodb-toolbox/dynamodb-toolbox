@@ -15,6 +15,7 @@ import { $item, $options } from './constants.js'
 import type { PutTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
 
+/** Write a complete entity item within a `TransactWriteItems` operation. */
 export class PutTransaction<
     ENTITY extends Entity = Entity,
     OPTIONS extends PutTransactionOptions<ENTITY> = PutTransactionOptions<ENTITY>
@@ -27,16 +28,19 @@ export class PutTransaction<
   [$item]?: PutItemInput<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the transaction to an entity, an item and options. */
   constructor(entity: ENTITY, item?: PutItemInput<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$item] = item
     this[$options] = options
   }
 
+  /** Set the item to write. */
   item(nextItem: PutItemInput<ENTITY>): PutTransaction<ENTITY> {
     return new PutTransaction(this.entity, nextItem, this[$options])
   }
 
+  /** Set the transaction options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends PutTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): PutTransaction<ENTITY, NEXT_OPTIONS> {
@@ -47,6 +51,7 @@ export class PutTransaction<
     )
   }
 
+  /** Build the raw AWS SDK `Put` entry of the transaction, parsed item included. */
   params(): Require<TransactWriteItem, 'Put'> & {
     ToolboxItem: ValidItem<ENTITY>
   } {

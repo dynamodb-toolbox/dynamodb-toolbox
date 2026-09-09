@@ -9,6 +9,7 @@ import { isEmpty } from '~/utils/isEmpty.js'
 
 import type { TransactWriteItem } from '../transactWrite/transaction.js'
 
+/** Options accepted by a `ConditionCheck` (return values on condition false, table name). */
 export interface ConditionCheckOptions {
   returnValuesOnConditionFalse?: ReturnValuesOnConditionFalseOption
   tableName?: string
@@ -20,6 +21,9 @@ type OptionsParser = <ENTITY extends Entity>(
   options?: ConditionCheckOptions
 ) => Omit<NonNullable<TransactWriteItem['ConditionCheck']>, 'TableName' | 'Key'>
 
+/**
+ * Turn a condition and its `ConditionCheckOptions` into their AWS SDK counterparts.
+ */
 export const parseOptions: OptionsParser = (entity, condition, options = {}) => {
   const { returnValuesOnConditionFalse, tableName, ...extraOptions } = options
   rejectExtraOptions(extraOptions)

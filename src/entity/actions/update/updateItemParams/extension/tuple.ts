@@ -48,6 +48,9 @@ function* tupleElementParser(
   })
 }
 
+/**
+ * Parse the update extensions of a `tuple` attribute (`$set` and element updates).
+ */
 export const parseTupleExtension = (
   schema: TupleSchema,
   input: unknown,

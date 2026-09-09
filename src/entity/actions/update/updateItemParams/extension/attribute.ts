@@ -17,6 +17,9 @@ import { parseReferenceExtension } from './reference.js'
 import { parseSetExtension } from './set.js'
 import { parseTupleExtension } from './tuple.js'
 
+/**
+ * Parse the update extensions of an attribute, delegating to the parser of its type.
+ */
 export const parseUpdateExtension: ExtensionParser<UpdateItemInputExtension> = (
   schema: Schema,
   input: unknown,

@@ -7,6 +7,7 @@ import type { EntityAttributes, SchemaOf } from '../entityAttributes.js'
 import type { EntityAttrOptions, TimestampsOptions } from './options.js'
 import type { EntityAttrOptionValue, IsTimestampEnabled, TimestampOptionValue } from './utils.js'
 
+/** Add an internal attribute to a set of entity attributes. */
 export type WithInternalAttribute<
   ATTRIBUTES extends EntityAttributes,
   ATTRIBUTE_NAME extends string,
@@ -19,6 +20,7 @@ export type WithInternalAttribute<
       : never
 }>
 
+/** Schema of the internal attribute tagging items with their entity name. */
 export type EntityAttribute<
   TABLE extends Table,
   ENTITY_NAME extends string,
@@ -31,6 +33,7 @@ export type EntityAttribute<
   updateDefault: unknown
 }>
 
+/** Add the entity attribute to a set of entity attributes. */
 export type WithEntityAttribute<
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
@@ -44,6 +47,7 @@ export type WithEntityAttribute<
       EntityAttribute<TABLE, ENTITY_NAME, ENTITY_ATTR_OPTIONS>
     >
 
+/** Schema of an internal timestamp attribute. */
 export type TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean> = StringSchema<{
   hidden: HIDDEN
   savedAs: SAVED_AS
@@ -51,6 +55,7 @@ export type TimestampAttribute<SAVED_AS extends string, HIDDEN extends boolean> 
   updateDefault: unknown
 }>
 
+/** Add the enabled `created` and `modified` attributes to a set of entity attributes. */
 export type WithTimestampAttributes<
   ATTRIBUTES extends EntityAttributes,
   ENTITY_NAME extends string,
@@ -95,6 +100,7 @@ export type WithTimestampAttributes<
       >
     >
 
+/** Item schema of an `Entity`, internal attributes included. */
 export type BuildEntitySchema<
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,
@@ -117,6 +123,7 @@ export type BuildEntitySchema<
           >
         >
 
+/** Signature of `buildEntitySchema`. */
 export type EntitySchemaBuilder = <
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table,

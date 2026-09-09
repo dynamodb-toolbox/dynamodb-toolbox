@@ -16,16 +16,19 @@ type EntityParserInput<
   ? ValidItem<ENTITY, WRITE_ITEM_OPTIONS>
   : InputItem<ENTITY, WRITE_ITEM_OPTIONS>
 
+/** Validate and transform an input item toward DynamoDB, primary key included. */
 export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {
   static override actionName: 'parse';
 
   [$parser]: Parser<ENTITY['schema']>
 
+  /** Bind the parser to an entity. */
   constructor(entity: ENTITY) {
     super(entity)
     this[$parser] = new Parser(entity.schema)
   }
 
+  /** Parse an unknown input and return the valid item, its transformed form and its primary key. */
   parse<OPTIONS extends ParseItemOptions = {}>(
     input: unknown,
     options: OPTIONS = {} as OPTIONS
@@ -58,6 +61,7 @@ export class EntityParser<ENTITY extends Entity = Entity> extends EntityAction<E
     }
   }
 
+  /** Parse an input already typed against the entity. */
   reparse<OPTIONS extends ParseItemOptions = {}>(
     input: EntityParserInput<ENTITY, InferWriteItemOptions<OPTIONS>>,
     options: OPTIONS = {} as OPTIONS

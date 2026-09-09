@@ -11,6 +11,9 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
+/**
+ * Parse the update of an `any` attribute, overriding object and array values as a whole.
+ */
 export const parseAnyExtension = (
   schema: AnySchema,
   input: unknown,

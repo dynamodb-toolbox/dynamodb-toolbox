@@ -27,6 +27,7 @@ type NeedsKeyPartCompute<
       ? true
       : false
 
+/** Whether an entity's attributes leave part of its table primary key uncovered, requiring a `computeKey`. */
 export type NeedsKeyCompute<
   ATTRIBUTES extends EntityAttributes,
   TABLE extends Table

@@ -16,6 +16,7 @@ import { $key, $options } from './constants.js'
 import { getItemParams } from './getItemParams/index.js'
 import type { GetItemOptions } from './options.js'
 
+/** Response returned by a `GetItemCommand`: the DynamoDB output with `Item` formatted. */
 export type GetItemResponse<
   ENTITY extends Entity,
   OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
@@ -33,6 +34,7 @@ export type GetItemResponse<
   }
 >
 
+/** Get a single item of an entity by its key, and format it. */
 export class GetItemCommand<
     ENTITY extends Entity = Entity,
     OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
@@ -45,16 +47,19 @@ export class GetItemCommand<
   [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the command to an entity, a key and options. */
   constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
+  /** Set the key of the item to get. */
   key(nextKey: KeyInputItem<ENTITY>): GetItemCommand<ENTITY, OPTIONS> {
     return new GetItemCommand(this.entity, nextKey, this[$options])
   }
 
+  /** Set the command options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends GetItemOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): GetItemCommand<ENTITY, NEXT_OPTIONS> {
@@ -65,6 +70,7 @@ export class GetItemCommand<
     )
   }
 
+  /** Return the arguments sent to DynamoDB. */
   [$sentArgs](): [KeyInputItem<ENTITY>, GetItemOptions<ENTITY>] {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {
@@ -75,10 +81,12 @@ export class GetItemCommand<
     return [this[$key], this[$options]]
   }
 
+  /** Build the raw AWS SDK `GetCommandInput`. */
   params(): GetCommandInput {
     return getItemParams(this.entity, ...this[$sentArgs]())
   }
 
+  /** Run the get and return the formatted item. */
   @interceptable()
   async send(
     documentClientOptions?: DocumentClientOptions

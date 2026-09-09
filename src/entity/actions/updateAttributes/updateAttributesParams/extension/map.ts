@@ -10,6 +10,9 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
+/**
+ * Parse the update of a `map` attribute, overriding it as a whole.
+ */
 export const parseMapExtension = (
   schema: MapSchema,
   input: unknown,

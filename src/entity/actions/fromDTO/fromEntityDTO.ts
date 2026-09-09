@@ -4,6 +4,7 @@ import type { TimestampsDefaultOptions } from '~/entity/index.js'
 import { fromSchemaDTO } from '~/schema/actions/fromDTO/index.js'
 import { fromTableDTO } from '~/table/actions/fromDTO/index.js'
 
+/** Rebuild an `Entity` instance from an `IEntityDTO`. */
 export const fromEntityDTO = ({
   entityName,
   schema,

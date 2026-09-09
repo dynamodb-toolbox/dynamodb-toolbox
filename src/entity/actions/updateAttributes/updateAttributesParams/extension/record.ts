@@ -10,6 +10,9 @@ import { isObject } from '~/utils/validation/isObject.js'
 
 import type { UpdateAttributesInputExtension } from '../../types.js'
 
+/**
+ * Parse the update of a `record` attribute, overriding it as a whole.
+ */
 export const parseRecordExtension = (
   schema: RecordSchema,
   input: unknown,

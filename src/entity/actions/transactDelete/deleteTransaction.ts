@@ -12,6 +12,7 @@ import { $key, $options } from './constants.js'
 import type { DeleteTransactionOptions } from './options.js'
 import { parseOptions } from './options.js'
 
+/** Delete an entity item within a `TransactWriteItems` operation. */
 export class DeleteTransaction<
     ENTITY extends Entity = Entity,
     OPTIONS extends DeleteTransactionOptions<ENTITY> = DeleteTransactionOptions<ENTITY>
@@ -24,16 +25,19 @@ export class DeleteTransaction<
   [$key]?: KeyInputItem<ENTITY>;
   [$options]: OPTIONS
 
+  /** Bind the transaction to an entity, a key and options. */
   constructor(entity: ENTITY, key?: KeyInputItem<ENTITY>, options: OPTIONS = {} as OPTIONS) {
     super(entity)
     this[$key] = key
     this[$options] = options
   }
 
+  /** Set the key of the item to delete. */
   key(nextKey: KeyInputItem<ENTITY>): DeleteTransaction<ENTITY> {
     return new DeleteTransaction(this.entity, nextKey, this[$options])
   }
 
+  /** Set the transaction options, or derive them from the previous ones. */
   options<NEXT_OPTIONS extends DeleteTransactionOptions<ENTITY>>(
     nextOptions: NEXT_OPTIONS | ((prevOptions: OPTIONS) => NEXT_OPTIONS)
   ): DeleteTransaction<ENTITY, NEXT_OPTIONS> {
@@ -44,6 +48,7 @@ export class DeleteTransaction<
     )
   }
 
+  /** Build the raw AWS SDK `Delete` entry of the transaction. */
   params(): Require<TransactWriteItem, 'Delete'> {
     if (!this[$key]) {
       throw new DynamoDBToolboxError('actions.incompleteAction', {

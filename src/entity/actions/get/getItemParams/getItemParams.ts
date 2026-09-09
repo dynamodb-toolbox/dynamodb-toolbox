@@ -12,6 +12,9 @@ type GetItemParamsGetter = <ENTITY extends Entity, OPTIONS extends GetItemOption
   getItemOptions?: OPTIONS
 ) => GetCommandInput
 
+/**
+ * Build the raw AWS SDK `GetCommandInput` of a get command.
+ */
 export const getItemParams: GetItemParamsGetter = <
   ENTITY extends Entity,
   OPTIONS extends GetItemOptions<ENTITY>

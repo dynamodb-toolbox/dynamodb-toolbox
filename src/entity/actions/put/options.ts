@@ -5,6 +5,7 @@ import type { MetricsOption } from '~/options/metrics.js'
 import type { AllOldReturnValuesOption, NoneReturnValuesOption } from '~/options/returnValues.js'
 import type { ReturnValuesOnConditionFalseOption } from '~/options/returnValuesOnConditionFalse.js'
 
+/** `returnValues` options accepted by a `PutItemCommand`. */
 export type PutItemCommandReturnValuesOption = NoneReturnValuesOption | AllOldReturnValuesOption
 
 export const putItemCommandReturnValuesOptions = [
@@ -15,6 +16,7 @@ export const putItemCommandReturnValuesOptionsSet = new Set<PutItemCommandReturn
   putItemCommandReturnValuesOptions
 )
 
+/** Options accepted by a `PutItemCommand` (capacity, metrics, return values, condition, table name). */
 export interface PutItemOptions<ENTITY extends Entity = Entity> {
   capacity?: CapacityOption
   metrics?: MetricsOption

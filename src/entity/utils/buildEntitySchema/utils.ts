@@ -7,6 +7,7 @@ import type {
   TimestampsOptions
 } from './options.js'
 
+/** Whether a given timestamp attribute is enabled by some `timestamps` options. */
 export type IsTimestampEnabled<
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP extends 'created' | 'modified'
@@ -14,6 +15,9 @@ export type IsTimestampEnabled<
   ? true
   : false
 
+/**
+ * Tell whether a given timestamp attribute is enabled by some `timestamps` options.
+ */
 export const isTimestampEnabled = <
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP_KEY extends 'created' | 'modified'
@@ -41,6 +45,7 @@ const TIMESTAMPS_DEFAULTS_OPTIONS: TimestampsDefaultOptions = {
   modified: { name: 'modified', savedAs: '_md', hidden: false }
 }
 
+/** Value of a timestamp attribute option, falling back to its default. */
 export type TimestampOptionValue<
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP_KEY extends 'created' | 'modified',
@@ -49,6 +54,9 @@ export type TimestampOptionValue<
   ? TIMESTAMP_OPTIONS[TIMESTAMP_KEY][OPTION_KEY]
   : TimestampsDefaultOptions[TIMESTAMP_KEY][OPTION_KEY]
 
+/**
+ * Get the value of a timestamp attribute option, falling back to its default.
+ */
 export const getTimestampOptionValue = <
   TIMESTAMP_OPTIONS extends TimestampsOptions,
   TIMESTAMP_KEY extends 'created' | 'modified',
@@ -77,9 +85,13 @@ export const getTimestampOptionValue = <
   return defaultOptions
 }
 
+/** Whether the entity attribute is enabled by some `entityAttribute` options. */
 export type IsEntityAttrEnabled<ENTITY_ATTR_OPTIONS extends EntityAttrOptions> =
   ENTITY_ATTR_OPTIONS extends true | Record<string, unknown> ? true : false
 
+/**
+ * Tell whether the entity attribute is enabled by some `entityAttribute` options.
+ */
 export const isEntityAttrEnabled = <ENTITY_ATTR_OPTIONS extends EntityAttrOptions>(
   entityAttrOptions: ENTITY_ATTR_OPTIONS
 ): IsEntityAttrEnabled<ENTITY_ATTR_OPTIONS> =>
@@ -90,6 +102,7 @@ const ENTITY_ATTR_DEFAULTS_OPTIONS: EntityAttrDefaultOptions = {
   hidden: true
 }
 
+/** Value of an entity attribute option, falling back to its default. */
 export type EntityAttrOptionValue<
   ENTITY_ATTR_OPTIONS extends EntityAttrOptions,
   OPTION_KEY extends 'name' | 'hidden'
@@ -97,6 +110,9 @@ export type EntityAttrOptionValue<
   ? ENTITY_ATTR_OPTIONS[OPTION_KEY]
   : EntityAttrDefaultOptions[OPTION_KEY]
 
+/**
+ * Get the value of an entity attribute option, falling back to its default.
+ */
 export const getEntityAttrOptionValue = <
   ENTITY_ATTR_OPTIONS extends EntityAttrOptions,
   OPTION_KEY extends 'name' | 'hidden'
