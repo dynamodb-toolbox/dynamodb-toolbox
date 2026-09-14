@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [18, 20, 22, 24]
+        # Node 18 dropped: `aws-cdk-lib` (devDependency) requires Node >= 20
+        node: [20, 22, 24]
         typescript: [
             '~5.0.4',
             '~5.1.6',
