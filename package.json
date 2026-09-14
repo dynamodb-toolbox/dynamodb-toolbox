@@ -473,6 +473,16 @@
         "default": "./dist/cjs/table/actions/repository/index.js"
       }
     },
+    "./table/actions/cdk": {
+      "import": {
+        "types": "./dist/esm/table/actions/cdk/index.d.ts",
+        "default": "./dist/esm/table/actions/cdk/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/cdk/index.d.ts",
+        "default": "./dist/cjs/table/actions/cdk/index.js"
+      }
+    },
     "./table/actions/dto": {
       "import": {
         "types": "./dist/esm/table/actions/dto/index.d.ts",
