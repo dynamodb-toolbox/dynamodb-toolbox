@@ -21,6 +21,8 @@ const PokeTable = new Table({
 
 The configuration provided to the `Table` constructor must match your resources. But DynamoDB-Toolbox does NOT hold the responsibility of actually deploying them. This should be done by other means, like the [AWS CLI](https://aws.amazon.com/cli/), [Terraform](https://www.terraform.io/) or [Cloudformation](https://aws.amazon.com/cloudformation/).
 
+If you deploy with [AWS CDK](https://aws.amazon.com/cdk/), the [`CDKTableV2`](../2-actions/13-cdk/index.md) action derives your `TableV2` keys and indexes from your `Table`.
+
 :::
 
 ## Constructor

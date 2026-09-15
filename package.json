@@ -39,7 +39,9 @@
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
     "@typescript-eslint/parser": "^8.67.0",
+    "aws-cdk-lib": "^2.226.0",
     "aws-sdk-client-mock": "^4.0.1",
+    "constructs": "^10.5.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-import": "^2.29.1",
@@ -469,6 +471,16 @@
       "require": {
         "types": "./dist/cjs/table/actions/repository/index.d.ts",
         "default": "./dist/cjs/table/actions/repository/index.js"
+      }
+    },
+    "./table/actions/cdk": {
+      "import": {
+        "types": "./dist/esm/table/actions/cdk/index.d.ts",
+        "default": "./dist/esm/table/actions/cdk/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/table/actions/cdk/index.d.ts",
+        "default": "./dist/cjs/table/actions/cdk/index.js"
       }
     },
     "./table/actions/dto": {

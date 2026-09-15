@@ -34,6 +34,8 @@ const PokeTable = new Table({
 
 DynamoDB-Toolbox does NOT hold the responsibility of actually deploying your table. This should be done by other means, like the [AWS CLI](https://aws.amazon.com/cli/), [Terraform](https://www.terraform.io/) or [Cloudformation](https://aws.amazon.com/cloudformation/).
 
+If you deploy with [AWS CDK](https://aws.amazon.com/cdk/), the [`CDKTableV2`](../../2-tables/2-actions/13-cdk/index.md) action derives your `TableV2` keys and indexes from your `Table`.
+
 :::
 
 ### 2. Design a Schema

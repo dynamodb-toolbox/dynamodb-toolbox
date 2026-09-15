@@ -21,6 +21,7 @@ const { Items } = await command.send()
 | `spy` | `TableSpy` | Mock/inspect table actions in tests. |
 | `repository` | `TableRepository` | Convenience wrapper exposing table actions as methods. |
 | `registry` | `Registry` | Registry of entities keyed by their entity attribute. |
+| `cdk` | `CDKTableV2` | Derive AWS CDK `TableV2` props (keys, indexes, name) from a table. Types-only `aws-cdk-lib` import; not in the root barrel. |
 | `dto` | `TableDTO` | Serialize a table definition → JSON DTO. |
 | `fromDTO` | `fromTableDTO` | Rebuild a table from a DTO. |
 | `indexes.ts` | — | Shared index typing (`IndexNames`, `IndexSchema`). |
