@@ -21,9 +21,9 @@ The Notion board URL can be found in the CLAUDE.md file. Make sure to use the No
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `To Spec` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+List the tasks that are in `To Design` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
 
-As soon as the task is chosen, set its status to `Specifying` before any other work, so parallel `/spec` runs don't grab the same task.
+As soon as the task is chosen, set its status to `Designing` before any other work, so parallel `/spec` runs don't grab the same task.
 
 Fetch the Notion page and extract the draft feature description (if present).
 
