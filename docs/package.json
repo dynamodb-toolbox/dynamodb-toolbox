@@ -18,7 +18,7 @@
     "@docusaurus/plugin-google-gtag": "3.10.2",
     "@docusaurus/preset-classic": "3.10.2",
     "@docusaurus/theme-mermaid": "3.10.2",
-    "mermaid": "11.17.0",
+    "mermaid": "12.2.0",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^2.4.1",
     "react": "18.3.1",
