@@ -84,25 +84,29 @@ export const parseTupleExtension = (
     return {
       isExtension: true,
       *extensionParser() {
-        if (isInputObject) {
-          for (const inputKey in input) {
-            const parsedInputKey = parseFloat(inputKey)
+        for (const inputKey in input) {
+          const parsedInputKey = parseFloat(inputKey)
 
-            if (
-              !isInteger(parsedInputKey) ||
-              parsedInputKey < 0 ||
-              parsedInputKey > schema.elements.length - 1
-            ) {
-              const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
+          if (!isInteger(parsedInputKey) || parsedInputKey < 0) {
+            const path = valuePath !== undefined ? formatArrayPath(valuePath) : undefined
 
-              throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
-                message: `Index of tuple attribute ${
-                  path !== undefined ? `'${path}' ` : ''
-                }is not a valid tuple index`,
-                path,
-                payload: { received: parsedInputKey }
-              })
-            }
+            throw new DynamoDBToolboxError('parsing.invalidAttributeInput', {
+              message: `Index of tuple attribute ${
+                path !== undefined ? `'${path}' ` : ''
+              }is not a valid tuple index`,
+              path,
+              payload: { received: parsedInputKey }
+            })
+          }
+
+          if (schema.props.strict && parsedInputKey > schema.elements.length - 1) {
+            const path = formatArrayPath([...(valuePath ?? []), parsedInputKey])
+
+            throw new DynamoDBToolboxError('parsing.additionalElement', {
+              message: `Attribute '${path}' is not defined and the schema is strict.`,
+              path,
+              payload: { received: (input as Record<number, unknown>)[parsedInputKey] }
+            })
           }
         }
 
