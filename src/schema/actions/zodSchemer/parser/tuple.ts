@@ -12,6 +12,20 @@ import type { SchemaZodParserRec, WithDefault, WithOptional } from './utils.js'
 import { withDefault, withOptional } from './utils.js'
 
 /**
+ * Zod schema of the elements of an input `tuple` value.
+ */
+type TupleZodParserValue<
+  SCHEMA extends TupleSchema,
+  ELEMENTS extends [z.ZodTypeAny, ...z.ZodTypeAny[]]
+> = SCHEMA['props'] extends { strict: true }
+  ? z.ZodTuple<ELEMENTS>
+  : z.ZodEffects<
+      z.ZodTuple<ELEMENTS, z.ZodUnknown>,
+      z.ZodTuple<ELEMENTS>['_output'],
+      z.ZodTuple<ELEMENTS, z.ZodUnknown>['_input']
+    >
+
+/**
  * Zod schema validating an input `tuple` value.
  */
 export type TupleZodParser<
@@ -30,7 +44,8 @@ export type TupleZodParser<
           SCHEMA['elements'] extends [infer SCHEMAS_HEAD, ...infer SCHEMAS_TAIL]
             ? SCHEMAS_HEAD extends Schema
               ? SCHEMAS_TAIL extends Schema[]
-                ? z.ZodTuple<
+                ? TupleZodParserValue<
+                    SCHEMA,
                     [
                       SchemaZodParser<SCHEMAS_HEAD, Overwrite<OPTIONS, { defined: true }>>,
                       ...SchemaZodParserRec<SCHEMAS_TAIL, Overwrite<OPTIONS, { defined: true }>>
@@ -46,8 +61,18 @@ export type TupleZodParser<
 /**
  * Build a Zod schema validating an input `tuple` value.
  */
-export const tupleZodParser = (schema: TupleSchema, options: ZodParserOptions = {}): z.ZodTypeAny =>
-  withDescribe(
+export const tupleZodParser = (
+  schema: TupleSchema,
+  options: ZodParserOptions = {}
+): z.ZodTypeAny => {
+  const zodTuple = z.tuple(
+    schema.elements.map(element => schemaZodParser(element, { ...options, defined: true })) as [
+      z.ZodTypeAny,
+      ...z.ZodTypeAny[]
+    ]
+  )
+
+  return withDescribe(
     schema,
     withDefault(
       schema,
@@ -57,12 +82,11 @@ export const tupleZodParser = (schema: TupleSchema, options: ZodParserOptions = 
         options,
         withValidate(
           schema,
-          z.tuple(
-            schema.elements.map(element =>
-              schemaZodParser(element, { ...options, defined: true })
-            ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
-          )
+          schema.props.strict
+            ? zodTuple
+            : zodTuple.rest(z.unknown()).transform(values => values.slice(0, zodTuple.items.length))
         )
       )
     )
   )
+}

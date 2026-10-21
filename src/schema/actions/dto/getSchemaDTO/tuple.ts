@@ -9,7 +9,7 @@ import { getDefaultsDTO } from './utils.js'
  */
 export const getTupleSchemaDTO = (schema: TupleSchema): TupleSchemaDTO => {
   const defaultsDTO = getDefaultsDTO(schema)
-  const { required, hidden, key, savedAs, meta } = schema.props
+  const { required, hidden, key, strict, savedAs, meta } = schema.props
 
   return {
     type: 'tuple',
@@ -17,6 +17,7 @@ export const getTupleSchemaDTO = (schema: TupleSchema): TupleSchemaDTO => {
     ...(required !== undefined && required !== 'atLeastOnce' ? { required } : {}),
     ...(hidden !== undefined && hidden ? { hidden } : {}),
     ...(key !== undefined && key ? { key } : {}),
+    ...(strict !== undefined && strict ? { strict } : {}),
     ...(savedAs !== undefined ? { savedAs } : {}),
     ...(meta !== undefined ? { meta } : {}),
     ...defaultsDTO

@@ -196,6 +196,7 @@ export interface TupleSchemaDTO extends SchemaPropsDTO {
     putLink?: undefined
     updateLink?: undefined
   })[]
+  strict?: boolean
 }
 
 /**
@@ -272,6 +273,7 @@ export interface ItemSchemaDTO extends SchemaPropsDTO {
       | BinarySchemaDTO
       | SetSchemaDTO
       | ListSchemaDTO
+      | TupleSchemaDTO
       | MapSchemaDTO
       | RecordSchemaDTO
       | AnyOfSchemaDTO
