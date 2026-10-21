@@ -1,5 +1,7 @@
 import type { MockedFunction } from 'vitest'
 
+import { DynamoDBToolboxError } from '~/errors/index.js'
+
 import { string } from '../string/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
 import { tuple } from './schema_.js'
@@ -16,6 +18,19 @@ describe('map properties check', () => {
 
   beforeEach(() => {
     checkSchemaPropsMock.mockClear()
+  })
+
+  test('rejects a non-boolean strict prop on check', () => {
+    const tupleInstance = tuple(string(), string()).strict('yes' as unknown as boolean)
+    const invalidCall = () => tupleInstance.check()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({
+        code: 'schema.invalidProp',
+        payload: { propName: 'strict', received: 'yes' }
+      })
+    )
   })
 
   test('applies checkSchemaProps on tupleInstance', () => {

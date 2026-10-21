@@ -135,6 +135,15 @@ describe('tuple', () => {
   })
 
   // TODO: Reimplement props as potential first argument
+  test('returns strict tuple (method)', () => {
+    const tupleSchema = tuple(str).strict()
+
+    const assertTuple: A.Contains<(typeof tupleSchema)['props'], { strict: true }> = 1
+    assertTuple
+
+    expect(tupleSchema.props.strict).toBe(true)
+  })
+
   test('returns savedAs tuple (method)', () => {
     const tupleSchema = tuple(str).savedAs('foo')
 

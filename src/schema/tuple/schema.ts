@@ -1,16 +1,16 @@
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import { isArray } from '~/utils/validation/isArray.js'
+import { isBoolean } from '~/utils/validation/isBoolean.js'
 
-import type { SchemaProps } from '../types/index.js'
 import { checkSchemaProps } from '../utils/checkSchemaProps.js'
-import type { TupleElementSchema } from './types.js'
+import type { TupleElementSchema, TupleSchemaProps } from './types.js'
 
 /**
  * Schema for a tuple attribute.
  */
 export class TupleSchema<
   ELEMENTS extends TupleElementSchema[] = TupleElementSchema[],
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends TupleSchemaProps = TupleSchemaProps
 > {
   type: 'tuple'
   elements: ELEMENTS
@@ -41,6 +41,18 @@ export class TupleSchema<
     }
 
     checkSchemaProps(this.props, path)
+
+    const { strict } = this.props
+
+    if (strict !== undefined && !isBoolean(strict)) {
+      throw new DynamoDBToolboxError('schema.invalidProp', {
+        message: `Invalid prop type${
+          path !== undefined ? ` at path '${path}'` : ''
+        }. Property: 'strict'. Expected: boolean. Received: ${String(strict)}.`,
+        path,
+        payload: { propName: 'strict', received: strict }
+      })
+    }
 
     if (!isArray(this.elements)) {
       throw new DynamoDBToolboxError('schema.tuple.invalidElements', {
