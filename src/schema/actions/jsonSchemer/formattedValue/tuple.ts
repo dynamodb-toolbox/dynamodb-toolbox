@@ -13,8 +13,8 @@ export type FormattedTupleJSONSchema<SCHEMA extends TupleSchema> = ComputeObject
   JSONSchemaMeta<SCHEMA> & {
     type: 'array'
     items: FormattedValueJSONSchemaRec<SCHEMA['elements']>
-    minLength: SCHEMA['elements']['length']
-    maxLength: SCHEMA['elements']['length']
+    minItems: SCHEMA['elements']['length']
+    maxItems: SCHEMA['elements']['length']
   }
 >
 
@@ -29,6 +29,6 @@ export const getFormattedTupleJSONSchema = <SCHEMA extends TupleSchema>(
   items: schema.elements.map(element =>
     getFormattedValueJSONSchema(element)
   ) as FormattedValueJSONSchemaRec<SCHEMA['elements']>,
-  minLength: schema.elements.length,
-  maxLength: schema.elements.length
+  minItems: schema.elements.length,
+  maxItems: schema.elements.length
 })
