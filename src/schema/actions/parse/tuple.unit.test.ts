@@ -8,6 +8,7 @@ import { tupleSchemaParser } from './tuple.js'
 const schemaParser = vi.spyOn(schemaParserModule, 'schemaParser')
 
 const tupleSchema = tuple(string(), number())
+const strictTupleSchema = tuple(string(), number()).strict()
 
 describe('tupleSchemaParser', () => {
   beforeEach(() => {
@@ -19,6 +20,66 @@ describe('tupleSchemaParser', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('silently drops additional elements on a non-strict tuple', () => {
+    const parser = tupleSchemaParser(tupleSchema, ['foo', 42, 'bar'])
+
+    const { value: defaultedValue } = parser.next()
+    expect(defaultedValue).toStrictEqual(['foo', 42])
+
+    const { value: linkedValue } = parser.next()
+    expect(linkedValue).toStrictEqual(['foo', 42])
+
+    const { value: parsedValue } = parser.next()
+    expect(parsedValue).toStrictEqual(['foo', 42])
+
+    const { value: transformedValue } = parser.next()
+    expect(transformedValue).toStrictEqual(['foo', 42])
+  })
+
+  test('throws on a strict tuple (put mode) naming the offending path', () => {
+    const invalidCall = () =>
+      tupleSchemaParser(strictTupleSchema, ['foo', 42, 'bar'], {
+        fill: false,
+        valuePath: ['range']
+      }).next()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'parsing.additionalElement', path: 'range[2]' })
+    )
+  })
+
+  describe('all modes', () => {
+    test('throws in update mode on an additional element', () => {
+      const invalidCall = () =>
+        tupleSchemaParser(strictTupleSchema, ['foo', 42, 'bar'], {
+          mode: 'update',
+          fill: false,
+          valuePath: ['range']
+        }).next()
+
+      expect(invalidCall).toThrow(DynamoDBToolboxError)
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'parsing.additionalElement', path: 'range[2]' })
+      )
+    })
+
+    test('throws in key mode on an additional element', () => {
+      const keySchema = tuple(string(), number()).key().strict()
+
+      const invalidCall = () =>
+        tupleSchemaParser(keySchema, ['foo', 42, 'bar'], {
+          mode: 'key',
+          fill: false,
+          valuePath: ['range']
+        }).next()
+
+      expect(invalidCall).toThrow(
+        expect.objectContaining({ code: 'parsing.additionalElement', path: 'range[2]' })
+      )
+    })
   })
 
   test('applies schemaParser on input elements otherwise (and pass options)', () => {

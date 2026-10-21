@@ -60,6 +60,17 @@ export function* tupleSchemaParser<OPTIONS extends ParseAttrValueOptions = {}>(
     })
   }
 
+  if (schema.props.strict && inputValue.length > schema.elements.length) {
+    const additionalElementIndex = schema.elements.length
+    const path = formatArrayPath([...(valuePath ?? []), additionalElementIndex])
+
+    throw new DynamoDBToolboxError('parsing.additionalElement', {
+      message: `Attribute '${path}' is not defined and the schema is strict.`,
+      path,
+      payload: { received: inputValue[additionalElementIndex] }
+    })
+  }
+
   const parsedValue = parsers.map(parser => parser.next().value)
   if (parsedValue !== undefined) {
     applyCustomValidation(schema, parsedValue, options)
