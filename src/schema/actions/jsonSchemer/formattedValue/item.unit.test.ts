@@ -11,7 +11,8 @@ import {
   number,
   record,
   set,
-  string
+  string,
+  tuple
 } from '~/schema/index.js'
 
 import { JSONSchemer } from '../jsonSchemer.js'
@@ -33,6 +34,7 @@ describe('jsonSchemer - formattedItem', () => {
         num: number()
       }),
       record: record(string(), string()),
+      tuple: tuple(string(), number()),
       anyOf: anyOf(nul(), string())
     }).meta({ title: 'Title', description: 'Desc', examples: ['ex'], custom: 'prop' })
 
@@ -72,6 +74,12 @@ describe('jsonSchemer - formattedItem', () => {
           propertyNames: { type: 'string' }
           additionalProperties: { type: 'string' }
         }
+        tuple: {
+          type: 'array'
+          items: [{ type: 'string' }, { type: 'number' }]
+          minItems: 2
+          maxItems: 2
+        }
         anyOf: { anyOf: [{ type: 'null' }, { type: 'string' }] }
       }
       required: (
@@ -84,6 +92,7 @@ describe('jsonSchemer - formattedItem', () => {
         | 'list'
         | 'map'
         | 'record'
+        | 'tuple'
         | 'anyOf'
       )[]
     }
@@ -122,6 +131,12 @@ describe('jsonSchemer - formattedItem', () => {
           propertyNames: { type: 'string' },
           additionalProperties: { type: 'string' }
         },
+        tuple: {
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'number' }],
+          minItems: 2,
+          maxItems: 2
+        },
         anyOf: { anyOf: [{ type: 'null' }, { type: 'string' }] }
       },
       required: [
@@ -134,8 +149,63 @@ describe('jsonSchemer - formattedItem', () => {
         'list',
         'map',
         'record',
+        'tuple',
         'anyOf'
       ]
+    }
+
+    const assertJSONSchema: A.Equals<typeof JSONSchema, ExpectedJSONSchema> = 1
+    assertJSONSchema
+
+    expect(JSONSchema).toStrictEqual(expectedJSONSchema)
+  })
+
+  test('builds correct json schemas for strict schemas', () => {
+    const mySchema = item({
+      map: map({ str: string() }).strict(),
+      tuple: tuple(string(), number()).strict()
+    }).strict()
+
+    const JSONSchema = mySchema.build(JSONSchemer).formattedValueSchema()
+
+    type ExpectedJSONSchema = {
+      type: 'object'
+      properties: {
+        map: {
+          type: 'object'
+          properties: { str: { type: 'string' } }
+          required: 'str'[]
+          additionalProperties: false
+        }
+        tuple: {
+          type: 'array'
+          items: [{ type: 'string' }, { type: 'number' }]
+          minItems: 2
+          maxItems: 2
+        }
+      }
+      required: ('map' | 'tuple')[]
+      additionalProperties: false
+    }
+
+    const expectedJSONSchema: ExpectedJSONSchema = {
+      type: 'object',
+      properties: {
+        map: {
+          type: 'object',
+          properties: { str: { type: 'string' } },
+          required: ['str'],
+          additionalProperties: false
+        },
+        tuple: {
+          type: 'array',
+          items: [{ type: 'string' }, { type: 'number' }],
+          minItems: 2,
+          maxItems: 2
+        }
+      },
+      required: ['map', 'tuple'],
+      additionalProperties: false
     }
 
     const assertJSONSchema: A.Equals<typeof JSONSchema, ExpectedJSONSchema> = 1

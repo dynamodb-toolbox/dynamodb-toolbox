@@ -13,14 +13,13 @@ import type {
   Never,
   Schema,
   SchemaMeta,
-  SchemaProps,
   SchemaRequiredProp,
   Validator
 } from '../types/index.js'
 import type { LightRec } from '../utils/light.js'
 import { lightRec } from '../utils/light.js'
 import { TupleSchema } from './schema.js'
-import type { TupleElementSchema } from './types.js'
+import type { TupleElementSchema, TupleSchemaProps } from './types.js'
 
 type TupleSchemer = <ELEMENTS extends TupleElementSchema[]>(
   ...elements: ELEMENTS
@@ -39,7 +38,7 @@ export const tuple: TupleSchemer = <ELEMENTS extends TupleElementSchema[]>(...el
  */
 export class TupleSchema_<
   ELEMENTS extends TupleElementSchema[] = TupleElementSchema[],
-  PROPS extends SchemaProps = SchemaProps
+  PROPS extends TupleSchemaProps = TupleSchemaProps
 > extends TupleSchema<ELEMENTS, PROPS> {
   /**
    * Tag schema values as required. Possible values are:
@@ -81,6 +80,15 @@ export class TupleSchema_<
       this.elements,
       overwrite(this.props, { key: nextKey, required: 'always' })
     )
+  }
+
+  /**
+   * Reject additional (undeclared) elements when parsing input values
+   */
+  strict<NEXT_STRICT extends boolean = true>(
+    nextStrict: NEXT_STRICT = true as NEXT_STRICT
+  ): TupleSchema_<ELEMENTS, Overwrite<PROPS, { strict: NEXT_STRICT }>> {
+    return new TupleSchema_(this.elements, overwrite(this.props, { strict: nextStrict }))
   }
 
   /**
@@ -312,7 +320,7 @@ export class TupleSchema_<
     )
   }
 
-  clone<NEXT_PROPS extends SchemaProps = {}>(
+  clone<NEXT_PROPS extends TupleSchemaProps = {}>(
     nextProps: NarrowObject<NEXT_PROPS> = {} as NEXT_PROPS
   ): TupleSchema_<ELEMENTS, Overwrite<PROPS, NEXT_PROPS>> {
     return new TupleSchema_(this.elements, overwrite(this.props, nextProps))

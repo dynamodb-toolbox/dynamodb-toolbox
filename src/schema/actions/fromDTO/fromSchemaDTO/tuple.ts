@@ -15,6 +15,7 @@ export const fromTupleSchemaDTO = ({
   required,
   hidden,
   key,
+  strict,
   savedAs,
   meta
 }: TupleSchemaDTO): TupleSchema => {
@@ -33,6 +34,10 @@ export const fromTupleSchemaDTO = ({
 
   if (key !== undefined && key) {
     tuple_ = tuple_.key(key)
+  }
+
+  if (strict !== undefined && strict) {
+    tuple_ = tuple_.strict(strict)
   }
 
   if (savedAs !== undefined) {

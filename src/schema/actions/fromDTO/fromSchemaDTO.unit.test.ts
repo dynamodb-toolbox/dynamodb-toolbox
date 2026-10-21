@@ -10,7 +10,8 @@ import {
   NumberSchema,
   RecordSchema,
   SetSchema,
-  StringSchema
+  StringSchema,
+  TupleSchema
 } from '~/schema/index.js'
 
 import { fromSchemaDTO } from './fromSchemaDTO/index.js'
@@ -94,5 +95,19 @@ describe('fromDTO - schema', () => {
     expect(anyOf.elements).toHaveLength(2)
     expect(anyOf.elements[0]?.type).toBe('string')
     expect(anyOf.elements[1]?.type).toBe('null')
+  })
+
+  test('rebuilds a strict tuple', () => {
+    const schemaDTO: ItemSchemaDTO = {
+      type: 'item',
+      attributes: {
+        tuple: { type: 'tuple', elements: [{ type: 'string' }], strict: true }
+      }
+    }
+
+    const { attributes } = fromSchemaDTO(schemaDTO) as ItemSchema
+
+    expect(attributes.tuple).toBeInstanceOf(TupleSchema)
+    expect((attributes.tuple as TupleSchema).props.strict).toBe(true)
   })
 })

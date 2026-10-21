@@ -60,7 +60,9 @@ const TestEntity = new Entity({
     test_list_required: list(any()),
     contents: map({ test: string() }).savedAs('_c'),
     test_map: map({ optional: number().enum(1, 2).optional() }),
+    test_map_strict: map({ num: number().optional() }).strict().optional(),
     test_tuple: tuple(string(), number().enum(1, 2)).optional(),
+    test_tuple_strict: tuple(string(), number().enum(1, 2)).strict().optional(),
     test_string_set: set(string()).optional(),
     test_number_set: set(number()).optional(),
     test_binary_set: set(binary()).optional(),
@@ -1353,6 +1355,53 @@ describe('update', () => {
 
     expect(invalidCallB).toThrow(DynamoDBToolboxError)
     expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('ignores additional elements while updating non-strict tuple', () => {
+    const { UpdateExpression } = TestEntity.build(UpdateItemCommand)
+      .item({
+        email: 'test-pk',
+        sort: 'test-sk',
+        // @ts-expect-error
+        test_tuple: {
+          3: 'Test3'
+        }
+      })
+      .params()
+
+    expect(UpdateExpression).not.toContain('test_tuple')
+  })
+
+  test('rejects additional elements while updating strict tuple', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_tuple_strict: {
+            2: 'Test3'
+          }
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({ code: 'parsing.additionalElement', path: 'test_tuple_strict[2]' })
+    )
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_tuple_strict: ['foo', 2, 'bar']
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(
+      expect.objectContaining({ code: 'parsing.additionalElement', path: 'test_tuple_strict[2]' })
+    )
 
     const invalidCallC = () =>
       TestEntity.build(UpdateItemCommand)
@@ -1360,14 +1409,11 @@ describe('update', () => {
           email: 'test-pk',
           sort: 'test-sk',
           // @ts-expect-error
-          test_tuple: {
-            3: 'Test3'
-          }
+          test_tuple_strict: $set(['foo', 2, 'bar'])
         })
         .params()
 
-    expect(invalidCallC).toThrow(DynamoDBToolboxError)
-    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+    expect(invalidCallC).toThrow(expect.objectContaining({ code: 'parsing.additionalElement' }))
   })
 
   test('accepts references when updating tuple element', () => {
@@ -1705,6 +1751,60 @@ describe('update', () => {
 
     expect(invalidCall).toThrow(DynamoDBToolboxError)
     expect(invalidCall).toThrow(expect.objectContaining({ code: 'parsing.invalidAttributeInput' }))
+  })
+
+  test('rejects additional properties while updating strict map', () => {
+    const invalidCallA = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          // @ts-expect-error
+          test_map_strict: { extra: 'Test' }
+        })
+        .params()
+
+    expect(invalidCallA).toThrow(DynamoDBToolboxError)
+    expect(invalidCallA).toThrow(
+      expect.objectContaining({
+        code: 'parsing.additionalProperty',
+        path: 'test_map_strict.extra'
+      })
+    )
+
+    const invalidCallB = () =>
+      TestEntity.build(UpdateItemCommand)
+        .item({
+          email: 'test-pk',
+          sort: 'test-sk',
+          test_map_strict: $set({ num: 1, extra: 'Test' })
+        })
+        .params()
+
+    expect(invalidCallB).toThrow(expect.objectContaining({ code: 'parsing.additionalProperty' }))
+  })
+
+  test('rejects additional attributes while updating strict item', () => {
+    const StrictEntity = new Entity({
+      name: 'StrictEntity',
+      schema: item({
+        pk: string().key(),
+        sk: string().key(),
+        num: number().optional()
+      }).strict(),
+      table: TestTable
+    })
+
+    const invalidCall = () =>
+      StrictEntity.build(UpdateItemCommand)
+        // @ts-expect-error
+        .item({ pk: 'pk', sk: 'sk', extra: 'Test' })
+        .params()
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'parsing.additionalProperty', path: 'extra' })
+    )
   })
 
   test('updates deep data in a record', () => {

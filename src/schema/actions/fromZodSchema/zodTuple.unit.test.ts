@@ -13,10 +13,10 @@ import {
 import { fromZodSchema } from './fromZodSchema.js'
 
 describe('fromZodSchema > zodTuple', () => {
-  test('returns tuple schema', () => {
+  test('returns strict tuple schema from a plain zod tuple', () => {
     const schema = z.tuple([z.string(), z.number()])
     const output = fromZodSchema(schema)
-    const expected = tuple(string(), number())
+    const expected = tuple(string(), number()).strict()
 
     const assert: A.Equals<typeof output, typeof expected> = 1
     assert
@@ -24,6 +24,18 @@ describe('fromZodSchema > zodTuple', () => {
     expect(output).toBeInstanceOf(TupleSchema_)
     expect(output.elements[0]).toBeInstanceOf(StringSchema_)
     expect(output.elements[1]).toBeInstanceOf(NumberSchema_)
+    expect(output.props.strict).toBe(true)
+  })
+
+  test('returns non-strict tuple schema from a zod tuple with a rest element', () => {
+    const schema = z.tuple([z.string(), z.number()]).rest(z.unknown())
+    const output = fromZodSchema(schema)
+    const expected = tuple(string(), number())
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output).toBeInstanceOf(TupleSchema_)
   })
 
   test('maps a description to meta.description', () => {

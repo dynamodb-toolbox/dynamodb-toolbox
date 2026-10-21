@@ -41,6 +41,14 @@ type AdditionalPropertyErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+type AdditionalElementErrorBlueprint = ErrorBlueprint<{
+  code: 'parsing.additionalElement'
+  hasPath: true
+  payload: {
+    received: unknown
+  }
+}>
+
 /**
  * Union of the error blueprints raised while parsing a value.
  */
@@ -50,3 +58,4 @@ export type ParserErrorBlueprints =
   | InvalidAttributeInputErrorBlueprint
   | CustomValidationFAiledErrorBlueprint
   | AdditionalPropertyErrorBlueprint
+  | AdditionalElementErrorBlueprint

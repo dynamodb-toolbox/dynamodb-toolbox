@@ -126,4 +126,13 @@ describe('dto', () => {
       strict: true
     })
   })
+
+  test('emits `strict: true` for a strict tuple', () => {
+    const schema = item({ tuple: tuple(string(), number()).strict() })
+    const dto = schema.build(SchemaDTO).toJSON()
+
+    expect(dto).toMatchObject({
+      attributes: { tuple: { type: 'tuple', strict: true } }
+    })
+  })
 })
