@@ -82,6 +82,23 @@ Tags schema values as a primary key attribute or linked to a primary key attribu
 const dateRangeSchema = tuple(string(), string()).key()
 ```
 
+### `.strict()`
+
+<p style={{ marginTop: '-15px' }}><i><code>boolean | undefined</code></i></p>
+
+Rejects **additional elements** when parsing input values:
+
+```ts
+const dateRangeSchema = tuple(string(), string()).strict()
+
+// ❌ Throws `parsing.additionalElement`
+dateRangeSchema
+  .build(Parser)
+  .parse(['2024-01-01', '2024-12-31', '2025-12-31'])
+```
+
+Enforcement happens on **writes** only and on all modes.
+
 ### `.savedAs(...)`
 
 <p style={{ marginTop: '-15px' }}><i><code>string</code></i></p>

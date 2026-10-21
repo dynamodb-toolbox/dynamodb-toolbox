@@ -58,7 +58,7 @@ const jsonSchema = pokemonSchema
   .formattedValueSchema()
 ```
 
-Only attributes that appear in the formatted value are included. `item` and `map` schemas produce `type: 'object'` (with `additionalProperties: false` when [`strict`](../14-item/index.md#strict)), `list`/`set`/`tuple` produce `type: 'array'`, `record` produces `type: 'object'` with `propertyNames`/`additionalProperties`, and [`anyOf`](../17-anyOf/index.md) produces an `anyOf` union.
+Only attributes that appear in the formatted value are included. `item` and `map` schemas produce `type: 'object'` (with `additionalProperties: false` when [`strict`](../14-item/index.md#strict)), `list`/`set` produce `type: 'array'`, `tuple` produces `type: 'array'` with `minItems`/`maxItems` set to its arity, `record` produces `type: 'object'` with `propertyNames`/`additionalProperties`, and [`anyOf`](../17-anyOf/index.md) produces an `anyOf` union.
 
 ## Metadata
 
