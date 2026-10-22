@@ -5,7 +5,9 @@ import { TableDTO } from '~/table/actions/dto/index.js'
 
 import { $awsAccount } from './constants.js'
 import { deleteEntity } from './deleteEntity.js'
+import { deleteTable } from './deleteTable.js'
 import { getTableEntityNames } from './getTableEntityNames.js'
+import { getTableNames } from './getTableNames.js'
 import { assignAccessRole, putAccessRole } from './putAccessRole.js'
 import { putAWSAccount } from './putAwsAccount.js'
 import { putEntity } from './putEntity.js'
@@ -44,10 +46,12 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
   async sync({
     apiKey,
     deleteUnknownEntities = false,
+    deleteUnknownTables = false,
     fetch: _fetch = fetch
   }: {
     apiKey: string
     deleteUnknownEntities?: boolean
+    deleteUnknownTables?: boolean
     fetch?: typeof fetch
   }): Promise<void> {
     const fetchOpts: FetchOpts = { apiUrl: this.apiUrl, fetch: _fetch, apiKey }
@@ -75,11 +79,15 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
       fetchOpts
     )
 
+    const knownTableNames = new Set<string>()
+
     for (const registry of Object.values(this.database.tables)) {
       const { tableName, ...tableDTO } = registry.build(TableDTO).toJSON()
       if (tableName === undefined) {
         throw new Error('tableName should be provided')
       }
+
+      knownTableNames.add(tableName)
 
       const tableMetadata = registry.table.meta as SyncedTableMetadata
 
@@ -138,6 +146,16 @@ export class Synchronizer<DATABASE extends Database> extends DatabaseAction<DATA
       if (deleteUnknownEntities && unknownEntityNames !== undefined) {
         for (const entityName of unknownEntityNames) {
           await deleteEntity({ awsAccountId, awsRegion, tableName, entityName }, fetchOpts)
+        }
+      }
+    }
+
+    if (deleteUnknownTables) {
+      const tableNames = await getTableNames({ awsAccountId, awsRegion }, fetchOpts)
+
+      for (const tableName of tableNames) {
+        if (!knownTableNames.has(tableName)) {
+          await deleteTable({ awsAccountId, awsRegion, tableName }, fetchOpts)
         }
       }
     }
