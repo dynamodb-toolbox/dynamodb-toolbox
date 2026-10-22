@@ -56,6 +56,8 @@ await PokeTable.build(Synchronizer)
     apiKey: '<API_KEY>',
     // 👇 (optional) Keep only specified entities (`false` by default)
     deleteUnknownEntities: true,
+    // 👇 (optional) Keep only specified tables (`false` by default)
+    deleteUnknownTables: true,
   })
 ```
 
