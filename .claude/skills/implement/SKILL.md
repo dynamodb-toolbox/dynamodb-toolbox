@@ -18,11 +18,22 @@ Before writing any code, read the following:
 
 ## Your task
 
+### Step 0 — Check the model and the effort
+
+Before anything else, report which model and effort level this session runs on, in one line.
+
+- **Fable**: not the model for this work. Suggest **Opus**.
+- **Maximal effort (ultracode)**: more than this workflow needs. Suggest **Extra** or **Max** effort.
+
+Only the developer can change either (the model picker in the desktop and web apps, `/model` in the terminal), so say what to switch to and wait for their answer before Step 1. Switching later throws away the work in flight. When both are already right, say so in that same line and carry on.
+
 ### Step 1 — Read the tasks
 
-List the tasks that are in `To Implement` status. If there are none, stop there. If there are several, ask which task you should handle.
+List the tasks that are in `To Implement` status, sorted by name (`ORDER BY "Name" COLLATE NOCASE`), so parallel `/implement` runs list them in the same order. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
 
 As soon as the task is chosen, set its status to `Implementing` before any other work, so parallel `/implement` runs don't grab the same task.
+
+If the session exposes a rename tool (`set_session_title`, present in the Claude Code desktop and web apps, absent in the plain terminal, called with `session_id: "self"`), rename the session to `Implement: <topic>`, a few words naming the feature. Skip it silently when no such tool is available.
 
 Fetch the full Notion task, read both the spec and the Strategy section. Extract:
 
@@ -57,19 +68,14 @@ For each step within the current chunk:
 At the end of each chunk, before starting the next:
 
 - **Verify it** — run the relevant tests/build (`npm run test-type`, `npm run test-unit` filtered to the folder, then the full `npm test` when the chunk warrants it) and confirm it's green wherever possible; call out anything left red mid-migration.
+- **Review it against the coding standards with a fresh subagent.** Your own context is bloated by the session history, so spawn a new subagent (`Agent` tool, `general-purpose`, never a fork) to do the review. Brief it with only: the repository path, the chunk's diff (`git diff HEAD` plus untracked files), and the instruction to read [CODING_STANDARDS.md](../../../CODING_STANDARDS.md), `/CLAUDE.md` and the `CLAUDE.md` of each folder the diff touches, then report each violation as `file:line`, the rule broken and the fix, checking every new name against the rules even when it mirrors an existing one (existing code is no precedent). It reports only, it never edits. Apply the fixes you agree with, re-run the checks they affect, and list the findings you rejected, with the reason, in the summary below.
 - **Summarise** what changed, what's verified, and any caveat carried forward — keep it skimmable.
 - **Pause and wait for the developer to review.** Do not begin the next chunk until they tell you to continue. (Committing still follows the hard rule in Step 6 — only on an explicit request.)
 
 Coding standards:
 
-- See `/CLAUDE.md` (ESLint, Prettier, naming conventions, `.js` import extensions, `~/*` path alias).
+- Follow [CODING_STANDARDS.md](../../../CODING_STANDARDS.md) (type safety, functions, organization, keeping the library light) and `/CLAUDE.md` (repository layout, casing, `.js` import extensions, `~/*` path alias), plus the `CLAUDE.md` of each folder you touch.
 - No dead code, no commented-out blocks, no `console.log` left in.
-
-#### Clarity over comments
-
-Make the code readable on its own instead of annotating it. Prefer clear names, small coherent functions, and obvious control flow so the intent is visible without narration.
-
-Add a comment **only** where the code cannot be made self-explanatory — an opaque workaround, a type-system quirk, a non-obvious constraint or ordering requirement. State the _why_, not the _what_. A comment that restates what the code already says is noise — delete it. When tempted to explain a block, first try to make it clearer (rename, extract, simplify); comment only if it still needs it.
 
 #### Compact the conversation regularly
 

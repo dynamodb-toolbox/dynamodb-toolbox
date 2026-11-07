@@ -21,9 +21,11 @@ The Notion board URL can be found in the CLAUDE.md file. Make sure to use the No
 
 ### Step 1 — Read the tasks
 
-List the tasks that are in `To Design` status. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
+List the tasks that are in `To Design` status, sorted by name (`ORDER BY "Name" COLLATE NOCASE`), so parallel `/spec` runs list them in the same order. If there are none, stop there. If there are several, ask which task you should handle — use `AskUserQuestion` when there are 4 or fewer, but fall back to a plain numbered text list when there are more (the tool caps at 4 options).
 
 As soon as the task is chosen, set its status to `Designing` before any other work, so parallel `/spec` runs don't grab the same task.
+
+If the session exposes a rename tool (`set_session_title`, present in the Claude Code desktop and web apps, absent in the plain terminal, called with `session_id: "self"`), rename the session to `Spec: <topic>`, a few words naming the feature. Skip it silently when no such tool is available.
 
 Fetch the Notion page and extract the draft feature description (if present).
 
@@ -35,7 +37,7 @@ Look for similar existing features (actions, transformers, schema types) to stay
 
 ### Step 3 — Grill the user
 
-Before writing anything, challenge the draft. Ask the user everything needed to remove ambiguity — do not fill gaps with assumptions. Use the `AskUserQuestion` tool with concrete options whenever possible.
+Before writing anything, challenge the draft. Ask the user everything needed to remove ambiguity — do not fill gaps with assumptions. Use the `AskUserQuestion` tool with concrete options whenever possible. When a question has 2 options or fewer, add a third one, "Lightest technically" — sometimes every option is fine on the product side and the technical footprint (e.g. how much code it adds) should decide. If it is picked, note in the spec that `/plan` settles it, with the product constraints that still apply.
 
 For instance:
 
@@ -72,11 +74,11 @@ Include a checkbox in each acceptance criterion for manual validation.
 
 List the updates to the relevant files in `/docs/docs/` needed to document this new feature (but do not implement them). Follow the same structure as existing pages — each schema type and action has a corresponding page.
 
-### Step 7 — Validate with user
+### Step 7 — Summarise for the user
 
-Present the spec to the user **concisely** — lead with a short summary (the decisions taken and what visibly changes) and keep the long detail (full behaviour, edge cases, acceptance criteria) scannable or on request, rather than dumping the whole document in chat. The exhaustive version lives in Notion (Step 8). If there is any feedback, update the spec accordingly.
+Do not ask the user to validate the spec — present it, then go straight to Step 8. Present it **concisely**: lead with a short summary (the decisions taken and what visibly changes) and keep the long detail (full behaviour, edge cases, acceptance criteria) scannable or on request, rather than dumping the whole document in chat. The exhaustive version lives in Notion (Step 8). If feedback comes later, update the Notion page accordingly.
 
-Once the user is satisfied, ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`../plan/SKILL.md`](../plan/SKILL.md)) once this workflow is over.
+Then ask if you should continue to the "Plan" step. If they agree, execute the "Plan" command (in [`../plan/SKILL.md`](../plan/SKILL.md)) once this workflow is over.
 
 ### Step 8 — Write back to Notion
 

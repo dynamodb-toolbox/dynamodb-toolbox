@@ -118,6 +118,8 @@ Reversible `{ encode, decode }` codecs applied to attribute values: `prefix`, `s
 
 ## Conventions
 
+Code style — type safety, functions, code organization, keeping the library light — lives in [CODING_STANDARDS.md](./CODING_STANDARDS.md). What follows is the repository's own structure.
+
 - **Casing:**
   - **Generics / type parameters** — `UPPER_SNAKE_CASE` (e.g. `SCHEMA`, `PARTITION_KEY`, `ENTITY_ATTRIBUTE_SAVED_AS`).
   - **Classes & types** — `PascalCase` (e.g. `Entity`, `GetItemCommand`, `FormattedItem`).

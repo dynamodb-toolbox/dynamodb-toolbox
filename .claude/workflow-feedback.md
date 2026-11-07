@@ -8,7 +8,7 @@ Run this only once the main task is finished and Notion has been updated.
 
 Ask the developer whether they have any feedback on the **workflow itself** — this command's prompt, its steps, their ordering, anything that was unclear, redundant, or missing. Make it explicit that you are asking about the *process*, not the feature you just delivered.
 
-Use the `AskUserQuestion` tool, e.g. "No, all good" / "Yes, I have some feedback".
+Use the `AskUserQuestion` tool, e.g. "No, all good" / "Yes, I have some feedback". Do not suggest feedback of your own — the question is the developer's to answer.
 
 - If they have no feedback, thank them and stop. Do not create or change anything.
 
@@ -18,8 +18,8 @@ If they do have feedback:
 
 - Identify which file(s) it affects: `.claude/skills/spec/SKILL.md`, `.claude/skills/plan/SKILL.md`, `.claude/skills/implement/SKILL.md`, this file (`.claude/workflow-feedback.md`), or `/CLAUDE.md`.
 - Draft the **smallest** edit that captures the feedback. Preserve the existing tone and structure — make surgical changes, do not rewrite whole sections.
-- Show the proposed diff and explain each change in one line.
-- Iterate with the developer until they are happy. If a piece of feedback is ambiguous, ask rather than guess.
+- Show the proposed edits as unified diffs in the chat itself (fenced `diff` blocks with a few lines of context), not a paraphrase, and explain each change in one line.
+- Then, once the diffs are in the chat, iterate with the developer through `AskUserQuestion` until they are happy. If a piece of feedback is ambiguous, ask rather than guess.
 
 ## Step 3 — Open a small PR (only if the developer approves)
 
