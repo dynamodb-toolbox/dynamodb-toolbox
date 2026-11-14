@@ -5,7 +5,7 @@ import type { ArrayPath, StrPath } from './types.js'
 
 const listIndexRegex = /\[(\d+)\]/g
 const escapedStrRegex = /\['(.+?)'\]/g
-const regularStrRegex = /[\w#@-]+(?=(\.|\[|$))/g
+const regularStrRegex = /[^.[\]]+(?=(\.|\[|$))/g
 const pathRegex = combineRegExp(listIndexRegex, escapedStrRegex, regularStrRegex)
 
 type MatchType = 'regularStr' | 'escapedStr' | 'listIndex'
