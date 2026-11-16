@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { Entity } from '~/entity/entity.js'
