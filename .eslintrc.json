@@ -51,7 +51,8 @@
         ]
       }
     ],
-    "import/extensions": ["error", "always"],
+    // `ignorePackages` exempts package subpaths (`zod/v3`) from the extension requirement; relative and `~/` imports are unaffected
+    "import/extensions": ["error", "always", { "ignorePackages": true }],
     "prettier/prettier": "error",
     "linebreak-style": ["error", "unix"],
     "quotes": [
@@ -75,7 +76,18 @@
     // v8 flipped the `caughtErrors` default to "all"; keep ignoring unused catch bindings as before
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-non-null-assertion": "warn",
-    "@typescript-eslint/consistent-type-imports": "error"
+    "@typescript-eslint/consistent-type-imports": "error",
+    "@typescript-eslint/no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "zod",
+            "message": "Import from a zod version permalink instead: 'zod/v3' (v3 actions), 'zod/v4' (emitting Classic schemas) or 'zod/v4/core' (consuming Classic or Mini schemas). Bare 'zod' resolves to v4 on a zod 4 install, which breaks the emitted declarations."
+          }
+        ]
+      }
+    ]
   },
   "overrides": [
     {
