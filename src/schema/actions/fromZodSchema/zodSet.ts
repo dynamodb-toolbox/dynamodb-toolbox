@@ -58,7 +58,7 @@ export const fromZodSet = (zodSet: ZodSet): SetSchema => {
     )
   ) {
     throw new DynamoDBToolboxError('fromZodSchema.unsupportedSetValueType', {
-      message: 'Sets can only contain binaries, strings or number',
+      message: 'Sets can only contain strings, numbers or bigints',
       payload: { received: valueType }
     })
   }
