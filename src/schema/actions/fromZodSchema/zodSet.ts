@@ -1,5 +1,5 @@
-import type { ZodSet } from 'zod'
-import { ZodBigInt, ZodNumber, ZodString } from 'zod'
+import type { ZodSet } from 'zod/v3'
+import { ZodBigInt, ZodNumber, ZodString } from 'zod/v3'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {

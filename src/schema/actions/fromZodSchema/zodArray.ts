@@ -1,4 +1,4 @@
-import type { ArrayCardinality, ZodArray, ZodTypeAny } from 'zod'
+import type { ArrayCardinality, ZodArray, ZodTypeAny } from 'zod/v3'
 
 import type { ListSchema, ListSchema_ } from '~/index.js'
 import { list } from '~/schema/list/index.js'

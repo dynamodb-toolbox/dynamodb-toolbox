@@ -1,4 +1,4 @@
-import type { UnknownKeysParam, ZodObject, ZodRawShape } from 'zod'
+import type { UnknownKeysParam, ZodObject, ZodRawShape } from 'zod/v3'
 
 import type { MapSchema, MapSchema_ } from '~/index.js'
 import { map } from '~/schema/map/index.js'

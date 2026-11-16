@@ -1,4 +1,4 @@
-import type { ZodTuple, ZodTypeAny } from 'zod'
+import type { ZodTuple, ZodTypeAny } from 'zod/v3'
 
 import type { TupleSchema, TupleSchema_ } from '~/index.js'
 import { tuple } from '~/schema/tuple/index.js'

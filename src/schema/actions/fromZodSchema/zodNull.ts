@@ -1,4 +1,4 @@
-import type { ZodNull } from 'zod'
+import type { ZodNull } from 'zod/v3'
 
 import type { NullSchema, NullSchema_ } from '~/index.js'
 import { nul } from '~/schema/null/index.js'

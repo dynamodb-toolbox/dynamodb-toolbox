@@ -1,5 +1,5 @@
 import type { A } from 'ts-toolbelt'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import { AnyOfSchema_, MapSchema_, StringSchema_, anyOf, map, string } from '~/schema/index.js'
 

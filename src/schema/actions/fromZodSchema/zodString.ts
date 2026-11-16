@@ -1,4 +1,4 @@
-import type { ZodString } from 'zod'
+import type { ZodString } from 'zod/v3'
 
 import type { StringSchema, StringSchema_ } from '~/index.js'
 import { string } from '~/schema/string/index.js'

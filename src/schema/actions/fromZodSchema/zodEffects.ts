@@ -1,4 +1,4 @@
-import type { ZodEffects, ZodTypeAny } from 'zod'
+import type { ZodEffects, ZodTypeAny } from 'zod/v3'
 
 import type { Schema, Validator } from '~/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'

@@ -1,4 +1,4 @@
-import type { ZodDiscriminatedUnion, ZodDiscriminatedUnionOption } from 'zod'
+import type { ZodDiscriminatedUnion, ZodDiscriminatedUnionOption } from 'zod/v3'
 
 import type { AnyOfSchema, AnyOfSchema_ } from '~/index.js'
 import { anyOf } from '~/schema/anyOf/index.js'

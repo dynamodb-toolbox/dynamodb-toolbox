@@ -1,4 +1,4 @@
-import type { ZodOptional, ZodTypeAny } from 'zod'
+import type { ZodOptional, ZodTypeAny } from 'zod/v3'
 
 import type { Schema } from '~/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'

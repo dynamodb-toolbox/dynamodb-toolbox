@@ -1,4 +1,4 @@
-import type { ZodLiteral } from 'zod'
+import type { ZodLiteral } from 'zod/v3'
 
 import { DynamoDBToolboxError } from '~/errors/index.js'
 import type {

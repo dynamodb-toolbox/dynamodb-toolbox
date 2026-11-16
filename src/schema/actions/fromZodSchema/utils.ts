@@ -1,4 +1,4 @@
-import type { ZodType } from 'zod'
+import type { ZodType } from 'zod/v3'
 
 import type { Schema, Schema_ } from '~/schema/types/schema.js'
 

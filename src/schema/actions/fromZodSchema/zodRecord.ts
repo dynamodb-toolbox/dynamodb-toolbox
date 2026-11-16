@@ -1,5 +1,5 @@
-import type { KeySchema, ZodRecord } from 'zod'
-import { ZodEnum, ZodString } from 'zod'
+import type { KeySchema, ZodRecord } from 'zod/v3'
+import { ZodEnum, ZodString } from 'zod/v3'
 
 import type { RecordSchema, RecordSchema_, StringSchema } from '~/index.js'
 import { record } from '~/schema/record/index.js'

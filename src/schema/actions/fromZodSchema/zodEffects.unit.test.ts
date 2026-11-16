@@ -1,5 +1,5 @@
 import type { A } from 'ts-toolbelt'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import { Parser } from '~/schema/actions/parse/index.js'
 import { AnySchema_, StringSchema_, any, string } from '~/schema/index.js'

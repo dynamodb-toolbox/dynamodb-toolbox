@@ -1,4 +1,4 @@
-import type { ZodType } from 'zod'
+import type { ZodType } from 'zod/v3'
 
 import type { AnySchema, AnySchema_ } from '~/index.js'
 import { any } from '~/schema/any/index.js'

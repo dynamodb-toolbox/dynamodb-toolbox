@@ -1,4 +1,4 @@
-import type { ZodUnion, ZodUnionOptions } from 'zod'
+import type { ZodUnion, ZodUnionOptions } from 'zod/v3'
 
 import type { AnyOfSchema, AnyOfSchema_ } from '~/index.js'
 import { anyOf } from '~/schema/anyOf/index.js'

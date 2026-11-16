@@ -1,4 +1,4 @@
-import type { ZodNumber } from 'zod'
+import type { ZodNumber } from 'zod/v3'
 
 import type { NumberSchema, NumberSchema_ } from '~/index.js'
 import { number } from '~/schema/number/index.js'

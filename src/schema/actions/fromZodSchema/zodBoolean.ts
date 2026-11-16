@@ -1,4 +1,4 @@
-import type { ZodBoolean } from 'zod'
+import type { ZodBoolean } from 'zod/v3'
 
 import type { BooleanSchema, BooleanSchema_ } from '~/index.js'
 import { boolean } from '~/schema/boolean/index.js'

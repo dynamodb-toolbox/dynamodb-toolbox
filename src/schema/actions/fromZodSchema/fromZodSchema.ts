@@ -1,4 +1,4 @@
-import type { ZodSchema, ZodType } from 'zod'
+import type { ZodSchema, ZodType } from 'zod/v3'
 import {
   ZodArray,
   ZodBigInt,
@@ -17,7 +17,7 @@ import {
   ZodString,
   ZodTuple,
   ZodUnion
-} from 'zod'
+} from 'zod/v3'
 
 import type { Schema } from '~/schema/types/schema.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
