@@ -1,5 +1,5 @@
 import type { A } from 'ts-toolbelt'
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import { set, string } from '~/schema/index.js'
 

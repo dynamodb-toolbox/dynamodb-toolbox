@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import type { ItemSchema, MapSchema, Schema, TransformedValue } from '~/schema/index.js'
 import type { Transformer } from '~/transformers/transformer.js'

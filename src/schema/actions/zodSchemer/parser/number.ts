@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import type { NumberSchema, ResolvedNumberSchema } from '~/schema/index.js'
 import type { Cast } from '~/types/cast.js'

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import type { ListSchema } from '~/schema/index.js'
 import type { Overwrite } from '~/types/overwrite.js'

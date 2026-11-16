@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod/v3'
 
 import type { ItemSchema } from '~/schema/index.js'
 import type { OmitKeys } from '~/types/omitKeys.js'
