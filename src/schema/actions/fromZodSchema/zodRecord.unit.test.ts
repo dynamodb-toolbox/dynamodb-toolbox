@@ -1,6 +1,7 @@
 import type { A } from 'ts-toolbelt'
 import { z } from 'zod/v3'
 
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import {
   NumberSchema_,
   RecordSchema_,
@@ -38,6 +39,15 @@ describe('fromZodSchema > zodRecord', () => {
     expect(output.keys).toBeInstanceOf(StringSchema_)
     expect(output.keys.props.enum).toStrictEqual(['foo', 'bar'])
     expect(output.elements).toBeInstanceOf(NumberSchema_)
+  })
+
+  test('throws if keys are neither strings nor enums', () => {
+    const invalidCall = () => fromZodSchema(z.record(z.number(), z.string()))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'fromZodSchema.unsupportedRecordKeyType' })
+    )
   })
 
   test('maps a description to meta.description', () => {

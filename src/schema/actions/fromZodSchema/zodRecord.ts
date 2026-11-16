@@ -1,6 +1,7 @@
 import type { KeySchema, ZodRecord } from 'zod/v3'
 import { ZodEnum, ZodString } from 'zod/v3'
 
+import { DynamoDBToolboxError } from '~/errors/index.js'
 import type { RecordSchema, RecordSchema_, StringSchema } from '~/index.js'
 import { record } from '~/schema/record/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
@@ -45,7 +46,10 @@ export const fromZodRecord = (zodRecord: ZodRecordAny): RecordSchema => {
   const { keySchema, valueSchema } = zodRecord
 
   if (!(keySchema instanceof ZodString || keySchema instanceof ZodEnum)) {
-    throw new Error()
+    throw new DynamoDBToolboxError('fromZodSchema.unsupportedRecordKeyType', {
+      message: 'Record keys can only be strings or enums',
+      payload: { received: keySchema }
+    })
   }
 
   return withMeta(record(fromZodSchema(keySchema), fromZodSchema(valueSchema)), zodRecord)
