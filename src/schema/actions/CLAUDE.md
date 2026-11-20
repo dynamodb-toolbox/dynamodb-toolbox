@@ -19,7 +19,9 @@ const { key, item } = parser.parse(input)
 | `dto` | `SchemaDTO` | Serialize a schema → JSON DTO (portable definition). |
 | `fromDTO` | `fromSchemaDTO` | Rebuild a schema from a DTO (inverse of `dto`). |
 | `zodSchemer` | `ZodSchemer` | Derive Zod schemas (`ZodParser` / `ZodFormatter`) from a DDB-TB schema. |
-| `fromZodSchema` | `fromZodSchema` | Convert a Zod schema → DDB-TB schema (inverse direction). |
+| `fromZodSchema/v3` | `fromZodSchema` | Convert a zod v3 schema → DDB-TB schema (inverse direction). |
+| `fromZodSchema/v4` | `fromZodSchema` | Same, for zod v4 schemas (Classic or Mini). |
+| `fromZodSchema` | `fromZodSchema` | Deprecated alias of `fromZodSchema/v3`, plus the error codes both versions share. |
 | `finder` | `Finder` | Locate sub-schemas at a given path (used by path/condition logic). |
 | `utils` | — | Shared internals: path parsing/formatting, deduper, errors. Not a public action. |
 | `errors.ts` | — | Shared action error codes. |

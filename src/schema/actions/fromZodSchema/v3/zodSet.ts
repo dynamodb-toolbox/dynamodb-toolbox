@@ -14,8 +14,8 @@ import { set } from '~/schema/set/index.js'
 import type { SetElementProps } from '~/schema/set/types.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
-import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import type { FromZodSchema } from './types.js'
 import { withMeta } from './utils.js'
 
 /**

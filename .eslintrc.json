@@ -83,7 +83,7 @@
         "paths": [
           {
             "name": "zod",
-            "message": "Import from a zod version permalink instead: 'zod/v3' (v3 actions), 'zod/v4' (emitting Classic schemas) or 'zod/v4/core' (consuming Classic or Mini schemas). Bare 'zod' resolves to v4 on a zod 4 install, which breaks the emitted declarations."
+            "message": "Import from a zod version permalink instead: 'zod/v3' (v3 actions), 'zod/v4' (emitting Classic schemas), 'zod/v4/core' (consuming Classic or Mini schemas) or 'zod/v4/mini' (tests building Mini input). Bare 'zod' resolves to v4 on a zod 4 install, which breaks the emitted declarations."
           }
         ]
       }

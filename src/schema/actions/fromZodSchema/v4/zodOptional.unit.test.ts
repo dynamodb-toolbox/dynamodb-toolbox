@@ -1,0 +1,26 @@
+import type { A } from 'ts-toolbelt'
+import { z } from 'zod/v4'
+
+import { AnySchema_, any } from '~/schema/index.js'
+
+import { fromZodSchema } from './fromZodSchema.js'
+
+describe('fromZodSchema(v4) > zodOptional', () => {
+  test('returns optional schema', () => {
+    const schema = z.custom().optional()
+    const output = fromZodSchema(schema)
+    const expected = any().optional()
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output).toBeInstanceOf(AnySchema_)
+    expect(output.props.required).toBe('never')
+  })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.string().optional().describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
+})

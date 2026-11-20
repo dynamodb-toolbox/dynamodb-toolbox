@@ -4,8 +4,8 @@ import type { AnyOfSchema, AnyOfSchema_ } from '~/index.js'
 import { anyOf } from '~/schema/anyOf/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
-import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import type { FromZodSchemaRec } from './types.js'
 import { withMeta } from './utils.js'
 
 /**

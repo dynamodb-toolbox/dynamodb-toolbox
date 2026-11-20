@@ -1,38 +1,30 @@
-import type { ZodDiscriminatedUnion, ZodDiscriminatedUnionOption } from 'zod/v3'
+import type { $ZodDiscriminatedUnion, $ZodDiscriminatedUnionDef, SomeType } from 'zod/v4/core'
 
 import type { AnyOfSchema, AnyOfSchema_ } from '~/index.js'
 import { anyOf } from '~/schema/anyOf/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 import type { Overwrite } from '~/types/overwrite.js'
 
-import type { FromZodSchemaRec } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
-import { withMeta } from './utils.js'
-
-/**
- * Any `zod` discriminated union schema.
- */
-export type ZodDiscriminatedUnionAny = ZodDiscriminatedUnion<
-  string,
-  ZodDiscriminatedUnionOption<string>[]
->
+import type { FromZodSchemaRec } from './types.js'
+import { withMeta, withRefinements } from './utils.js'
 
 /**
  * DDB-TB schema derived from a `zod` discriminated union schema.
  */
 export type FromZodDiscriminatedUnion<
-  ZOD_SCHEMA extends ZodDiscriminatedUnionAny,
+  ZOD_SCHEMA extends $ZodDiscriminatedUnion,
   ROOT extends boolean = true,
   PROPS extends SchemaProps = {}
 > =
-  ZOD_SCHEMA extends ZodDiscriminatedUnion<infer DISCRIMINATOR, infer ELEMENT_ZOD_SCHEMAS>
+  ZOD_SCHEMA extends $ZodDiscriminatedUnion<infer ZOD_SCHEMA_ELEMENTS, infer DISCRIMINATOR>
     ? ROOT extends true
       ? AnyOfSchema_<
-          FromZodSchemaRec<ELEMENT_ZOD_SCHEMAS, false>,
+          FromZodSchemaRec<ZOD_SCHEMA_ELEMENTS, false>,
           Overwrite<PROPS, { discriminator: DISCRIMINATOR }>
         >
       : AnyOfSchema<
-          FromZodSchemaRec<ELEMENT_ZOD_SCHEMAS, false>,
+          FromZodSchemaRec<ZOD_SCHEMA_ELEMENTS, false>,
           Overwrite<PROPS, { discriminator: DISCRIMINATOR }>
         >
     : never
@@ -41,11 +33,13 @@ export type FromZodDiscriminatedUnion<
  * Convert a `zod` discriminated union schema to a DDB-TB schema.
  */
 export const fromZodDiscriminatedUnion = (
-  zodDiscriminatedUnion: ZodDiscriminatedUnionAny
+  zodDiscriminatedUnion: SomeType,
+  { options, discriminator }: $ZodDiscriminatedUnionDef
 ): AnyOfSchema =>
-  withMeta(
-    anyOf(...zodDiscriminatedUnion.options.map(option => fromZodSchema(option))).discriminate(
-      zodDiscriminatedUnion._def.discriminator
+  withRefinements(
+    withMeta(
+      anyOf(...options.map(option => fromZodSchema(option))).discriminate(discriminator),
+      zodDiscriminatedUnion
     ),
     zodDiscriminatedUnion
   )

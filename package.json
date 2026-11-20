@@ -289,6 +289,26 @@
         "default": "./dist/cjs/schema/actions/fromZodSchema/index.js"
       }
     },
+    "./schema/actions/fromZodSchema/v3": {
+      "import": {
+        "types": "./dist/esm/schema/actions/fromZodSchema/v3/index.d.ts",
+        "default": "./dist/esm/schema/actions/fromZodSchema/v3/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/actions/fromZodSchema/v3/index.d.ts",
+        "default": "./dist/cjs/schema/actions/fromZodSchema/v3/index.js"
+      }
+    },
+    "./schema/actions/fromZodSchema/v4": {
+      "import": {
+        "types": "./dist/esm/schema/actions/fromZodSchema/v4/index.d.ts",
+        "default": "./dist/esm/schema/actions/fromZodSchema/v4/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/actions/fromZodSchema/v4/index.d.ts",
+        "default": "./dist/cjs/schema/actions/fromZodSchema/v4/index.js"
+      }
+    },
     "./schema/actions/dto": {
       "import": {
         "types": "./dist/esm/schema/actions/dto/index.d.ts",

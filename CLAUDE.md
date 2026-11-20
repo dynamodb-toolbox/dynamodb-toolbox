@@ -126,7 +126,7 @@ Code style — type safety, functions, code organization, keeping the library li
   - **Functions, variables, values** — `camelCase` (e.g. `string()`, `fromSchemaDTO`, `documentClient`).
 - **Path alias:** `~/*` → `src/*` (see `tsconfig.json`). Import as `~/schema/index.js`.
 - **`.js` extensions in imports** — required for ESM output even though sources are `.ts`.
-- **Never import bare `'zod'`** — always a version permalink: `zod/v3` for the v3 actions, `zod/v4` to emit Classic schemas, `zod/v4/core` to consume Classic or Mini ones. Bare `'zod'` resolves to v3 or v4 depending on what the user installed, which breaks the emitted declarations. Enforced by `@typescript-eslint/no-restricted-imports`.
+- **Never import bare `'zod'`** — always a version permalink: `zod/v3` for the v3 actions, `zod/v4` to emit Classic schemas, `zod/v4/core` to consume Classic or Mini ones, `zod/v4/mini` in tests that build Mini input. Bare `'zod'` resolves to v3 or v4 depending on what the user installed, which breaks the emitted declarations. Enforced by `@typescript-eslint/no-restricted-imports`.
 - **Every folder has an `index.ts` barrel.** New public API must also be re-exported from `src/index.ts` **and** given a subpath in `package.json` `exports`.
 - **Two class variants:** many schema types export both `XSchema` and `XSchema_` (the `_` variant is the "warm"/builder form used during definition).
 - **Test files sit next to source:**

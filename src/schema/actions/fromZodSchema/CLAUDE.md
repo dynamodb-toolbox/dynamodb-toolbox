@@ -1,19 +1,13 @@
 # `fromZodSchema` — `fromZodSchema`
 
-Converts a **Zod** schema into a DDB-TB schema, so an existing Zod-defined model can drive DynamoDB. Inverse direction: [`zodSchemer`](../zodSchemer/CLAUDE.md).
+Converts a **zod** schema into a DDB-TB schema, so an existing zod-defined model can drive DynamoDB. Inverse direction: [`zodSchemer`](../zodSchemer/CLAUDE.md).
 
-A plain function (no schema to `build` from yet).
+zod ships two major versions in one package, under the `zod/v3` and `zod/v4` permalinks, so the action has one implementation per version:
 
-```ts
-const ddbSchema = fromZodSchema(zObject)
-```
-
-Note: not re-exported from the action `index.ts` at time of writing — imported directly / via the `dynamodb-toolbox/schema/actions/fromZodSchema` subpath. Marked v3-facing.
+- [`v3/`](./v3/CLAUDE.md) — `dynamodb-toolbox/schema/actions/fromZodSchema/v3`
+- [`v4/`](./v4/CLAUDE.md) — `dynamodb-toolbox/schema/actions/fromZodSchema/v4`
 
 ## Files
 
-- `fromZodSchema.ts` — entry (`fromZodSchema`).
-- One file per Zod node — `zodString.ts`, `zodNumber.ts`, `zodBoolean.ts`, `zodBigInt.ts`, `zodNull.ts`, `zodLiteral.ts`, `zodEnum.ts`, `zodArray.ts`, `zodTuple.ts`, `zodObject.ts`, `zodRecord.ts`, `zodSet.ts`, `zodUnion.ts`, `zodDiscriminatedUnion.ts`, `zodOptional.ts`, `zodDefault.ts`, `zodEffects.ts`, `zodCustom.ts` — each mapping one Zod type to its DDB-TB equivalent.
-- `errors.ts` — raised for unsupported Zod constructs.
-
-Each mapper has a colocated `*.unit.test.ts`. Adding support for a Zod node = new `zodX.ts` + wire into `fromZodSchema.ts`.
+- `index.ts` — the `dynamodb-toolbox/schema/actions/fromZodSchema` subpath, kept as a **deprecated** alias of `v3/` so existing imports keep working. It re-declares `fromZodSchema`, `FromZodSchema` and `FromZodSchemaRec` rather than re-exporting them, which is what carries the `@deprecated` tag to consumers.
+- `errors.ts` — the `fromZodSchema.*` error codes, raised by both implementations and wired into the error union by `../errors.ts`. It stays here because the codes are shared: neither version namespaces its own.

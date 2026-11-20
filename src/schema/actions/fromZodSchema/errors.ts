@@ -24,10 +24,19 @@ type UnsupportedRecordKeyTypeErrorBlueprint = ErrorBlueprint<{
   }
 }>
 
+type UnrecognizedEnumErrorBlueprint = ErrorBlueprint<{
+  code: 'fromZodSchema.unrecognizedEnum'
+  hasPath: false
+  payload: {
+    received: unknown
+  }
+}>
+
 /**
  * Union of error blueprints raised when converting a `zod` schema.
  */
 export type FromZodSchemaErrorBlueprints =
   | UnrecognizedLiteralErrorBlueprint
+  | UnrecognizedEnumErrorBlueprint
   | UnsupportedSetValueTypeErrorBlueprint
   | UnsupportedRecordKeyTypeErrorBlueprint

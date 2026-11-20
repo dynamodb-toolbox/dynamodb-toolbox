@@ -6,8 +6,8 @@ import type { RecordSchema, RecordSchema_, StringSchema } from '~/index.js'
 import { record } from '~/schema/record/index.js'
 import type { SchemaProps } from '~/schema/types/schemaProps.js'
 
-import type { FromZodSchema } from './fromZodSchema.js'
 import { fromZodSchema } from './fromZodSchema.js'
+import type { FromZodSchema } from './types.js'
 import { withMeta } from './utils.js'
 
 /**
