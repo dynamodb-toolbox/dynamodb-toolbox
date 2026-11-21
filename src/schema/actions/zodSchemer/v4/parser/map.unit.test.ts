@@ -211,7 +211,7 @@ describe('zodSchemer > parser > map', () => {
   })
 
   describe('encoding/decoding', () => {
-    test('returns a zod effect if an attribute is renamed', () => {
+    test('returns a zod pipe if an attribute is renamed', () => {
       const schema = map({ str: string(), num: number().savedAs('_n') })
       const output = schemaZodParser(schema)
       const expectedSchema = z.object({ str: z.string(), num: z.number() })

@@ -5,7 +5,7 @@ Derives **zod** schemas from a DDB-TB schema, for validating at the app boundary
 zod ships two major versions in one package, under the `zod/v3` and `zod/v4` permalinks, so the action has one implementation per version:
 
 - [`v3/`](./v3/CLAUDE.md) — `dynamodb-toolbox/schema/actions/zodSchemer/v3`
-- [`v4/`](./v4/CLAUDE.md) — `dynamodb-toolbox/schema/actions/zodSchemer/v4` (subpath not published yet: the parser side is in, the formatter and the `ZodSchemer` class are not)
+- [`v4/`](./v4/CLAUDE.md) — `dynamodb-toolbox/schema/actions/zodSchemer/v4`
 
 ## Files
 

@@ -38,8 +38,8 @@ describe('zodSchemer > parser > string', () => {
 
       expect(expected).toBeInstanceOf(z.ZodOptional)
       expect(output).toBeInstanceOf(z.ZodOptional)
-      expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
-      expect(output.unwrap()).toBeInstanceOf(z.ZodType)
+      expect(expected.unwrap()).toBeInstanceOf(z.ZodString)
+      expect(output.unwrap()).toBeInstanceOf(z.ZodString)
 
       expect(expected.parse(FOO)).toBe(FOO)
       expect(output.parse(FOO)).toBe(FOO)
@@ -74,9 +74,9 @@ describe('zodSchemer > parser > string', () => {
       assert
 
       expect(expected).toBeInstanceOf(z.ZodDefault)
-      expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
+      expect(expected.unwrap()).toBeInstanceOf(z.ZodString)
       expect(output).toBeInstanceOf(z.ZodDefault)
-      expect(output.unwrap()).toBeInstanceOf(z.ZodType)
+      expect(output.unwrap()).toBeInstanceOf(z.ZodString)
 
       expect(expected.parse(undefined)).toStrictEqual(FOO)
       expect(output.parse(undefined)).toStrictEqual(FOO)
@@ -91,9 +91,9 @@ describe('zodSchemer > parser > string', () => {
       assert
 
       expect(expected).toBeInstanceOf(z.ZodDefault)
-      expect(expected.unwrap()).toBeInstanceOf(z.ZodType)
+      expect(expected.unwrap()).toBeInstanceOf(z.ZodString)
       expect(output).toBeInstanceOf(z.ZodDefault)
-      expect(output.unwrap()).toBeInstanceOf(z.ZodType)
+      expect(output.unwrap()).toBeInstanceOf(z.ZodString)
 
       expect(expected.parse(undefined)).toStrictEqual(FOO)
       expect(output.parse(undefined)).toStrictEqual(FOO)

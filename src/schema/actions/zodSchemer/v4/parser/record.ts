@@ -50,6 +50,7 @@ export const compileKeysEncoder =
     // Every schema type declares `transform` as `unknown`, so reading it as a transformer is a cast
     const transformer = schema.keys.props.transform as Transformer
 
+    // The input value is a record, which zod types as `unknown` at the call site
     for (const [key, value] of Object.entries(decoded as Record<string, unknown>)) {
       encoded[transformer.encode(key)] = value
     }

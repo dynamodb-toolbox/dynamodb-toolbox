@@ -201,7 +201,7 @@ describe('zodSchemer > parser > record', () => {
   })
 
   describe('encoding/decoding', () => {
-    test('returns object zod effects if keys are enum & transformed', () => {
+    test('returns object zod pipe if keys are enum & transformed', () => {
       const transformer = prefix('_', { delimiter: '' })
       const schema = record(string().enum('foo').transform(transformer), number())
       const output = schemaZodParser(schema)
@@ -248,7 +248,7 @@ describe('zodSchemer > parser > record', () => {
       expect(output.parse(VALUE)).toStrictEqual(VALUE)
     })
 
-    test('returns record zod schema with effects as keys if keys are transformed & non-enum', () => {
+    test('returns record zod schema with a pipe as keys if keys are transformed & non-enum', () => {
       const transformer = prefix('_', { delimiter: '' })
       const schema = record(string().transform(transformer), number())
       const output = schemaZodParser(schema)
