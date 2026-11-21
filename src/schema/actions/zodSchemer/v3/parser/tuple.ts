@@ -76,17 +76,17 @@ export const tupleZodParser = (
     schema,
     withDefault(
       schema,
-      options,
       withOptional(
         schema,
-        options,
         withValidate(
           schema,
           schema.props.strict
             ? zodTuple
             : zodTuple.rest(z.unknown()).transform(values => values.slice(0, zodTuple.items.length))
-        )
-      )
+        ),
+        options
+      ),
+      options
     )
   )
 }

@@ -63,8 +63,8 @@ export type WithOptional<
  */
 export const withOptional = (
   schema: Schema,
-  { partial, defined }: ZodFormatterOptions,
-  zodSchema: z.ZodTypeAny
+  zodSchema: z.ZodTypeAny,
+  { partial, defined }: ZodFormatterOptions
 ): z.ZodTypeAny =>
   defined === true
     ? zodSchema
@@ -94,8 +94,8 @@ export type WithDecoding<
  */
 export const withDecoding = (
   schema: Extract<Schema, { props: { transform?: unknown } }>,
-  { transform }: ZodFormatterOptions,
-  zodSchema: z.ZodTypeAny
+  zodSchema: z.ZodTypeAny,
+  { transform }: ZodFormatterOptions
 ): z.ZodTypeAny =>
   transform === false
     ? zodSchema
@@ -121,8 +121,8 @@ export type WithAttributeNameDecoding<
  */
 export const withAttributeNameDecoding = (
   schema: MapSchema | ItemSchema,
-  { transform }: ZodFormatterOptions,
-  zodSchema: z.ZodTypeAny
+  zodSchema: z.ZodTypeAny,
+  { transform }: ZodFormatterOptions
 ): z.ZodTypeAny =>
   transform === false ||
   Object.values(schema.attributes).every(attribute => attribute.props.savedAs === undefined)

@@ -26,5 +26,5 @@ export type AnyZodFormatter<
 export const anyZodFormatter = (schema: AnySchema, options: ZodFormatterOptions): z.ZodTypeAny =>
   withDescribe(
     schema,
-    withDecoding(schema, options, withOptional(schema, options, withValidate(schema, z.custom())))
+    withDecoding(schema, withOptional(schema, withValidate(schema, z.custom()), options), options)
   )

@@ -30,8 +30,8 @@ type WithDecodedKeys<
 
 const withDecodedKeys = (
   schema: RecordSchema,
-  { transform }: ZodFormatterOptions,
-  zodSchema: z.ZodTypeAny
+  zodSchema: z.ZodTypeAny,
+  { transform }: ZodFormatterOptions
 ): z.ZodTypeAny =>
   transform === false
     ? zodSchema
@@ -112,8 +112,8 @@ export const recordZodFormatter = (
      */
     zodFormatter = withDecodedKeys(
       schema,
-      options,
-      z.object(Object.fromEntries(schema.keys.props.enum.map(key => [key, elementsFormatter])))
+      z.object(Object.fromEntries(schema.keys.props.enum.map(key => [key, elementsFormatter]))),
+      options
     )
   } else {
     zodFormatter = z.record(
@@ -122,5 +122,5 @@ export const recordZodFormatter = (
     )
   }
 
-  return withDescribe(schema, withOptional(schema, options, withValidate(schema, zodFormatter)))
+  return withDescribe(schema, withOptional(schema, withValidate(schema, zodFormatter), options))
 }

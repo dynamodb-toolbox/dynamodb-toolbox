@@ -40,14 +40,14 @@ export const listZodParser = (schema: ListSchema, options: ZodParserOptions = {}
     schema,
     withDefault(
       schema,
-      options,
       withOptional(
         schema,
-        options,
         withValidate(
           schema,
           z.array(schemaZodParser(schema.elements, { ...options, defined: true }))
-        )
-      )
+        ),
+        options
+      ),
+      options
     )
   )

@@ -55,13 +55,13 @@ export const anyOfZodParser = (
   schema: AnyOfSchema,
   options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
-  let zodFormatter: z.ZodTypeAny
+  let zodParser: z.ZodTypeAny
 
   const { discriminator } = schema.props
   if (discriminator !== undefined) {
     // LIMITATION: Does not support nested `anyOf`s for now, should change with v4: https://v4.zod.dev/v4#upgraded-zdiscriminatedunion
     // LIMITATION: Does not support `savedAs` attributes for now as ZodEffects are not valid discriminatedUnion options
-    zodFormatter = z.discriminatedUnion(
+    zodParser = z.discriminatedUnion(
       discriminator,
       schema.elements.map(element => schemaZodParser(element, { ...options, defined: true })) as [
         z.ZodDiscriminatedUnionOption<string>,
@@ -69,7 +69,7 @@ export const anyOfZodParser = (
       ]
     )
   } else {
-    zodFormatter = z.union(
+    zodParser = z.union(
       schema.elements.map(element => schemaZodParser(element, { ...options, defined: true })) as [
         z.ZodTypeAny,
         z.ZodTypeAny,
@@ -80,6 +80,6 @@ export const anyOfZodParser = (
 
   return withDescribe(
     schema,
-    withDefault(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
+    withDefault(schema, withOptional(schema, withValidate(schema, zodParser), options), options)
   )
 }

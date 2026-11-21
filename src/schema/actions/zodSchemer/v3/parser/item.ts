@@ -60,6 +60,6 @@ export const itemZodParser = <SCHEMA extends ItemSchema, OPTIONS extends ZodPars
 
   return withDescribe(
     schema,
-    withAttributeNameEncoding(schema, options, schema.props.strict ? zodObject.strict() : zodObject)
+    withAttributeNameEncoding(schema, schema.props.strict ? zodObject.strict() : zodObject, options)
   ) as ItemZodParser<SCHEMA, OPTIONS>
 }

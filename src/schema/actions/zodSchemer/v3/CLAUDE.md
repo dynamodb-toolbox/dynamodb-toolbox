@@ -15,6 +15,8 @@ const zFormatter = zodSchemer.formatter()  // ZodFormatter — validates FORMATT
 - `zodSchemer.ts` — `ZodSchemer` class (`actionName = 'zodSchemer'`).
 - `parser/` — builds a Zod schema for the write/input side (`ZodParser`).
 - `formatter/` — builds a Zod schema for the read/formatted side (`ZodFormatter`).
-- `utils.ts` — shared helpers.
+- `utils.ts` — shared helpers (`withValidate`, `withDescribe`).
+
+`parser/utils.ts` holds the wrappers each type file applies, in this order: `withEncoding` (the schema's transformer), `withAttributeNameEncoding` (`savedAs`), `withValidate`, `withDescribe`, `withDefault`, `withOptional`. Each takes `(schema, zodSchema, options)`, as in v4. `formatter/utils.ts` mirrors it with `withDecoding`, `withAttributeNameDecoding` and `withOptional` — a formatter has no default to apply.
 
 `zod` is a **dev/peer** concern — imported for types only; not a runtime dependency of the core.

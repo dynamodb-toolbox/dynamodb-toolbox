@@ -51,6 +51,6 @@ export const stringZodFormatter = (
 
   return withDescribe(
     schema,
-    withDecoding(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
+    withDecoding(schema, withOptional(schema, withValidate(schema, zodFormatter), options), options)
   )
 }

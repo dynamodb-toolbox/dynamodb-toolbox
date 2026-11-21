@@ -60,10 +60,8 @@ export const mapZodFormatter = (
     schema,
     withAttributeNameDecoding(
       schema,
-      options,
       withOptional(
         schema,
-        options,
         withValidate(
           schema,
           z.object(
@@ -74,8 +72,10 @@ export const mapZodFormatter = (
               ])
             )
           )
-        )
-      )
+        ),
+        options
+      ),
+      options
     )
   )
 }

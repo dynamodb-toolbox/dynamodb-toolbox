@@ -40,11 +40,14 @@ export const setZodParser = (schema: SetSchema, options: ZodParserOptions = {}):
     schema,
     withDefault(
       schema,
-      options,
       withOptional(
         schema,
-        options,
-        withValidate(schema, z.set(schemaZodParser(schema.elements, { ...options, defined: true })))
-      )
+        withValidate(
+          schema,
+          z.set(schemaZodParser(schema.elements, { ...options, defined: true }))
+        ),
+        options
+      ),
+      options
     )
   )

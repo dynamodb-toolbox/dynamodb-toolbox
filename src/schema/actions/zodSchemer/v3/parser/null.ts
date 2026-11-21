@@ -28,7 +28,7 @@ export const nullZodParser = (schema: NullSchema, options: ZodParserOptions = {}
     schema,
     withEncoding(
       schema,
-      options,
-      withDefault(schema, options, withOptional(schema, options, withValidate(schema, z.null())))
+      withDefault(schema, withOptional(schema, withValidate(schema, z.null()), options), options),
+      options
     )
   )

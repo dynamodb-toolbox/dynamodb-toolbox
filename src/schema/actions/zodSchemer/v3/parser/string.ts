@@ -42,27 +42,23 @@ export const stringZodParser = (
   schema: StringSchema,
   options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
-  let zodFormatter: z.ZodTypeAny
+  let zodParser: z.ZodTypeAny
 
   const { props } = schema
   const [enumHead, ...enumTail] = props.enum ?? []
 
   if (enumHead !== undefined) {
-    zodFormatter = enumTail.length > 0 ? z.enum([enumHead, ...enumTail]) : z.literal(enumHead)
+    zodParser = enumTail.length > 0 ? z.enum([enumHead, ...enumTail]) : z.literal(enumHead)
   } else {
-    zodFormatter = z.string()
+    zodParser = z.string()
   }
 
   return withDescribe(
     schema,
     withEncoding(
       schema,
-      options,
-      withDefault(
-        schema,
-        options,
-        withOptional(schema, options, withValidate(schema, zodFormatter))
-      )
+      withDefault(schema, withOptional(schema, withValidate(schema, zodParser), options), options),
+      options
     )
   )
 }

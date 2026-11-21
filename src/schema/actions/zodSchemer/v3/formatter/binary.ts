@@ -32,7 +32,7 @@ export const binaryZodFormatter = (
     schema,
     withDecoding(
       schema,
-      options,
-      withOptional(schema, options, withValidate(schema, z.instanceof(Uint8Array)))
+      withOptional(schema, withValidate(schema, z.instanceof(Uint8Array)), options),
+      options
     )
   )

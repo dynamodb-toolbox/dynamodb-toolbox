@@ -71,16 +71,16 @@ export const mapZodParser = (schema: MapSchema, options: ZodParserOptions = {}):
     schema,
     withAttributeNameEncoding(
       schema,
-      options,
       withDefault(
         schema,
-        options,
         withOptional(
           schema,
-          options,
-          withValidate(schema, schema.props.strict ? zodObject.strict() : zodObject)
-        )
-      )
+          withValidate(schema, schema.props.strict ? zodObject.strict() : zodObject),
+          options
+        ),
+        options
+      ),
+      options
     )
   )
 }

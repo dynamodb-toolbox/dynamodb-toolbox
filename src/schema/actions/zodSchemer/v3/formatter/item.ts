@@ -55,7 +55,6 @@ export const itemZodFormatter = <
     schema,
     withAttributeNameDecoding(
       schema,
-      options,
       z.object(
         Object.fromEntries(
           displayedAttrEntries.map(([attributeName, attribute]) => [
@@ -63,7 +62,8 @@ export const itemZodFormatter = <
             schemaZodFormatter(attribute, { ...options, defined: false })
           ])
         )
-      )
+      ),
+      options
     )
   ) as ItemZodFormatter<SCHEMA, OPTIONS>
 }

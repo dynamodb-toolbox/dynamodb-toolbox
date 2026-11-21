@@ -50,7 +50,6 @@ export const tupleZodFormatter = (
     schema,
     withOptional(
       schema,
-      options,
       withValidate(
         schema,
         z.tuple(
@@ -58,6 +57,7 @@ export const tupleZodFormatter = (
             schemaZodFormatter(element, { ...options, defined: false })
           ) as [z.ZodTypeAny, ...z.ZodTypeAny[]]
         )
-      )
+      ),
+      options
     )
   )

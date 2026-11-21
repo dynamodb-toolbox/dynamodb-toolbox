@@ -35,11 +35,11 @@ export const binaryZodParser = (
     schema,
     withEncoding(
       schema,
-      options,
       withDefault(
         schema,
-        options,
-        withOptional(schema, options, withValidate(schema, z.instanceof(Uint8Array)))
-      )
+        withOptional(schema, withValidate(schema, z.instanceof(Uint8Array)), options),
+        options
+      ),
+      options
     )
   )

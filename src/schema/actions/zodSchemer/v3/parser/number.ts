@@ -48,7 +48,7 @@ export const numberZodParser = (
   schema: NumberSchema,
   options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
-  let zodFormatter: z.ZodTypeAny
+  let zodParser: z.ZodTypeAny
 
   const { props } = schema
   const [enumHead, ...enumTail] = props.enum ?? []
@@ -56,7 +56,7 @@ export const numberZodParser = (
   if (enumHead !== undefined) {
     const [enumTailHead, ...enumTailTail] = enumTail
 
-    zodFormatter =
+    zodParser =
       enumTailHead !== undefined
         ? z.union([
             z.literal(enumHead),
@@ -66,19 +66,15 @@ export const numberZodParser = (
         : z.literal(enumHead)
   } else {
     const { big = false } = props
-    zodFormatter = big ? z.union([z.number(), z.bigint()]) : z.number()
+    zodParser = big ? z.union([z.number(), z.bigint()]) : z.number()
   }
 
   return withDescribe(
     schema,
     withEncoding(
       schema,
-      options,
-      withDefault(
-        schema,
-        options,
-        withOptional(schema, options, withValidate(schema, zodFormatter))
-      )
+      withDefault(schema, withOptional(schema, withValidate(schema, zodParser), options), options),
+      options
     )
   )
 }

@@ -46,7 +46,7 @@ export const booleanZodParser = (
   schema: BooleanSchema,
   options: ZodParserOptions
 ): z.ZodTypeAny => {
-  let zodFormatter: z.ZodTypeAny
+  let zodParser: z.ZodTypeAny
 
   const { props } = schema
   const [enumHead, ...enumTail] = props.enum ?? []
@@ -54,7 +54,7 @@ export const booleanZodParser = (
   if (enumHead !== undefined) {
     const [enumTailHead, ...enumTailTail] = enumTail
 
-    zodFormatter =
+    zodParser =
       enumTailHead !== undefined
         ? z.union([
             z.literal(enumHead),
@@ -63,19 +63,15 @@ export const booleanZodParser = (
           ])
         : z.literal(enumHead)
   } else {
-    zodFormatter = z.boolean()
+    zodParser = z.boolean()
   }
 
   return withDescribe(
     schema,
     withEncoding(
       schema,
-      options,
-      withDefault(
-        schema,
-        options,
-        withOptional(schema, options, withValidate(schema, zodFormatter))
-      )
+      withDefault(schema, withOptional(schema, withValidate(schema, zodParser), options), options),
+      options
     )
   )
 }

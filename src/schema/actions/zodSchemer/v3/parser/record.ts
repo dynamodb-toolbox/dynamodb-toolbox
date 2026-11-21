@@ -30,8 +30,8 @@ type WithEncodedKeys<
 
 const withEncodedKeys = (
   schema: RecordSchema,
-  { transform }: ZodParserOptions,
-  zodSchema: z.ZodTypeAny
+  zodSchema: z.ZodTypeAny,
+  { transform }: ZodParserOptions
 ): z.ZodTypeAny =>
   transform === false
     ? zodSchema
@@ -106,7 +106,7 @@ export const recordZodParser = (
   schema: RecordSchema,
   options: ZodParserOptions = {}
 ): z.ZodTypeAny => {
-  let zodFormatter: z.ZodTypeAny
+  let zodParser: z.ZodTypeAny
 
   if (schema.keys.props.enum !== undefined && schema.props.partial !== true) {
     const elementsFormatter = schemaZodParser(schema.elements, { ...options, defined: false })
@@ -114,13 +114,13 @@ export const recordZodParser = (
     /**
      * @debt dependency "Using ZodObject until ZodStrictRecord is a thing: https://github.com/colinhacks/zod/issues/2623"
      */
-    zodFormatter = withEncodedKeys(
+    zodParser = withEncodedKeys(
       schema,
-      options,
-      z.object(Object.fromEntries(schema.keys.props.enum.map(key => [key, elementsFormatter])))
+      z.object(Object.fromEntries(schema.keys.props.enum.map(key => [key, elementsFormatter]))),
+      options
     )
   } else {
-    zodFormatter = z.record(
+    zodParser = z.record(
       schemaZodParser(schema.keys, { ...options, defined: true }),
       schemaZodParser(schema.elements, { ...options, defined: true })
     )
@@ -128,6 +128,6 @@ export const recordZodParser = (
 
   return withDescribe(
     schema,
-    withDefault(schema, options, withOptional(schema, options, withValidate(schema, zodFormatter)))
+    withDefault(schema, withOptional(schema, withValidate(schema, zodParser), options), options)
   )
 }

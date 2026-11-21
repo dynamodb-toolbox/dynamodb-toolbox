@@ -71,5 +71,5 @@ export const anyOfZodFormatter = (
     )
   }
 
-  return withDescribe(schema, withOptional(schema, options, withValidate(schema, zodFormatter)))
+  return withDescribe(schema, withOptional(schema, withValidate(schema, zodFormatter), options))
 }

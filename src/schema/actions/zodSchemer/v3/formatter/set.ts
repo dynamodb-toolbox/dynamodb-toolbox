@@ -39,10 +39,10 @@ export const setZodFormatter = (
     schema,
     withOptional(
       schema,
-      options,
       withValidate(
         schema,
         z.set(schemaZodFormatter(schema.elements, { ...options, defined: true }))
-      )
+      ),
+      options
     )
   )

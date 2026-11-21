@@ -32,7 +32,7 @@ export const anyZodParser = (schema: AnySchema, options: ZodParserOptions): z.Zo
     schema,
     withEncoding(
       schema,
-      options,
-      withDefault(schema, options, withOptional(schema, options, withValidate(schema, z.custom())))
+      withDefault(schema, withOptional(schema, withValidate(schema, z.custom()), options), options),
+      options
     )
   )

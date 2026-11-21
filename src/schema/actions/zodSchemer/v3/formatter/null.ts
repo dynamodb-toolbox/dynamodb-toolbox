@@ -25,5 +25,5 @@ export const nullZodFormatter = (
 ): z.ZodTypeAny =>
   withDescribe(
     schema,
-    withDecoding(schema, options, withOptional(schema, options, withValidate(schema, z.null())))
+    withDecoding(schema, withOptional(schema, withValidate(schema, z.null()), options), options)
   )
