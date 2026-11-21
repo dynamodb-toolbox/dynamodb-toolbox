@@ -1,0 +1,58 @@
+import type { A } from 'ts-toolbelt'
+import { z } from 'zod/v3'
+
+import { DynamoDBToolboxError } from '~/errors/index.js'
+import {
+  NumberSchema_,
+  RecordSchema_,
+  StringSchema_,
+  number,
+  record,
+  string
+} from '~/schema/index.js'
+
+import { fromZodSchema } from './fromZodSchema.js'
+
+describe('fromZodSchema > zodRecord', () => {
+  test('returns record schema', () => {
+    const schema = z.record(z.string(), z.number())
+    const output = fromZodSchema(schema)
+    const expected = record(string(), number())
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output).toBeInstanceOf(RecordSchema_)
+    expect(output.keys).toBeInstanceOf(StringSchema_)
+    expect(output.elements).toBeInstanceOf(NumberSchema_)
+  })
+
+  test('returns record schema with enum keys if keys are enum', () => {
+    const schema = z.record(z.enum(['foo', 'bar']), z.number())
+    const output = fromZodSchema(schema)
+    const expected = record(string().enum('foo', 'bar'), number())
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(output).toBeInstanceOf(RecordSchema_)
+    expect(output.keys).toBeInstanceOf(StringSchema_)
+    expect(output.keys.props.enum).toStrictEqual(['foo', 'bar'])
+    expect(output.elements).toBeInstanceOf(NumberSchema_)
+  })
+
+  test('throws if keys are neither strings nor enums', () => {
+    const invalidCall = () => fromZodSchema(z.record(z.number(), z.string()))
+
+    expect(invalidCall).toThrow(DynamoDBToolboxError)
+    expect(invalidCall).toThrow(
+      expect.objectContaining({ code: 'fromZodSchema.unsupportedRecordKeyType' })
+    )
+  })
+
+  test('maps a description to meta.description', () => {
+    const output = fromZodSchema(z.record(z.string(), z.string()).describe('Desc'))
+
+    expect((output.props as { meta?: unknown }).meta).toStrictEqual({ description: 'Desc' })
+  })
+})

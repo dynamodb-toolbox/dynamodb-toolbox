@@ -1,12 +1,13 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 import { PutItemCommand } from '~/entity/actions/put/index.js'
+import type { PutItemInput } from '~/entity/actions/put/index.js'
 import { putItemCommandReturnValuesOptions } from '~/entity/actions/put/options.js'
 import type { Entity } from '~/entity/entity.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
-import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
+import { ZodSchemer } from '~/schema/actions/zodSchemer/v4/index.js'
 
 import type { AddEntityToolsOptions } from './options.js'
 
@@ -53,7 +54,9 @@ export const addPutEntityItemTool = (
     putToolName,
     putToolDescription,
     {
-      item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodTypeAny,
+      item: new ZodSchemer(entity.schema).parser({ transform: false }) as z.ZodType<
+        PutItemInput<Entity>
+      >,
       options: putOptionsSchema
     },
     { title: putToolDescription, readOnlyHint: false, destructiveHint: false },

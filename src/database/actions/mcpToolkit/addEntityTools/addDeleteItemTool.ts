@@ -1,12 +1,13 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 import { DeleteItemCommand } from '~/entity/actions/delete/index.js'
 import { deleteItemCommandReturnValuesOptions } from '~/entity/actions/delete/options.js'
 import type { Entity } from '~/entity/entity.js'
+import type { KeyInputItem } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { metricsOptions } from '~/options/metrics.js'
-import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
+import { ZodSchemer } from '~/schema/actions/zodSchemer/v4/index.js'
 
 import type { AddEntityToolsOptions } from './options.js'
 
@@ -59,7 +60,7 @@ export const addDeleteEntityItemTool = (
       key: new ZodSchemer(entity.schema).parser({
         mode: 'key',
         transform: false
-      }) as z.ZodTypeAny,
+      }) as z.ZodType<KeyInputItem<Entity>>,
       options: deleteOptionsSchema
     },
     { title: deleteToolDescription, readOnlyHint: false, destructiveHint: true },

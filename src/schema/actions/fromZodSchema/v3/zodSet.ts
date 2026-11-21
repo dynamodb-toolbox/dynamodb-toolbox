@@ -1,0 +1,67 @@
+import type { ZodSet } from 'zod/v3'
+import { ZodBigInt, ZodNumber, ZodString } from 'zod/v3'
+
+import { DynamoDBToolboxError } from '~/errors/index.js'
+import type {
+  NumberSchema,
+  NumberSchemaProps,
+  SetSchema,
+  SetSchema_,
+  StringSchema,
+  StringSchemaProps
+} from '~/index.js'
+import { set } from '~/schema/set/index.js'
+import type { SetElementProps } from '~/schema/set/types.js'
+import type { SchemaProps } from '~/schema/types/schemaProps.js'
+
+import { fromZodSchema } from './fromZodSchema.js'
+import type { FromZodSchema } from './types.js'
+import { withMeta } from './utils.js'
+
+/**
+ * DDB-TB schema derived from a `zod` set schema.
+ */
+export type FromZodSet<
+  ZOD_SCHEMA extends ZodSet,
+  ROOT extends boolean = true,
+  PROPS extends SchemaProps = {}
+> =
+  ZOD_SCHEMA extends ZodSet<infer ZOD_SCHEMA_ELEMENTS>
+    ?
+        | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends NumberSchema<
+            NumberSchemaProps & SetElementProps
+          >
+            ? ROOT extends true
+              ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+              : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+            : never)
+        | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends StringSchema<
+            StringSchemaProps & SetElementProps
+          >
+            ? ROOT extends true
+              ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+              : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+            : never)
+    : never
+
+/**
+ * Convert a `zod` set schema to a DDB-TB schema.
+ */
+export const fromZodSet = (zodSet: ZodSet): SetSchema => {
+  const { valueType } = zodSet._def
+
+  if (
+    !(
+      valueType instanceof ZodNumber ||
+      valueType instanceof ZodString ||
+      valueType instanceof ZodBigInt
+    )
+  ) {
+    throw new DynamoDBToolboxError('fromZodSchema.unsupportedSetValueType', {
+      message: 'Sets can only contain strings, numbers or bigints',
+      payload: { received: valueType }
+    })
+  }
+
+  return withMeta(set(fromZodSchema(valueType)), zodSet)
+}

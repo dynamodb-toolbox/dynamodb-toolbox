@@ -1,0 +1,56 @@
+import type { KeySchema, ZodRecord } from 'zod/v3'
+import { ZodEnum, ZodString } from 'zod/v3'
+
+import { DynamoDBToolboxError } from '~/errors/index.js'
+import type { RecordSchema, RecordSchema_, StringSchema } from '~/index.js'
+import { record } from '~/schema/record/index.js'
+import type { SchemaProps } from '~/schema/types/schemaProps.js'
+
+import { fromZodSchema } from './fromZodSchema.js'
+import type { FromZodSchema } from './types.js'
+import { withMeta } from './utils.js'
+
+/**
+ * Any `zod` record schema.
+ */
+export type ZodRecordAny = ZodRecord<KeySchema>
+
+/**
+ * DDB-TB schema derived from a `zod` record schema.
+ */
+export type FromZodRecord<
+  ZOD_SCHEMA extends ZodRecordAny,
+  ROOT extends boolean = true,
+  PROPS extends SchemaProps = {}
+> =
+  ZOD_SCHEMA extends ZodRecord<infer ZOD_SCHEMA_KEYS, infer ZOD_SCHEMA_VALUES>
+    ? FromZodSchema<ZOD_SCHEMA_KEYS, false> extends StringSchema
+      ? ROOT extends true
+        ? RecordSchema_<
+            FromZodSchema<ZOD_SCHEMA_KEYS, false>,
+            FromZodSchema<ZOD_SCHEMA_VALUES, false>,
+            PROPS
+          >
+        : RecordSchema<
+            FromZodSchema<ZOD_SCHEMA_KEYS, false>,
+            FromZodSchema<ZOD_SCHEMA_VALUES, false>,
+            PROPS
+          >
+      : never
+    : never
+
+/**
+ * Convert a `zod` record schema to a DDB-TB schema.
+ */
+export const fromZodRecord = (zodRecord: ZodRecordAny): RecordSchema => {
+  const { keySchema, valueSchema } = zodRecord
+
+  if (!(keySchema instanceof ZodString || keySchema instanceof ZodEnum)) {
+    throw new DynamoDBToolboxError('fromZodSchema.unsupportedRecordKeyType', {
+      message: 'Record keys can only be strings or enums',
+      payload: { received: keySchema }
+    })
+  }
+
+  return withMeta(record(fromZodSchema(keySchema), fromZodSchema(valueSchema)), zodRecord)
+}

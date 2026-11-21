@@ -11,18 +11,20 @@ import TabItem from '@theme/TabItem';
 
 :::note
 
-`ZodSchemer` requires the `zod` dependency (v3) to be installed as peer dependency:
+`ZodSchemer` requires the `zod` dependency to be installed as (optional) peer dependency:
 
 ```bash
-npm install zod@v3
+npm install zod
 ```
+
+Both `zod` v3 and v4 are supported, through a subpath each.
 
 :::
 
 Transpiles DynamoDB-Toolbox schemas to [Zod Schemas](https://github.com/colinhacks/zod). Note that the **transpilation itself is type-safe**, which means that **resulting schema types can be introspected** and **type inference is preserved**:
 
 ```ts
-import { ZodSchemer } from 'dynamodb-toolbox/schema/actions/zodSchemer'
+import { ZodSchemer } from 'dynamodb-toolbox/schema/actions/zodSchemer/v4'
 
 const zodSchemer = pokemonSchema.build(ZodSchemer)
 
@@ -41,11 +43,11 @@ Because DynamoDB-Toolbox schema are more flexible than Zod Schemas ([Parsing](./
 
 :::
 
-You can also derive schemas from Zod schemas with the [`fromZodSchema`] util:
+You can also derive schemas from Zod schemas with the `fromZodSchema` util (with [some limitations](#fromzodschema)):
 
 ```ts
-import { z } from 'zod'
-import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema'
+import { z } from 'zod/v4'
+import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema/v4'
 
 const zodSchema = z.object({
   firstName: z.string(),
@@ -55,6 +57,19 @@ const ddbToolboxSchema = fromZodSchema(zodSchema)
 ```
 
 Again the **transpilation itself is type-safe** and **type inference is preserved**, although the resulting schema may have to be tweaked to introduce DynamoDB related features (keys, links, transforms etc.).
+
+## Which version?
+
+`zod` ships both of its major versions in a single package, so DynamoDB-Toolbox has one implementation of each action per version, exposed through its own subpath:
+
+| Subpath                                            | Zod schemas                                              |
+| -------------------------------------------------- | -------------------------------------------------------- |
+| `dynamodb-toolbox/schema/actions/zodSchemer/v4`    | v4 ([Classic](https://zod.dev/packages/zod))             |
+| `dynamodb-toolbox/schema/actions/zodSchemer/v3`    | v3                                                       |
+| `dynamodb-toolbox/schema/actions/fromZodSchema/v4` | v4, Classic **or** [Mini](https://zod.dev/packages/mini) |
+| `dynamodb-toolbox/schema/actions/fromZodSchema/v3` | v3                                                       |
+
+The `zod` peer range is `^3.25.0 || ^4.0.0`: the `zod/v3` and `zod/v4` permalinks only exist from `3.25.0` onward, so an install still on `zod@3` can emit v4 schemas by importing them from `zod/v4`.
 
 ## ⚠️ Known Limitations
 
@@ -73,7 +88,7 @@ const fullSchema = nameSchema.and({
     ({ firstName, lastName }) =>
       [firstName, lastName].join(' ')
   )
-}))
+})
 
 const zodSchema = fullSchema.build(ZodSchemer).parser()
 // ❌ Error: Missing `fullName` attribute
@@ -92,22 +107,49 @@ const zodSchema = schema.build(ZodSchemer).formatter()
 zodSchema.parse({})
 ```
 
-Due to some discrepancies between schema systems, [discriminated unions](../17-anyOf/index.md#discriminate) also suffer from some minor limitations:
+Due to some discrepancies between schema systems, [discriminated unions](../17-anyOf/index.md#discriminate) also suffer from some minor limitations.
 
-- **Discriminated AND remapped** `maps` cannot be transpiled:
+| Discriminated `anyOf` with an element that is...  | v3  | v4                           |
+| ------------------------------------------------- | :-: | ---------------------------- |
+| **remapped** (i.e. holding a `savedAs` attribute) | ❌  | ✅ `parser` / ❌ `formatter` |
+| **refined** (i.e. holding a `validate`)           | ❌  | ✅                           |
+| a **discriminated** `anyOf` (i.e. nested)         | ❌  | ✅                           |
+| a **non-discriminated** `anyOf`                   | ❌  | ❌                           |
+
+- Since v4, **discriminated AND remapped** `maps` can be transpiled on the `parser` side but not on the `formatter` side, where it is a `preprocess`:
 
 ```ts
 const schema = anyOf(
-  map({ type: string().const('a').savedAs('_t') }),
-  map({ type: string().const('b').savedAs('_t') })
+  map({
+    type: string().const('a'),
+    name: string().savedAs('_n')
+  }),
+  map({ type: string().const('b') })
 ).discriminate('type')
 
-const zodSchema = schema.build(ZodSchemer).parser()
-// ❌ Fails: `ZodDiscriminatedUnion` does not support `ZodEffect` options
-zodSchema.parse(input)
+// ✅ Success
+schema.build(ZodSchemer).parser().parse(input)
+
+const zodFormatter = schema.build(ZodSchemer).formatter()
+// ❌ Fails: Zod cannot read the discriminant through a `preprocess`
+zodFormatter.parse(savedItem)
 ```
 
-- **Discriminated AND refined** `maps` cannot be transpiled (should be fixed with [Zod v4](https://v4.zod.dev/v4?id=refinements-now-live-inside-schemas)):
+:::note
+
+Opting out of transformations removes the `preprocess`, and the `formatter` works again:
+
+```ts
+// ✅ Success
+schema
+  .build(ZodSchemer)
+  .formatter({ transform: false })
+  .parse(input)
+```
+
+:::
+
+- Since v4, **discriminated AND refined** `maps` can be transpiled:
 
 ```ts
 const schema = anyOf(
@@ -116,11 +158,11 @@ const schema = anyOf(
 ).discriminate('type')
 
 const zodSchema = schema.build(ZodSchemer).parser()
-// ❌ Fails: `ZodDiscriminatedUnion` does not support `ZodEffect` options
+// ✅ Success
 zodSchema.parse(input)
 ```
 
-- **Nested discriminated union** cannot be transpiled (should be fixed with [Zod v4](https://v4.zod.dev/v4?id=refinements-now-live-inside-schemas#upgraded-zdiscriminatedunion)):
+- Since v4, **nested discriminated union** can be transpiled:
 
 ```ts
 const schema = anyOf(
@@ -128,42 +170,59 @@ const schema = anyOf(
   anyOf(
     map({ type: string().const('b') }),
     map({ type: string().const('c') })
-  )
+  ).discriminate('type')
 ).discriminate('type')
 
+// ✅ Success
 const zodSchema = schema.build(ZodSchemer).parser()
-// ❌ Fails: `ZodDiscriminatedUnion` does not support `ZodDiscriminatedUnion` options
 zodSchema.parse(input)
 ```
 
 ### fromZodSchema
 
-Binary schemas (`Uint8Array`) do not exist in `zod` and are cannot be transpiled (see [this issue](https://github.com/colinhacks/zod/issues/2597)).
+Binary schemas (`Uint8Array`) do not exist in `zod` and cannot be transpiled (see [this issue](https://github.com/colinhacks/zod/issues/2597)).
 
-Refinments are transpiled but `transforms` are not (should be fixed with [Zod v4 codecs](https://zod.dev/codecs)):
+Refinements are transpiled but `transforms` are not. The resulting schema validates its input and leaves it untouched. `preprocesses` are the mirror case: the wrapped schema is kept and enforced, but the preprocessing is dropped:
 
 ```ts
-const zodSchema = z
+const refined = z.string().refine(value => value.length > 0)
+
+const refinedSchema = fromZodSchema(refined)
+refinedSchema.build(Parser).parse('') // ❌ Fails
+
+const transformed = z
   .string()
-  .validate(value => value.length > 0)
+  .transform(value => value.trim())
 
-const schema = fromZodSchema(zodSchema)
-schema.build(Parser).parse('') // ❌ Fails
+const transformedSchema = fromZodSchema(transformed)
+transformedSchema.build(Parser).parse(' foo ') // => ' foo '
 
-const zodSchema = z.transform(value => value.trim())
+const preprocessed = z.preprocess(
+  value => Number(value),
+  z.number()
+)
 
-const schema = fromZodSchema(zodSchema)
-schema.build(Parser).parse(' foo ') // => ' foo '
+const preprocessedSchema = fromZodSchema(preprocessed)
+preprocessedSchema.build(Parser).parse('42') // ❌ Fails
 ```
 
-Preprocessed schemas and intersections are not supported, as well as types that are not natively available in DynamoDB are (`Dates`, `NaNs`, `InstanceOf` etc.).
+Intersections are not supported, as well as types that DynamoDB has no equivalent for (`Dates`, `NaNs`, `InstanceOf` etc.). Rather than throwing, they **degrade to an `any` schema** carrying the Zod schema's output type, so type inference is preserved but **nothing is validated at runtime**:
+
+```ts
+const schema = fromZodSchema(z.date())
+// => any().castAs<Date>()
+
+// ⚠️ Does not throw
+schema.build(Parser).parse('not a date')
+```
 
 ## Metadata
 
-The [`meta`](../1-usage/index.md#schemas-props) `description` is applied to the resulting Zod schema through [`.describe()`](https://zod.dev/?id=describe), on both the `parser` and the `formatter`:
+The [`meta`](../1-usage/index.md#schemas-props) props are applied to the resulting Zod schema, on both the `parser` and the `formatter`:
 
 ```ts
 const levelSchema = number().meta({
+  title: 'Level',
   description: 'The Pokémon level'
 })
 
@@ -173,9 +232,16 @@ zodSchema.description
 // => 'The Pokémon level'
 ```
 
+With `zod` v4, the **whole `meta` store** is carried over through [`.meta()`](https://zod.dev/metadata), so `title`, `examples` and any custom key survive as well:
+
+```ts
+zodSchema.meta()
+// => { title: 'Level', description: 'The Pokémon level' }
+```
+
 :::warning
 
-`zod` v3 only supports `.describe()`, so other keys (including `meta.title` and `meta.examples`) are silently dropped.
+`zod` v3 only supports [`.describe()`](https://zod.dev/?id=describe), so every other key (including `meta.title` and `meta.examples`) is silently dropped by the `/v3` subpath.
 
 :::
 
@@ -188,7 +254,7 @@ zodSchema.description
 Creates a `zodSchema` to use for Item parsing. It includes defaults, custom validation and transformations (see the [`Parser`](./1-parse.md) action for more details on parsing):
 
 ```ts
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 const nameSchema = item({
   firstName: string().savedAs('_f'),
@@ -297,7 +363,7 @@ zodSchema.parse(undefined)
 Creates a `zodSchema` to use for Item formatting. It includes transformations, custom validation and formatting (see the [`Formatter`](./2-format.md) action for more details on formatting):
 
 ```ts
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 const nameSchema = item({
   firstName: string().savedAs('_f'),
@@ -325,7 +391,7 @@ You can provide additional options. Available options:
 | ----------- | :-------: | :-----: | ------------------------------------------------------------------------------------------------------------------ |
 | `transform` | `boolean` | `true`  | Whether to include pre-validation transformations (i.e. `savedAs` and `transform`) in the resulting schema or not. |
 | `format`    | `boolean` | `true`  | Whether to strip `hidden` attributes from the resulting schema or not.                                             |
-| `partial`   | `boolean` |  `put`  | Wether to make every attribute (flat or deep) `optional` in the schema or not.                                     |
+| `partial`   | `boolean` | `false` | Wether to make every attribute (flat or deep) `optional` in the schema or not.                                     |
 | `defined`   | `boolean` | `false` | Whether to reject `undefined` values in the resulting schema or not (even if the original schema is optional).     |
 
 :::note[Examples]

@@ -1,10 +1,11 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
+import { z } from 'zod/v4'
 
 import { GetItemCommand } from '~/entity/actions/get/index.js'
 import type { Entity } from '~/entity/entity.js'
+import type { KeyInputItem } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
-import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
+import { ZodSchemer } from '~/schema/actions/zodSchemer/v4/index.js'
 
 import type { AddEntityToolsOptions } from './options.js'
 
@@ -54,7 +55,7 @@ export const addGetEntityItemTool = (
       key: new ZodSchemer(entity.schema).parser({
         mode: 'key',
         transform: false
-      }) as z.ZodTypeAny,
+      }) as z.ZodType<KeyInputItem<Entity>>,
       options: getOptionsSchema
     },
     { title: getToolDescription, readOnlyHint: true },
