@@ -69,6 +69,40 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(output.options[1].shape.type.options).toStrictEqual(['b', 'c'])
   })
 
+  test('throws on parse if a discriminated element has renamed attributes', () => {
+    const schema = anyOf(
+      map({ type: string().const('a'), num: number().savedAs('_n') }),
+      map({ type: string().const('b') })
+    ).discriminate('type')
+    const output = schemaZodFormatter(schema)
+
+    const assert: A.Equals<
+      typeof output,
+      z.ZodDiscriminatedUnion<
+        [
+          z.ZodPreprocess<
+            z.ZodObject<{ type: z.ZodLiteral<'a'>; num: z.ZodNumber }>,
+            { type: 'a'; _n: number }
+          >,
+          z.ZodObject<{ type: z.ZodLiteral<'b'> }>
+        ],
+        'type'
+      >
+    > = 1
+    assert
+
+    // Pins the LIMITATION in anyOf.ts: the rejection surfaces on the first parse, not at build time
+    expect(output).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(() => output.parse({ type: 'a', _n: NUM })).toThrow(
+      'Invalid discriminated union option at index "0"'
+    )
+
+    // Opting out of transforms removes the preprocess, and the union works again
+    const untransformed = schemaZodFormatter(schema, { transform: false })
+
+    expect(untransformed.parse({ type: 'a', num: NUM })).toStrictEqual({ type: 'a', num: NUM })
+  })
+
   describe('optionality', () => {
     test('returns optional zod schema', () => {
       const schema = anyOf(string(), number()).optional()

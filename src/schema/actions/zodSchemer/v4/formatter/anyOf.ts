@@ -58,7 +58,9 @@ export const anyOfZodFormatter = (
 
   if (discriminator !== undefined) {
     // LIMITATION: Does not support nested `anyOf`s for now, although the upgraded `z.discriminatedUnion` may allow it: https://v4.zod.dev/v4#upgraded-zdiscriminatedunion
-    // LIMITATION: Does not support `savedAs` attributes for now as ZodPipes are not valid discriminatedUnion options
+    // LIMITATION: Does not support `savedAs` attributes, whose decoder is a `z.preprocess`: its input
+    // side is a generated transform rather than an object, which `z.discriminatedUnion` rejects.
+    // Zod builds its discriminator map lazily, so this throws on the first parse, not at build time.
     zodFormatter = z.discriminatedUnion(
       discriminator,
       /**

@@ -59,7 +59,6 @@ export const anyOfZodParser = (schema: AnyOfSchema, options: ZodParserOptions = 
 
   if (discriminator !== undefined) {
     // LIMITATION: Does not support nested `anyOf`s for now, although the upgraded `z.discriminatedUnion` may allow it: https://v4.zod.dev/v4#upgraded-zdiscriminatedunion
-    // LIMITATION: Does not support `savedAs` attributes for now as ZodPipes are not valid discriminatedUnion options
     zodParser = z.discriminatedUnion(
       discriminator,
       /**

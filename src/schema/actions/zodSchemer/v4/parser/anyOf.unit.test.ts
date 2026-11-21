@@ -69,6 +69,37 @@ describe('zodSchemer > parser > anyOf', () => {
     expect(output.options[1].shape.type.options).toStrictEqual(['b', 'c'])
   })
 
+  test('returns discriminated union zod schema if an element has renamed attributes', () => {
+    const schema = anyOf(
+      map({ type: string().enum('a'), num: number().savedAs('_n') }),
+      map({ type: string().enum('b') })
+    ).discriminate('type')
+    const output = schemaZodParser(schema)
+    const expectedOption = z.object({ type: z.literal('a'), num: z.number() })
+    const expected = z.discriminatedUnion('type', [
+      expectedOption.transform(({ type, num }): { type: 'a'; _n: number } => ({ type, _n: num })),
+      z.object({ type: z.literal('b') })
+    ])
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    // The renamer is a `.transform`, so the option is a pipe whose input side is still an object
+    expect(expected).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(expected.options[0]).toBeInstanceOf(z.ZodPipe)
+    expect(output).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(output.options).toHaveLength(2)
+    expect(output.options[0]).toBeInstanceOf(z.ZodPipe)
+    expect(output.options[0].in).toBeInstanceOf(z.ZodObject)
+    expect(output.options[1]).toBeInstanceOf(z.ZodObject)
+
+    const VALUE = { type: 'a', num: NUM } as const
+    const RENAMED_VALUE = { type: 'a', _n: NUM }
+
+    expect(expected.parse(VALUE)).toStrictEqual(RENAMED_VALUE)
+    expect(output.parse(VALUE)).toStrictEqual(RENAMED_VALUE)
+  })
+
   describe('optionality', () => {
     test('returns optional zod schema', () => {
       const schema = anyOf(string(), number()).optional()
