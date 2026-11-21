@@ -33,10 +33,10 @@ export type DeletePartitionResponse = Merge<
 
 /** Delete every item in a partition by querying it, then batch-deleting the matches. */
 export class DeletePartitionCommand<
-    TABLE extends Table = Table,
-    ENTITIES extends Entity[] = Entity[],
-    QUERY extends Query<TABLE> = Query<TABLE>
-  >
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  QUERY extends Query<TABLE> = Query<TABLE>
+>
   extends TableAction<TABLE, ENTITIES>
   implements TableSendableAction<TABLE>
 {

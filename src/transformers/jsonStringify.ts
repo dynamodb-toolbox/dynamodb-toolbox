@@ -21,10 +21,13 @@ export interface JSONStringifierDTO {
 /**
  * Transformer that encodes values to JSON strings and decodes them back.
  */
-export class JSONStringifier
-  implements
-    SerializableTransformer<unknown, unknown, string, Constant<string>, JSONStringifierDTO>
-{
+export class JSONStringifier implements SerializableTransformer<
+  unknown,
+  unknown,
+  string,
+  Constant<string>,
+  JSONStringifierDTO
+> {
   // @ts-expect-error
   _typeModifier: Constant<string>
   transformerId: 'jsonStringify'

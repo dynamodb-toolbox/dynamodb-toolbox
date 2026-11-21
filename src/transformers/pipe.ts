@@ -26,15 +26,12 @@ const identity: Fn = arg => arg
 /**
  * Transformer that composes a sequence of transformers, encoding left-to-right.
  */
-export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
-  implements
-    TypedTransformer<
-      ReturnType<TRANSFORMERS[0]['decode']>,
-      Parameters<TRANSFORMERS[0]['encode']>[0],
-      ReturnType<LastTransformer<TRANSFORMERS>['encode']>,
-      ComposeLeft<TypeModifiers<TRANSFORMERS>>
-    >
-{
+export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]> implements TypedTransformer<
+  ReturnType<TRANSFORMERS[0]['decode']>,
+  Parameters<TRANSFORMERS[0]['encode']>[0],
+  ReturnType<LastTransformer<TRANSFORMERS>['encode']>,
+  ComposeLeft<TypeModifiers<TRANSFORMERS>>
+> {
   // @ts-expect-error
   _typeModifier: ComposeLeft<TypeModifiers<TRANSFORMERS>>
 
@@ -79,8 +76,8 @@ export class Pipe<TRANSFORMERS extends Transformer[] = Transformer[]>
  * `Pipe` of serializable transformers that can itself be serialized to a DTO.
  */
 export class SerializablePipe<
-    TRANSFORMERS extends SerializableTransformer[] = SerializableTransformer[]
-  >
+  TRANSFORMERS extends SerializableTransformer[] = SerializableTransformer[]
+>
   extends Pipe<TRANSFORMERS>
   implements
     SerializableTransformer<

@@ -17,10 +17,9 @@ export type FormattedItemJSONSchema<
   JSONSchemaMeta<SCHEMA> & {
     type: 'object'
     properties: {
-      [KEY in OmitKeys<
-        SCHEMA['attributes'],
-        { props: { hidden: true } }
-      >]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
+      [
+        KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>
+      ]: FormattedValueJSONSchema<SCHEMA['attributes'][KEY]>
     }
   } & ([REQUIRED_PROPERTIES] extends [never] ? {} : { required: REQUIRED_PROPERTIES[] }) &
     (SCHEMA['props'] extends { strict: true } ? { additionalProperties: false } : {})

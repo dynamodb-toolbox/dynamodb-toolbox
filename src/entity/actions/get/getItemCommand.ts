@@ -36,9 +36,9 @@ export type GetItemResponse<
 
 /** Get a single item of an entity by its key, and format it. */
 export class GetItemCommand<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends GetItemOptions<ENTITY> = GetItemOptions<ENTITY>
+>
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {

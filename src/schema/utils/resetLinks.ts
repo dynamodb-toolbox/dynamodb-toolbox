@@ -20,60 +20,53 @@ import type {
 export type ResetLinks<SCHEMA extends Schema> =
   | (SCHEMA extends AnySchema
       ? AnySchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends NullSchema
       ? NullSchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends BooleanSchema
       ? BooleanSchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends NumberSchema
       ? NumberSchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends StringSchema
       ? StringSchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends BinarySchema
       ? BinarySchema<{
-          [KEY in Exclude<
-            keyof SCHEMA['props'],
-            'keyLink' | 'putLink' | 'updateLink'
-          >]: SCHEMA['props'][KEY]
+          [
+            KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+          ]: SCHEMA['props'][KEY]
         }>
       : never)
   | (SCHEMA extends SetSchema
       ? SetSchema<
           SCHEMA['elements'],
           {
-            [KEY in Exclude<
-              keyof SCHEMA['props'],
-              'keyLink' | 'putLink' | 'updateLink'
-            >]: SCHEMA['props'][KEY]
+            [
+              KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+            ]: SCHEMA['props'][KEY]
           }
         >
       : never)
@@ -81,10 +74,9 @@ export type ResetLinks<SCHEMA extends Schema> =
       ? ListSchema<
           SCHEMA['elements'],
           {
-            [KEY in Exclude<
-              keyof SCHEMA['props'],
-              'keyLink' | 'putLink' | 'updateLink'
-            >]: SCHEMA['props'][KEY]
+            [
+              KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+            ]: SCHEMA['props'][KEY]
           }
         >
       : never)
@@ -92,10 +84,9 @@ export type ResetLinks<SCHEMA extends Schema> =
       ? MapSchema<
           SCHEMA['attributes'],
           {
-            [KEY in Exclude<
-              keyof SCHEMA['props'],
-              'keyLink' | 'putLink' | 'updateLink'
-            >]: SCHEMA['props'][KEY]
+            [
+              KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+            ]: SCHEMA['props'][KEY]
           }
         >
       : never)
@@ -104,10 +95,9 @@ export type ResetLinks<SCHEMA extends Schema> =
           SCHEMA['keys'],
           SCHEMA['elements'],
           {
-            [KEY in Exclude<
-              keyof SCHEMA['props'],
-              'keyLink' | 'putLink' | 'updateLink'
-            >]: SCHEMA['props'][KEY]
+            [
+              KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+            ]: SCHEMA['props'][KEY]
           }
         >
       : never)
@@ -115,10 +105,9 @@ export type ResetLinks<SCHEMA extends Schema> =
       ? AnyOfSchema<
           SCHEMA['elements'],
           {
-            [KEY in Exclude<
-              keyof SCHEMA['props'],
-              'keyLink' | 'putLink' | 'updateLink'
-            >]: SCHEMA['props'][KEY]
+            [
+              KEY in Exclude<keyof SCHEMA['props'], 'keyLink' | 'putLink' | 'updateLink'>
+            ]: SCHEMA['props'][KEY]
           }
         >
       : never)

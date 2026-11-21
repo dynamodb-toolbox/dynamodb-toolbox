@@ -27,21 +27,20 @@ export type FromZodSet<
   PROPS extends SchemaProps = {}
 > =
   ZOD_SCHEMA extends ZodSet<infer ZOD_SCHEMA_ELEMENTS>
-    ?
-        | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends NumberSchema<
-            NumberSchemaProps & SetElementProps
-          >
-            ? ROOT extends true
-              ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
-              : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
-            : never)
-        | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends StringSchema<
-            StringSchemaProps & SetElementProps
-          >
-            ? ROOT extends true
-              ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
-              : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
-            : never)
+    ? | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends NumberSchema<
+          NumberSchemaProps & SetElementProps
+        >
+          ? ROOT extends true
+            ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+            : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+          : never)
+      | (FromZodSchema<ZOD_SCHEMA_ELEMENTS, false> extends StringSchema<
+          StringSchemaProps & SetElementProps
+        >
+          ? ROOT extends true
+            ? SetSchema_<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+            : SetSchema<FromZodSchema<ZOD_SCHEMA_ELEMENTS, false>, PROPS>
+          : never)
     : never
 
 /**
@@ -50,13 +49,11 @@ export type FromZodSet<
 export const fromZodSet = (zodSet: ZodSet): SetSchema => {
   const { valueType } = zodSet._def
 
-  if (
-    !(
-      valueType instanceof ZodNumber ||
-      valueType instanceof ZodString ||
-      valueType instanceof ZodBigInt
-    )
-  ) {
+  if (!(
+    valueType instanceof ZodNumber ||
+    valueType instanceof ZodString ||
+    valueType instanceof ZodBigInt
+  )) {
     throw new DynamoDBToolboxError('fromZodSchema.unsupportedSetValueType', {
       message: 'Sets can only contain strings, numbers or bigints',
       payload: { received: valueType }

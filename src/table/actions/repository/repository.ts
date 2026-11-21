@@ -99,8 +99,7 @@ export class TableRepository<
   /** Assemble entity `BatchGetRequest`s (optionally led by options) into a `BatchGetCommand`. */
   batchGet<
     REQUESTS_OR_OPTIONS extends
-      | IBatchGetRequest[]
-      | [BatchGetCommandOptions, ...IBatchGetRequest[]],
+      IBatchGetRequest[] | [BatchGetCommandOptions, ...IBatchGetRequest[]],
     REQUESTS extends IBatchGetRequest[] = REQUESTS_OR_OPTIONS extends IBatchGetRequest[]
       ? REQUESTS_OR_OPTIONS
       : REQUESTS_OR_OPTIONS extends [BatchGetCommandOptions, ...infer TAIL_REQUESTS]
@@ -162,8 +161,7 @@ export class TableRepository<
   /** Assemble entity batch put/delete requests (optionally led by options) into a `BatchWriteCommand`. */
   batchWrite<
     REQUESTS_OR_OPTIONS extends
-      | IBatchWriteRequest[]
-      | [BatchWriteCommandOptions, ...IBatchWriteRequest[]],
+      IBatchWriteRequest[] | [BatchWriteCommandOptions, ...IBatchWriteRequest[]],
     REQUESTS extends IBatchWriteRequest[] = REQUESTS_OR_OPTIONS extends IBatchWriteRequest[]
       ? REQUESTS_OR_OPTIONS
       : REQUESTS_OR_OPTIONS extends [BatchWriteCommandOptions, ...infer TAIL_REQUESTS]

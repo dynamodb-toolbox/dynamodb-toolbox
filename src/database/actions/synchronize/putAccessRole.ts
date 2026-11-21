@@ -26,8 +26,7 @@ export const putAccessRole = async (
   if (!getResponse.ok) {
     if (getResponse.status !== 404) {
       const { message, Message } = (await getResponse.json()) as
-        | { message: string; Message?: undefined }
-        | { message?: undefined; Message: string }
+        { message: string; Message?: undefined } | { message?: undefined; Message: string }
       throw new Error(message ?? Message)
     }
 
@@ -40,8 +39,7 @@ export const putAccessRole = async (
 
     if (!putResponse.ok) {
       const { message, Message } = (await putResponse.json()) as
-        | { message: string; Message?: undefined }
-        | { message?: undefined; Message: string }
+        { message: string; Message?: undefined } | { message?: undefined; Message: string }
       throw new Error(message ?? Message)
     }
   }
@@ -71,8 +69,7 @@ export const assignAccessRole = async (
 
   if (!response.ok) {
     const { message, Message } = (await response.json()) as
-      | { message: string; Message?: undefined }
-      | { message?: undefined; Message: string }
+      { message: string; Message?: undefined } | { message?: undefined; Message: string }
     throw new Error(message ?? Message)
   }
 }

@@ -100,11 +100,7 @@ type WhiteListedE = DecodedValue<
   typeof testSchema,
   {
     attributes:
-      | "list[0]['num']"
-      | "tuple[0]['str']"
-      | "map['num']"
-      | "record['foo']"
-      | "record['foo'].num"
+      "list[0]['num']" | "tuple[0]['str']" | "map['num']" | "record['foo']" | "record['foo'].num"
   }
 >
 const assertWhiteListedE: A.Equals<
@@ -122,10 +118,7 @@ type WhiteListedF = DecodedValue<
   typeof testSchema,
   {
     attributes:
-      | "['list'][0]['num']"
-      | "['tuple'][0]['str']"
-      | "['map']['num']"
-      | "['record']['foo']"
+      "['list'][0]['num']" | "['tuple'][0]['str']" | "['map']['num']" | "['record']['foo']"
   }
 >
 const assertWhiteListedF: A.Equals<

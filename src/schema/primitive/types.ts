@@ -28,21 +28,13 @@ import type {
  * Union of the primitive (non-collection) schema classes: `null`, `boolean`, `number`, `string` and `binary`.
  */
 export type PrimitiveSchema =
-  | NullSchema
-  | BooleanSchema
-  | NumberSchema
-  | StringSchema
-  | BinarySchema
+  NullSchema | BooleanSchema | NumberSchema | StringSchema | BinarySchema
 
 /**
  * Union of the builder primitive schema classes.
  */
 export type PrimitiveSchema_ =
-  | NullSchema_
-  | BooleanSchema_
-  | NumberSchema_
-  | StringSchema_
-  | BinarySchema_
+  NullSchema_ | BooleanSchema_ | NumberSchema_ | StringSchema_ | BinarySchema_
 
 /**
  * Runtime type of an unconstrained primitive schema — the union of every primitive's resolved type.
@@ -59,9 +51,8 @@ export type ResolvedPrimitiveSchema =
  */
 export type ResolvePrimitiveSchema<SCHEMA extends PrimitiveSchema> = PrimitiveSchema extends SCHEMA
   ? ResolvedPrimitiveSchema
-  :
-      | (SCHEMA extends NullSchema ? ResolvedNullSchema : never)
-      | (SCHEMA extends BooleanSchema ? ResolveBooleanSchema<SCHEMA> : never)
-      | (SCHEMA extends NumberSchema ? ResolveNumberSchema<SCHEMA> : never)
-      | (SCHEMA extends StringSchema ? ResolveStringSchema<SCHEMA> : never)
-      | (SCHEMA extends BinarySchema ? ResolveBinarySchema<SCHEMA> : never)
+  : | (SCHEMA extends NullSchema ? ResolvedNullSchema : never)
+    | (SCHEMA extends BooleanSchema ? ResolveBooleanSchema<SCHEMA> : never)
+    | (SCHEMA extends NumberSchema ? ResolveNumberSchema<SCHEMA> : never)
+    | (SCHEMA extends StringSchema ? ResolveStringSchema<SCHEMA> : never)
+    | (SCHEMA extends BinarySchema ? ResolveBinarySchema<SCHEMA> : never)

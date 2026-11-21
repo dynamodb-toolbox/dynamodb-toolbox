@@ -4,8 +4,7 @@ import type { NumberSchema } from './schema.js'
  * Resolves a number schema to its runtime type.
  */
 export type ResolveNumberSchema<SCHEMA extends NumberSchema> = SCHEMA['props']['enum'] extends (
-  | number
-  | bigint
+  number | bigint
 )[]
   ? SCHEMA['props']['enum'][number]
   : number | WithBigInt<SCHEMA['props']['big']>

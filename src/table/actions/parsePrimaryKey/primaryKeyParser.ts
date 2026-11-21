@@ -14,11 +14,11 @@ import { isValidPrimitive } from '~/utils/validation/isValidPrimitive.js'
  * @return Object
  */
 export type PrimaryKey<TABLE extends Table = Table> = {
-  [KEY in
-    | TABLE['partitionKey']
-    | (TABLE extends { sortKey?: Key }
-        ? NonNullable<TABLE['sortKey']>
-        : never) as KEY['name']]: KeyValue<KEY>
+  [
+    KEY in
+      | TABLE['partitionKey']
+      | (TABLE extends { sortKey?: Key } ? NonNullable<TABLE['sortKey']> : never) as KEY['name']
+  ]: KeyValue<KEY>
 }
 
 /** Validate and extract a table's primary key from a key input. */

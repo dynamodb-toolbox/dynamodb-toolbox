@@ -180,8 +180,7 @@ export type Reference<SCHEMA extends Schema, AVAILABLE_PATHS extends string = st
 >
 
 type NumberUpdate<SCHEMA extends NumberSchema> =
-  | number
-  | (SCHEMA['props'] extends { big: true } ? bigint : never)
+  number | (SCHEMA['props'] extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given Schema
@@ -207,163 +206,156 @@ export type UpdateValueInput<
         },
         OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
       >
-    :
-        | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
-        | If<
-            IsExtended<OPTIONS>,
-            | If<CanBeRemoved<SCHEMA>, REMOVE, never>
-            // Not using Reference<...> for improved type display
-            | GET<
-                [
-                  ref: AVAILABLE_PATHS,
-                  fallback?:
-                    | ValidValue<SCHEMA, { defined: true }>
-                    | Reference<SCHEMA, AVAILABLE_PATHS>
-                ]
-              >
-          >
-        | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> : never)
-        | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
-        | (SCHEMA extends NumberSchema
-            ? If<
+    : | If<MustBeDefined<SCHEMA, OPTIONS>, never, undefined>
+      | If<
+          IsExtended<OPTIONS>,
+          | If<CanBeRemoved<SCHEMA>, REMOVE, never>
+          // Not using Reference<...> for improved type display
+          | GET<
+              [
+                ref: AVAILABLE_PATHS,
+                fallback?:
+                  ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
+              ]
+            >
+        >
+      | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> : never)
+      | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
+      | (SCHEMA extends NumberSchema
+          ? If<
+              IsExtended<OPTIONS>,
+              | ADD<NumberUpdate<SCHEMA>>
+              | SUM<
+                  // Not using Reference<...> for improved type display
+                  | NumberUpdate<SCHEMA>
+                  | GET<
+                      [
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                      ]
+                    >,
+                  // Not using Reference<...> for improved type display
+                  | NumberUpdate<SCHEMA>
+                  | GET<
+                      [
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                      ]
+                    >
+                >
+              | SUBTRACT<
+                  // Not using Reference<...> for improved type display
+                  | NumberUpdate<SCHEMA>
+                  | GET<
+                      [
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                      ]
+                    >,
+                  // Not using Reference<...> for improved type display
+                  | NumberUpdate<SCHEMA>
+                  | GET<
+                      [
+                        ref: AVAILABLE_PATHS,
+                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                      ]
+                    >
+                >
+            >
+          : never)
+      | (SCHEMA extends SetSchema
+          ? | Unextended<Set<ValidValue<SCHEMA['elements']>>>
+            | If<
                 IsExtended<OPTIONS>,
-                | ADD<NumberUpdate<SCHEMA>>
-                | SUM<
+                | ADD<Set<ValidValue<SCHEMA['elements']>>>
+                | DELETE<Set<ValidValue<SCHEMA['elements']>>>
+              >
+          : never)
+      | (SCHEMA extends ListSchema
+          ? | Unextended<{
+                [INDEX in number]?:
+                  | UpdateValueInput<
+                      SCHEMA['elements'],
+                      Overwrite<OPTIONS, { defined: false; extended: true }>,
+                      AVAILABLE_PATHS
+                    >
+                  | REMOVE
+              }>
+            | If<
+                IsExtended<OPTIONS>,
+                | SET<ValidValue<SCHEMA['elements']>[]>
+                | APPEND<
                     // Not using Reference<...> for improved type display
-                    | NumberUpdate<SCHEMA>
                     | GET<
                         [
                           ref: AVAILABLE_PATHS,
-                          fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                        ]
-                      >,
-                    // Not using Reference<...> for improved type display
-                    | NumberUpdate<SCHEMA>
-                    | GET<
-                        [
-                          ref: AVAILABLE_PATHS,
-                          fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                          fallback?:
+                            ValidValue<SCHEMA['elements']>[] | Reference<SCHEMA, AVAILABLE_PATHS>
                         ]
                       >
+                    | ValidValue<SCHEMA['elements']>[]
                   >
-                | SUBTRACT<
-                    // Not using Reference<...> for improved type display
-                    | NumberUpdate<SCHEMA>
+                | PREPEND<
                     | GET<
                         [
                           ref: AVAILABLE_PATHS,
-                          fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                        ]
-                      >,
-                    // Not using Reference<...> for improved type display
-                    | NumberUpdate<SCHEMA>
-                    | GET<
-                        [
-                          ref: AVAILABLE_PATHS,
-                          fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                          fallback?:
+                            ValidValue<SCHEMA['elements']>[] | Reference<SCHEMA, AVAILABLE_PATHS>
                         ]
                       >
+                    | ValidValue<SCHEMA['elements']>[]
                   >
               >
-            : never)
-        | (SCHEMA extends SetSchema
-            ?
-                | Unextended<Set<ValidValue<SCHEMA['elements']>>>
-                | If<
-                    IsExtended<OPTIONS>,
-                    | ADD<Set<ValidValue<SCHEMA['elements']>>>
-                    | DELETE<Set<ValidValue<SCHEMA['elements']>>>
-                  >
-            : never)
-        | (SCHEMA extends ListSchema
-            ?
-                | Unextended<{
-                    [INDEX in number]?:
-                      | UpdateValueInput<
-                          SCHEMA['elements'],
-                          Overwrite<OPTIONS, { defined: false; extended: true }>,
-                          AVAILABLE_PATHS
-                        >
-                      | REMOVE
-                  }>
-                | If<
-                    IsExtended<OPTIONS>,
-                    | SET<ValidValue<SCHEMA['elements']>[]>
-                    | APPEND<
-                        // Not using Reference<...> for improved type display
-                        | GET<
-                            [
-                              ref: AVAILABLE_PATHS,
-                              fallback?:
-                                | ValidValue<SCHEMA['elements']>[]
-                                | Reference<SCHEMA, AVAILABLE_PATHS>
-                            ]
-                          >
-                        | ValidValue<SCHEMA['elements']>[]
-                      >
-                    | PREPEND<
-                        | GET<
-                            [
-                              ref: AVAILABLE_PATHS,
-                              fallback?:
-                                | ValidValue<SCHEMA['elements']>[]
-                                | Reference<SCHEMA, AVAILABLE_PATHS>
-                            ]
-                          >
-                        | ValidValue<SCHEMA['elements']>[]
-                      >
-                  >
-            : never)
-        | (SCHEMA extends TupleSchema
-            ?
-                | Unextended<
-                    UpdateValueInputRec<
+          : never)
+      | (SCHEMA extends TupleSchema
+          ? | Unextended<
+                UpdateValueInputRec<
+                  SCHEMA['elements'],
+                  Overwrite<OPTIONS, { defined: false; extended: true }>,
+                  AVAILABLE_PATHS
+                >
+              >
+            | Unextended<{
+                [
+                  ELEMENT_ENTRY in UpdateValueInputRecEntries<
+                    SCHEMA['elements'],
+                    Overwrite<OPTIONS, { defined: false; extended: true }>,
+                    AVAILABLE_PATHS
+                  > as ELEMENT_ENTRY[0]
+                ]?: ELEMENT_ENTRY[1]
+              }>
+            | If<IsExtended<OPTIONS>, SET<ValidValueRec<SCHEMA['elements'], { defined: true }>>>
+          : never)
+      | (SCHEMA extends MapSchema
+          ? | Unextended<
+                Optional<
+                  {
+                    [KEY in keyof SCHEMA['attributes']]: UpdateValueInput<
+                      SCHEMA['attributes'][KEY],
+                      Overwrite<OPTIONS, { defined: false; extended: true }>,
+                      AVAILABLE_PATHS
+                    >
+                  },
+                  OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
+                >
+              >
+            | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
+          : never)
+      | (SCHEMA extends RecordSchema
+          ? | Unextended<{
+                [KEY in ResolveStringSchema<SCHEMA['keys']>]?:
+                  | UpdateValueInput<
                       SCHEMA['elements'],
                       Overwrite<OPTIONS, { defined: false; extended: true }>,
                       AVAILABLE_PATHS
                     >
-                  >
-                | Unextended<{
-                    [ELEMENT_ENTRY in UpdateValueInputRecEntries<
-                      SCHEMA['elements'],
-                      Overwrite<OPTIONS, { defined: false; extended: true }>,
-                      AVAILABLE_PATHS
-                    > as ELEMENT_ENTRY[0]]?: ELEMENT_ENTRY[1]
-                  }>
-                | If<IsExtended<OPTIONS>, SET<ValidValueRec<SCHEMA['elements'], { defined: true }>>>
-            : never)
-        | (SCHEMA extends MapSchema
-            ?
-                | Unextended<
-                    Optional<
-                      {
-                        [KEY in keyof SCHEMA['attributes']]: UpdateValueInput<
-                          SCHEMA['attributes'][KEY],
-                          Overwrite<OPTIONS, { defined: false; extended: true }>,
-                          AVAILABLE_PATHS
-                        >
-                      },
-                      OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
-                    >
-                  >
-                | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
-            : never)
-        | (SCHEMA extends RecordSchema
-            ?
-                | Unextended<{
-                    [KEY in ResolveStringSchema<SCHEMA['keys']>]?:
-                      | UpdateValueInput<
-                          SCHEMA['elements'],
-                          Overwrite<OPTIONS, { defined: false; extended: true }>,
-                          AVAILABLE_PATHS
-                        >
-                      | REMOVE
-                  }>
-                | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
-            : never)
-        | (SCHEMA extends AnyOfSchema
-            ? UpdateValueInput<SCHEMA['elements'][number], OPTIONS, AVAILABLE_PATHS>
-            : never)
+                  | REMOVE
+              }>
+            | If<IsExtended<OPTIONS>, SET<ValidValue<SCHEMA, { defined: true }>>>
+          : never)
+      | (SCHEMA extends AnyOfSchema
+          ? UpdateValueInput<SCHEMA['elements'][number], OPTIONS, AVAILABLE_PATHS>
+          : never)
 
 /** Update inputs of a tuple of schemas. */
 export type UpdateValueInputRec<

@@ -15,8 +15,7 @@ export const deleteTable = async (
 
   if (!response.ok && response.status !== 404) {
     const { message, Message } = (await response.json()) as
-      | { message: string; Message?: undefined }
-      | { message?: undefined; Message: string }
+      { message: string; Message?: undefined } | { message?: undefined; Message: string }
     throw new Error(message ?? Message)
   }
 }

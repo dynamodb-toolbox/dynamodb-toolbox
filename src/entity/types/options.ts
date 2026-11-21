@@ -5,5 +5,6 @@ import type { ReadValueOptions, WriteValueOptions } from '~/schema/index.js'
 export interface WriteItemOptions extends WriteValueOptions {}
 
 /** Options controlling how an item is formatted on reads. */
-export interface ReadItemOptions<ENTITY extends Entity = Entity>
-  extends ReadValueOptions<ENTITY['schema']> {}
+export interface ReadItemOptions<ENTITY extends Entity = Entity> extends ReadValueOptions<
+  ENTITY['schema']
+> {}

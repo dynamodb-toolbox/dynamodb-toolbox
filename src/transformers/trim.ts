@@ -14,9 +14,13 @@ export interface TrimmerDTO {
 /**
  * Transformer that trims leading and trailing whitespace when encoding a string.
  */
-export class Trimmer
-  implements SerializableTransformer<string, string, string, Strings.Trim, TrimmerDTO>
-{
+export class Trimmer implements SerializableTransformer<
+  string,
+  string,
+  string,
+  Strings.Trim,
+  TrimmerDTO
+> {
   // @ts-expect-error
   _typeModifier: Strings.Trim
   transformerId: 'trim'

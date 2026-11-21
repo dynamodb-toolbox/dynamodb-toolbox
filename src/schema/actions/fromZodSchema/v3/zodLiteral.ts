@@ -39,38 +39,35 @@ export type FromZodLiteral<
   PROPS extends SchemaProps = {}
 > =
   ZOD_SCHEMA extends ZodLiteral<infer ZOD_SCHEMA_LITERAL>
-    ?
-        | (ZOD_SCHEMA_LITERAL extends null
-            ? ROOT extends true
-              ? NullSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-              : NullSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-            : never)
-        | (ZOD_SCHEMA_LITERAL extends boolean
-            ? ROOT extends true
-              ? BooleanSchema_<
-                  Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>
-                >
-              : BooleanSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-            : never)
-        | (ZOD_SCHEMA_LITERAL extends number
-            ? ROOT extends true
-              ? NumberSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-              : NumberSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-            : never)
-        | (ZOD_SCHEMA_LITERAL extends bigint
-            ? ROOT extends true
-              ? NumberSchema_<
-                  Overwrite<PROPS, { big: true; enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>
-                >
-              : NumberSchema<
-                  Overwrite<PROPS, { big: true; enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>
-                >
-            : never)
-        | (ZOD_SCHEMA_LITERAL extends string
-            ? ROOT extends true
-              ? StringSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-              : StringSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
-            : never)
+    ? | (ZOD_SCHEMA_LITERAL extends null
+          ? ROOT extends true
+            ? NullSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+            : NullSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+          : never)
+      | (ZOD_SCHEMA_LITERAL extends boolean
+          ? ROOT extends true
+            ? BooleanSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+            : BooleanSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+          : never)
+      | (ZOD_SCHEMA_LITERAL extends number
+          ? ROOT extends true
+            ? NumberSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+            : NumberSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+          : never)
+      | (ZOD_SCHEMA_LITERAL extends bigint
+          ? ROOT extends true
+            ? NumberSchema_<
+                Overwrite<PROPS, { big: true; enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>
+              >
+            : NumberSchema<
+                Overwrite<PROPS, { big: true; enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>
+              >
+          : never)
+      | (ZOD_SCHEMA_LITERAL extends string
+          ? ROOT extends true
+            ? StringSchema_<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+            : StringSchema<Overwrite<PROPS, { enum: [ZOD_SCHEMA_LITERAL]; putDefault: unknown }>>
+          : never)
     : never
 
 /**

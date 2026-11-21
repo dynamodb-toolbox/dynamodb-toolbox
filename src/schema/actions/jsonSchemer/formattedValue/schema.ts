@@ -67,16 +67,15 @@ export const getFormattedValueJSONSchema = <SCHEMA extends Schema>(
  */
 export type FormattedValueJSONSchema<SCHEMA extends Schema> = Schema extends SCHEMA
   ? Record<string, unknown>
-  :
-      | (SCHEMA extends AnySchema ? FormattedAnyJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends SetSchema ? FormattedSetJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends ListSchema ? FormattedListJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends TupleSchema ? FormattedTupleJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends MapSchema ? FormattedMapJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends RecordSchema ? FormattedRecordJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
-      | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
+  : | (SCHEMA extends AnySchema ? FormattedAnyJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends PrimitiveSchema ? FormattedPrimitiveJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends SetSchema ? FormattedSetJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends ListSchema ? FormattedListJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends TupleSchema ? FormattedTupleJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends MapSchema ? FormattedMapJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends RecordSchema ? FormattedRecordJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends AnyOfSchema ? FormattedAnyOfJSONSchema<SCHEMA> : never)
+    | (SCHEMA extends ItemSchema ? FormattedItemJSONSchema<SCHEMA> : never)
 
 /**
  * JSON Schemas of a tuple of formatted values, preserving positions.

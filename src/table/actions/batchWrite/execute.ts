@@ -17,8 +17,7 @@ import { BatchWriteCommand } from './batchWriteCommand.js'
 
 /** Input to `executeBatchWrite`: one or more `BatchWriteCommand`s, optionally led by options. */
 export type ExecuteBatchWriteInput =
-  | [ExecuteBatchWriteOptions, ...BatchWriteCommand[]]
-  | BatchWriteCommand[]
+  [ExecuteBatchWriteOptions, ...BatchWriteCommand[]] | BatchWriteCommand[]
 
 /** Options for `executeBatchWrite` (capacity, metrics, document client, retry attempts). */
 export interface ExecuteBatchWriteOptions extends DocumentClientOptions {

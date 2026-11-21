@@ -58,26 +58,25 @@ type FromZodSpecialSchema<
   ROOT extends boolean = true,
   PROPS extends SchemaProps = {}
 > = ZOD_SCHEMA extends ZodSpecialSchema
-  ?
-      | (ZOD_SCHEMA extends ZodNull ? FromZodNull<ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodBoolean ? FromZodBoolean<ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodNumber ? FromZodNumber<ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodBigInt ? FromZodBigInt<ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodString ? FromZodString<ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodLiteralAny ? FromZodLiteral<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodEnumAny ? FromZodEnum<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodSet ? FromZodSet<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodArrayAny ? FromZodArray<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodTupleAny ? FromZodTuple<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodObjectAny ? FromZodObject<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodRecordAny ? FromZodRecord<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodUnionAny ? FromZodUnion<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodDiscriminatedUnionAny
-          ? FromZodDiscriminatedUnion<ZOD_SCHEMA, ROOT, PROPS>
-          : never)
-      | (ZOD_SCHEMA extends ZodOptionalAny ? FromZodOptional<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodDefaultAny ? FromZodDefault<ZOD_SCHEMA, ROOT, PROPS> : never)
-      | (ZOD_SCHEMA extends ZodEffectsAny ? FromZodEffects<ZOD_SCHEMA, ROOT, PROPS> : never)
+  ? | (ZOD_SCHEMA extends ZodNull ? FromZodNull<ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodBoolean ? FromZodBoolean<ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodNumber ? FromZodNumber<ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodBigInt ? FromZodBigInt<ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodString ? FromZodString<ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodLiteralAny ? FromZodLiteral<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodEnumAny ? FromZodEnum<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodSet ? FromZodSet<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodArrayAny ? FromZodArray<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodTupleAny ? FromZodTuple<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodObjectAny ? FromZodObject<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodRecordAny ? FromZodRecord<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodUnionAny ? FromZodUnion<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodDiscriminatedUnionAny
+        ? FromZodDiscriminatedUnion<ZOD_SCHEMA, ROOT, PROPS>
+        : never)
+    | (ZOD_SCHEMA extends ZodOptionalAny ? FromZodOptional<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodDefaultAny ? FromZodDefault<ZOD_SCHEMA, ROOT, PROPS> : never)
+    | (ZOD_SCHEMA extends ZodEffectsAny ? FromZodEffects<ZOD_SCHEMA, ROOT, PROPS> : never)
   : never
 
 type ZodGeneralSchema = ZodType

@@ -48,10 +48,9 @@ type ReturnedItems<
                   }
                 >,
                 {
-                  [KEY in EntityAttrOptionValue<
-                    ENTITY['entityAttribute'],
-                    'name'
-                  >]: ENTITY['entityName']
+                  [
+                    KEY in EntityAttrOptionValue<ENTITY['entityAttribute'], 'name'>
+                  ]: ENTITY['entityName']
                 }
               >
             : FormattedItem<
@@ -82,11 +81,11 @@ export type QueryResponse<
 
 /** Internal `QueryCommand` implementation exposing `send`, `params` and `paginate`. */
 export class IQueryCommand<
-    TABLE extends Table = Table,
-    ENTITIES extends Entity[] = Entity[],
-    QUERY extends Query<TABLE> = Query<TABLE>,
-    OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
-  >
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  QUERY extends Query<TABLE> = Query<TABLE>,
+  OPTIONS extends QueryOptions<TABLE, ENTITIES, QUERY> = QueryOptions<TABLE, ENTITIES, QUERY>
+>
   extends TableAction<TABLE, ENTITIES>
   implements TableSendableAction<TABLE>
 {

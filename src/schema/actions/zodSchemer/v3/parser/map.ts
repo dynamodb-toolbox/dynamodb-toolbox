@@ -33,9 +33,11 @@ export type MapZodParser<
             SCHEMA,
             z.ZodObject<
               {
-                [KEY in OPTIONS extends { mode: 'key' }
-                  ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-                  : keyof SCHEMA['attributes']]: SchemaZodParser<
+                [
+                  KEY in OPTIONS extends { mode: 'key' }
+                    ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
+                    : keyof SCHEMA['attributes']
+                ]: SchemaZodParser<
                   SCHEMA['attributes'][KEY],
                   Overwrite<OPTIONS, { defined: false }>
                 >

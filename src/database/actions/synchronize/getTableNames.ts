@@ -14,8 +14,7 @@ export const getTableNames = async (
 
   if (!response.ok) {
     const { message, Message } = (await response.json()) as
-      | { message: string; Message?: undefined }
-      | { message?: undefined; Message: string }
+      { message: string; Message?: undefined } | { message?: undefined; Message: string }
     throw new Error(message ?? Message)
   }
 

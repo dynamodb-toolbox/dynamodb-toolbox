@@ -31,9 +31,7 @@ const assertMock: A.Equals<
       arg: KeyInputItem<typeof TestEntity>,
       options: GetItemOptions<typeof TestEntity>
     ) =>
-      | Promise<GetItemResponse<typeof TestEntity>>
-      | GetItemResponse<typeof TestEntity>
-      | undefined
+      Promise<GetItemResponse<typeof TestEntity>> | GetItemResponse<typeof TestEntity> | undefined
   ) => typeof spy
 > = 1
 assertMock

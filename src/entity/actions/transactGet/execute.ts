@@ -27,8 +27,7 @@ export interface ExecuteTransactGetOptions extends DocumentClientOptions {
 
 /** Arguments of `executeTransactGet`: the transactions, optionally preceded by execution options. */
 export type ExecuteTransactGetInput =
-  | GetTransactionProps[]
-  | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
+  GetTransactionProps[] | [ExecuteTransactGetOptions, ...GetTransactionProps[]]
 
 type ExecuteTransactGet = <TRANSACTIONS extends ExecuteTransactGetInput>(
   ..._transactions: TRANSACTIONS

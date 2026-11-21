@@ -30,18 +30,16 @@ export type ReturnedAttributes<
 > = OPTIONS['returnValues'] extends NoneReturnValuesOption
   ? undefined
   : OPTIONS['returnValues'] extends UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
-    ?
-        | FormattedItem<
-            ENTITY,
-            {
-              partial: OPTIONS['returnValues'] extends
-                | UpdatedOldReturnValuesOption
-                | UpdatedNewReturnValuesOption
-                ? true
-                : false
-            }
-          >
-        | undefined
+    ? | FormattedItem<
+          ENTITY,
+          {
+            partial: OPTIONS['returnValues'] extends
+              UpdatedOldReturnValuesOption | UpdatedNewReturnValuesOption
+              ? true
+              : false
+          }
+        >
+      | undefined
     : OPTIONS['returnValues'] extends AllNewReturnValuesOption | AllOldReturnValuesOption
       ? FormattedItem<ENTITY> | undefined
       : never
@@ -60,9 +58,9 @@ export type UpdateItemResponse<
 
 /** Partially update an item of an entity, with support for update extensions. */
 export class UpdateItemCommand<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends UpdateItemOptions<ENTITY> = UpdateItemOptions<ENTITY>
+>
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {

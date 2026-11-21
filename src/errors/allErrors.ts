@@ -6,10 +6,7 @@ import type { TableErrorBlueprints } from '~/table/errors.js'
 import type { ErrorBlueprint } from './blueprint.js'
 
 type ErrorBlueprints =
-  | SchemaErrorBlueprints
-  | EntityErrorBlueprints
-  | TableErrorBlueprints
-  | OptionsErrorBlueprints
+  SchemaErrorBlueprints | EntityErrorBlueprints | TableErrorBlueprints | OptionsErrorBlueprints
 
 type IndexErrors<ERROR_BLUEPRINTS extends ErrorBlueprint> = {
   [ERROR_BLUEPRINT in ERROR_BLUEPRINTS as ERROR_BLUEPRINT['code']]: ERROR_BLUEPRINT

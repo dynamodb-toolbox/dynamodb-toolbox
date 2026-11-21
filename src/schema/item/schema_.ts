@@ -99,13 +99,12 @@ export class ItemSchema_<
    */
   and<ADDITIONAL_ATTRIBUTES extends ItemAttributes = ItemAttributes>(
     additionalAttr:
-      | NarrowObject<ADDITIONAL_ATTRIBUTES>
-      | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
+      NarrowObject<ADDITIONAL_ATTRIBUTES> | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
   ): ItemSchema_<
     {
-      [KEY in
-        | keyof ATTRIBUTES
-        | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+      [
+        KEY in keyof ATTRIBUTES | keyof ADDITIONAL_ATTRIBUTES
+      ]: KEY extends keyof ADDITIONAL_ATTRIBUTES
         ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
         : KEY extends keyof ATTRIBUTES
           ? ATTRIBUTES[KEY]
@@ -125,9 +124,9 @@ export class ItemSchema_<
 
     return new ItemSchema_(
       nextAttributes as {
-        [KEY in
-          | keyof ATTRIBUTES
-          | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+        [
+          KEY in keyof ATTRIBUTES | keyof ADDITIONAL_ATTRIBUTES
+        ]: KEY extends keyof ADDITIONAL_ATTRIBUTES
           ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]

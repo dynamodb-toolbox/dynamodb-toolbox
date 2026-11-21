@@ -14,5 +14,4 @@ type InvalidProjectionExpressionErrorBlueprint = ErrorBlueprint<{
 
 /** Union of error blueprints raised while building a `ScanCommand`'s DynamoDB params. */
 export type ScanCommandParamsErrorBlueprints =
-  | InvalidSegmentOptionErrorBlueprint
-  | InvalidProjectionExpressionErrorBlueprint
+  InvalidSegmentOptionErrorBlueprint | InvalidProjectionExpressionErrorBlueprint

@@ -47,10 +47,9 @@ type ReturnedItems<
                   }
                 >,
                 {
-                  [KEY in EntityAttrOptionValue<
-                    ENTITY['entityAttribute'],
-                    'name'
-                  >]: ENTITY['entityName']
+                  [
+                    KEY in EntityAttrOptionValue<ENTITY['entityAttribute'], 'name'>
+                  ]: ENTITY['entityName']
                 }
               >
             : FormattedItem<
@@ -80,10 +79,10 @@ export type ScanResponse<
 
 /** Internal `ScanCommand` implementation exposing `send`, `params` and `paginate`. */
 export class IScanCommand<
-    TABLE extends Table = Table,
-    ENTITIES extends Entity[] = Entity[],
-    OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
-  >
+  TABLE extends Table = Table,
+  ENTITIES extends Entity[] = Entity[],
+  OPTIONS extends ScanOptions<TABLE, ENTITIES> = ScanOptions<TABLE, ENTITIES>
+>
   extends TableAction<TABLE, ENTITIES>
   implements TableSendableAction<TABLE>
 {

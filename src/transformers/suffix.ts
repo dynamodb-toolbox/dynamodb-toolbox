@@ -20,16 +20,16 @@ export interface SuffixerDTO {
 /**
  * Transformer that appends a suffix (joined by a delimiter) to a string value.
  */
-export class Suffixer<SUFFIX extends string, DELIMITER extends string = '#'>
-  implements
-    SerializableTransformer<
-      string,
-      string,
-      string,
-      Strings.Append<`${DELIMITER}${SUFFIX}`>,
-      SuffixerDTO
-    >
-{
+export class Suffixer<
+  SUFFIX extends string,
+  DELIMITER extends string = '#'
+> implements SerializableTransformer<
+  string,
+  string,
+  string,
+  Strings.Append<`${DELIMITER}${SUFFIX}`>,
+  SuffixerDTO
+> {
   // @ts-expect-error
   _typeModifier: Strings.Append<`${DELIMITER}${SUFFIX}`>
   transformerId: 'suffix'

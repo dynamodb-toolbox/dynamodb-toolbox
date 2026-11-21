@@ -25,8 +25,7 @@ export type StringToEscape = `${string}${CharsToEscape}${string}`
  * Appends a key to a path, escaping it when needed.
  */
 export type AppendKey<PATH extends string, KEY extends string> =
-  | If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`>
-  | `${PATH}['${KEY}']`
+  If<Extends<KEY, StringToEscape>, never, `${PATH}.${KEY}`> | `${PATH}['${KEY}']`
 
 /**
  * Union of every valid attribute path of a schema.
@@ -57,13 +56,12 @@ export type ItemSchemaPaths<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema
   ? string
   : keyof SCHEMA['attributes'] extends infer SCHEMA_PATH
     ? SCHEMA_PATH extends string
-      ?
-          | `['${SCHEMA_PATH}']`
-          | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
-          | SchemaPaths<
-              SCHEMA['attributes'][SCHEMA_PATH],
-              `['${SCHEMA_PATH}']` | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
-            >
+      ? | `['${SCHEMA_PATH}']`
+        | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
+        | SchemaPaths<
+            SCHEMA['attributes'][SCHEMA_PATH],
+            `['${SCHEMA_PATH}']` | If<Extends<SCHEMA_PATH, StringToEscape>, never, SCHEMA_PATH>
+          >
       : never
     : never
 
@@ -118,9 +116,8 @@ type RecordSchemaPaths<
   RESOLVED_KEYS extends string = ResolveStringSchema<SCHEMA['keys']>
 > = RecordSchema extends SCHEMA
   ? string
-  :
-      | AppendKey<SCHEMA_PATH, RESOLVED_KEYS>
-      | SchemaPaths<SCHEMA['elements'], AppendKey<SCHEMA_PATH, RESOLVED_KEYS>>
+  : | AppendKey<SCHEMA_PATH, RESOLVED_KEYS>
+    | SchemaPaths<SCHEMA['elements'], AppendKey<SCHEMA_PATH, RESOLVED_KEYS>>
 
 type AnyOfSchemaPaths<
   SCHEMA extends AnyOfSchema,

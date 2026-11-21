@@ -41,9 +41,9 @@ export type PutItemResponse<
 
 /** Write a complete item of an entity, applying defaults and links. */
 export class PutItemCommand<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends PutItemOptions<ENTITY> = PutItemOptions<ENTITY>
+>
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {
