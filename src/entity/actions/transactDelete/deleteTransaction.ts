@@ -14,9 +14,9 @@ import { parseOptions } from './options.js'
 
 /** Delete an entity item within a `TransactWriteItems` operation. */
 export class DeleteTransaction<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends DeleteTransactionOptions<ENTITY> = DeleteTransactionOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends DeleteTransactionOptions<ENTITY> = DeleteTransactionOptions<ENTITY>
+>
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {

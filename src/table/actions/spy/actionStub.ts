@@ -26,8 +26,7 @@ interface MetadataBearer {
 
 /** AWS SDK error shape used to reject a stubbed action. */
 export interface AwsError
-  extends Partial<{ name: string; message: string; stack?: string }>,
-    Partial<MetadataBearer> {
+  extends Partial<{ name: string; message: string; stack?: string }>, Partial<MetadataBearer> {
   Type?: string
   Code?: string
   $fault?: 'client' | 'server'

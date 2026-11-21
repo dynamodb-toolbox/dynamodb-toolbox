@@ -10,5 +10,4 @@ type NoEntityMatchedErrorBlueprint = ErrorBlueprint<{
 
 /** Union of every error blueprint a `ScanCommand` can raise. */
 export type ScanCommandErrorBlueprints =
-  | ScanCommandParamsErrorBlueprints
-  | NoEntityMatchedErrorBlueprint
+  ScanCommandParamsErrorBlueprints | NoEntityMatchedErrorBlueprint

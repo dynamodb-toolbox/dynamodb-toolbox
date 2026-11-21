@@ -16,8 +16,7 @@ import type {
 
 /** A `QueryCommand` input: a query on the primary index or on a secondary index. */
 export type Query<TABLE extends Table = Table> =
-  | PrimaryIndexQuery<TABLE>
-  | SecondaryIndexQueries<TABLE>
+  PrimaryIndexQuery<TABLE> | SecondaryIndexQueries<TABLE>
 
 // --- PRIMARY ---
 /** A query on the table's primary index (partition value + optional range). */
@@ -51,9 +50,8 @@ type KeyRange<
 
 type QueryTypeRange<KEY_TYPE extends KeyType> =
   | (KEY_TYPE extends 'string'
-      ?
-          | { [OPERATOR in BeginsWithOperator]: KeyTypeValue<KEY_TYPE> }
-          | KeyRange<KeyTypeValue<KEY_TYPE>>
+      ? | { [OPERATOR in BeginsWithOperator]: KeyTypeValue<KEY_TYPE> }
+        | KeyRange<KeyTypeValue<KEY_TYPE>>
       : never)
   | (KEY_TYPE extends 'number' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)
   | (KEY_TYPE extends 'binary' ? KeyRange<KeyTypeValue<KEY_TYPE>> : never)

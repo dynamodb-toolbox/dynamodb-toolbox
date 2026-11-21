@@ -372,13 +372,12 @@ export class MapSchema_<
 
   and<ADDITIONAL_ATTRIBUTES extends MapAttributes = MapAttributes>(
     additionalAttr:
-      | NarrowObject<ADDITIONAL_ATTRIBUTES>
-      | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
+      NarrowObject<ADDITIONAL_ATTRIBUTES> | ((schema: this) => NarrowObject<ADDITIONAL_ATTRIBUTES>)
   ): MapSchema_<
     {
-      [KEY in
-        | keyof ATTRIBUTES
-        | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+      [
+        KEY in keyof ATTRIBUTES | keyof ADDITIONAL_ATTRIBUTES
+      ]: KEY extends keyof ADDITIONAL_ATTRIBUTES
         ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
         : KEY extends keyof ATTRIBUTES
           ? ATTRIBUTES[KEY]
@@ -398,9 +397,9 @@ export class MapSchema_<
 
     return new MapSchema_(
       nextAttributes as {
-        [KEY in
-          | keyof ATTRIBUTES
-          | keyof ADDITIONAL_ATTRIBUTES]: KEY extends keyof ADDITIONAL_ATTRIBUTES
+        [
+          KEY in keyof ATTRIBUTES | keyof ADDITIONAL_ATTRIBUTES
+        ]: KEY extends keyof ADDITIONAL_ATTRIBUTES
           ? Light<ADDITIONAL_ATTRIBUTES[KEY]>
           : KEY extends keyof ATTRIBUTES
             ? ATTRIBUTES[KEY]

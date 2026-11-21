@@ -20,16 +20,16 @@ export interface PrefixerDTO {
 /**
  * Transformer that prepends a prefix (joined by a delimiter) to a string value.
  */
-export class Prefixer<PREFIX extends string, DELIMITER extends string = '#'>
-  implements
-    SerializableTransformer<
-      string,
-      string,
-      string,
-      Strings.Prepend<`${PREFIX}${DELIMITER}`>,
-      PrefixerDTO
-    >
-{
+export class Prefixer<
+  PREFIX extends string,
+  DELIMITER extends string = '#'
+> implements SerializableTransformer<
+  string,
+  string,
+  string,
+  Strings.Prepend<`${PREFIX}${DELIMITER}`>,
+  PrefixerDTO
+> {
   // @ts-expect-error
   _typeModifier: Strings.Prepend<`${PREFIX}${DELIMITER}`>
   transformerId: 'prefix'

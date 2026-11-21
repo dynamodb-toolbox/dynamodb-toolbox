@@ -39,8 +39,7 @@ export type NullUnextendedValue = ResolvedNullSchema
  * Runtime value of a null schema, including extensions.
  */
 export type NullExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'null'>
-  | NullUnextendedValue
+  ExtendedValue<EXTENSION, 'null'> | NullUnextendedValue
 
 /**
  * Runtime value of a boolean schema, without extensions.
@@ -50,8 +49,7 @@ export type BooleanUnextendedValue = ResolvedBooleanSchema
  * Runtime value of a boolean schema, including extensions.
  */
 export type BooleanExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'boolean'>
-  | BooleanUnextendedValue
+  ExtendedValue<EXTENSION, 'boolean'> | BooleanUnextendedValue
 
 /**
  * Runtime value of a number schema, without extensions.
@@ -61,8 +59,7 @@ export type NumberUnextendedValue = ResolvedNumberSchema
  * Runtime value of a number schema, including extensions.
  */
 export type NumberExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'number'>
-  | NumberUnextendedValue
+  ExtendedValue<EXTENSION, 'number'> | NumberUnextendedValue
 
 /**
  * Runtime value of a string schema, without extensions.
@@ -72,8 +69,7 @@ export type StringUnextendedValue = ResolvedStringSchema
  * Runtime value of a string schema, including extensions.
  */
 export type StringExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'string'>
-  | StringUnextendedValue
+  ExtendedValue<EXTENSION, 'string'> | StringUnextendedValue
 
 /**
  * Runtime value of a binary schema, without extensions.
@@ -83,8 +79,7 @@ export type BinaryUnextendedValue = ResolvedBinarySchema
  * Runtime value of a binary schema, including extensions.
  */
 export type BinaryExtendedAttributeValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'binary'>
-  | BinaryUnextendedValue
+  ExtendedValue<EXTENSION, 'binary'> | BinaryUnextendedValue
 
 /**
  * Runtime value of a set schema, without extensions.
@@ -96,8 +91,7 @@ export type SetUnextendedValue<EXTENSION extends Extension = never> = Set<
  * Runtime value of a set schema, including extensions.
  */
 export type SetExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'set'>
-  | SetUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'set'> | SetUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of a list schema, without extensions.
@@ -108,8 +102,7 @@ export type ListUnextendedValue<EXTENSION extends Extension = never> =
  * Runtime value of a list schema, including extensions.
  */
 export type ListExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'list'>
-  | ListUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'list'> | ListUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of a tuple schema, without extensions.
@@ -120,8 +113,7 @@ export type TupleUnextendedValue<EXTENSION extends Extension = never> =
  * Runtime value of a tuple schema, including extensions.
  */
 export type TupleExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'tuple'>
-  | TupleUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'tuple'> | TupleUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of a map schema, without extensions.
@@ -133,8 +125,7 @@ export type MapUnextendedValue<EXTENSION extends Extension = never> = {
  * Runtime value of a map schema, including extensions.
  */
 export type MapExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'map'>
-  | MapUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'map'> | MapUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of a record schema, without extensions.
@@ -146,8 +137,7 @@ export type RecordUnextendedValue<EXTENSION extends Extension = never> = {
  * Runtime value of a record schema, including extensions.
  */
 export type RecordExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'record'>
-  | RecordUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'record'> | RecordUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of an item schema, without extensions.
@@ -159,8 +149,7 @@ export type ItemUnextendedValue<EXTENSION extends Extension = never> = {
  * Runtime value of an item schema, including extensions.
  */
 export type ItemExtendedValue<EXTENSION extends Extension = never> =
-  | ExtendedValue<EXTENSION, 'item'>
-  | ItemUnextendedValue<EXTENSION>
+  ExtendedValue<EXTENSION, 'item'> | ItemUnextendedValue<EXTENSION>
 
 /**
  * Runtime value of any schema, without extensions.

@@ -19,9 +19,9 @@ import type { UpdateTransactionOptions } from './options.js'
 
 /** Partially update an entity item within a `TransactWriteItems` operation. */
 export class UpdateTransaction<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends UpdateTransactionOptions<ENTITY> = UpdateTransactionOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends UpdateTransactionOptions<ENTITY> = UpdateTransactionOptions<ENTITY>
+>
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {

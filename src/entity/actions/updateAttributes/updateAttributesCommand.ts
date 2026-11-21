@@ -30,9 +30,9 @@ export type UpdateAttributesResponse<
 
 /** Update an item of an entity, overriding each provided attribute as a whole. */
 export class UpdateAttributesCommand<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends UpdateAttributesOptions<ENTITY> = UpdateAttributesOptions<ENTITY>
+>
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {

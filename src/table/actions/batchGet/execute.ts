@@ -27,8 +27,7 @@ export interface ExecuteBatchGetOptions extends DocumentClientOptions {
 
 /** Input to `executeBatchGet`: one or more `BatchGetCommand`s, optionally led by options. */
 export type ExecuteBatchGetInput =
-  | BatchGetCommand[]
-  | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
+  BatchGetCommand[] | [ExecuteBatchGetOptions, ...BatchGetCommand[]]
 
 type ExecuteBatchGet = <COMMANDS extends ExecuteBatchGetInput>(
   ..._commands: COMMANDS

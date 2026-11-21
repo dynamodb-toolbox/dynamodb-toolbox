@@ -37,9 +37,9 @@ export type DeleteItemResponse<
 
 /** Delete a single item of an entity by its key. */
 export class DeleteItemCommand<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends DeleteItemOptions<ENTITY> = DeleteItemOptions<ENTITY>
+>
   extends EntityAction<ENTITY>
   implements EntitySendableAction<ENTITY>
 {

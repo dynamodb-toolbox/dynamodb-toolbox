@@ -44,7 +44,7 @@ export function* mapSchemaFormatter(
       continue
     }
 
-    const attributeSavedAs = transform ? savedAs ?? attributeName : attributeName
+    const attributeSavedAs = transform ? (savedAs ?? attributeName) : attributeName
     formatters[attributeName] = schemaFormatter(attribute, rawValue[attributeSavedAs], {
       attributes: childrenAttributes,
       valuePath: [...(valuePath ?? []), attributeSavedAs],

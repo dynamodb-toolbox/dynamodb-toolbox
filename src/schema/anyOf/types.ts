@@ -5,26 +5,25 @@ import type { AnyOfSchema } from './schema.js'
 
 type ElementDiscriminator<ELEMENT extends Schema> = Schema extends ELEMENT
   ? string
-  :
-      | (ELEMENT extends AnyOfSchema ? Discriminator<ELEMENT['elements']> : never)
-      | (ELEMENT extends MapSchema
-          ? {
-              [KEY in keyof ELEMENT['attributes']]: ELEMENT['attributes'][KEY] extends StringSchema
-                ? ELEMENT['attributes'][KEY]['props'] extends {
-                    enum: string[]
-                    required?: AtLeastOnce | Always
-                    transform?: undefined
-                  }
-                  ? [
-                      KEY,
-                      ELEMENT['attributes'][KEY]['props'] extends { savedAs: string }
-                        ? ELEMENT['attributes'][KEY]['props']['savedAs']
-                        : KEY
-                    ]
-                  : never
+  : | (ELEMENT extends AnyOfSchema ? Discriminator<ELEMENT['elements']> : never)
+    | (ELEMENT extends MapSchema
+        ? {
+            [KEY in keyof ELEMENT['attributes']]: ELEMENT['attributes'][KEY] extends StringSchema
+              ? ELEMENT['attributes'][KEY]['props'] extends {
+                  enum: string[]
+                  required?: AtLeastOnce | Always
+                  transform?: undefined
+                }
+                ? [
+                    KEY,
+                    ELEMENT['attributes'][KEY]['props'] extends { savedAs: string }
+                      ? ELEMENT['attributes'][KEY]['props']['savedAs']
+                      : KEY
+                  ]
                 : never
-            }[keyof ELEMENT['attributes']]
-          : never)
+              : never
+          }[keyof ELEMENT['attributes']]
+        : never)
 
 /**
  * Valid discriminator keys shared by a list of element schemas.

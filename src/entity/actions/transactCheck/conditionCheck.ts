@@ -50,8 +50,7 @@ export class ConditionCheck<ENTITY extends Entity = Entity>
   /** Set the check options. */
   options(
     nextOptions:
-      | ConditionCheckOptions
-      | ((prevOptions: ConditionCheckOptions) => ConditionCheckOptions)
+      ConditionCheckOptions | ((prevOptions: ConditionCheckOptions) => ConditionCheckOptions)
   ): ConditionCheck<ENTITY> {
     return new ConditionCheck(
       this.entity,

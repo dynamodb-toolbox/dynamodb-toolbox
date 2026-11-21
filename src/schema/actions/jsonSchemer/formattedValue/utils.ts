@@ -9,10 +9,9 @@ export type RequiredProperties<SCHEMA extends MapSchema | ItemSchema> = ItemSche
   : MapSchema extends SCHEMA
     ? string
     : {
-        [KEY in OmitKeys<
-          SCHEMA['attributes'],
-          { props: { hidden: true } }
-        >]: SCHEMA['attributes'][KEY]['props'] extends { required: Never } ? never : KEY
+        [
+          KEY in OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>
+        ]: SCHEMA['attributes'][KEY]['props'] extends { required: Never } ? never : KEY
       }[OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]
 
 /**

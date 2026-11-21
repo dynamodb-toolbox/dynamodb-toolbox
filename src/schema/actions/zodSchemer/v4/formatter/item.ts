@@ -23,12 +23,11 @@ export type ItemZodFormatter<
       SCHEMA,
       OPTIONS,
       z.ZodObject<{
-        [KEY in OPTIONS extends { format: false }
-          ? keyof SCHEMA['attributes']
-          : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>]: SchemaZodFormatter<
-          SCHEMA['attributes'][KEY],
-          Overwrite<OPTIONS, { defined: false }>
-        >
+        [
+          KEY in OPTIONS extends { format: false }
+            ? keyof SCHEMA['attributes']
+            : OmitKeys<SCHEMA['attributes'], { props: { hidden: true } }>
+        ]: SchemaZodFormatter<SCHEMA['attributes'][KEY], Overwrite<OPTIONS, { defined: false }>>
       }>
     >
 

@@ -12,8 +12,9 @@ export type TransactWriteItem = NonNullable<
 export class WriteTransaction<ENTITY extends Entity = Entity> extends EntityAction<ENTITY> {}
 
 /** A `WriteTransaction` that can build its own `TransactWriteItems` entry. */
-export interface WriteTransactionImplementation<ENTITY extends Entity = Entity>
-  extends EntityAction<ENTITY> {
+export interface WriteTransactionImplementation<
+  ENTITY extends Entity = Entity
+> extends EntityAction<ENTITY> {
   params: () => TransactWriteItem & { ToolboxItem?: unknown }
 }
 

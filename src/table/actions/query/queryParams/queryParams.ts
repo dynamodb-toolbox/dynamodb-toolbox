@@ -72,7 +72,7 @@ export const queryParams: QueryParamsGetter = <
     tableName,
     entityAttrFilter = entities.every(entity => isEntityAttrEnabled(entity.entityAttribute)) &&
       !isKeyAttribute(
-        index !== undefined ? indexes[index] ?? table : table,
+        index !== undefined ? (indexes[index] ?? table) : table,
         entityAttributeSavedAs
       ),
     showEntityAttr,

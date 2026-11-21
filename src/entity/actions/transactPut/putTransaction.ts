@@ -17,9 +17,9 @@ import { parseOptions } from './options.js'
 
 /** Write a complete entity item within a `TransactWriteItems` operation. */
 export class PutTransaction<
-    ENTITY extends Entity = Entity,
-    OPTIONS extends PutTransactionOptions<ENTITY> = PutTransactionOptions<ENTITY>
-  >
+  ENTITY extends Entity = Entity,
+  OPTIONS extends PutTransactionOptions<ENTITY> = PutTransactionOptions<ENTITY>
+>
   extends WriteTransaction<ENTITY>
   implements WriteTransactionImplementation<ENTITY>
 {

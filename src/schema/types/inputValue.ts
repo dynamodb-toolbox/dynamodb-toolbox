@@ -88,12 +88,11 @@ type ItemSchemaInputValue<
   ? { [KEY: string]: SchemaInputValue<Schema, Overwrite<OPTIONS, { defined: false }>> }
   : Optional<
       {
-        [KEY in OPTIONS extends { mode: 'key' }
-          ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-          : keyof SCHEMA['attributes']]: SchemaInputValue<
-          SCHEMA['attributes'][KEY],
-          Overwrite<OPTIONS, { defined: false }>
-        >
+        [
+          KEY in OPTIONS extends { mode: 'key' }
+            ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
+            : keyof SCHEMA['attributes']
+        ]: SchemaInputValue<SCHEMA['attributes'][KEY], Overwrite<OPTIONS, { defined: false }>>
       },
       OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
     >
@@ -103,122 +102,105 @@ type SchemaInputValue<
   OPTIONS extends WriteValueOptions = {}
 > = Schema extends SCHEMA
   ? unknown
-  :
-      | (SCHEMA extends AnySchema ? AnySchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends SetSchema ? SetSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends ListSchema ? ListSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends TupleSchema ? TupleSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends MapSchema ? MapSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends RecordSchema ? RecordSchemaInputValue<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends AnyOfSchema ? AnyOfSchemaInputValue<SCHEMA, OPTIONS> : never)
+  : | (SCHEMA extends AnySchema ? AnySchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends PrimitiveSchema ? PrimitiveSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends SetSchema ? SetSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends ListSchema ? ListSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends TupleSchema ? TupleSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends MapSchema ? MapSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends RecordSchema ? RecordSchemaInputValue<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends AnyOfSchema ? AnyOfSchemaInputValue<SCHEMA, OPTIONS> : never)
 
 type AnySchemaInputValue<
   SCHEMA extends AnySchema,
   OPTIONS extends WriteValueOptions = {}
 > = AnySchema extends SCHEMA
   ? unknown
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | ResolveAnySchema<SCHEMA>
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | ResolveAnySchema<SCHEMA>
 
 type PrimitiveSchemaInputValue<
   SCHEMA extends PrimitiveSchema,
   OPTIONS extends WriteValueOptions = {}
 > = PrimitiveSchema extends SCHEMA
   ? undefined | ResolvedPrimitiveSchema | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | ResolvePrimitiveSchema<SCHEMA>
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | ResolvePrimitiveSchema<SCHEMA>
 
 type SetSchemaInputValue<
   SCHEMA extends SetSchema,
   OPTIONS extends WriteValueOptions = {}
 > = SetSchema extends SCHEMA
-  ?
-      | undefined
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Set<
-          SchemaInputValue<
-            SetSchema['elements'],
-            Overwrite<OPTIONS, { mode: 'put'; defined: false }>
-          >
-        >
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Set<
-          SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
-        >
+  ? | undefined
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | Set<
+        SchemaInputValue<SetSchema['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>
+      >
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | Set<SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { mode: 'put'; defined: false }>>>
 
 type ListSchemaInputValue<
   SCHEMA extends ListSchema,
   OPTIONS extends WriteValueOptions = {}
 > = ListSchema extends SCHEMA
   ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | unknown[]
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>[]
 
 type TupleSchemaInputValue<
   SCHEMA extends TupleSchema,
   OPTIONS extends WriteValueOptions = {}
 > = TupleSchema extends SCHEMA
-  ?
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | unknown[]
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | InputValueRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+  ? | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | unknown[]
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | InputValueRec<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
 
 type MapSchemaInputValue<
   SCHEMA extends MapSchema,
   OPTIONS extends WriteValueOptions = {}
 > = MapSchema extends SCHEMA
   ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | { [KEY: string]: unknown }
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Optional<
-          {
-            [KEY in OPTIONS extends { mode: 'key' }
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | Optional<
+        {
+          [
+            KEY in OPTIONS extends { mode: 'key' }
               ? SelectKeys<SCHEMA['attributes'], { props: { key: true } }>
-              : keyof SCHEMA['attributes']]: SchemaInputValue<
-              SCHEMA['attributes'][KEY],
-              Overwrite<OPTIONS, { defined: false }>
-            >
-          },
-          OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
-        >
+              : keyof SCHEMA['attributes']
+          ]: SchemaInputValue<SCHEMA['attributes'][KEY], Overwrite<OPTIONS, { defined: false }>>
+        },
+        OptionalKeys<SCHEMA, Overwrite<OPTIONS, { defined: false }>>
+      >
 
 type RecordSchemaInputValue<
   SCHEMA extends RecordSchema,
   OPTIONS extends WriteValueOptions = {}
 > = RecordSchema extends SCHEMA
   ? undefined | SchemaExtendedWriteValue<SCHEMA, OPTIONS> | Record<string, unknown>
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | Optional<
-          Record<
-            ResolveStringSchema<SCHEMA['keys']>,
-            SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
-          >,
-          | (SCHEMA['props'] extends { partial: true } ? string : never)
-          | (OPTIONS extends { mode: 'update' } ? string : never)
-        >
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | Optional<
+        Record<
+          ResolveStringSchema<SCHEMA['keys']>,
+          SchemaInputValue<SCHEMA['elements'], Overwrite<OPTIONS, { defined: false }>>
+        >,
+        | (SCHEMA['props'] extends { partial: true } ? string : never)
+        | (OPTIONS extends { mode: 'update' } ? string : never)
+      >
 
 type AnyOfSchemaInputValue<
   SCHEMA extends AnyOfSchema,
   OPTIONS extends WriteValueOptions = {}
 > = AnyOfSchema extends SCHEMA
   ? unknown
-  :
-      | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
-      | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
-      | SchemaInputValue<SCHEMA['elements'][number], OPTIONS>
+  : | If<MustBeProvided<SCHEMA, OPTIONS>, never, undefined>
+    | SchemaExtendedWriteValue<SCHEMA, OPTIONS>
+    | SchemaInputValue<SCHEMA['elements'][number], OPTIONS>

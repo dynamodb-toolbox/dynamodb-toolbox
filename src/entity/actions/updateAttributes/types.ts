@@ -129,8 +129,7 @@ export type UpdateAttributesInput<
         : never
 
 type NumberUpdate<SCHEMA extends NumberSchema> =
-  | number
-  | (SCHEMA['props'] extends { big: true } ? bigint : never)
+  number | (SCHEMA['props'] extends { big: true } ? bigint : never)
 
 /**
  * User input of an UPDATE command for a given Schema
@@ -141,94 +140,86 @@ export type UpdateAttributeInput<
   AVAILABLE_PATHS extends string = string
 > = Schema extends SCHEMA
   ? SchemaExtendedValue<UpdateAttributesInputExtension> | undefined
-  :
-      | If<MustBeDefined<SCHEMA, FILLED>, never, undefined>
-      | If<CanBeRemoved<SCHEMA>, REMOVE, never>
-      // Not using Reference<...> for improved type display
-      | GET<
-          [
-            ref: AVAILABLE_PATHS,
-            fallback?: ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
-          ]
-        >
-      | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> | unknown : never)
-      | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
-      | (SCHEMA extends NumberSchema
-          ?
-              | ADD<NumberUpdate<SCHEMA>>
-              | SUM<
-                  // Not using Reference<...> for improved type display
-                  | NumberUpdate<SCHEMA>
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >,
-                  // Not using Reference<...> for improved type display
-                  | NumberUpdate<SCHEMA>
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >
+  : | If<MustBeDefined<SCHEMA, FILLED>, never, undefined>
+    | If<CanBeRemoved<SCHEMA>, REMOVE, never>
+    // Not using Reference<...> for improved type display
+    | GET<
+        [
+          ref: AVAILABLE_PATHS,
+          fallback?: ValidValue<SCHEMA, { defined: true }> | Reference<SCHEMA, AVAILABLE_PATHS>
+        ]
+      >
+    | (SCHEMA extends AnySchema ? ResolveAnySchema<SCHEMA> | unknown : never)
+    | (SCHEMA extends PrimitiveSchema ? ResolvePrimitiveSchema<SCHEMA> : never)
+    | (SCHEMA extends NumberSchema
+        ? | ADD<NumberUpdate<SCHEMA>>
+          | SUM<
+              // Not using Reference<...> for improved type display
+              | NumberUpdate<SCHEMA>
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
+                >,
+              // Not using Reference<...> for improved type display
+              | NumberUpdate<SCHEMA>
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
                 >
-              | SUBTRACT<
-                  // Not using Reference<...> for improved type display
-                  | NumberUpdate<SCHEMA>
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >,
-                  // Not using Reference<...> for improved type display
-                  | NumberUpdate<SCHEMA>
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >
+            >
+          | SUBTRACT<
+              // Not using Reference<...> for improved type display
+              | NumberUpdate<SCHEMA>
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
+                >,
+              // Not using Reference<...> for improved type display
+              | NumberUpdate<SCHEMA>
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: NumberUpdate<SCHEMA> | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
                 >
-          : never)
-      | (SCHEMA extends SetSchema
-          ?
-              | Set<ValidValue<SCHEMA['elements']>>
-              | ADD<Set<ValidValue<SCHEMA['elements']>>>
-              | DELETE<Set<ValidValue<SCHEMA['elements']>>>
-          : never)
-      | (SCHEMA extends ListSchema
-          ?
-              | Unextended<ValidValue<SCHEMA['elements']>[]>
-              | APPEND<
-                  // Not using Reference<...> for improved type display
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?:
-                          | ValidValue<SCHEMA['elements']>[]
-                          | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >
-                  | ValidValue<SCHEMA['elements']>[]
+            >
+        : never)
+    | (SCHEMA extends SetSchema
+        ? | Set<ValidValue<SCHEMA['elements']>>
+          | ADD<Set<ValidValue<SCHEMA['elements']>>>
+          | DELETE<Set<ValidValue<SCHEMA['elements']>>>
+        : never)
+    | (SCHEMA extends ListSchema
+        ? | Unextended<ValidValue<SCHEMA['elements']>[]>
+          | APPEND<
+              // Not using Reference<...> for improved type display
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: ValidValue<SCHEMA['elements']>[] | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
                 >
-              | PREPEND<
-                  | GET<
-                      [
-                        ref: AVAILABLE_PATHS,
-                        fallback?:
-                          | ValidValue<SCHEMA['elements']>[]
-                          | Reference<SCHEMA, AVAILABLE_PATHS>
-                      ]
-                    >
-                  | ValidValue<SCHEMA['elements']>[]
+              | ValidValue<SCHEMA['elements']>[]
+            >
+          | PREPEND<
+              | GET<
+                  [
+                    ref: AVAILABLE_PATHS,
+                    fallback?: ValidValue<SCHEMA['elements']>[] | Reference<SCHEMA, AVAILABLE_PATHS>
+                  ]
                 >
-          : never)
-      | (SCHEMA extends TupleSchema ? Unextended<ValidValueRec<SCHEMA['elements']>> : never)
-      | (SCHEMA extends MapSchema ? Unextended<ValidValue<SCHEMA>> : never)
-      | (SCHEMA extends RecordSchema ? Unextended<ValidValue<SCHEMA>> : never)
-      | (SCHEMA extends AnyOfSchema
-          ? UpdateAttributeInput<SCHEMA['elements'][number], FILLED, AVAILABLE_PATHS>
-          : never)
+              | ValidValue<SCHEMA['elements']>[]
+            >
+        : never)
+    | (SCHEMA extends TupleSchema ? Unextended<ValidValueRec<SCHEMA['elements']>> : never)
+    | (SCHEMA extends MapSchema ? Unextended<ValidValue<SCHEMA>> : never)
+    | (SCHEMA extends RecordSchema ? Unextended<ValidValue<SCHEMA>> : never)
+    | (SCHEMA extends AnyOfSchema
+        ? UpdateAttributeInput<SCHEMA['elements'][number], FILLED, AVAILABLE_PATHS>
+        : never)

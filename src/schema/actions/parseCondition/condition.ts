@@ -290,15 +290,13 @@ type SizeRangeCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
  * Condition on the size of an attribute.
  */
 export type SizeCondition<ATTR_PATH extends string, ALL_PATHS extends string> =
-  | SizeValueCondition<ATTR_PATH, ALL_PATHS>
-  | SizeRangeCondition<ATTR_PATH, ALL_PATHS>
+  SizeValueCondition<ATTR_PATH, ALL_PATHS> | SizeRangeCondition<ATTR_PATH, ALL_PATHS>
 
 /**
  * Conditions available on a `null` attribute.
  */
 export type NullSchemaCondition<ATTR_PATH extends string> =
-  | ExistsCondition<ATTR_PATH>
-  | TypeCondition<ATTR_PATH>
+  ExistsCondition<ATTR_PATH> | TypeCondition<ATTR_PATH>
 
 /**
  * Conditions available on a `boolean` attribute.
@@ -532,17 +530,16 @@ export type AnyOfSchemaCondition<
  */
 export type NonLogicalCondition<SCHEMA extends ItemSchema = ItemSchema> = ItemSchema extends SCHEMA
   ? FreeCondition | AnySchemaCondition<AnySchema, string, string>
-  :
-      | FreeCondition
-      | (keyof SCHEMA['attributes'] extends infer ATTR_PATH
-          ? ATTR_PATH extends string
-            ? AttrCondition<
-                `['${ATTR_PATH}']` | If<Extends<ATTR_PATH, StringToEscape>, never, ATTR_PATH>,
-                SCHEMA['attributes'][ATTR_PATH],
-                Paths<SCHEMA>
-              >
-            : never
-          : never)
+  : | FreeCondition
+    | (keyof SCHEMA['attributes'] extends infer ATTR_PATH
+        ? ATTR_PATH extends string
+          ? AttrCondition<
+              `['${ATTR_PATH}']` | If<Extends<ATTR_PATH, StringToEscape>, never, ATTR_PATH>,
+              SCHEMA['attributes'][ATTR_PATH],
+              Paths<SCHEMA>
+            >
+          : never
+        : never)
 
 type DdbAttributeValue =
   | null
@@ -559,11 +556,7 @@ type DdbAttributeValue =
 type ScalarAttributeValue = number | string | Uint8Array
 
 type ContainersAttributes =
-  | string
-  | Set<string>
-  | Set<number>
-  | Set<Uint8Array>
-  | DdbAttributeValue[]
+  string | Set<string> | Set<number> | Set<Uint8Array> | DdbAttributeValue[]
 
 /**
  * @debt v3 "Size conditions can be applied to free conditions as well: Rework { size: 'path', eq: 3 } to { attr: 'path', sizeEq: 3 } (=> { value: 3, sizeEq : 3 })"
@@ -633,5 +626,4 @@ export type LogicalCondition<SCHEMA extends ItemSchema = ItemSchema> =
  * A type-safe condition over a schema's attributes.
  */
 export type SchemaCondition<SCHEMA extends ItemSchema = ItemSchema> =
-  | LogicalCondition<SCHEMA>
-  | NonLogicalCondition<SCHEMA>
+  LogicalCondition<SCHEMA> | NonLogicalCondition<SCHEMA>

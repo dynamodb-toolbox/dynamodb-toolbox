@@ -12,11 +12,7 @@ interface CustomTransformerDTO {
  * Serialized form of a transformer.
  */
 export type TransformerDTO =
-  | CustomTransformerDTO
-  | JSONStringifierDTO
-  | PrefixerDTO
-  | SuffixerDTO
-  | PipeDTO<TransformerDTO[]>
+  CustomTransformerDTO | JSONStringifierDTO | PrefixerDTO | SuffixerDTO | PipeDTO<TransformerDTO[]>
 
 // TODO: Infer from actual list of defaulters
 type DefaulterDTO = { defaulterId: 'value'; value: unknown } | { defaulterId: 'custom' }
@@ -48,9 +44,7 @@ interface SchemaPropsDTO extends SchemaDefaultsDTO, SchemaLinksDTO {
  * Transformers serializable on an `any` schema.
  */
 export type AnySchemaTransformerDTO =
-  | CustomTransformerDTO
-  | JSONStringifierDTO
-  | PipeDTO<TransformerDTO[]>
+  CustomTransformerDTO | JSONStringifierDTO | PipeDTO<TransformerDTO[]>
 
 /**
  * DTO of an `any` schema.
@@ -106,10 +100,7 @@ export interface NumberSchemaDTO extends SchemaPropsDTO {
  * Transformers serializable on a `string` schema.
  */
 export type StringSchemaTransformerDTO =
-  | CustomTransformerDTO
-  | PrefixerDTO
-  | SuffixerDTO
-  | PipeDTO<TransformerDTO[]>
+  CustomTransformerDTO | PrefixerDTO | SuffixerDTO | PipeDTO<TransformerDTO[]>
 
 /**
  * DTO of a `string` schema.
@@ -138,11 +129,7 @@ export interface BinarySchemaDTO extends SchemaPropsDTO {
  * DTO of a primitive schema.
  */
 export type PrimitiveSchemaDTO =
-  | NullSchemaDTO
-  | BooleanSchemaDTO
-  | NumberSchemaDTO
-  | StringSchemaDTO
-  | BinarySchemaDTO
+  NullSchemaDTO | BooleanSchemaDTO | NumberSchemaDTO | StringSchemaDTO | BinarySchemaDTO
 
 /**
  * DTO of a `set` schema.

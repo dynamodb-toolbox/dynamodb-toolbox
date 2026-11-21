@@ -162,8 +162,7 @@ describe('accessPattern', () => {
           options: { attributes: 'age'[] } | { attributes?: undefined }
         },
         { attributes: 'age'[] | undefined; reverse: true } & (
-          | { attributes: 'age'[] }
-          | { attributes?: undefined }
+          { attributes: 'age'[] } | { attributes?: undefined }
         )
       >
     > = 1

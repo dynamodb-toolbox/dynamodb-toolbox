@@ -65,19 +65,18 @@ export type SchemaZodFormatter<
   OPTIONS extends ZodFormatterOptions = {}
 > = Schema extends SCHEMA
   ? z.ZodTypeAny
-  :
-      | (SCHEMA extends AnySchema ? AnyZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends NullSchema ? NullZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends BooleanSchema ? BooleanZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends NumberSchema ? NumberZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends StringSchema ? StringZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends BinarySchema ? BinaryZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends SetSchema ? SetZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends ListSchema ? ListZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends TupleSchema ? TupleZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends MapSchema ? MapZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA, OPTIONS> : never)
+  : | (SCHEMA extends AnySchema ? AnyZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends NullSchema ? NullZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends BooleanSchema ? BooleanZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends NumberSchema ? NumberZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends StringSchema ? StringZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends BinarySchema ? BinaryZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends SetSchema ? SetZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends ListSchema ? ListZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends TupleSchema ? TupleZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends MapSchema ? MapZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends RecordSchema ? RecordZodFormatter<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends AnyOfSchema ? AnyOfZodFormatter<SCHEMA, OPTIONS> : never)
 
 /**
  * Dispatch a schema to the Zod formatter of its type.

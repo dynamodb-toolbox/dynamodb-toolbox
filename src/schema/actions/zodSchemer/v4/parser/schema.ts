@@ -65,19 +65,18 @@ export type SchemaZodParser<
   OPTIONS extends ZodParserOptions = {}
 > = Schema extends SCHEMA
   ? z.ZodType
-  :
-      | (SCHEMA extends AnySchema ? AnyZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends NullSchema ? NullZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends BooleanSchema ? BooleanZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends NumberSchema ? NumberZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends StringSchema ? StringZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends BinarySchema ? BinaryZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends SetSchema ? SetZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends ListSchema ? ListZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends TupleSchema ? TupleZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends MapSchema ? MapZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends RecordSchema ? RecordZodParser<SCHEMA, OPTIONS> : never)
-      | (SCHEMA extends AnyOfSchema ? AnyOfZodParser<SCHEMA, OPTIONS> : never)
+  : | (SCHEMA extends AnySchema ? AnyZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends NullSchema ? NullZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends BooleanSchema ? BooleanZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends NumberSchema ? NumberZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends StringSchema ? StringZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends BinarySchema ? BinaryZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends SetSchema ? SetZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends ListSchema ? ListZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends TupleSchema ? TupleZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends MapSchema ? MapZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends RecordSchema ? RecordZodParser<SCHEMA, OPTIONS> : never)
+    | (SCHEMA extends AnyOfSchema ? AnyOfZodParser<SCHEMA, OPTIONS> : never)
 
 /**
  * Dispatch a schema to the Zod parser of its type.

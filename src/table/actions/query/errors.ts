@@ -10,5 +10,4 @@ type NoEntityMatchedErrorBlueprint = ErrorBlueprint<{
 
 /** Union of every error blueprint a `QueryCommand` can raise. */
 export type QueryCommandErrorBlueprints =
-  | QueryCommandParamsErrorBlueprints
-  | NoEntityMatchedErrorBlueprint
+  QueryCommandParamsErrorBlueprints | NoEntityMatchedErrorBlueprint
