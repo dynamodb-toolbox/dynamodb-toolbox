@@ -184,10 +184,10 @@ Schemas are **portable**: They can be imported from or exported to [Zod](https:/
 
 ### Zod
 
-The [`ZodSchemer`](../18-actions/5-zod-schemer.md) action transpiles a DynamoDB-Toolbox schema into a [Zod](https://zod.dev) schema (for [parsing](../18-actions/1-parse.md) or [formatting](../18-actions/2-format.md)):
+The [`ZodSchemer`](../18-actions/5-zod-schemer.md) action transpiles a DynamoDB-Toolbox schema into a [Zod](https://zod.dev) schema (for [parsing](../18-actions/1-parse.md) or [formatting](../18-actions/2-format.md)). Both Zod versions are supported, through [a subpath each](../18-actions/5-zod-schemer.md#which-version):
 
 ```ts
-import { ZodSchemer } from 'dynamodb-toolbox/schema/actions/zodSchemer'
+import { ZodSchemer } from 'dynamodb-toolbox/schema/actions/zodSchemer/v4'
 
 const zodParser = pokemonSchema.build(ZodSchemer).parser()
 
@@ -198,8 +198,8 @@ const parsed = zodParser.parse(input)
 Conversely, the [`fromZodSchema`](../18-actions/5-zod-schemer.md#fromzodschema) util derives a DynamoDB-Toolbox schema from a Zod schema:
 
 ```ts
-import { z } from 'zod'
-import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema'
+import { z } from 'zod/v4'
+import { fromZodSchema } from 'dynamodb-toolbox/schema/actions/fromZodSchema/v4'
 
 const zodSchema = z.object({
   pokemonId: z.string(),

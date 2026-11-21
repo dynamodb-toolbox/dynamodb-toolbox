@@ -17,6 +17,8 @@ import TabItem from '@theme/TabItem';
 npm install zod @modelcontextprotocol/sdk
 ```
 
+It builds its tool input schemas with the **v4** [`ZodSchemer`](../../../4-schemas/18-actions/5-zod-schemer.md), so it needs a `zod` install that ships the `zod/v4` subpath (`^3.25.0` or any `4.x`). The MCP SDK reads either Zod version, so no particular version of it is required; DynamoDB-Toolbox is tested against `@modelcontextprotocol/sdk@^1.23.0`, which declares a `zod` peer of `^3.25 || ^4.0` — below that, `npm` may install the SDK its own nested `zod` 3 next to your `zod` 4.
+
 :::
 
 A utility for quickly adding [Tools](https://modelcontextprotocol.io/docs/concepts/tools) to an [MCP Server](https://modelcontextprotocol.io/examples), enabling any [MCP Clients](https://modelcontextprotocol.io/clients) (like [Claude](https://claude.ai) or [Cursor](https://www.cursor.com/)) to interact with your DynamoDB Tables using natural language.

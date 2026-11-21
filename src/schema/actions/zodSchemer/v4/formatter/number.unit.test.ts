@@ -233,10 +233,12 @@ describe('zodSchemer > formatter > number', () => {
     })
   })
 
-  test('applies meta.description', () => {
-    const schema = number().meta({ description: 'Desc' })
+  test('applies the whole meta store', () => {
+    const schema = number().meta({ description: 'Desc', title: 'Title', examples: [NUM] })
     const output = schemaZodFormatter(schema)
 
     expect(output.description).toBe('Desc')
+    // v4 has a meta store of its own, so no key is dropped
+    expect(output.meta()).toStrictEqual({ description: 'Desc', title: 'Title', examples: [NUM] })
   })
 })
