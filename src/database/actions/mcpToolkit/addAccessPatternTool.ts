@@ -1,5 +1,5 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod/v3'
+import { z } from 'zod/v4'
 
 import {
   $meta as $entityMeta,
@@ -9,7 +9,7 @@ import { IAccessPattern as IEntityAccessPattern } from '~/entity/actions/accessP
 import type { Entity } from '~/entity/index.js'
 import { capacityOptions } from '~/options/capacity.js'
 import { selectOptions } from '~/options/select.js'
-import { ZodSchemer } from '~/schema/actions/zodSchemer/index.js'
+import { ZodSchemer } from '~/schema/actions/zodSchemer/v4/index.js'
 import type { Schema } from '~/schema/index.js'
 import {
   $meta as $tableMeta,
