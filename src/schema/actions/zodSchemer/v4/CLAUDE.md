@@ -12,7 +12,7 @@ Everything is imported from `zod/v4`, never bare `'zod'` (lint-enforced). Types 
 
 The recursion, the file split and the option types are the v3 action's. What changed is what zod v4 emits:
 
-- **No `WithValidate` type.** `.refine()` appends a check to the schema it is called on and returns `this`, where v3 wrapped it in a `ZodEffects`. So `withValidate` has no type counterpart at all, and every call site substitutes the un-refined type.
+- **No `WithValidate` type.** `.superRefine()` appends a check to the schema it is called on and returns `this`, where v3 wrapped it in a `ZodEffects`. So `withValidate` has no type counterpart at all, and every call site substitutes the un-refined type.
 - **`withDescribe` became `withMeta`**, carrying the whole `meta` store rather than the description alone: zod v4 has a meta store of its own (`z.globalRegistry`), which `.meta()` writes to. DDB-TB's `SchemaMeta` is assignable to zod's `GlobalMeta`.
 - **`z.ZodEffects` became `z.ZodPipe`.** A `.transform(fn)` yields `ZodPipe<SELF, ZodTransform<OUT, output<SELF>>>`, so transformers, non-strict tuples and `savedAs` attribute renaming all surface as pipes. The input side is reached with `.in` (`.innerType()` in v3).
 - **One multi-value literal instead of a union of literals** for `boolean`/`number` enums: `z.literal([a, b, c])` is a single `ZodLiteral<a | b | c>`. This deletes v3's `ZodLiteralMap` helper. `string` enums stay `z.enum()` (`ZodEnum<util.ToEnum<…>>`), with a lone value still a literal.
@@ -33,5 +33,4 @@ Every type file has a colocated `*.unit.test.ts` asserting both the emitted type
 - **`z.union([…])` infers a `readonly` tuple of options** (its type param is `const`), while `z.discriminatedUnion` does not. `anyOf.ts` has to say `readonly [...]` on the plain-union arm only.
 - **`z.strictObject` and `z.object` are indistinguishable at the type level** (`$strict` and `$strip` are structurally identical), so `map.ts`/`item.ts` emit a bare `z.ZodObject<Shape>` and carry `strict` at runtime only. The tests assert `def.catchall` instead: a `ZodNever` when strict, `undefined` when stripped.
 - **A discriminated union only accepts options that carry the discriminant**, which the loose `z.ZodType` of the recursion does not say — hence the documented double cast in `anyOf.ts`.
-- **`withValidate` swallows DDB-TB validator messages** — a `Validator` may return a string, which is truthy to zod's `.refine`, so a rejection with a message reads as a pass. Pre-existing in v3; kept for parity.
 - **Three runtime casts remain**, all commented. Two are in `parser/utils.ts`: every schema type declares `transform?: unknown` in its props, so reading it as a `Transformer` is a cast, and the `savedAs` encoder is handed an `unknown` because zod types a `.transform` callback's argument as `unknown` at the call site. The third is in `parser/record.ts`, where the recursion types a record's key schema as the loose `z.ZodType`.

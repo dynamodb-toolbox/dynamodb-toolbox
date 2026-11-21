@@ -1,6 +1,7 @@
 import type { z } from 'zod/v4'
 
 import type { ItemSchema, MapSchema, Schema } from '~/schema/index.js'
+import { isString } from '~/utils/validation/isString.js'
 
 /**
  * Attribute keys of a `map`/`item` renamed via `savedAs`.
@@ -16,21 +17,29 @@ export type SavedAsAttributes<SCHEMA extends MapSchema | ItemSchema> = {
 /**
  * Apply the schema's custom validator to a Zod schema.
  *
- * Has no type counterpart, where v3 needed a `WithValidate`: in zod v4 `.refine` appends a check to
- * the schema it is called on and returns it, rather than wrapping it in a `ZodEffects`.
+ * Deliberately has no type counterpart: `.superRefine` returns the schema it is called on.
  */
 export const withValidate = (schema: Schema, zodSchema: z.ZodType): z.ZodType => {
   const { key = false, keyValidator, putValidator } = schema.props
 
-  if (key && keyValidator !== undefined) {
-    return zodSchema.refine(input => keyValidator(input, schema))
+  const validator = key ? keyValidator : putValidator
+
+  if (validator === undefined) {
+    return zodSchema
   }
 
-  if (!key && putValidator !== undefined) {
-    return zodSchema.refine(input => putValidator(input, schema))
-  }
+  // `.superRefine` rather than `.refine`: a validator rejects with a message, which is a truthy value
+  return zodSchema.superRefine((input, ctx) => {
+    const validationResult = validator(input, schema)
 
-  return zodSchema
+    if (validationResult !== true) {
+      ctx.addIssue(
+        `Custom validation failed${
+          isString(validationResult) ? ` with message: ${validationResult}` : ''
+        }.`
+      )
+    }
+  })
 }
 
 /**

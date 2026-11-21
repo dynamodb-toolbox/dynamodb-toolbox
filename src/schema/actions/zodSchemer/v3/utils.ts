@@ -2,6 +2,7 @@ import type { z } from 'zod/v3'
 
 import type { ItemSchema, MapSchema, Schema, Validator } from '~/schema/index.js'
 import type { Extends, If, Or } from '~/types/index.js'
+import { isString } from '~/utils/validation/isString.js'
 
 /**
  * Attribute keys of a `map`/`item` renamed via `savedAs`.
@@ -32,15 +33,25 @@ export type WithValidate<SCHEMA extends Schema, ZOD_SCHEMA extends z.ZodTypeAny>
 export const withValidate = (schema: Schema, zodSchema: z.ZodTypeAny): z.ZodTypeAny => {
   const { key = false, keyValidator, putValidator } = schema.props
 
-  if (key && keyValidator !== undefined) {
-    return zodSchema.refine(input => keyValidator(input, schema))
+  const validator = key ? keyValidator : putValidator
+
+  if (validator === undefined) {
+    return zodSchema
   }
 
-  if (!key && putValidator !== undefined) {
-    return zodSchema.refine(input => putValidator(input, schema))
-  }
+  // `.superRefine` rather than `.refine`: a validator rejects with a message, which is a truthy value
+  return zodSchema.superRefine((input, ctx) => {
+    const validationResult = validator(input, schema)
 
-  return zodSchema
+    if (validationResult !== true) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Custom validation failed${
+          isString(validationResult) ? ` with message: ${validationResult}` : ''
+        }.`
+      })
+    }
+  })
 }
 
 /**

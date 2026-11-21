@@ -131,6 +131,39 @@ describe('zodSchemer > parser > string', () => {
       expect(() => expected.parse('')).toThrow()
       expect(() => output.parse('')).toThrow()
     })
+
+    test('reports the validator message', () => {
+      const schema = string().validate(input => (input.length > 0 ? true : 'Please fill me'))
+      const output = schemaZodParser(schema)
+
+      const { error } = output.safeParse('')
+
+      expect(error?.issues[0]?.message).toBe(
+        'Custom validation failed with message: Please fill me.'
+      )
+    })
+
+    test('applies the key validator on a key schema', () => {
+      const schema = string()
+        .key()
+        .validate(input => (input.length > 0 ? true : 'Please fill me'))
+      const output = schemaZodParser(schema)
+
+      const { error } = output.safeParse('')
+
+      expect(error?.issues[0]?.message).toBe(
+        'Custom validation failed with message: Please fill me.'
+      )
+    })
+
+    test('reports a message-less rejection', () => {
+      const schema = string().validate(() => false)
+      const output = schemaZodParser(schema)
+
+      const { error } = output.safeParse('')
+
+      expect(error?.issues[0]?.message).toBe('Custom validation failed.')
+    })
   })
 
   describe('encoding/decoding', () => {
