@@ -279,6 +279,16 @@
         "default": "./dist/cjs/schema/actions/zodSchemer/index.js"
       }
     },
+    "./schema/actions/zodSchemer/v3": {
+      "import": {
+        "types": "./dist/esm/schema/actions/zodSchemer/v3/index.d.ts",
+        "default": "./dist/esm/schema/actions/zodSchemer/v3/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/schema/actions/zodSchemer/v3/index.d.ts",
+        "default": "./dist/cjs/schema/actions/zodSchemer/v3/index.js"
+      }
+    },
     "./schema/actions/fromZodSchema": {
       "import": {
         "types": "./dist/esm/schema/actions/fromZodSchema/index.d.ts",

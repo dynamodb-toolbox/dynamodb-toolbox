@@ -18,7 +18,9 @@ const { key, item } = parser.parse(input)
 | `jsonSchemer` | `JSONSchemer` | Convert a schema → JSON Schema (of the formatted value). |
 | `dto` | `SchemaDTO` | Serialize a schema → JSON DTO (portable definition). |
 | `fromDTO` | `fromSchemaDTO` | Rebuild a schema from a DTO (inverse of `dto`). |
-| `zodSchemer` | `ZodSchemer` | Derive Zod schemas (`ZodParser` / `ZodFormatter`) from a DDB-TB schema. |
+| `zodSchemer/v3` | `ZodSchemer` | Derive zod v3 schemas (`ZodParser` / `ZodFormatter`) from a DDB-TB schema. |
+| `zodSchemer/v4` | `ZodParser` | Same, for zod v4 schemas — parser side only so far, subpath not published yet. |
+| `zodSchemer` | `ZodSchemer` | Deprecated alias of `zodSchemer/v3`. |
 | `fromZodSchema/v3` | `fromZodSchema` | Convert a zod v3 schema → DDB-TB schema (inverse direction). |
 | `fromZodSchema/v4` | `fromZodSchema` | Same, for zod v4 schemas (Classic or Mini). |
 | `fromZodSchema` | `fromZodSchema` | Deprecated alias of `fromZodSchema/v3`, plus the error codes both versions share. |
