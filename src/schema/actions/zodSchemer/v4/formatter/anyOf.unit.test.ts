@@ -69,6 +69,72 @@ describe('zodSchemer > formatter > anyOf', () => {
     expect(output.options[1].shape.type.options).toStrictEqual(['b', 'c'])
   })
 
+  test('returns discriminated union zod schema if an element has a validator', () => {
+    const hasStr = (input: { str?: string }): boolean => input.str !== undefined
+    const schema = anyOf(
+      map({ type: string().const('a'), str: string().optional() }).validate(hasStr),
+      map({ type: string().const('b') })
+    ).discriminate('type')
+    const output = schemaZodFormatter(schema)
+    const expected = z.discriminatedUnion('type', [
+      z.object({ type: z.literal('a'), str: z.string().optional() }).refine(hasStr),
+      z.object({ type: z.literal('b') })
+    ])
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    // `.superRefine` appends a check to the object and returns it, so a validated element stays discriminable
+    expect(expected).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(expected.options[0]).toBeInstanceOf(z.ZodObject)
+    expect(output).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(output.options).toHaveLength(2)
+    expect(output.options[0]).toBeInstanceOf(z.ZodObject)
+
+    const VALID_VALUE = { type: 'a', str: STR } as const
+
+    expect(expected.parse(VALID_VALUE)).toStrictEqual(VALID_VALUE)
+    expect(output.parse(VALID_VALUE)).toStrictEqual(VALID_VALUE)
+
+    // The check runs, so the option was reached rather than rejected as non-discriminable
+    expect(() => expected.parse({ type: 'a' })).toThrow()
+    expect(() => output.parse({ type: 'a' })).toThrow('Custom validation failed')
+    expect(() => output.parse({ type: 'c' })).toThrow()
+  })
+
+  test('returns discriminated union zod schema if an element is a discriminated union', () => {
+    const schema = anyOf(
+      anyOf(map({ type: string().const('a') }), map({ type: string().const('b') })).discriminate(
+        'type'
+      ),
+      map({ type: string().const('c') })
+    ).discriminate('type')
+    const output = schemaZodFormatter(schema)
+    const expected = z.discriminatedUnion('type', [
+      z.discriminatedUnion('type', [
+        z.object({ type: z.literal('a') }),
+        z.object({ type: z.literal('b') })
+      ]),
+      z.object({ type: z.literal('c') })
+    ])
+
+    const assert: A.Equals<typeof output, typeof expected> = 1
+    assert
+
+    expect(expected).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(expected.options[0]).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(output).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(output.options).toHaveLength(2)
+    expect(output.options[0]).toBeInstanceOf(z.ZodDiscriminatedUnion)
+    expect(output.options[1]).toBeInstanceOf(z.ZodObject)
+
+    expect(expected.parse({ type: 'b' })).toStrictEqual({ type: 'b' })
+    expect(output.parse({ type: 'b' })).toStrictEqual({ type: 'b' })
+    expect(output.parse({ type: 'c' })).toStrictEqual({ type: 'c' })
+    expect(() => expected.parse({ type: 'd' })).toThrow()
+    expect(() => output.parse({ type: 'd' })).toThrow()
+  })
+
   test('throws on parse if a discriminated element has renamed attributes', () => {
     const schema = anyOf(
       map({ type: string().const('a'), num: number().savedAs('_n') }),

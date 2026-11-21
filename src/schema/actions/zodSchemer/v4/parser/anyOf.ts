@@ -58,7 +58,8 @@ export const anyOfZodParser = (schema: AnyOfSchema, options: ZodParserOptions = 
   )
 
   if (discriminator !== undefined) {
-    // LIMITATION: Does not support nested `anyOf`s for now, although the upgraded `z.discriminatedUnion` may allow it: https://v4.zod.dev/v4#upgraded-zdiscriminatedunion
+    // LIMITATION: a nested *non*-discriminated `anyOf` is not a valid option, as a `z.union` is
+    // not discriminable. Zod builds its discriminator map lazily, so this throws on the first parse.
     zodParser = z.discriminatedUnion(
       discriminator,
       /**
