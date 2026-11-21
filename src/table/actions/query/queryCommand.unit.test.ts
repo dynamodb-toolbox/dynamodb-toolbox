@@ -164,8 +164,8 @@ describe('queryCommand', () => {
         .options({ entityAttrFilter: false })
         .send()
 
-    expect(invalidCall).rejects.toThrow(DynamoDBToolboxError)
-    expect(invalidCall).rejects.toThrow(
+    await expect(invalidCall).rejects.toThrow(DynamoDBToolboxError)
+    await expect(invalidCall).rejects.toThrow(
       expect.objectContaining({ code: 'queryCommand.noEntityMatched' })
     )
   })

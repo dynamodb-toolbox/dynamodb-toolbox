@@ -10,7 +10,8 @@ jobs:
     strategy:
       matrix:
         # Node 18 dropped: `aws-cdk-lib` (devDependency) requires Node >= 20
-        node: [20, 22, 24]
+        # Node 20 dropped: `vitest` v5 (devDependency) requires Node >= 22.12
+        node: [22, 24]
         typescript: [
             '~5.0.4',
             '~5.1.6',
