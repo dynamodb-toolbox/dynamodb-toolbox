@@ -124,5 +124,25 @@ describe('parseProjection', () => {
         ExpressionAttributeNames: { '#p_1': ']' }
       })
     })
+
+    test('preserves spaces and special chars in savedAs and record keys', () => {
+      const schemaWithSpaces = item({
+        firstName: string().savedAs('first name'),
+        price: string().savedAs('$price'),
+        scores: record(string(), number())
+      })
+
+      expect(
+        schemaWithSpaces.build(PathParser).parse(['firstName', 'price', "scores['a b']"])
+      ).toStrictEqual({
+        ProjectionExpression: '#p_1, #p_2, #p_3.#p_4',
+        ExpressionAttributeNames: {
+          '#p_1': 'first name',
+          '#p_2': '$price',
+          '#p_3': 'scores',
+          '#p_4': 'a b'
+        }
+      })
+    })
   })
 })
